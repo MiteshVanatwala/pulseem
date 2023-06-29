@@ -136,6 +136,7 @@ const ProductsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
+        setDialogType(null);
         setLoader(true);
 
         const exportOptions = {
@@ -273,6 +274,7 @@ const ProductsReport = ({ classes }) => {
                             dispatch(GetProductReports({ ...searchData, IsExport: true }))
                             setDialogType('exportFormat')
                         }}
+                        disabled={!productsReportDetails?.Products?.length}
                         startIcon={<ExportIcon />}
                     >
                         {t('campaigns.exportFile')}
@@ -385,31 +387,35 @@ const ProductsReport = ({ classes }) => {
     }
 
     const renderTableBody = () => {
-        if (productsReportDetails && productsReportDetails?.Products?.length > 0) {
-            return (
-                <DataTable
-                    tableContainer={{
-                        className:
-                            windowSize === "xs"
-                                ? clsx(classes.mt3, classes.tableStyle)
-                                : classes.tableStyle,
-                    }}
-                    table={{ className: classes.tableContainer }}
-                    tableHead={{
-                        tableHeadCells: TABLE_HEAD,
-                        classes: rowStyle,
-                        className: windowSize === "xs" && classes.dNone,
-                    }}
-                >
-                    <TableBody>
-                        {productsReportDetails?.Products
-                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-                    </TableBody>
-                </DataTable>)
-        }
-        return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
-            <Typography>{t("common.NoDataTryFilter")}</Typography>
-        </Box>
+        return (
+            <DataTable
+                tableContainer={{
+                    className:
+                        windowSize === "xs"
+                            ? clsx(classes.mt3, classes.tableStyle)
+                            : classes.tableStyle,
+                }}
+                table={{ className: classes.tableContainer }}
+                tableHead={{
+                    tableHeadCells: TABLE_HEAD,
+                    classes: rowStyle,
+                    className: windowSize === "xs" && classes.dNone,
+                }}
+            >
+                {
+                    (productsReportDetails && productsReportDetails?.Products?.length > 0) ? (
+                        <TableBody>
+                            {productsReportDetails?.Products
+                                .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+                        </TableBody>
+                    ) : (
+                        <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+                            <Typography>{t("common.NoDataTryFilter")}</Typography>
+                        </Box>
+                    )
+                }
+            </DataTable>
+        )
     }
 
     const renderTablePagination = () => {

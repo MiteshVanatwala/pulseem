@@ -352,7 +352,7 @@ const ClientSearchResult = ({ props, classes }) => {
         ...searchData,
         PageIndex: 1,
         PageSize: rowsPerPage,
-        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+        // PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
         FromDate: date.FromDate,
         ToDate: date.ToDate,
         SearchTerm: searchStr,
@@ -1202,7 +1202,6 @@ const ClientSearchResult = ({ props, classes }) => {
                 PageSize: rowsPerPage,
                 FromDate: date.FromDate,
                 ToDate: date.ToDate,
-                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                 SearchTerm: searchStr,
                 MyActivities: null,
                 MyConditions: null,
@@ -1219,13 +1218,14 @@ const ClientSearchResult = ({ props, classes }) => {
           </Button>
         </Grid>
         {
-          searchData?.SearchTerm && (
+          (searchData?.SearchTerm || searchData?.FromDate || searchData?.ToDate) && (
             <Grid item>
               <Button
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  handleSearch({ ...searchData, SearchTerm: "", ...filterSearch });
+                  setDate({ FromDate: null, ToDate: null });
+                  handleSearch({ ...searchData, SearchTerm: "", FromDate: null, ToDate: null, ...filterSearch });
                   setSearchStr("");
                   setPage(1);
                   handleFilter();

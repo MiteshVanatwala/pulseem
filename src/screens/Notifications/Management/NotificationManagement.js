@@ -238,8 +238,8 @@ const NotificationManagement = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
-          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
+          const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
