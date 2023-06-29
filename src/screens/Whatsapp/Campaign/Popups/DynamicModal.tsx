@@ -63,7 +63,7 @@ const DynamicModal = ({
 	useEffect(() => {
 		if (dynamicModalVariable !== 0) {
 			const activeModalData = dynamicVariable?.find(
-				(variable) => variable.VariableIndex === dynamicModalVariable
+				(variable) => variable?.VariableIndex === dynamicModalVariable
 			);
 
 			if (activeModalData?.FieldTypeId) {
@@ -205,7 +205,7 @@ const DynamicModal = ({
 	) => {
 		const isVariableUpdated = updatedDynamicVariable?.find(
 			(updatedVariable: updatedVariable) =>
-				updatedVariable.VariableIndex === dynamicModalVariable
+				updatedVariable?.VariableIndex === dynamicModalVariable
 		);
 		if (field === 'link') {
 			setIsTrackLink(isTrackLink);
@@ -213,7 +213,7 @@ const DynamicModal = ({
 		if (!!isVariableUpdated) {
 			const newDynamicVariables = updatedDynamicVariable.map(
 				(updatedVariable) => {
-					if (updatedVariable.VariableIndex !== dynamicModalVariable)
+					if (updatedVariable?.VariableIndex !== dynamicModalVariable)
 						return updatedVariable;
 
 					return {
@@ -241,8 +241,8 @@ const DynamicModal = ({
 	const getFieldValueByID = (fieldID: number) => {
 		const value = updatedDynamicVariable?.find(
 			(updatedVariable: updatedVariable) =>
-				updatedVariable.VariableIndex === dynamicModalVariable &&
-				updatedVariable.FieldTypeId === fieldID
+				updatedVariable?.VariableIndex === dynamicModalVariable &&
+				updatedVariable?.FieldTypeId === fieldID
 		)?.VariableValue;
 		return value ? value : '';
 	};
