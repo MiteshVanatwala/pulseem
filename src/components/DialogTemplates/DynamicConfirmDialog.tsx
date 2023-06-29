@@ -25,6 +25,7 @@ const DynamicConfirmDialog = ({
     );
 
     const dialog = {
+        classes: classes,
         title: title,
         showDivider: true,
         icon: null,

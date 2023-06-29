@@ -425,10 +425,8 @@ const SmsMarketingDialog = ({
                     isOpen={newSmsVerification}
                     variant='sms'
                     onClose={() => setNewSmsVerification(false)}
-                    Option={{
-                        Step: 1,
-                        Value: smsModel.FromNumber
-                    }}
+                    step={1}
+                    value={smsModel.FromNumber}
                 />}
                 <Loader isOpen={showLoader} />
             </Grid>
@@ -451,7 +449,7 @@ const SmsMarketingDialog = ({
                 {...currentDialog}>
                 {currentDialog.content}
             </BaseDialog>
-            { toastMessage &&  <Toast data={toastMessage} /> }
+            {toastMessage && <Toast data={toastMessage} />}
         </>
     )
 }

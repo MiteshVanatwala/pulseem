@@ -239,8 +239,8 @@ const NotificationManagement = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
-          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
+          const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -1284,6 +1284,24 @@ const NotificationManagement = ({ classes }) => {
     <DefaultScreen
       currentPage='notifications'
       classes={classes}
+      containerClass={clsx(classes.management, classes.mb50)}>
+      <Title
+        Text={t('notifications.notificationManagement')} Classes={classes}
+        ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
+        Element={
+          <Button onClick={() => {
+            setCookie('scriptDialog', true);
+            setForceShowImplementation(true);
+            setShowScriptDialog(true);
+          }
+          }
+            variant='contained'
+            className={clsx(
+              classes.actionButton,
+              classes.implementButtonFlex,
+              classes.actionButtonDarkBlue)}>{t('master.implementScript')}</Button>
+        } ShowDivider={true} />
+      {renderSearchSection()}
       containerClass={classes.management}>
       <Box className={'topSection'}>
         <Title

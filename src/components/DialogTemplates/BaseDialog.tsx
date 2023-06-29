@@ -36,11 +36,12 @@ export const BaseDialog = ({
   cancelText = "common.Cancel",
   confirmText = "common.Ok",
   showDefaultButtons = true,
-  exitButton = null,
+  exitButton = true,
   style = undefined,
   maxHeight = "",
   reduceTitle = false,
-  confirmDisabled = false
+  confirmDisabled = false,
+  className = ''
 }: DialogOptions) => {
   const direction: { [key: string]: string } = {
     true: "rtl",
@@ -60,7 +61,7 @@ export const BaseDialog = ({
     exitButton ?? (
       <Stack
         onClick={onExit}
-        className={clsx(classes.dialogExitButton, classes.f20, isRTL ? classes.dialogExitButtonRTL : classes.dialogExitButtonLTR)}
+        className={clsx(classes.dialogExitButton, classes.f20, className, isRTL ? classes.dialogExitButtonRTL : classes.dialogExitButtonLTR)}
         justifyContent="center"
         alignItems="center"
         alignSelf="center"
@@ -207,7 +208,7 @@ export const BaseDialog = ({
         }
       }}
     >
-      <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
+      <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar, className)}>
         {RenderTopBar()}
         {RenderContent()}
       </Paper >

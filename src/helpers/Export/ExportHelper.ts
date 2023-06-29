@@ -35,7 +35,22 @@ export interface KeyValue {
     id: number;
     value: string;
 }
-const DateOptions: string[] = ['SendDate', 'LastEditDate', 'UpdateDate', 'UpdatedDate', 'CreationDate', 'ReplyDate', 'DATE', "Schedule"];
+const DateOptions: string[] = [
+    'SendDate',
+    'LastEditDate',
+    'UpdateDate',
+    'UpdatedDate',
+    'CreationDate',
+    'ReplyDate',
+    'DATE',
+    "Schedule",
+    "BirthDate",
+    "ExtraDate1",
+    "ExtraDate2",
+    "ExtraDate3",
+    "ExtraDate4",
+    "ReminderDate"
+];
 
 export const HandleExportData = async (exportData: ExportData, options: ExportOption) => {
     let finalExportData: ExportData = exportData;
@@ -99,7 +114,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
 export async function OrderItems(data: ExportData | any, order: any, options: ExportOption) {
     const finalOrder: any = [];
 
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data?.length; i++) {
         let newObject: any = {};
         // eslint-disable-next-line no-loop-func
         order.forEach((o: string | number) => {
@@ -107,8 +122,9 @@ export async function OrderItems(data: ExportData | any, order: any, options: Ex
             if (options.ReplaceClientStatus === true && o?.toString()?.toLowerCase() === 'clientstatus') {
                 value = data[i][o] === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
             }
-            if (options.FormatDate === true && DateOptions.filter(e => { return e === o })?.length > 0) {
-                value = FormatDate(value);
+            if (options.FormatDate === true && DateOptions.filter(e => { return e.toLowerCase() === o.toString().toLowerCase() })?.length > 0) {
+                const preventText = o.toString().toLowerCase() !== 'senddate' && o.toString().toLowerCase() !== 'date';
+                value = FormatDate(value, preventText);
             }
             newObject[o] = value;
         });
@@ -122,13 +138,13 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
     data.forEach((o: Status) => {
         const tempData = { ...o } as Status;
         if (options.ConvertStatusDescription === true) {
-            if (o.STATUS) {
+            if (o.STATUS || o.STATUS === 0) {
                 let status = statuses.find((s: { id: any; }) => { return s.id === o.STATUS });
                 if (status && status.value !== '') {
                     tempData.StatusDescription = i18n.t(status.value);
                 }
             }
-            if (o.Status) {
+            if (o.Status || o.Status === 0) {
                 let status = statuses.find((s: { id: any; }) => { return s.id === o.Status });
                 if (status && status.value !== '') {
                     tempData.StatusDescription = i18n.t(status.value);
@@ -142,9 +158,10 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
             }
         }
         if (options.ConvertStatusToString === true) {
-            if (o.Status) {
+            if (o.Status || o.Status === 0) {
                 let status = statuses.find((s) => { return s.id === o.Status });
                 if (status && status.value !== '') {
+                    tempData.Status = i18n.t(status.value);
                     tempData.StatusName = i18n.t(status.value);
                 }
             }
@@ -164,17 +181,21 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
     return retValData as ExportData;
 }
 export async function ReplaceNull(obj: ExportData | any, property: string, val: string = '') {
-    return new Promise((resolve) => {
-        const newObject: any = [];
-        obj.forEach((o: { [x: string]: string; }) => {
-            Object.freeze(o);
-            let item = { ...o };
-            if (item[property] === null || item[property] === '') {
-                item[property] = val;
+    obj.forEach((o: { [x: string]: string; }) => {
+        if (!property || property === '') {
+            Object.keys(o).forEach((key: any) => {
+                const currentValue = o[key];
+                if (currentValue === null || currentValue === undefined) {
+                    o[key] = '';
+                }
+            });
+        }
+        else {
+            if (o[property] === null || o[property] === '') {
+                o[property] = val;
             }
-            newObject.push(item);
-        });
-        resolve(newObject);
+        }
+
     });
 }
 export async function BooleanToNumber(obj: ExportData | any, property: string, isBoolean: boolean = false) {
@@ -194,9 +215,12 @@ export async function BooleanToNumber(obj: ExportData | any, property: string, i
         resolve(newObject);
     })
 }
-export const FormatDate = (date: string) => {
+export const FormatDate = (date: string, preventText: boolean = false) => {
     if (date === '' || !date) {
-        return date = i18n.t('common.notSent');
+        if (!preventText) {
+            return date = i18n.t('common.notSent');
+        }
+        return '';
     }
     return moment(date).format("DD/MM/YYYY HH:mm");
 }
@@ -287,3 +311,29 @@ export const FlatObject = (obj: any = {}) => Object.keys(obj || {}).reduce((o: a
     } else { o[cur] = obj[cur] }
     return o
 }, {})
+
+export async function SwitchStatusByCondition(data: ExportData | any, statuses: KeyValue[], isEmail: boolean) {
+    const retValData: any = [];
+    data.forEach((o: Status) => {
+        const tempData = { ...o } as Status;
+
+        if (isEmail === true && o.Status) {
+            let status = statuses.find((s) => { return s.id === o.Status });
+            if (status && status.value !== '') {
+                tempData.Status = i18n.t(status.value);
+                tempData.StatusName = i18n.t(status.value);
+            }
+        }
+        if (!isEmail && (o.SmsStatus || o.SmsStatus === 0)) {
+            const status = statuses.find((x) => { return x.id === o.SmsStatus });
+            if (status) {
+                tempData.SmsStatus = i18n.t(status.value);
+            }
+        }
+        if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
+            tempData.Attachments = i18n.t('emailStatus.noAttachments');
+        }
+        retValData.push(tempData);
+    });
+    return retValData as ExportData;
+}

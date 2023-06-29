@@ -62,7 +62,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         },
         editorFonts: FONTS(),
         workspace: {
-            type: null,
+            type: 'default', // 'mixed'|'amp_only'|'html_only'
         },
         defaultModulesOrder: [
             'Heading',

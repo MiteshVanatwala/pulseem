@@ -35,6 +35,7 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
+import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures } = useSelector(state => state.common);
@@ -57,10 +58,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
-  const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
   const [duplicateOptions, setDuplicateOptions] = useState([])
+  const { publicTemplates } = useSelector(state => state.campaignEditor);
 
   moment.locale(language)
 
@@ -73,7 +74,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
   useEffect(() => {
     setLoader(true);
     getData();
-  }, [dispatch])
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    dispatch(getAllTemplatesBySubaccountId());
+  }, [])
+
+  useEffect(() => {
+    dispatch(getPublicTemplates(isRTL));
+  }, [isRTL])
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -108,8 +118,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
-          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
+          const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -740,7 +750,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     if (!data || !Array.isArray(data)) return null
     return {
       title: t('campaigns.restoreCampaignTitle'),
-      showDivider: false,
+      showDivider: true,
       icon: (
         <div className={classes.dialogIconContent}>
           {'\uE185'}

@@ -151,11 +151,11 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}Campaigns/Create`}
-        element={<NewsLetterInfo classes={classes} />}
+        element={<NewsLetterInfo classes={classes} key="create" />}
       />
       <Route
         path={`${sitePrefix}Campaigns/Create/:id`}
-        element={<NewsLetterInfo classes={classes} />}
+        element={<NewsLetterInfo classes={classes} key="edit" />}
       />
       <Route
         exact
@@ -419,7 +419,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}Notification/edit/:id`}
-        element={<NotificationEdit classes={classes} />}
+        element={<NotificationEdit classes={classes} key="edit" />}
       />
       <Route
         exact
@@ -478,7 +478,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}reports/Inbound`}
-        element={<InboundMessages classes={classes} />}
+        element={<InboundMessages classes={classes} key="all" />}
       />
       <Route
         exact
@@ -488,7 +488,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}reports/Inbound/:type/:id`}
-        element={<InboundMessages classes={classes} />}
+        element={<InboundMessages classes={classes} key="byTypeId" />}
       />
       <Route
         exact

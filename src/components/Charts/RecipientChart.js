@@ -91,13 +91,13 @@ const RecipientChart = ({ classes, }) => {
             }
             else {
                 data.push({
-                    labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.Waiting'), t('common.Waiting')],
+                    labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.Waiting')],
                     datasets: [{
                         data: [
                             report.Active,
                             report.Error,
                             report.Removed,
-                            (report.ReportSection === 0) ? report.PendingClients : (report.ReportSection === 1) ? report.PendingSms : null
+                            (report.ReportSection === 0) ? report.PendingEmails : (report.ReportSection === 1) ? report.PendingSms : null
                         ],
                         borderWidth: 0,
                     }],
@@ -262,12 +262,13 @@ const RecipientChart = ({ classes, }) => {
 
         let innerData = {
             productType: report.ReportSection,
-            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.Waiting'), t('common.Waiting')],
+            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.Waiting')],
             datasets: [{
                 data: [
                     report.Active,
                     report.Error,
                     report.Removed,
+                    (report.ReportSection === 0) ? report.PendingEmails : (report.ReportSection === 1) ? report.PendingSms : null
                 ],
                 borderWidth: 5,
                 borderRadius: 10,
@@ -399,7 +400,7 @@ const RecipientChart = ({ classes, }) => {
 
     const renderChartsCarousel = () => {
         if (!recipientsReport) {
-            return (<Loader showBackdrop={false} contained containerSize={240} />);
+            return (<Loader showBackdrop={false} contained containerSize={240} zIndex={1} />);
         }
 
         let totalRecipientsReport = 0;
@@ -446,7 +447,7 @@ const RecipientChart = ({ classes, }) => {
 
     const renderCharts = () => {
         if (!recipientsReport) {
-            return (<Loader showBackdrop={false} contained containerSize={240} />);
+            return (<Loader showBackdrop={false} contained containerSize={240} zIndex={1} />);
         }
 
         let totalRecipientsReport = 0;

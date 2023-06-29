@@ -10,13 +10,23 @@ const minDialogWidth = {
   sm: 330,
   md: 500,
   lg: 500,
+  xl: 620,
 };
 
 const maxDialogWidth = {
-  md: 1070,
-  lg: 1070,
-  xl: 1070,
+  md: 1080,
+  lg: 1080,
+  xl: 1080,
 };
+
+// const maxTemplateDialogWidth = {
+//   xs: 330,
+//   sm: 500,
+//   md: 960,
+//   xl: 1060,
+//   lg: 1060,
+// };
+
 
 const summaryPadding = {
   xs: 0,
@@ -157,7 +167,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: `${minDialogWidth[windowSize]} !important`,
+      minWidth: 440,
+      maxWidth: `${maxDialogWidth[windowSize]}px !important`,
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",
@@ -1064,7 +1075,52 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomRightRadius: ".25rem",
   },
   templateModal: {
-    minWidth: "900px",
+    // minWidth: "900px",
+    minWidth: '60vw',
+    '& .category-container': {
+      paddingLeft: 10,
+      "@media screen and (max-width: 900px)": {
+        '& p': {
+          fontSize: '15px !important'
+        }
+      },
+    },
+    "@media screen and (max-width: 1278px)": {
+      padding: '0px 10px',
+    },
+    "@media screen and (max-width: 900px)": {
+      '& #name, #buttons': {
+        fontSize: '13px'
+      }
+    },
+    "@media screen and (min-width: 759px) and (max-width: 1200px)": {
+      '& .category-container': {
+        maxWidth: '25%',
+        flexBasis: '25%'
+      },
+      '& .template-container': {
+        maxWidth: '75%',
+        flexBasis: '75%'
+      },
+    },
+    '& .template-item': {
+      "@media screen and (max-width: 768px)": {
+        maxWidth: '100%',
+        flexBasis: '100%'
+      },
+      "@media screen and (min-width: 768px) and (max-width: 1024px)": {
+        maxWidth: '50%',
+        flexBasis: '50%'
+      },
+      "@media screen and (min-width: 1024px) and (max-width: 1200px)": {
+        maxWidth: '33.33%',
+        flexBasis: '33.33%'
+      },
+      "@media screen and (min-width: 1200px)": {
+        maxWidth: '25%',
+        flexBasis: '25%'
+      },
+    },
   },
   beeTemplate: {
     padding: '0px !important',
@@ -1076,8 +1132,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       paddingRight: 0,
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: maxDialogWidth[windowSize],
-      maxWidth: maxDialogWidth[windowSize],
+      minWidth: `70vw !important`,
+      maxWidth: `70vw !important`,
     },
   },
   templateItem: {
@@ -2865,7 +2921,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textTransform: "capitalize",
     width: 'auto',
     fontSize: 18,
-    borderRadius: 8,
+    borderRadius: 5,
     boxShadow: 'none !important',
     border: 'none !important'
   },
@@ -2977,6 +3033,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&:hover': {
       backgroundColor: 'transparent'
     }
+  },
+  elipsis: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
   },
   p5: {
     padding: 5
@@ -3184,8 +3245,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     zIndex: '1000 !important'
   },
   testSendDialog: {
-    width: 440,
-    maxWidth: 440
+    width: '100%',
+    maxWidth: 390
   },
   containerFullHeight: {
     minHeight: 'calc(100vh - 120px)',

@@ -628,10 +628,11 @@
   "all": "All",
   "noTemplate": "In order to add your own templates, create a design in the editor and click on \"Save Template\" button",
   "loadTemplate": "Load Template",
-  "selectTemplate": "Select Template",
+  "selectTemplate": "Select",
   "notice": "Notice!",
   "overwriteTemplate": "Loading the template will overrun the current design in the editor",
   "doYouWantToProceed": "Do you want to proceed?",
   "templateSaved": "Template successfully saved!",
-  "templateNameIsRequired": "Template name is required"
+  "templateNameIsRequired": "Template name is required",
+  "loadMore": "Load More"
 }

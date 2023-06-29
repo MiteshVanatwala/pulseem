@@ -89,7 +89,7 @@ const Editorbox = ({
     textRef,
     ...props }) => {
     const { t } = useTranslation();
-    document.title = t("sms.pageTitle");
+    //document.title = t("sms.pageTitle");
     const styles = useStyles();
     const btnStyle = useStyleNew();
     const dispatch = useDispatch();

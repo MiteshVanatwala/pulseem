@@ -136,12 +136,12 @@ const SmsReplies = ({ classes }) => {
         setDialog(null);
         setShowLoader(true);
         let response = await dispatch(getSmsReplies({ ...request, IsExport: true }));
-        let finalData = response?.payload;
-        finalData = ReplaceNull(finalData, 'FirstName', '');
-        finalData = ReplaceNull(finalData, 'LastName', '');
-        finalData = ReplaceNull(finalData, 'CellPhone', '');
-        finalData = ReplaceNull(finalData, 'CampaignName', '');
-        finalData = DeletePropertyFromArrayObject(finalData, 'Status');
+        let finalData = response?.payload?.Data;
+        finalData = await ReplaceNull(finalData, 'FirstName', '');
+        finalData = await ReplaceNull(finalData, 'LastName', '');
+        finalData = await ReplaceNull(finalData, 'CellPhone', '');
+        finalData = await ReplaceNull(finalData, 'CampaignName', '');
+        finalData = await DeletePropertyFromArrayObject(finalData, ['Status']);
 
         const exportOptions = {
             OrderItems: true,

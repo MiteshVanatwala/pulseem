@@ -34,7 +34,7 @@ import { getEmailSendSettings, setEmailSendSettings, getSendSummary, deleteCampa
 import SummaryDialog from "./Popups/SummaryDialog";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
-import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+// import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import UploadXL from '../../../components/Files/UploadXL'
 import { UploadSettings } from "../../../helpers/Constants";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -102,7 +102,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const recipientSuccess = useSnackRecipients();
     const { isRTL } = useSelector((state) => state.core);
     const { verifiedEmails, accountSettings } = useSelector(state => state.common);
-    const { defaultGroupId, subAccountAllGroups } = useSelector((state) => state.group);
+    const { subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, extraData, testGroups, previousLandingData } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
@@ -158,8 +158,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     });
     const [newGroupId, setNewGroupId] = useState(0);
     const [quickSendClients, setQuickSendClients] = useState(null);
-    const [summaryEmail, setSummaryEmail] = useState(newsletterInfo.FromEmail);
     const [totalClientsToSend, setTotalClientsToSend] = useState(0);
+    const [reCheckAuth, setRecheckAuth] = useState(false);
 
     useEffect(() => {
         const total = selectedGroups?.reduce(function (a, b) {
@@ -169,18 +169,38 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setTotalClientsToSend(total);
     }, [selectedGroups]);
 
+    //#region Email Authentication
+
+    const checkEmailAuth = () => {
+        const isVerified = verifiedEmails.filter((email) => {
+            return email?.Number === newsletterInfo.FromEmail;
+        });
+        setIsEmailVerified(isVerified?.length > 0);
+        setNewEmailVerification(isVerified?.length <= 0);
+    }
+    const handleOnVerificationClose = async () => {
+        await dispatch(getAuthorizedEmails());
+        setRecheckAuth(true);
+    }
+
+
+    useEffect(() => {
+        if (reCheckAuth === true) {
+            checkEmailAuth();
+        }
+
+    }, [reCheckAuth]);
+
+    //#endregion Email Authentication
+
     const initOnReady = () => {
         if (newsletterSettings?.error) {
             logout();
         }
 
-
         try {
-            const isVerified = verifiedEmails.filter((email) => {
-                return email?.Number === newsletterInfo.FromEmail;
-            });
-            setIsEmailVerified(isVerified?.length > 0);
-            setNewEmailVerification(!isVerified || isVerified === false);
+            //checkEmailAuth();
+
             if (newsletterSettings.length === 0)
                 return;
 
@@ -203,6 +223,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : ''
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting || false);
+
         } catch (e) {
             // dispatch(sendToTeamChannel({
             //     MethodName: 'onReady',
@@ -222,23 +243,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setLoader(true);
         return new Promise(async (resolve, reject) => {
             try {
+                dispatch(getPreviousCampaignData());
+                dispatch(getAccountExtraData());
+                dispatch(getPreviousLandingData());
+                await dispatch(getAuthorizedEmails())
                 await dispatch(getEmailSendSettings(params?.id));
-
-                if (!verifiedEmails || verifiedEmails?.length === 0)
-                    dispatch(getAuthorizedEmails())
-                if (!previousCampaignData || previousCampaignData?.length === 0)
-                    dispatch(getPreviousCampaignData());
-                if (!subAccountAllGroups || subAccountAllGroups?.length === 0)
-                    await dispatch(getGroupsBySubAccountId());
-                if (!testGroups || testGroups?.length === 0)
-                    await dispatch(getTestGroups());
-                if (!extraData || extraData?.length === 0)
-                    await dispatch(getAccountExtraData());
-                if (!previousLandingData || previousLandingData?.length === 0)
-                    dispatch(getPreviousLandingData());
-                if (!accountSettings || !accountSettings?.Account) {
-                    await dispatch(getCommonFeatures());
-                }
+                await dispatch(getGroupsBySubAccountId());
+                await dispatch(getTestGroups());
+                await dispatch(getCommonFeatures());
                 resolve();
             } catch (error) {
                 reject(error)
@@ -318,13 +330,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         try {
             response = await dispatch(setEmailSendSettings(payload))
-            setLoader(false)
         }
         catch (error) {
             console.log("ERROR-SAVE-SEND-SETTINGS:", error)
         }
         finally {
             handleSaveResponse(response.payload, showSummary);
+            setLoader(false);
+            return response.payload;
         }
     }
     const handleSaveResponse = (response, silenceSave = false) => {
@@ -376,7 +389,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setDialogType({ type: 'sendSuccess' });
         }
         else if (response?.StatusCode === 403) {
-            setSummaryEmail(response.fromEmail);
             setNewEmailVerification(newsletterInfo.FromEmail)
         }
         else {
@@ -402,8 +414,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         const r = await dispatch(addRecipient(finalPayload));
 
         if (r.payload.StatusCode === 201) {
+            const isVerified = verifiedEmails.filter((email) => {
+                return email?.Number === newsletterInfo.FromEmail;
+            });
             onSaveSettings(true, groupId.toString()).then(async () => {
-                if (isEmailVerified) {
+                if (isEmailVerified || isVerified?.length > 0) {
                     setLoader(true);
                     await dispatch(getSendSummary(params?.id));
                     setDialogType({ type: 'SummaryDialog', IsQuickSend: true });
@@ -479,13 +494,18 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setPulseIndication(false)
         }
         else {
-            setCampaignValues({ ...campaignValues, ...pulseSettings })
-            setPulseIndication(pulseEnabled);
             setDialogType(null);
+            setPulseIndication(pulseEnabled);
+            if (pulseEnabled) {
+                setCampaignValues({ ...campaignValues, ...pulseSettings });
+            }
+            else {
+                setCampaignValues({ ...campaignValues, ...pulseSettings, PulseAmount: null, TimeInterval: null });
+            }
         }
     }
 
-    const handlePulseClose = () => {
+    const handlePulseClose = (isPulseEnabled) => {
         let tempData = {
             ...campaignValues,
             PulseAmount: sourcePulses.PulseAmount || "", TimeInterval: sourcePulses.TimeInterval || ""
@@ -493,12 +513,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         if (sourcePulses.PulseAmount === "" || sourcePulses.TimeInterval === "") {
             tempData = { ...tempData, togglePulse: false }
         }
-        if (sourcePulses.PulseAmount === '' && sourcePulses.TimeInterval === '') {
-            setPulseIndication(false);
-        }
-        else {
-            setPulseIndication(true);
-        }
+        setPulseIndication(isPulseEnabled);
         setCampaignValues({ ...campaignValues, ...tempData });
         setDialogType(null);
     };
@@ -506,10 +521,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handlePulseDialog = () => {
         setSourcePulses({ ...sourcePulses, SendingMethod: campaignValues.SendingMethod ?? 1, PulseAmount: campaignValues.PulseAmount, TimeInterval: campaignValues.TimeInterval });
         setDialogType({ type: "pulses" });
-    }
-
-    const handleMainWarningPulse = () => {
-
     }
 
     const createNewGroup = async (groupName) => {
@@ -576,14 +587,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
     }
 
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
     const NewGroupForm = () => newGroupDetails.toggleChecked ? (
         <Stack direction="row">
             <input
@@ -728,16 +731,22 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             selectedGroups.length > 0 && totalClientsToSend > 0 ? "#5cb85c" : "#91C78D"
                     }}
                     onClick={() => {
-                        onSaveSettings(true).then(async () => {
-                            if (isEmailVerified) {
-                                setLoader(true);
+                        onSaveSettings(true).then(async (results) => {
+                            setLoader(true);
+                            if (results?.StatusCode === 201) {
                                 await dispatch(getSendSummary(params?.id));
                                 setDialogType({ type: 'SummaryDialog' });
-                                setLoader(false);
                             }
-                            else {
-                                setNewEmailVerification(true);
-                            }
+                            setLoader(false);
+                            // if (isEmailVerified) {
+                            //     setLoader(true);
+                            //     await dispatch(getSendSummary(params?.id));
+                            //     setDialogType({ type: 'SummaryDialog' });
+                            //     setLoader(false);
+                            // }
+                            // else {
+                            //     setNewEmailVerification(true);
+                            // }
                         })
                     }}
                 >
@@ -770,8 +779,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setFilterValues: setFilterValues,
             groupList: subAccountAllGroups,
             callbackUpdateGroupFilterd: (group) => callbackUpdateGroupFilterd(group),
-            callbackFilteredGroups: (group) => callbackFilteredGroups(group),
-            renderHtml: renderHtml,
+            callbackFilteredGroups: (group) => callbackFilteredGroups(group)
         })
 
         let TabBody = (tabs = []) => (
@@ -842,19 +850,29 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     segmantIndication = true;
                 }
                 else {
-                    filterParameters.IsOpened = false;
-                    filterParameters.IsNotOpened = false;
-                    filterParameters.IsNotClicked = false;
-                    filterParameters.IsOpenedClicked = false;
-
-                    setFilterParameters({ ...campaignValues, FromDate: null, ToDate: null });
-                    setCampaignValues({ ...campaignValues, FromDate: null, ToDate: null });
-
+                    setFilterParameters({
+                        ...campaignValues,
+                        FromDate: null,
+                        ToDate: null,
+                        IsOpened: false,
+                        IsNotOpened: false,
+                        IsNotClicked: false,
+                        IsOpenedClicked: false
+                    });
+                    setCampaignValues({
+                        ...campaignValues,
+                        FromDate: null,
+                        ToDate: null,
+                        IsOpened: false,
+                        IsNotOpened: false,
+                        IsNotClicked: false,
+                        IsOpenedClicked: false
+                    });
                 }
 
                 if (!segmantIndication) {
                     if (filterValues.toggleReci) {
-                        if (validationCheck() && filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
+                        if (validationCheck() && (filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0)) {
                             segmantIndication = true;
                         }
                     }
@@ -881,7 +899,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 campaign: campaignValues,
                 selectedGroups: selectedGroups,
                 onClose: handlePulseClose,
-                onCancel: handlePulseClose,
                 onConfirm: handlePulseConfirm,
             }),
             delete: DeleteDialog({
@@ -1011,7 +1028,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <Box>
                 <Title
                     Text={t("campaigns.newsLetterSendSettings.title")}
-                    Classes={classes}
+                    classes={classes}
                 />
                 <Grid container style={{ marginBottom: "40px" }} spacing={5}>
                     <Grid item md={7} xs={12}>
@@ -1162,9 +1179,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             }}
                                             direction="row"
                                         >
-                                            <span>{t("mainReport.totalReci")}: {selectedGroups.reduce(function (a, b) {
-                                                return a + b['Recipients'];
-                                            }, 0).toLocaleString()}</span>
+                                            <span>{t("mainReport.totalReci")}: {totalClientsToSend.toLocaleString()}</span>
                                             <Tooltip
                                                 placement={'bottom'}
                                                 disableFocusListener
@@ -1206,6 +1221,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                     classes.actionButton,
                                                     classes.actionButtonOutlinedBlue,
                                                     selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0 || campaignValues.IsBestTime
+                                                        || totalClientsToSend < 100
                                                         ? classes.disabled : null)}
                                                 onClick={() => {
                                                     handlePulseDialog();
@@ -1390,14 +1406,16 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             </Snackbar>
             {/* //#endregion  */}
             {newEMailVerification && <VerificationDialog
+                textButtonOnSuccess={t('common.close')}
                 classes={classes}
                 isOpen={newEMailVerification}
                 variant='email'
-                onClose={() => setNewEmailVerification(false)}
-                Option={{
-                    Step: 1,
-                    Value: summaryEmail || newsletterInfo.FromEmail
+                onClose={() => {
+                    setNewEmailVerification(false);
+                    handleOnVerificationClose();
                 }}
+                step={1}
+                value={newsletterInfo.FromEmail}
             />}
 
             {dialogType?.type === 'quickMnualUpload' && <QuickManualUploadDialog

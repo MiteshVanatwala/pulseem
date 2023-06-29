@@ -28,7 +28,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
+  const { account, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
@@ -88,8 +88,8 @@ const AccountSettingsEditor = ({ classes }: any) => {
   }, []);
 
   useEffect(() => {
-    setSettingRequest(accountSettings?.Data);
-  }, [accountSettings]);
+    setSettingRequest(account?.Data);
+  }, [account]);
 
   const handleUpdate = async (
     updatedObject: AccountSettings,

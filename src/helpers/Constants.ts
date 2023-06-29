@@ -6,6 +6,7 @@ export const DomainProtocol = [
 ];
 export const EmailStatus = [
     { id: null, value: 'common.All' },
+    { id: 0, value: 'emailStatus.draft' },
     { id: 1, value: 'emailStatus.pending' },
     { id: 2, value: 'emailStatus.sending' },
     { id: 3, value: 'emailStatus.succeeded' },

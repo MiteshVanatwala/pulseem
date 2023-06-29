@@ -139,10 +139,10 @@ const SmsManagnentScreen = ({ classes }) => {
 						? moment(SendDate, dateFormat).valueOf()
 						: moment(UpdatedDate, dateFormat).valueOf();
 					const startFromDate =
-						(values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ||
+						(values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ||
 						null;
 					const endToDate =
-						(values.toDate && values.toDate.hour(23).minute(59).valueOf()) ||
+						(values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ||
 						null;
 
 					if (!values) return true;
@@ -1063,7 +1063,7 @@ const SmsManagnentScreen = ({ classes }) => {
 			currentPage='sms'
 			classes={classes}
 			containerClass={clsx(classes.management, classes.mb50)}>
-			<Title Text={t('sms.PageResource1.Title')} Classes={classes} ShowDivider={true} />
+			<Title Text={t('sms.PageResource1.Title')} classes={classes} ShowDivider={true} />
 			{renderSearchLine()}
 			{renderManagmentLine()}
 			{renderTable()}

@@ -10,7 +10,6 @@ const PulseDialog = ({
     campaign = {},
     selectedGroups = [],
     onClose = () => null,
-    onCancel = () => null,
     onConfirm = () => null
 }) => {
     const [pulseEnabled, setPulseEnabled] = useState(false);
@@ -19,7 +18,7 @@ const PulseDialog = ({
         TimeInterval: ''
     })
     const { t } = useTranslation();
-    const { windowSize, isRTL } = useSelector(
+    const { windowSize } = useSelector(
         (state) => state.core
     );
 
@@ -38,12 +37,11 @@ const PulseDialog = ({
         if (!pulseEnabled) {
             setPulseSettings({
                 ...pulseSettigns,
-                PulseAmount: '',
-                TimeInterval: ''
+                PulseAmount: 100,
+                TimeInterval: 1
             });
         }
     }, [pulseEnabled])
-
 
     const handleTime = (e) => {
         const re = /^[0-9\b]+$/;
@@ -73,6 +71,17 @@ const PulseDialog = ({
     const handleConfirm = () => {
         onConfirm(pulseSettigns, pulseEnabled);
     };
+
+    const handleClose = () => {
+        if (campaign?.PulseAmount >= 100 && campaign?.TimeInterval >= 1) {
+            onClose(true);
+            setPulseEnabled(true);
+        }
+        else {
+            onClose(false);
+            setPulseEnabled(false);
+        }
+    }
 
     return {
         title: t('smsReport.pulseSending'),
@@ -111,9 +120,15 @@ const PulseDialog = ({
                             className={classes.flexAlignCetner}
                         >
                             <input
-                                type="text"
+                                type="number"
                                 placeholder={t("smsReport.insert")}
                                 disabled={!pulseEnabled}
+                                onBlur={() => {
+                                    if (pulseSettigns.PulseAmount < 100) {
+                                        setPulseSettings({ ...pulseSettigns, PulseAmount: 100 });
+                                    }
+                                }}
+                                min="100"
                                 className={
                                     pulseEnabled
                                         ? (!pulseSettigns.PulseAmount || pulseSettigns.PulseAmount < 1) ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
@@ -134,9 +149,14 @@ const PulseDialog = ({
                         <Box className={classes.flexAlignCetner}
                         >
                             <input
-                                type="text"
+                                type="number"
                                 placeholder={t("smsReport.insert")}
                                 disabled={!pulseEnabled}
+                                onBlur={() => {
+                                    if (pulseSettigns.TimeInterval < 1) {
+                                        setPulseSettings({ ...pulseSettigns, TimeInterval: 1 });
+                                    }
+                                }}
                                 className={
                                     pulseEnabled
                                         ? (!pulseSettigns.TimeInterval || pulseSettigns.TimeInterval < 1) ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
@@ -156,8 +176,8 @@ const PulseDialog = ({
             </Box>
         ),
         showDefaultButtons: true,
-        onClose: onClose,
-        onCancel: onCancel,
+        onClose: handleClose,
+        onCancel: handleClose,
         onConfirm: handleConfirm
     }
 }

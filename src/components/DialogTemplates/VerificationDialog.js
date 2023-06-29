@@ -25,16 +25,16 @@ const VerificationDialog = ({
     isOpen = false,
     onClose,
     variant = 'email',
-    Option = null,
+    step = 0, value,
     ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState(true);
-    const [verificationStep, setVerificationStep] = useState(Option?.Step ?? 0)
+    const [verificationStep, setVerificationStep] = useState(step ?? 0)
     const [verificationError, setVerificationError] = useState(null)
-    const [selectedVerificationContact, setSelectedVerificationContact] = useState(Option?.Value ?? "")
+    const [selectedVerificationContact, setSelectedVerificationContact] = useState(value ?? "")
     const [codeResend, setCodeResend] = useState(false)
     const [verificationCode, setVerificationCode] = useState('')
     const [authorizedTypeDisabled, setAuthorizedTypeDisabled] = useState(false);
@@ -45,6 +45,7 @@ const VerificationDialog = ({
     const [addToFromNumberToSend, setAddToFromNumberToSend] = useState(false);
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [deleteValue, setDeleteValue] = useState(null);
+    const [verificationSuccess, setVerificationSuccess] = useState(false);
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
     const SLIDE_HEIGHTS = [25, 20, 20, 20, 20];
 
@@ -123,7 +124,7 @@ const VerificationDialog = ({
         }
 
         callback?.()
-        onClose?.()
+        onClose?.(verificationSuccess && selectedVerificationContact)
         verificationStep && setVerificationStep(0)
         verificationError && setVerificationError(null)
         selectedVerificationContact && setSelectedVerificationContact('');
@@ -184,6 +185,7 @@ const VerificationDialog = ({
                         setUserCodeConfirmed(false);
                         switch (response?.payload.toLowerCase()) {
                             case "ok": {
+                                setVerificationSuccess(true);
                                 if (variant === 'emailTFA') {
                                     addTwoFactorValue();
                                 }
@@ -227,6 +229,7 @@ const VerificationDialog = ({
                 setUserCodeConfirmed(false);
                 switch (result.payload.toLowerCase()) {
                     case 'ok': {
+                        setVerificationSuccess(true);
                         if (variant === 'smsTFA') {
                             addTwoFactorValue(false, 2);
                         }
@@ -411,7 +414,7 @@ const VerificationDialog = ({
         const EMAIL_SLIDE_2 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide secondSlide' >
-                    <Box className='titleDescBox' style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
+                    <Box className='titleDescBox' >
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
                         <Box className='desc'>
                             <Typography variant='body1' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1')}</Typography>

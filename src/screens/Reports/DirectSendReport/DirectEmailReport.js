@@ -43,7 +43,7 @@ const RenderRow = ({
       text = `${text.format('DD/MM/YYYY')} ${text.format('LT')}`
     }
     if (dataType === 'status') {
-      text = t(ConvertEmailStatusText(data))
+      text = t(ConvertEmailStatusText(`${data}`))
       return (
         <Typography style={{ color: ConvertColorStatus(data, SourceType.EMAIL), fontWeight: 600 }}>{text}</Typography>
       )
@@ -595,7 +595,7 @@ const DirectEmailReportTab = ({
             </Box>
             <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
               <Typography style={{ color: ConvertColorStatus(Status, SourceType.EMAIL) }}>
-                {t(ConvertEmailStatusText(Status))}
+                {t(ConvertEmailStatusText(`${Status}`))}
               </Typography>
             </Box>
           </Box>

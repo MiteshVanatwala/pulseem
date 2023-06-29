@@ -38,7 +38,10 @@ const SummaryDialog = ({ classes,
     const { verifiedEmails } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [disableSend, setDisableSend] = useState(false);
-    const [verPopupOpen, setVerPopupOpen] = useState(false)
+    const [verPopupOpen, setVerPopupOpen] = useState(false);
+    const [fromEmailVerified, setFromEmailVerified] = useState(true);
+    const [verifyStep, setVerifyStep] = useState(0);
+    const [verifyValue, setVerifyValue] = useState('');
 
     const {
         FinalClients,
@@ -82,8 +85,11 @@ const SummaryDialog = ({ classes,
 
     useEffect(() => {
         const verifiedEmail = verifiedEmails.filter((vm) => { return vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true });
-        if (verifiedEmail?.length > 0)
-            setFromEmail(newsletterSendSummary?.FromEmail);
+        setFromEmail(newsletterSendSummary?.FromEmail);
+        if (!verifiedEmail || verifiedEmail?.length <= 0) {
+            setDisableSend(true);
+            setFromEmailVerified(false);
+        }
     }, [newsletterSendSummary])
 
     const renderWhenToSend = () => {
@@ -204,6 +210,8 @@ const SummaryDialog = ({ classes,
             const updateInfo = { ...newsletterInfo };
             updateInfo.FromEmail = event.target.value;
             dispatch(saveCampaignInfo(updateInfo));
+            const isVerified = verifiedEmails.filter((ve) => { return ve.Number === updateInfo.FromEmail && ve.IsOptIn === true });
+            setDisableSend(isVerified?.length === 0);
         }
     }
     const currentDialog = {
@@ -214,27 +222,31 @@ const SummaryDialog = ({ classes,
         content: (
             <>
                 <Box style={{ fontSize: "22px", marginTop: "5px" }}>
-                    <Box className={classes.baseSum}>
-                        <Box className={classes.sumLeft}>
+                    <Box className={classes.baseSum} style={{ display: 'flex', width: '100%' }}>
+                        <Box className={classes.sumLeft} style={{ width: '50%' }}>
                             <Box>
-                                {/* <span className={clsx(classes.spanSum, classes.bold)}>{t("sms.smsSummaryCampaignFrom")}:</span> */}
-                                <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
+                                <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("sms.smsSummaryCampaignFrom")}:</span>
+                            </Box>
+                            <Box style={{ width: '100%' }}>
                                 <Select
+                                    style={{ width: '100%' }}
                                     className={classes.mt1}
                                     autoWidth={false}
                                     native
                                     value={fromEmail}
-                                    // onChange={handleChange}
                                     displayEmpty
                                     onChange={handleFromEmailChanged}
                                     inputProps={{
                                         'aria-label': 'Without label',
-                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null) && classes.error),
-                                        // style: { maxWidth: '70%' }
+                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
+                                        style: { width: '100%' }
                                     }}
                                     variant='outlined'
                                 >
-                                    {verifiedEmails.map((obj) => (
+                                    {[{
+                                        Number: newsletterSendSummary?.FromEmail
+                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true })
+                                    ].map((obj) => (
                                         <option
                                             key={obj.Number}
                                             value={obj.Number}
@@ -245,7 +257,17 @@ const SummaryDialog = ({ classes,
                                 </Select>
                             </Box>
                             <Box className={classes.sumChild}>
-                                <Link className={clsx(classes.link, classes.mt1)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')} {t('campaigns.newsLetterEditor.helpTexts.newAddress')}</Link>
+                                <Link className={clsx(classes.link)}
+                                    style={{ margin: 0 }}
+                                    onClick={() => {
+                                        if (!fromEmailVerified) {
+                                            setVerifyStep(1);
+                                            setVerifyValue(newsletterSendSummary?.FromEmail);
+                                        }
+                                        setVerPopupOpen(true)
+                                    }
+                                    }
+                                >{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</Link>
                             </Box>
                             <Box className={classes.sumChild}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
@@ -277,10 +299,10 @@ const SummaryDialog = ({ classes,
                                 }
                             </Box>
                         </Box>
-                        {PreviewURL && <Box className={classes.sumRight}>
+                        {PreviewURL && <Box className={classes.sumRight} style={{ width: '50%' }}>
                             <Stack direction='column' alignItems='center' spacing={2}>
                                 <Stack className={classes.previewIframe}>
-                                    {RenderHtml(`<iframe src=${PreviewURL} style="height: inherit; border: 0; background: none; width: 100%; height: 100vh;pointer-events: none" />`)}
+                                    {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
                                 </Stack>
                             </Stack>
                         </Box>}
@@ -348,9 +370,23 @@ const SummaryDialog = ({ classes,
                         </Button>
                     </Grid>
                 </Grid>
-                {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => {
-                    setVerPopupOpen(false);
-                }} />}
+                {verPopupOpen && <VerificationDialog
+                    classes={classes}
+                    isOpen={verPopupOpen}
+                    step={verifyStep ?? 0}
+                    value={verifyValue ?? ''}
+                    onClose={async (verifiedEmail) => {
+                        if (verifiedEmail) {
+                            const updateInfo = { ...newsletterInfo };
+                            updateInfo.FromEmail = verifiedEmail;
+                            await dispatch(saveCampaignInfo(updateInfo));
+                            setFromEmail(verifiedEmail);
+                            setDisableSend(false);
+                            setFromEmailVerified(true);
+                        }
+                        setVerPopupOpen(false);
+                    }}
+                />}
             </>
         ),
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,
@@ -360,6 +396,7 @@ const SummaryDialog = ({ classes,
     }
 
     return <BaseDialog
+        customContainerStyle={classes.summaryContainer}
         classes={classes}
         open={isOpen}
         onClose={() => { setDialogType(null) }}

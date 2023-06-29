@@ -47,7 +47,7 @@ import { RenderHtml, ConvertObjectToQueryString } from '../../../helpers/Utils/H
 import { Title } from '../../../components/managment/Title';
 import queryString from 'query-string';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
-import { DeletePropertyFromArrayObject, FlatObject, HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { ClientStatus } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
@@ -1760,7 +1760,7 @@ const Groups = ({ classes }) => {
                     tableHead={{
                         tableHeadCells: TABLE_HEAD,
                         classes: rowStyle,
-                        className: windowSize === "xs" && classes.dNone,
+                        className: windowSize === "xs" ? classes.dNone : null,
                     }}
                 >
                     <TableBody>
@@ -1837,32 +1837,22 @@ const Groups = ({ classes }) => {
             client.SmsStatus = t(tempSmsStatus.value);
             return client;
         }, []);
-        const promiseArray = [];
-        promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
-        promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
 
-        Promise.all(promiseArray).then(() => {
-            const exportOptions = {
-                OrderItems: true,
-                FormatDate: true,
-                ConvertStatusToString: false,
-                Statuses: ClientStatus.Sms,
-                Order: Object.keys(exportColumnHeader.current),
-                DeleteProperties: ["Status"]
-            };
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            Order: Object.keys(exportColumnHeader.current),
+            DeleteProperties: ["Revenue", "SendDate"],
+            ReplaceNull: true
+        };
 
-            HandleExportData(orderList, exportOptions).then((result) => {
-                if (formatType === 'csv') {
-                    ExportFile({
-                        data: result,
-                        exportType: formatType,
-                        fields: exportColumnHeader.current,
-                        fileName: 'PulseemClientsExport'
-                    });
-                }
-                else {
-                    exportAsXLSX(result, exportColumnHeader.current, `PulseemClientsExport.XLSX`);
-                }
+        HandleExportData(orderList, exportOptions).then(async (result) => {
+            ExportFile({
+                data: result,
+                exportType: formatType,
+                fields: exportColumnHeader.current,
+                fileName: 'PulseemClientsExport'
             });
         });
     }

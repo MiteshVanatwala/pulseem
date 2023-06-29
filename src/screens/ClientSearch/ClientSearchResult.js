@@ -48,8 +48,8 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, FlatObject, DeletePropertyFromArrayObject, OrderItems, SwitchStatus } from '../../helpers/Export/ExportHelper';
-import { ClientStatus, SmsStatus } from "../../helpers/Constants";
+import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
+import { ClientStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -186,6 +186,17 @@ const ClientSearchResult = ({ classes }) => {
     UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS",
     EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
   };
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', () => null);
+
+    return () => {
+      window.removeEventListener('beforeunload', () => null);
+      sessionStorage.removeItem('searchData')
+    };
+  }, []);
+
+
   useEffect(() => {
     const initExtraFields = async () => {
       dispatch(getAccountExtraData());
@@ -344,6 +355,7 @@ const ClientSearchResult = ({ classes }) => {
         ...searchData,
         PageIndex: 1,
         PageSize: rowsPerPage,
+        // PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
         FromDate: date.FromDate,
         ToDate: date.ToDate,
         SearchTerm: searchStr,
@@ -386,13 +398,14 @@ const ClientSearchResult = ({ classes }) => {
         case 201: {
           const promiseArray = [];
           let orderList = [];
-          orderList = data.Clients.map((ol) => { return FlatObject(ol) });
+          const deletedProperties = [];
+          orderList = data.Clients.map((ol) => ol);
           if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
-            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
+            deletedProperties.push("Revenue");
           }
           if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
             searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
+            deletedProperties.push("SendDate");
           }
           if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
             orderList = DeletePropertyFromArrayObject(orderList, "Revenue");
@@ -403,13 +416,18 @@ const ClientSearchResult = ({ classes }) => {
             const exportOptions = {
               OrderItems: true,
               FormatDate: true,
-              ConvertStatusToString: true,
-              Statuses: ClientStatus.Sms,
+              ConvertStatusToString: false,
+              DeleteProperties: deletedProperties.length > 0 ? deletedProperties : null,
               Order: Object.keys(exportColumnHeader.current),
-              DeleteProperties: ["Status"]
+              ReplaceNull: true
             };
 
-            HandleExportData(orderList, exportOptions).then((result) => {
+            HandleExportData(orderList, exportOptions).then(async (result) => {
+              // Pay attention -> We set XLSX for better header's order.
+              // CSV not supporting numeric extra fields order.
+              result = await SwitchStatusByCondition(result, ClientStatus.Email, true);
+              result = await SwitchStatusByCondition(result, ClientStatus.Sms, false);
+
               ExportFile({
                 data: result,
                 exportType: formatType,
@@ -500,6 +518,7 @@ const ClientSearchResult = ({ classes }) => {
   const EL_FromDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
+        classes={classes}
         toolbarDisabled={false}
         value={date.FromDate}
         onChange={handleFromDateChange}
@@ -510,6 +529,7 @@ const ClientSearchResult = ({ classes }) => {
   const EL_ToDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
+        classes={classes}
         toolbarDisabled={false}
         value={date.ToDate}
         onChange={(value) => setDate({ ...date, ToDate: value })}
@@ -1151,24 +1171,24 @@ const ClientSearchResult = ({ classes }) => {
   const renderSearchLine = () => {
     if (windowSize === "xs") {
       return (
-        <Grid container className={'searchLine'}>
-          <SearchField
-            classes={classes}
-            value={searchStr}
-            onChange={(e) => setSearchStr(e.target.value)}
-            onClick={() => {
-              handleSearch({
-                ...searchData,
-                PageIndex: 1,
-                PageSize: rowsPerPage,
-                SearchTerm: searchStr
-              });
-              setPage(1);
-            }}
-            onKeyPress={handleKeyPress}
-            placeholder={t("appbar.search")}
-          />
-        </Grid>
+        <SearchField
+          classes={classes}
+          value={searchStr}
+          onChange={(e) => setSearchStr(e.target.value)}
+          onClick={() => {
+            handleSearch({
+              ...searchData,
+              IsAdvanced: false,
+              IsSearchByFilter: false,
+              PageIndex: 1,
+              PageSize: rowsPerPage,
+              SearchTerm: searchStr
+            });
+            setPage(1);
+          }}
+          onKeyPress={handleKeyPress}
+          placeholder={t("appbar.search")}
+        />
       );
     }
     return (
@@ -1196,7 +1216,9 @@ const ClientSearchResult = ({ classes }) => {
                 ToDate: date.ToDate,
                 SearchTerm: searchStr,
                 MyActivities: null,
-                MyConditions: null
+                MyConditions: null,
+                IsAdvanced: false,
+                IsSearchByFilter: false,
               });
               setPage(1);
               handleFilter();
@@ -1208,11 +1230,12 @@ const ClientSearchResult = ({ classes }) => {
           </Button>
         </Grid>
         {
-          searchData?.SearchTerm && (
+          (searchData?.SearchTerm || searchData?.FromDate || searchData?.ToDate) && (
             <Grid item>
               <Button
                 onClick={() => {
-                  handleSearch({ ...searchData, SearchTerm: "", ...filterSearch });
+                  setDate({ FromDate: null, ToDate: null });
+                  handleSearch({ ...searchData, SearchTerm: "", FromDate: null, ToDate: null, ...filterSearch });
                   setSearchStr("");
                   setPage(1);
                   handleFilter();

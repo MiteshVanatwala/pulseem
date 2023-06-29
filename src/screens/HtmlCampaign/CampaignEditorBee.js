@@ -64,7 +64,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
-  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures } = useSelector(state => state.common)
@@ -134,7 +134,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   useEffect(() => {
     if (dataReady) {
-      Promise.all([initFields(), siteTrackingLogic()]).then(() => {
+      Promise.all([initFields()]).then(() => {
         return true;
       })
     }
@@ -155,7 +155,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         window.location.reload(true);
       } else getData();
     }
-    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
     dispatch(getAllTemplatesBySubaccountId());
   }, []);
   useEffect(() => {
@@ -234,17 +234,17 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     initBeeToken();
   }
-  const siteTrackingLogic = () => {
-    if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
-      const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
-      if (campaign?.HtmlData?.indexOf(domainName) > -1) {
-        setIsSiteTracking(true);
-      }
-      else {
-        setIsSiteTracking(false);
-      }
-    }
-  }
+  // const siteTrackingLogic = () => {
+  //   if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
+  //     const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
+  //     if (campaign?.HtmlData?.indexOf(domainName) > -1) {
+  //       setIsSiteTracking(true);
+  //     }
+  //     else {
+  //       setIsSiteTracking(false);
+  //     }
+  //   }
+  // }
   //#region Init Bee Token & Configuration
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
@@ -317,7 +317,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             if (forceTemplate !== null) {
               template = forceTemplate;
             }
-            else{
+            else {
               template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             }
 
@@ -372,31 +372,30 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
-  const doaminWithClientRef = (str) => {
-    let finalStr = str;
-    const startIndex = finalStr.substring(finalStr.indexOf(accountSettings?.SubAccountSettings.DomainAddress));
-    //eslint-disable-next-line
-    const originalLink = startIndex.split(/[\s\n]+/);
-    let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
-    let newUrl = originUrl.trim();
-    if (newUrl.indexOf('ClientIDEnc') === -1) {
-      newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
-      finalStr = finalStr.replace(originUrl, newUrl);
-    }
-    return finalStr;
-  }
+  // const doaminWithClientRef = (str) => {
+  //   let finalStr = str;
+  //   const startIndex = finalStr.substring(finalStr.indexOf(accountSettings?.SubAccountSettings.DomainAddress));
+  //   const originalLink = startIndex.split(/[\s\n]+/);
+  //   let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
+  //   let newUrl = originUrl.trim();
+  //   if (newUrl.indexOf('ClientIDEnc') === -1) {
+  //     newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
+  //     finalStr = finalStr.replace(originUrl, newUrl);
+  //   }
+  //   return finalStr;
+  // }
   const onSave = async (args) => {
     try {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
-      if (isSiteTracking === true) {
-        if (!args.HtmlData.indexOf('ref') > -1) {
-          finalHtml = doaminWithClientRef(args.HtmlData);
-          finalJson = doaminWithClientRef(args.JsonData);
-        }
-      }
+      // if (isSiteTracking === true) {
+      //   if (!args.HtmlData.indexOf('ref') > -1) {
+      //     finalHtml = doaminWithClientRef(args.HtmlData);
+      //     finalJson = doaminWithClientRef(args.JsonData);
+      //   }
+      // }
       const response = await dispatch(saveCampaign({
         Name: campaign.Name,
         campaignId: args.campaignId,
@@ -418,7 +417,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (saveRef.current?.saveTemplate) {
         const templateResponse = await dispatch(saveTemplateToAccount({
           Name: saveRef.current?.templateName,
-          JsonData: finalJson,  
+          JsonData: finalJson,
           HTML: finalHtml,
           Category: saveRef.current?.templateCategory
         }));
@@ -695,15 +694,15 @@ const CampaignEditor = ({ classes, ...props }) => {
   const renderTemplateButtons = () => {
     return <>
       <Button onClick={() => {
-          setLoader(true);
-          setTimeout(() => {
-            setDialog(DialogType.Templates);
-          }, 1000);
+        setLoader(true);
+        setTimeout(() => {
+          setDialog(DialogType.Templates);
+        }, 1000);
 
-          setTimeout(() => {
-            setLoader(false);
-          }, 2000);
-        }}
+        setTimeout(() => {
+          setLoader(false);
+        }, 2000);
+      }}
         variant='contained'
         size='medium'
         className={clsx(
@@ -862,7 +861,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
-        additionalButtonsOnStart={renderTemplateButtons()}
+        // additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       <OverwriteTemplatePopUp

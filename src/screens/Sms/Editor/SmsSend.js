@@ -129,6 +129,10 @@ const SmsSend = ({ classes, ...props }) => {
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
   const [sourcePulses, setSourcePulses] = useState({});
   const [campaignSettings, setCampaignSettings] = useState(null);
+  const [filterValues, setFilterValues] = useState({
+    dontSend: false,
+    days: ''
+  });
 
   //#endregion
   useEffect(() => {
@@ -975,7 +979,8 @@ const SmsSend = ({ classes, ...props }) => {
   };
   const handleFilterConfirm = () => {
     let formIsvalid = true;
-    if (toggleReci) {
+    settoggleReci(filterValues.dontSend);
+    if (filterValues.dontSend) {
       formIsvalid = validationCheck();
       if (formIsvalid) {
         if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) {
@@ -1519,6 +1524,7 @@ const SmsSend = ({ classes, ...props }) => {
           filteredCampaigns={selectedFilterCampaigns}
           // displayCampaigns={totalCampaigns}
           open={summModal}
+          pulseType={pulseType}
         />
       </>
     );
@@ -1935,7 +1941,11 @@ const SmsSend = ({ classes, ...props }) => {
     setDialogType(null);
     setFilterGroups(campaignSettings?.SendExeptional?.Groups ?? []);
     setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns ?? []);
-    setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
+    // setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
+    setFilterValues({
+      dontSend: toggleReci,
+      days: exceptionalDays
+    })
   }
   const filterRecipientsDialog = () => {
     return {
@@ -1950,13 +1960,16 @@ const SmsSend = ({ classes, ...props }) => {
             className={classes.reciCheckoxContainer}
           >
             <Checkbox
-              checked={toggleReci}
+              checked={filterValues.dontSend}
               color="primary"
               inputProps={{ "aria-label": "secondary checkbox" }}
-              onClick={() => {
-                settoggleReci(!toggleReci);
-                setExceptionalDays("");
-              }}
+              onClick={(e) => 
+                setFilterValues({
+                  ...filterValues,
+                  dontSend: e.target.checked,
+                  days: ''
+                })
+              }
             />
             <span style={{ display: 'inline-block', marginTop: 2 }} className={classes.font13}>
               {t("smsReport.filterInputText")}
@@ -2552,6 +2565,12 @@ const SmsSend = ({ classes, ...props }) => {
     const currentDialog = dialogContent[type] || {}
 
     if (type) {
+      if (dialogType === 'filterRecipients') {
+        setFilterValues({
+          dontSend: toggleReci,
+          days: exceptionalDays
+        });
+      }
       return (
         dialogType && <BaseDialog
           classes={classes}

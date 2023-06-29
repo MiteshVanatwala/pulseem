@@ -1,7 +1,6 @@
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import { TYPE_JSX } from "./common";
 export type DialogOptions = {
-  classes: any;
   childrenPadding?: boolean;
   open: boolean;
   title?: any;
@@ -26,6 +25,8 @@ export type DialogOptions = {
   maxHeight?: string | number | undefined;
   reduceTitle?: boolean;
   confirmDisabled?: boolean;
+  classes?: any;
+  className?: string;
 };
 
 export type Slide_PropTypes = {

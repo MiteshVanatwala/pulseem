@@ -334,8 +334,8 @@ const NewslettersReport = ({ classes }) => {
         const lastUpdate = SendDate ?
           moment(SendDate, dateFormat).valueOf()
           : moment(LastEditDate, dateFormat).valueOf()
-        const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) || null
-        const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) || null
+        const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) || null
+        const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) || null
 
         if (!values)
           return true
@@ -499,6 +499,7 @@ const NewslettersReport = ({ classes }) => {
               newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialog('exportFormat')}
+            disabled={isSearching && !searchResults?.length}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
@@ -964,18 +965,20 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-
     let rowData = searchResults || newslettersReports;
-    let rpp = parseInt(rowsPerPage)
-    rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
-    return (
-      <Box className='tableBodyContainer newsLetterReportTable'>
+    if (rowData.length > 0) {
+      let rpp = parseInt(rowsPerPage)
+      rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+      return (
         <TableBody>
           {rowData
             .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
         </TableBody>
-      </Box>
-    )
+      )
+    }
+    return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+      <Typography>{t("common.NoDataTryFilter")}</Typography>
+    </Box>
   }
 
   const renderTable = () => {

@@ -24,7 +24,7 @@ import { addRecipient, deleteRecipients } from "../../../../redux/reducers/group
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
-import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
+import { IsValidPhone, IsValidEmail, IsNumberField } from "../../../../helpers/Utils/Validations";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
@@ -441,15 +441,8 @@ const AddRecipientPopup = ({ classes,
                             value={addRecipientData.Telephone}
                             className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={(e) => {
-                                let tempVal = e.target.value
-                                if (!tempVal) {
-                                    handleChange(e)
-                                }
-                                else if (!IsValidPhone(tempVal)) {
-                                    handleChange(e)
-                                }
-                            }}
+                            onKeyPress={IsNumberField}
+                            onChange={handleChange}
                         />,
                         gridSize: { xs: 12, sm: 9 }
                     }
@@ -471,6 +464,7 @@ const AddRecipientPopup = ({ classes,
                             value={addRecipientData.Cellphone}
                             className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                             autoComplete="off"
+                            onKeyPress={IsNumberField}
                             onChange={(e) => {
                                 if (e.target.value.length === 1 && e.target.value === "-") {
                                     return;

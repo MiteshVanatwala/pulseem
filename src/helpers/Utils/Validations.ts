@@ -17,9 +17,9 @@ export const IsValidPhone = (value: string) => {
 
 export const IsNumberField = (event: any) => {
   var NumberRegEx = /^[0-9]*$/;
-  if (!event.key.match(NumberRegEx) || event.key === "e" || event.key === ".") {
-    event.preventDefault();
-    event.stopPropagation();
+  if (!event?.key?.match(NumberRegEx) || event?.key === "e" || event?.key === ".") {
+    event?.preventDefault();
+    event?.stopPropagation();
     return false;
   }
 };

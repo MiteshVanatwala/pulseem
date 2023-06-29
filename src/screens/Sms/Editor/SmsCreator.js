@@ -332,9 +332,7 @@ const SmsCreator = ({ classes }) => {
 		setCampaignId(id ?? -1);
 		await dispatch(getPreviousLandingData());
 		await dispatch(getPreviousCampaignData());
-
-		if (!testGroups || testGroups?.length === 0)
-			await dispatch(getTestGroups());
+		await dispatch(getTestGroups());
 
 		let resp = null;
 		if (!extraData || extraData?.length === 0) {

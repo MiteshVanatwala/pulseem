@@ -277,6 +277,7 @@ const ProductsReport = ({ classes }) => {
                             setDialogType('exportFormat')
                         }}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                        disabled={!productsReportDetails?.Products?.length}
                     >
                         {t('campaigns.exportFile')}
                     </Button>

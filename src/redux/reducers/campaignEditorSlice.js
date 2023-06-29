@@ -105,9 +105,9 @@ export const saveTemplateToAccount = createAsyncThunk(
     })
 
 export const getPublicTemplates = createAsyncThunk(
-    '/CampaignEditor/GetPublicTemplates', async (_, thunkAPI) => {
+    '/CampaignEditor/GetPublicTemplates', async (isRTL, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates`);
+            const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
             return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -162,12 +162,12 @@ export const campaignEditorSlice = createSlice({
                 state.beeToken = payload;
             })
             .addCase(getPublicTemplates.fulfilled, (state, action) => {
-                state.publicTemplates = action.payload.Data
-                state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
+                state.publicTemplates = action.payload.Data || []
+                state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
             })
             .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
-                state.templatesBySubAccount = action.payload.Data;
-                state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
+                state.templatesBySubAccount = action.payload.Data || [];
+                state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
             })
 
     }

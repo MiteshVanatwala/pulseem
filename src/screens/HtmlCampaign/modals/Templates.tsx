@@ -19,6 +19,7 @@ const Templates = ({
   const [tabValue, setTabValue] = useState(0);
   const [templateList, setTemplateList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
+  const [maxTemplatesToShow, setMaxTemplatesToShow] = useState(8);
   const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
   const refScriptCode = useRef<HTMLDivElement>(null);
   const refCategory = useRef<HTMLDivElement>(null);
@@ -46,64 +47,91 @@ const Templates = ({
   }
 
   useEffect(() => {
-    setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount);
+    const templates = tabValue === 0 ? publicTemplates : templatesBySubAccount;
+    setTemplateList(templates);
     const categories = tabValue === 0 ? publicTemplateCategories : templatesBySubAccountCategories;
     setCategoryList(categories);
-    setSelectedCategory(categories.length > 0 ? categories[0] : '');
+    setSelectedCategory(categories?.length > 0 ? categories[0] : '');
     setLoader(false);
+
+    resizeWindow();
   }, [publicTemplates, templatesBySubAccount, tabValue]);
 
   useEffect(() => {
+    if (tabValue === 0 && selectedCategory === '') {
+      setTemplateList(publicTemplates.slice(0, maxTemplatesToShow));
+    } else {
+      const templates = tabValue === 0 ? publicTemplates : templatesBySubAccount;
+      setTemplateList(templates);
+    }
+  }, [maxTemplatesToShow, selectedCategory]);
+
+  useEffect(() => {
     if (!publicTemplates.length) setLoader(true);
+    setTimeout(() => {
+      resizeWindow();
+    }, 1000);
   }, []);
 
-  const template = (templateDetails: any) => {
-    return (
-      <>
-        <Grid item xs={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10)} key={templateDetails.ID} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
-          <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
-            {renderHtml(templateDetails.Html)}
-          </Box>
-          <div className={clsx(classes.textCenter, classes.pt5, classes.f14)}>{convertHyphensToword(templateDetails.Name)}</div>
-          <div className={clsx(classes.textCenter, classes.p5)}>
-            <Button
-              className={clsx(
-                classes.solidDialogButton,
-                classes.dialogConfirmBlueButton,
-                classes.p5
-              )}
-              onClick={() => {
-                setSelectedTemplate(templateDetails);
-                setOpenPreview(true);
-              }}
-            >
-              <Typography
-                className={clsx(classes.dBlock, classes.f14)}
-              >
-                {t('common.Preview')}
-              </Typography>
-            </Button>
+  const resizeWindow = () => {
+    const height = (document.querySelector('.bee-templates') as HTMLElement)?.offsetHeight - 120;
+    if (refScriptCode.current !== null) {
+      refScriptCode.current.style['maxHeight'] = `${height}px`;
+      refScriptCode.current.style['height'] = `${height}px`;
+      refScriptCode.current.style['overflow'] = 'scroll';
+    }
+    if (refCategory.current !== null) {
+      refCategory.current.style['maxHeight'] = `${height + 60}px`;
+      refCategory.current.style['height'] = `${height + 60}px`;
+      refCategory.current.style['overflow'] = 'scroll';
+    }
+  }
 
-            <Button
-              className={clsx(
-                classes.solidDialogButton,
-                classes.dialogConfirmButton,
-                classes.ml5,
-                classes.p5
-              )}
-              onClick={() => {
-                onClose(templateDetails)
-              }}
+  const template = (templateDetails: any, selectedCategory: string) => {
+    return (
+      <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={12} sm={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10, 'template-item')} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
+        <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
+          {renderHtml(templateDetails.Html)}
+        </Box>
+        <div id='name' className={clsx(classes.textCenter, classes.pt5, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
+        <div id='buttons' className={clsx(classes.textCenter, classes.p5, classes.pb25)}>
+          <Button
+            className={clsx(
+              classes.solidDialogButton,
+              classes.dialogConfirmBlueButton,
+              classes.p5
+            )}
+            onClick={() => {
+              setSelectedTemplate(templateDetails);
+              setOpenPreview(true);
+            }}
+          >
+            <Typography
+              className={clsx(classes.dBlock, classes.f14)}
             >
-              <Typography
-                className={clsx(classes.dBlock, classes.f14)}
-              >
-                {t(`common.${isCreateCampaign ? 'selectTemplate' : 'loadTemplate'}`)}
-              </Typography>
-            </Button>
-          </div>
-        </Grid>
-      </>
+              {t('common.Preview')}
+            </Typography>
+          </Button>
+
+          <Button
+            className={clsx(
+              classes.solidDialogButton,
+              classes.dialogConfirmButton,
+              classes.ml5,
+              classes.p5
+            )}
+            onClick={() => {
+              onClose(templateDetails)
+            }}
+          >
+            <Typography
+              className={clsx(classes.dBlock, classes.f14)}
+            >
+              {t(`common.${isCreateCampaign ? 'selectTemplate' : 'loadTemplate'}`)}
+            </Typography>
+          </Button>
+        </div>
+      </Grid>
     )
   }
 
@@ -118,15 +146,20 @@ const Templates = ({
     onConfirm={onClose}
     reduceTitle
     showDefaultButtons={false}
-    exitButton={true}>
+    exitButton={true}
+    maxHeight='70vh'
+    className='bee-templates'>
     <Box className={clsx(classes.templateModal)}>
       <Grid container style={{ width: '100%' }}>
-        <Grid item md={2} ref={refCategory}>
+        <Grid item xs={12} sm={4} md={2} ref={refCategory} className='category-container'>
           {
             categoryList?.length > 0 && (
               <Typography
                 className={clsx(classes.dBlock, classes.pb10, classes.f16, selectedCategory === '' ? classes.bold : '', classes.cursorPointer)}
-                onClick={() => setSelectedCategory('')}
+                onClick={() => {
+                  setMaxTemplatesToShow(8);
+                  setSelectedCategory('')
+                }}
               >
                 {t('common.all')}
               </Typography>
@@ -144,7 +177,7 @@ const Templates = ({
             })
           }
         </Grid>
-        <Grid item md={10}>
+        <Grid item xs={12} sm={8} md={10} className='template-container'>
           <Tabs
             value={tabValue}
             onChange={handleChange}
@@ -152,9 +185,7 @@ const Templates = ({
             classes={{ indicator: classes.hideIndicator }}
           >
             <Tab label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
-            {
-              !isCreateCampaign && <Tab label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
-            }
+            <Tab label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
           </Tabs>
           <Box className={classes.pt15}>
             {
@@ -167,9 +198,31 @@ const Templates = ({
             <Grid container ref={refScriptCode}>
               {
                 templateList?.map((templ, i): any => {
-                  if (selectedCategory !== '' && selectedCategory === templ['Category']) return template(templ);
-                  if (selectedCategory === '') return template(templ);
+                  if (selectedCategory !== '' && selectedCategory === templ['Category']) return template(templ, 'category');
+                  if (selectedCategory === '') return template(templ, 'all');
                 })
+              }
+              {
+                selectedCategory === '' && tabValue === 0 && maxTemplatesToShow < publicTemplates.length && (
+                  <Grid item md={12}>
+                    <Box className={clsx(classes.textCenter, classes.pt15)}>
+                      <Button
+                        className={clsx(
+                          classes.actionButton,
+                          classes.actionButtonLightBlue,
+                          classes.paddingSides25
+                        )}
+                        onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
+                      >
+                        <Typography
+                          className={clsx(classes.dBlock, classes.f18)}
+                        >
+                          {t('common.loadMore')}
+                        </Typography>
+                      </Button>
+                    </Box>
+                  </Grid>
+                )
               }
             </Grid>
           </Box>
