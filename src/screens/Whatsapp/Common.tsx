@@ -180,7 +180,7 @@ export const getTemplatePreviewData = (
 									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
-									value: '+972',
+									value: button?.phoneCode || '+972',
 								},
 								{
 									fieldName: 'whatsapp.phoneNumber',
