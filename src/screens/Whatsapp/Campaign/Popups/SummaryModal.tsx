@@ -362,8 +362,8 @@ const SummaryModal = ({
 												isSpecialDateBefore
 													? translator('mainReport.before')
 													: translator('mainReport.after')
-											} ${getSpecialDay()} day at ${moment(sendTime)?.format(
-												'hh:mm a'
+											} ${getSpecialDay()} ${translator('whatsappCampaign.atTime')} ${moment(sendTime)?.format(
+												'HH:mm a'
 											)}`}
 									</span>
 								</Box>
