@@ -136,7 +136,7 @@ const ChatFooterContent = ({
 											showEmojis
 												? `${classes.whatsappChat} chat__input-icon--highlight`
 												: ''
-										}`}
+											}`}
 									/>
 								</button>
 								{savedTemplate?.length !== 0 ? (
@@ -145,6 +145,7 @@ const ChatFooterContent = ({
 										style={{
 											direction: getTextDirection(newMessage, isRTL),
 										}}>
+										{/* @ts-ignore */}
 										<Highlighter
 											searchWords={dynamicVariable}
 											autoEscape={true}
@@ -165,8 +166,8 @@ const ChatFooterContent = ({
 														? 'rtl'
 														: 'ltr'
 													: isRTL
-													? 'rtl'
-													: 'ltr',
+														? 'rtl'
+														: 'ltr',
 											minHeight: freeFormInputHeight,
 											resize: 'none',
 											overflowY: 'auto',
@@ -240,13 +241,13 @@ const ChatFooterContent = ({
 						)}{' '}
 						{(whatsappChatSession.IsIn24Window ||
 							savedTemplate?.length > 0) && (
-							<button aria-label='Send message' onClick={onChatSend}>
-								<Icon
-									id='send'
-									className={`${classes.whatsappChat} chat__send-icon`}
-								/>
-							</button>
-						)}{' '}
+								<button aria-label='Send message' onClick={onChatSend}>
+									<Icon
+										id='send'
+										className={`${classes.whatsappChat} chat__send-icon`}
+									/>
+								</button>
+							)}{' '}
 					</>
 				) : (
 					<div style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
