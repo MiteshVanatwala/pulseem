@@ -24,10 +24,8 @@ const BulkStatus = ({ classes }) => {
   const dispatch = useDispatch();
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {} } = packagesDetails || {};
-  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {} } = packagesDetails || {};
 
   const getBillingTypeText = (product) => {
-    switch (product?.eBillingType) {
     switch (product?.eBillingType) {
       case 2: {
         return t('dashboard.perRecipients');
