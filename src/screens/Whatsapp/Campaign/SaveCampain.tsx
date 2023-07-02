@@ -644,7 +644,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			validateDynamicVaraiable &&
 			savedTemplate?.length > 0 &&
 			getDynamicFields(templateData?.templateText)?.length !==
-				updatedDynamicVariable?.length
+			updatedDynamicVariable?.length
 		) {
 			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
 			isValidated = false;
@@ -765,9 +765,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				if (quickSendGroupsData?.Status !== apiStatus.SUCCESS) {
 					quickSendGroupsData?.Message
 						? setToastMessage({
-								...ToastMessages.ERROR,
-								message: quickSendGroupsData?.Message,
-						  })
+							...ToastMessages.ERROR,
+							message: quickSendGroupsData?.Message,
+						})
 						: setToastMessage(ToastMessages.ERROR);
 					return;
 				}
@@ -815,9 +815,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						} else {
 							campaignSummaryData?.Message
 								? setToastMessage({
-										...ToastMessages.ERROR,
-										message: campaignSummaryData?.Message,
-								  })
+									...ToastMessages.ERROR,
+									message: campaignSummaryData?.Message,
+								})
 								: setToastMessage(ToastMessages.ERROR);
 						}
 					}
@@ -1048,7 +1048,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 																(field.fieldName ===
 																	'whatsapp.websiteButtonText' ||
 																	field.fieldName ===
-																		'whatsapp.phoneButtonText') && (
+																	'whatsapp.phoneButtonText') && (
 																	<Box
 																		key={button.id}
 																		className={
@@ -1097,9 +1097,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 											<span
 												className={clsx(
 													classes.textInfoWrapper,
-													`${
-														templateTextCount > templateTextLimit &&
-														'limit-exceed'
+													`${templateTextCount > templateTextLimit &&
+													'limit-exceed'
 													}`
 												)}>
 												{isRTL && (
@@ -1357,8 +1356,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						isQuickReplyOpen={isQuickReplyOpen}
 						closeQuickReply={() => setIsQuickReplyOpen(false)}
 						quickReplyButtons={quickReplyButtons}
-						setQuickReplyButtons={() => {}}
-						updateTemplateData={() => {}}
+						setQuickReplyButtons={() => { }}
+						updateTemplateData={() => { }}
 						templateButtons={templateData.templateButtons}
 						isEditable={false}
 					/>
@@ -1370,8 +1369,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
 						phoneNumberField={phoneNumberField}
 						websiteField={websiteField}
-						addMore={() => {}}
-						updateTemplateData={() => {}}
+						addMore={() => { }}
+						updateTemplateData={() => { }}
 						isEditable={false}
 						buttonType={buttonType}
 						templateText={templateData.templateText}
@@ -1404,11 +1403,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						)}
 						subtitle={`${translator(
 							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${
-							nextMessageAvailable
+						)} ${nextMessageAvailable
 								? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
 								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
-						}`}
+							}`}
 						type='alert'
 						onConfirmOrYes={() => onExceedLimitYes()}
 					/>

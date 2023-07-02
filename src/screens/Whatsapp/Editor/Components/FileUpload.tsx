@@ -89,7 +89,7 @@ const FileUpload = ({
 							}}>
 							{fileData?.fileLink
 								?.split('/')
-								[fileData?.fileLink?.split('/')?.length - 1]?.substring(0, 25) +
+							[fileData?.fileLink?.split('/')?.length - 1]?.substring(0, 25) +
 								'...'}
 							&emsp;
 							<i

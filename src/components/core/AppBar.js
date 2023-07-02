@@ -285,9 +285,6 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
           anchorEl={topNavRef.current}
           role={undefined}
           className={classes.phoneAppBarPaperContainer}
-          // style={{
-
-          // }}
           transition
         >
           {({ TransitionProps }) => (

@@ -253,7 +253,7 @@ const renderRoutes = (classes, redirect) => {
 
       <Route
         path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
-        element={<SaveCampain classes={classes} />}
+        element={<SaveCampain classes={classes} key="wa-save-campaign" />}
       />
 
       <Route
@@ -283,7 +283,7 @@ const renderRoutes = (classes, redirect) => {
 
       <Route
         path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
-        element={<SaveCampain classes={classes} />}
+        element={<SaveCampain classes={classes} key="wa-save-campaign-page2" />}
       />
 
       <Route

@@ -1901,9 +1901,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			background: '#e4dcd4',
 		},
 		'&.chat__header,\n&.chat__footer,\n&.chat__date-wrapper,\n&.chat__msg-group,\n.&chat__encryption-msg':
-			{
-				zIndex: '10',
-			},
+		{
+			zIndex: '10',
+		},
 		'&.chat__header': {
 			zIndex: '20',
 		},
@@ -2043,58 +2043,58 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 
 		'&.chat__msg-group > *:nth-child(1):not(.chat__msg--sent)::before,\n&.chat__msg--sent + .chat__msg--rxd::before':
-			{
-				content: "''",
-				position: 'absolute',
-				width: '0',
-				height: '0',
-				top: '0',
-				left: '-8px',
-				borderTop: isRTL ? '0px' : '6px solid white',
-				borderRight: isRTL ? '0px' : '6px solid white',
-				borderBottom: isRTL ? '0px' : '6px solid transparent',
-				borderLeft: isRTL ? '0px' : '6px solid transparent',
-			},
+		{
+			content: "''",
+			position: 'absolute',
+			width: '0',
+			height: '0',
+			top: '0',
+			left: '-8px',
+			borderTop: isRTL ? '0px' : '6px solid white',
+			borderRight: isRTL ? '0px' : '6px solid white',
+			borderBottom: isRTL ? '0px' : '6px solid transparent',
+			borderLeft: isRTL ? '0px' : '6px solid transparent',
+		},
 		'&.chat__msg-group > *:nth-child(1):not(.chat__msg--rxd)::before,\n&.chat__msg--rxd + .chat__msg--sent::before':
-			{
-				right: '-8px',
-				content: "''",
-				position: 'absolute',
-				width: '0',
-				height: '0',
-				top: '0',
-				borderTop: isRTL ? '0px' : '6px solid #dbf8c6',
-				borderRight: isRTL ? '0px' : '6px solid transparent',
-				borderBottom: isRTL ? '0px' : '6px solid transparent',
-				borderLeft: isRTL ? '0px' : '6px solid #dbf8c6',
-			},
+		{
+			right: '-8px',
+			content: "''",
+			position: 'absolute',
+			width: '0',
+			height: '0',
+			top: '0',
+			borderTop: isRTL ? '0px' : '6px solid #dbf8c6',
+			borderRight: isRTL ? '0px' : '6px solid transparent',
+			borderBottom: isRTL ? '0px' : '6px solid transparent',
+			borderLeft: isRTL ? '0px' : '6px solid #dbf8c6',
+		},
 
 		'&.chat__msg-group > *:nth-child(1):not(.chat__msg--sent)::after,\n&.chat__msg--sent + .chat__msg--rxd::after':
-			{
-				content: "''",
-				position: 'absolute',
-				width: '0',
-				height: '0',
-				top: '0',
-				right: '-6px',
-				borderTop: isRTL ? '6px solid white' : '0px',
-				borderRight: isRTL ? '6px solid transparent' : '0px',
-				borderBottom: isRTL ? '6px solid transparent' : '0px',
-				borderLeft: isRTL ? '6px solid transparent' : '0px',
-			},
+		{
+			content: "''",
+			position: 'absolute',
+			width: '0',
+			height: '0',
+			top: '0',
+			right: '-6px',
+			borderTop: isRTL ? '6px solid white' : '0px',
+			borderRight: isRTL ? '6px solid transparent' : '0px',
+			borderBottom: isRTL ? '6px solid transparent' : '0px',
+			borderLeft: isRTL ? '6px solid transparent' : '0px',
+		},
 		'&.chat__msg-group > *:nth-child(1):not(.chat__msg--rxd)::after,\n&.chat__msg--rxd + .chat__msg--sent::after':
-			{
-				left: '-6px',
-				content: "''",
-				position: 'absolute',
-				width: '0',
-				height: '0',
-				top: '0',
-				borderTop: isRTL ? '6px solid #dbf8c6' : '0px',
-				borderRight: isRTL ? '6px solid transparent' : '0px',
-				borderBottom: isRTL ? '6px solid transparent' : '0px',
-				borderLeft: isRTL ? '6px solid transparent' : '0px',
-			},
+		{
+			left: '-6px',
+			content: "''",
+			position: 'absolute',
+			width: '0',
+			height: '0',
+			top: '0',
+			borderTop: isRTL ? '6px solid #dbf8c6' : '0px',
+			borderRight: isRTL ? '6px solid transparent' : '0px',
+			borderBottom: isRTL ? '6px solid transparent' : '0px',
+			borderLeft: isRTL ? '6px solid transparent' : '0px',
+		},
 
 		'&.chat__img': { width: '100%', height: '100%', objectFit: 'cover' },
 		'&.chat__msg-filler': {
@@ -2121,9 +2121,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__msg-status-icon--blue': { color: '#0da9e5' },
 		'&.chat__img-wrapper .chat__msg-footer,\n&.chat__img-wrapper .chat__msg-options-icon,\n&.chat__img-wrapper .chat__msg-status-icon':
-			{
-				color: 'white',
-			},
+		{
+			color: 'white',
+		},
 		'&.chat__msg-options': {
 			opacity: '0',
 			position: 'absolute',
@@ -2388,9 +2388,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			cursor: 'pointer',
 		},
 		'&.profile__action:not(:last-of-type),\n&.profile__about-item:not(:last-of-type),\n&.profile__group:not(:last-of-type)':
-			{
-				borderBottom: '1px solid #ebebeb',
-			},
+		{
+			borderBottom: '1px solid #ebebeb',
+		},
 		'&.profile__action-left': { flex: '1' },
 		'&.profile__action-text': { display: 'block' },
 		'&.profile__action-text--top,\n.profile__about-item': {
@@ -2533,9 +2533,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			lineHeight: '17px',
 		},
 		'&.sidebar__alert--danger .sidebar__alert-text:first-of-type, .sidebar__alert--danger .sidebar__alert-text:last-of-type':
-			{
-				color: 'white',
-			},
+		{
+			color: 'white',
+		},
 		'&.sidebar__search-wrapper': {
 			padding: '7px 10px',
 			height: '50px',
@@ -2570,11 +2570,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.sidebar-contact__content': { overflow: 'hidden', flex: '1' },
 		'&.sidebar-contact__top-content, .sidebar-contact__bottom-content, .sidebar-contact__message-wrapper':
-			{
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'space-between',
-			},
+		{
+			display: 'flex',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+		},
 		'&.sidebar-contact__name, .sidebar-contact__message': {
 			flex: 1,
 			overflow: 'hidden',
@@ -2610,13 +2610,13 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			fontWeight: '500',
 		},
 		'&.sidebar-contact__icons, .sidebar-contact:not(:focus) .sidebar-contact__icons':
-			{
-				display: 'flex',
-				justifyContent: 'center',
-				alignItems: 'center',
-				transform: isRTL ? 'translateX(-32px)' : 'translateX(24px)',
-				transition: 'transform 0.5s ease',
-			},
+		{
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+			transform: isRTL ? 'translateX(-32px)' : 'translateX(24px)',
+			transition: 'transform 0.5s ease',
+		},
 		'&.sidebar-contact:hover .sidebar-contact__icons': {
 			transform: 'translateX(0)',
 		},
@@ -2933,9 +2933,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			left: isRTL ? '0px' : 'unset',
 		},
 		'& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
-			{
-				paddingRight: isRTL ? '0px !important' : '0px',
-			},
+		{
+			paddingRight: isRTL ? '0px !important' : '0px',
+		},
 	},
 	buttonCallToActionAutocomplete: {
 		padding: '14px 12px 12px 4px',
@@ -3135,7 +3135,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		width: '40px',
 		color: '#000',
 		border: '1px solid #000',
-		'& input':{
+		'& input': {
 			textAlign: 'center',
 		}
 	},
