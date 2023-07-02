@@ -2627,8 +2627,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           },
           '& .svg_data_analysis': {
             position: 'absolute',
-            right: 86.44,
-            left: 'auto',
+            right: isRTL ? 'auto' : 85,
+            left: isRTL ? 85 : 'auto',
             // right: isRTL ? 'auto' : 86.44,
             // left: isRTL ? 86.44 : 'auto',
             top: 49.17,
@@ -2637,8 +2637,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           '& .svg_app_settings': {
             position: 'absolute',
             top: 121.3,
-            right: 93.14,
-            left: 'auto',
+            right: isRTL ? 'auto' : 90,
+            left: isRTL ? 90 : 'auto',
             // right: isRTL ? 'auto' : 93.14,
             // left: isRTL ? 93.14 : 'auto',
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'

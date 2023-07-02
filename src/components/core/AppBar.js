@@ -233,8 +233,10 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
           />
           <span className='settingsBorder'></span>
         </Box>
-        <Box style={{ zIndex: 1300 }}>
+        <Box>
           <NotificationBell classes={classes} />
+        </Box>
+        <Box style={{ zIndex: 1300 }}>
           <LanguageSelector classes={classes} />
         </Box>
         {!cameFromSubAccount && isAdmin !== '' && <AppBarItem

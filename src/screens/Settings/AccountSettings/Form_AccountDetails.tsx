@@ -81,7 +81,7 @@ const FORM_ACCOUNT_DETAILS = ({
 				Element={null}
 			/>
 			<Box className={'formContainer'}>
-				<Illustration_app_Settings className={"svg_data_analysis"} /> 
+				<Illustration_app_Settings className={"svg_app_settings"} /> 
 				<Grid container className={'form'}>
 					<Grid item xs={12} sm={6} md={4} className={'textBoxWrapper'}>
 						<Typography>
