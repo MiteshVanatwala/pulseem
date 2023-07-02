@@ -190,7 +190,7 @@
 		"6": "Campaign name is empty",
 		"7": "The campaign name exceeds 100 characters.",
 		"8": "Campaign with this sub account id does not exists",
-		"9": "This Campaign is already deleted.Yo are not allowed to update this campaign",
+		"9": "This Campaign is already deleted. You are not allowed to update this campaign",
 		"10": "You are not allow to edit this campaign",
 		"100": "Inetrnal Error"
 	},
@@ -199,7 +199,7 @@
 		"2": "Invalid campaign",
 		"3": "Sub account not found",
 		"4": "You are not allow to save campaign settings",
-		"5": "This campaign is already deleted.You are not allow to save campaign settings",
+		"5": "This campaign is already deleted. You are not allow to save campaign settings",
 		"6": "Future date time required.",
 		"7": "Invalid data for special date",
 		"100": "Inetrnal Error"
