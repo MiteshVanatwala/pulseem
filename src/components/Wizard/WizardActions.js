@@ -5,6 +5,7 @@ import { BsTrash } from "react-icons/bs";
 import { BiSave } from 'react-icons/bi'
 import { useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md'
+import { AiOutlineFileText } from 'react-icons/ai'
 
 const WizardActions = ({
     classes,
@@ -24,7 +25,7 @@ const WizardActions = ({
     const { t } = useTranslation();
     const { isRTL, windowSize } = useSelector(state => state.core);
     return (
-        <Grid container style={{ ...innerStyle, paddingBottom: 40 }}
+        <Grid container style={{ ...innerStyle }}
             className={disabled ? classes.disableChildButtons : null}>
             <Grid item xs={12}>
                 <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: 40 }}>
@@ -50,7 +51,7 @@ const WizardActions = ({
                                 style={{ margin: '8px' }}
                                 onClick={() => { onDelete() }}
                             >
-                                <BsTrash style={{ fontSize: "25", marginInlineStart: 0 }} />
+                                <BsTrash className={'trash'} style={{ fontSize: "24", marginLeft: '0 !important', marginRight: '0 !important' }} />
                             </Button>
                         }
                         {onShowDocuments &&
@@ -59,9 +60,8 @@ const WizardActions = ({
                                 style={{ marginInline: 8, paddingInline: 10 }}
                                 className={clsx(classes.btn,
                                     classes.btnRounded)}
-                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                endIcon={<AiOutlineFileText style={{ fontSize: "24", paddingInline: 3 }} />}
                             >
-                                {/* <AiOutlineFileAdd style={{ fontSize: "20", paddingInline: 5 }} /> */}
                                 {t("common.documentGallery")}
                             </Button>
                         }

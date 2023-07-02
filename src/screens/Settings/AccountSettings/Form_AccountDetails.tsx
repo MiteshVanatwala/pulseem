@@ -75,7 +75,7 @@ const FORM_ACCOUNT_DETAILS = ({
 			className={'settingsWrapper'}>
 			<Title
 				Text={t('settings.accountSettings.actDetails.title')}
-				Classes={classes}
+				classes={classes}
 				ContainerStyle={undefined}
 				Element={null}
 			/>

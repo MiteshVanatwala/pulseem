@@ -1461,18 +1461,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	manageTemplatesHeaderButtons: {
 		justifyContent: 'space-between',
 		'& button': {
-			background: 'blue',
-			color: 'white',
+			// 	background: 'blue',
+			// 	color: 'white',
 			margin: '4px 8px',
-			textTransform: 'none',
-			fontSize: '16px',
+			// 	textTransform: 'none',
+			// 	fontSize: '16px',
 		},
-		'& .green': {
-			background: '#27AE60',
-		},
-		'& .blue': {
-			background: '#3498DB',
-		},
+		// '& .green': {
+		// 	background: '#27AE60',
+		// },
+		// '& .blue': {
+		// 	background: '#3498DB',
+		// },
 	},
 	manageTemplatesCreate: {
 		marginTop: '10px',

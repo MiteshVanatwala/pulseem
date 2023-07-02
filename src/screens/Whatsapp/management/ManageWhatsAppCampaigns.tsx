@@ -83,12 +83,13 @@ import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { windowSize, rowsPerPage } = useSelector(
+	const { windowSize, rowsPerPage, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const ToastMessages = useSelector(
@@ -504,9 +505,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			} else {
 				templateData?.payload?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: templateData?.payload?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: templateData?.payload?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
@@ -560,6 +561,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{
 				key: 'send',
 				buttonKey: 'send',
+				uIcon: '',
 				icon: SendGreenIcon,
 				lable: translator('campaigns.imgSendResource1.ToolTip'),
 				remove: Status !== 1 || AutomationID !== 0,
@@ -573,7 +575,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{
 				key: 'preview',
 				buttonKey: 'preview',
-				icon: PreviewIcon,
+				uIcon: PreviewIcon,
+				icon: '',
 				lable: translator('campaigns.Image1Resource1.ToolTip'),
 				remove: windowSize === 'xs',
 				rootClass: classes.paddingIcon,
@@ -584,7 +587,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{
 				key: 'edit',
 				buttonKey: 'edit',
-				icon: EditIcon,
+				uIcon: EditIcon,
+				icon: '',
 				disable: Status !== 1 || AutomationID !== 0,
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
 				rootClass: classes.paddingIcon,
@@ -596,7 +600,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{
 				key: 'duplicate',
 				buttonKey: 'duplicate',
-				icon: DuplicateIcon,
+				uIcon: DuplicateIcon,
+				icon: '',
 				lable: translator('campaigns.lnkEditResource1.ToolTip'),
 				rootClass: classes.paddingIcon,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
@@ -606,7 +611,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{
 				key: 'groups',
 				buttonKey: 'groups',
-				icon: GroupsIcon,
+				uIcon: GroupsIcon,
+				icon: '',
 				disable: Groups?.length === 0 ? true : false,
 				lable: translator('campaigns.lnkPreviewResource1.ToolTip'),
 				remove: windowSize === 'xs',
@@ -618,7 +624,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{
 				key: 'automation',
 				buttonKey: 'automation',
-				icon: AutomationIcon,
+				uIcon: AutomationIcon,
+				icon: '',
 				disable: AutomationID === 0,
 				remove: windowSize === 'xs',
 				lable: translator('campaigns.automation'),
@@ -630,7 +637,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{
 				key: 'delete',
 				buttonKey: 'delete',
-				icon: DeleteIcon,
+				uIcon: DeleteIcon,
+				icon: '',
 				disable: AutomationID !== 0,
 				rootClass: classes.paddingIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
@@ -653,7 +661,10 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						)}
 						key={icon.key}
 						item>
-						<ManagmentIcon {...icon} />
+						<ManagmentIcon
+							{...icon}
+							uIcon={icon?.uIcon && <icon.uIcon width={18} height={20} className={'rowIcon'} />}
+						/>
 					</Grid>
 				))}
 			</Grid>
@@ -673,9 +684,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		} else {
 			deleteData?.payload?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: deleteData?.payload?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: deleteData?.payload?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -693,9 +704,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		} else {
 			deleteData?.payload?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: deleteData?.payload?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: deleteData?.payload?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -714,9 +725,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		} else {
 			restoreCampaignData?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: restoreCampaignData?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: restoreCampaignData?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -826,15 +837,14 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{isAccountSetup ? (
 				<>
 					{renderToast()}
-					<Title
-						Text={translator('whatsappManagement.campaignManagement')}
-						Classes={classes}
-						ContainerStyle={{}}
-						Element={null}
-					/>
-
-					<div className={classes.manageWhatsappTemplates}>
-						<Grid container spacing={2} className={classes.lineTopMarging}>
+					<Box className={'topSection'}>
+						<Title
+							Text={translator('whatsappManagement.campaignManagement')}
+							classes={classes}
+							ContainerStyle={{}}
+							Element={null}
+						/>
+						<Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
 							<Grid item>
 								<TextField
 									variant='outlined'
@@ -925,17 +935,28 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 								</Grid>
 							)}
 						</Grid>
+					</Box>
 
+
+					<div className={clsx(classes.manageWhatsappTemplates, classes.mt15)}>
 						<Grid
 							container
 							spacing={2}
 							className={classes.manageTemplatesHeaderButtons}>
 							<div className={classes.manageCampaignCreateAndRestore}>
-								<Button className={'green'} onClick={() => onCreateCampaign()}>
+								<Button
+									className={clsx(
+										classes.btn, classes.btnRounded
+									)}
+									endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+									onClick={() => onCreateCampaign()}>
 									<>{translator('whatsappManagement.createCampaign')}</>
 								</Button>
 								<Button
-									className={'blue'}
+									className={clsx(
+										classes.btn, classes.btnRounded
+									)}
+									endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 									onClick={() => setIsRestoreDeletedModal(true)}>
 									<>{translator('whatsappManagement.restore')}</>
 								</Button>

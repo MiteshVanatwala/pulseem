@@ -904,6 +904,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold',
     background: '#fff',
     // maxWidth: 300,
+    minHeight: 34,
     color: '#000',
     "@media screen and (max-width: 400px)": {
       maxWidth: 200
@@ -916,7 +917,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
     border: '2px solid #F65026',
-    '& svg': {
+    '& svg:not(.trash)': {
       marginLeft: 5,
       color: '#000'
     },
@@ -2491,7 +2492,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   editorCont: {
     marginTop: 40,
     marginBottom: 50,
-    background: '#fff',
+    // background: '#fff',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     // '& .head': {
@@ -2506,6 +2507,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .containerBody': {
       paddingInline: 20,
       paddingTop: 20,
+      backgroundColor: '#fff',
       border: "2px solid #F0F5FF",
 
       '& .stepHead': {
@@ -2605,6 +2607,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderBottomLeftRadius: 20,
       borderBottomRightRadius: 20,
       border: "2px solid #F0F5FF",
+      backgroundCOlor: '#fff',
       paddingInline: 17.2,
       '& .settingsWrapper': {
         '& .mgmtTitle': {

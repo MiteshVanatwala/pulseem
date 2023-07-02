@@ -258,7 +258,7 @@ const NewsLetterInfo = ({ classes }) => {
         if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
         if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
     }, []);
-    
+
     useEffect(() => {
         dispatch(getPublicTemplates(isRTL));
     }, [isRTL])
@@ -401,11 +401,9 @@ const NewsLetterInfo = ({ classes }) => {
             setLoader(false);
         }, 2000);
     }}
-        variant='contained'
-        size='medium'
         className={clsx(
-            classes.actionButton,
-            classes.actionButtonOutlinedBlue
+            classes.btn,
+            classes.btnRounded
         )}
         style={{ margin: '8px' }}
     >
@@ -1114,109 +1112,108 @@ const NewsLetterInfo = ({ classes }) => {
             currentPage="newsletter"
             subPage={"newsletterInfo"}
             classes={classes}
-            containerClass={clsx(classes.management, classes.mb50)}
+            customPadding={true}
+            containerClass={clsx(classes.mb50, classes.editorCont)}
         >
+            <Box className="head">
+                <Title Text={t("campaigns.createNewsLetterHeader")} classes={classes} />
+            </Box>
+            <Box className={"containerBody"}>
+                {CampaignBox1()}
+                {/* <Divider /> */}
+                <Grid container spacing={3} className={classes.ps15}>
+                    {/* Additional Text */}
+                    <Grid item xs={12} sm={5} >
+                        <AdditionalText
+                            classes={classes}
+                            localClasses={localClasses}
+                            selectedCheck={{ ...selectedCheck }}
+                            campaingnValues={{ ...campaingnValues }}
+                            handleChangeCheckbox={handleChangeCheckbox}
+                            handleSelectionRadio={handleSelectionRadio}
+                        />
+                    </Grid>
+                    {/* Advanced settings */}
+                    <Grid item xs={12} sm={7}>
+                        <AdvancedSettings
+                            classes={classes}
+                            localClasses={localClasses}
+                            campaingnValues={{ ...campaingnValues }}
+                            setCampaingnValues={setCampaingnValues}
+                            setShowGallery={setShowGallery}
+                            removeAttachmentFile={removeAttachmentFile}
+                        />
+                    </Grid>
+                </Grid>
+
+                <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 15 }}>
+                    <WizardActions
+                        classes={classes}
+                        onBack={{
+                            callback: () => { setConfirmExit(true) }
+                        }}
+                        onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
+                        additionalButtons={renderButtons()}
+                        additionalButtonsOnStart={renderTemplateButtons()}
+                    />
+                </Box>
+                <BaseDialog
+                    classes={classes}
+                    open={confirmExit}
+                    title={t("campaigns.GridButtonColumnResource2.confirmExit")}
+                    showDivider={true}
+                    onClose={() => handleExit(false)}
+                    onCancel={() => handleExit(null)}
+                    onConfirm={() => handleExit(true)}
+                    disableBackdropClick={true}
+                    cancelText="common.No"
+                    confirmText="common.Yes"
+                >
+                    <Box>
+                        <Typography variant="subtitle1">
+                            {t("campaigns.GridButtonColumnResource2.confirmExitText")}
+                        </Typography>
+                    </Box>
+                </BaseDialog>
+                <BaseDialog
+                    classes={classes}
+                    open={confirmDelete}
+                    title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
+                    showDivider={true}
+                    onClose={() => setConfirmDelete(false)}
+                    onCancel={() => setConfirmDelete(false)}
+                    onConfirm={() => handleDelete()}
+                    cancelText="common.Cancel"
+                    confirmText="common.Ok"
+                >
+                    <Box>
+                        <Typography variant="subtitle1">
+                            {t("campaigns.GridButtonColumnResource2.ConfirmText")}
+                        </Typography>
+                    </Box>
+                </BaseDialog>
+                {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
+                {
+                    dialogType === DialogType.Templates && <Templates
+                        isCreateCampaign={true}
+                        classes={classes}
+                        onClose={async (template) => {
+                            setDialogType(null);
+                            if (template !== undefined) {
+                                const response = await dispatch(getTemplateById(template.ID));
+                                if (response.payload.StatusCode === 201) {
+                                    setTemplate(response?.payload?.Data);
+                                }
+                            }
+                        }}
+                        isOpen={dialogType === DialogType.Templates}
+                    />
+                }
+                <Loader isOpen={showLoader} />
+            </Box>
             {renderDialog()}
             {showGalleryModal()}
             {renderToast()}
-            <Box className={classes.editorCont}>
-                <Box className="head">
-                    <Title Text={t("campaigns.createNewsLetterHeader")} classes={classes} />
-                </Box>
-                <Box className={"containerBody"}>
-                    {CampaignBox1()}
-                    {/* <Divider /> */}
-                    <Grid container spacing={3} className={classes.ps15}>
-                        {/* Additional Text */}
-                        <Grid item xs={12} sm={5} >
-                            <AdditionalText
-                                classes={classes}
-                                localClasses={localClasses}
-                                selectedCheck={{ ...selectedCheck }}
-                                campaingnValues={{ ...campaingnValues }}
-                                handleChangeCheckbox={handleChangeCheckbox}
-                                handleSelectionRadio={handleSelectionRadio}
-                            />
-                        </Grid>
-                        {/* Advanced settings */}
-                        <Grid item xs={12} sm={7}>
-                            <AdvancedSettings
-                                classes={classes}
-                                localClasses={localClasses}
-                                campaingnValues={{ ...campaingnValues }}
-                                setCampaingnValues={setCampaingnValues}
-                                setShowGallery={setShowGallery}
-                                removeAttachmentFile={removeAttachmentFile}
-                            />
-                        </Grid>
-                    </Grid>
-
-                    <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 25 }}>
-                        <WizardActions
-                            classes={classes}
-                            onBack={{
-                                callback: () => { setConfirmExit(true) }
-                            }}
-                            onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
-                            additionalButtons={renderButtons()}
-                            additionalButtonsOnStart={renderTemplateButtons()}
-                        />
-                    </Box>
-                    <BaseDialog
-                        classes={classes}
-                        open={confirmExit}
-                        title={t("campaigns.GridButtonColumnResource2.confirmExit")}
-                        showDivider={true}
-                        onClose={() => handleExit(false)}
-                        onCancel={() => handleExit(null)}
-                        onConfirm={() => handleExit(true)}
-                        disableBackdropClick={true}
-                        cancelText="common.No"
-                        confirmText="common.Yes"
-                    >
-                        <Box>
-                            <Typography variant="subtitle1">
-                                {t("campaigns.GridButtonColumnResource2.confirmExitText")}
-                            </Typography>
-                        </Box>
-                    </BaseDialog>
-                    <BaseDialog
-                        classes={classes}
-                        open={confirmDelete}
-                        title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
-                        showDivider={true}
-                        onClose={() => setConfirmDelete(false)}
-                        onCancel={() => setConfirmDelete(false)}
-                        onConfirm={() => handleDelete()}
-                        cancelText="common.Cancel"
-                        confirmText="common.Ok"
-                    >
-                        <Box>
-                            <Typography variant="subtitle1">
-                                {t("campaigns.GridButtonColumnResource2.ConfirmText")}
-                            </Typography>
-                        </Box>
-                    </BaseDialog>
-                    {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
-                    {
-                        dialogType === DialogType.Templates && <Templates
-                            isCreateCampaign={true}
-                            classes={classes}
-                            onClose={async (template) => {
-                                setDialogType(null);
-                                if (template !== undefined) {
-                                    const response = await dispatch(getTemplateById(template.ID));
-                                    if (response.payload.StatusCode === 201) {
-                                        setTemplate(response?.payload?.Data);
-                                    }
-                                }
-                            }}
-                            isOpen={dialogType === DialogType.Templates}
-                        />
-                    }
-                    <Loader isOpen={showLoader} />
-                </Box>
-            </Box>
         </DefaultScreen>
     )
 }
