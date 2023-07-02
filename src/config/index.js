@@ -3,7 +3,7 @@ dotenv.config();
 
 const apiURL = process.env.REACT_APP_API_URL;
 const isProdMode = process.env.REACT_APP_MODE === "PROD";
-const port = process.env.PORT;
+const port = process.env.PORT ?? '';
 const actionURL = isProdMode
   ? `https://${window.location.hostname}${port}/Pulseem/`
   : process.env.REACT_APP_ACTION_URL;
