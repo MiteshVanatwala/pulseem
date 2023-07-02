@@ -82,7 +82,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 1050,
   },
   mgmtTitleContainer: {
-    width: 'auto !important',
+    width: 'auto',
     background: '#F0F5FF',
     padding: `11px 31.69px 8px 31.69px`,
     borderTopRightRadius: 10,

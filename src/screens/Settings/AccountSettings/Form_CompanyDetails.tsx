@@ -34,6 +34,7 @@ import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
 import { Title } from "../../../components/managment/Title";
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
+import ILLUSTRATION_DATA_ANALYSIS from "../../../assets/images/settings/Illustration_data_Analysis";
 
 
 const FORM_COMPANY_DETAILS = ({
@@ -253,21 +254,7 @@ const FORM_COMPANY_DETAILS = ({
           }}
         />
         <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-          <img
-            src={DataAnalysis}
-            className={"svg_data_analysis"}
-            alt=""
-            width="225"
-            height="155"
-            style={{
-              top: 121,
-              right: isRTL ? "auto" : "93.14px",
-              left: isRTL ? "93.14px" : "auto",
-              position: "absolute",
-              transform: "scaleX(1)",
-            }}
-          />
-          {/* <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> */}
+          <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} />
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
@@ -428,9 +415,10 @@ const FORM_COMPANY_DETAILS = ({
         <Title
           Text={t("settings.accountSettings.fixedComDetails.securitySettings")}
           classes={classes}
+          ContainerStyle={{ width: 'auto' }}
         />
-        <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
-          <Grid container className={"form"}>
+        <Box className={"formContainer"} style={{ paddingInlineStart: 15 }}>
+          <Grid container className={"form"} style={{ maxWidth: '100%' }}>
             {accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 && <Grid
               item
               xs={12}

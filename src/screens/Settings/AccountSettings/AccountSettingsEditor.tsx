@@ -23,12 +23,13 @@ import {
 	MdMobileFriendly,
 	MdOutlineMarkEmailRead,
 } from "react-icons/md";
+import { Title } from '../../../components/managment/Title';
 
 const AccountSettingsEditor = ({ classes }: any) => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
-	const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
+	const { account, ToastMessages } = useSelector((state: any) => state?.accountSettings);
 	const { CoreToastMessages } = useSelector((state: any) => state?.core);
 	const [toastMessage, setToastMessage] = useState(null);
 	const [showLoader, setShowLoader] = useState(true);
@@ -88,8 +89,8 @@ const AccountSettingsEditor = ({ classes }: any) => {
 	}, []);
 
 	useEffect(() => {
-		setSettingRequest(accountSettings?.Data);
-	}, [accountSettings]);
+		setSettingRequest(account?.Data);
+	}, [account]);
 
 	// useEffect(() => {
 	// 	if (WhatsappTierID) {
@@ -243,55 +244,56 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		>
 			{toastMessage && renderToast()}
 			<Box className={clsx(classes.settingsContainer)}>
-				<Box className={clsx("head", classes.flexSpaceBetween)} style={{ display: windowSize !== 'xs' ? 'flex' : 'block' }}>
-					<Typography className={classes.managementTitle} style={{ marginTop: 0 }}>
-						{/* @ts-ignore */}
-						{t('settings.accountSettings.title')}
-					</Typography>
-					<Box style={{ marginInlineStart: 'auto' }}>
-						<Button
-							className={clsx(
-								classes.btn,
-								classes.btnNohover,
-								classes.noBorder,
-								classes.link,
-								classes.textCapitalize,
-								"link"
-							)}
-							onClick={() =>
-								handleVerification('cellphone')
-							}
-							startIcon={<MdMobileFriendly />}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-						>
-							<>
-								{t(
-									"settings.accountSettings.fixedComDetails.btnVerifyNumber"
+				<Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? 'flex' : 'block' }}>
+					<Title Text={t("settings.accountSettings.title")} classes={classes}
+						ContainerStyle={{ width: '100% !important' }}
+						Element={<Box style={{ float: isRTL ? 'left' : 'right' }}>
+							<Button
+								className={clsx(
+									classes.btn,
+									classes.btnNohover,
+									classes.noBorder,
+									classes.link,
+									classes.textCapitalize,
+									"link"
 								)}
-							</>
-						</Button>
-						<Button
-							className={clsx(
-								classes.btn,
-								classes.btnNohover,
-								classes.noBorder,
-								classes.link,
-								classes.textCapitalize,
-								"link"
-							)}
-							onClick={() =>
-								handleVerification('email')
-							}
-							startIcon={<MdOutlineMarkEmailRead />}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-						>
-							<>
-								{t(
-									"settings.accountSettings.fixedComDetails.btnVerifyEmail"
+								onClick={() =>
+									handleVerification('cellphone')
+								}
+								startIcon={<MdMobileFriendly />}
+								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+								style={{ backgroundColor: 'transparent' }}
+							>
+								<>
+									{t(
+										"settings.accountSettings.fixedComDetails.btnVerifyNumber"
+									)}
+								</>
+							</Button>
+							<Button
+								className={clsx(
+									classes.btn,
+									classes.btnNohover,
+									classes.noBorder,
+									classes.link,
+									classes.textCapitalize,
+									"link"
 								)}
-							</>
-						</Button>
-					</Box>
+								onClick={() =>
+									handleVerification('email')
+								}
+								startIcon={<MdOutlineMarkEmailRead />}
+								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+								style={{ backgroundColor: 'transparent' }}
+							>
+								<>
+									{t(
+										"settings.accountSettings.fixedComDetails.btnVerifyEmail"
+									)}
+								</>
+							</Button>
+						</Box>}
+					/>
 				</Box>
 				<Divider />
 				<Box className={"containerBody"}>

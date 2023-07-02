@@ -21,9 +21,10 @@ import { AccDtlPropTypes } from '../../../Models/Settings/AccountDetails';
 import { IsNumberField } from '../../../helpers/Utils/Validations';
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { tierSetting } from '../../Whatsapp/Constant';
+import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
 
 const FORM_ACCOUNT_DETAILS = ({
-  	classes,
+	classes,
 	setToastMessage,
 	ToastMessages,
 	Settings,
@@ -31,8 +32,8 @@ const FORM_ACCOUNT_DETAILS = ({
 	selectedTier,
 	onTierChange,
 }: AccDtlPropTypes) => {
-  const { t } = useTranslation();
-  const { isRTL } = useSelector((state: any) => state.core);
+	const { t } = useTranslation();
+	const { isRTL } = useSelector((state: any) => state.core);
 
 	const [accountDetails, setAccountDetails] = useState<AccountSettings | null>({
 		DefaultFromMail: '',
@@ -49,9 +50,9 @@ const FORM_ACCOUNT_DETAILS = ({
 		return true;
 	};
 
-  useEffect(() => {
-    setAccountDetails(Settings);
-  }, [Settings]);
+	useEffect(() => {
+		setAccountDetails(Settings);
+	}, [Settings]);
 
 	const handleChange = (e: any, name = '') => {
 		let actualValue = e?.target?.value;
@@ -76,10 +77,11 @@ const FORM_ACCOUNT_DETAILS = ({
 			<Title
 				Text={t('settings.accountSettings.actDetails.title')}
 				classes={classes}
-				ContainerStyle={undefined}
+				ContainerStyle={{ width: 'auto'}}
 				Element={null}
 			/>
 			<Box className={'formContainer'}>
+				<Illustration_app_Settings className={"svg_data_analysis"} /> 
 				<Grid container className={'form'}>
 					<Grid item xs={12} sm={6} md={4} className={'textBoxWrapper'}>
 						<Typography>
@@ -228,22 +230,24 @@ const FORM_ACCOUNT_DETAILS = ({
 								})}
 							</Select>
 						</Grid>
-
-						<Grid item xs={12} className={classes.justifyContentEnd}>
-							<Button
-								variant='contained'
-								size='medium'
-								onClick={handleSave}
-								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								className={clsx(
-									classes.mt5,
-									classes.actionButton,
-									classes.actionButtonLightGreen
-								)}>
-								{/* @ts-ignore */}
-								{t('settings.accountSettings.actDetails.btnUpdate')}
-							</Button>
-						</Grid>
+					</Grid>
+				</Grid>
+				<Grid container className={'form'} style={{ maxWidth: '100%' }}>
+					<Grid item xs={12} className={classes.justifyContentEnd}>
+						<Button
+							variant='contained'
+							size='medium'
+							onClick={handleSave}
+							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+							className={clsx(
+								classes.mt5,
+								classes.btn,
+								classes.btnRounded,
+								"saveFixedDetails"
+							)}>
+							{/* @ts-ignore */}
+							{t('settings.accountSettings.actDetails.btnUpdate')}
+						</Button>
 					</Grid>
 				</Grid>
 			</Box>
