@@ -1286,6 +1286,7 @@ const ClientSearchResult = ({ props, classes }) => {
               variant="contained"
               size="medium"
               className={clsx(
+                !data ? classes.disabled : null,
                 classes.actionButton,
                 classes.actionButtonGreen
               )}
