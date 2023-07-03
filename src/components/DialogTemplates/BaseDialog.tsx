@@ -57,27 +57,20 @@ export const BaseDialog = ({
     onCancel?.();
   };
 
-  const RenderExitButton = () =>
-    exitButton ?? (
-      <Stack
-        onClick={onExit}
-        className={clsx(classes.dialogExitButton, classes.f20, className, isRTL ? classes.dialogExitButtonRTL : classes.dialogExitButtonLTR)}
-        justifyContent="center"
-        alignItems="center"
-        alignSelf="center"
-        style={{
-          left: isRTL ? 15 : 'auto',
-          right: isRTL ? 'auto' : 15,
-        }}
-      >
-        <CgClose />
-      </Stack>
-    );
-
+  const RenderExitButton = () => {
+    return <Stack
+      onClick={onExit}
+      className={clsx(classes.dialogExitButton, classes.f20, className, isRTL ? classes.dialogExitButtonRTL : classes.dialogExitButtonLTR)}
+      justifyContent="center"
+      alignItems="center"
+      alignSelf="center"
+    >
+      <CgClose />
+    </Stack>
+  }
   const RenderTitleDefault = () => (
     <>
       <Typography
-        // style={{ textAlign: 'center', marginTop: 15, color: "#000", direction: isRTL ? 'rtl' : 'ltr' }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -88,7 +81,6 @@ export const BaseDialog = ({
       >
         {title}
       </Typography>
-      {/* {showDivider && <Divider />} */}
     </>
   );
 
@@ -140,7 +132,7 @@ export const BaseDialog = ({
     if (icon === false) return <></>;
     const alertIcon = <IoAlertCircleOutline />;
     return (
-      <Stack className={classes.dialogIconContainer}>
+      <Stack>
         {icon || alertIcon}
       </Stack>
     );

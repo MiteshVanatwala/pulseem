@@ -2223,8 +2223,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: 'rgba(0, 0, 0, 0.7)',
     fontWeight: '700',
     position: 'absolute',
-    top: '0.2rem',
+    // top: '0.2rem',
     cursor: 'pointer',
+    '& svg': {
+      color: '#fff'
+    }
   },
   btnBgExitDialog: {
     backgroundColor: "#0371ad",
@@ -3058,11 +3061,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   dialogTopBar: {
+    paddingInline: 15,
     height: 50,
-    width: '100%',
     display: 'flex',
     alignItems: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
     flexDirection: isRTL ? 'row-reverse !important' : 'row',
     color: "#fff",
     fontWeight: 600,
@@ -3071,10 +3074,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiStack-root': {
       display: 'flex',
       flexDirection: isRTL ? 'row-reverse' : 'row',
-      paddingInlineStart: 15,
-      paddingInlineEnd: 15,
+      // paddingInlineStart: 15,
+      // paddingInlineEnd: 15,
     },
-
+    '& svg': {
+      fontSize: 30
+    }
   },
   textRight: {
     textAlign: "right",

@@ -198,7 +198,9 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     );
   }
 
-  const deleteShortcut = async () => {
+  const deleteShortcut = async (event) => {
+    event?.preventDefault();
+    event?.stopPropagation();
     if (activeShortcut !== null) {
       const sid = activeShortcut.replace('short_', '');
       await dispatch(deleteShortcuts(sid));

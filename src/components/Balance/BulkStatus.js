@@ -272,16 +272,30 @@ const BulkStatus = ({ classes }) => {
               </Button>
             </Box>
           </Grid>}
-          {Whatsapp?.Credits > 0 && <Grid
-            container
-            item xs={9}
-            className={getBillingTypeText(Whatsapp) === 0 ? classes.statusOutline : classes.statusBlue}
-            justifyContent='space-between'>
-            <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
-            <Typography className={classes.bulkTitle}>
-              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Whatsapp)}
-            </Typography>
-          </Grid>}
+          <Divider />
+          {Whatsapp?.Credits > 0 &&
+            <Grid
+              container
+              item sm={12} md={12} lg={12} xl={12}
+              className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+              justifyContent='space-between'
+            >
+              <Box className={clsx(classes.flex1)}>
+                <WhatsappIcon className={classes.shoppingCartIcon} />
+              </Box>
+              <Box className={clsx(classes.flex2)}>
+                <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
+              </Box>
+              <Box className={clsx(classes.flex2, classes.textCenter)}>
+                {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Whatsapp)}
+              </Box>
+              <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType(4)}>
+                <Button className={clsx(classes.btn, classes.btnRounded, classes.btnDisabled)}>
+                  {t('dashboard.purchase')}
+                  {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                </Button>
+              </Box>
+            </Grid>}
         </Grid>
       </Paper>
     </>
