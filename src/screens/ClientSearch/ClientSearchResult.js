@@ -49,9 +49,9 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, FlatObject, ReplaceExtraFieldHeader, DeletePropertyFromArrayObject, OrderItems, SwitchStatus, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
-import { ClientStatus, SmsStatus } from "../../helpers/Constants";
+import { ExportFile } from '../../helpers/Export/ExportFile';
+import { HandleExportData, ReplaceExtraFieldHeader, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
+import { ClientStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -1363,7 +1363,7 @@ const ClientSearchResult = ({ props, classes }) => {
     let date = null;
     const { FirstName, LastName, CreationDate, ClientID } = row;
     let text = t("common.UpdatedOn");
-    date = row.CreationDate ? moment(row.CreationDate, dateFormat) : null;
+    date = CreationDate ? moment(CreationDate, dateFormat) : null;
     return (
       <Grid container spacing={1}>
         <Grid item sm={12} style={{ textAlign: 'start' }}>
@@ -1380,7 +1380,7 @@ const ClientSearchResult = ({ props, classes }) => {
             title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
             text={`${FirstName} ${LastName}`}
           >
-            <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName} {LastName}</Typography>
+            <Typography data-client-id={ClientID} noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName} {LastName}</Typography>
           </CustomTooltip>
           <Typography
             className={classes.grayTextCell}>
