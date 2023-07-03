@@ -363,6 +363,7 @@ export const getRoutes = (
         { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: '/react/Reports/DirectSendReport/Archive', isShow: true },
         { title: t('master.OpenedClickedReport'), href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
         { key: 'inboundMessages', title: t('master.responses'), href: '/react/reports/Inbound', isShow: true },
+        { key: 'recipientReport', title: t('common.recipient'), href: '/react/reports/recipient', isShow: true },
       ],
     },
   ];

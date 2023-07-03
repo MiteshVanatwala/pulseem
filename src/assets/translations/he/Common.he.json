@@ -627,5 +627,9 @@
   "doYouWantToProceed": "האם ברצונכם להמשיך?",
   "templateSaved": "תבנית נשמרה בהצלחה!",
   "templateNameIsRequired": "אנא בחרו שם לתבנית",
-  "loadMore": "טען עוד"
+  "loadMore": "טען עוד",
+  "recipient": "דו”/ח נמען",
+  "search": "חיפוש",
+  "createdDate": "נוצר בתאריך",
+  "recipientGroups": "קבוצות נמענים"
 }

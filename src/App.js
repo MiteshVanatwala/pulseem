@@ -65,6 +65,7 @@ import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAp
 import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
+import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -497,6 +498,11 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={'/react/Groups/Download'}
         element={<DownloadFiles classes={classes} />}
+      />
+      <Route
+        exact
+        path={'/react/reports/recipient'}
+        element={<RecipientReport classes={classes} />}
       />
     </Routes>
   )

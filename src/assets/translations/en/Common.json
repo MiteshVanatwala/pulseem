@@ -630,5 +630,9 @@
   "doYouWantToProceed": "Do you want to proceed?",
   "templateSaved": "Template successfully saved!",
   "templateNameIsRequired": "Template name is required",
-  "loadMore": "Load More"
+  "loadMore": "Load More",
+  "recipient": "Recipient Report",
+  "search": "Search",
+  "createdDate": "Created Date",
+  "recipientGroups": "Recipient Groups"
 }
