@@ -1970,8 +1970,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   activeTab: {
-    borderBottom: "4px solid #168ee3",
-    color: "#007bff !important",
+    borderBottom: "4px solid #ff2c44",
+    color: "#ff2c44 !important",
   },
   "@media screen and (max-width: 768px)": {
     width: "100%",

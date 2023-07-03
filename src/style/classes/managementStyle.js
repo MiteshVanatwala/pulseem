@@ -636,7 +636,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
     '& .MuiTableCell-head': {
       fontWeight: 300,
-      fontSize: 18
+      fontSize: 18,
+      fontWeight: 'bold',
     },
     '& .MuiTableBody-root': {
       '& .MuiTableRow-root': {
@@ -1417,7 +1418,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: "#0371AD",
     fontSize: 18,
     padding: '10px',
-    position: 'relative',
+    position: 'initial',
     [theme.breakpoints.down('xs')]: {
       padding: 0,
       height: 'auto',

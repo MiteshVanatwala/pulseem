@@ -154,7 +154,7 @@ const BulkStatus = ({ classes }) => {
         elevation={3}>
 
         <Grid container justifyContent='center'>
-          <Grid item xs={12} className={classes.dashBoxtitleSection}>
+          <Grid item xs={12} className={clsx(classes.posRelative, classes.dashBoxtitleSection)}>
             <Box className={classes.spaceBetween}>
               <Box className={clsx(classes.alignItemsCenter, classes.flexJustifyCenter)}>
                 <CardIcon className={clsx(classes.mleft5, classes.mr10)} />
