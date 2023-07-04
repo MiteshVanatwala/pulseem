@@ -525,7 +525,8 @@
       "BULK_ENDED": "החבילה שלכם נגמרה!<br/>עברו למסך הבית בכדי לרכוש חבילה חדשה",
       "MONTHLY_BULK_ENDED": "החבילה החודשית שלכם נגמרה!<br/>עברו למסך הבית בכדי לרכוש חבילה חדשה<br/>או פנו לשירות הלקוחות שלנו",
       "contactUs": "בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
-      "FUTURE_DATE_PASSED": "תאריך שליחת הקמפיין עבר. יש לבחור תאריך עתידי."
+      "FUTURE_DATE_PASSED": "תאריך שליחת הקמפיין עבר. יש לבחור תאריך עתידי.",
+      "INVALID_CAMPAIGN_ID": "Invalid Campaign ID"
     },
     "success": "הקמפיין נשמר בהצלחה",
     "sendSettings": {
