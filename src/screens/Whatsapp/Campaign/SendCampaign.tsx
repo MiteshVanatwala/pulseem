@@ -1,7 +1,7 @@
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
 import Title from '../../../components/Wizard/Title';
-import { Grid } from '@material-ui/core';
+import { Grid, Box } from '@material-ui/core';
 import {
 	APICreateGroupData,
 	ApiCreateGroupPayload,
@@ -742,7 +742,7 @@ const SendCampaign = ({
 			containerClass={null}>
 			{isAccountSetup ? (
 				<div>
-					<div>
+					<Box className={'topSection'}>
 						<Title
 							title={translator('whatsappCampaign.whatsappCampaign')}
 							classes={classes}
@@ -806,7 +806,7 @@ const SendCampaign = ({
 							onFormButtonClick={onFormButtonClick}
 							displayBackButton={true}
 						/>
-					</div>
+					</Box>
 					<SummaryModal
 						classes={classes}
 						isOpen={isSummaryModal}

@@ -368,10 +368,9 @@ const VerificationDialog = ({
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                             <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                             <Button
-                                style={{ height: 50 }}
+                                style={{ height: 35 }}
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonDarkBlue
+                                    classes.btn, classes.btnRounded
                                 )}
                                 onClick={() => {
                                     setSelectedVerificationContact('')
@@ -561,8 +560,7 @@ const VerificationDialog = ({
                             <Button
                                 style={{ height: 50 }}
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonDarkBlue,
+                                    classes.btn, classes.btnRounded,
                                     'btnVerifyNew'
                                 )}
                                 onClick={() => {
@@ -971,8 +969,7 @@ const VerificationDialog = ({
                             <Button
                                 style={{ height: 50 }}
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonDarkBlue
+                                    classes.btn, classes.btnRounded
                                 )}
                                 onClick={() => {
                                     setSelectedVerificationContact('')
@@ -1185,8 +1182,7 @@ const VerificationDialog = ({
                     handleClose()
                 }}
                 className={clsx(
-                    classes.dialogButton,
-                    classes.dialogConfirmButton,
+                    classes.btn, classes.btnRounded,
                     classes.ml5
                 )}>
                 {t('common.Ok')}

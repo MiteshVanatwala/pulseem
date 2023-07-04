@@ -798,6 +798,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: "transparent",
     },
   },
+  textCapitalize: {
+    textTransform: 'capitalize',
+  },
   blueLink: {
     color: '#0371ad',
     textTransform: 'capitalize',
@@ -1075,6 +1078,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   templateModal: {
     // minWidth: "900px",
     minWidth: '60vw',
+    '& .preview-btn': {
+      height: 30,
+      background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+      color: '#fff',
+      fontWeight: 'bold'
+    },
     '& .category-container': {
       paddingLeft: 10,
       "@media screen and (max-width: 900px)": {

@@ -818,11 +818,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const getDeleteDialog = (data = '') => ({
     title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}

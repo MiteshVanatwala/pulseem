@@ -1081,18 +1081,19 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			subPage={'create'}
 			currentPage='whatsapp'
 			classes={classes}
-			containerClass={null}
-			customPadding={true}>
+			containerClass={classes.management}>
 			{isAccountSetup ? (
 				<>
 					{renderToast()}
-					<Title
-						Text={translator('whatsapp.header')}
-						classes={classes}
-						ContainerStyle={{}}
-						// @ts-ignore
-						Element={null}
-					/>
+					<Box className={'topSection'}>
+						<Title
+							Text={translator('whatsapp.header')}
+							classes={classes}
+							ContainerStyle={{}}
+							// @ts-ignore
+							Element={null}
+						/>
+					</Box>
 					<br />
 					<form onSubmit={onSubmit}>
 						<Grid container>

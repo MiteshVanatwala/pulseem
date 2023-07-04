@@ -97,9 +97,13 @@ const Templates = ({
         <div id='buttons' className={clsx(classes.textCenter, classes.p5, classes.pb25)}>
           <Button
             className={clsx(
-              classes.solidDialogButton,
-              classes.dialogConfirmBlueButton,
-              classes.p5
+              // classes.solidDialogButton,
+              // classes.dialogConfirmBlueButton,
+              classes.p5,
+              classes.btn,
+              classes.btnRounded,
+              classes.textCapitalize,
+              'preview-btn'
             )}
             onClick={() => {
               setSelectedTemplate(templateDetails);
@@ -107,7 +111,7 @@ const Templates = ({
             }}
           >
             <Typography
-              className={clsx(classes.dBlock, classes.f14)}
+              className={clsx(classes.dBlock, classes.f12)}
             >
               {t('common.Preview')}
             </Typography>
@@ -115,10 +119,13 @@ const Templates = ({
 
           <Button
             className={clsx(
-              classes.solidDialogButton,
-              classes.dialogConfirmButton,
+              // classes.solidDialogButton,
+              // classes.dialogConfirmButton,
+              classes.btn,
+              classes.btnRounded,
               classes.ml5,
-              classes.p5
+              classes.p5,
+              classes.textCapitalize,
             )}
             onClick={() => {
               onClose(templateDetails)
