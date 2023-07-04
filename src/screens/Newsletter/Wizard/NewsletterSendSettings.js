@@ -389,11 +389,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setDialogType({ type: 'sendSuccess' });
         }
         else if (response?.StatusCode === 403) {
-            setNewEmailVerification(newsletterInfo.FromEmail)
+            setNewEmailVerification(newsletterInfo.FromEmail);
         }
         else {
             setDialogType(SEND_PROC[response?.StatusCode]);
         }
+        dispatch(getEmailSendSettings(params?.id));
     }
     const handleInputNewGroup = (e) => {
         setNewGroupDetails({ ...newGroupDetails, groupNameExist: false, groupValue: e.target.value });
