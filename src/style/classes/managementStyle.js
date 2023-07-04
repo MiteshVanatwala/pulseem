@@ -554,6 +554,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       color: "rgba(0,0,0,0.40)",
     },
   },
+  actionButton: {
+    height: 15,
+    display: 'inline-Block'
+  },
   selectPlaceholder: {
     height: 0,
     padding: 0,

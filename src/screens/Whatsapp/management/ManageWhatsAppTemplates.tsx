@@ -15,12 +15,7 @@ import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	DeleteIcon,
-	DuplicateIcon,
-	EditIcon,
-	SendGreenIcon,
 	SearchIcon,
-	PreviewIcon,
 } from '../../../assets/images/managment/index';
 import ManagmentIcon from './Component/ManagmentIcon';
 import { Title } from '../../../components/managment/Title';
@@ -76,6 +71,11 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import NoSetup from '../NoSetup/NoSetup';
 import { getApiErrorResponseMessage } from '../Common';
+import Delete from '../../../assets/images/managment/Delete';
+import Duplicate from '../../../assets/images/managment/Duplicate';
+import Edit from '../../../assets/images/managment/Edit';
+import Preview from '../../../assets/images/managment/Preview';
+import SendGreenIcon from '../../../assets/images/managment/greenSend.png';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -560,7 +560,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'preview',
 				buttonKey: 'preview',
-				icon: PreviewIcon,
+				uIcon: <Preview className={classes.actionButton} />,
 				lable: translator('whatsappManagement.preview'),
 				remove: windowSize === 'xs',
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
@@ -571,7 +571,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'edit',
 				buttonKey: 'edit',
-				icon: EditIcon,
+				uIcon: <Edit className={classes.actionButton} />,
 				disable: !row?.IsAllowEdit,
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
@@ -583,7 +583,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'duplicate',
 				buttonKey: 'duplicate',
-				icon: DuplicateIcon,
+				uIcon: <Duplicate className={classes.actionButton} />,
 				lable: translator('campaigns.lnkEditResource1.ToolTip'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
@@ -593,7 +593,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'delete',
 				buttonKey: 'delete',
-				icon: DeleteIcon,
+				uIcon: <Delete className={classes.actionButton} />,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
@@ -744,12 +744,14 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{isAccountSetup ? (
 				<>
 					{renderToast()}
-					<Title
-						Text={translator('whatsappManagement.templateManagement')}
-						classes={classes}
-						ContainerStyle={{}}
-						Element={null}
-					/>
+					<Box className={'topSection'}>
+						<Title
+							Text={translator('whatsappManagement.templateManagement')}
+							classes={classes}
+							ContainerStyle={{}}
+							Element={null}
+						/>
+					</Box>
 
 					<div className={classes.manageWhatsappTemplates}>
 						<Grid container spacing={2} className={classes.lineTopMarging}>
@@ -824,7 +826,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							spacing={2}
 							className={classes.manageTemplatesHeaderButtons}>
 							<div className={classes.manageTemplatesCreate}>
-								<Button className={'green'} onClick={onCreateTemplate}>
+								<Button onClick={onCreateTemplate} className={clsx(classes.btn, classes.btnRounded)}>
 									<>{translator('whatsappManagement.createTemplate')}</>
 								</Button>
 							</div>
