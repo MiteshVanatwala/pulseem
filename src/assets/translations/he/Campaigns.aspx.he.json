@@ -526,7 +526,8 @@
       "MONTHLY_BULK_ENDED": "החבילה החודשית שלכם נגמרה!<br/>עברו למסך הבית בכדי לרכוש חבילה חדשה<br/>או פנו לשירות הלקוחות שלנו",
       "contactUs": "בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
       "FUTURE_DATE_PASSED": "תאריך שליחת הקמפיין עבר. יש לבחור תאריך עתידי.",
-      "INVALID_CAMPAIGN_ID": "Invalid Campaign ID"
+      "INVALID_CAMPAIGN_ID": "מספר מזהה של הקמפיין לא תקין",
+      "ACCOUNT_RESTRICTED": "חשבון זה מוגבל לשליחה<br/>עליכם להסדיר תשלומים קודמים מול מחלקת המכירות."
     },
     "success": "הקמפיין נשמר בהצלחה",
     "sendSettings": {
@@ -555,7 +556,7 @@
       "specialDateMissing": "שדה מיוחד חסר",
       "filters": "סינון",
       "segmentations": "פילוחים",
-      "totalNotToSend":"סה\"כ מסוננים",
+      "totalNotToSend": "סה\"כ מסוננים",
       "DidNotClicked": "לא פתחו או לחצו על קישור",
       "smsMarketing": {
         "title": "SMS שיווק משלים",

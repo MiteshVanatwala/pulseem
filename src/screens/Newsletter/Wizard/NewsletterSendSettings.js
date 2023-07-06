@@ -383,6 +383,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         408: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_HAS_NO_PRICE_LIST'), ShowContactSupport: true } },
         409: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.MONTHLY_BULK_ENDED'), ShowContactSupport: true } },
         410: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.FIRST_CAMPAIGN_RESTRICTIONS'), ShowContactSupport: false } },
+        411: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_RESTRICTED'), ShowContactSupport: true } },
     };
 
     const handleSendResponse = (response) => {
