@@ -62,6 +62,7 @@
 	"sendCampaign": "Campaign sent successfully",
 	"saveCampaign": "Campaign saved successfully",
 	"cloneCampaign": "Campaign cloned successfully",
+	"deleteCampaign": "Campaign deleted successfully",
 	"createTemplate": "Template created successfully",
 	"deleteTemplate": "Template deleted successfully",
 	"submitTemplate": "Template submitted successfully",
