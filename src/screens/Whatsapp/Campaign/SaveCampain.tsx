@@ -1434,7 +1434,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						campaignName={''}
 						fromNumber={''}
 						onSummaryModalClose={() => setIsSummaryModal(false)}
-						onConfirmOrYes={() => onTestSend(false, Number(campaignID || 0))}
+						onConfirmOrYes={async () => await onTestSend(false, Number(campaignID || 0))}
 						selectedGroups={selectedTestGroup}
 						selectedFilterGroups={[]}
 						selectedFilterCampaigns={[]}
@@ -1448,7 +1448,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						campaignSummary={campaignSummary}
 						randomlyCount={randomlyCount}
 						setRandomlyCount={setRandomlyCount}
-						resetRandomCount={() => setRandomlyCount('')}
+						resetRandomCount={async () => await setRandomlyCount('')}
 					/>
 				</>
 			) : (
