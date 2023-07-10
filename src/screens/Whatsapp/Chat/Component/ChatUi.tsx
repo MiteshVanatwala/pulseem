@@ -109,6 +109,12 @@ const ChatUi = ({
 			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
 				setAllWhatsappChat(allWhatsAppChatData.payload?.Data?.Items);
 				updateContactList();
+				const element = document.getElementById('chat-messages');
+				if (element !== null) {
+					setTimeout(() => {
+						element.scrollTop = element.scrollHeight;
+					}, 1000)
+				}
 			} else {
 				setAllWhatsappChat(undefined);
 			}
