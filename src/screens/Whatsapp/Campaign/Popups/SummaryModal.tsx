@@ -263,20 +263,22 @@ const SummaryModal = ({
 		setRandomlyCount(value);
 	};
 
-	const onConfirmOrYesClick = () => {
+	const onConfirmOrYesClick = async () => {
+		setIsLoader(true);
 		if (validateSummary()) {
 			if (campaignSummary?.WhatsappTierID === 4) {
-				onConfirmOrYes();
-				resetRandomCount();
+				await onConfirmOrYes();
+				await resetRandomCount();
 			} else {
 				if (sendType === '1' || (sendType === '2' && isIn24HrWindow)) {
-					onConfirmOrYes();
-					resetRandomCount();
+					await onConfirmOrYes();
+					await resetRandomCount();
 				} else {
 					setTierAlert(true);
 				}
 			}
 		}
+		setIsLoader(false);
 	};
 
 	const getTierInfoTooltip = () => {
