@@ -17,6 +17,7 @@ import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { ImWhatsapp } from 'react-icons/im';
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
 import { HandleExportData } from '../../../../helpers/Export/ExportHelper';
+import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
 
 const WhatsappInbound = ({ classes }) => {
     const dispatch = useDispatch();
@@ -27,9 +28,8 @@ const WhatsappInbound = ({ classes }) => {
     const [dialog, setDialog] = useState(null);
     const [showLoader, setShowLoader] = useState(true);
     const [isSearching, setIsSearching] = useState(false);
-    const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
     const { inboundWhatsappReport } = useSelector(state => state.whatsapp);
-    const { windowSize } = useSelector(state => state.core);
+    const { windowSize, rowsPerPage } = useSelector(state => state.core);
     const { accountFeatures } = useSelector(state => state.common);
 
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
@@ -267,8 +267,7 @@ const WhatsappInbound = ({ classes }) => {
     }
 
     const handlePageChange = (val) => {
-        setRowsPerPage(val);
-        setRequest({ ...request, PageSize: val });
+        dispatch(setRowsPerPage(val))
     }
 
     const renderTablePagination = () => {
