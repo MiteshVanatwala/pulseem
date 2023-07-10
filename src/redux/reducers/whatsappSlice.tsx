@@ -834,6 +834,12 @@ export const whatsappSlice = createSlice({
 				message: 'whatsappCampaign.deleteTemplate',
 				showAnimtionCheck: true,
 			},
+			DUPLICATE_TEMPLATE_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'whatsappCampaign.duplicateTemplate',
+				showAnimtionCheck: true,
+			},
 			DUPLICATE_CAMPAIGN_SUCCESS: {
 				severity: 'success',
 				color: 'success',

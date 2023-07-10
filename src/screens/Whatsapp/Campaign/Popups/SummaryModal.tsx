@@ -170,6 +170,8 @@ const SummaryModal = ({
 			return translator('mainReport.birthday');
 		} else if (spectialDateFieldID === '2') {
 			return translator('mainReport.creationDay');
+		} else if (spectialDateFieldID === '4') {
+			return translator('mainReport.dateOfJoining');
 		} else {
 			return (
 				specialDatedropDown &&

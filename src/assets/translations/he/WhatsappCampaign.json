@@ -65,6 +65,7 @@
 	"deleteCampaign": "מסע הפרסום נמחק בהצלחה",
 	"createTemplate": "תבנית נוצרה",
 	"deleteTemplate": "תבנית נמחקה",
+	"duplicateTemplate": "תבנית שוכפלה בהצלחה",
 	"submitTemplate": "תבנית הוגשה בהצלחה",
 	"saveTemplate": "תבנית נשמרה בהצלחה",
 	"chatMediaErrorMsg": "לא ניתן להציג מדיה זאת בצ'אט - לחץ על הקישור כדי לצפות במדיה",

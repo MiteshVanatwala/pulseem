@@ -280,6 +280,7 @@ export type toastProps = {
 	SAVE_CAMPAIGN_SUCCESS: toastKeyProps;
 	DELETE_CAMPAIGN_SUCCESS: toastKeyProps;
 	DELETE_TEMPLATE_SUCCESS: toastKeyProps;
+	DUPLICATE_TEMPLATE_SUCCESS: toastKeyProps;
 	SUBMIT_CAMPAIGN_SUCCESS: toastKeyProps;
 	DUPLICATE_CAMPAIGN_SUCCESS: toastKeyProps;
 	INVALID_RECIPIENTS: toastKeyProps;

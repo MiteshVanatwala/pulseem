@@ -915,8 +915,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`/react/whatsapp/campaign/edit/page2/${campaignID}`,
-					{ state: { from: 'edit/page1' } }
+					`/react/whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}`,
+					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}` } }
 				);
 			} else {
 				data?.Message

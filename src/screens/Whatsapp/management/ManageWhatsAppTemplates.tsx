@@ -648,7 +648,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		);
 		setIsLoader(false);
 		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
-			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+			setToastMessage(ToastMessages.DELETE_TEMPLATE_SUCCESS);
 			setApiTemplateData();
 		} else {
 			deleteData?.payload?.Error
@@ -668,7 +668,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		);
 		setIsLoader(false);
 		if (duplicateData?.payload?.Status === apiStatus.SUCCESS) {
-			setToastMessage(ToastMessages.DELETE_TEMPLATE_SUCCESS);
+			setToastMessage(ToastMessages.DUPLICATE_TEMPLATE_SUCCESS);
 			setApiTemplateData();
 		} else {
 			duplicateData?.payload?.Error

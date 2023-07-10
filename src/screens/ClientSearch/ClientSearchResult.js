@@ -83,6 +83,11 @@ const useStyles = makeStyles({
     "@media screen and (max-width: 1160px)": {
       fontSize: '13px'
     }
+  },
+  actionButtons: {
+    "& button": {
+      minWidth: 'auto'
+    }
   }
 });
 const ClientSearchResult = ({ props, classes }) => {
@@ -1486,7 +1491,9 @@ const ClientSearchResult = ({ props, classes }) => {
         <Grid
           container
           direction='row'
-          justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}>
+          justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}
+          className={localClasses.actionButtons}
+          >
           {iconsMap.map(icon => (
             <Grid
               className={icon.disable && classes.disabledCursor}

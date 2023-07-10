@@ -471,6 +471,7 @@
   "days"  :"Days",
   "birthday"  :"Birthday",
   "creationDay":"Creation Day",
+  "dateOfJoining": "Date Of Joining",
   "recipientFilter" : "Filter",
   "createContent":"Create Content",
   "campName":"Campaign Name",
