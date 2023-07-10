@@ -37,8 +37,8 @@ const WhatsappInbound = ({ classes }) => {
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const { id } = useParams();
     const defaultRequest = {
-        FromDate: null,
-        ToDate: null,
+        FromDate: moment().subtract(30, 'days').utcOffset(0).format('YYYY-MM-DD HH:mm').toString(),
+        ToDate: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm').toString(),
         FromNumber: '',
         ToNumber: '',
         TextMessage: '',
