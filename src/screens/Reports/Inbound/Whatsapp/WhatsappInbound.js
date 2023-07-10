@@ -128,7 +128,7 @@ const WhatsappInbound = ({ classes }) => {
             <>
                 <Grid item className={clsx(classes.groupsLableContainer, classes.mb15)} >
                     <Typography className={classes.groupsLable}>
-                        {`${inboundWhatsappReport?.Message} ${t('common.Clients')}`}
+                        {`${inboundWhatsappReport?.Message} ${t('master.responses')}`}
                     </Typography>
                 </Grid>
                 <TableContainer className={classes.tableStyle}>
