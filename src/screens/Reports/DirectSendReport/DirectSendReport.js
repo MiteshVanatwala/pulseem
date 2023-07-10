@@ -360,7 +360,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         {
           const requestPayload = { ...defaultRequests.WHATSAPP };
           requestPayload.IsExport = true;
-          response = await dispatch(getDirectReport(requestPayload));
+          response = await dispatch(getDirectReport(searchData.whatsapp));
 
           const exportOptions = {
             OrderItems: true,
