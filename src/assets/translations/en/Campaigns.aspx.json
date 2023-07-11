@@ -517,7 +517,7 @@
       "invaliApiKey": "Invalid or missing API KEY",
       "fileExtNotAlwd": "File extension not allowed",
       "fileCanNotNull": "File cannot be null",
-      "generalError": "Error Occured",
+      "generalError": "Error Occured, Please contact our costumer support:",
       "campaignName": "Please fill in campaign name",
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",
