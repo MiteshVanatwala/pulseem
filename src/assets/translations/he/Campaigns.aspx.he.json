@@ -508,7 +508,7 @@
       "invaliApiKey": "מפתח API לא תקין!",
       "fileExtNotAlwd": "סיומת הקובץ אינה נתמכת",
       "fileCanNotNull": "קובץ לא יכול להיות ריק",
-      "generalError": "אירעה שגיאה",
+      "generalError": "אירעה שגיאה, אנא פנה לתמיכה",
       "campaignName": "אנא מלא שם קמפיין",
       "fromName": "אנא מלא שם שולח",
       "fromEmail": "נא מלא כתובת מייל לשליחה",
