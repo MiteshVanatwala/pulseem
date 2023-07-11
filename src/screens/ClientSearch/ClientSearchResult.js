@@ -1380,7 +1380,7 @@ const ClientSearchResult = ({ props, classes }) => {
             title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
             text={`${FirstName} ${LastName}`}
           >
-            <Typography data-client-id={ClientID} noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName} {LastName}</Typography>
+            <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName} {LastName}</Typography>
           </CustomTooltip>
           <Typography
             className={classes.grayTextCell}>
