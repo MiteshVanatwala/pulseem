@@ -1258,7 +1258,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Button>
                                         </Badge>
                                     </Stack>
-                                    <Stack direction="row" justifyContent="center" alignItems="center">
+                                    {/* <Stack direction="row" justifyContent="center" alignItems="center">
                                         <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
@@ -1270,7 +1270,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                 {t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
                                             </Button>
                                         </Badge>
-                                    </Stack>
+                                    </Stack> */}
                                 </>
                             } />
                     </Grid>
