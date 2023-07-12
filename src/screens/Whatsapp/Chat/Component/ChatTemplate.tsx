@@ -137,13 +137,16 @@ const ChatTemplate = ({
 			<>
 				{message?.MediaUrl?.length === 0 && <span>{message?.Message}</span>}
 				{message?.MediaUrl && message?.MediaUrl?.length > 0 && (
-					<ImagePreview
-						classes={classes}
-						className={`${classes.whatsappChat} chat__img`}
-						placeholderImg={imagePlaceholder}
-						errorImg={imagePlaceholderX}
-						src={message?.MediaUrl}
-					/>
+					<>
+						<ImagePreview
+							classes={classes}
+							className={`${classes.whatsappChat} chat__img`}
+							placeholderImg={imagePlaceholder}
+							errorImg={imagePlaceholderX}
+							src={message?.MediaUrl}
+						/>
+						{message?.Message}
+					</>
 				)}
 			</>
 		);
