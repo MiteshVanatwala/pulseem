@@ -626,7 +626,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleUploadRecipients = async (groupName, res, uploadAsFile) => {
         let r = null;
         try {
-            if (res?.ClientsData?.length > MAX_UPLOAD_LIMITATION) {
+            if (res?.ClientsData?.length > MAX_UPLOAD_LIMITATION || uploadAsFile === true) {
                 setDialogType({ type: 'maximumUploadLimitation' });
             }
             else {
