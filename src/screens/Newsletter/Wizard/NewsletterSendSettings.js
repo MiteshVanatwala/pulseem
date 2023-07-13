@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
@@ -160,6 +160,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [quickSendClients, setQuickSendClients] = useState(null);
     const [totalClientsToSend, setTotalClientsToSend] = useState(0);
     const [reCheckAuth, setRecheckAuth] = useState(false);
+    const MAX_UPLOAD_LIMITATION = 5000;
 
     useEffect(() => {
         const total = selectedGroups?.reduce(function (a, b) {
@@ -625,23 +626,32 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleUploadRecipients = async (groupName, res, uploadAsFile) => {
         let r = null;
         try {
-            const response = await dispatch(createGroup({ GroupName: groupName, IsTestGroup: false }));
-            handleCreateGroupResponses(response, async () => {
-                if (response?.payload?.Message) {
-                    if (uploadAsFile === true) {
-                        r = await dispatch(addRecipients(res));
+            if (res?.ClientsData?.length > MAX_UPLOAD_LIMITATION) {
+                setDialogType({ type: 'maximumUploadLimitation' });
+            }
+            else {
+                setLoader(true);
+                const response = await dispatch(createGroup({ GroupName: groupName, IsTestGroup: false }));
+                handleCreateGroupResponses(response, async () => {
+                    if (response?.payload?.Message) {
+                        if (uploadAsFile === true) {
+                            r = await dispatch(addRecipients(res));
+                        }
+                        else {
+                            r = await dispatch(addRecipient({ ...res, GroupIds: [response.payload.Message] }));
+                        }
+                        dispatch(getGroupsBySubAccountId());
+                        handleAddClientsResponse(r?.payload);
+                        setNewGroupId(parseInt(response?.payload?.Message));
                     }
-                    else {
-                        r = await dispatch(addRecipient({ ...res, GroupIds: [response.payload.Message] }));
-                    }
-                    dispatch(getGroupsBySubAccountId());
-                    handleAddClientsResponse(r?.payload);
-                    setNewGroupId(parseInt(response?.payload?.Message));
-                }
-            })
+                })
+            }
         }
         catch (error) {
             console.error('ADD Clients Error: ', error)
+        }
+        finally {
+            setLoader(false);
         }
     }
 
@@ -941,7 +951,25 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 }
             }),
             summary: ConfirmationDialog({ classes: classes, count: data }),
-            uploadInProgress: UploadInProgressDialog({ classes: classes, onClose: () => { setDialogType(null); } })
+            uploadInProgress: UploadInProgressDialog({ classes: classes, onClose: () => { setDialogType(null); } }),
+            maximumUploadLimitation: {
+                title: t('common.ErrorTitle'),
+                content: <Typography>{t('recipient.maxUploadLimitation')}</Typography>,
+                showDefaultButtons: false,
+                renderButtons: () => (
+                    <Button
+                        variant='contained'
+                        size='small'
+                        style={{ maxWidth: 100 }}
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(
+                            classes.gruopsDialogButton,
+                            classes.dialogConfirmButton,
+                        )}>
+                        {t('common.Ok')}
+                    </Button>
+                ),
+            }
         }
 
         const currentDialog = dialogContent[type] || {}
