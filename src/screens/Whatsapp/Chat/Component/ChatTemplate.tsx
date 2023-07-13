@@ -75,6 +75,22 @@ const ChatTemplate = ({
 			return DOC;
 		}
 	};
+
+	const getIconName = (statusId: number) => {
+		switch (statusId) {
+			case 2:
+				return 'singleTick';
+			case 3:
+			case 6:
+				return 'doubleTick';
+			case 4:
+			case 7:
+				return 'cancel';
+			default:
+				return '';
+		}
+	}
+
 	const getInboundMessageContent = (message: APIWhatsappChatDetailData) => {
 		if (message?.Message?.length === 0 && message?.MediaUrl?.length === 0) {
 			return (
@@ -360,7 +376,7 @@ const ChatTemplate = ({
 					<span className={`${classes.whatsappChat} chat__msg-footer`}>
 						<span> {formatTime(message.MessageDate)} </span>
 						<Icon
-							id={message?.SmsStatusId === 2 ? 'singleTick' : 'doubleTick'}
+							id={getIconName(message?.SmsStatusId)}
 							aria-label={'sent'}
 							className={`${classes.whatsappChat} chat__msg-status-icon ${
 								message?.SmsStatusId === 6
@@ -413,7 +429,7 @@ const ChatTemplate = ({
 							<span className={`${classes.whatsappChat} chat__msg-footer`}>
 								<span> {formatTime(message.MessageDate)} </span>
 								<Icon
-									id={message?.SmsStatusId === 2 ? 'singleTick' : 'doubleTick'}
+									id={getIconName(message?.SmsStatusId)}
 									aria-label={'sent'}
 									className={`${classes.whatsappChat} chat__msg-status-icon ${
 										message?.SmsStatusId === 6
