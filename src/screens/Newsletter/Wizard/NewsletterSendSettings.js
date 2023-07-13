@@ -956,6 +956,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 title: t('common.ErrorTitle'),
                 content: <Typography>{t('recipient.maxUploadLimitation')}</Typography>,
                 showDefaultButtons: false,
+                showDivider: true,
                 renderButtons: () => (
                     <Button
                         variant='contained'
