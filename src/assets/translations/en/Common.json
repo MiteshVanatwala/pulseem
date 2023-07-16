@@ -637,5 +637,6 @@
   "templateSaved": "Template successfully saved!",
   "templateNameIsRequired": "Template name is required",
   "loadMore": "Load More",
-  "ReadTime": "Read Time"
+  "ReadTime": "Read Time",
+  "noCampaignToRestore": "No campaigns for restore"
 }

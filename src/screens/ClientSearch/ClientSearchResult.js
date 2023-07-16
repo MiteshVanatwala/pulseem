@@ -1321,6 +1321,7 @@ const ClientSearchResult = ({ classes }) => {
           accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && <Grid item xs={windowSize === "xs" && 12}>
             <Button
               className={clsx(
+                !data ? classes.disabled : null,
                 classes.btn, classes.btnRounded
               )}
               onClick={() => setDialog(DialogType.EXPORT_FORMAT)}
@@ -1399,9 +1400,9 @@ const ClientSearchResult = ({ classes }) => {
   };
   const renderWebNameCell = (row, fullwidth) => {
     let date = null;
-    const { FirstName, LastName } = row;
+    const { FirstName, LastName, CreationDate } = row;
     let text = t("common.UpdatedOn");
-    date = row.CreationDate ? moment(row.CreationDate, dateFormat) : null;
+    date = CreationDate ? moment(CreationDate, dateFormat) : null;
     return (
       <Grid container spacing={1}>
         <Grid item sm={12} style={{ textAlign: 'start' }}>

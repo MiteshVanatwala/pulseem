@@ -13,6 +13,7 @@ import VerificationDialog from '../../../../components/DialogTemplates/Verificat
 import { Loader } from '../../../../components/Loader/Loader';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import Toast from '../../../../components/Toast/Toast.component';
+import { logout } from '../../../../helpers/Api/PulseemReactAPI';
 
 const SmsMarketingDialog = ({
     classes,
@@ -164,10 +165,6 @@ const SmsMarketingDialog = ({
 
                 const r = await dispatch(setSmsMarketing(smsCampaignPayload));
                 handleTotalMarketingResponse(r.payload);
-                setLoader(false);
-                setTimeout(() => {
-                    onConfirm();
-                }, 3000);
             }
         }
 
@@ -180,6 +177,7 @@ const SmsMarketingDialog = ({
                 break;
             }
             case 401: {
+                logout();
                 //Invalid api key
                 break;
             }
@@ -187,10 +185,20 @@ const SmsMarketingDialog = ({
             case 500: {
                 break;
             }
+            // no credit left 
+            case 405: {
+                setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.BULK_ENDED'), showAnimtionCheck: false });
+                break
+            }
             default: {
                 setToastMessage({ severity: 'success', color: 'success', message: response?.Message, showAnimtionCheck: true });
             }
         }
+
+        setLoader(false);
+        setTimeout(() => {
+            response?.StatusCode !== 405 && onConfirm();
+        }, 3000);
     }
     const handleValidation = () => {
         const tempErrors = {};
