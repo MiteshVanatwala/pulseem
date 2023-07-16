@@ -627,5 +627,6 @@
   "doYouWantToProceed": "האם ברצונכם להמשיך?",
   "templateSaved": "תבנית נשמרה בהצלחה!",
   "templateNameIsRequired": "אנא בחרו שם לתבנית",
-  "loadMore": "טען עוד"
+  "loadMore": "טען עוד",
+  "noCampaignToRestore": "אין קמפיינים לשחזור"
 }
