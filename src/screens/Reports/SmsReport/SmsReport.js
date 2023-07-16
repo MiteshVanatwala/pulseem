@@ -238,6 +238,7 @@ const SmsReport = ({ classes }) => {
     "replies": t('common.Comments'),
     "futureSends": t('campaigns.FutureSend'),
     "StatusName": t('mainReport.statusName'),
+    "Revenue": t('common.revenue')
   }
 
   const clearSearch = () => {
@@ -274,7 +275,7 @@ const SmsReport = ({ classes }) => {
       ExportFile({
         data: result,
         fileName: 'smsReport',
-        exportType: 'csv',
+        exportType: formatType,
         fields: exportColumnHeader
       });
     } catch (error) {

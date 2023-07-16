@@ -138,13 +138,13 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
     data.forEach((o: Status) => {
         const tempData = { ...o } as Status;
         if (options.ConvertStatusDescription === true) {
-            if (o.STATUS) {
+            if (o.STATUS || o.STATUS === 0) {
                 let status = statuses.find((s: { id: any; }) => { return s.id === o.STATUS });
                 if (status && status.value !== '') {
                     tempData.StatusDescription = i18n.t(status.value);
                 }
             }
-            if (o.Status) {
+            if (o.Status || o.Status === 0) {
                 let status = statuses.find((s: { id: any; }) => { return s.id === o.Status });
                 if (status && status.value !== '') {
                     tempData.StatusDescription = i18n.t(status.value);
@@ -158,7 +158,7 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
             }
         }
         if (options.ConvertStatusToString === true) {
-            if (o.Status) {
+            if (o.Status || o.Status === 0) {
                 let status = statuses.find((s) => { return s.id === o.Status });
                 if (status && status.value !== '') {
                     tempData.Status = i18n.t(status.value);

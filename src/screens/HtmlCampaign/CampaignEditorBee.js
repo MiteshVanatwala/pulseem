@@ -132,7 +132,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   useEffect(() => {
     if (dataReady) {
-      Promise.all([initFields(), siteTrackingLogic()]).then(() => {
+      Promise.all([initFields()]).then(() => {
         return true;
       })
     }
@@ -228,17 +228,17 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     initBeeToken();
   }
-  const siteTrackingLogic = () => {
-    if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
-      const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
-      if (campaign?.HtmlData?.indexOf(domainName) > -1) {
-        setIsSiteTracking(true);
-      }
-      else {
-        setIsSiteTracking(false);
-      }
-    }
-  }
+  // const siteTrackingLogic = () => {
+  //   if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
+  //     const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
+  //     if (campaign?.HtmlData?.indexOf(domainName) > -1) {
+  //       setIsSiteTracking(true);
+  //     }
+  //     else {
+  //       setIsSiteTracking(false);
+  //     }
+  //   }
+  // }
   //#region Init Bee Token & Configuration
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
@@ -365,30 +365,30 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
-  const doaminWithClientRef = (str) => {
-    let finalStr = str;
-    const startIndex = finalStr.substring(finalStr.indexOf(accountSettings?.SubAccountSettings.DomainAddress));
-    const originalLink = startIndex.split(/[\s\n]+/);
-    let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
-    let newUrl = originUrl.trim();
-    if (newUrl.indexOf('ClientIDEnc') === -1) {
-      newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
-      finalStr = finalStr.replace(originUrl, newUrl);
-    }
-    return finalStr;
-  }
+  // const doaminWithClientRef = (str) => {
+  //   let finalStr = str;
+  //   const startIndex = finalStr.substring(finalStr.indexOf(accountSettings?.SubAccountSettings.DomainAddress));
+  //   const originalLink = startIndex.split(/[\s\n]+/);
+  //   let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
+  //   let newUrl = originUrl.trim();
+  //   if (newUrl.indexOf('ClientIDEnc') === -1) {
+  //     newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
+  //     finalStr = finalStr.replace(originUrl, newUrl);
+  //   }
+  //   return finalStr;
+  // }
   const onSave = async (args) => {
     try {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
-      if (isSiteTracking === true) {
-        if (!args.HtmlData.indexOf('ref') > -1) {
-          finalHtml = doaminWithClientRef(args.HtmlData);
-          finalJson = doaminWithClientRef(args.JsonData);
-        }
-      }
+      // if (isSiteTracking === true) {
+      //   if (!args.HtmlData.indexOf('ref') > -1) {
+      //     finalHtml = doaminWithClientRef(args.HtmlData);
+      //     finalJson = doaminWithClientRef(args.JsonData);
+      //   }
+      // }
       const response = await dispatch(saveCampaign({
         Name: campaign.Name,
         campaignId: args.campaignId,

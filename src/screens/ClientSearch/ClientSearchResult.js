@@ -49,9 +49,9 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, FlatObject, ReplaceExtraFieldHeader, DeletePropertyFromArrayObject, OrderItems, SwitchStatus, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
-import { ClientStatus, SmsStatus } from "../../helpers/Constants";
+import { ExportFile } from '../../helpers/Export/ExportFile';
+import { HandleExportData, ReplaceExtraFieldHeader, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
+import { ClientStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -352,7 +352,7 @@ const ClientSearchResult = ({ props, classes }) => {
         ...searchData,
         PageIndex: 1,
         PageSize: rowsPerPage,
-        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+        // PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
         FromDate: date.FromDate,
         ToDate: date.ToDate,
         SearchTerm: searchStr,
@@ -1202,7 +1202,6 @@ const ClientSearchResult = ({ props, classes }) => {
                 PageSize: rowsPerPage,
                 FromDate: date.FromDate,
                 ToDate: date.ToDate,
-                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                 SearchTerm: searchStr,
                 MyActivities: null,
                 MyConditions: null,
@@ -1219,13 +1218,14 @@ const ClientSearchResult = ({ props, classes }) => {
           </Button>
         </Grid>
         {
-          searchData?.SearchTerm && (
+          (searchData?.SearchTerm || searchData?.FromDate || searchData?.ToDate) && (
             <Grid item>
               <Button
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  handleSearch({ ...searchData, SearchTerm: "", ...filterSearch });
+                  setDate({ FromDate: null, ToDate: null });
+                  handleSearch({ ...searchData, SearchTerm: "", FromDate: null, ToDate: null, ...filterSearch });
                   setSearchStr("");
                   setPage(1);
                   handleFilter();
@@ -1286,6 +1286,7 @@ const ClientSearchResult = ({ props, classes }) => {
               variant="contained"
               size="medium"
               className={clsx(
+                !data ? classes.disabled : null,
                 classes.actionButton,
                 classes.actionButtonGreen
               )}
@@ -1362,7 +1363,7 @@ const ClientSearchResult = ({ props, classes }) => {
     let date = null;
     const { FirstName, LastName, CreationDate, ClientID } = row;
     let text = t("common.UpdatedOn");
-    date = row.CreationDate ? moment(row.CreationDate, dateFormat) : null;
+    date = CreationDate ? moment(CreationDate, dateFormat) : null;
     return (
       <Grid container spacing={1}>
         <Grid item sm={12} style={{ textAlign: 'start' }}>
