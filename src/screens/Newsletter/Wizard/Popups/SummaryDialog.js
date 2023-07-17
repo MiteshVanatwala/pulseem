@@ -8,7 +8,7 @@ import { FaChevronUp } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux'
 import clsx from "clsx";
 import { Stack } from "@mui/material";
-import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
+import { getAuthorizedEmails, isSweepingApprovalAccount } from "../../../../redux/reducers/commonSlice";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
@@ -35,7 +35,7 @@ const SummaryDialog = ({ classes,
     const [fromEmail, setFromEmail] = useState(null);
     const { isRTL } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
-    const { verifiedEmails } = useSelector(state => state.common);
+    const { verifiedEmails, isSweepingApproval } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [disableSend, setDisableSend] = useState(false);
     const [verPopupOpen, setVerPopupOpen] = useState(false);
@@ -79,14 +79,23 @@ const SummaryDialog = ({ classes,
             fromEmail: fromEmail
         });
     }
+
     useEffect(() => {
+        dispatch(isSweepingApprovalAccount());
         dispatch(getAuthorizedEmails());
     }, [])
 
     useEffect(() => {
+        if (isSweepingApproval === true) {
+            setDisableSend(false);
+            setFromEmailVerified(true);
+        }
+    }, [isSweepingApproval])
+
+    useEffect(() => {
         const verifiedEmail = verifiedEmails.filter((vm) => { return vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true });
         setFromEmail(newsletterSendSummary?.FromEmail);
-        if (!verifiedEmail || verifiedEmail?.length <= 0) {
+        if ((!verifiedEmail || verifiedEmail?.length <= 0) && !isSweepingApproval) {
             setDisableSend(true);
             setFromEmailVerified(false);
         }

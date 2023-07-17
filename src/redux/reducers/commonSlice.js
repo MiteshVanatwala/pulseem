@@ -120,6 +120,16 @@ export const getTwoFactorAuthValues = createAsyncThunk(
     }
   })
 
+  export const isSweepingApprovalAccount = createAsyncThunk(
+    'isSweepingApprovalAccount', async (_, thunkAPI) => {
+      try {
+        const response = await PulseemReactInstance.get(`isSweepingApprovalAccount`);
+        return response.data
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    })
+
 
 export const commonSlice = createSlice({
   name: 'common',
@@ -131,7 +141,8 @@ export const commonSlice = createSlice({
     twoFactorAuthEmails: [],
     twoFactorAuthNumbers: [],
     accountSettings: null,
-    accountFeatures: null
+    accountFeatures: null,
+    isSweepingApproval: false
   },
   extraReducers: builder => {
     builder
@@ -169,6 +180,10 @@ export const commonSlice = createSlice({
       else {
         state.twoFactorAuthNumbers = payload?.Data;
       }
+    })
+    builder
+    .addCase(isSweepingApprovalAccount.fulfilled, (state, { payload }) => {
+      state.isSweepingApproval = payload
     })
   }
 })
