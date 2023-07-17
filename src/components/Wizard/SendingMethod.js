@@ -68,7 +68,7 @@ const SendingMethod = ({
     }, [isBestTime])
     useEffect(() => {
         if (campaign.SendingMethod === 2) {
-            onUpdateCampaign({ IsBestTime: isBestTimeFuture });
+            onUpdateCampaign({ IsBestTime: isBestTimeFuture, PulseAmount: '', TimeInterval: '' });
         }
     }, [isBestTimeFuture]);
     useEffect(() => {
@@ -131,7 +131,8 @@ const SendingMethod = ({
         onUpdateCampaign({ AutoSendDelay: sendDelayRef.current.value })
     };
 
-    const onConfirmOptimalPulseConflict = (value, isFuture = false) => {
+    const onConfirmOptimalPulseConflict = (value) => {
+        const isFuture = campaign.SendingMethod === 2;
         setShowOptimalPulseConflict(false);
         if (!isFuture) {
             setIsBestTime(value);
@@ -285,7 +286,7 @@ const SendingMethod = ({
                                                 setShowOptimalPulseConflict(true);
                                             }
                                             else {
-                                                onConfirmOptimalPulseConflict(!isBestTimeFuture, true);
+                                                onConfirmOptimalPulseConflict(!isBestTimeFuture);
                                             }
                                         }}
                                     />
@@ -465,7 +466,7 @@ const SendingMethod = ({
                 isOpen={showOptimalPulseConflict}
                 title={t('campaigns.newsLetterMgmt.payAttention')}
                 text={t('campaigns.newsLetterEditor.sendSettings.optimalPulseConflictMessage')}
-                onConfirm={() => onConfirmOptimalPulseConflict(true, false)}
+                onConfirm={() => onConfirmOptimalPulseConflict(true)}
                 onCancel={() => onCancelOptimalPulseConflict()}
             />
         </div>
