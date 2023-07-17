@@ -49,7 +49,15 @@ const SmsMarketingDialog = ({
 
     useEffect(() => {
         setIsLinksStatistics(smsMarketingModel.IsLinksStatistics ?? true);
-    }, [])
+        setNumberVerified(isFromNumberVerified());
+    }, []);
+
+    const isFromNumberVerified = () => {
+        const isVerified = verifiedNumbers.find((number) => {
+            return number?.Number === smsModel.FromNumber && number?.IsOptIn === true;
+        });
+        return isVerified?.length > 0;
+    }
 
     const sendToOptions = [
         {
@@ -113,10 +121,10 @@ const SmsMarketingDialog = ({
         }
         else {
             if (value.length > 8) {
-                const isVerified = verifiedNumbers.find((number) => {
-                    return number?.Number === value;
-                });
-                setNumberVerified(isVerified);
+                // const isVerified = verifiedNumbers.find((number) => {
+                //     return number?.Number === value && number?.IsOptIn === true;
+                // });
+                setNumberVerified(isFromNumberVerified());
             }
         }
     }
@@ -433,10 +441,8 @@ const SmsMarketingDialog = ({
                     isOpen={newSmsVerification}
                     variant='sms'
                     onClose={() => setNewSmsVerification(false)}
-                    Option={{
-                        Step: 1,
-                        Value: smsModel.FromNumber
-                    }}
+                    step={1}
+                    value={smsModel.FromNumber}
                 />}
                 <Loader isOpen={showLoader} />
             </Grid>

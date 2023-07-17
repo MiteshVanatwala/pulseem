@@ -1998,7 +1998,7 @@ const SmsSend = ({ classes, ...props }) => {
             <div>
               <div className={clsx(classes.sidebar)}>
                 <Groups
-                  isSms={false}
+                  isSms={true}
                   bsDot={false}
                   classes={classes}
                   showSortBy={false}
@@ -2011,7 +2011,7 @@ const SmsSend = ({ classes, ...props }) => {
                   callbackSelectedGroups={callbackFiltertedCampaigns}
                   noSelectionText={t("sms.NoFilteredCampaigns")}
                   innerHeight={160}
-                  uniqueKey={'campaigns'}
+                  uniqueKey={'campaigns_2'}
                 />
               </div>
             </div>
