@@ -13,6 +13,7 @@ import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import GroupTags from "../../components/Groups/GroupTags";
+import InputMask from 'react-input-mask';
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -75,10 +76,10 @@ const Shopify = ({ classes }: any) => {
     if (settings.store_name.trim() === '') errorsDump = { ...errorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
     if (settings.api_key.trim() === '') errorsDump = { ...errorsDump, api_key: t('integrations.shopify.enterAPIKey') };
     if (settings.api_access_token.trim() === '') errorsDump = { ...errorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
-    if (settings.api_version.trim() === '') errorsDump = { ...errorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
+    if (settings.api_version.trim() === '' || settings.api_version.indexOf('_') !== -1) errorsDump = { ...errorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
 
     await setErrors(errorsDump);
-    if (settings.store_name.trim() !== '' && settings.api_key.trim() !== '' && settings.api_access_token.trim() !== '') {
+    if (settings.store_name.trim() !== '' && settings.api_key.trim() !== '' && settings.api_access_token.trim() !== '' && settings.api_version.trim() !== '' && settings.api_version.indexOf('_') < 0) {
       setSettings({
         ...settings,
         store_name: '',
@@ -255,12 +256,11 @@ const Shopify = ({ classes }: any) => {
   }
 
   const resetStore = async () => {
+    setShowResetDialog(false);
     setShowLoader(true);
     const resetResponse = await dispatch(resetIntegration(LU_Plugin.Shopify)) as any;
-    console.log(resetResponse)
     handleResetIntegrationResponse(resetResponse);
     setShowLoader(false);
-    setShowResetDialog(false);
   }
 
   const showCredentials = () => {
@@ -322,7 +322,7 @@ const Shopify = ({ classes }: any) => {
         !isPageLoading && (
           <Box className={"formContainer"}>
             <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15)}>
-              {t('integrations.shopify.authentication')}
+              {t('integrations.shopify.authenticate')}
             </Typography>
             <Box className={clsx(classes.dblock, classes.pb15)}>
               <Typography className={clsx(classes.bold)}>
@@ -339,6 +339,7 @@ const Shopify = ({ classes }: any) => {
                 value={settings.store_name}
                 onChange={(event) => setSettings({ ...settings, store_name: event.target.value })}
                 className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                disabled={isAuthenticated}
               />
               {!!errors.store_name && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -364,6 +365,7 @@ const Shopify = ({ classes }: any) => {
                       value={settings.api_key}
                       onChange={(event) => setSettings({ ...settings, api_key: event.target.value })}
                       className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                      disabled={isAuthenticated}
                     />
                     {!!errors.api_key && (
                       <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -372,51 +374,53 @@ const Shopify = ({ classes }: any) => {
                     )}
                   </Box>
 
-                  <Box className={clsx(classes.dblock, classes.pb15)}>
-                    <Typography className={clsx(classes.bold)}>
-                      {t("integrations.shopify.apiAccessToken")}
-                      <label className={clsx(classes.ml10, classes.textRed)}>*</label>
+                <Box className={clsx(classes.dblock, classes.pb15)}>
+                  <Typography className={clsx(classes.bold)}>
+                    {t("integrations.shopify.apiAccessToken")}
+                    <label className={clsx(classes.ml10, classes.textRed)}>*</label>
+                  </Typography>
+                  <Typography className={clsx(classes.mb5)}>
+                    {t("integrations.shopify.insertToken")}
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    name="DefaultFromName"
+                    value={settings.api_access_token}
+                    onChange={(event) => setSettings({ ...settings, api_access_token: event.target.value })}
+                    className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                    disabled={isAuthenticated}
+                  />
+                  {!!errors.api_access_token && (
+                    <Typography className={clsx(classes.errorText, classes.f14)}>
+                      {errors.api_access_token}
                     </Typography>
-                    <Typography className={clsx(classes.mb5)}>
-                      {t("integrations.shopify.insertToken")}
+                  )}
+                </Box>
+                <Box className={clsx(classes.dblock, classes.pb15)}>
+                  <Typography className={clsx(classes.bold)}>
+                    {t("integrations.shopify.apiVersion")}
+                    <label className={clsx(classes.ml10, classes.textRed)}>*</label>
+                  </Typography>
+                  <Typography className={clsx(classes.mb5)}>
+                    {t("integrations.shopify.apiVersionDesc")}
+                  </Typography>
+                  <InputMask
+                    name="apiVersion"
+                    className={clsx(classes.InputMaskTextField, classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                    mask="9999-99"
+                    maskPlaceholder="____-__"
+                    placeholder="____-__"
+                    onChange={(event: any) => setSettings({ ...settings, api_version: event.target.value })}
+                    value={settings.api_version}
+                    disabled={isAuthenticated}
+                  />
+                  {!!errors.api_version && (
+                    <Typography className={clsx(classes.errorText, classes.f14)}>
+                      {errors.api_version}
                     </Typography>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      name="DefaultFromName"
-                      value={settings.api_access_token}
-                      onChange={(event) => setSettings({ ...settings, api_access_token: event.target.value })}
-                      className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-                    />
-                    {!!errors.api_access_token && (
-                      <Typography className={clsx(classes.errorText, classes.f14)}>
-                        {errors.api_access_token}
-                      </Typography>
-                    )}
-                  </Box>
-                  <Box className={clsx(classes.dblock, classes.pb15)}>
-                    <Typography className={clsx(classes.bold)}>
-                      {t("integrations.shopify.apiVersion")}
-                      <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-                    </Typography>
-                    <Typography className={clsx(classes.mb5)}>
-                      {t("integrations.shopify.apiVersion")}
-                    </Typography>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      name="apiVersion"
-                      value={settings.api_version}
-                      onChange={(event) => setSettings({ ...settings, api_version: event.target.value })}
-                      className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-                      placeholder='XXXX-XX'
-                    />
-                    {!!errors.api_version && (
-                      <Typography className={clsx(classes.errorText, classes.f14)}>
-                        {errors.api_version}
-                      </Typography>
-                    )}
-                  </Box>
+                  )}
+                </Box>
 
                   {!!errors.authentication_message && (
                     <Box className={clsx(classes.flex, classes.pbt15)}>
@@ -448,7 +452,7 @@ const Shopify = ({ classes }: any) => {
                           )}
                           color="primary"
                         >
-                          {t("integrations.shopify.authenticate")}
+                          {t("integrations.shopify.connectStore")}
                         </Button>
                       </Box>
                     )
@@ -670,7 +674,7 @@ const Shopify = ({ classes }: any) => {
                 )}
                 color="primary"
               >
-                {t("integrations.shopify.connectStore")}
+                {t("common.save")}
               </Button>
               <Loader isOpen={showLoader} showBackdrop={true} />
             </Box>

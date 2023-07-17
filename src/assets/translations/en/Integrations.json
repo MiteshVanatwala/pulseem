@@ -38,5 +38,18 @@
     },
     "connectStore": "Connect Store",
     "disconnectStore": "Disconnect Store"
+  },
+  "wooCommerce": {
+    "title": "WooCommerce",
+    "description": "In order to integrate your WooCommerce store to your Pulseem account please read the following guide:",
+    "connectStore": "Connect your WooCommerce Store"
+  },
+  "cashCow": {
+    "title": "CashCow",
+    "step1": "Enter CashCow app store",
+    "step2": "Enter \"Marketing Systems\" category and choose \"Pulseem\"",
+    "step3": "Click \"Install Application\"",
+    "step4": "Enter your API key from Pulseem and click \"save\"",
+    "step5": "Set up groups for the events and click \"Save\""
   }
 }
