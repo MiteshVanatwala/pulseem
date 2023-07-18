@@ -935,7 +935,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: 30
     }
   },
-
+  greenButton: {
+    borderColor: '#5db85b',
+    backgroundColor: '#5db85b',
+    '&:hover': {
+      background: '#5db85b',
+    }
+  },
   btnNohover: {
     '&:hover': {
       background: '#fff',
@@ -2888,10 +2894,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomRightRadius: isRTL ? '4px' : null,
     borderTopLeftRadius: isRTL ? null : '4px',
     borderTopRightRadius: isRTL ? '4px' : null,
-    border: '1px solid #277BFF',
+    border: '1px solid #f74f26',
     padding: '10px',
     marginBottom: '8px',
-    color: '#277BFF',
+    color: '#f74f26',
     cursor: 'pointer',
   },
   disabledBefore: {
@@ -2917,10 +2923,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTopLeftRadius: isRTL ? '4px' : null,
     borderTopRightRadius: isRTL ? null : '4px',
     // borderLeft: "none",
-    border: '1px solid #277BFF',
+    border: '1px solid #f74f26',
     padding: '10px',
     marginBottom: '8px',
-    color: '#277BFF',
+    color: '#f74f26',
     cursor: 'pointer',
   },
   disabledAfter: {
@@ -2946,10 +2952,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomRightRadius: isRTL ? '4px' : null,
     borderTopLeftRadius: isRTL ? null : '4px',
     borderTopRightRadius: isRTL ? '4px' : null,
-    border: '1px solid #277BFF',
+    border: '1px solid #f74f26',
     padding: '10px',
     marginBottom: '8px',
-    backgroundColor: '#277BFF',
+    backgroundColor: '#f74f26',
     color: '#ffffff',
     cursor: 'pointer',
   },
@@ -2963,10 +2969,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTopRightRadius: isRTL ? null : '4px',
     borderTopLeftRadius: isRTL ? '4px' : null,
     borderLeft: 'none',
-    border: '1px solid #277BFF',
+    border: '1px solid #f74f26',
     padding: '10px',
     marginBottom: '8px',
-    backgroundColor: '#277BFF',
+    backgroundColor: '#f74f26',
     color: '#ffffff',
     cursor: 'pointer',
   },

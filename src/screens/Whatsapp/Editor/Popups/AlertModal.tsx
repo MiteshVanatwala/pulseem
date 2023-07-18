@@ -1,4 +1,5 @@
 import { Button, Box, Dialog, Grid } from '@material-ui/core';
+import clsx from "clsx";
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Close } from '@material-ui/icons';
@@ -25,6 +26,7 @@ const AlertModal = ({
 				fullScreen={fullScreen}
 				open={isOpen}
 				onClose={onClose}
+				className={clsx(classes.dialogContainer)}
 				aria-labelledby='responsive-dialog-title'>
 				<div className={classes.alertModal}>
 					{title?.length > 0 && (

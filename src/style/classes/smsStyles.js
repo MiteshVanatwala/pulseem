@@ -1105,6 +1105,22 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             fontWeight: 400
         }
     },
+    buttonActiveRed: {
+        borderColor: '#ff2747',
+        backgroundColor: '#ff2747',
+        '&:hover': {
+            borderColor: '#ff2747',
+            backgroundColor: '#ff2747',
+        },
+        '& label, & span': {
+            fontSize: 16,
+            cursor: 'pointer',
+            color: '#fff',
+            lineHeight: 1.5,
+            textTransform: 'capitalize',
+            fontWeight: 400
+        }
+    },
     customWidth: {
         maxWidth: 200,
         backgroundColor: "black",

@@ -600,10 +600,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
         <TableCell
           component="th"
           scope="row"
-          classes={{ root: classes.tableCellRoot }}
-          className={classes.flex12}>
+          className={clsx(
+            classes.flex5,
+            classes.tableCellRoot
+          )}
+        >
           {accountFeatures && renderCellIcons(row)}
-
         </TableCell>
       </TableRow>
     )
@@ -806,18 +808,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           })}
         </Box>
       ),
-      renderButtons: () => (
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleClose}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.Ok')}
-        </Button>
-      )
+      onConfirm: () => handleClose()
     }
   }
 

@@ -15,7 +15,12 @@ import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+	DeleteIcon,
+	DuplicateIcon,
+	EditIcon,
+	PreviewIcon,
 	SearchIcon,
+	SendIcon,
 } from '../../../assets/images/managment/index';
 import ManagmentIcon from './Component/ManagmentIcon';
 import { Title } from '../../../components/managment/Title';
@@ -71,11 +76,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import NoSetup from '../NoSetup/NoSetup';
 import { getApiErrorResponseMessage } from '../Common';
-import Delete from '../../../assets/images/managment/Delete';
-import Duplicate from '../../../assets/images/managment/Duplicate';
-import Edit from '../../../assets/images/managment/Edit';
-import Preview from '../../../assets/images/managment/Preview';
-import SendGreenIcon from '../../../assets/images/managment/greenSend.png';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -123,6 +124,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		templateListItemsProps[]
 	>([]);
 	const [activeRowId, setActiveRowId] = useState<string>('');
+	const [dialogType, setDialogType] = useState<any>({});
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -532,7 +534,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				onPreview(Id);
 				break;
 			case 'duplicate':
-				setIsDuplicateTemplateOpen(true);
+				// setIsDuplicateTemplateOpen(true);
+				setDialogType({
+					type: 'duplicate',
+					data: ''
+				});
 				break;
 			case 'delete':
 				setIsDeleteTemplateOpen(true);
@@ -548,7 +554,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'send',
 				buttonKey: 'send',
-				icon: SendGreenIcon,
+				icon: SendIcon,
 				lable: translator('whatsappManagement.submit'),
 				remove: row.StatusId !== templateStatusIdsByStatusName.Created,
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
@@ -560,7 +566,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'preview',
 				buttonKey: 'preview',
-				uIcon: <Preview className={classes.actionButton} />,
+				uIcon: PreviewIcon,
 				lable: translator('whatsappManagement.preview'),
 				remove: windowSize === 'xs',
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
@@ -571,7 +577,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'edit',
 				buttonKey: 'edit',
-				uIcon: <Edit className={classes.actionButton} />,
+				uIcon: EditIcon,
 				disable: !row?.IsAllowEdit,
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
@@ -583,7 +589,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'duplicate',
 				buttonKey: 'duplicate',
-				uIcon: <Duplicate className={classes.actionButton} />,
+				uIcon: DuplicateIcon,
 				lable: translator('campaigns.lnkEditResource1.ToolTip'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
@@ -593,7 +599,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'delete',
 				buttonKey: 'delete',
-				uIcon: <Delete className={classes.actionButton} />,
+				uIcon: DeleteIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
@@ -615,7 +621,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						)}
 						key={icon.key}
 						item>
-						<ManagmentIcon {...icon} />
+						<ManagmentIcon
+							{...icon}
+							uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
+						/>
 					</Grid>
 				))}
 			</Grid>
@@ -734,6 +743,47 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		}
 	};
 
+	const getDuplicateDialog = () => ({
+    title: translator('whatsappManagement.duplicate'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }}>
+        {translator('whatsappManagement.duplicateDesc')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({});
+      onDuplicaTemplate();
+    },
+    onCancel: () => {
+      setDialogType({});
+    },
+    onClose: () => {
+      setDialogType({});
+    }
+  })
+
+  const renderDialog = () => {
+    const { data, type } = dialogType || {}
+		let currentDialog = {};
+		if (type === 'duplicate') {
+    	currentDialog = getDuplicateDialog();
+		}
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -802,7 +852,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 									size='large'
 									variant='contained'
 									onClick={onSearch}
-									className={classes.searchButton}
+									className={clsx(
+										classes.btn,
+										classes.btnRounded
+									)}
 									endIcon={<SearchIcon />}>
 									<>{translator('campaigns.btnSearchResource1.Text')}</>
 								</Button>
@@ -813,7 +866,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 										size='large'
 										variant='contained'
 										onClick={clearSearch}
-										className={classes.searchButton}
+										className={clsx(
+											classes.btn,
+											classes.btnRounded
+										)}
 										endIcon={<ClearIcon />}>
 										<>{translator('common.clear')}</>
 									</Button>
@@ -996,7 +1052,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						onConfirmOrYes={() => onDeleteTemplate()}
 					/>
 
-					<AlertModal
+					{/* <AlertModal
 						classes={classes}
 						isOpen={isDuplicateTemplateOpen}
 						onClose={() => setIsDuplicateTemplateOpen(false)}
@@ -1004,7 +1060,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						subtitle={translator('whatsappManagement.duplicateDesc')}
 						type='delete'
 						onConfirmOrYes={() => onDuplicaTemplate()}
-					/>
+					/> */}
 
 					<AlertModal
 						classes={classes}
@@ -1023,6 +1079,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				!isLoader && <NoSetup classes={classes} />
 			)}
 
+			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);

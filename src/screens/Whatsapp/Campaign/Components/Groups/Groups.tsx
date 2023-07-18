@@ -246,7 +246,7 @@ const Groups = ({
 							className={clsx(
 								classes.formControl,
 								showTestGroups
-									? classes.buttonActiveGreen
+									? classes.buttonActiveRed
 									: classes.twoLineButton
 							)}
 							onClick={() => handleShowTestGroup()}>

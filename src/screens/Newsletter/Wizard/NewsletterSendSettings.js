@@ -715,8 +715,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     variant='contained'
                     size='medium'
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightBlue,
+                        classes.btn,
+                        classes.btnRounded,
                         classes.backButton
                     )}
                     style={{ margin: '8px' }}
@@ -732,16 +732,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         campaignValues.SendingMethod === 3 && campaignValues?.AutoSendingByUserField === '0' ? classes.disabled : null,
                         campaignValues.SendingMethod === 3 && !campaignValues?.AutoSendDelay ? classes.disabled : null,
                         campaignValues.SendingMethod === 3 && !campaignValues.SendDate ? classes.disabled : null,
-                        classes.actionButton,
-                        classes.actionButtonLightGreen,
-                        classes.backButton
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.greenButton
                     )}
                     color="primary"
                     style={{
                         margin: '8px',
                         pointerEvents: selectedGroups.length > 0 && totalClientsToSend > 0 ? "auto" : "none",
-                        backgroundColor:
-                            selectedGroups.length > 0 && totalClientsToSend > 0 ? "#5cb85c" : "#91C78D"
+                        backgroundColor: selectedGroups.length > 0 && totalClientsToSend > 0 ? "#5cb85c" : "#91C78D"
                     }}
                     onClick={() => {
                         onSaveSettings(true).then(async (results) => {
@@ -1065,7 +1064,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         classes={classes} />
                 </Box>
                 <Box className={'containerBody'}>
-                    <Grid container style={{ marginBottom: "40px" }} spacing={5}>
+                    <Grid container style={{ marginBottom: "40px" }} spacing={10}>
                         <Grid item md={7} xs={12}>
                             <Stack className={classes.infoDiv} direction="row" style={{ height: 50 }}>
                                 <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
@@ -1232,8 +1231,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 }
                             </Stack>
                         </Grid>
-                        <Grid item xs={12} md={1}></Grid>
-                        <Grid item md={4} xs={12}>
+                        {/* <Grid item xs={12} md={1}></Grid> */}
+                        <Grid item md={5} xs={12}>
                             <SendingMethod
                                 disabled={newsletterSettings?.Status !== 1}
                                 classes={classes}
@@ -1253,8 +1252,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             <Badge variant="dot" color="primary" invisible={!pulseIndication}>
                                                 <Button
                                                     className={clsx(
-                                                        classes.actionButton,
-                                                        classes.actionButtonOutlinedBlue,
+                                                        classes.btn,
+                                                        classes.btnRounded,
                                                         selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0 || campaignValues.IsBestTime
                                                             || totalClientsToSend < 100
                                                             ? classes.disabled : null)}
@@ -1278,7 +1277,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <Badge variant="dot" color="primary" invisible={!segmantIndication}>
                                                 <Button
-                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                    className={clsx(classes.btn, classes.btnRounded)}
                                                     disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                     onClick={() => {
                                                         setFilterParameters(campaignValues);
@@ -1293,7 +1292,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
                                                 <Button
-                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                    className={clsx(classes.btn, classes.btnRounded)}
                                                     disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                     onClick={() => {
                                                         handleSmsMarketing();
