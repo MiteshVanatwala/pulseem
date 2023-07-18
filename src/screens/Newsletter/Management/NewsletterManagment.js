@@ -93,6 +93,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
     setSearching(false);
   }
 
+  useEffect(() => {
+    if (duplicateOptions.indexOf(CloneOptions.Groups) === -1 && duplicateOptions.indexOf(CloneOptions.Pulses) !== -1) {
+      handleDuplicateOptions(CloneOptions.Pulses);
+    }
+  }, [duplicateOptions])
+
   const renderSearchLine = () => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 13 || event.key === 'Enter') {
@@ -915,6 +921,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
               control={
                 <Checkbox
                   color="primary"
+                  disabled={duplicateOptions.indexOf(CloneOptions.Groups) === -1}
                   inputProps={{ "aria-label": "secondary checkbox" }}
                   onClick={() => handleDuplicateOptions(CloneOptions.Pulses)}
                   checked={duplicateOptions.indexOf(CloneOptions.Pulses) > -1}

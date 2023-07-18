@@ -630,5 +630,6 @@
   "doYouWantToProceed": "Do you want to proceed?",
   "templateSaved": "Template successfully saved!",
   "templateNameIsRequired": "Template name is required",
-  "loadMore": "Load More"
+  "loadMore": "Load More",
+  "noCampaignToRestore": "No campaigns for restore"
 }

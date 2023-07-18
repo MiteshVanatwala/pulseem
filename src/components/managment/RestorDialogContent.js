@@ -1,23 +1,28 @@
 import React from 'react';
-import {Box,FormControlLabel,Checkbox} from '@material-ui/core'
+import { Box, FormControlLabel, Checkbox } from '@material-ui/core'
+import { useTranslation } from 'react-i18next'
 
-
-export const RestorDialogContent=({
+export const RestorDialogContent = ({
   classes,
-  data=[],
-  currentChecked=[],
-  dataIdVar='ID',
-  dataLabeleVar='Name',
-  onChange=() => null
+  data = [],
+  currentChecked = [],
+  dataIdVar = 'ID',
+  dataLabeleVar = 'Name',
+  onChange = () => null
 }) => {
-  if(!Array.isArray(data))
-    return null
+  const { t } = useTranslation()
+
+  if (!Array.isArray(data) || !data || data?.length === 0)
+    return <Box
+      style={{ minHeight: 200 }}
+      className={classes.restorDialogContent}>{t('common.noCampaignToRestore')}</Box>
 
   return (
     <Box
+      style={{ minHeight: 200 }}
       className={classes.restorDialogContent}>
-      {data.map((row,index) => {
-        const checked=currentChecked.includes(row[dataIdVar])
+      {data.map((row, index) => {
+        const checked = currentChecked.includes(row[dataIdVar])
         return (
           <FormControlLabel
             key={index}
