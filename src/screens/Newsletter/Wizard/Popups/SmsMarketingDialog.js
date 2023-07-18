@@ -56,7 +56,7 @@ const SmsMarketingDialog = ({
         const isVerified = verifiedNumbers.find((number) => {
             return number?.Number === smsModel.FromNumber && number?.IsOptIn === true;
         });
-        return isVerified?.length > 0;
+        return isVerified?.length > 0 || smsModel.FromNumber === '';
     }
 
     const sendToOptions = [

@@ -292,11 +292,9 @@ const SummaryDialog = ({ classes,
                                 <span className={classes.bodySum}>
                                     {`${t("sms.smsSummaryDialogTotalRecipients")}: ${FinalClients?.toLocaleString()}`}
                                 </span>
-                                {
-                                    !IsQuickSend && <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
-                                        {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
-                                    </Link>
-                                }
+                                <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
+                                    {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
+                                </Link>
                             </Box>
                         </Box>
                         {PreviewURL && <Box className={classes.sumRight} style={{ width: '50%' }}>
@@ -323,7 +321,7 @@ const SummaryDialog = ({ classes,
                         </Box>
                     }
                 </Box>
-                {!IsQuickSend && <Box>
+                <Box>
                     {detailsHide ? null : <ul className={classes.sumList}>
                         <li
                             onClick={() => { setsubRecipients(!subRecipientsDetails) }}
@@ -336,7 +334,6 @@ const SummaryDialog = ({ classes,
                     </ul>}
                     {subRecipientsDetails ? renderFilterDetails() : null}
                 </Box>
-                }
                 <Grid
                     container
                     spacing={4}
