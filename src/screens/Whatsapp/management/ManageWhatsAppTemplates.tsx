@@ -554,7 +554,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'send',
 				buttonKey: 'send',
-				icon: SendIcon,
+				uIcon: SendIcon,
 				lable: translator('whatsappManagement.submit'),
 				remove: row.StatusId !== templateStatusIdsByStatusName.Created,
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
