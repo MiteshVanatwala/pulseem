@@ -1577,7 +1577,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     '& .bubbleNew': {
       marginTop: '-5px',
       position: 'absolute',
-      right: '0',
+      right: isRTL ? '' : 0,
+      left: isRTL ? 0 : '',
       '& .bubbleText': {
         color: '#000',
         position: 'absolute',
