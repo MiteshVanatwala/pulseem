@@ -1390,7 +1390,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   barChart: {
     width: '100%',
-    float: isRTL ? "left" : "right",
+    float: isRTL ? "right" : "left",
     "& canvas": {
       height: barHeight[windowSize],
     },
@@ -1662,8 +1662,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: "5px 0px",
   },
   lastReportsTabPanels: {
-    paddingRight: windowSize !== "xs" ? 25 : 0,
-    paddingLeft: windowSize !== "xs" ? 25 : 0,
+    paddingRight: windowSize !== "xs" ? 15 : 0,
+    paddingLeft: windowSize !== "xs" ? 15 : 0,
     '& .MuiDivider-root': {
       width: '100%',
       border: '1px #F0F5FF solid',
