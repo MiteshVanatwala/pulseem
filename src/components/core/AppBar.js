@@ -95,13 +95,13 @@ const AppBarItem = ({
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   style={{ padding: 0 }}>
-                  {item.options && item.options.filter((item) => item.isShow !== false).map((option, index) => (
+                  {item.options && item.options.filter((item) => item.isShow !== false).map((option, index, row) => (
                     <Box
                       key={index}
                       component='a'
                       href={option.href}
                       className={classes.appBarItemMenuItem}>
-                      {index !== 0 && <Box className={classes.appBarItemBorder} />}
+                      {/* {index !== 0 && option.title !== t("appBar.logout") && <Box className={classes.appBarItemBorder} />} */}
                       <MenuItem
                         key={option.title}
                         onClick={(e) => {
@@ -112,7 +112,7 @@ const AppBarItem = ({
                           else Redirect({ url: option.href })
                         }}
                         classes={{ root: classes.appBarItemMenuRoot }}
-                        className={clsx(classes.appBarItemMenuItem, option.title === t("appBar.logout") ? 'active' : '')}
+                        className={clsx(classes.appBarItemMenuItem, index !== row.length -1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}
                       >
                         {option.title}
                         {
@@ -187,7 +187,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const { companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
   const { accountSettings, accountFeatures } = useSelector(state => state.common);
   const phoneMenuButtonRef = useRef(null)
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const topNavRef = useRef(null)
 
@@ -198,7 +198,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   }, [accountSettings])
 
   const handleOpen = () => {
-    setOpen(!open)
+    // setOpen(!open)
   }
   const { t } = useTranslation();
   const { username } = useSelector(state => state.user)

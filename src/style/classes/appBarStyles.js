@@ -64,7 +64,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   },
   appBarItemBorder: {
     borderBottom: '1px solid #707070',
-    marginInline: 15
+    // marginInline: 15
   },
   appBarItemDoubleArrowIcon: {
     marginInlineEnd: '0.5em',
@@ -111,6 +111,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
       color: '#fff',
+      border: 'none',
       '& svg': {
         color: '#fff',
       },
