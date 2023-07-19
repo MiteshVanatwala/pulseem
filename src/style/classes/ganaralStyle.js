@@ -2721,7 +2721,26 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
-
+  iconTab: {
+    '& .MuiTab-wrapper': {
+      display: 'inline-block',
+    },
+    '& img': {
+      verticalAlign: 'bottom',
+      marginBottom: '0px !important',
+      paddingRight: isRTL ? '0px' : '15px',
+      paddingLeft: !isRTL ? '0px' : '15px',
+      height: '30px'
+    }
+  },
+  InputMaskTextField: {
+    padding: 10,
+    border: 'solid 1px #c4c4c4',
+    borderRadius: 4,
+    fontSize: 14,
+    width: 400,
+    letterSpacing: 1
+  },
   dialogZindex: {
     zIndex: '1000 !important'
   },
