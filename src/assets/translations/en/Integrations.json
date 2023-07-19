@@ -14,17 +14,17 @@
     "insertClientToGroup": "Insert client to groups",
     "insertToken": "Insert the one-time API token you received when creating the application",
     "insertAPIKey": "Insert the API key you received after creating the application",
-    "insertShopifyURL": "Insert only bold part: https://<b>mystore</b>.myshopify.com/",
+    "insertShopifyURL": "Insert your store URL",
     "authenticate": "Authenticate",
-    "enterShopifyUrl": "Enter Shopify URL",
+    "enterShopifyUrl": "Enter valid Shopify URL",
     "enterAPIKey": "Enter API Key",
     "enterAPIVersion": "Enter API Version",
     "enterAccessToken": "Enter Access Token",
     "reset": "Reset",
     "showCredentials": "Show Credentials",
     "hideCredentials": "Hide Credentials",
-    "apiVersion": "API Version",
-    "apiVersionDesc": "Check your API version in \"Configuration\" tab",
+    "apiVersion": "Webhook Verison",
+    "apiVersionDesc": "Check your Webhook version in \"Configuration\" tab",
     "authResponses": {
       "201": "Authentication Success",
       "400": "The store is related to another account",
@@ -46,10 +46,7 @@
   },
   "cashCow": {
     "title": "CashCow",
-    "step1": "Enter CashCow app store",
-    "step2": "Enter \"Marketing Systems\" category and choose \"Pulseem\"",
-    "step3": "Click \"Install Application\"",
-    "step4": "Enter your API key from Pulseem and click \"save\"",
-    "step5": "Set up groups for the events and click \"Save\""
+    "description": "In order to integrate your Cashcow store to your Pulseem account please read the following guide:",
+    "connectStore": "Connect your CashCow Store"
   }
 }

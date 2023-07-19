@@ -14,17 +14,17 @@
     "insertClientToGroup": "הכנס לקוחות לקבוצות:",
     "insertToken": "הזינו את הטוקן החד-פעמי אותו קיבלתם ביצירת האפליקציה",
     "insertAPIKey": "הזינו את המפתח אותו קיבלתם ביצירת האפליקציה",
-    "insertShopifyURL": "הכניסו את החלוק המודגש בלבד: shopify.com/store/<b>mystore</b>",
+    "insertShopifyURL": "הכניסו את כתובת האינטרנט של החנות שלכם",
     "authenticate": "התחבר",
-    "enterShopifyUrl": "הזינו כתובת אתר",
+    "enterShopifyUrl": "יש להכניס URL תקין",
     "enterAPIKey": "API הזינו מפתח",
     "enterAccessToken": "API Token הזינו",
     "enterAPIVersion": "API Version הזינו",
     "reset": "אפס",
     "showCredentials": "הצג פרטי התחברות",
     "hideCredentials": "הסתר פרטי התחברות",
-    "apiVersion": "גרסת API",
-    "apiVersionDesc": "בדקו את גרסאת ה-API בעמוד \"Configuration\"",
+    "apiVersion": "גרסת וובהוק",
+    "apiVersionDesc": "בדקו את גרסאת הוובהוק בעמוד \"Configuration\"",
     "authResponses": {
       "201": "החנות אומתה בהצלחה",
       "400": "שם החנות שייך לחשבון אחר",
@@ -46,10 +46,7 @@
   },
   "cashCow": {
     "title": "CashCow",
-    "step1": "היכנסו לחנות אפליקציות של קאשקאו",
-    "step2": "היכנסו לקטגוריית \"מערכות דיוור\" ובחרו בפולסים",
-    "step3": "לחצו על \"התקנת האפליקציה\"",
-    "step4": "הכניסו את מפתח ה-API  שקיבלתם מפולסים ולחצו \"שמור\"",
-    "step5": "הגדירו קבוצות ולחצו \"שמור\""
+    "description": "על מנת לחבר את החנות שלכם בקאשקאו לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
+    "connectStore": "חברו חנות CashCow Store"
   }
 }

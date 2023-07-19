@@ -73,7 +73,10 @@ const Shopify = ({ classes }: any) => {
   const authenticateStore = async () => {
     // Add validation then this logic
     let errorsDump = errors;
-    if (settings.store_name.trim() === '') errorsDump = { ...errorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
+    const regex = /https:\/\/[^.\s]+\.myshopify\.com/;
+    const validURL = settings.store_name.trim().match(regex);
+
+    if (settings.store_name.trim() === '' || validURL == null) errorsDump = { ...errorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
     if (settings.api_key.trim() === '') errorsDump = { ...errorsDump, api_key: t('integrations.shopify.enterAPIKey') };
     if (settings.api_access_token.trim() === '') errorsDump = { ...errorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
     if (settings.api_version.trim() === '' || settings.api_version.indexOf('_') !== -1) errorsDump = { ...errorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
@@ -340,6 +343,7 @@ const Shopify = ({ classes }: any) => {
                 onChange={(event) => setSettings({ ...settings, store_name: event.target.value })}
                 className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
                 disabled={isAuthenticated}
+                placeholder="https://<store_id>.myshopify.com"
               />
               {!!errors.store_name && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>

@@ -1,33 +1,28 @@
 import { useTranslation } from "react-i18next";
-import Step1 from '../../assets/images/CashCow/CashCow-Step1.png';
-import Step2 from '../../assets/images/CashCow/CashCow-Step2.png';
-import Step3 from '../../assets/images/CashCow/CashCow-Step3.png';
-import Step5 from '../../assets/images/CashCow/CashCow-Step5.png';
+import { Button } from "@material-ui/core";
 import clsx from "clsx";
 
 const CashCow = ({ classes }: any) => {
   
   const { t } = useTranslation();
   return (
-    <ol type="1">
-      <li className={clsx(classes.pt10)}>{t('integrations.cashCow.step1')}</li>
-      <div className={clsx(classes.pt10)}>
-        <img src={Step1} alt={t('integrations.cashCow.step1')} className={clsx(classes.pb25)} />
-      </div>
-      <li className={clsx(classes.pt10)}>{t('integrations.cashCow.step2')}</li>
-      <div className={clsx(classes.pt10)}>
-        <img src={Step2} alt={t('integrations.cashCow.step2')} className={clsx(classes.pb25)} />
-      </div>
-      <li className={clsx(classes.pt10)}>{t('integrations.cashCow.step3')}</li>
-      <div className={clsx(classes.pt10)}>
-        <img src={Step3} alt={t('integrations.cashCow.step3')} className={clsx(classes.pb25)} />
-      </div>
-      <li className={clsx(classes.pt10)}>{t('integrations.cashCow.step4')}</li>
-      <li className={clsx(classes.pt10)}>{t('integrations.cashCow.step5')}</li>
-      <div className={clsx(classes.pt10)}>
-        <img src={Step5} alt={t('integrations.cashCow.step5')} className={clsx(classes.pb25)} />
-      </div>
-    </ol>
+    <>
+      <div>{t('integrations.wooCommerce.description')}</div>
+      <Button
+        onClick={() => window.open('https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%9B%D7%99%D7%9D/%d7%94%d7%aa%d7%a7%d7%a0%d7%aa-%d7%a4%d7%9c%d7%90%d7%92%d7%99%d7%9f-%d7%9c-cashcow/', '_blank')}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.actionButton,
+          classes.actionButtonLightBlue,
+          classes.backButton,
+          classes.mt20
+        )}
+        color="primary"
+      >
+        {t(`integrations.cashCow.connectStore`)}
+      </Button>
+    </>
   );
 };
 

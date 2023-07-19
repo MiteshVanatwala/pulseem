@@ -62,7 +62,7 @@ const Integrations = ({ classes }: any) => {
           <WooCommerce classes={classes} />
         </TabPanel>
 
-        <TabPanel value='2' className={clsx(classes.pt0)}>
+        <TabPanel value='2'>
           <CashCow classes={classes} />
         </TabPanel>
       </TabContext>
