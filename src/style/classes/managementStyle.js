@@ -1077,7 +1077,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   avatarIcon: {
     fontFamily: "pulseemicons",
     color: "#fff",
-    fontSize: 18,
+    fontSize: 20,
   },
   checkIcon: {
     backgroundColor: "green",

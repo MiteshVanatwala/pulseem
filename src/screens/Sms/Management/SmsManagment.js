@@ -944,7 +944,7 @@ const SmsManagnentScreen = ({ classes }) => {
 					size={!data ? 'large' : 'medium'}
 					variant='contained'
 					onClick={handleSendVerificationCode}
-					className={clsx(classes.verifyButton, !data && classes.f20)}>
+					className={clsx(classes.btn, classes.btnRounded)}>
 					{t('sms.verificationButtonText')}
 				</Button>
 				<Typography className={clsx(classes.contactUs, classes.newLine)}>
