@@ -353,9 +353,9 @@ const VerificationDialog = ({
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
                         {/* <Box pb={1} className={classes.textCenter}> */}
-                        <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
+                        {/* <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
                             {t('campaigns.newsLetterMgmt.emailVerification.popupTitle')}
-                        </Typography>
+                        </Typography> */}
                         <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
                             {t('campaigns.newsLetterMgmt.emailVerification.popupDesc1')}
                         </Typography>
@@ -543,26 +543,19 @@ const VerificationDialog = ({
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
-                        <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
-                            {t('sms.verificationDialogTitle')}
-                        </Typography>
-                        <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
+                        <Typography variant="body1">
                             {t('sms.verificationBody')} <b>{t('sms.oneTimeProcess')}</b>{' '}{t('sms.foreachSubmission')}
                         </Typography>
-                        <Typography style={{ fontSize: 15, textDecoration: 'underline' }} className={classes.mt15}>
+                        <Typography style={{ textDecoration: 'underline' }} className={clsx(classes.mt15, classes.mb15)}>
                             {t('sms.verificationNote')}
                         </Typography>
                         <Divider />
                     </Box>
                     <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
+                            <Typography className={clsx(classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
                             <Button
-                                style={{ height: 50 }}
-                                className={clsx(
-                                    classes.btn, classes.btnRounded,
-                                    'btnVerifyNew'
-                                )}
+                                className={clsx(classes.btn, classes.btnRounded)}
                                 onClick={() => {
                                     setSelectedVerificationContact('')
                                     setVerificationError({ Number: '' })
@@ -738,9 +731,9 @@ const VerificationDialog = ({
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
-                        <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
+                        {/* <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
                             {t('settings.accountSettings.2fa.cellphone.firstSlide.title')}
-                        </Typography>
+                        </Typography> */}
                         <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
                             {RenderHtml(t('settings.accountSettings.2fa.cellphone.firstSlide.descirption'))}
                         </Typography>
@@ -955,9 +948,9 @@ const VerificationDialog = ({
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
-                        <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
+                        {/* <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
                             {t('settings.accountSettings.2fa.email.firstSlide.title')}
-                        </Typography>
+                        </Typography> */}
                         <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
                             {RenderHtml(t('settings.accountSettings.2fa.email.firstSlide.descirption'))}
                         </Typography>
@@ -1163,8 +1156,23 @@ const VerificationDialog = ({
         )
     }
 
+    const getTitle = () => {
+        switch (variant) {
+            case 'email':
+                return t('campaigns.newsLetterMgmt.emailVerification.popupTitle');
+            case 'sms':
+                return t('sms.verificationDialogTitle');
+            case 'emailTFA':
+                return t('settings.accountSettings.2fa.email.firstSlide.title');
+            case 'smsTFA':
+                return t('settings.accountSettings.2fa.cellphone.firstSlide.title');
+            default:
+                break;
+        }
+    }
+
     const Popup = (data = '') => ({
-        title: '',
+        title: getTitle(),
         content: (<>
             {variant === 'email' && EMAIL_MODULE()}
             {variant === 'sms' && SMS_MODULE()}
