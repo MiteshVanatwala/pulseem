@@ -1394,11 +1394,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& canvas": {
       height: barHeight[windowSize],
     },
-    paddingLeft: windowSize !== "xs" ? 15 : 0,
-    // paddingRight: windowSize !== "xs" ? 15 : 0,
+    paddingLeft: windowSize !== "xs" && !isRTL ? 10 : 0,
+    paddingRight: windowSize !== "xs" && isRTL ? 10 : 0,
   },
   barContainer: {
-    width: windowSize !== "xs" ? "460px !important" : "100%",
+    width: windowSize !== "xs" ? "450px !important" : "100%",
   },
   fontWrap: {
     fontSize: "10px",
@@ -1662,8 +1662,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: "5px 0px",
   },
   lastReportsTabPanels: {
-    paddingRight: windowSize !== "xs" ? 15 : 0,
-    paddingLeft: windowSize !== "xs" ? 15 : 0,
+    paddingRight: windowSize !== "xs" ? 5 : 0,
+    paddingLeft: windowSize !== "xs" ? 5 : 0,
     '& .MuiDivider-root': {
       width: '100%',
       border: '1px #F0F5FF solid',

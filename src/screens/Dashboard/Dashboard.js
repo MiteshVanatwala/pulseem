@@ -71,14 +71,14 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
-            <Grid item xs={12} sm={12} md={12} lg={3}>
+            <Grid item xs={12} sm={12} md={12} lg={4}>
               <PulseemTips
                 classes={classes}
                 t={t}
                 isRTL={isRTL}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={9}>
+            <Grid item xs={12} sm={12} md={12} lg={8}>
               <LatestReports
                 classes={classes}
                 windowSize={windowSize}

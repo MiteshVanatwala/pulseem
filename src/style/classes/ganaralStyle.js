@@ -215,6 +215,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingLeft: summaryPadding[windowSize],
     overflowY: "auto",
   },
+  paddingSides5: {
+    paddingRight: 5,
+    paddingLeft: 5,
+  },
   paddingSides15: {
     paddingRight: 15,
     paddingLeft: 15,

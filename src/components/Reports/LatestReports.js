@@ -219,8 +219,8 @@ const LatestReports = ({ classes, t, isRTL }) => {
       <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
         <Box className={clsx(!showGraphs ? classes.tabPanel : null, classes.spaceBetween, classes.flexJustifyCenter, classes.flexWrap)}>
           <Grid container>
-            <Grid item sm={6}>
-              <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1, classes.mlr10)}>
+            <Grid item sm={5}>
+              <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1)}>
                 {
                   showGraphs ? (innerData.map((c, index) => {
                     const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
@@ -228,23 +228,23 @@ const LatestReports = ({ classes, t, isRTL }) => {
                       <Box key={index} className={classes.w100}>
                         {index === 0 && <Divider />}
                         <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex)} key={`${c.CampaignName}_${index}`}>
-                          <Box className={clsx(classes.flex2, classes.paddingSides15)}>
+                          <Box className={clsx(classes.flex2, classes.paddingSides5)}>
                             <BootstrapTooltip title={c.CampaignName} placement="top">
-                              <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f16, classes.ellipsisText, classes.graphCampaignName)}>
+                              <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f14, classes.ellipsisText, classes.graphCampaignName)}>
                                 {c.CampaignName}
                               </Link>
                             </BootstrapTooltip>
                           </Box>
                           {tabType === "sms" && <Box className={classes.flex1}>
                             <Box>
-                              <Typography className={clsx(classes.dInline, classes.ml5, classes.mr5, classes.f16)}>
+                              <Typography className={clsx(classes.dInline, classes.ml5, classes.mr5, classes.f14)}>
                                 {c.TotalSendPlan.toLocaleString()} {`${c.TotalSendPlan === 1 ? t('common.Recipient') : t('common.Recipients')}`}
                               </Typography>
                             </Box>
                           </Box>
                           }
                           <Box className={classes.flex1}>
-                            <Typography className={clsx(classes.dInlineBlock, classes.f16, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                            <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
                               {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
                             </Typography>
                           </Box>
@@ -264,7 +264,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                 }
               </Box>
             </Grid>
-            <Grid item sm={6}>
+            <Grid item sm={7}>
               {showGraphs &&
                 <Box className={classes.barChart}>
                   <Bar data={reportData.data} options={barOptions} />
