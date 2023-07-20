@@ -2443,10 +2443,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   autoCompleteTag: {
     '& .MuiAutocomplete-tag': {
-      backgroundColor: '#0371ad',
-      color: '#fff',
+      backgroundColor: '#fff',
+      border: 'solid 2px #F65026',
+      color: '#000',
+      fontWeight: 'bold',
       '& .MuiChip-deleteIcon': {
-        fill: '#fff'
+        fill: '#F65026'
       }
     }
   },
