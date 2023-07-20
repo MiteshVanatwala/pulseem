@@ -1511,6 +1511,7 @@ const ClientSearchResult = ({ classes }) => {
           justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}>
           {iconsMap.map(icon => (
             <Grid
+              style={{ flex: 1, alignItems: 'center', }}
               className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
               key={icon.key}
               item >
