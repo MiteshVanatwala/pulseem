@@ -668,10 +668,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			);
 			setIsDeleteCampaignOpen(false);
 			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
-				setToastMessage({
-					...ToastMessages.SUCCESS,
-					message: deleteData?.payload?.Message,
-				})
+				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 				setTimeout(() => {
 					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 				}, 1000);
