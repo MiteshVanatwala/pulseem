@@ -113,7 +113,7 @@ const ChatUi = ({
 				if (element !== null) {
 					setTimeout(() => {
 						element.scrollTop = element.scrollHeight;
-					}, 1000)
+					}, 1500)
 				}
 			} else {
 				setAllWhatsappChat(undefined);
