@@ -15,7 +15,8 @@ const EventTabs = ({ classes,
     setDialog,
     purchaseToggleDisabled = false,
     showButtons = () => null,
-    onPurchaseChanged = () => null }) => {
+    onPurchaseChanged = () => null 
+}) => {
     const { t } = useTranslation();
     const [tabValue, setTabValue] = useState('PAGE_VIEW');
     const { event, purchaseEnabled } = useSelector((state) => state.siteTracking);

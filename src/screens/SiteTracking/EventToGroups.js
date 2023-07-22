@@ -124,7 +124,7 @@ const EventToGroups = ({
                             value={currentEvent && currentEvent.operatorKey}
                             onChange={e => updateOperationData(e, "operatorKey", e.target.value)}
                             style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left', maxHeight: 57 }}
-                            className={'bottomAlignedSelect'}
+                            className={clsx('bottomAlignedSelect', classes.p10)}
                             endAdornment={
                                 <InputAdornment
                                     className={classes.selectAdornment}
@@ -159,7 +159,7 @@ const EventToGroups = ({
                         </Select>
                     </FormControl>
                 </Box>
-                <Box style={{ width: '100%' }} className={clsx('textBoxWrapper', classes.dFlex, classes.flex1)}>
+                <Box style={{ width: '100%' }} className={clsx('textBoxWrapper', classes.dFlex, classes.flex1, classes.paddingSides15)}>
                     <TextField
                         placeholder={t("siteTracking.placeHolderAddPageUrl")}
                         className={clsx(classes.mt24, classes.textField, classes.fullWidth, classes.endElementNoRadius, pageUrlIsValid === false ? classes.error : pageUrlIsValid !== null ? classes.valid : null)}
@@ -189,7 +189,7 @@ const EventToGroups = ({
                     classes={classes}
                     title={'siteTracking.typeGroupName'}
                     onShowModal={handleShowGroup}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', paddingTop: '24px' }}
                     containerStyle={{ paddingBlock: 2 }}
                 />
             </Box>
