@@ -45,6 +45,7 @@ import WizardActions from "../../../components/Wizard/WizardActions";
 import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog.js";
 import SendResponseDialog from './Popups/SendResponseDialog';
 import UploadInProgressDialog from "./Popups/UploadInProgressDialog";
+import NoCreditDialog from './Popups/NoCreditDialog'
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -160,6 +161,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [quickSendClients, setQuickSendClients] = useState(null);
     const [totalClientsToSend, setTotalClientsToSend] = useState(0);
     const [reCheckAuth, setRecheckAuth] = useState(false);
+    const [noCreditLeft, setNoCreditLeft] = useState(false);
     const MAX_UPLOAD_LIMITATION = 5000;
 
     useEffect(() => {
@@ -384,7 +386,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         408: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.generalError'), ShowContactSupport: true } },
         409: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.MONTHLY_BULK_ENDED'), ShowContactSupport: true } },
         410: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.FIRST_CAMPAIGN_RESTRICTIONS'), ShowContactSupport: false } },
-        411: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_RESTRICTED'), ShowContactSupport: true } },
+        411: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_RESTRICTED'), ShowContactSupport: true } }
     };
 
     const handleSendResponse = (response) => {
@@ -393,6 +395,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         else if (response?.StatusCode === 403) {
             setNewEmailVerification(newsletterInfo.FromEmail);
+        }
+        else if (response.StatusCode === 405) {
+            setNoCreditLeft(true);
         }
         else {
             setDialogType(SEND_PROC[response?.StatusCode]);
@@ -1350,6 +1355,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 isOpen={dialogType?.type === 'SendResponse'}
                 key={'SendResponse'}
                 setDialogType={setDialogType}
+            />}
+            {noCreditLeft && <NoCreditDialog
+                classes={classes}
+                isOpen={noCreditLeft}
+                popUpType={2}
+                onClose={() => setNoCreditLeft(false)}
+                onCancel={() => setNoCreditLeft(false)}
+                key={'123'}
             />}
             {/* //#region snacks */}
             {/* <Snackbar

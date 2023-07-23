@@ -14,6 +14,8 @@ import { Loader } from '../../../../components/Loader/Loader';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import Toast from '../../../../components/Toast/Toast.component';
 import { logout } from '../../../../helpers/Api/PulseemReactAPI';
+import { CreditType } from '../../../../Models/Payments/NoCreditPopUp';
+import NoCreditDialog from '../Popups/NoCreditDialog'
 
 const SmsMarketingDialog = ({
     classes,
@@ -38,6 +40,7 @@ const SmsMarketingDialog = ({
     const [linkToUpdateEnabled, setLinkToUpdateEnabled] = useState(true);
     const [linkToCampaignEnabled, setLinkToCampaignEnabled] = useState(true);
     const [newSmsVerification, setNewSmsVerification] = useState(false);
+    const [noCreditLeft, setNoCreditLeft] = useState(false);
     const [showLoader, setLoader] = useState(false);
     const [numberVerified, setNumberVerified] = useState(true);
     const [errors, setErrors] = useState({});
@@ -191,11 +194,14 @@ const SmsMarketingDialog = ({
             }
             case 200:
             case 500: {
+                setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.generalError'), showAnimtionCheck: false });
                 break;
             }
             // no credit left 
             case 405: {
-                setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.BULK_ENDED'), showAnimtionCheck: false });
+                setNoCreditLeft(true);
+                // setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.BULK_ENDED'), showAnimtionCheck: false });
+                // Show dialog with option to purchase a new SMS package
                 break
             }
             default: {
@@ -444,6 +450,17 @@ const SmsMarketingDialog = ({
                     step={1}
                     value={smsModel.FromNumber}
                 />}
+                {noCreditLeft && <NoCreditDialog
+                    classes={classes}
+                    isOpen={noCreditLeft}
+                    popUpType={CreditType.SMS}
+                    onClose={() => setNoCreditLeft(false)}
+                    onCancel={() => setNoCreditLeft(false)}
+                    key={'123'}
+
+                />
+
+                }
                 <Loader isOpen={showLoader} />
             </Grid>
         ),
