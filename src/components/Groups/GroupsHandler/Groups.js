@@ -88,7 +88,7 @@ const Groups = ({ classes,
         return groupList && groupList.length > 0 ? groupList?.filter((g) => {
             return g.GroupName.trim().toLowerCase().indexOf(groupNameSearch?.trim().toLowerCase()) > -1;
         }).map((group) => {
-            const isExist = selectedList?.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
+            const isExist = selectedList?.map((group) => { return group[groupIdKey] }).indexOf(group[groupIdKey]) > -1;
             return (<ListItem id={group[groupIdKey]} key={group[groupIdKey]} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
                 onMouseEnter={() => setIsHover(group[groupIdKey])}
                 onMouseLeave={() => setIsHover(null)}
@@ -117,10 +117,10 @@ const Groups = ({ classes,
 
     const renderCampaigns = () => {
         return groupList && groupList.length > 0 ? groupList?.filter((c) => {
-            return c.Name.toLowerCase().includes(groupNameSearch.toLowerCase());
+            return c.Name.toLowerCase().indexOf(groupNameSearch.toLowerCase()) > -1;
         }).map((camp) => {
             if (isSms) {
-                const isExist = selectedList.map((c) => { return c.SMSCampaignID }).includes(camp.SMSCampaignID);
+                const isExist = selectedList.map((c) => { return c.SMSCampaignID }).indexOf(camp.SMSCampaignID) > -1;
                 return (<ListItem id={camp.SMSCampaignID}
                     key={camp.SMSCampaignID}
                     onClick={() => onSelectGroup(camp)} style={{ cursor: 'pointer' }}
@@ -146,7 +146,7 @@ const Groups = ({ classes,
                 </ListItem>)
             }
             else {
-                const isExist = selectedList.map((c) => { return c.CampaignID }).includes(camp.CampaignID);
+                const isExist = selectedList.map((c) => { return c.CampaignID }).indexOf(camp.CampaignID) > -1;
                 return (<ListItem id={camp.CampaignID}
                     key={camp.CampaignID}
                     onClick={() => onSelectGroup(camp)} style={{ cursor: 'pointer' }}
