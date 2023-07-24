@@ -477,7 +477,9 @@ const SendCampaign = ({
 			setIsDeleteCampaignOpen(false);
 			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
-				navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+				setTimeout(() => {
+					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+				}, 1000);
 			} else {
 				deleteData?.payload?.Message
 					? setToastMessage({
