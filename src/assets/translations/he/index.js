@@ -26,6 +26,7 @@ import whatsappManagement from './WhatsappManagement.json';
 import whatsappReport from './WhatsappReport.json';
 import whatsappChat from './WhatsappChat.json';
 import settings from './Settings.he.json'
+import integrations from './Integrations.he.json'
 
 export const he = {
 	automations,
@@ -55,5 +56,6 @@ export const he = {
 	whatsappCampaign,
 	whatsappManagement,
 	whatsappReport,
-	whatsappChat
+	whatsappChat,
+	integrations
 }
