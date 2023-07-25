@@ -436,7 +436,7 @@ export const getSmsMarketing = createAsyncThunk(
 export const setSmsMarketing = createAsyncThunk(
   'smsCampaign/SetSmsMarketing', async (payload, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.post(`smsCampaign/SetSmsMarketing/`, payload);
+      const response = await PulseemReactInstance.post(`smsCampaign/SetSmsMarketing`, payload);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

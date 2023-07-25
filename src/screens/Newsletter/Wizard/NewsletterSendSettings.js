@@ -46,6 +46,7 @@ import VerificationDialog from "../../../components/DialogTemplates/Verification
 import SendResponseDialog from './Popups/SendResponseDialog';
 import UploadInProgressDialog from "./Popups/UploadInProgressDialog";
 import NoCreditDialog from './Popups/NoCreditDialog'
+import { CreditType } from "../../../Models/Payments/NoCreditPopUp";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -1359,7 +1360,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             {noCreditLeft && <NoCreditDialog
                 classes={classes}
                 isOpen={noCreditLeft}
-                popUpType={2}
+                popUpType={CreditType.SMS}
                 onClose={() => setNoCreditLeft(false)}
                 onCancel={() => setNoCreditLeft(false)}
                 key={'123'}

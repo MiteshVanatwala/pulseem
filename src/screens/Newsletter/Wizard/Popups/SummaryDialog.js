@@ -78,6 +78,7 @@ const SummaryDialog = ({ classes,
             ...sendResponse.payload,
             fromEmail: fromEmail
         });
+        setDisableSend(false);
     }
 
     useEffect(() => {

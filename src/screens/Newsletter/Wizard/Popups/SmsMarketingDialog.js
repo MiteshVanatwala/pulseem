@@ -162,19 +162,19 @@ const SmsMarketingDialog = ({
                 const smsCampaignPayload = {
                     Type: 0,
                     SendDate: newVal,
-                    Name: smsModel.Name,
+                    Name: smsModel.Name ?? '',
                     Text: textRef.current.value,
                     IsTestCampaign: false,
                     SendSmsTo: smsModel.SendSmsTo,
                     FromNumber: smsModel.FromNumber,
-                    SmsBulkCost: smsModel.SmsBulkCost,
+                    SmsBulkCost: smsModel.Credits,
                     IsLinksStatistics: isLinksStatistics,
                     CreditsPerSms: smsModel.CreditsPerSms,
                     EmailCampaignID: totalMarketing?.CampaignID,
-                    GroupIds: selectedGroups.map((g) => g.GroupID)
+                    GroupIds: selectedGroups.map((g) => g.GroupID).join(',')
                 };
 
-                const r = await dispatch(setSmsMarketing(smsCampaignPayload));
+                const r = await dispatch(setSmsMarketing({ ...smsCampaignPayload }));
                 handleTotalMarketingResponse(r.payload);
             }
         }
@@ -469,7 +469,7 @@ const SmsMarketingDialog = ({
         cancelText: t("common.Cancel"),
         onClose: onClose,
         onCancel: onCancel,
-        onConfirm: handleConfirm
+        onConfirm: () => { handleConfirm() }
     }
 
     return (
