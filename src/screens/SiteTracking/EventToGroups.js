@@ -119,6 +119,7 @@ const EventToGroups = ({
                         className={clsx(classes.selectInputFormControl)}
                         style={{ minWidth: 100, marginTop: 12, width: windowSize === 'xs' ? '100%' : 'auto' }}>
                         <Select
+                            native
                             id="demo-simple-select-outlined"
                             name={currentEvent && currentEvent.operatorKey}
                             value={currentEvent && currentEvent.operatorKey}
@@ -135,7 +136,7 @@ const EventToGroups = ({
                             }
                         >
                             {EventConditions.map((condition) => {
-                                return <MenuItem
+                                return <option
                                     key={condition.key}
                                     value={condition.key}
                                     name={condition.key}
@@ -154,7 +155,7 @@ const EventToGroups = ({
                                         /> :
                                             t(condition.value)
                                     }
-                                </MenuItem>
+                                </option>
                             })}
                         </Select>
                     </FormControl>
