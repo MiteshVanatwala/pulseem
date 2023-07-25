@@ -5,7 +5,9 @@ import { useTranslation } from 'react-i18next';
 import GroupTags from '../../components/Groups/GroupTags'
 import { EventConditions } from '../../helpers/Constants'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
-import { FormControl, Typography, TextField, Box, Select, MenuItem, Button, InputAdornment } from '@material-ui/core'
+import { Typography, TextField, Box, Button, InputAdornment, MenuItem } from '@material-ui/core';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import { updateMetaData, deleteMetaData } from '../../redux/reducers/siteTrackingSlice';
 import { GroupDialog } from '../../components/Groups/GroupDialog';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
@@ -115,12 +117,11 @@ const EventToGroups = ({
             >
                 <Box className={clsx('selectWrapper', { [classes.w100]: windowSize === 'xs' })}>
                     <FormControl
-                        // variant="outlined"
+                        variant="outlined"
                         className={clsx(classes.selectInputFormControl)}
-                        style={{ minWidth: 100, marginTop: 12, width: windowSize === 'xs' ? '100%' : 'auto' }}>
+                        style={{ minWidth: 100, marginTop: 12, width: windowSize === 'xs' ? '100%' : 'auto' }}
+                    >
                         <Select
-                            native
-                            id="demo-simple-select-outlined"
                             name={currentEvent && currentEvent.operatorKey}
                             value={currentEvent && currentEvent.operatorKey}
                             onChange={e => updateOperationData(e, "operatorKey", e.target.value)}
@@ -134,9 +135,25 @@ const EventToGroups = ({
                                     <IoIosArrowDown size={20} />
                                 </InputAdornment>
                             }
+                            PaperProps={{
+                                style: {
+                                    transform: 'translateX(10px) translateY(50px)',
+                                }
+                            }}
+                            MenuProps={{
+                                anchorOrigin: {
+                                    vertical: "bottom",
+                                    horizontal: "left"
+                                },
+                                transformOrigin: {
+                                    vertical: "top",
+                                    horizontal: "left"
+                                },
+                                getContentAnchorEl: null
+                            }}
                         >
                             {EventConditions.map((condition) => {
-                                return <option
+                                return <MenuItem
                                     key={condition.key}
                                     value={condition.key}
                                     name={condition.key}
@@ -155,7 +172,7 @@ const EventToGroups = ({
                                         /> :
                                             t(condition.value)
                                     }
-                                </option>
+                                </MenuItem>
                             })}
                         </Select>
                     </FormControl>
