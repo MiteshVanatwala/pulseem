@@ -71,7 +71,7 @@ const Gallery = ({
             const tmpFolders = [];
             f.forEach((folder, index) => {
                 const folderFiles = [...gallery[folder]];
-                const folderName = index === 0 ? "main" : folder.split("\\")[1];
+                const folderName = index === 0 ? "main" : folder;
                 var files = folderFiles.sort((a, b) => {
                     return new Date(b?.CreatedDate) - new Date(a?.CreatedDate);
                 });
@@ -129,6 +129,16 @@ const Gallery = ({
             marginRight: theme.spacing(1),
             backgroundColor: 'transparent'
         },
+        labelSubIcon: {
+            color: '#0371ad',
+            marginRight: theme.spacing(1),
+            backgroundColor: 'transparent'
+        },
+        labelLastIcon: {
+            color: '#3498DB',
+            marginRight: theme.spacing(1),
+            backgroundColor: 'transparent'
+        },
         labelText: {
             fontWeight: 'inherit',
             flexGrow: 1
@@ -153,7 +163,7 @@ const Gallery = ({
                             <StyledTreeItem
                                 title={f.FolderName === "main" ? (isRTL ? "ראשי" : "Main") : f.FolderName}
                                 key={`k_${index}`}
-                                style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                                style={{ direction: isRTL ? 'rtl' : 'ltr', paddingInlineStart: f.FolderName.split('\\').length * 7 }}
                                 nodeId={`k_${index}`}
                                 labelText={`${f.FolderName === "main" ? (isRTL ? "ראשי" : "Main") : f.FolderName} (${f.files ? f.files.length : 0})`}
                                 labelIcon={FolderIcon}
@@ -225,7 +235,7 @@ const Gallery = ({
             <TreeItem
                 label={
                     <div className={classes.labelRoot}>
-                        <LabelIcon color="inherit" className={classes.labelIcon} />
+                        <LabelIcon className={other?.title.split('\\').length > 2 ? classes.labelLastIcon : other?.title.split('\\').length === 2 ? classes.labelSubIcon : classes.labelIcon} />
                         <Typography variant="body2" className={classes.labelText}>
                             {labelText}
                         </Typography>
@@ -254,6 +264,7 @@ const Gallery = ({
         bgColor: PropTypes.string,
         color: PropTypes.string,
         labelIcon: PropTypes.elementType.isRequired,
+        labelSubIcon: PropTypes.elementType.isRequired,
         labelInfo: PropTypes.string,
         labelText: PropTypes.string.isRequired,
     };

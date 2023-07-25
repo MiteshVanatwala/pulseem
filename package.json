@@ -59,6 +59,7 @@
     "react-i18next": "^12.2.2",
     "react-icons": "^4.7.1",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-input-mask": "^2.0.4",
     "react-modal": "^3.16.1",
     "react-number-format": "^4.6.3",
     "react-papaparse": "^3.17.1",
@@ -102,6 +103,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.192",
+    "@types/react-input-mask": "^3.0.2",
     "@types/react-router-dom": "^5.3.3",
     "@types/uuid": "^8.3.4",
     "babel-core": "^6.26.3",

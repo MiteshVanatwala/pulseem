@@ -10,17 +10,19 @@ export interface TeamsMessage {
 export const sendToTeamChannel = createAsyncThunk(
     'connectors/SendToTeamChannel',
     async (message: TeamsMessage, thunkAPI) => {
-        try {
-            // const { ComponentName = '', MethodName = '' } = message;
-            // const log = {
-            //     activityTitle: `Component: ${ComponentName} | Method: ${MethodName}`,
-            //     text: message.Text,
-            // }
-            // const response = await PulseemReactInstance.post(`connectors/SendToTeamChannel`, log);
-            // return JSON.parse(response.data)
-        } catch (error) {
-            return console.log(error);
-        }
+        return null;
+        // try {
+        //     const { ComponentName = '', MethodName = '' } = message;
+        //     const log = {
+        //         activityTitle: `Component: ${ComponentName} | Method: ${MethodName}`,
+        //         text: message.Text,
+        //     }
+        //     const response = await PulseemReactInstance.post(`connectors/SendToTeamChannel`, log);
+        //     return JSON.parse(response.data)
+
+        // } catch (error) {
+        //     return console.log(error);
+        // }
     }
 );
 

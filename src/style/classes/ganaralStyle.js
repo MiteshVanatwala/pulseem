@@ -2721,7 +2721,26 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
-
+  iconTab: {
+    '& .MuiTab-wrapper': {
+      display: 'inline-block',
+    },
+    '& img': {
+      verticalAlign: 'bottom',
+      marginBottom: '0px !important',
+      paddingRight: isRTL ? '0px' : '15px',
+      paddingLeft: !isRTL ? '0px' : '15px',
+      height: '30px'
+    }
+  },
+  InputMaskTextField: {
+    padding: 10,
+    border: 'solid 1px #c4c4c4',
+    borderRadius: 4,
+    fontSize: 14,
+    width: 400,
+    letterSpacing: 1
+  },
   dialogZindex: {
     zIndex: '1000 !important'
   },
@@ -2934,5 +2953,33 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   cursorPointer: {
     cursor: 'pointer'
+  },
+  shopifySettingTextBox: {
+    '& input': {
+      minWidth: '400px'
+    },
+    '& .selectBox': {
+      marginLeft: 30,
+      border: "1px solid #818181",
+      backgroundColor: "white",
+      padding: "10px",
+      borderRadius: "4px",
+      width: 400,
+      outline: "none",
+      display: 'block'
+    },
+  },
+  shopifySettingMultiSelect: {
+    paddingLeft: '30px',
+    '& #multiple-checkbox': {
+      width: 330,
+    },
+    '& .group-dropdown': {
+      width: 400,
+    },
+    '& .MuiSelect-icon': {
+      position: 'initial',
+      paddingRight: '10px'
+    }
   }
 });

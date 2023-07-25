@@ -65,6 +65,7 @@ import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAp
 import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
+import Integrations from './screens/Integrations/Integrations';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -472,10 +473,15 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path={`/SystemMessage`}
+        path={`/react/SystemMessage`}
         element={<SystemMessage classes={classes} />}
       />
       <Route exact
+        path={`/react/Integrations`}
+        element={<Integrations classes={classes} />}
+      />
+      <Route
+        exact
         path={'/react/reports/Inbound'}
         element={<InboundMessages classes={classes} key="all" />}
       />
