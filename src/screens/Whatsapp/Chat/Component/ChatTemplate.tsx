@@ -84,7 +84,9 @@ const ChatTemplate = ({
 			case 6:
 				return 'doubleTick';
 			case 4:
+			case 5:
 			case 7:
+			case 11:
 				return 'cancel';
 			default:
 				return '';
@@ -421,6 +423,18 @@ const ChatTemplate = ({
 							key={msgIndex}
 							className={`${classes.whatsappChat} chat__msg chat__msg--sent`}>
 							<span>
+							{
+								message?.MediaUrl && message?.MediaUrl?.length > 0 && (
+									<>
+										<ImagePreview
+											classes={classes}
+											className={`${classes.whatsappChat} chat__img`}
+											placeholderImg={imagePlaceholder}
+											errorImg={imagePlaceholderX}
+											src={message?.MediaUrl}
+										/>
+									</>
+								)}
 								{message.Message || translator('whatsappChat.messageErrorText')}
 							</span>
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
