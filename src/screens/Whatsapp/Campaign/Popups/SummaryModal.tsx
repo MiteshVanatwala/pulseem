@@ -170,7 +170,7 @@ const SummaryModal = ({
 			return translator('mainReport.birthday');
 		} else if (spectialDateFieldID === '2') {
 			return translator('mainReport.creationDay');
-		} else {
+		} else if (spectialDateFieldID !== '0') {
 			return (
 				specialDatedropDown &&
 				Object.entries(specialDatedropDown)[Number(spectialDateFieldID) - 3][1]
