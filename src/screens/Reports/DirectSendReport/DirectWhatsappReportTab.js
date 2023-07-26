@@ -334,6 +334,7 @@ const DirectWhatsappReportTab = ({
                         size='large'
                         variant='contained'
                         onClick={() => {
+                            setPage(1);
                             clearSearch('whatsapp');
                         }}
                         className={classes.searchButton}
