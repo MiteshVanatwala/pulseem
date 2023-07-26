@@ -170,18 +170,10 @@ const SummaryModal = ({
 			return translator('mainReport.birthday');
 		} else if (spectialDateFieldID === '2') {
 			return translator('mainReport.creationDay');
-		} else if (spectialDateFieldID === '3') {
-			return translator('mainReport.dateOfFirstCampaign');
-		} else if (spectialDateFieldID === '4') {
-			return translator('mainReport.dateOfJoining');
-		} else if (spectialDateFieldID === '5') {
-			return translator('mainReport.dateOfSomething1');
-		} else if (spectialDateFieldID === '6') {
-			return translator('mainReport.dateOfSomething2');
 		} else {
 			return (
 				specialDatedropDown &&
-				Object.entries(specialDatedropDown)[Number(spectialDateFieldID) - 3]
+				Object.entries(specialDatedropDown)[Number(spectialDateFieldID) - 3][1]
 			);
 		}
 	};
