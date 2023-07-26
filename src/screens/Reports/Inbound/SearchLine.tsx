@@ -50,7 +50,7 @@ const SearchLine = ({
     onFilterRequest,
     onSetPage,
     onSetIsSearching,
-    showAutoCompleteForm
+    showAutoCompleteForm = false
 }: SearchObject) => {
     const { t: translator } = useTranslation();
     const localClasses = useStyles();
@@ -119,7 +119,7 @@ const SearchLine = ({
     const renderDateFields = () => {
         return (
             <>
-                {showAutoCompleteForm && <Grid item>
+                {/* {showAutoCompleteForm && <Grid item>
                     <FormControl variant="outlined" className={clsx(classes.formControl, classes.smsReplies)} style={{ width: '100%' }}>
                         <Autocomplete
                             disableListWrap
@@ -169,7 +169,7 @@ const SearchLine = ({
                             }}
                         />
                     </FormControl>
-                </Grid>}
+                </Grid>} */}
                 {dateFields()}
                 {windowSize !== 'xs' && <Grid item>
                     <TextField
