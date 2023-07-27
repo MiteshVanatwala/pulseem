@@ -104,7 +104,7 @@ const SmsReplies = ({ classes }) => {
         return (
             <>
                 {/* <Divider /> */}
-                <Grid container spacing={2} className={classes.lineTopMarging} >
+                <Grid container spacing={2} className={clsx(classes.p20)}>
                     {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                         <Button
                             className={clsx(
@@ -474,7 +474,7 @@ const SmsReplies = ({ classes }) => {
 
 
     return (
-        <Box>
+        <Box className={classes.p20}>
             {/* <Box className={'topSection'}> */}
             {/* {renderHeader()} */}
             <Grid container>
