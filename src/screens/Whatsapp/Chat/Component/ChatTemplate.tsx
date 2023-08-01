@@ -435,7 +435,7 @@ const ChatTemplate = ({
 										/>
 									</>
 								)}
-								{message.Message || translator('whatsappChat.messageErrorText')}
+								{message.Message || (!message?.MediaUrl?.length ? translator('whatsappChat.messageErrorText') : '')}
 							</span>
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
 								{' '}
