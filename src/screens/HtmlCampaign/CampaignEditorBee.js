@@ -12,10 +12,10 @@ import {
   testSend,
   saveUserBlock,
   deleteUserBlock,
-  saveTemplateToAccount,
-  getTemplateById,
-  getPublicTemplates,
-  getAllTemplatesBySubaccountId
+  // saveTemplateToAccount,
+  // getTemplateById,
+  // getPublicTemplates,
+  // getAllTemplatesBySubaccountId
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
@@ -62,7 +62,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
-  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates } = useSelector(state => state.campaignEditor);
+  // const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures } = useSelector(state => state.common)
@@ -79,7 +80,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI();
   const [showGallery, setShowGallery] = useState(false);
   const [showDocs, setShowDocuments] = useState(false);
-  const [isSiteTracking, setIsSiteTracking] = useState(false);
   const queryParams = new URLSearchParams(window.location.search)
   const isFromAutomation = queryParams.get("FromAutomation");
   const NodeToEdit = queryParams.get("NodeToEdit");
@@ -151,8 +151,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         window.location.reload(true);
       } else getData();
     }
-    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-    dispatch(getAllTemplatesBySubaccountId());
+    // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    // dispatch(getAllTemplatesBySubaccountId());
   }, []);
   useEffect(() => {
     if (userBlocks) {
@@ -228,17 +228,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     initBeeToken();
   }
-  // const siteTrackingLogic = () => {
-  //   if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
-  //     const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
-  //     if (campaign?.HtmlData?.indexOf(domainName) > -1) {
-  //       setIsSiteTracking(true);
-  //     }
-  //     else {
-  //       setIsSiteTracking(false);
-  //     }
-  //   }
-  // }
   //#region Init Bee Token & Configuration
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
@@ -275,17 +264,17 @@ const CampaignEditor = ({ classes, ...props }) => {
       const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
       let forceTemplate = null;
       let defaultContent = DefaultContent(isRtlLang);
-      if (templateId !== null) {
-        const templateResponse = await dispatch(getTemplateById(templateId));
+      // if (templateId !== null) {
+      //   const templateResponse = await dispatch(getTemplateById(templateId));
 
-        if (templateResponse?.payload?.StatusCode === 201) {
-          const responseData = templateResponse?.payload?.Data;
-          setNewTemplate(responseData)
-          forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
-        } else {
-          setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
-        }
-      }
+      //   if (templateResponse?.payload?.StatusCode === 201) {
+      //     const responseData = templateResponse?.payload?.Data;
+      //     setNewTemplate(responseData)
+      //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+      //   } else {
+      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+      //   }
+      // }
 
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
@@ -308,12 +297,12 @@ const CampaignEditor = ({ classes, ...props }) => {
             const beeTest = new BeePlugin(beeObject);
             let template = null;
 
-            if (forceTemplate !== null) {
-              template = forceTemplate;
-            }
-            else {
-              template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
-            }
+            // if (forceTemplate !== null) {
+            //   template = forceTemplate;
+            // }
+            // else {
+            template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
+            // }
 
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
@@ -383,12 +372,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
-      // if (isSiteTracking === true) {
-      //   if (!args.HtmlData.indexOf('ref') > -1) {
-      //     finalHtml = doaminWithClientRef(args.HtmlData);
-      //     finalJson = doaminWithClientRef(args.JsonData);
-      //   }
-      // }
       const response = await dispatch(saveCampaign({
         Name: campaign.Name,
         campaignId: args.campaignId,
@@ -408,18 +391,18 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       }
 
-      if (saveRef.current?.saveTemplate) {
-        const templateResponse = await dispatch(saveTemplateToAccount({
-          Name: saveRef.current?.templateName,
-          JsonData: finalJson,
-          HTML: finalHtml,
-          Category: saveRef.current?.templateCategory
-        }));
-        if (!templateResponse.payload.Data) {
-          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
-        }
-        dispatch(getAllTemplatesBySubaccountId());
-      }
+      // if (saveRef.current?.saveTemplate) {
+      //   const templateResponse = await dispatch(saveTemplateToAccount({
+      //     Name: saveRef.current?.templateName,
+      //     JsonData: finalJson,
+      //     HTML: finalHtml,
+      //     Category: saveRef.current?.templateCategory
+      //   }));
+      //   if (!templateResponse.payload.Data) {
+      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+      //   }
+      //   dispatch(getAllTemplatesBySubaccountId());
+      // }
     } catch (e) {
       console.error(e);
     }
