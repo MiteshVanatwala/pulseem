@@ -121,7 +121,7 @@ const TemplateFields = ({
 							options={autoCompleteOptions}
 							renderOption={renderOptions}
 							style={{ direction: isRTL ? 'rtl' : 'ltr' }}
-							renderInput={(params) => <TextField {...params} />}
+							renderInput={(params: any) => <TextField {...params} />}
 							onChange={(_event: any, value: any) => onTemplateChange(value)}
 							value={getTemplateNameById(savedTemplateList, savedTemplate)}
 						/>
