@@ -3003,7 +3003,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			width: '100%',
 			fontSize: '24px',
 			fontWeight: '600',
-			color: '#1c82b2',
+			color: '#ff164f',
 			'@media screen and (max-width: 768px)': {
 				fontSize: '20px',
 			},
@@ -3035,11 +3035,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappNoSetupContactButton: {
 		fontFamily: 'OpenSansHebrew',
-		backgroundColor: '#1c82b2',
+		backgroundColor: '#ff164f',
 		cursor: 'pointer',
 		margin: '7px 54px',
 		'&:hover': {
-			backgroundColor: '#1c82b2',
+			backgroundColor: '#ff164f',
 		},
 		'& span': {
 			fontFamily: 'OpenSansHebrew',
