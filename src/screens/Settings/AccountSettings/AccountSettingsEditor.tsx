@@ -259,7 +259,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
 								}
 								startIcon={<MdMobileFriendly />}
 								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								style={{ backgroundColor: 'transparent' }}
 							>
 								<>
 									{t(
@@ -277,7 +276,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
 								}
 								startIcon={<MdOutlineMarkEmailRead />}
 								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								style={{ backgroundColor: 'transparent' }}
 							>
 								<>
 									{t(

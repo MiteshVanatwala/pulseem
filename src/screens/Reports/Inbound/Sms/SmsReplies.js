@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
 import { ClientStatus } from '../../../../helpers/Constants';
-import { EditIcon, ExportIcon } from '../../../../assets/images/managment/index';
+import { EditIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
 import { TablePagination, ManagmentIcon } from '../../../../components/managment/index';
@@ -261,7 +261,7 @@ const SmsReplies = ({ classes }) => {
                                     disableHover={true}
                                     key='edit'
                                     classes={classes}
-                                    icon={EditIcon}
+                                    uIcon={<EditIcon width={18} height={20} className={'editIcon'} />}
                                     iconClass={clsx(classes.smallIcon)}
                                     rootClass={classes.paddingIcon}
                                     onClick={async () => {
