@@ -14,6 +14,7 @@ import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
+import { Loader } from "../../../../components/Loader/Loader";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -42,6 +43,7 @@ const SummaryDialog = ({ classes,
     const [fromEmailVerified, setFromEmailVerified] = useState(true);
     const [verifyStep, setVerifyStep] = useState(0);
     const [verifyValue, setVerifyValue] = useState('');
+    const [showLoader, setShowLoader] = useState(false);
 
     const {
         FinalClients,
@@ -72,6 +74,7 @@ const SummaryDialog = ({ classes,
     const { t } = useTranslation();
 
     const handleSendCampaign = async () => {
+        setShowLoader(true);
         setDisableSend(true);
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
         handleSendResponse({
@@ -79,6 +82,7 @@ const SummaryDialog = ({ classes,
             fromEmail: fromEmail
         });
         setDisableSend(false);
+        setShowLoader(false);
     }
 
     useEffect(() => {
@@ -410,6 +414,7 @@ const SummaryDialog = ({ classes,
         onCancel={() => { setDialogType(null) }}
         {...currentDialog}>
         {currentDialog.content}
+        <Loader isOpen={showLoader} />
     </BaseDialog>
 
 }
