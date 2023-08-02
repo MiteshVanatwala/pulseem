@@ -71,7 +71,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
         }
         if (options.ReplaceNull === true) {
             try {
-                finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue) as ExportData;
+                finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue) as unknown as ExportData;
             } catch (error) {
                 // Log({
                 //     MethodName: 'ReplaceNull',

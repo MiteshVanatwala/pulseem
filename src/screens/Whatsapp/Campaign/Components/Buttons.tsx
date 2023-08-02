@@ -71,8 +71,11 @@ const Buttons = ({
 				<Button
 					variant='contained'
 					size='medium'
-					className={clsx(classes.actionButton, classes.actionButtonRed)}
-					style={{ margin: '8px', padding: '13px 0' }}
+					className={clsx(
+						classes.btn,
+            classes.btnRounded
+					)}
+					style={{ margin: '8px' }}
 					onClick={(e) => onFormButtonClick(buttons.DELETE)}>
 					<BsTrash size={22} />
 				</Button>
@@ -81,9 +84,8 @@ const Buttons = ({
 					variant='contained'
 					size='medium'
 					className={clsx(
-						classes.actionButton,
-						classes.actionButtonLightBlue,
-						classes.backButton
+						classes.btn,
+            classes.btnRounded
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
@@ -95,9 +97,8 @@ const Buttons = ({
 					variant='contained'
 					size='medium'
 					className={clsx(
-						classes.actionButton,
-						classes.actionButtonLightBlue,
-						classes.backButton
+						classes.btn,
+            classes.btnRounded
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
@@ -109,9 +110,9 @@ const Buttons = ({
 					variant='contained'
 					size='medium'
 					className={clsx(
-						classes.actionButton,
-						classes.actionButtonLightGreen,
-						classes.backButton
+						classes.greenButton,
+						classes.btn,
+            classes.btnRounded
 					)}
 					color='primary'
 					style={{ margin: '8px' }}

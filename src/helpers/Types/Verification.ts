@@ -7,7 +7,7 @@ export type Verification_Dialog_Popup = {
   };
   
   export type POPUP_OBJECT_TYPE = {
-    step: Number,
+    step?: Number,
     title: any;
     icon: any;
     content: any;
