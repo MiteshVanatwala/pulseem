@@ -155,7 +155,7 @@ const CampaignFields = ({
 					// @ts-ignore
 					options={autoCompleteOptions}
 					renderOption={renderOptions}
-					renderInput={(params) => <TextField {...params} />}
+					renderInput={(params: any) => <TextField {...params} />}
 					onChange={onTemplateChange}
 					value={getTemplateNameById(savedTemplateList, savedTemplate)}
 				/>

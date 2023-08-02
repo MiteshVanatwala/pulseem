@@ -1285,24 +1285,6 @@ const NotificationManagement = ({ classes }) => {
       currentPage='notifications'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title
-        Text={t('notifications.notificationManagement')} classes={classes}
-        ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
-        Element={
-          <Button onClick={() => {
-            setCookie('scriptDialog', true);
-            setForceShowImplementation(true);
-            setShowScriptDialog(true);
-          }
-          }
-            variant='contained'
-            className={clsx(
-              classes.actionButton,
-              classes.implementButtonFlex,
-              classes.actionButtonDarkBlue)}>{t('master.implementScript')}</Button>
-        } ShowDivider={true} />
-      {renderSearchSection()}
-      containerClass={classes.management}>
       <Box className={'topSection'}>
         <Title
           classes={classes}

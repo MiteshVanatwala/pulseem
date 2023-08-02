@@ -152,7 +152,7 @@ const DownloadFiles = ({ classes }: any) => {
                 arrow={true}
                 placement={'top'}
                 title={<Typography noWrap={false}>{row.FileName}</Typography>}
-                text={row.FileName} icon={undefined} style={undefined}>
+                text={row.FileName} icon={undefined} style={undefined} titleStyle={undefined}>
                 <Typography noWrap={false}>{row.SourceFileName && row.SourceFileName != '' && row.SourceFileName != null ? row.SourceFileName : row.FileName}</Typography>
             </CustomTooltip>
         )
