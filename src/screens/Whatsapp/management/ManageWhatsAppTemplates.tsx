@@ -765,7 +765,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
   const renderDialog = () => {
     const { data, type } = dialogType || {}
-		let currentDialog = {};
+		let currentDialog: any = {};
 		if (type === 'duplicate') {
     	currentDialog = getDuplicateDialog();
 		}
