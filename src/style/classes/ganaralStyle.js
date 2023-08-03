@@ -3387,5 +3387,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   cursorPointer: {
     cursor: 'pointer'
+  },
+  smallActionIcons: {
+    '& button': {
+      minWidth: 45,
+    },
+    '& svg': {
+      padding: 3
+    },
+    '& p': {
+      fontSize: '12px !important'
+    },
+    '& .MuiBox-root': {
+      '& div': {
+        height: '20px !important',
+        width: '20px !important'
+      }
+    }
   }
 });
