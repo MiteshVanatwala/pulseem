@@ -95,26 +95,26 @@ const RightPane = ({
 							}
 						/>
 						<Box
-							className={classes.dateBox}
+							className={clsx(classes.dateBox, classes.pbt15)}
 							style={{
 								pointerEvents: sendType === '2' ? 'auto' : 'none',
 							}}>
 							<DateField
 								minDate={moment()}
-								maximumDate={null}
+								maximumDate={moment().add(100, 'y')}
 								classes={classes}
 								value={sendType === '2' ? sendDate : null}
 								onChange={handleDatePicker}
 								placeholder={translator('notifications.date')}
 								timePickerOpen={true}
 								dateActive={sendType === '2' ? false : true}
-								onTimeChange={undefined}
-								timeActive={undefined}
-								buttons={undefined}
+								onTimeChange={() => {}}
+								timeActive={false}
+								buttons={[]}
 							/>
 						</Box>
 						<Box
-							className={classes.dateBox}
+							className={clsx(classes.dateBox, classes.pbt15)}
 							style={{
 								marginTop: 10,
 								pointerEvents: sendType === '2' ? 'auto' : 'none',

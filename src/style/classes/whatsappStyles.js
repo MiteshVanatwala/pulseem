@@ -2674,17 +2674,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappDropDown: {
 		marginLeft: 5,
 		alignSelf: 'flex-end',
-		border: '1px solid #1c82b2',
+		border: '1px solid #ff3343',
+		color: '#ff3343',
 		borderRadius: '.2rem',
 		padding: '1px 4px',
 		'& .MuiSelect-selectMenu': {
-			color: '#1c82b2 !important',
+			color: '#ff3343 !important',
 			'&:focus': {
 				// backgroundColor: '#fff'
 			},
 		},
 		'& .MuiSelect-icon': {
-			color: '#1c82b2 !important',
+			color: '#ff3343 !important',
 		},
 	},
 	whatsappAreaManual: {
