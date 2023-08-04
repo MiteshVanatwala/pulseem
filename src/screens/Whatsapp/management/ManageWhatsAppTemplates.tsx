@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
+import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	DeleteIcon,
@@ -48,7 +49,6 @@ import {
 	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
-import clsx from 'clsx';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
@@ -239,7 +239,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		} else {
 			setFailedTemplateReason('common');
 		}
-		setIsStatusResonModal(true);
+		// setIsStatusResonModal(true);
+		setDialogType({
+			type: 'errorDialog',
+			data: ''
+		});
 	};
 
 	const renderNameCell = (row: templateListItemsProps) => {
@@ -512,7 +516,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		);
 		if (templateData) {
 			onSavedTemplateChange(templateData?.Data);
-			setIsPreviewTemplateOpen(true);
+			setDialogType({
+				type: 'preview',
+				data: ''
+			});
 		}
 	};
 
@@ -522,7 +529,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		);
 		if (templateData) {
 			onSavedTemplateChange(templateData?.Data);
-			setIsSubmitTemplateOpen(true);
+			// setIsSubmitTemplateOpen(true);
+			setDialogType({
+				type: 'submitTemplate',
+				data: ''
+			});
 		} else {
 			setToastMessage(ToastMessages.ERROR);
 		}
@@ -545,7 +556,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				});
 				break;
 			case 'delete':
-				setIsDeleteTemplateOpen(true);
+				setDialogType({
+					type: 'delete',
+					data: ''
+				});
 				break;
 
 			default:
@@ -767,12 +781,97 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
     }
   })
 
+	const getDisplayErrorDialog = () => ({
+    title: '',
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator(getApiErrorResponseMessage('templateError', failedTemplateReason))}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      setDialogType({});
+    }
+  })
+
+	const getDeleteDialog = () => ({
+    title: translator('whatsappManagement.deleteTemplate'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator('whatsapp.alertModal.DeleteTemplateTitle')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+      onDeleteTemplate();
+    }
+  })
+
+	const getPreviewDialog = () => ({
+    title: translator('whatsappManagement.preview'),
+    showDivider: false,
+    content: (
+      <Box className={classes.alertModalContentMobile}>
+				<WhatsappMobilePreview
+					classes={classes}
+					templateData={templateData}
+					buttonType={buttonType}
+					fileData={fileData}
+				/>
+			</Box>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getSubmitTemplateDialog = () => ({
+    title: translator('whatsapp.alertModal.ConfirmText'),
+    showDivider: false,
+    content: (
+			<>
+				<div className={clsx(classes.pb25)}>{translator('whatsapp.alertModal.ConfirmTitle')}</div>
+				<Box className={classes.alertModalContentMobile}>
+					<WhatsappMobilePreview
+						classes={classes}
+						templateData={templateData}
+						buttonType={buttonType}
+						fileData={fileData}
+					/>
+				</Box>
+			</>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+			onSubmitTemplate();
+    }
+  })
+
   const renderDialog = () => {
     const { data, type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'duplicate') {
     	currentDialog = getDuplicateDialog();
+		} else if (type === 'errorDialog') {
+    	currentDialog = getDisplayErrorDialog();
+		} else if (type === 'delete') {
+			currentDialog = getDeleteDialog();
+		} else if (type === 'preview') {
+			currentDialog = getPreviewDialog();
+		} else if (type === 'submitTemplate') {
+			currentDialog = getSubmitTemplateDialog();
 		}
+
 		if (type) {
 			return (
 				dialogType && <BaseDialog
@@ -794,7 +893,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={false}
-			containerClass={clsx(classes.management, classes.mb50)}>
+			containerClass={clsx(classes.management, classes.mb50, classes.whatsapp)}>
 			{isAccountSetup ? (
 				<>
 					{renderToast()}
@@ -854,7 +953,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 												setTemplateStatusSearch(e.target.value)
 											}
 										>
-											<option disabled value="-1" key="-1" className={classes.underlinedSelOptns}>{translator("common.select")}</option>
+											<option value="" key="-1" className={classes.underlinedSelOptns}>{translator("common.select")}</option>
 											{
 												Object.keys(statusesByName)?.map((item: any, index: any) => (
 													<option
@@ -1031,7 +1130,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						/>
 					</div>
 
-					<AlertModal
+					{/* <AlertModal
 						classes={classes}
 						isOpen={isSubmitTemplateOpen}
 						onClose={() => setIsSubmitTemplateOpen(false)}
@@ -1048,58 +1147,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 								fileData={fileData}
 							/>
 						</Box>
-					</AlertModal>
-
-					<AlertModal
-						classes={classes}
-						isOpen={isPreviewTemplateOpen}
-						onClose={() => setIsPreviewTemplateOpen(false)}
-						title={translator('whatsappManagement.preview')}
-						subtitle={''}
-						onConfirmOrYes={() => setIsPreviewTemplateOpen(false)}
-						type='alert'>
-						<Box className={classes.alertModalContentMobile}>
-							<WhatsappMobilePreview
-								classes={classes}
-								templateData={templateData}
-								buttonType={buttonType}
-								fileData={fileData}
-							/>
-						</Box>
-					</AlertModal>
-
-					<AlertModal
-						classes={classes}
-						isOpen={isDeleteTemplateOpen}
-						onClose={() => setIsDeleteTemplateOpen(false)}
-						title={translator('whatsappManagement.deleteTemplate')}
-						subtitle={translator('whatsapp.alertModal.DeleteTemplateTitle')}
-						type='delete'
-						onConfirmOrYes={() => onDeleteTemplate()}
-					/>
-
-					{/* <AlertModal
-						classes={classes}
-						isOpen={isDuplicateTemplateOpen}
-						onClose={() => setIsDuplicateTemplateOpen(false)}
-						title={translator('whatsappManagement.duplicate')}
-						subtitle={translator('whatsappManagement.duplicateDesc')}
-						type='delete'
-						onConfirmOrYes={() => onDuplicaTemplate()}
-					/> */}
-
-					<AlertModal
-						classes={classes}
-						isOpen={isStatusResonModal}
-						onClose={() => setIsStatusResonModal(false)}
-						title={''}
-						subtitle={translator(
-							getApiErrorResponseMessage('templateError', failedTemplateReason)
-						)}
-						type='alert'
-						onConfirmOrYes={() => onDuplicaTemplate()}
-						direction='ltr'
-					/>
+					</AlertModal> */}
 				</>
 			) : (
 				!isLoader && <NoSetup classes={classes} />
