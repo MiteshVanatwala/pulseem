@@ -754,7 +754,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         borderRadius: "5px",
         justifyContent: "space-between",
         alignItems: "center",
-        margin: "0 5px"
+        margin: "0 5px",
         // marginTop: "15px"
     },
     pulseParentDiv:

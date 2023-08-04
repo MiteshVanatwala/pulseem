@@ -414,6 +414,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt15: {
     paddingTop: 15
   },
+  pt30: {
+    paddingTop: 30
+  },
   pt50: {
     paddingTop: 50
   },
@@ -3219,9 +3222,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   selectInputFormControl: {
     '&.MuiFormControl-root': {
       marginInline: 3,
-      // borderBottom: "1px solid #d6d1e6",
+      borderBottom: "1px solid #d6d1e6",
       "&:hover": {
-        // borderBottom: "1px solid #000"
+        borderBottom: "1px solid #000"
       },
       '& label': {
         marginInline: 5

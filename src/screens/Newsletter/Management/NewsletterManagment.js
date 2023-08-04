@@ -314,10 +314,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("common.CampaignName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.CampaignName")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
-          <TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex12} ></TableCell>
+          <TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex6} ></TableCell>
         </TableRow>
       </TableHead>
     )
@@ -341,16 +341,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
 
     const iconsMap = [[
-      {
-        key: 'send',
-        uIcon: SendIcon,
-        lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
-        rootClass: classes.sendIcon,
-        textClass: classes.sendIconText,
-        href: `${sitePrefix}Campaigns/SendSettings/${CampaignID}`
-        //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
-      },
+      // {
+      //   key: 'send',
+      //   uIcon: SendIcon,
+      //   lable: t('campaigns.imgSendResource1.ToolTip'),
+      //   remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
+      //   rootClass: classes.sendIcon,
+      //   textClass: classes.sendIconText,
+      //   href: `${sitePrefix}Campaigns/SendSettings/${CampaignID}`
+      //   //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+      // },
       {
         key: 'preview',
         uIcon: PreviewIcon,
@@ -489,6 +489,26 @@ const NewsletterManagnentScreen = ({ classes }) => {
                   {icon.key === 'copy' && renderCopyToClipoard}
                 </Grid>
               ))}
+              {
+                !(Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false)) && (
+                  <Grid
+                    style={{ flex: 1, alignItems: 'center', }}
+                    className={clsx('rowIconContainer', classes.justifyCenter, classes.alignSelfCenter, classes.pt30, classes.paddingSides5)}
+                    item
+                  >
+                    <Button
+                      className={clsx(
+                        classes.btn,
+                        classes.btnRounded,
+                      )}
+                      endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                      onClick={() => navigate(`${sitePrefix}Campaigns/SendSettings/${CampaignID}`)}
+                    >
+                      {t('campaigns.imgSendResource1.ToolTip')}
+                    </Button>
+                  </Grid>
+                )
+              }
             </Grid>
           </Grid>
         ))}
@@ -582,7 +602,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex3}>
+          className={classes.flex2}>
           {renderNameCell(row)}
         </TableCell>
         <TableCell
@@ -601,7 +621,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           component="th"
           scope="row"
           className={clsx(
-            classes.flex5,
+            classes.flex6,
             classes.tableCellRoot
           )}
         >

@@ -51,7 +51,7 @@ const WizardActions = ({
                                 style={{ margin: '8px' }}
                                 onClick={() => { onDelete() }}
                             >
-                                <BsTrash className={'trash'} style={{ fontSize: "24", marginLeft: '0 !important', marginRight: '0 !important' }} />
+                                <BsTrash className={'trash'} style={{ fontSize: "20", marginLeft: '0 !important', marginRight: '0 !important' }} />
                             </Button>
                         }
                         {onShowDocuments &&

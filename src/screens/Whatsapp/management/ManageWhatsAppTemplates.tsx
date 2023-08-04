@@ -1,8 +1,11 @@
 import {
 	Box,
 	Button,
+	FormControl,
 	Grid,
+	InputAdornment,
 	MenuItem,
+	Select,
 	Table,
 	TableCell,
 	TableContainer,
@@ -77,6 +80,7 @@ import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import NoSetup from '../NoSetup/NoSetup';
 import { getApiErrorResponseMessage } from '../Common';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -794,27 +798,25 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{isAccountSetup ? (
 				<>
 					{renderToast()}
-					<Box className={'topSection'}>
+					<Box className={clsx('topSection', classes.mb15)}>
 						<Title
 							Text={translator('whatsappManagement.templateManagement')}
 							classes={classes}
 							ContainerStyle={{}}
 							Element={null}
 						/>
-					</Box>
 
-					<div className={classes.manageWhatsappTemplates}>
-						<Grid container spacing={2} className={classes.lineTopMarging}>
+						<Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.paddingSides25)}>
 							<Grid item xs={6} lg={2}>
 								<TextField
 									variant='outlined'
 									size='small'
+									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth')}
 									value={templateNameSearch}
 									onChange={handleCampainNameChange}
 									onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
 										onTemplateKeyDown(e)
 									}
-									className={clsx(classes.textField, classes.minWidth252)}
 									placeholder={translator('whatsapp.templateNamePlaceholder')}
 								/>
 							</Grid>
@@ -823,28 +825,50 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 								item
 								xs={6}
 								lg={2}
-								className={classes.whatsappManagementbuttonFieldFlexWrapper}>
-								<TextField
-									select
-									type='text'
-									label={
-										templateStatusSearch?.length > 0 ? (
-											''
-										) : (
-											<>{translator('whatsappManagement.status')}</>
-										)
-									}
-									className={classes.whatsappManagementbuttonField}
-									onChange={(e: BaseSyntheticEvent) =>
-										setTemplateStatusSearch(e.target.value)
-									}
-									value={templateStatusSearch}>
-									{Object.keys(statusesByName)?.map((status: string) => (
-										<MenuItem key={'no-data-template' + status} value={status}>
-											<>{translator(statusesByName[status])}</>
-										</MenuItem>
-									))}
-								</TextField>
+								className={classes.whatsappManagementbuttonFieldFlexWrapper}
+							>
+								<Box className='selectWrapper'>
+									<FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+										<Select
+											labelId="FromEmail"
+											id="FromEmail"
+											displayEmpty
+											name="FromEmail"
+											value={templateStatusSearch}
+											endAdornment={
+												<InputAdornment
+													className={classes.selectAdornment}
+													position="end"
+												>
+													<IoIosArrowDown size={20} />
+												</InputAdornment>
+											}
+											inputProps={{ 'aria-label': 'Without label' }}
+											MenuProps={{
+												style: {
+													paddingTop: 9,
+													paddingBottom: 9
+												}
+											}}
+											onChange={(e: BaseSyntheticEvent) =>
+												setTemplateStatusSearch(e.target.value)
+											}
+										>
+											<option disabled value="-1" key="-1" className={classes.underlinedSelOptns}>{translator("common.select")}</option>
+											{
+												Object.keys(statusesByName)?.map((item: any, index: any) => (
+													<option
+														key={`exd_${index}`}
+														value={item}
+														className={classes.underlinedSelOptns}
+													>
+														{translator(statusesByName[item])}
+													</option>
+												))
+											}
+										</Select>
+									</FormControl>	
+								</Box>
 							</Grid>
 
 							<Grid item>
@@ -876,7 +900,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 								</Grid>
 							)}
 						</Grid>
+					</Box>
 
+					<div className={classes.manageWhatsappTemplates}>
 						<Grid
 							container
 							spacing={2}

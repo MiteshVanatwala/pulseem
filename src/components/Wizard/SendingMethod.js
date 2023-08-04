@@ -255,7 +255,7 @@ const SendingMethod = ({
                                     />
                                 </Box>
                                 <Box
-                                    className={classes.dateBox}
+                                    className={clsx(classes.dateBox, classes.pbt15)}
                                     style={{
                                         marginTop: 10,
                                         pointerEvents: campaign.SendingMethod === 2 ? "auto" : "none",
@@ -273,7 +273,7 @@ const SendingMethod = ({
                                         timePickerOpen={campaign.timePickerOpen}
                                     />
                                 </Box>
-                                <Stack direction='row' alignItems='center'>
+                                <Stack direction='row' alignItems='center' className={classes.pbt15}>
                                     <Checkbox
                                         className={classes.ml20}
                                         disabled={campaign.SendingMethod !== 2 || disabled}
@@ -409,7 +409,7 @@ const SendingMethod = ({
                                     </div>
                                 </Box>
                                 <Box
-                                    className={classes.dateBox}
+                                    className={clsx(classes.dateBox, classes.pbt15)}
                                     style={{
                                         marginTop: 10,
                                         pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
