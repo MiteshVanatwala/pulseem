@@ -2928,6 +2928,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	buttonWhatsappAutocomplete: {
 		padding: '10px 12px 10px 4px',
+		borderBottom: 'solid 1px #ced4da',
 		'& .MuiAutocomplete-endAdornment': {
 			right: isRTL ? 'unset' : '0px',
 			left: isRTL ? '0px' : 'unset',

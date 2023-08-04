@@ -93,7 +93,7 @@ const Templates = ({
         <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
           {renderHtml(templateDetails.Html)}
         </Box>
-        <div id='name' className={clsx(classes.textCenter, classes.pt5, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
+        <div id='name' className={clsx(classes.textCenter, classes.pt10, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
         <div id='buttons' className={clsx(classes.textCenter, classes.p5, classes.pb25)}>
           <Button
             className={clsx(

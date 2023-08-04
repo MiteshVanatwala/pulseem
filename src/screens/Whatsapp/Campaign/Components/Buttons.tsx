@@ -77,7 +77,7 @@ const Buttons = ({
 					)}
 					style={{ margin: '8px' }}
 					onClick={(e) => onFormButtonClick(buttons.DELETE)}>
-					<BsTrash size={22} />
+					<BsTrash size={18} style={{ marginLeft: 0 }} />
 				</Button>
 
 				<Button

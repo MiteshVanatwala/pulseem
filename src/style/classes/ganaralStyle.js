@@ -403,7 +403,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingTop: "2rem",
   },
   pt5: {
-    paddingTop: 10,
+    paddingTop: 5,
   },
   pt10: {
     paddingTop: 10,
@@ -983,7 +983,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#ca332f",
   },
   buttonField: {
-    borderRadius: "5px",
+    // borderRadius: "5px",
     // border: "1px solid #bbb",
     outline: "none",
     padding: "8px 12px 8px 4px",

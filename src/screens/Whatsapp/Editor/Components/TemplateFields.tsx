@@ -17,7 +17,6 @@ import {
 	Box,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import AlertModal from '../Popups/AlertModal';
 import { Autocomplete } from '@mui/material';
 import {
 	getTemplateIdByName,
@@ -40,8 +39,6 @@ const TemplateFields = ({
 		(state: { core: coreProps }) => state.core
 	);
 	const { t: translator } = useTranslation();
-	const [isFileSizeAlert, setIsFileSizeAlert] = useState<boolean>(false);
-	const [isFileUploadAlert, setIsFileUploadAlert] = useState<boolean>(false);
 	const [autoCompleteOptions, setAutoCompleteOptions] = useState<string[]>([]);
 
 	useEffect(() => {
@@ -114,7 +111,6 @@ const TemplateFields = ({
 						<Autocomplete
 							id='template-list'
 							className={clsx(
-								classes.buttonField,
 								classes.buttonWhatsappAutocomplete
 							)}
 							// @ts-ignore
@@ -138,7 +134,6 @@ const TemplateFields = ({
 
 						<Select
 							type='text'
-							className={classes.buttonField}
 							onChange={(e: BaseSyntheticEvent) =>
 								onCategoryChange(e.target.value)
 							}
@@ -149,6 +144,10 @@ const TemplateFields = ({
 									},
 								},
 							}}
+							style={{
+								borderBottom: 'solid 1px #ced4da'
+							}}
+							className={classes.buttonField}
 							placeholder={translator('report.ProductsReport.category')}
 							value={category}>
 							<MenuItem key={'marketing'} value={'marketing'}>
@@ -164,26 +163,6 @@ const TemplateFields = ({
 					</Grid>
 				</Grid>
 			</Grid>
-
-			<AlertModal
-				classes={classes}
-				isOpen={isFileSizeAlert}
-				onClose={() => setIsFileSizeAlert(false)}
-				title={translator('whatsapp.alertModal.alert')}
-				subtitle={translator('whatsapp.alertModal.fileSizeAlert')}
-				type='alert'
-				onConfirmOrYes={() => setIsFileSizeAlert(false)}
-			/>
-
-			<AlertModal
-				classes={classes}
-				isOpen={isFileUploadAlert}
-				onClose={() => setIsFileUploadAlert(false)}
-				title={translator('whatsapp.alertModal.alert')}
-				subtitle={translator('whatsapp.alertModal.fileUploadAlert')}
-				type='alert'
-				onConfirmOrYes={() => setIsFileUploadAlert(false)}
-			/>
 		</Grid>
 	);
 };

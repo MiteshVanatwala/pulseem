@@ -1,4 +1,5 @@
 import React, { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
+import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import uniqid from 'uniqid';
 import { Title } from '../../../components/managment/Title';
@@ -30,7 +31,7 @@ import {
 } from './Types/WhatsappCreator.types';
 import { ClassesType } from '../../Classes.types';
 import { useTranslation } from 'react-i18next';
-import { Box, Grid } from '@material-ui/core';
+import { Box, Grid, Typography } from '@material-ui/core';
 import WhatsappTemplateEditor from './Components/WhatsappTemplateEditor';
 import { actionButtonProps } from './Types/WhatsappCreator.types';
 import QuickReply from './Popups/QuickReply';
@@ -70,6 +71,7 @@ import NoSetup from '../NoSetup/NoSetup';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import moment from 'moment';
 import FileUpload from './Components/FileUpload';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -92,6 +94,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
+	const [dialogType, setDialogType] = useState<any>({});
 	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const getSavedTemplateFields = async () => {
@@ -998,7 +1001,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
 			case 'delete':
-				setIsDeleteTemplateOpen(true);
+				setDialogType({
+					type: 'delete'
+				})
 				break;
 			case 'save':
 				saveTemplate();
@@ -1075,6 +1080,45 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			setCallToActionFieldRows([...templateData.templateButtons]);
 		}
 	};
+
+	const getDeleteDialog = () => ({
+    title: translator('whatsapp.alertModal.DeleteText'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator('whatsapp.alertModal.DeleteTitle')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+      onDeleteTemplate();
+    }
+  })
+
+	const renderDialog = () => {
+    const { data, type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'delete') {
+			currentDialog = getDeleteDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
 
 	return (
 		<DefaultScreen
@@ -1242,6 +1286,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			) : (
 				!isLoader && <NoSetup classes={classes} />
 			)}
+			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
