@@ -1125,100 +1125,101 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			subPage={'create'}
 			currentPage='whatsapp'
 			classes={classes}
-			containerClass={classes.management}>
+			containerClass={classes.editorCont}>
 			{isAccountSetup ? (
 				<>
-					{renderToast()}
-					<Box className={'topSection'}>
-						<Title
-							Text={translator('whatsapp.header')}
-							classes={classes}
-							ContainerStyle={{}}
-							// @ts-ignore
-							Element={null}
-						/>
-					</Box>
-					<br />
-					<form onSubmit={onSubmit}>
-						<Grid container>
-							<TemplateFields
+					<Box className={"head"}>
+						{renderToast()}
+						<Box className={'topSection'}>
+							<Title
+								Text={translator('whatsapp.header')}
 								classes={classes}
-								templateName={templateName}
-								savedTemplate={savedTemplate}
-								onTemplateNameChange={(e) => onTemplateNameChange(e)}
-								onSavedTemplateChange={(templateId) =>
-									onSavedTemplateChange(templateId)
-								}
-								savedTemplateList={savedTemplateList}
-								category={category}
-								onCategoryChange={setCategory}
-								showValidation={showValidation}
 							/>
-							<Grid
-								container
-								spacing={windowSize === 'xs' ? 0 : 2}
-								style={{ paddingTop: '14px' }}>
-								<Grid item className={classes.whatsappTextEditorWrapper}>
-									<WhatsappTemplateEditor
-										classes={classes}
-										onButtonClick={(button: actionButtonProps) =>
-											onButtonClick(button)
-										}
-										buttons={templateData.templateButtons}
-										onButtonDelete={(button) => onActionButtonDelete(button)}
-										buttonType={buttonType}
-										setTemplateText={(text: string) => updateTemplateText(text)}
-										templateText={templateData.templateText}
-										templateTextRef={templateTextRef}
-										OnEditorActionButtonClick={() =>
-											buttonType === buttonTypes.QUICK_REPLY
-												? setIsQuickReplyOpen(true)
-												: setIsCallToActionOpen(true)
-										}
-										dynamicFieldCount={dynamicFieldCount}
-										linkCount={linkCount}
-										templateTextLimit={templateTextLimit}
-										fileData={fileData}
-									/>
+						</Box>
 
-									<Grid className={classes.whatsappFileUploadWrapper} item>
-										<FileUpload
+						<Box className={'containerBody'}>
+							<form onSubmit={onSubmit}>
+								<Grid container>
+									<TemplateFields
+										classes={classes}
+										templateName={templateName}
+										savedTemplate={savedTemplate}
+										onTemplateNameChange={(e) => onTemplateNameChange(e)}
+										onSavedTemplateChange={(templateId) =>
+											onSavedTemplateChange(templateId)
+										}
+										savedTemplateList={savedTemplateList}
+										category={category}
+										onCategoryChange={setCategory}
+										showValidation={showValidation}
+									/>
+									<Grid
+										container
+										spacing={windowSize === 'xs' ? 0 : 2}
+										style={{ paddingTop: '14px' }}>
+										<Grid item className={classes.whatsappTextEditorWrapper}>
+											<WhatsappTemplateEditor
+												classes={classes}
+												onButtonClick={(button: actionButtonProps) =>
+													onButtonClick(button)
+												}
+												buttons={templateData.templateButtons}
+												onButtonDelete={(button) => onActionButtonDelete(button)}
+												buttonType={buttonType}
+												setTemplateText={(text: string) => updateTemplateText(text)}
+												templateText={templateData.templateText}
+												templateTextRef={templateTextRef}
+												OnEditorActionButtonClick={() =>
+													buttonType === buttonTypes.QUICK_REPLY
+														? setIsQuickReplyOpen(true)
+														: setIsCallToActionOpen(true)
+												}
+												dynamicFieldCount={dynamicFieldCount}
+												linkCount={linkCount}
+												templateTextLimit={templateTextLimit}
+												fileData={fileData}
+											/>
+
+											<Grid className={classes.whatsappFileUploadWrapper} item>
+												<FileUpload
+													classes={classes}
+													buttonType={buttonType}
+													fileData={fileData}
+													setFileData={(fileData) => uploadFile(fileData)}
+												/>
+											</Grid>
+										</Grid>
+
+										<Grid item className={classes.whatsappPreviewWrapper}>
+											<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
+												{/* <Grid item xs={12} sm={12} md={12} lg={6}>
+													<WhatsappTips classes={classes} />
+												</Grid> */}
+												<Grid item xs={12} sm={12} md={12} lg={12}>
+													<Box className={classes.whatsappMobilePreviewWrapper}>
+														<WhatsappMobilePreview
+															classes={classes}
+															templateData={templateData}
+															buttonType={buttonType}
+															fileData={fileData}
+														/>
+													</Box>
+												</Grid>
+											</Grid>
+										</Grid>
+
+										<Buttons
 											classes={classes}
-											buttonType={buttonType}
-											fileData={fileData}
-											setFileData={(fileData) => uploadFile(fileData)}
+											onFormButtonClick={(buttonName) =>
+												onFormButtonClick(buttonName)
+											}
+											displayBackButton={false}
 										/>
 									</Grid>
 								</Grid>
-
-								<Grid item className={classes.whatsappPreviewWrapper}>
-									<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
-										{/* <Grid item xs={12} sm={12} md={12} lg={6}>
-											<WhatsappTips classes={classes} />
-										</Grid> */}
-										<Grid item xs={12} sm={12} md={12} lg={12}>
-											<Box className={classes.whatsappMobilePreviewWrapper}>
-												<WhatsappMobilePreview
-													classes={classes}
-													templateData={templateData}
-													buttonType={buttonType}
-													fileData={fileData}
-												/>
-											</Box>
-										</Grid>
-									</Grid>
-								</Grid>
-
-								<Buttons
-									classes={classes}
-									onFormButtonClick={(buttonName) =>
-										onFormButtonClick(buttonName)
-									}
-									displayBackButton={false}
-								/>
-							</Grid>
-						</Grid>
-					</form>
+							</form>
+						</Box>
+					</Box>
 					<QuickReply
 						classes={classes}
 						isQuickReplyOpen={isQuickReplyOpen}

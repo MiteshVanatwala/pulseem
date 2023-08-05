@@ -1237,12 +1237,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignDynamicFieldButtonActive: {
 		textTransform: 'capitalize',
 		fontSize: '14px',
-		backgroundColor: '#0371ad',
+		backgroundColor: '#ff3343',
 		color: '#ffffff',
 		'&:hover': {
 			textTransform: 'capitalize',
 			fontSize: '14px',
-			backgroundColor: '#0371ad',
+			backgroundColor: '#ff3343',
 			color: '#ffffff',
 		},
 	},
@@ -1622,7 +1622,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignDynamicFieldLinkRemoval: {
 		textTransform: 'capitalize',
 		fontSize: '14px',
-		backgroundColor: '#0371ad',
+		backgroundColor: '#ff3343',
 		color: '#ffffff',
 		marginTop: '6px',
 		marginLeft: isRTL ? '0px' : '10px',
@@ -1632,7 +1632,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&:hover': {
 			textTransform: 'capitalize',
 			fontSize: '14px',
-			backgroundColor: '#0371ad',
+			backgroundColor: '#ff3343',
 			color: '#ffffff',
 		},
 	},

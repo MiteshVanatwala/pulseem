@@ -279,7 +279,7 @@ const RightPane = ({
 							)}
 						</Box>
 						<Box
-							className={classes.dateBox}
+							className={clsx(classes.dateBox, classes.pbt15)}
 							style={{
 								marginTop: 10,
 								pointerEvents: sendType === '3' ? 'auto' : 'none',

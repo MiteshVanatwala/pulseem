@@ -68,7 +68,6 @@ import {
 	saveQuickSendGroups,
 	getWhatsAppCampaignSummary,
 } from '../../../redux/reducers/whatsappSlice';
-import ValidationAlert from './Popups/ValidationAlert';
 import TestGroupModal from './Popups/TestGroupModal';
 import { RiCloseFill } from 'react-icons/ri';
 import QuickReply from '../Editor/Popups/QuickReply';
@@ -103,6 +102,7 @@ import SummaryModal from './Popups/SummaryModal';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 import NoSetup from '../NoSetup/NoSetup';
 import moment from 'moment';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -176,12 +176,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [campaignName, setCampaignName] = useState<string>('');
 	const [from, setFrom] = useState<string>('');
 	const [showValidation, setShowValidation] = useState<boolean>(false);
-	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [isTestGroupModal, setIsTestGroupModal] = useState<boolean>(false);
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
-	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
-	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
@@ -199,6 +196,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		fileLink: '',
 		fileType: '',
 	});
+	const [dialogType, setDialogType] = useState<any>({});
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
 	const [templateData, setTemplateData] = useState<templateDataProps>({
@@ -656,10 +654,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		return isValidated;
 	};
 
-	const onDeleteClick = () => {
-		setIsDeleteCampaignOpen(true);
-	};
-
 	const onDeleteCampaign = async () => {
 		resetFields();
 		navigate(whatsappRoutes.CREATE_CAMPAIGN_PAGE1);
@@ -667,7 +661,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		// 	const deleteData: commonAPIResponseProps = await dispatch<any>(
 		// 		deleteCampaign(campaignID)
 		// 	);
-		// 	setIsDeleteCampaignOpen(false);
 		// 	if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 		// 		setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 		// 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
@@ -682,7 +675,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		// } else {
 		// 	resetFields();
 		// }
-		setIsDeleteCampaignOpen(false);
 	};
 
 	const onTestSend = async (isSingle: boolean = false, campaignID: number) => {
@@ -739,7 +731,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			} else {
 				setIsLoader(false);
 				setIsTestGroupModal(false);
-				setIsValidationAlert(true);
+				setDialogType({
+					type: 'validation'
+				})
 			}
 		} else {
 			setIsLoader(false);
@@ -826,7 +820,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 		} else {
 			setIsTestGroupModal(false);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			})
 		}
 	};
 
@@ -886,7 +882,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				return null;
 			}
 		} else {
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			})
 			return null;
 		}
 	};
@@ -909,7 +907,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		} else {
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			})
 		}
 	};
 
@@ -919,10 +919,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				onSaveCampaign('save');
 				break;
 			case buttons.DELETE:
-				onDeleteClick();
+				setDialogType({
+					type: 'delete'
+				})
 				break;
 			case buttons.EXIT:
-				setIsExitCampaignOpen(true);
+				setDialogType({
+					type: 'exit'
+				})
 				break;
 			case buttons.SEND:
 				onSubmit();
@@ -939,380 +943,468 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setExceedLimitModal(false);
 	};
 
+	const getExitDialog = () => ({
+    title: translator('mainReport.handleExitTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator('mainReport.leaveCampaign')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+      onExitCampaign();
+    }
+  })
+	
+	const getDeleteDialog = () => ({
+    title: translator('whatsapp.alertModal.DeleteText'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator('whatsapp.alertModal.DeleteTitle')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+      onDeleteCampaign();
+    }
+  })
+
+	const getValidationDialog = () => ({
+    title: translator('whatsappCampaign.sendValidation'),
+    showDivider: false,
+    content: (
+      <Typography>
+        <div>
+					<ul className={clsx(classes.noMargin, classes.mb20)}>
+						{groupSendValidationErrors?.map((requiredField: string, index: number) => (
+							<li key={index} className={classes.validationAlertModalLi}>
+								{requiredField}
+							</li>
+						))}
+					</ul>
+				</div>
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const renderDialog = () => {
+    const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'exit') {
+    	currentDialog = getExitDialog();
+		} else if (type === 'delete') {
+			currentDialog = getDeleteDialog();
+		} else if (type === 'validation') {
+			currentDialog = getValidationDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
+
 	return (
 		<DefaultScreen
 			subPage={'create'}
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}
-			containerClass={null}>
+			containerClass={classes.editorCont}>
 			{isAccountSetup ? (
 				<>
-					{renderToast()}
-					<Grid
-						className={classes.WhatsappCampainHeaderWrapper}
-						container
-						alignItems='center'>
-						<Grid item md={12} lg={6} className={classes.WhatsappCampainHeader}>
+					<Box className={"head"}>
+						<Box className={'topSection'}>
 							<Title
 								Text={translator('whatsappCampaign.header')}
 								classes={classes}
-								ContainerStyle={{}}
-								Element={null}
 							/>
-						</Grid>
-						<Grid item md={12} lg={6} className={classes.WhatsappCampainNotice}>
-							<span style={{ lineHeight: '0' }}>
-								{translator('whatsappCampaign.note')}
-							</span>
+						</Box>
+						<Box className={'containerBody'}>
+						{renderToast()}
+							<Grid
+								className={clsx(classes.WhatsappCampainHeaderWrapper, classes.pt15)}
+								container
+								alignItems='center'
+							>
+								<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
+									<span style={{ lineHeight: '0' }}>
+										{translator('whatsappCampaign.note')}
+									</span>
+									
+									<div className={classes.pt15}>
+										<>{translator('whatsappCampaign.checkLimit')}</>{' '}
+										<a
+											href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+											target='_blank'
+											rel='noreferrer'
+										>
+											<>{translator('whatsappCampaign.here')}</>
+										</a>
+									</div>
+								</Grid>
+							</Grid>
 							<br />
-							<span>
-								<>{translator('whatsappCampaign.checkLimit')}</>{' '}
-								<a
-									href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-									target='_blank'
-									rel='noreferrer'>
-									<>{translator('whatsappCampaign.here')}</>
-								</a>
-							</span>
-						</Grid>
-					</Grid>
-					<br />
-					<form onSubmit={onSubmit}>
-						<Grid container className={classes.WhatsappCampainP1}>
-							<Grid
-								className={classes.WhatsappCampainP1Left}
-								item
-								md={12}
-								lg={6}>
-								<Grid container>
+							<form onSubmit={onSubmit}>
+								<Grid container className={classes.WhatsappCampainP1}>
 									<Grid
+										className={classes.WhatsappCampainP1Left}
 										item
-										className={classes.WhatsappCampainFields}
 										md={12}
-										lg={12}>
-										<CampaignFields
-											classes={classes}
-											savedTemplateList={savedTemplateList}
-											savedTemplate={savedTemplate}
-											onSavedTemplateChange={(templateId) =>
-												onSavedTemplateChange(templateId)
-											}
-											campaignName={campaignName}
-											onCampaignNameChange={(campaignName) =>
-												setCampaignName(campaignName)
-											}
-											from={from}
-											onFromChange={(from) => setFrom(from)}
-											showValidation={showValidation}
-											phoneNumbersList={phoneNumbersList}
-										/>
-									</Grid>
-									<Grid
-										item
-										className={classes.WhatsappCampainTextarea}
-										md={12}
-										lg={12}>
-										<div className={classes.whatsappCampainHighlightContent}>
-											<div
-												className={classes.whatsappCampainHighlightTextWrapper}
-												style={{
-													direction: getTextDirection(
-														templateData.templateText,
-														isRTL
-													),
-												}}>
-												{/* @ts-ignore */}
-												<Highlighter
-													searchWords={dynamicVariable}
-													autoEscape={true}
-													textToHighlight={templateData.templateText}
-													highlightTag={(tagData: tagDataProps) =>
-														highlightText(tagData)
+										lg={6}>
+										<Grid container>
+											<Grid
+												item
+												className={classes.WhatsappCampainFields}
+												md={12}
+												lg={12}>
+												<CampaignFields
+													classes={classes}
+													savedTemplateList={savedTemplateList}
+													savedTemplate={savedTemplate}
+													onSavedTemplateChange={(templateId) =>
+														onSavedTemplateChange(templateId)
 													}
+													campaignName={campaignName}
+													onCampaignNameChange={(campaignName) =>
+														setCampaignName(campaignName)
+													}
+													from={from}
+													onFromChange={(from) => setFrom(from)}
+													showValidation={showValidation}
+													phoneNumbersList={phoneNumbersList}
 												/>
-											</div>
-											<Box
-												className={classes.whatsappCampaignActionButtonsWrapper}
-												id='buttons-wrapper'>
-												{templateData.templateButtons?.map(
-													(
-														button: quickReplyButtonProps | callToActionRowProps
-													) =>
-														button.fields.map(
+											</Grid>
+											<Grid
+												item
+												className={classes.WhatsappCampainTextarea}
+												md={12}
+												lg={12}>
+												<div className={classes.whatsappCampainHighlightContent}>
+													<div
+														className={classes.whatsappCampainHighlightTextWrapper}
+														style={{
+															direction: getTextDirection(
+																templateData.templateText,
+																isRTL
+															),
+														}}>
+														{/* @ts-ignore */}
+														<Highlighter
+															searchWords={dynamicVariable}
+															autoEscape={true}
+															textToHighlight={templateData.templateText}
+															highlightTag={(tagData: tagDataProps) =>
+																highlightText(tagData)
+															}
+														/>
+													</div>
+													<Box
+														className={classes.whatsappCampaignActionButtonsWrapper}
+														id='buttons-wrapper'>
+														{templateData.templateButtons?.map(
 															(
-																field:
-																	| quickReplyButtonsFieldProps
-																	| callToActionFieldProps
+																button: quickReplyButtonProps | callToActionRowProps
 															) =>
-																(field.fieldName ===
-																	'whatsapp.websiteButtonText' ||
-																	field.fieldName ===
-																	'whatsapp.phoneButtonText') && (
-																	<Box
-																		key={button.id}
-																		className={
-																			classes.whatsappCampaignActionButtonsBox
-																		}>
-																		<Button
-																			className={classes.whatsappActionButtons}
-																			onClick={() =>
-																				buttonType === 'quickReply'
-																					? setIsQuickReplyOpen(true)
-																					: setIsCallToActionOpen(true)
-																			}>
-																			{field.value}
-																		</Button>
-																	</Box>
+																button.fields.map(
+																	(
+																		field:
+																			| quickReplyButtonsFieldProps
+																			| callToActionFieldProps
+																	) =>
+																		(field.fieldName ===
+																			'whatsapp.websiteButtonText' ||
+																			field.fieldName ===
+																			'whatsapp.phoneButtonText') && (
+																			<Box
+																				key={button.id}
+																				className={
+																					classes.whatsappCampaignActionButtonsBox
+																				}>
+																				<Button
+																					className={classes.whatsappActionButtons}
+																					onClick={() =>
+																						buttonType === 'quickReply'
+																							? setIsQuickReplyOpen(true)
+																							: setIsCallToActionOpen(true)
+																					}>
+																					{field.value}
+																				</Button>
+																			</Box>
+																		)
 																)
-														)
-												)}
-											</Box>
-										</div>
-										<Box className={classes.whatsappSmallInfoDiv}>
-											<span className={classes.textInfoWrapper}>
-												{isRTL && <>{linkCount}&nbsp;</>}
-												<span className={classes.textInfo}>
-													{linkCount === 1 ? (
-														<>{translator('whatsappCampaign.link')}</>
-													) : (
-														<>{translator('whatsappCampaign.links')}</>
-													)}
-												</span>
-												{!isRTL && <>&nbsp;{linkCount}</>}
-											</span>
+														)}
+													</Box>
+												</div>
+												<Box className={classes.whatsappSmallInfoDiv}>
+													<span className={classes.textInfoWrapper}>
+														{isRTL && <>{linkCount}&nbsp;</>}
+														<span className={classes.textInfo}>
+															{linkCount === 1 ? (
+																<>{translator('whatsappCampaign.link')}</>
+															) : (
+																<>{translator('whatsappCampaign.links')}</>
+															)}
+														</span>
+														{!isRTL && <>&nbsp;{linkCount}</>}
+													</span>
 
-											<span className={classes.textInfoWrapper}>
-												{isRTL && <>{dynamicFieldCount}&nbsp;</>}
-												<span className={classes.textInfo}>
-													{dynamicFieldCount === 1 ? (
-														<>{translator('whatsappCampaign.dfield')}</>
-													) : (
-														<>{translator('whatsappCampaign.dfields')}</>
-													)}
-												</span>
-												{!isRTL && <>&nbsp;{dynamicFieldCount}</>}
-											</span>
+													<span className={classes.textInfoWrapper}>
+														{isRTL && <>{dynamicFieldCount}&nbsp;</>}
+														<span className={classes.textInfo}>
+															{dynamicFieldCount === 1 ? (
+																<>{translator('whatsappCampaign.dfield')}</>
+															) : (
+																<>{translator('whatsappCampaign.dfields')}</>
+															)}
+														</span>
+														{!isRTL && <>&nbsp;{dynamicFieldCount}</>}
+													</span>
 
-											<span
-												className={clsx(
-													classes.textInfoWrapper,
-													`${templateTextCount > templateTextLimit &&
-													'limit-exceed'
-													}`
-												)}>
-												{isRTL && (
-													<>
-														{templateTextCount}/{templateTextLimit}&nbsp;
-													</>
-												)}
-												<span className={classes.textInfo}>
-													<>{translator('whatsappCampaign.char')}</>
-												</span>
-												{!isRTL && (
-													<>
-														&nbsp;{templateTextCount}/{templateTextLimit}
-													</>
-												)}
-											</span>
-										</Box>
-									</Grid>
-								</Grid>
-							</Grid>
-							<Grid
-								className={classes.WhatsappCampainP1Right}
-								item
-								md={12}
-								lg={6}>
-								<Grid container>
-									<Grid item xs={12} sm={12} md={12} lg={12}>
-										<Box className={classes.WhatsappCampainMobilePreviewBox}>
-											<WhatsappMobilePreview
-												classes={classes}
-												templateData={templateData}
-												buttonType={buttonType}
-												fileData={fileData}
-											/>
-										</Box>
+													<span
+														className={clsx(
+															classes.textInfoWrapper,
+															`${templateTextCount > templateTextLimit &&
+															'limit-exceed'
+															}`
+														)}>
+														{isRTL && (
+															<>
+																{templateTextCount}/{templateTextLimit}&nbsp;
+															</>
+														)}
+														<span className={classes.textInfo}>
+															<>{translator('whatsappCampaign.char')}</>
+														</span>
+														{!isRTL && (
+															<>
+																&nbsp;{templateTextCount}/{templateTextLimit}
+															</>
+														)}
+													</span>
+												</Box>
+											</Grid>
+										</Grid>
 									</Grid>
 									<Grid
-										className={classes.WhatsappCampainMobilePreviewBox}
+										className={classes.WhatsappCampainP1Right}
 										item
-										xs={12}
-										sm={12}
 										md={12}
-										lg={12}>
-										<Box
-											className={clsx(
-												classes.switchDiv,
-												classes.testSendWrapper
-											)}>
-											<FormGroup>
-												<Switch
-													checked={isTestSend}
-													onChange={() => setIsTestSend(!isTestSend)}
-													className={clsx(
-														{ [classes.rtlSwitch]: isRTL },
-														classes.WhatsappCampainSwitch
-													)}
-												/>
-											</FormGroup>
-
-											<Box className={classes.radio}>
-												<Typography style={{ fontSize: '18px' }}>
-													<>{translator('whatsappCampaign.tsend')}</>
-												</Typography>
-												<Typography className={classes.whatsappDescSwitch}>
-													<>{translator('whatsappCampaign.tsendDesc')}</>
-												</Typography>
-											</Box>
-										</Box>
-
-										{isTestSend && (
-											<Box
-												className={clsx(classes.radio, classes.testSendRadio)}>
-												<RadioGroup
-													aria-labelledby='demo-controlled-radio-buttons-group'
-													defaultValue='onecontact'
-													name='radio-buttons-group'
-													onChange={(e: BaseSyntheticEvent) =>
-														onChangeTestSendRadio(e.target.value)
-													}>
-													<FormControlLabel
-														value='onecontact'
-														control={
-															<Radio
-																className={classes.WhatsappCampainRadioButton}
-															/>
-														}
-														label={
-															<Typography style={{ fontSize: 16 }}>
-																<>{translator('whatsappCampaign.oneContact')}</>
-															</Typography>
-														}
+										lg={6}>
+										<Grid container>
+											<Grid item xs={12} sm={12} md={12} lg={12}>
+												<Box className={classes.WhatsappCampainMobilePreviewBox}>
+													<WhatsappMobilePreview
+														classes={classes}
+														templateData={templateData}
+														buttonType={buttonType}
+														fileData={fileData}
 													/>
-													<Stack direction='row' spacing={0.5} height={40}>
-														<TextField
-															required
-															size='small'
-															id='templateName'
-															placeholder={translator(
-																'whatsappCampaign.oneContactPlaceholder'
-															)}
+												</Box>
+											</Grid>
+											<Grid
+												className={classes.WhatsappCampainMobilePreviewBox}
+												item
+												xs={12}
+												sm={12}
+												md={12}
+												lg={12}>
+												<Box
+													className={clsx(
+														classes.switchDiv,
+														classes.testSendWrapper
+													)}>
+													<FormGroup>
+														<Switch
+															checked={isTestSend}
+															onChange={() => setIsTestSend(!isTestSend)}
 															className={clsx(
-																classes.buttonField,
-																classes.success
+																{ [classes.rtlSwitch]: isRTL },
+																classes.WhatsappCampainSwitch
 															)}
-															disabled={testSendSelection !== 'onecontact'}
+														/>
+													</FormGroup>
+
+													<Box className={classes.radio}>
+														<Typography style={{ fontSize: '18px' }}>
+															<>{translator('whatsappCampaign.tsend')}</>
+														</Typography>
+														<Typography className={classes.whatsappDescSwitch}>
+															<>{translator('whatsappCampaign.tsendDesc')}</>
+														</Typography>
+													</Box>
+												</Box>
+
+												{isTestSend && (
+													<Box
+														className={clsx(classes.radio, classes.testSendRadio)}>
+														<RadioGroup
+															aria-labelledby='demo-controlled-radio-buttons-group'
+															defaultValue='onecontact'
+															name='radio-buttons-group'
 															onChange={(e: BaseSyntheticEvent) =>
-																setTestSendOneContact(
-																	e.target.value
-																		?.replace(/\D/g, '')
-																		?.substr(0, 18)
-																)
-															}
-															value={testSendOneContact}
-														/>
-														<Button
-															disabled={
-																testSendSelection !== 'onecontact' ||
-																testSendOneContact?.length === 0
-															}
-															variant='outlined'
-															color='primary'
-															className={classes.testOneContactSendButton}
-															onClick={() => onOkTestSending()}>
-															<>{translator('whatsappCampaign.sendButton')}</>
-														</Button>
-													</Stack>
-													<br />
-													<Stack
-														direction='row'
-														alignItems={'center'}
-														spacing={0.5}
-														height={40}>
-														<FormControlLabel
-															value='testgroup'
-															control={
-																<Radio
-																	className={classes.WhatsappCampainRadioButton}
-																/>
-															}
-															label={
-																<Typography style={{ fontSize: 16 }}>
-																	<>
-																		{translator('whatsappCampaign.testGroups')}
-																	</>
-																</Typography>
-															}
-														/>
-														<span className={classes.testSendNewTag}>
-															<>{translator('mainReport.newFeature')}</>
-														</span>
-													</Stack>
-													{testSendSelection === 'testgroup' && (
-														<Stack>
-															<div className={classes.rightForm}>
-																<div
-																	className={classes.contactGroupDiv}
-																	onClick={() => {
-																		setIsTestGroupModal(true);
-																	}}>
-																	{selectedTestGroup.length <= 0 && (
-																		<div>
-																			{' '}
-																			<>
-																				{translator('mainReport.ChooseLinks')}
-																			</>
-																		</div>
+																onChangeTestSendRadio(e.target.value)
+															}>
+															<FormControlLabel
+																value='onecontact'
+																control={
+																	<Radio
+																		className={classes.WhatsappCampainRadioButton}
+																	/>
+																}
+																label={
+																	<Typography style={{ fontSize: 16 }}>
+																		<>{translator('whatsappCampaign.oneContact')}</>
+																	</Typography>
+																}
+															/>
+															<Stack direction='row' spacing={0.5} height={40}>
+																<TextField
+																	required
+																	size='small'
+																	id='templateName'
+																	placeholder={translator(
+																		'whatsappCampaign.oneContactPlaceholder'
 																	)}
-																	{selectedTestGroup.length > 0 ? (
-																		<div className={classes.mappedGroup}>
-																			{selectedTestGroup.map((item, index) => {
-																				return (
-																					<div
-																						key={index}
-																						className={
-																							classes.selectedGroupsDiv
-																						}>
-																						<span className={classes.nameGroup}>
-																							{item.GroupName}
-																						</span>
-																						<RiCloseFill
-																							className={classes.groupCloseicn}
-																							onClick={(event) => {
-																								onRemoveGroupSelection(
-																									event,
-																									item.GroupID
-																								);
-																							}}
-																						/>
-																					</div>
-																				);
-																			})}
+																	className={clsx(
+																		classes.buttonField,
+																		classes.success
+																	)}
+																	disabled={testSendSelection !== 'onecontact'}
+																	onChange={(e: BaseSyntheticEvent) =>
+																		setTestSendOneContact(
+																			e.target.value
+																				?.replace(/\D/g, '')
+																				?.substr(0, 18)
+																		)
+																	}
+																	value={testSendOneContact}
+																/>
+																<Button
+																	disabled={
+																		testSendSelection !== 'onecontact' ||
+																		testSendOneContact?.length === 0
+																	}
+																	variant='outlined'
+																	color='primary'
+																	className={classes.testOneContactSendButton}
+																	onClick={() => onOkTestSending()}>
+																	<>{translator('whatsappCampaign.sendButton')}</>
+																</Button>
+															</Stack>
+															<br />
+															<Stack
+																direction='row'
+																alignItems={'center'}
+																spacing={0.5}
+																height={40}>
+																<FormControlLabel
+																	value='testgroup'
+																	control={
+																		<Radio
+																			className={classes.WhatsappCampainRadioButton}
+																		/>
+																	}
+																	label={
+																		<Typography style={{ fontSize: 16 }}>
+																			<>
+																				{translator('whatsappCampaign.testGroups')}
+																			</>
+																		</Typography>
+																	}
+																/>
+																<span className={classes.testSendNewTag}>
+																	<>{translator('mainReport.newFeature')}</>
+																</span>
+															</Stack>
+															{testSendSelection === 'testgroup' && (
+																<Stack>
+																	<div className={classes.rightForm}>
+																		<div
+																			className={classes.contactGroupDiv}
+																			onClick={() => {
+																				setIsTestGroupModal(true);
+																			}}>
+																			{selectedTestGroup.length <= 0 && (
+																				<div>
+																					{' '}
+																					<>
+																						{translator('mainReport.ChooseLinks')}
+																					</>
+																				</div>
+																			)}
+																			{selectedTestGroup.length > 0 ? (
+																				<div className={classes.mappedGroup}>
+																					{selectedTestGroup.map((item, index) => {
+																						return (
+																							<div
+																								key={index}
+																								className={
+																									classes.selectedGroupsDiv
+																								}>
+																								<span className={classes.nameGroup}>
+																									{item.GroupName}
+																								</span>
+																								<RiCloseFill
+																									className={classes.groupCloseicn}
+																									onClick={(event) => {
+																										onRemoveGroupSelection(
+																											event,
+																											item.GroupID
+																										);
+																									}}
+																								/>
+																							</div>
+																						);
+																					})}
+																				</div>
+																			) : null}
 																		</div>
-																	) : null}
-																</div>
-															</div>
-														</Stack>
-													)}
-												</RadioGroup>
-											</Box>
-										)}
+																	</div>
+																</Stack>
+															)}
+														</RadioGroup>
+													</Box>
+												)}
+											</Grid>
+										</Grid>
 									</Grid>
 								</Grid>
-							</Grid>
-						</Grid>
-						<Grid container>
-							<Buttons
-								displayBackButton={false}
-								classes={classes}
-								onFormButtonClick={(buttonName: string) =>
-									onFormButtonClick(buttonName)
-								}
-							/>
-						</Grid>
-					</form>
+								<Grid container>
+									<Buttons
+										displayBackButton={false}
+										classes={classes}
+										onFormButtonClick={(buttonName: string) =>
+											onFormButtonClick(buttonName)
+										}
+									/>
+								</Grid>
+							</form>
+						</Box>
+					</Box>
 
 					<DynamicModal
 						classes={classes}
@@ -1328,14 +1420,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						isTrackLink={isTrackLink}
 						setIsTrackLink={setIsTrackLink}
 						savedTemplate={savedTemplate}
-					/>
-
-					<ValidationAlert
-						classes={classes}
-						isOpen={isValidationAlert}
-						onClose={() => setIsValidationAlert(false)}
-						title={translator('whatsappCampaign.sendValidation')}
-						requiredFields={groupSendValidationErrors}
 					/>
 
 					<TestGroupModal
@@ -1374,25 +1458,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						isEditable={false}
 						buttonType={buttonType}
 						templateText={templateData.templateText}
-					/>
-
-					<AlertModal
-						classes={classes}
-						isOpen={isDeleteCampaignOpen}
-						onClose={() => setIsDeleteCampaignOpen(false)}
-						title={translator('whatsapp.alertModal.DeleteText')}
-						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
-						type='delete'
-						onConfirmOrYes={() => onDeleteCampaign()}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={isExitCampaignOpen}
-						onClose={() => setIsExitCampaignOpen(false)}
-						title={translator('mainReport.handleExitTitle')}
-						subtitle={translator('mainReport.leaveCampaign')}
-						type='delete'
-						onConfirmOrYes={() => onExitCampaign()}
 					/>
 					<AlertModal
 						classes={classes}
@@ -1437,6 +1502,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			) : (
 				!isLoader && <NoSetup classes={classes} />
 			)}
+			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
