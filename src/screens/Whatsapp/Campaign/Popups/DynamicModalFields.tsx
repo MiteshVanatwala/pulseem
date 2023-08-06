@@ -166,8 +166,17 @@ const DynamicModalFields = ({
 						variant='outlined'
 						color='primary'
 						size='small'
-						className={classes.whatsappCampaignDynamicFieldLinkRemoval}
-						onClick={() => onAddRemovalLinkClick()}>
+						className={clsx(
+							// classes.whatsappCampaignDynamicFieldLinkRemoval,
+							classes.btn,
+							classes.btnRounded
+						)}
+						onClick={() => onAddRemovalLinkClick()}
+						style={{
+							marginLeft: 10,
+							marginTop: 5
+						}}
+					>
 						<>{translator('whatsappCampaign.removalLinkTooltip')}</>
 					</Button>
 				</div>

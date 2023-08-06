@@ -1237,12 +1237,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignDynamicFieldButtonActive: {
 		textTransform: 'capitalize',
 		fontSize: '14px',
-		backgroundColor: '#0371ad',
+		backgroundColor: '#ff3343',
 		color: '#ffffff',
 		'&:hover': {
 			textTransform: 'capitalize',
 			fontSize: '14px',
-			backgroundColor: '#0371ad',
+			backgroundColor: '#ff3343',
 			color: '#ffffff',
 		},
 	},
@@ -1622,7 +1622,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignDynamicFieldLinkRemoval: {
 		textTransform: 'capitalize',
 		fontSize: '14px',
-		backgroundColor: '#0371ad',
+		backgroundColor: '#ff3343',
 		color: '#ffffff',
 		marginTop: '6px',
 		marginLeft: isRTL ? '0px' : '10px',
@@ -1632,7 +1632,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&:hover': {
 			textTransform: 'capitalize',
 			fontSize: '14px',
-			backgroundColor: '#0371ad',
+			backgroundColor: '#ff3343',
 			color: '#ffffff',
 		},
 	},
@@ -2674,17 +2674,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappDropDown: {
 		marginLeft: 5,
 		alignSelf: 'flex-end',
-		border: '1px solid #1c82b2',
+		border: '1px solid #ff3343',
+		color: '#ff3343',
 		borderRadius: '.2rem',
 		padding: '1px 4px',
 		'& .MuiSelect-selectMenu': {
-			color: '#1c82b2 !important',
+			color: '#ff3343 !important',
 			'&:focus': {
 				// backgroundColor: '#fff'
 			},
 		},
 		'& .MuiSelect-icon': {
-			color: '#1c82b2 !important',
+			color: '#ff3343 !important',
 		},
 	},
 	whatsappAreaManual: {
@@ -2928,6 +2929,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	buttonWhatsappAutocomplete: {
 		padding: '10px 12px 10px 4px',
+		borderBottom: 'solid 1px #ced4da',
 		'& .MuiAutocomplete-endAdornment': {
 			right: isRTL ? 'unset' : '0px',
 			left: isRTL ? '0px' : 'unset',

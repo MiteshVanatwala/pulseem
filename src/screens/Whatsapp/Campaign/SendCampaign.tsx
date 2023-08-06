@@ -1,7 +1,6 @@
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import Title from '../../../components/Wizard/Title';
-import { Grid, Box } from '@material-ui/core';
+import { Grid, Box, Typography } from '@material-ui/core';
 import {
 	APICreateGroupData,
 	ApiCreateGroupPayload,
@@ -28,6 +27,7 @@ import {
 	GetTestGroups,
 	ApiSendCampaignData,
 } from './Types/WhatsappCampaign.types';
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import RightPane from './Components/RightPane';
 import LeftPane from './Components/LeftPane';
@@ -72,6 +72,8 @@ import AlertModal from '../Editor/Popups/AlertModal';
 import SendCampaignSuccess from './Popups/SendCampaignSuccess';
 import NoSetup from '../NoSetup/NoSetup';
 import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
+import { Title } from '../../../components/managment/Title';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const SendCampaign = ({
 	classes,
@@ -110,8 +112,6 @@ const SendCampaign = ({
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
-	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
-	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState<boolean>(false);
 	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [isSendCampaignSuccessOpen, setIsSendCampaignSuccessOpen] =
 		useState<boolean>(false);
@@ -139,6 +139,7 @@ const SendCampaign = ({
 	>([]);
 	const [campaignSummary, setCampaignSummary] =
 		useState<ApiGetCampaignSummaryPayloadData>();
+	const [dialogType, setDialogType] = useState<any>({});
 
 	useEffect(() => {
 		(async () => {
@@ -308,7 +309,7 @@ const SendCampaign = ({
 	};
 
 	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
-		handleSendDate(value);
+		handleSendDate(moment(value));
 	};
 
 	const handleRadioTime = (value: MaterialUiPickersDate | null) => {
@@ -465,16 +466,11 @@ const SendCampaign = ({
 		setIsLoader(false);
 	};
 
-	const onDeleteClick = () => {
-		setIsDeleteCampaignOpen(true);
-	};
-
 	const onDeleteCampaign = async () => {
 		if (campaignID) {
 			const deleteData: commonAPIResponseProps = await dispatch<any>(
 				deleteCampaign(campaignID)
 			);
-			setIsDeleteCampaignOpen(false);
 			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 				navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
@@ -487,16 +483,19 @@ const SendCampaign = ({
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
-		setIsDeleteCampaignOpen(false);
 	};
 
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
 			case buttons.DELETE:
-				onDeleteClick();
+				setDialogType({
+					type: 'delete'
+				})
 				break;
 			case buttons.EXIT:
-				setIsExitCampaignOpen(true);
+				setDialogType({
+					type: 'exit'
+				})
 				break;
 			case buttons.SAVE:
 				onCampaignSave(true, true, true);
@@ -733,22 +732,85 @@ const SendCampaign = ({
 		setExceedLimitModal(false);
 	};
 
+	const getExitDialog = () => ({
+    title: translator('whatsappManagement.LeaveCampaignCreation'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator('whatsappManagement.LeaveCampaignCreationDesc')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+      onExitCampaign();
+    }
+  })
+	
+	const getDeleteDialog = () => ({
+    title: translator('whatsapp.alertModal.DeleteText'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator('whatsapp.alertModal.DeleteTitle')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+      onDeleteCampaign();
+    }
+  })
+
+	const renderDialog = () => {
+    const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'exit') {
+    	currentDialog = getExitDialog();
+		} else if (type === 'group') {
+    	// currentDialog = getGroup();
+		} else if (type === 'delete') {
+			currentDialog = getDeleteDialog();
+		} else if (type === 'preview') {
+			// currentDialog = getPreviewDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
+
 	return (
 		<DefaultScreen
 			subPage={'send2'}
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}
-			containerClass={null}>
+			containerClass={classes.editorCont}
+		>
 			{isAccountSetup ? (
-				<div>
+				<Box className={"head"}>
 					<Box className={'topSection'}>
 						<Title
-							title={translator('whatsappCampaign.whatsappCampaign')}
+							Text={translator('whatsappCampaign.header')}
 							classes={classes}
-							stepNumber={2}
-							subTitle={translator('mainReport.sendSetting')}
 						/>
+					</Box>
+					<Box className={'containerBody'}>
 						<Grid container style={{ marginBottom: '40px' }}>
 							<Grid item md={7} xs={12}>
 								<LeftPane
@@ -838,26 +900,6 @@ const SendCampaign = ({
 					/>
 					<AlertModal
 						classes={classes}
-						isOpen={isDeleteCampaignOpen}
-						onClose={() => setIsDeleteCampaignOpen(false)}
-						title={translator('whatsapp.alertModal.DeleteText')}
-						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
-						type='delete'
-						onConfirmOrYes={() => onDeleteCampaign()}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={isExitCampaignOpen}
-						onClose={() => setIsExitCampaignOpen(false)}
-						title={translator('whatsappManagement.LeaveCampaignCreation')}
-						subtitle={translator(
-							'whatsappManagement.LeaveCampaignCreationDesc'
-						)}
-						type='delete'
-						onConfirmOrYes={() => onExitCampaign()}
-					/>
-					<AlertModal
-						classes={classes}
 						isOpen={exceedLimitModal}
 						onClose={() => setExceedLimitModal(false)}
 						title={translator(
@@ -885,10 +927,11 @@ const SendCampaign = ({
 						onClose={() => setIsSendCampaignSuccessOpen(false)}
 					/>
 					{renderToast()}
-				</div>
+				</Box>
 			) : (
 				!isLoader && <NoSetup classes={classes} />
 			)}
+			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);

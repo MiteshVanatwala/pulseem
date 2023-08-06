@@ -221,12 +221,12 @@ const Groups = ({
 								onClick={callbackReciFilter}
 								style={{
 									height: '36px',
-									color: '#1D82B3',
+									color: '#ff3343',
 									fontWeight: '600',
 									textTransform: 'capitalize',
 								}}>
 								{windowSize !== 'xs' && (
-									<BsFilter style={{ fontSize: '22px', color: '#1D82B3' }} />
+									<BsFilter style={{ fontSize: '22px', color: '#ff3343' }} />
 								)}{' '}
 								{isFilterSelected ? (
 									<BsDot

@@ -607,7 +607,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 key={"extraButton"}
                 className={
                     clsx(
-                        classes.actionButton, classes.actionButtonOutlinedBlue,
+                        classes.btn, classes.btnRounded, classes.mlr10,
                         !newGroupDetails.groupValue.trim() ? classes.disabled : ''
                     )
                 }
@@ -1195,21 +1195,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                     }}
                                                 />
                                                 <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
-                                                <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
-                                                <Tooltip
-                                                    disableFocusListener
-                                                    title={t("mainReport.tooltipCreateGroup")}
-                                                    classes={{ tooltip: styles.customWidth }}
-                                                    style={{ marginInlineStart: "5px" }}
-                                                >
-                                                    <span className={classes.bodyInfo}>i</span>
-                                                </Tooltip>
                                             </Stack>
 
                                             <Stack
                                                 style={{
                                                     display: "flex",
-                                                    marginTop: "10px",
+                                                    marginTop: 10,
+                                                    paddingLeft: 10
                                                 }}
                                                 direction="row"
                                             >
