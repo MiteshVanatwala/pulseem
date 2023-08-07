@@ -50,7 +50,7 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 				className={clsx(
 					classes.btn,
 					classes.btnRounded,
-					classes.greenButton
+					classes.redButton
 				)}
 				color='primary'
 				style={{ margin: '8px' }}

@@ -106,6 +106,10 @@ const AppBarItem = ({
                         key={option.title}
                         onClick={(e) => {
                           e.preventDefault();
+                          if (option.title === t("appBar.logout")) {
+                            option.onClick();
+                          }
+
                           if (!option.href || option.href === '') {
                             onInnerClick(option)
                           }

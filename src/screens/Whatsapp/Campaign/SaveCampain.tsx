@@ -297,7 +297,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	}, [buttonType]);
 
 	useEffect(() => {
-		// getDynamicModalValues();\
 		const updatedPersonalField = {
 			FirstName: translator('smsReport.firstName'),
 			LastName: translator('smsReport.lastName'),
@@ -602,7 +601,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onChangeTestSendRadio = (value: string) => {
 		if (value === 'testgroup') {
-			setIsTestGroupModal(true);
+			setDialogType({
+				type: 'testGroup'
+			});
 		}
 		setTestSendSelection(value);
 	};
@@ -680,7 +681,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onTestSend = async (isSingle: boolean = false, campaignID: number) => {
 		setIsLoader(true);
 		setIsSummaryModal(false);
-		setIsTestGroupModal(false);
 		let payload: TestSendReq = {
 			WACampaignID: campaignID,
 		};
@@ -727,10 +727,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						}
 					}
 				}
-				setIsTestGroupModal(false);
 			} else {
 				setIsLoader(false);
-				setIsTestGroupModal(false);
 				setDialogType({
 					type: 'validation'
 				})
@@ -742,7 +740,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onOkTestSending = async () => {
 		if (validateSaveCampaign(true)) {
-			setIsTestGroupModal(false);
 			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
 			const saveCampaign = await onSaveCampaign('testSend', false, false);
@@ -819,7 +816,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			}
 			setIsLoader(false);
 		} else {
-			setIsTestGroupModal(false);
 			setDialogType({
 				type: 'validation'
 			})
@@ -981,23 +977,46 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
     title: translator('whatsappCampaign.sendValidation'),
     showDivider: false,
     content: (
-      <Typography>
-        <div>
-					<ul className={clsx(classes.noMargin, classes.mb20)}>
-						{groupSendValidationErrors?.map((requiredField: string, index: number) => (
-							<li key={index} className={classes.validationAlertModalLi}>
-								{requiredField}
-							</li>
-						))}
-					</ul>
-				</div>
-      </Typography>
+			<ul className={clsx(classes.noMargin, classes.mb20)}>
+				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
+					<li key={index} className={classes.validationAlertModalLi}>
+						{requiredField}
+					</li>
+				))}
+			</ul>
     ),
     onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
+    }
+  })
+
+	const getTestGroupDialog = () => ({
+    title: translator('whatsappCampaign.sendTitle'),
+    showDivider: false,
+    content: (
+			<TestGroupModal
+				classes={classes}
+				isOpen={isTestGroupModal}
+				onClose={() => setIsTestGroupModal(false)}
+				title={translator('whatsappCampaign.sendTitle')}
+				testGroupData={testGroups}
+				selectedTestGroup={selectedTestGroup}
+				setSelectedTestGroup={(updatedSelectedGroup) =>
+					setSelectedTestGroup(updatedSelectedGroup)
+				}
+				onConfirmOrYes={() => onOkTestSending()}
+			/>
+    ),
+		customContainerStyle: classes.testGroupSending,
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+			onOkTestSending();
     }
   })
 
@@ -1010,6 +1029,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			currentDialog = getDeleteDialog();
 		} else if (type === 'validation') {
 			currentDialog = getValidationDialog();
+		} else if (type === 'testGroup') {
+			currentDialog = getTestGroupDialog();
 		}
 
 		if (type) {
@@ -1041,11 +1062,37 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							<Title
 								Text={translator('whatsappCampaign.header')}
 								classes={classes}
+								subTitle={<>
+									<Grid
+										className={clsx(classes.WhatsappCampainHeaderWrapper)}
+										container
+										alignItems='center'
+										style={{
+										}}
+									>
+										<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
+											<span style={{ lineHeight: '0' }}>
+												{translator('whatsappCampaign.note')}
+											</span>
+											
+											<div className={classes.pt10}>
+												<>{translator('whatsappCampaign.checkLimit')}</>{' '}
+												<a
+													href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+													target='_blank'
+													rel='noreferrer'
+												>
+													<>{translator('whatsappCampaign.here')}</>
+												</a>
+											</div>
+										</Grid>
+									</Grid>
+								</>}
 							/>
 						</Box>
 						<Box className={'containerBody'}>
 						{renderToast()}
-							<Grid
+							{/* <Grid
 								className={clsx(classes.WhatsappCampainHeaderWrapper, classes.pt15)}
 								container
 								alignItems='center'
@@ -1066,7 +1113,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 										</a>
 									</div>
 								</Grid>
-							</Grid>
+							</Grid> */}
 							<br />
 							<form onSubmit={onSubmit}>
 								<Grid container className={classes.WhatsappCampainP1}>
@@ -1310,7 +1357,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 																	}
 																	variant='outlined'
 																	color='primary'
-																	className={classes.testOneContactSendButton}
+																	className={clsx(classes.btn, classes.btnRounded)}
 																	onClick={() => onOkTestSending()}>
 																	<>{translator('whatsappCampaign.sendButton')}</>
 																</Button>
@@ -1422,7 +1469,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						savedTemplate={savedTemplate}
 					/>
 
-					<TestGroupModal
+					{/* <TestGroupModal
 						classes={classes}
 						isOpen={isTestGroupModal}
 						onClose={() => setIsTestGroupModal(false)}
@@ -1433,7 +1480,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							setSelectedTestGroup(updatedSelectedGroup)
 						}
 						onConfirmOrYes={() => onOkTestSending()}
-					/>
+					/> */}
 
 					<QuickReply
 						classes={classes}

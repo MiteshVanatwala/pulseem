@@ -707,7 +707,7 @@ const SummaryModal = ({
 					className={classes.alertModalAction}
 					style={{ marginTop: '16px' }}>
 					<Button
-						className='ok-button'
+						className={clsx(classes.btn, classes.btnRounded)}
 						variant='contained'
 						color='primary'
 						autoFocus
@@ -716,7 +716,7 @@ const SummaryModal = ({
 						<>{translator('whatsapp.alertModal.okButtonText')}</>
 					</Button>
 					<Button
-						className='cancel-button'
+						className={clsx(classes.btn, classes.btnRounded)}
 						color='primary'
 						variant='contained'
 						onClick={onSummaryModalClose}>

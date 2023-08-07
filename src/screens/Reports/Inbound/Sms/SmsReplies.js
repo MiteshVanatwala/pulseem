@@ -250,7 +250,7 @@ const SmsReplies = ({ classes }) => {
                         style={{ width: '100%' }}
                     >
                         <Box className={classes.dFlex}>
-                            <Box style={{ width: '70%', textAlign: isRTL ? 'right' : 'left' }}>
+                            <Box style={{ width: '70%' }}>
                                 <Typography className={classes.font18}>{CellPhone}</Typography>
                                 <Typography className={clsx(classes.font14, classes.ellipsisText)}
                                     title={`${FirstName} ${LastName}`}

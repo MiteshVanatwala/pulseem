@@ -112,13 +112,11 @@ const SendCampaign = ({
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
-	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [isSendCampaignSuccessOpen, setIsSendCampaignSuccessOpen] =
 		useState<boolean>(false);
 	const [newGroupName, setNewGroupName] = useState<string>('');
 
 	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
-	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
@@ -139,7 +137,10 @@ const SendCampaign = ({
 	>([]);
 	const [campaignSummary, setCampaignSummary] =
 		useState<ApiGetCampaignSummaryPayloadData>();
-	const [dialogType, setDialogType] = useState<any>({});
+	const [dialogType, setDialogType] = useState<any>({
+		type: '',
+		data: ''
+	});
 
 	useEffect(() => {
 		(async () => {
@@ -442,7 +443,9 @@ const SendCampaign = ({
 							) {
 								setIsSummaryModal(true);
 							} else {
-								setExceedLimitModal(true);
+								setDialogType({
+									type: 'exceedDailyLimit'
+								})
 							}
 						} else {
 							setIsSummaryModal(true);
@@ -554,7 +557,9 @@ const SendCampaign = ({
 			setGroupSendValidationErrors([
 				translator('whatsappCampaign.groupNameRequired'),
 			]);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			})
 		}
 	};
 
@@ -692,7 +697,9 @@ const SendCampaign = ({
 		}
 		if (!isValidated) {
 			setGroupSendValidationErrors(validationErrors);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			})
 		}
 		return isValidated;
 	};
@@ -726,10 +733,6 @@ const SendCampaign = ({
 
 	const onExitCampaign = () => {
 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
-	};
-
-	const onExceedLimitYes = () => {
-		setExceedLimitModal(false);
 	};
 
 	const getExitDialog = () => ({
@@ -766,17 +769,57 @@ const SendCampaign = ({
     }
   })
 
+	const getValidationDialog = () => ({
+    title: translator('whatsappCampaign.sendValidation'),
+    showDivider: false,
+    content: (
+			<ul className={clsx(classes.noMargin, classes.mb20)}>
+				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
+					<li key={index} className={classes.validationAlertModalLi}>
+						{requiredField}
+					</li>
+				))}
+			</ul>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getExceedDailyLimit = () => ({
+    title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {`${translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage')}
+					${campaignSummary?.NextAvailableTime
+						? moment(campaignSummary?.NextAvailableTime).format('DD.MM.YYYY HH:MM')
+						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+				}`}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
 	const renderDialog = () => {
     const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'exit') {
     	currentDialog = getExitDialog();
-		} else if (type === 'group') {
-    	// currentDialog = getGroup();
+		} else if (type === 'validation') {
+    	currentDialog = getValidationDialog();
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
-		} else if (type === 'preview') {
-			// currentDialog = getPreviewDialog();
+		} else if (type === 'exceedDailyLimit') {
+			currentDialog = getExceedDailyLimit();
 		}
 
 		if (type) {
@@ -891,17 +934,9 @@ const SendCampaign = ({
 						setRandomlyCount={setRandomlyCount}
 						resetRandomCount={() => setRandomlyCount('')}
 					/>
-					<ValidationAlert
+					{/* <AlertModal
 						classes={classes}
-						isOpen={isValidationAlert}
-						onClose={() => setIsValidationAlert(false)}
-						title={translator('whatsappCampaign.sendValidation')}
-						requiredFields={groupSendValidationErrors}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={exceedLimitModal}
-						onClose={() => setExceedLimitModal(false)}
+						isOpen={true}
 						title={translator(
 							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
 						)}
@@ -915,8 +950,7 @@ const SendCampaign = ({
 								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
 						}`}
 						type='alert'
-						onConfirmOrYes={() => onExceedLimitYes()}
-					/>
+					/> */}
 					<SendCampaignSuccess
 						classes={classes}
 						isOpen={isSendCampaignSuccessOpen}

@@ -502,7 +502,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                         classes.btnRounded,
                       )}
                       endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                      onClick={() => navigate(`${sitePrefix}Campaigns/SendSettings/${CampaignID}`)}
+                      onClick={() => window.location.href = `${sitePrefix}Campaigns/SendSettings/${CampaignID}`}
                     >
                       {t('campaigns.imgSendResource1.ToolTip')}
                     </Button>

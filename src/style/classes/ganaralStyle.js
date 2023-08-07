@@ -949,6 +949,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       background: '#5db85b',
     }
   },
+  redButton: {
+    borderColor: '#F65026',
+    backgroundColor: '#F65026',
+    color: '#fff',
+    '&:hover': {
+      background: '#F65026',
+    },
+  },
   btnNohover: {
     '&:hover': {
       background: '#fff',

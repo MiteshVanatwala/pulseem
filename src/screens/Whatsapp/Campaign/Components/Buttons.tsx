@@ -111,7 +111,7 @@ const Buttons = ({
 					variant='contained'
 					size='medium'
 					className={clsx(
-						classes.greenButton,
+						classes.redButton,
 						classes.btn,
             classes.btnRounded
 					)}
