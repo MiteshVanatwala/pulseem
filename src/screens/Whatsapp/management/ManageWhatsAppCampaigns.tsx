@@ -58,7 +58,6 @@ import {
 	resetToastData,
 } from '../Constant';
 import Pagination from './Component/Pagination';
-import RestoreDeletedModal from './Popups/RestoreDeletedModal';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { AllCampaignReq, ManagmentIconProps } from './Types/Management.types';
@@ -82,6 +81,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { RestorDialogContent } from '../../../components/managment';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -102,6 +102,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const [campaignNameSearch, setCampaignNameSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [dialogType, setDialogType] = useState<any>({});
+	const [restoreArray, setRestoreArray] = useState<any>([])
 
 	const [templateData, setTemplateData] = useState<templateDataProps>({
 		templateText: '',
@@ -666,7 +667,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 									classes.btnRounded,
 								)}
 								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								onClick={() => navigate(`/react/whatsapp/campaign/edit/page2/${row.WACampaignID}`)}
+								onClick={() => window.location.href = `/react/whatsapp/campaign/edit/page2/${row.WACampaignID}`}
 							>
 								{translator('campaigns.imgSendResource1.ToolTip')}
 							</Button>
@@ -716,7 +717,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onRestoreDeleted = async () => {
-		setIsRestoreDeletedModal(false);
 		setIsLoader(true);
 		const { payload: restoreCampaignData }: restoreCampaignData =
 			await dispatch<any>(
@@ -909,6 +909,44 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
     }
   })
 
+	const handleRestoreDeleteChange = (WACampaignID: any) => () => {
+		const found = restoreArray.includes(WACampaignID)
+    if (found) {
+      setRestoreArray(restoreArray.filter((restore: any) => restore !== WACampaignID))
+    } else {
+      setRestoreArray([...restoreArray, WACampaignID])
+    }
+  }
+
+	const getRestoreDeletedDialog = (data = []) => {
+    if (!data || !Array.isArray(data)) return null
+    return {
+      title: translator('whatsappManagement.restoreDeleted'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <RestorDialogContent
+          classes={classes}
+          data={deletedCampaignListData}
+          currentChecked={restoreArray}
+          onChange={handleRestoreDeleteChange}
+          dataIdVar='WACampaignID'
+        />
+      ),
+      onConfirm: async () => {
+				setDialogType({
+					type: '',
+					data: ''
+				});
+        onRestoreDeleted();
+      }
+    }
+  }
+
 	const renderDialog = () => {
     const { data, type } = dialogType || {}
 		let currentDialog: any = {};
@@ -920,6 +958,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			currentDialog = getDeleteDialog();
 		} else if (type === 'preview') {
 			currentDialog = getPreviewDialog();
+		} else if (type === 'restoreDeleted') {
+			currentDialog = getRestoreDeletedDialog();
 		}
 
 		if (type) {
@@ -1067,7 +1107,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 										classes.btn, classes.btnRounded
 									)}
 									endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-									onClick={() => setIsRestoreDeletedModal(true)}>
+									onClick={() => setDialogType({ type: 'restoreDeleted' })}>
 									<>{translator('whatsappManagement.restore')}</>
 								</Button>
 							</div>
@@ -1207,7 +1247,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						/>
 					</div>
 
-					<RestoreDeletedModal
+				{/* <RestoreDeletedModal
 						classes={classes}
 						title={translator('whatsappManagement.restoreDeleted')}
 						isOpen={isRestoreDeletedModal}
@@ -1216,7 +1256,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						restoreIds={restoreIds}
 						setRestoreIds={(ids: string[]) => setRestoreIds(ids)}
 						deletedCampaignListData={deletedCampaignListData}
-					/>
+					/> */}
 				</>
 			) : (
 				!isLoader && <NoSetup classes={classes} />

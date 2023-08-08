@@ -153,9 +153,19 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         minWidth: 30,
         minHeight: 30
     },
+    redDoc: {
+        border: "1px solid #ff3343",
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#ff3343",
+        minWidth: 30,
+        minHeight: 30
+    },
     greenDoc:
     {
-        border: "1px solid #018901",
+        border: "1px solid #ff3343",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",

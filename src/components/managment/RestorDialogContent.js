@@ -9,7 +9,7 @@ export const RestorDialogContent = ({
   currentChecked = [],
   dataIdVar = 'ID',
   dataLabeleVar = 'Name',
-  onChange = () => null
+  onChange
 }) => {
   const { t } = useTranslation()
 

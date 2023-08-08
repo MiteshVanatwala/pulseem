@@ -819,7 +819,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				currentPage='whatsapp'
 				classes={classes}
 				customPadding={false}
-				containerClass={classes.mb50}>
+				containerClass={{}}
+			>
 				{isAccountSetup ? (
 					<>
 						{toastMessage?.message?.length > 0 && <>{renderToast()}</>}

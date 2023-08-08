@@ -90,7 +90,9 @@ const Buttons = ({
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
-					onClick={(e) => onFormButtonClick(buttons.EXIT)}>
+					onClick={(e) => onFormButtonClick(buttons.EXIT)}
+					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+				>
 					<>{translator('whatsappCampaign.exit')}</>
 				</Button>
 
@@ -103,7 +105,9 @@ const Buttons = ({
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
-					onClick={(e) => onFormButtonClick(buttons.SAVE)}>
+					onClick={(e) => onFormButtonClick(buttons.SAVE)}
+					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+				>
 					<>{translator('whatsappCampaign.save')}</>
 				</Button>
 
@@ -111,7 +115,7 @@ const Buttons = ({
 					variant='contained'
 					size='medium'
 					className={clsx(
-						classes.greenButton,
+						classes.redButton,
 						classes.btn,
             classes.btnRounded
 					)}

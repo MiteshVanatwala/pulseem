@@ -559,11 +559,6 @@ const ArchiveManagementScreen = ({ classes }) => {
   const getDuplicateDialog = (data = '') => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{ fontSize: 18 }}>
         {t('campaigns.dialogDuplicateContent')}

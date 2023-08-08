@@ -734,14 +734,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         campaignValues.SendingMethod === 3 && !campaignValues.SendDate ? classes.disabled : null,
                         classes.btn,
                         classes.btnRounded,
-                        classes.greenButton
+                        classes.redButton
                     )}
                     color="primary"
                     style={{
                         margin: '8px',
                         pointerEvents: selectedGroups.length > 0 && totalClientsToSend > 0 ? "auto" : "none",
-                        backgroundColor: selectedGroups.length > 0 && totalClientsToSend > 0 ? "#5cb85c" : "#91C78D"
+                        backgroundColor: selectedGroups.length > 0 && totalClientsToSend > 0 ? "#F65026" : "#F65026"
                     }}
+                    disabled={!selectedGroups.length || !totalClientsToSend}
                     onClick={() => {
                         onSaveSettings(true).then(async (results) => {
                             setLoader(true);
