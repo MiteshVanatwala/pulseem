@@ -5,6 +5,7 @@
   "Default": "Default",
   "Clicked": "Clicked",
   "Copyrights": "##Year## © All Rights Reserved by Pulseem LTD",
+  "ForSupport": "For Support",
   "DateFormat": "mm/dd/yy",
   "EditMessage": "Edit Message",
   "EmailLink": "Add Link to Email Campaign",
@@ -72,6 +73,7 @@
   "Opens": "Opens",
   "Status": "Status",
   "smsStatus": "Sms Status",
+  "whatsappStatus": "WhatsApp Status",
   "emailStatus": "Email Status",
   "ClicksUnique": "Unique Clicks",
   "ErrorEmail": "Error",
@@ -549,6 +551,7 @@
   "invalid": "Invalid",
   "noSms": "Not registered for Sms",
   "noEmail": "Not registered for Email",
+  "noWhatsapp": "Not registered for Whatsapp",
   "restricted": "Restricted",
   "deleteFromAllGroups": "Remove from groups",
   "removeFromAccount": "Remove from account",
@@ -614,6 +617,9 @@
   "xssError": "Html, Scripts or other then a normal string does not allowed!",
   "remove": "Remove",
   "searchByCampaign": "Search by Campaign",
+  "next": "Next",
+  "new": "New",
+  "comingSoon": "Coming Soon",
   "savedSuccessfully": "Saved Successfully",
   "fileDownloads": "File Downloads",
   "fileDownloadError": "Oops...Something went wrong while downloading the file",
@@ -631,5 +637,6 @@
   "templateSaved": "Template successfully saved!",
   "templateNameIsRequired": "Template name is required",
   "loadMore": "Load More",
-  "noCampaignToRestore": "No campaigns for restore"
+  "noCampaignToRestore": "No campaigns for restore",
+  "ReadTime": "Read Time"
 }

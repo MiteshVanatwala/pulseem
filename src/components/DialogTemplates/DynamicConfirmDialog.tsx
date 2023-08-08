@@ -80,6 +80,7 @@ const DynamicConfirmDialog = ({
     };
 
     return (<BaseDialog
+        classes={classes}
         open={isOpen ?? false}
         onClose={() => onCancel()}
         onCancel={() => onCancel()}

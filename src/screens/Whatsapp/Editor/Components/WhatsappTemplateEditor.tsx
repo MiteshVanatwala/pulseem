@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useEffect, useState, useMemo } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
@@ -12,10 +12,9 @@ import {
 } from '../Types/WhatsappCreator.types';
 import clsx from 'clsx';
 import { Box, Button, makeStyles, Tooltip } from '@material-ui/core';
-import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft';
-import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { ClassesType } from '../../../Classes.types';
+import { checkLanguage } from '../../Common';
 
 const WhatsappTemplateEditor = ({
 	classes,
@@ -30,6 +29,7 @@ const WhatsappTemplateEditor = ({
 	dynamicFieldCount,
 	linkCount,
 	templateTextLimit,
+	fileData,
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -45,8 +45,8 @@ const WhatsappTemplateEditor = ({
 	}));
 	const styles = useStyles();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const [alignment, setAlignment] = useState<string>('right');
 	const [textAreaHeight, setTextAreaHeight] = useState<string>('auto');
+	const [textDirection, setTextDirection] = useState<string>('ltr');
 
 	useEffect(() => {
 		const textAreaElement: HTMLElement | null = document.getElementById(
@@ -67,8 +67,12 @@ const WhatsappTemplateEditor = ({
 	}, [templateText, buttons]);
 
 	useEffect(() => {
-		setAlignment(isRTL ? 'right' : 'left');
-	}, [isRTL]);
+		const direction = checkLanguage(templateText, isRTL);
+		if (direction !== 'Both') {
+			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [templateText]);
 
 	const onEditorChange = (e: BaseSyntheticEvent) => {
 		if (e.target.value?.length <= templateTextLimit) {
@@ -83,38 +87,35 @@ const WhatsappTemplateEditor = ({
 		}
 	};
 
-	const actionButtons = useMemo<actionButtonProps[]>(
-		() => [
-			{
-				tooltipTitle: 'whatsapp.template.callToActionTooltip',
-				buttonTitle: 'whatsapp.template.callToAction',
-			},
-			{
-				tooltipTitle: 'whatsapp.template.quickReplayTooltip',
-				buttonTitle: 'whatsapp.template.quickReplay',
-			},
-			// {
-			// 	tooltipTitle: 'whatsapp.template.removalLinkTooltip',
-			// 	buttonTitle: 'whatsapp.template.removalLink',
-			// },
-			{
-				tooltipTitle: 'whatsapp.template.removalTextTooltip',
-				buttonTitle: 'whatsapp.template.removalText',
-			},
-			{
-				tooltipTitle: 'whatsapp.template.dynamicFieldTooltip',
-				buttonTitle: 'whatsapp.template.dynamicField',
-			},
-		],
-		[]
-	);
+	const actionButtons: actionButtonProps[] = [
+		{
+			tooltipTitle: 'whatsapp.template.callToActionTooltip',
+			buttonTitle: 'whatsapp.template.callToAction',
+		},
+		{
+			tooltipTitle: 'whatsapp.template.quickReplayTooltip',
+			buttonTitle: 'whatsapp.template.quickReplay',
+		},
+		// {
+		// 	tooltipTitle: 'whatsapp.template.removalLinkTooltip',
+		// 	buttonTitle: 'whatsapp.template.removalLink',
+		// },
+		{
+			tooltipTitle: 'whatsapp.template.removalTextTooltip',
+			buttonTitle: 'whatsapp.template.removalText',
+		},
+		{
+			tooltipTitle: 'whatsapp.template.dynamicFieldTooltip',
+			buttonTitle: 'whatsapp.template.dynamicField',
+		},
+	];
 
 	const isDisableButton = (buttonTitle: string) => {
 		if (buttonTitle?.includes('callToAction') && buttonType === 'quickReply') {
 			return true;
 		} else if (
 			buttonTitle?.includes('quickReplay') &&
-			buttonType === 'callToAction'
+			(buttonType === 'callToAction' || fileData?.fileLink?.length > 0)
 		) {
 			return true;
 		} else if (
@@ -137,8 +138,16 @@ const WhatsappTemplateEditor = ({
 					id='whatsapp-template-text'
 					className={clsx(classes.msgArea, classes.sidebar)}
 					style={{
-						textAlign: alignment === 'right' ? 'right' : 'left',
+						direction:
+							templateText?.length > 0
+								? textDirection === 'rtl'
+									? 'rtl'
+									: 'ltr'
+								: isRTL
+								? 'rtl'
+								: 'ltr',
 						height: textAreaHeight,
+						minHeight: '81px',
 					}}
 					onChange={onEditorChange}
 					value={templateText}></textarea>
@@ -174,17 +183,6 @@ const WhatsappTemplateEditor = ({
 			</div>
 			<Box className={classes.whatsappSmallInfoDiv}>
 				<span className={classes.textInfoWrapper}>
-					{linkCount}
-					<span className={classes.textInfo}>
-						<>
-							{linkCount === 1
-								? translator('mainReport.link')
-								: translator('mainReport.links')}
-						</>
-					</span>
-				</span>
-
-				<span className={classes.textInfoWrapper}>
 					{dynamicFieldCount}
 					<span className={classes.textInfo}>
 						<>
@@ -208,57 +206,6 @@ const WhatsappTemplateEditor = ({
 			</Box>
 
 			<Box className={classes.whatsappFuncDiv}>
-				<Box
-					className={clsx(
-						isRTL ? classes.emojiHe : classes.emoji,
-						classes.whatsappEmoji
-					)}>
-					<>
-						<Tooltip
-							disableFocusListener
-							title={<>{translator('mainReport.aligntoRight')}</>}
-							classes={{ tooltip: styles.customWidth }}
-							placement='top-start'
-							arrow>
-							{isRTL ? (
-								<FormatAlignRightIcon
-									style={{ marginInlineEnd: '4px' }}
-									onClick={() => {
-										setAlignment('right');
-									}}
-								/>
-							) : (
-								<FormatAlignLeftIcon
-									onClick={() => {
-										setAlignment('left');
-									}}
-								/>
-							)}
-						</Tooltip>
-						<Tooltip
-							disableFocusListener
-							title={<>{translator('mainReport.alignToLeft')}</>}
-							classes={{ tooltip: styles.customWidth }}
-							placement='top-start'
-							arrow>
-							{isRTL ? (
-								<FormatAlignLeftIcon
-									onClick={() => {
-										setAlignment('left');
-									}}
-								/>
-							) : (
-								<FormatAlignRightIcon
-									style={{ marginInlineEnd: '4px' }}
-									onClick={() => {
-										setAlignment('right');
-									}}
-								/>
-							)}
-						</Tooltip>
-					</>
-				</Box>
-
 				<Box className={classes.whatsappBaseButtons}>
 					{actionButtons.map((button) => (
 						<Tooltip

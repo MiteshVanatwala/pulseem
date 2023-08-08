@@ -1,3 +1,5 @@
+export const rowsOptions = [6, 10, 20, 50];
+
 export const DomainProtocol = [
     { key: 0, name: "http://" },
     { key: 1, name: "https://" }
@@ -55,6 +57,13 @@ export const ClientStatus = {
         { id: 2, value: 'common.Unsubscribed' },
         { id: 3, value: 'common.restricted' },
         { id: 4, value: 'client.clientStatus.email.Invalid' },
+        { id: 5, value: 'common.Pending' }
+    ],
+    Whatsapp: [
+        { id: -1, value: 'common.noWhatsapp' },
+        { id: 0, value: 'common.statusActive' },
+        { id: 1, value: 'common.Unsubscribed' },
+        { id: 4, value: 'client.clientStatus.sms.Invalid' },
         { id: 5, value: 'common.Pending' }
     ]
 };
@@ -200,4 +209,3 @@ export const UploadSettings = {
     }
 
 };
-export const rowsOptions = [6, 10, 20, 50];

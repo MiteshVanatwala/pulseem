@@ -151,7 +151,7 @@ const CampaignGroups = ({
 					) : (
 						<Typography
 							className={clsx(classes.bottomShadow, classes.noSelection)}>
-							<>{translator('notifications.noGroupsSelected')}</>
+							<>{translator('sms.NoFilteredCampaigns')}</>
 						</Typography>
 					)
 				}
@@ -187,6 +187,7 @@ const CampaignGroups = ({
 								Name: group?.GroupName,
 							})
 						}
+						from={'campaign'}
 					/>
 				</List>
 			</div>

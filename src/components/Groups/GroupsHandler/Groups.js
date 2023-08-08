@@ -97,11 +97,11 @@ const Groups = ({ classes,
 
                 <ListItemAvatar>
                     <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                        className={clsx(classes.listIcon, isExist ? classes.redBg : classes.transparentBg, isExist ? classes.white : classes.blue, isExist ? classes.borderRed : classes.borderPrimary)}>
                         {isExist ?
-                            (<FaCheck className={clsx(classes.green)} />)
+                            (<FaCheck className={clsx(classes.white)} />)
                             :
-                            (<HiUserGroup className={clsx(classes.blue)} />)
+                            (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                         }
                     </Avatar>
                 </ListItemAvatar>
@@ -181,11 +181,11 @@ const Groups = ({ classes,
         return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }}>
             <ListItemAvatar>
                 <Avatar
-                    className={clsx(classes.listIcon, classes.transparentBg, allSelected ? classes.green : classes.blue, allSelected ? classes.borderGreen : classes.borderBlue)}>
+                    className={clsx(classes.listIcon, allSelected ? classes.redBg : classes.transparentBg, allSelected ? classes.white : classes.blue, allSelected ? classes.borderRed : classes.borderPrimary)}>
                     {allSelected ?
-                        (<FaCheck className={clsx(classes.green)} />)
+                        (<FaCheck className={clsx(classes.white)} />)
                         :
-                        (<HiUserGroup className={clsx(classes.blue)} />)
+                        (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                     }
                 </Avatar>
             </ListItemAvatar>
@@ -342,8 +342,8 @@ const Groups = ({ classes,
                     />
                 </FormControl>}
                 {showSortBy && <Box className={classes.filterButtonsContainer}>
-                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#1D82B3", fontWeight: "600", textTransform: "capitalize" }}>
-                        {windowSize !== 'xs' && <BsFilter style={{ fontSize: "22px", color: "#1D82B3" }} />} {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
+                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#ff3343", fontWeight: "600", textTransform: "capitalize" }}>
+                        {windowSize !== 'xs' && <BsFilter style={{ fontSize: "22px", color: "#ff3343" }} />} {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
 
                     </Button> : null}
                     {isSms && <Button variant="outlined"

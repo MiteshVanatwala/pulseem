@@ -13,7 +13,7 @@ const ConfirmRadioDialog = ({
     text = '',
     title = '',
     radioTitle = '',
-    options = null,
+    options,
     isOpen = false,
     onCancel,
     onConfirm,
@@ -141,29 +141,25 @@ const ConfirmRadioDialog = ({
         renderButtons: () => (
             <Grid
                 container
-                spacing={4}
+                spacing={2}
                 className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
             >
                 <Grid item>
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => { onConfirm(value, notifyEmail) }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.confirm')}
                     </Button>
                 </Grid>
                 <Grid item>
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => { onCancel() }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogCancelButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.cancel')}
                     </Button>

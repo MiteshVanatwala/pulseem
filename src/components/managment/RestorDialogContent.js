@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, FormControlLabel, Checkbox } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
+import clsx from 'clsx'
 
 export const RestorDialogContent = ({
   classes,
@@ -31,8 +32,7 @@ export const RestorDialogContent = ({
               <Checkbox
                 checked={checked}
                 onChange={onChange(row[dataIdVar])}
-                className={classes.restoreDialogCheckBox}
-                color='primary'
+                className={clsx(classes.checkbox, classes.restoreDialogCheckBox)}
                 size='small'
               />
             }

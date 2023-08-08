@@ -10,12 +10,11 @@ const ButtonWithTitle = ({ classes, title, buttonText, redirect, innerStyle, but
                 {title}
             </Typography>
             <Button
-                variant='contained'
-                size='medium'
                 className={clsx(
-                    classes.actionButton,
-                    buttonClass ? buttonClass : classes.actionButtonLightGreen,
+                    buttonClass ? buttonClass : '',
                     classes.backButton,
+                    classes.btn,
+                    classes.btnRounded
                 )}
                 color="primary"
                 style={{ margin: '8px' }}

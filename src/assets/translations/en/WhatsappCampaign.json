@@ -67,5 +67,8 @@
 	"submitTemplate": "Template submitted successfully",
 	"saveTemplate": "Template saved successfully",
 	"chatMediaErrorMsg": "Can not view media in chat - click here to view the media",
-	"noRecipient": "no recipients selected"
+	"noRecipient": "no recipients selected",
+	"setupMessage1": "To set up WhatsApp for this account,",
+	"setupMessage2": "please contact our sales team:",
+	"groupNameRequired": "Group name - Required field"
 }

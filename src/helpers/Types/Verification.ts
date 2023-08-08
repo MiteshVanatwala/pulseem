@@ -1,4 +1,3 @@
-
 export type Verification_Dialog_Popup = {
     variant: string;
     isOpen: boolean;

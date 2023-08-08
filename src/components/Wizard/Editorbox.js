@@ -32,6 +32,7 @@ import clsx from "clsx";
 import { Loader } from "../Loader/Loader";
 import EmojiPicker from "../Emojis/EmojiPicker";
 import debounce from 'lodash.debounce';
+import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -169,7 +170,7 @@ const Editorbox = ({
 
     useEffect(() => {
         if (isPageLoaded && accountFeatures) {
-            if (accountFeatures.includes('38')) {
+            if (accountFeatures?.indexOf(PulseemFeatures.ADD_SMS_REMOVE_TEXT) > -1) {
                 setSmsModel((currentState) => {
                     if (currentState.Text === '') {
                         onAddText(`${t("sms.toUnsubscribe")}${removalNumber}`);
@@ -182,7 +183,7 @@ const Editorbox = ({
                     return currentState;
                 });
             }
-            setShowRemovalLink(!accountFeatures.includes('39'))
+            setShowRemovalLink(accountFeatures?.indexOf(PulseemFeatures.REMOVE_SMS_UNSUBSCRIBE_LINK) === -1)
         }
     }, [isPageLoaded || accountFeatures]);
 
@@ -275,7 +276,7 @@ const Editorbox = ({
             fromNumber = accountSettings.DefaultCellNumber;
         }
 
-        
+
         const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
 
         if (fromNumber === -1 || fromNumber === '' || fromNumber === null) {
@@ -284,7 +285,7 @@ const Editorbox = ({
 
         setstoredValue(fromNumber);
         setcampaignNumber(fromNumber);
-        
+
         setremovalNumber(virtualNumber.payload.RemovalKey);
         if (fromNumber !== virtualNumber.payload.Number) {
             setrestoreBool(false);

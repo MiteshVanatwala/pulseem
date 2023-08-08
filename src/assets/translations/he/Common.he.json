@@ -71,6 +71,7 @@
   "Opens": "פתיחות",
   "Status": "סטאטוס",
   "smsStatus": "סטאטוס SMS",
+  "whatsappStatus": "סטאטוס WhatsApp",
   "emailStatus": "סטאטוס אימייל",
   "ClicksUnique": "הקלקות ייחודיות",
   "ErrorEmail": "שגיאה",
@@ -544,6 +545,7 @@
   "statusActive": "פעיל",
   "invalid": "לא תקין",
   "noSms": "לא רשום לשירותי SMS",
+  "noWhatsapp": "לא רשום לשירותי Whatsapp",
   "noEmail": "לא רשום לשירותי מייל",
   "restricted": "מוגבל",
   "deleteFromAllGroups": "מחק מכל הקבוצות",
@@ -593,8 +595,6 @@
   "filesNotUploaded": "קבצים נכשלו: ",
   "saveAndContinue": "שמור והמשך",
   "backToAutomation": "חזור לאוטומציה",
-  "dearCustomer": "לקוח יקר",
-  "systemFailureNotice": "שלום. יש כרגע תקלה במערכת שליחת המיילים.<br/> אנו מטפלים בבעיה והיא תיפטר בשעות הקרובות.<br/>אנו זמינים לשאלות  ב 035240290 <a href='mailto:support@pulseem.co.il'>support@pulseem.co.il</a>",
   "backToHome": "לדף הבית",
   "backToCampaigns": "לניהול קמפיינים",
   "showError": "הצג שגיאה",
@@ -628,5 +628,7 @@
   "templateSaved": "תבנית נשמרה בהצלחה!",
   "templateNameIsRequired": "אנא בחרו שם לתבנית",
   "loadMore": "טען עוד",
-  "noCampaignToRestore": "אין קמפיינים לשחזור"
+  "noCampaignToRestore": "אין קמפיינים לשחזור",
+  "ReadTime": "זמן קריאה"
 }
+

@@ -2,18 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControlLabel
 } from '@material-ui/core'
-import Switch from "react-switch";
-import {
-  SearchIcon, ExportIcon
-} from '../../../assets/images/managment/index'
 import {
   TablePagination, DateField, SearchField
 } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
@@ -29,6 +24,10 @@ import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageM
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -119,7 +118,7 @@ const SmsReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      // href: `/react/ClientSearchResult/${id}`,
+      href: `${sitePrefix}ClientSearchResult/${id}`,
       isRevenueCol: true,
       onClick: () => {
         navigate(`${CLIENT_CONSTANTS.BASEURL}/${id}`, {
@@ -192,24 +191,11 @@ const SmsReport = ({ classes }) => {
   }, [dispatch, smsQuery.ShowTestCampaigns, isSearching]);
 
   useEffect(() => {
-    if (accountFeatures && accountFeatures.includes('42')) {
+    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.REVENUE) > -1) {
       setHasRevenue(true);
     }
   }, [accountFeatures])
 
-  useEffect(() => {
-    if (smsQuery.SerachTxt !== '' ||
-      JSON.stringify(smsQuery.From) !== JSON.stringify(priorDate) ||
-      smsQuery.To !== null ||
-      (prevShowTestCampaign !== undefined && prevShowTestCampaign !== smsQuery.ShowTestCampaigns)) {
-      setPage(1);
-      setSearching(true);
-    }
-  }, [dispatch, smsQuery.ShowTestCampaigns, isSearching]);
-
-  useEffect(() => {
-    getData(smsQuery);
-  }, [isSearching, smsQuery.ShowTestCampaigns])
 
   useEffect(() => {
     const getGraph = async () => {
@@ -242,9 +228,16 @@ const SmsReport = ({ classes }) => {
   }
 
   const clearSearch = () => {
-    const resetSmsQuery = { ...smsQuery, From: priorDate, To: null, SerachTxt: '', ShowTestCampaigns: false, SmsCampaignID: null };
+    const resetSmsQuery = {
+      ...smsQuery,
+      From: priorDate,
+      To: null,
+      SerachTxt: '',
+      ShowTestCampaigns: false,
+      SmsCampaignID: null,
+      PageNumber: 1
+    };
     setSmsQuery(resetSmsQuery);
-    getData(resetSmsQuery)
     setSearching(false);
     getData(resetSmsQuery);
     SetPageState({
@@ -253,50 +246,72 @@ const SmsReport = ({ classes }) => {
       "SearchData": resetSmsQuery
     });
   }
+
   const handleDownloadCsv = async (formatType) => {
     setDialogType(null);
     setLoader(true);
-    let orderList = [...smsReport];
+
+    if (hasRevenue)
+      exportColumnHeader["Revenue"] = t("common.revenue");
 
     const exportOptions = {
       OrderItems: true,
       FormatDate: true,
+      ConvertStatusToString: true,
       IsBoolean: true,
       BooleanToNumber: true,
-      Statuses: smsReportStatus,
-      ConvertStatusToString: true,
       PropertyToReplace: 'IsResponse',
+      PropertyDefaultReplaceValue: t('common.No'),
+      Statuses: smsReportStatus,
       Order: Object.keys(exportColumnHeader),
       DeleteProperties: ["Status"]
     };
 
     try {
-      const result = await HandleExportData(orderList, exportOptions);
+      const result = await HandleExportData([...smsReport], exportOptions);
+
       ExportFile({
         data: result,
         fileName: 'smsReport',
         exportType: formatType,
         fields: exportColumnHeader
       });
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.log(e);
+      // dispatch(sendToTeamChannel({
+      //   MethodName: 'handleDownloadCsv',
+      //   ComponentName: 'ArchiveManagement.js',
+      //   Text: e
+      // }));
     }
-    setLoader(false);
+    finally {
+      setLoader(false);
+    }
+  }
+
+
+  const handleSearch = () => {
+    if (smsQuery.SerachTxt === '' && !smsQuery.From && !smsQuery.To) {
+      return;
+    }
+
+    setSmsQuery(smsQuery);
+    setSearching(true);
+    SetPageState({
+      "PageName": "reports/SMSMainReport",
+      "PageNumber": page,
+      "SearchData": smsQuery
+    });
+    getData(smsQuery);
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.keyCode === 13 || event.code === 'Enter') {
+      handleSearch();
+    }
   }
 
   const renderSearchSection = () => {
-    const handleSearch = () => {
-      if (smsQuery.SerachTxt === '' && !smsQuery.From && !smsQuery.To) {
-        return;
-      }
-      setSearching(true);
-      getData(smsQuery);
-    }
-    const handleKeyPress = (event) => {
-      if (event.keyCode === 13 || event.code === 'Enter') {
-        handleSearch();
-      }
-    }
     if (windowSize === 'xs') {
       return (
         <SearchField
@@ -317,7 +332,7 @@ const SmsReport = ({ classes }) => {
       <Grid
         container
         spacing={2}
-        className={classes.lineTopMarging}>
+        className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -371,7 +386,25 @@ const SmsReport = ({ classes }) => {
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Switch
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+                switchType='ios'
+                classes={classes}
+                checked={smsQuery.ShowTestCampaigns}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx({ [classes.rtlSwitch]: isRTL })}
+                onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
+              />
+            }
+            label={t('mainReport.locShowTestCampaigns.Text')}
+          />
+          {/* <Switch
             checked={smsQuery.ShowTestCampaigns}
             onColor="#0371ad"
             handleDiameter={20}
@@ -383,28 +416,21 @@ const SmsReport = ({ classes }) => {
             width={40}
             className={clsx({ [classes.rtlSwitch]: isRTL })}
             onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
-          />
-          <Typography style={{ marginInlineStart: 8 }}>
-            {t('mainReport.locShowTestCampaigns.Text')}
-          </Typography>
+          /> */}
         </Grid>
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => handleSearch()}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => clearSearch()}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -416,17 +442,14 @@ const SmsReport = ({ classes }) => {
     const dataLength = smsReport.length;
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
+              classes.btn, classes.btnRounded,
               smsReport.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialogType('exportFormat')}
-            startIcon={<ExportIcon />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
         </Grid>}
@@ -738,10 +761,12 @@ const SmsReport = ({ classes }) => {
     if (rowData.length > 0) {
       rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
       return (
-        <TableBody>
-          {rowData
-            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-        </TableBody>
+        <Box className='tableBodyContainer'>
+          <TableBody>
+            {rowData
+              .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+          </TableBody>
+        </Box>
       )
     }
     return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
@@ -765,7 +790,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={smsReport.length}
+        rows={isSearching && smsReport.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -794,8 +819,10 @@ const SmsReport = ({ classes }) => {
       containerClass={clsx(classes.management, classes.mb50)}
       currentPage="reports"
       subPage="SmsReport">
-      <Title Text={t('common.SMSReports')} Classes={classes} ShowDivider={true} />
-      {renderSearchSection()}
+      <Box className={'topSection'}>
+        <Title Text={t('common.SMSReports')} classes={classes} />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

@@ -44,6 +44,7 @@ import {
 	getTemplatePreviewData,
 } from '../Common';
 import {
+	coreProps,
 	landingPageAPIProps,
 	landingPageDataProps,
 	personalFieldAPIProps,
@@ -69,6 +70,9 @@ import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useParams } from 'react-router-dom';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 import Toast from '../../../components/Toast/Toast.component';
+import NoSetup from '../NoSetup/NoSetup';
+import AlertModal from '../Editor/Popups/AlertModal';
+import moment from 'moment';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -78,12 +82,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	);
 	const SubAccountSettings = useSelector(
 		(state: {
-			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
-		}) => state.common?.commonSettings?.SubAccountSettings
+			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.accountSettings?.SubAccountSettings
 	);
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
+	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
 			ConversationStatusId: 0,
@@ -98,9 +106,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [sideChatContacts, setSideChatContacts] = useState<
 		APIWhatsappChatSidebarContactsItemsData[]
 	>([]);
-	const [filteredSideChatContacts, setFilteredSideChatContacts] =
-		useState<APIWhatsappChatSidebarContactsItemsData[]>(sideChatContacts);
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
+	const [filterBySelected, setFilterBySelected] = useState(0);
 	const [whatsappChatSession, setWhatsappChatSession] =
 		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
@@ -182,7 +189,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			fieldName: 'whatsapp.country',
 			type: 'select',
 			placeholder: 'Select Your Country Code',
-			value: '+972 Israel',
+			value: '+972',
 		},
 		{
 			fieldName: 'whatsapp.phoneNumber',
@@ -217,13 +224,25 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		});
 
 	useEffect(() => {
-		if (!personalFields || landingPages?.length <= 0) {
-			getDynamicModalValues();
-		}
-		getSavedTemplateFields();
 		(async () => {
 			setIsLoader(true);
-			await getPhoneNumber();
+			const { payload: phoneNumberData }: phoneNumberAPIProps =
+				await dispatch<any>(userPhoneNumbers());
+			if (
+				phoneNumberData?.Status === apiStatus.SUCCESS &&
+				phoneNumberData?.Data &&
+				phoneNumberData?.Data?.length > 0
+			) {
+				if (!personalFields || landingPages?.length <= 0) {
+					getDynamicModalValues();
+				}
+				getSavedTemplateFields();
+				setIsLoader(true);
+				await getPhoneNumber();
+			} else {
+				setIsLoader(false);
+				setIsAccountSetup(false);
+			}
 		})();
 		/**
 		 * we disable it because we want to run this code only when component loads
@@ -244,6 +263,29 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			return () => clearInterval(ChatStatusTimer);
 		}
 	});
+
+	useEffect(() => {
+		const updatedPersonalField = {
+			FirstName: translator('smsReport.firstName'),
+			LastName: translator('smsReport.lastName'),
+			Email: translator('common.Mail'),
+			Telephone: translator('common.telephone'),
+			Cellphone: translator('common.Cellphone'),
+			Address: translator('common.address'),
+			BirthDate: translator('common.birthDate'),
+			City: translator('common.city'),
+			State: translator('common.state'),
+			Country: translator('common.country'),
+			Zip: translator('common.zip'),
+			Company: translator('common.company'),
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
+			ReminderDate: translator('recipient.reminderDate'),
+		};
+		setpersonalFields({ ...personalFields, ...updatedPersonalField });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isRTL]);
 
 	const setWhatsappChatCoversationStatus = async (
 		StatusId: number,
@@ -275,17 +317,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 				return contact;
 			});
-			const updatedFilterSideChatContacts = filteredSideChatContacts?.map(
-				(contact) => {
-					if (contact?.PhoneNumber === ClientNumber) {
-						return { ...contact, ConversationStatusId: StatusId };
-					}
-					return contact;
-				}
-			);
-
 			setSideChatContacts(updatedSideChatContacts);
-			setFilteredSideChatContacts(updatedFilterSideChatContacts);
 		} else {
 			whatsAppChatConversationStatusData?.payload?.Message
 				? setToastMessage({
@@ -331,7 +363,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setIsLoader(true);
 		if (!isInitial) {
 			setSideChatContacts([]);
-			setFilteredSideChatContacts([]);
 			setActiveChatContacts({
 				ConversationStatusId: 0,
 				IsTemplate: false,
@@ -353,6 +384,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					IsPagination: true,
 					pageNo: contactsPaginationSetting?.PageNo,
 					pageSize: contactsPaginationSetting?.PageSize,
+					ChatStatus: filterBySelected,
 				})
 			);
 		setIsLoader(false);
@@ -366,20 +398,28 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				if (activeContact) {
 					setActiveChatContacts(activeContact);
 					navigate(`/react/whatsapp/chat/${activeContact?.PhoneNumber}`);
-					changeContactReadStatus(activeContact, contactData, contactData);
+					changeContactReadStatus(activeContact, contactData);
 				}
 			} else {
 				if (activeChatContacts?.PhoneNumber === '' && updatedActiveChat) {
 					setActiveChatContacts(updatedActiveChat);
 					navigate(`/react/whatsapp/chat/${updatedActiveChat?.PhoneNumber}`);
-					changeContactReadStatus(updatedActiveChat, contactData, contactData);
+					changeContactReadStatus(updatedActiveChat, contactData);
 				}
 			}
-			setContactsPaginationSetting({
-				...contactsPaginationSetting,
-				hasMore: true,
-				PageNo: 1,
-			});
+			if (contactData?.length < contactsPaginationSetting.PageSize) {
+				setContactsPaginationSetting({
+					...contactsPaginationSetting,
+					hasMore: false,
+					PageNo: 1,
+				});
+			} else {
+				setContactsPaginationSetting({
+					...contactsPaginationSetting,
+					hasMore: true,
+					PageNo: 1,
+				});
+			}
 		} else {
 			setContactsPaginationSetting({
 				...contactsPaginationSetting,
@@ -387,7 +427,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				PageNo: 1,
 			});
 			setSideChatContacts([]);
-			setFilteredSideChatContacts([]);
 		}
 	};
 
@@ -432,9 +471,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const getDynamicModalValues = async () => {
 		const staticPersonalField: personalFieldDataProps = {
-			Status: translator('common.Status'),
-			SmsStatus: translator('common.smsStatus'),
-			CreationDate: translator('client.subscribedOn'),
 			FirstName: translator('smsReport.firstName'),
 			LastName: translator('smsReport.lastName'),
 			Email: translator('common.Mail'),
@@ -447,6 +483,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			Country: translator('common.country'),
 			Zip: translator('common.zip'),
 			Company: translator('common.company'),
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
 			ReminderDate: translator('recipient.reminderDate'),
 		};
 		const { payload: personalFieldData }: personalFieldAPIProps =
@@ -535,8 +574,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const changeContactReadStatus = (
 		contacts: APIWhatsappChatSidebarContactsItemsData,
-		sideChatContactList: APIWhatsappChatSidebarContactsItemsData[] = sideChatContacts,
-		filterSideChatContactList: APIWhatsappChatSidebarContactsItemsData[] = filteredSideChatContacts
+		sideChatContactList: APIWhatsappChatSidebarContactsItemsData[] = sideChatContacts
 	) => {
 		const updatedSideChatContacts = sideChatContactList?.map(
 			(sideChatContact) => {
@@ -546,16 +584,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				return sideChatContact;
 			}
 		);
-		const updatedFilteredSideChatContacts = filterSideChatContactList?.map(
-			(filteredSideChatContact) => {
-				if (filteredSideChatContact?.PhoneNumber === contacts?.PhoneNumber) {
-					return { ...filteredSideChatContact, Unread: 0 };
-				}
-				return filteredSideChatContact;
-			}
-		);
 		setSideChatContacts(updatedSideChatContacts);
-		setFilteredSideChatContacts(updatedFilteredSideChatContacts);
 	};
 
 	const handleChatId = (
@@ -599,6 +628,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					pageNo: 1,
 					pageSize: 6,
 					UserNumber: activeChatContacts?.PhoneNumber,
+					ChatStatus: filterBySelected,
 				})
 			);
 			if (
@@ -615,11 +645,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					return contact;
 				});
 
-				changeContactReadStatus(
-					activeChatContacts,
-					updatedContacts,
-					updatedContacts
-				);
+				changeContactReadStatus(activeChatContacts, updatedContacts);
 			}
 		}
 	};
@@ -634,9 +660,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			if (savedTemplate?.length > 0) {
 				chatReqPayload.TemplateId = savedTemplate;
 				chatReqPayload.Variables = formatUpdatedDynamicVariable(
-					updatedDynamicVariable,
-					personalFields,
-					landingPages
+					updatedDynamicVariable
 				);
 			} else {
 				chatReqPayload.TextMessage = newMessage;
@@ -673,12 +697,24 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				// To update contact list
 				updateContactList();
 			} else {
-				sendWhatsappChat?.Message
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: sendWhatsappChat?.Message,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
+				if (sendWhatsappChat.StatusCode === 112) {
+					setExceedLimitModal(true);
+					// setNextMessageAvailable
+					if (
+						sendWhatsappChat?.Data &&
+						sendWhatsappChat?.Data?.NextAvailableTime &&
+						sendWhatsappChat?.Data?.NextAvailableTime?.length > 0
+					) {
+						setNextMessageAvailable(sendWhatsappChat?.Data?.NextAvailableTime);
+					}
+				} else {
+					sendWhatsappChat?.Message
+						? setToastMessage({
+								...ToastMessages.ERROR,
+								message: sendWhatsappChat?.Message,
+						  })
+						: setToastMessage(ToastMessages.ERROR);
+				}
 			}
 		}
 	};
@@ -699,6 +735,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const fetchMoreContacts = async (
 		searchText: string,
+		ChatStatus: number = filterBySelected,
 		isPaginationReset: boolean = false
 	) => {
 		if (activePhoneNumber && activePhoneNumber?.length > 0) {
@@ -714,6 +751,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					pageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
 					pageSize: contactsPaginationSetting?.PageSize,
 					Searchtext: searchText,
+					ChatStatus: ChatStatus,
 				})
 			);
 			setIsLoader(false);
@@ -733,21 +771,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						listDivElement.scrollTop = 0;
 					}
 					setSideChatContacts(whatsAppChatContactsData?.Data?.Items);
-					setFilteredSideChatContacts(whatsAppChatContactsData?.Data?.Items);
 				} else {
 					setSideChatContacts([
 						...sideChatContacts,
-						...whatsAppChatContactsData?.Data?.Items,
-					]);
-					setFilteredSideChatContacts([
-						...filteredSideChatContacts,
 						...whatsAppChatContactsData?.Data?.Items,
 					]);
 				}
 			} else {
 				if (whatsAppChatContactsData?.Message === 'No Data Found') {
 					setSideChatContacts([]);
-					setFilteredSideChatContacts([]);
 					setContactsPaginationSetting({
 						...contactsPaginationSetting,
 						PageNo: 1,
@@ -769,6 +801,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	};
 
+	const onChatTemplateDelete = () => {
+		setButtonType('');
+		setUpdatedDynamicVariable([]);
+		setNewMessage('');
+		setSavedTemplate('');
+	};
+
+	const onExceedLimitYes = () => {
+		setExceedLimitModal(false);
+	};
+
 	return (
 		<>
 			<DefaultScreen
@@ -777,90 +820,118 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				classes={classes}
 				customPadding={false}
 				containerClass={classes.mb50}>
-				{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
-				<div className={`${classes.whatsappChat} app`}>
-					<div className={`${classes.whatsappChat} app-content`}>
-						<SideBar
-							isMobileSideBar={isMobileSideBar}
+				{isAccountSetup ? (
+					<>
+						{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
+						<div className={`${classes.whatsappChat} app`}>
+							<div className={`${classes.whatsappChat} app-content`}>
+								<SideBar
+									isMobileSideBar={isMobileSideBar}
+									classes={classes}
+									setIsMobileSideBar={() =>
+										setIsMobileSideBar(!isMobileSideBar)
+									}
+									handleChatId={handleChatId}
+									activePhoneNumber={activePhoneNumber}
+									setActiveUser={setActivePhoneNumber}
+									onActiveUserChange={onActiveUserChange}
+									sideChatContacts={sideChatContacts}
+									phoneNumbersList={phoneNumbersList}
+									handleUserStatus={handleUserStatus}
+									getStatusClass={getStatusClass}
+									chatContacts={activeChatContacts}
+									fetchMoreContacts={fetchMoreContacts}
+									contactsPaginationSetting={contactsPaginationSetting}
+									fetchSearchedContacts={fetchMoreContacts}
+									isLoader={isLoader}
+									filterBySelected={filterBySelected}
+									setFilterBySelected={setFilterBySelected}
+								/>
+								<ChatUi
+									isMobileSideBar={isMobileSideBar}
+									classes={classes}
+									setIsMobileSideBar={() =>
+										setIsMobileSideBar(!isMobileSideBar)
+									}
+									savedTemplateList={savedTemplateList}
+									onChoose={(template, templateText) =>
+										onChoose(template, templateText)
+									}
+									newMessage={newMessage}
+									setNewMessage={updateFreeFormMessage}
+									isTemplateModal={isTemplateModal}
+									setIsTemplateModal={setIsTemplateModal}
+									dynamicVariable={dynamicVariable}
+									updatedDynamicVariable={updatedDynamicVariable}
+									setIsDynamcFieldModal={setIsDynamcFieldModal}
+									setDynamicModalVariable={setDynamicModalVariable}
+									savedTemplate={savedTemplate}
+									chatContacts={activeChatContacts}
+									activePhoneNumber={activePhoneNumber}
+									ChatContacts={sideChatContacts}
+									whatsappChatSession={whatsappChatSession}
+									handleUserStatus={handleUserStatus}
+									getStatusClass={getStatusClass}
+									onChatSend={onChatSend}
+									allWhatsappChat={allWhatsappChat}
+									setAllWhatsappChat={setAllWhatsappChat}
+									setAPIInboundChatStatus={setAPIInboundChatStatus}
+									setWhatsappChatSession={setWhatsappChatSession}
+									setUpdatedDynamicVariable={setUpdatedDynamicVariableWithLinks}
+									setDynamicVariable={setDynamicVariable}
+									setSavedTemplate={setSavedTemplate}
+									activeChatContacts={activeChatContacts}
+									isContactLoader={isLoader}
+									updateContactList={updateContactList}
+									personalFields={personalFields}
+									onChatTemplateDelete={onChatTemplateDelete}
+								/>
+							</div>
+						</div>
+						<DynamicModal
 							classes={classes}
-							setIsMobileSideBar={() => setIsMobileSideBar(!isMobileSideBar)}
-							handleChatId={handleChatId}
-							activePhoneNumber={activePhoneNumber}
-							setActiveUser={setActivePhoneNumber}
-							onActiveUserChange={onActiveUserChange}
-							sideChatContacts={sideChatContacts}
-							filteredSideChatContacts={filteredSideChatContacts}
-							setFilteredSideChatContacts={setFilteredSideChatContacts}
-							setContactsPaginationSetting={setContactsPaginationSetting}
-							phoneNumbersList={phoneNumbersList}
-							handleUserStatus={handleUserStatus}
-							getStatusClass={getStatusClass}
-							chatContacts={activeChatContacts}
-							fetchMoreContacts={fetchMoreContacts}
-							contactsPaginationSetting={contactsPaginationSetting}
-							fetchSearchedContacts={fetchMoreContacts}
-							isLoader={isLoader}
-						/>
-						<ChatUi
-							isMobileSideBar={isMobileSideBar}
-							classes={classes}
-							setIsMobileSideBar={() => setIsMobileSideBar(!isMobileSideBar)}
-							savedTemplateList={savedTemplateList}
-							onChoose={(template, templateText) =>
-								onChoose(template, templateText)
+							isDynamcFieldModal={isDynamcFieldModal}
+							onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
+							personalFields={personalFields}
+							landingPageData={landingPages}
+							dynamicModalVariable={dynamicModalVariable}
+							onDynamcFieldModalSave={(updatedDynamicVariable) =>
+								onDynamcFieldModalSave(updatedDynamicVariable)
 							}
-							newMessage={newMessage}
-							setNewMessage={updateFreeFormMessage}
-							isTemplateModal={isTemplateModal}
-							setIsTemplateModal={setIsTemplateModal}
-							dynamicVariable={dynamicVariable}
-							updatedDynamicVariable={updatedDynamicVariable}
-							setIsDynamcFieldModal={setIsDynamcFieldModal}
-							setDynamicModalVariable={setDynamicModalVariable}
+							dynamicVariable={updatedDynamicVariable}
+							isTrackLink={isTrackLink}
+							setIsTrackLink={setIsTrackLink}
 							savedTemplate={savedTemplate}
-							chatContacts={activeChatContacts}
-							activePhoneNumber={activePhoneNumber}
-							filteredSideChatContacts={filteredSideChatContacts}
-							whatsappChatSession={whatsappChatSession}
-							handleUserStatus={handleUserStatus}
-							getStatusClass={getStatusClass}
-							onChatSend={onChatSend}
-							allWhatsappChat={allWhatsappChat}
-							setAllWhatsappChat={setAllWhatsappChat}
-							setAPIInboundChatStatus={setAPIInboundChatStatus}
-							setWhatsappChatSession={setWhatsappChatSession}
-							setUpdatedDynamicVariable={setUpdatedDynamicVariableWithLinks}
-							setDynamicVariable={setDynamicVariable}
-							setSavedTemplate={setSavedTemplate}
-							activeChatContacts={activeChatContacts}
-							isContactLoader={isLoader}
-							updateContactList={updateContactList}
 						/>
-					</div>
-				</div>
-				<DynamicModal
-					classes={classes}
-					isDynamcFieldModal={isDynamcFieldModal}
-					onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
-					personalFields={personalFields}
-					landingPageData={landingPages}
-					dynamicModalVariable={dynamicModalVariable}
-					onDynamcFieldModalSave={(updatedDynamicVariable) =>
-						onDynamcFieldModalSave(updatedDynamicVariable)
-					}
-					dynamicVariable={updatedDynamicVariable}
-					isTrackLink={isTrackLink}
-					setIsTrackLink={setIsTrackLink}
-					savedTemplate={savedTemplate}
-				/>
+						<ValidationAlert
+							classes={classes}
+							isOpen={isValidationAlert}
+							onClose={() => setIsValidationAlert(false)}
+							title={translator('whatsappCampaign.sendValidation')}
+							requiredFields={groupSendValidationErrors}
+						/>
+						<AlertModal
+							classes={classes}
+							isOpen={exceedLimitModal}
+							onClose={() => setExceedLimitModal(false)}
+							title={translator(
+								'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
+							)}
+							subtitle={`${translator(
+								'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
+							)} ${
+								nextMessageAvailable
+									? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
+									: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+							}`}
+							type='alert'
+							onConfirmOrYes={() => onExceedLimitYes()}
+						/>
+					</>
+				) : (
+					!isLoader && <NoSetup classes={classes} />
+				)}
 				<Loader isOpen={isLoader} showBackdrop={true} />
-				<ValidationAlert
-					classes={classes}
-					isOpen={isValidationAlert}
-					onClose={() => setIsValidationAlert(false)}
-					title={translator('whatsappCampaign.sendValidation')}
-					requiredFields={groupSendValidationErrors}
-				/>
 			</DefaultScreen>
 		</>
 	);

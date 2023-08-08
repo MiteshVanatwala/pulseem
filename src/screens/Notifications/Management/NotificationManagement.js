@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
-  Grid, Button, TextField, InputAdornment, Box, FormControlLabel, Checkbox, RadioGroup, Radio, FormControl, Tooltip, Divider
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, InputAdornment, Box, FormControlLabel, Checkbox, RadioGroup, Radio, FormControl, Tooltip
 } from '@material-ui/core'
 import {
-  DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
-  GroupsIcon, PreviewIcon
+  DeleteIcon, DuplicateIcon, EditIcon,
+  GroupsIcon, PreviewIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, RestorDialogContent, SearchField
@@ -15,7 +15,6 @@ import {
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import {
@@ -29,16 +28,17 @@ import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { actionURL } from '../../../config/index'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { MdNotificationsActive } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { DialogTypes } from '../../../Models/PushNotifications/DialogTypes';
+import { sitePrefix } from '../../../config/index';
 
 const NotificationManagement = ({ classes }) => {
   const Redirect = useRedirect();
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { notificationData, subAccountApiKey, hideScriptDialog } = useSelector(state => state.notification)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { notificationData, subAccountApiKey } = useSelector(state => state.notification)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null);
@@ -62,6 +62,7 @@ const NotificationManagement = ({ classes }) => {
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const scriptDialogCookie = getCookie('scriptDialog')
+  const hideScriptDialog = (scriptDialogCookie === 'true')
   const [showScriptDialog, setShowScriptDialog] = useState(!hideScriptDialog)
   const [showLoader, setLoader] = useState(true);
   const [forceShowImplementation, setForceShowImplementation] = useState(false);
@@ -188,7 +189,7 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderImplementDialog = () => {
-    if (hideScriptDialog && !forceShowImplementation) {
+    if (scriptDialogCookie && !forceShowImplementation) {
       return;
     }
 
@@ -273,19 +274,21 @@ const NotificationManagement = ({ classes }) => {
 
     if (windowSize === 'xs') {
       return (
-        <SearchField
-          classes={classes}
-          value={notificationNameSearch}
-          onKeyPress={handleSearch}
-          onChange={handleNotificationNameChange}
-          onClick={handleSearch}
-          placeholder={t('common.CampaignName')}
-        />
+        <Grid container className={'searchLine'}>
+          <SearchField
+            classes={classes}
+            value={notificationNameSearch}
+            onKeyPress={handleSearch}
+            onChange={handleNotificationNameChange}
+            onClick={handleSearch}
+            placeholder={t('common.CampaignName')}
+          />
+        </Grid>
       )
     }
 
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -325,21 +328,17 @@ const NotificationManagement = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -353,53 +352,37 @@ const NotificationManagement = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {<Grid item>
           <Button
-            variant='contained'
-            size='medium'
             component="a"
-            href='/react/Notification/create'
+            href={`${sitePrefix}Notification/create`}
             onClick={(e) => {
               e.preventDefault()
-              Redirect({ url: '/react/Notification/create' })
+              Redirect({ url: `${sitePrefix}Notification/create` })
             }}
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.createNotification')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={handleShowDeletedItems}>
             {t('notifications.restoreDeleted')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={handleShowGroups}>
             {t('notifications.buttons.groups')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={handleShowSubscribers}>
             {t('notifications.buttons.subscribers')}
           </Button>
@@ -443,16 +426,16 @@ const NotificationManagement = ({ classes }) => {
     const iconsMap = [
       {
         key: 'send',
-        icon: SendGreenIcon,
+        uIcon: SendIcon,
         lable: t('notifications.buttons.send'),
         remove: StatusID !== 0,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/react/Notification/send/${ID}`
+        href: `${sitePrefix}Notification/send/${ID}`
       },
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('notifications.buttons.preview'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -462,16 +445,16 @@ const NotificationManagement = ({ classes }) => {
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         disable: StatusID !== 0,
         lable: t('notifications.buttons.edit'),
         // remove: windowSize === 'xs',
-        href: `/react/notification/Edit/${ID}`,
+        href: `${sitePrefix}notification/Edit/${ID}`,
         rootClass: classes.paddingIcon
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('notifications.buttons.duplicate'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -483,7 +466,7 @@ const NotificationManagement = ({ classes }) => {
       },
       {
         key: 'groups',
-        icon: GroupsIcon,
+        uIcon: GroupsIcon,
         disable: (!HasGroups),
         lable: t('notifications.buttons.groups'),
         rootClass: classes.paddingIcon,
@@ -493,7 +476,7 @@ const NotificationManagement = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('notifications.buttons.delete'),
         showPhone: true,
         rootClass: classes.paddingIcon,
@@ -512,12 +495,13 @@ const NotificationManagement = ({ classes }) => {
         justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
-            className={icon.disable && classes.disabledCursor}
+            className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
             key={icon.key}
             item >
             <ManagmentIcon
               classes={classes}
               {...icon}
+              uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
             />
           </Grid>
         ))}
@@ -679,7 +663,7 @@ const NotificationManagement = ({ classes }) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1) }}>
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
           <Box className={classes.justifyBetween}>
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
@@ -699,10 +683,12 @@ const NotificationManagement = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {rowData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {rowData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -751,6 +737,7 @@ const NotificationManagement = ({ classes }) => {
     return {
       childrenStyle: classes.previewPaper,
       showDivider: false,
+      title: <><b>{t('common.campaignID')}</b>:&nbsp;{data?.SMSCampaignID || data?.MmsCampaignID || data?.ID || ''}</>,
       icon: (
         <div className={classes.dialogIconContent}>
           {'\uE0F8'}
@@ -774,7 +761,9 @@ const NotificationManagement = ({ classes }) => {
           onClick={handleDialogClose}
           className={clsx(
             classes.confirmButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}>
           {t('common.confirm')}
         </Button>
@@ -807,7 +796,9 @@ const NotificationManagement = ({ classes }) => {
           onClick={handleDialogClose}
           className={clsx(
             classes.confirmButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}>
           {t('common.Ok')}
         </Button>
@@ -822,7 +813,7 @@ const NotificationManagement = ({ classes }) => {
       title: t('notifications.restoreTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE185'}
         </div>
       ),
@@ -852,30 +843,25 @@ const NotificationManagement = ({ classes }) => {
       title: null,
       renderTitle: () => (
         <Box className={classes.myGroupsTitleSection}>
-          <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
-          <Link
-            className={clsx(classes.f15, classes.bold, classes.mt1)}
-            component="button"
-            color="textPrimary"
-            underline="always"
-            onClick={() => {
-              setDialogType({
-                type: 'createGroup',
-                data: {}
-              })
-            }}>
-            {t('notifications.howToCreateGroup')}
-          </Link>
+          <Typography className={classes.dialogTitle}>{t('notifications.myGroups') + " ("}</Typography>
+          {" "}
+          <Typography className={clsx(classes.dialogTitle, classes.link, classes.bold)} onClick={() => {
+            setDialogType({
+              type: 'createGroup',
+              data: {}
+            })
+          }}> {t('notifications.howToCreateGroup')}? </Typography>
+          {" )"}
         </Box>
       ),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, classes.mt1, 'unicode')}>
           {'\uE0D5'}
         </div>
       ),
       content: (
-        <Box className={classes.dialogBox}>
+        <Box className={clsx(classes.dialogBox, classes.pt0)}>
           <Table>
             <TableHead >
               <TableRow>
@@ -910,7 +896,8 @@ const NotificationManagement = ({ classes }) => {
           onClick={handleDialogClose}
           className={clsx(
             classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded
           )}>
           {t('common.Ok')}
         </Button>
@@ -924,12 +911,24 @@ const NotificationManagement = ({ classes }) => {
       paperStyle: classes.maxWidth540,
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE0D5'}
         </div>
       ),
       content: (
         <Box className={classes.dialogBox}>
+          <Button
+            onClick={handleShowGroups}
+            className={clsx(
+              classes.btn,
+              classes.btnRounded,
+              classes.f12,
+            )}
+            startIcon={!isRTL ? <MdArrowBackIos size={14} /> : <MdArrowForwardIos size={14} />}
+            style={{ position: 'absolute', top: 60 }}
+          >
+            {t('notifications.back')}
+          </Button>
           <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
           <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
           <Typography variant='body'>{t('common.pulseemLink')}</Typography>
@@ -960,7 +959,8 @@ const NotificationManagement = ({ classes }) => {
           onClick={handleDialogClose}
           className={clsx(
             classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded,
           )}>
           {t('common.confirm')}
         </Button>
@@ -974,7 +974,7 @@ const NotificationManagement = ({ classes }) => {
       title: t('notifications.groupsByIdTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE0D5'}
         </div>
       ),
@@ -1014,7 +1014,7 @@ const NotificationManagement = ({ classes }) => {
       title: t('notifications.deleteTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE0D2'}
         </div>
       ),
@@ -1037,7 +1037,7 @@ const NotificationManagement = ({ classes }) => {
       title: t('notifications.duplicateTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE038'}
         </div>
       ),
@@ -1090,19 +1090,15 @@ const NotificationManagement = ({ classes }) => {
   }
   const renderImplement = () => {
     return {
-      title: null,
+      title: t('notifications.implementDialog.beforeYouStarted'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\u005E'}
         </div>
       ),
       content: (
-        <Box className={classes.dialogBox}>
-          <Typography
-            className={classes.f28}>
-            {t('notifications.implementDialog.beforeYouStarted')}
-          </Typography>
+        <Box className={clsx(classes.pt0, classes.dialogBox)}>
           <Typography
             className={clsx(classes.f20, classes.pb10)}>
             {t('notifications.implementDialog.startSendingOutMessage')}
@@ -1111,6 +1107,7 @@ const NotificationManagement = ({ classes }) => {
             1. {t('notifications.downloadThe')}
             <a
               download="service-worker.js"
+              className={clsx(classes.link, classes.colrPrimary)}
               href={process.env.PUBLIC_URL + '/assets/scripts/service-worker.js'}>
               {t('notifications.attachedScript')}
             </a>
@@ -1139,23 +1136,23 @@ const NotificationManagement = ({ classes }) => {
           </Grid>
           {scriptDirectory === 1 ?
             <Box>
-              <Box className={classes.directoryField}>
+              <Box className={clsx(classes.directoryField)}>
                 <Typography className={classes.f16}>
-                  {t("notifications.enterDirectory")}
-                </Typography>
-                <Typography
-                  variant="body2" className={classes.f16}>
-                  {t("notifications.example")}: /examplefolder1/examplefodler2/
+                  {t("notifications.enterDirectory") + ':'}
                 </Typography>
               </Box>
               <TextField
                 variant="outlined"
                 size="small"
                 fullWidth
-                className={classes.maxWidth400}
+                className={clsx(classes.textField, classes.maxWidth400)}
                 onChange={handleScriptPathChange}
                 value={scriptPath}
               />
+              <Typography
+                variant="body2" className={classes.f14}>
+                {t("notifications.example")}: /examplefolder1/examplefodler2/
+              </Typography>
             </Box> : null}
           <hr />
           <Typography className={classes.f18}>
@@ -1196,8 +1193,8 @@ const NotificationManagement = ({ classes }) => {
               control={
                 <Checkbox
                   checked={scriptDialog}
+                  className={classes.checkbox}
                   onChange={() => handleDontShowAgain(!scriptDialog)}
-                  color="primary"
                 />
               }
               label={t('notifications.implementDialog.dontShowThisMessage')} />
@@ -1208,7 +1205,8 @@ const NotificationManagement = ({ classes }) => {
             onClick={() => setShowScriptDialog(false)}
             className={clsx(
               classes.gruopsDialogButton,
-              classes.dialogConfirmButton,
+              classes.btn,
+              classes.btnRounded
             )}>
             {t('common.Ok')}
           </Button>
@@ -1288,7 +1286,7 @@ const NotificationManagement = ({ classes }) => {
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Title
-        Text={t('notifications.notificationManagement')} Classes={classes}
+        Text={t('notifications.notificationManagement')} classes={classes}
         ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
         Element={
           <Button onClick={() => {
@@ -1304,6 +1302,29 @@ const NotificationManagement = ({ classes }) => {
               classes.actionButtonDarkBlue)}>{t('master.implementScript')}</Button>
         } ShowDivider={true} />
       {renderSearchSection()}
+      containerClass={classes.management}>
+      <Box className={'topSection'}>
+        <Title
+          classes={classes}
+          Element={
+            <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
+              <Typography style={{ color: '#4D4D4D', fontSize: 29 }}>{t('notifications.notificationManagement')}</Typography>
+              <Button onClick={() => {
+                setCookie('scriptDialog', true);
+                setShowScriptDialog(true);
+              }
+              }
+                className={clsx(
+                  classes.implementButtonFlex,
+                  classes.btn, classes.btnRounded,
+                )}
+                style={{ alignSelf: 'flex-end' }}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+              >{t('master.implementScript')}</Button>
+            </Box>
+          } />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

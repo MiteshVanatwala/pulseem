@@ -56,7 +56,8 @@ export type ManagmentIconProps = {
 	classes: ClassesType['classes'];
 	key: string;
 	buttonKey: string;
-	icon: string;
+	icon: any;
+	uIcon: any;
 	lable: string;
 	disable?: boolean;
 	hide?: boolean;
@@ -84,6 +85,7 @@ export type AllCampaignReq = {
 	isPagination: boolean;
 	pageNo: number;
 	pageSize: number;
+	isDeleted: boolean;
 };
 
 export type AllReportReq = {
@@ -96,3 +98,20 @@ export type AllReportReq = {
 };
 
 export type PageTypeRequest = { [key: string]: number };
+
+export type TierSetting = {
+	name: string;
+	value: '1' | '2' | '3' | '4';
+	messageLimit: number | string;
+};
+
+export type UpdateWhatsappTierPayload = {
+	Data: null;
+	Message: string;
+	Status: string;
+	StatusCode: number;
+};
+
+export type UpdateWhatsappTier = {
+	payload: UpdateWhatsappTierPayload;
+};

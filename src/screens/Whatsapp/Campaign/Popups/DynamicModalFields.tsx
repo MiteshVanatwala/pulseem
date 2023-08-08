@@ -46,8 +46,8 @@ const DynamicModalFields = ({
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const SubAccountSettings = useSelector(
 		(state: {
-			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
-		}) => state.common?.commonSettings?.SubAccountSettings
+			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.accountSettings?.SubAccountSettings
 	);
 	const [isSiteTrack, setIsSiteTrack] = useState(false);
 
@@ -82,16 +82,27 @@ const DynamicModalFields = ({
 							? undefined
 							: () => <>{translator('whatsappCampaign.pFieldPlaceholder')}</>
 					}
+					MenuProps={{
+						PaperProps: {
+							style: {
+								maxHeight: 48 * 4.5 + 8,
+								width: 250,
+								direction: isRTL ? 'rtl' : 'ltr',
+							},
+						},
+					}}
 					onChange={(e: BaseSyntheticEvent) =>
 						setPersonalField(e.target.value)
 					}>
-					{Object.values(personalFields)
+					{Object.keys(personalFields)
 						?.filter(
-							(personalField) => personalField && personalField?.length > 0
+							(personalField) =>
+								personalFields[personalField] &&
+								personalFields[personalField]?.length > 0
 						)
 						?.map((personalFieldKey: string, index: number) => (
 							<MenuItem key={index} value={personalFieldKey}>
-								{personalFieldKey}
+								{personalFields[personalFieldKey]}
 							</MenuItem>
 						))}
 				</Select>
@@ -174,11 +185,18 @@ const DynamicModalFields = ({
 							? undefined
 							: () => <>{translator('whatsappCampaign.lPagePlaceholder')}</>
 					}
+					MenuProps={{
+						PaperProps: {
+							style: {
+								maxHeight: 48 * 4.5 + 8,
+								width: 250,
+								direction: isRTL ? 'rtl' : 'ltr',
+							},
+						},
+					}}
 					onChange={(e: BaseSyntheticEvent) => setLandPage(e.target.value)}>
 					{landingPageData?.map((landingPage: landingPageDataProps) => (
-						<MenuItem
-							key={landingPage.CampaignID}
-							value={landingPage.CampaignName}>
+						<MenuItem key={landingPage.CampaignID} value={landingPage.PageHref}>
 							{landingPage.CampaignName}
 						</MenuItem>
 					))}
@@ -201,6 +219,15 @@ const DynamicModalFields = ({
 											<>{translator('whatsappCampaign.navAppPlaceholder')}</>
 									  )
 							}
+							MenuProps={{
+								PaperProps: {
+									style: {
+										maxHeight: 48 * 4.5 + 8,
+										width: 250,
+										direction: isRTL ? 'rtl' : 'ltr',
+									},
+								},
+							}}
 							onChange={(e: BaseSyntheticEvent) => setNavApp(e.target.value)}>
 							<MenuItem value='Waze'>Waze</MenuItem>
 							<MenuItem value='Google Maps'>Google Maps</MenuItem>

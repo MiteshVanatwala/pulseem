@@ -51,7 +51,7 @@ const GroupSelector = ({
 	const onSelectAll = () => {
 		if (!allGroupsSelected) {
 			if (showTestGroups) {
-				setSelected(testGroupList);
+				setSelected([...allGroupList, ...testGroupList]);
 			} else {
 				setSelected([...allGroupList]);
 			}
@@ -77,6 +77,7 @@ const GroupSelector = ({
 						? [...allGroupList, ...testGroupList]
 						: [...allGroupList]
 				}
+				showTestGroups={showTestGroups}
 				selectedList={selectedGroups}
 				callbackSelectedGroups={onSelectedGroups}
 				callbackUpdateGroups={onUpdateGroups}
@@ -128,7 +129,7 @@ const GroupSelector = ({
 						</Tooltip>
 					</div>
 					{isCreateNewGroup && (
-						<div>
+						<div className={classes.whatsappSaveGroupWrapper}>
 							<input
 								type='text'
 								className={classes.groupInput}
@@ -138,7 +139,9 @@ const GroupSelector = ({
 								}
 								value={newGroupName}
 							/>
-							<span className={classes.saveBtn} onClick={onNewGroupSave}>
+							<span
+								className={classes.whatsappSaveBtn}
+								onClick={onNewGroupSave}>
 								<>{translator('mainReport.save')}</>
 							</span>
 						</div>

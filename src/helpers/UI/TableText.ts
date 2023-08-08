@@ -1,6 +1,7 @@
 export enum SourceType {
     SMS = 1,
-    EMAIL = 2
+    EMAIL = 2,
+    WHATSAPP = 3
 }
 export const ConvertColorStatus = (value: string, type: SourceType) => {
     if (type === SourceType.SMS) {
@@ -55,6 +56,47 @@ export const ConvertColorStatus = (value: string, type: SourceType) => {
             case '6':
             case '5': {
                 return '#0371AD';
+            }
+        }
+    }
+    if (type === SourceType.WHATSAPP) {
+        switch (value.toString()) {
+            case "-1": {
+                return '#000';
+            }
+            default:
+            case '1': {
+                return '#959595';
+            }
+            case '2': {
+                return '#F59A23';
+            }
+            case '3': {
+                return '#27AE60';
+            }
+            case '4': {
+                return '#E74C3C';
+            }
+            case '5': {
+                return '#E74C3C';
+            }
+            case '6': {
+                return '#27AE60';
+            }
+            case '7': {
+                return '#E74C3C';
+            }
+            case '8': {
+                return '#E74C3C';
+            }
+            case '9': {
+                return '#E74C3C';
+            }
+            case '10': {
+                return '#E74C3C';
+            }
+            case '11': {
+                return '#959595';
             }
         }
     }
@@ -163,6 +205,52 @@ export const ConvertEmailStatusText = (value: string) => {
     }
     return null;
 }
+export const ConvertWhatsappStatusText = (value: string) => {
+    if (value) {
+        switch (value.toString()) {
+            case "-1": {
+                return "report.takenBySender";
+            }
+            case "1": { // Pending
+                return "common.Pending";
+            }
+            case "2": { // Sent
+                return "common.Sent";
+            }
+            case "3": { //Success
+                return "common.delivered";
+            }
+            case "4": { // Failed
+                return "common.failedStatus";
+            }
+            case "5": { //Unsubscribe
+                return "common.Unsubscribed";
+            }
+            case "6": { // read
+                return "common.read";
+            }
+            case "7": { // Canceled
+                return "report.canceled";
+            }
+            case "8": { // Stopped
+                return "common.stopped";
+            }
+            case "9": { // Removed
+                return "common.removed";
+            }
+            case "10": { // InvalidFromNumber
+                return "report.invalidFromNumber";
+            }
+            case "11": { // NoInboundIn24Session
+                return "common.NoInboundIn24Session";
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+    return null;
+}
 export const EllipsisText = (value: string, len: number) => {
     const length = value.length;
     if (length > len) {
@@ -215,47 +303,50 @@ export const TranslateKeys = (key: string, t: any) => {
         default: { return { key: 'adjustTitle', value: t("sms.adjustTitle") } }
     }
 }
-export const ConvertClientStatus = (value: string, type: SourceType) => {
-    if (type === SourceType.SMS) {
-        switch (value.toString()) {
-            case '-1':
-            default: {
-                return 'client.clientStatus.sms.NoSms';
-            }
-            case '0': {
-                return 'client.clientStatus.sms.Active';
-            }
-            case '1': {
-                return 'client.clientStatus.sms.Removed';
-            }
-            case '4': {
-                return 'client.clientStatus.sms.Invalid';
-            }
-            case '5': {
-                return 'client.clientStatus.sms.Pending';
+export const ConvertClientStatus = (statusType: SourceType, statusId: number) => {
+    switch (statusType) {
+        case SourceType.SMS: {
+            switch (statusId.toString()) {
+                case '-1':
+                default: {
+                    return 'client.clientStatus.sms.NoSms';
+                }
+                case '0': {
+                    return 'client.clientStatus.sms.Active';
+                }
+                case '1': {
+                    return 'client.clientStatus.sms.Removed';
+                }
+                case '4': {
+                    return 'client.clientStatus.sms.Invalid';
+                }
+                case '5': {
+                    return 'client.clientStatus.sms.Pending';
+                }
             }
         }
-    }
-    if (type === SourceType.EMAIL) {
-        switch (value.toString()) {
-            case '-1':
-            default: {
-                return 'client.clientStatus.email.NoEmail';
-            }
-            case '1': {
-                return 'client.clientStatus.email.Active';
-            }
-            case '2': {
-                return 'client.clientStatus.email.Removed';
-            }
-            case '3': {
-                return 'client.clientStatus.email.Restricted';
-            }
-            case '4': {
-                return 'client.clientStatus.email.Invalid';
-            }
-            case '5': {
-                return 'client.clientStatus.email.Pending';
+        case SourceType.EMAIL:
+        default: {
+            switch (statusId.toString()) {
+                case '-1':
+                default: {
+                    return 'client.clientStatus.email.NoEmail';
+                }
+                case '1': {
+                    return 'client.clientStatus.email.Active';
+                }
+                case '2': {
+                    return 'client.clientStatus.email.Removed';
+                }
+                case '3': {
+                    return 'client.clientStatus.email.Restricted';
+                }
+                case '4': {
+                    return 'client.clientStatus.email.Invalid';
+                }
+                case '5': {
+                    return 'client.clientStatus.email.Pending';
+                }
             }
         }
     }

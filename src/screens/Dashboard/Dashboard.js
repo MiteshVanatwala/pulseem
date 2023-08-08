@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
@@ -16,7 +16,8 @@ import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
+  const { windowSize, isRTL} = useSelector(state => state.core);
+  const { accountSettings } = useSelector(state => state.common);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -60,7 +61,7 @@ const DashboardScreen = ({ classes }) => {
       classes={classes}
       customStyle={classes.dashboard}>
       <Grid container>
-        <Grid item xs={12} sm={9} md={10} className={clsx(classes.pt20, classes.dashboardTop)}>
+        <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
               <BulkStatus classes={classes} />
@@ -87,7 +88,7 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={3} md={2} className={classes.dashboardSide}>
+        <Grid item xs={12} sm={4} md={3} lg={3} xl={2} className={classes.dashboardSide}>
           <Shortcut
             windowSize={windowSize}
             classes={classes}
@@ -98,6 +99,7 @@ const DashboardScreen = ({ classes }) => {
       </Grid>
       {toastMessage && renderToast()}
       {showChangePassword && <ChangePassword
+        classes={classes}
         SetToast={setToastMessage}
         IsOpen={showChangePassword}
         OnClose={() => setShowChangePassword(false)}

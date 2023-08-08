@@ -22,6 +22,10 @@ export type WhatsappCreatorProps = {
 	dynamicFieldCount: number;
 	linkCount: number;
 	templateTextLimit: number;
+	fileData: {
+		fileLink: string;
+		fileType: string;
+	};
 };
 
 export type TemplateFieldsProps = {
@@ -30,15 +34,20 @@ export type TemplateFieldsProps = {
 	savedTemplate: string;
 	onTemplateNameChange: (e: BaseSyntheticEvent) => void;
 	onSavedTemplateChange: (templateId: string) => void;
+	savedTemplateList: savedTemplateListProps[];
+	onCategoryChange: (category: string) => void;
+	category: string;
+	showValidation: boolean;
+};
+
+export type FileUploadProps = {
+	classes: ClassesType['classes'];
 	fileData: {
 		fileLink: string;
 		fileType: string;
 	};
 	setFileData: (fileData: File | undefined) => void;
-	savedTemplateList: savedTemplateListProps[];
-	onCategoryChange: (category: string) => void;
-	category: string;
-	showValidation: boolean;
+	buttonType: string;
 };
 
 export type ReduxUserProps = {
@@ -110,6 +119,12 @@ export type coreProps = {
 
 export type CommonRedux = {
 	accountFeatures: string[];
+	accountSettings: {
+		SubAccountSettings: {
+			DomainAddress: string;
+			WhatsappTierID: null | string;
+		};
+	};
 };
 
 export type actionButtonProps = {
@@ -176,6 +191,7 @@ export type AlertModalProps = {
 	subtitle: string;
 	type: 'confirm' | 'delete' | 'alert' | 'submit';
 	children?: React.ReactNode;
+	direction?: 'ltr' | 'rtl';
 };
 
 export type savedTemplateVariablesProps = {
@@ -274,6 +290,10 @@ export type toastProps = {
 	GROUP_ALREADY_EXIST: toastKeyProps;
 	CAMPAIGN_SEND_SUCCESS: toastKeyProps;
 	RESTORE_CAMPAIGN_SUCCESS: toastKeyProps;
+	GROUP_CREATED_SUCCESS: toastKeyProps;
+	TEMPLATE_ALREADY_EXIST: toastKeyProps;
+	INVALID_NUMBER: toastKeyProps;
+	QUICK_SEND_ERROR: toastKeyProps;
 };
 
 export type toastKeyProps = {
@@ -363,6 +383,7 @@ export type getTemplateByIdAPIProps = {
 
 export type submitTemplateDataProps = {
 	createdDate: string;
+	id: number;
 	templateId: string;
 	templateName: string;
 };
@@ -493,4 +514,12 @@ export type CommonFeaturesAPIPayload = {
 
 export type CommonFeaturesAPI = {
 	payload: CommonFeaturesAPIPayload;
+};
+
+export type ApiErrorKey = {
+	[key: string]: string | { [key: string]: string | number | null };
+};
+
+export type ApiErrorResponse = {
+	[key: string]: ApiErrorKey;
 };

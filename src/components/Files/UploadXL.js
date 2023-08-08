@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Typography, Grid, Box, TextField } from "@material-ui/core";
+import { Typography, Grid, Box, TextField, Button, Tooltip } from "@material-ui/core";
 import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import Papa from 'papaparse';
@@ -8,7 +8,6 @@ import {
     addRecipient,
     addRecipients
 } from "../../redux/reducers/groupSlice";
-import { Tooltip, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
@@ -64,6 +63,7 @@ const UploadXL = ({
     const [highlighted, setHighlighted] = React.useState(false);
     const [contacts, setContacts] = React.useState([]);
     const [groupNameInput, setgroupNameInput] = useState("");
+    //eslint-disable-next-line
     const [groupList, setGroupList] = useState([]);
     const [selectArray, setselectArray] = useState([]);
     const [groupTextError, setGroupTextError] = useState(false);
@@ -103,6 +103,7 @@ const UploadXL = ({
         fields = fields.filter((i) => i !== null && typeof i !== 'undefined');
 
         setselectArray(fields);
+
     }, [dialogType]);
 
 
@@ -364,11 +365,17 @@ const UploadXL = ({
                                     for (let i = 0; i < resultCsv.length; i++) {
                                         b.push(resultCsv[i]);
                                     }
-                                    b.pop();
+                                    /**
+                                     * commented because it is removing the last row if.
+                                     * if row has data then it should not be deleted.
+                                     * Ticket id WA - 106
+                                     */
+                                    // b.pop();
                                     settypedData(b);
 
                                     let ddc = [];
-                                    for (let i in resultCsv[0]) {
+                                    //eslint-disable-next-line
+                                    for (let { } in resultCsv[0]) {
                                         ddc.push(t("sms.adjustTitle"))
                                     }
                                     if (ddc !== 0) {
@@ -828,16 +835,7 @@ const UploadXL = ({
                 {areaData !== "" ? (
                     <>
                         <Button
-                            size='medium'
-                            color="primary"
-                            variant='contained'
-                            key={"editFields"}
-                            style={{ marginInlineEnd: 10 }}
-                            className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonLightGreen,
-                                classes.backButton
-                            )}
+                            className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
                             onClick={() => {
                                 handlePasted(areaData);
                             }}
@@ -845,7 +843,7 @@ const UploadXL = ({
                             {t("sms.editFields")}
                         </Button>
                         <Button
-                            className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                            className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
                             onClick={() => {
                                 setareaData("");
                                 setContacts([]);

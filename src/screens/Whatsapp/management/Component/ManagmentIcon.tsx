@@ -6,6 +6,7 @@ import { ManagmentIconProps } from '../Types/Management.types';
 export const ManagmentIcon = ({
 	classes,
 	icon,
+	uIcon,
 	lable = '',
 	disable = false,
 	hide = false,
@@ -41,13 +42,19 @@ export const ManagmentIcon = ({
 					classes.managmentIconContainer,
 					rootClass
 				)}>
-				<img
-					src={icon}
-					alt='Icon'
-					className={clsx(classes.managmentIcon, {
-						[classes.managmentIconDisable]: disable,
-					})}
-				/>
+				{!!uIcon ?
+					<div>
+						{uIcon}
+					</div>
+					:
+					<img
+						src={icon}
+						alt='Icon'
+						className={clsx(classes.managmentIcon, {
+							[classes.managmentIconDisable]: disable,
+						})}
+					/>
+				}
 				<Typography
 					className={clsx(
 						classes.managmentIconText,
