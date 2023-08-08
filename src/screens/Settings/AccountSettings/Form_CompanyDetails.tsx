@@ -424,7 +424,7 @@ const FORM_COMPANY_DETAILS = ({
               xs={12}
               sm={3}
               md={4}
-              className={clsx(classes.dFlex, classes.mt3, "selectWrapper")}
+              className={clsx(classes.dFlex, classes.mt3, classes.mr15, "selectWrapper")}
               alignItems="center"
             >
               <Typography>
@@ -487,12 +487,9 @@ const FORM_COMPANY_DETAILS = ({
               }}>
                 <Button
                   className={clsx(
-                    // classes.btn,
-                    classes.btnNohover,
-                    classes.noBorder,
-                    classes.link,
-                    classes.textCapitalize,
-                    "link"
+                    classes.btn,
+                    classes.btnRounded,
+                    classes.mr15
                   )}
                   onClick={() => {
                     onShowTwoFactorAuth('smsTFA');
@@ -508,12 +505,8 @@ const FORM_COMPANY_DETAILS = ({
                 </Button>
                 <Button
                   className={clsx(
-                    // classes.btn,
-                    classes.btnNohover,
-                    classes.noBorder,
-                    classes.link,
-                    classes.textCapitalize,
-                    "link"
+                    classes.btn,
+                    classes.btnRounded
                   )}
                   onClick={() => {
                     onShowTwoFactorAuth('emailTFA');

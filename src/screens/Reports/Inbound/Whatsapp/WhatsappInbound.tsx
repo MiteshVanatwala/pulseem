@@ -113,7 +113,7 @@ const WhatsappInbound = ({ classes }: any) => {
     return (
       <>
         {/* <Divider /> */}
-        <Grid container spacing={2} className={classes.linePadding}>
+        <Grid container spacing={2}>
           {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== "xs" && (
             <Grid item>
               <Button
@@ -374,7 +374,7 @@ const WhatsappInbound = ({ classes }: any) => {
   return (
     <>
       {inboundWhatsappReport?.StatusCode === 201 ? (
-        <Box>
+        <Box className={classes.p20}>
           {renderHeader()}
           <SearchLine
             key="sl"

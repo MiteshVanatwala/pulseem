@@ -8,6 +8,7 @@ import { ButtonsProps } from '../../Editor/Types/WhatsappCreator.types';
 import { coreProps } from '../Types/WhatsappCampaign.types';
 import { buttons } from '../../Constant';
 import { useNavigate, useParams } from 'react-router-dom';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const Buttons = ({
 	classes,
@@ -49,9 +50,8 @@ const Buttons = ({
 						variant='contained'
 						size='medium'
 						className={clsx(
-							classes.actionButton,
-							classes.actionButtonLightBlue,
-							classes.backButton,
+							classes.btn,
+							classes.btnRounded,
 							isRTL && windowSize !== 'xs' && windowSize !== 'sm'
 								? classes.marginLeftAuto
 								: windowSize !== 'xs' && windowSize !== 'sm'
@@ -62,32 +62,37 @@ const Buttons = ({
 						style={{ margin: '8px' }}
 						onClick={() => {
 							handlePreviousPage();
-						}}>
-						<span style={{ marginInlineEnd: '5px' }}>{'<'}</span>
-						<>{translator('whatsappCampaign.back')}</>
+						}}
+						startIcon={isRTL ? <MdArrowForwardIos size={18} /> : <MdArrowBackIos size={18} />}
+					>
+						{translator('whatsappCampaign.back')}
 					</Button>
 				)}
 
 				<Button
 					variant='contained'
 					size='medium'
-					className={clsx(classes.actionButton, classes.actionButtonRed)}
-					style={{ margin: '8px', padding: '13px 0' }}
+					className={clsx(
+						classes.btn,
+            classes.btnRounded
+					)}
+					style={{ margin: '8px' }}
 					onClick={(e) => onFormButtonClick(buttons.DELETE)}>
-					<BsTrash size={22} />
+					<BsTrash size={18} style={{ marginLeft: 0 }} />
 				</Button>
 
 				<Button
 					variant='contained'
 					size='medium'
 					className={clsx(
-						classes.actionButton,
-						classes.actionButtonLightBlue,
-						classes.backButton
+						classes.btn,
+            classes.btnRounded
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
-					onClick={(e) => onFormButtonClick(buttons.EXIT)}>
+					onClick={(e) => onFormButtonClick(buttons.EXIT)}
+					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+				>
 					<>{translator('whatsappCampaign.exit')}</>
 				</Button>
 
@@ -95,13 +100,14 @@ const Buttons = ({
 					variant='contained'
 					size='medium'
 					className={clsx(
-						classes.actionButton,
-						classes.actionButtonLightBlue,
-						classes.backButton
+						classes.btn,
+            classes.btnRounded
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
-					onClick={(e) => onFormButtonClick(buttons.SAVE)}>
+					onClick={(e) => onFormButtonClick(buttons.SAVE)}
+					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+				>
 					<>{translator('whatsappCampaign.save')}</>
 				</Button>
 
@@ -109,9 +115,9 @@ const Buttons = ({
 					variant='contained'
 					size='medium'
 					className={clsx(
-						classes.actionButton,
-						classes.actionButtonLightGreen,
-						classes.backButton
+						classes.redButton,
+						classes.btn,
+            classes.btnRounded
 					)}
 					color='primary'
 					style={{ margin: '8px' }}

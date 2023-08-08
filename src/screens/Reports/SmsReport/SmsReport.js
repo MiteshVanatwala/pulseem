@@ -634,7 +634,7 @@ const SmsReport = ({ classes }) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex3}>
-          <Grid container direction={'row'} className={classes.justifyEvenly}>
+          <Grid container direction={'row'} className={classes.justifyEvenly} style={{ flexWrap: 'initial' }}>
             <Grid item className={classes.plr10}>
               {renderIntData(CreditsPerSms, '', { title: t("mainReport.postCredits") })}
             </Grid>

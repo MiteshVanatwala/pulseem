@@ -197,6 +197,16 @@ export const getRoutes = (
           href: "/Pulseem/ResponsesReport.aspx?fromreact=true",
           isShow: true,
         },
+        {
+          title: t("master.NewMMSCampaign.Text"),
+          href: "/Pulseem/MmsCampaignEdit.aspx?fromreact=true",
+          isShow: true,
+        },
+        {
+          title: t("master.MmsCampaignMnage.Text"),
+          href: "/react/MmsCampaigns",
+          isShow: true,
+        }
       ],
     },
     {
@@ -236,26 +246,6 @@ export const getRoutes = (
           key: 'chat',
           title: t('whatsapp.ChatWhatsapp'),
           href: whatsappRoutes.CHAT,
-          isShow: true,
-        },
-      ],
-    },
-    {
-      key: "mms",
-      title: "MMS",
-      pageTitle: t("mms.logPageHeaderResource1.Text"),
-      iconUnicode: "\ue11b",
-      href: "/react/MmsCampaigns",
-      isShow: true,
-      options: [
-        {
-          title: t("master.NewMMSCampaign.Text"),
-          href: "/Pulseem/MmsCampaignEdit.aspx?fromreact=true",
-          isShow: true,
-        },
-        {
-          title: t("master.MmsCampaignMnage.Text"),
-          href: "/react/MmsCampaigns",
           isShow: true,
         },
       ],

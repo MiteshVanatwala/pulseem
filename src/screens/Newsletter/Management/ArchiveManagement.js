@@ -559,11 +559,6 @@ const ArchiveManagementScreen = ({ classes }) => {
   const getDuplicateDialog = (data = '') => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{ fontSize: 18 }}>
         {t('campaigns.dialogDuplicateContent')}
@@ -607,7 +602,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       currentPage="newsletter"
       subPage='archiveManagement'
       classes={classes}
-      containerClass={clsx(classes.managmentNarrow, classes.mb50)}>
+      containerClass={clsx(classes.management)}>
       <Box className={classes.mb50}>
         <Box className={'topSection'}>
           <Title Text={t('campaigns.logPageHeaderArchive.Text')} classes={classes} />

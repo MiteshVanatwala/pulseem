@@ -1095,7 +1095,7 @@ const NewsLetterInfo = ({ classes }) => {
 
         const currentDialog = dialogContent[type] || {}
         return (
-            dialogType && <BaseDialog
+            dialogType && type !== dialogType.Templates && <BaseDialog
                 classes={classes}
                 open={dialogType}
                 onCancel={() => setDialogType(null)}

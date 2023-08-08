@@ -517,15 +517,15 @@ const NewslettersReport = ({ classes }) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex4} align='center'>{t('campaigns.camapignName')}</TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.locTotalSendPlan.HeaderText")}</span></TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex3} align='center'></TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen)} align='center'></TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t('campaigns.camapignName')}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.locTotalSendPlan.HeaderText")}</span></TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex3, classes.f16)} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen, classes.f16)} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
-          {hasRevenue && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
+          {hasRevenue && <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.f16)} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
       </TableHead>
     )

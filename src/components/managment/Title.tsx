@@ -1,4 +1,4 @@
-import { Typography, Box } from "@material-ui/core";
+import { Typography, Box, Grid } from "@material-ui/core";
 import { ListIcon } from "../../assets/images/managment";
 import clsx from "clsx";
 
@@ -8,6 +8,7 @@ interface TitleObject {
   ContainerStyle?: object;
   Element?: any;
   isIcon?: boolean;
+  subTitle?: any;
 }
 
 export const Title = ({
@@ -16,6 +17,7 @@ export const Title = ({
   ContainerStyle,
   Element = null,
   isIcon = true,
+  subTitle
 }: TitleObject) => {
   return (
     <Box
@@ -37,6 +39,9 @@ export const Title = ({
           {Element}
         </Box>
       )}
+      {subTitle && subTitle !== '' && <div className={classes.alignItemsCenter}>
+        {subTitle}
+      </div>}
     </Box>
   );
 };

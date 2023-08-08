@@ -275,7 +275,7 @@
 		"noFooter": "Footer is missing",
 		"invalidPhone": "Phone number is not a valid phone number.",
 		"characterExceeded":"Character Limit Exceeded. The Body (or Content) field can't have more than 1,024 characters",
-		"common": "INVALID_FORMAT Please see https://www.twilio.com/docs/content-api/troubleshooting-and-diagnostics#common-rejection-reasons for more information"
+		"common": "INVALID_FORMAT"
 	},
 	"twilio": {
 		"22225": {

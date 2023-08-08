@@ -153,9 +153,19 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         minWidth: 30,
         minHeight: 30
     },
+    redDoc: {
+        border: "1px solid #ff3343",
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#ff3343",
+        minWidth: 30,
+        minHeight: 30
+    },
     greenDoc:
     {
-        border: "1px solid #018901",
+        border: "1px solid #ff3343",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",
@@ -754,7 +764,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         borderRadius: "5px",
         justifyContent: "space-between",
         alignItems: "center",
-        margin: "0 5px"
+        margin: "0 5px",
         // marginTop: "15px"
     },
     pulseParentDiv:
@@ -1095,6 +1105,22 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         '&:hover': {
             borderColor: '#1c82b2',
             backgroundColor: '#1c82b2',
+        },
+        '& label, & span': {
+            fontSize: 16,
+            cursor: 'pointer',
+            color: '#fff',
+            lineHeight: 1.5,
+            textTransform: 'capitalize',
+            fontWeight: 400
+        }
+    },
+    buttonActiveRed: {
+        borderColor: '#ff2747',
+        backgroundColor: '#ff2747',
+        '&:hover': {
+            borderColor: '#ff2747',
+            backgroundColor: '#ff2747',
         },
         '& label, & span': {
             fontSize: 16,

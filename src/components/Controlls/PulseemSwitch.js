@@ -7,10 +7,13 @@ const IOSSwitch = styled((props) => (
     <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
 ))(({ theme }) => ({
     width: 34,
-    height: 20,
+    height: 35,
     padding: 0,
     display: 'flex',
     overflow: 'unset',
+    '&.MuiSwitch-root': {
+        width:43,
+    },
     '&:active': {
         '& .MuiSwitch-thumb': {
             width: 15,
@@ -36,10 +39,10 @@ const IOSSwitch = styled((props) => (
     },
     '& .MuiSwitch-thumb': {
         boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-        width: 14,
-        height: 14,
+        width: 24,
+        height: 24,
         margin: 1,
-        borderRadius: 6,
+        borderRadius: 50,
         background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
         transition: theme.transitions.create(['width'], {
             duration: 200,
@@ -47,7 +50,7 @@ const IOSSwitch = styled((props) => (
     },
     '& .MuiSwitch-track': {
         borderRadius: 20,
-        height: 20,
+        height: 30,
         opacity: 1,
         backgroundColor:
             theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : '#fff',
@@ -72,8 +75,8 @@ const PulseemSwitch = ({ classes, id, switchType, margin = 1, onChange = (par) =
                 onChange={onChange}
                 checkedIcon={false}
                 uncheckedIcon={false}
-                height={20}
-                width={48}
+                height={40}
+                width={70}
                 id={id}
             />)
         }

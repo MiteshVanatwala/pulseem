@@ -529,35 +529,6 @@ const SiteTrackingEditor = ({ classes }) => {
     }
     //#endregion Dialogs
 
-    const PageHeader = () => {
-        return (
-            <Grid container>
-                <Grid item xs={7}>
-                    <Title
-                        Element={(
-                            <Box className='stepHead'>
-                                <Typography className={'stepTitle'}>
-                                    {t("siteTracking.setUp")}
-                                </Typography>
-                            </Box>
-                        )}
-                        classes={classes}
-                        isIcon={false}
-                    />
-                </Grid>
-                <Grid item xs={5} style={{ alignItems: 'center', display: 'flex', marginTop: -10 }}>
-                    <Button
-                        onClick={() => setDialogType({ type: 'scriptImplementation' })}
-                        variant='contained'
-                        style={{ lineHeight: windowSize === 'xs' ? 1 : null, marginInlineStart: 'auto' }}
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonDarkBlue)}
-                    >{t("siteTracking.scriptImplementation")}</Button>
-                </Grid>
-            </Grid>
-        )
-    }
     const PageFooter = () => {
         return <Grid container spacing={2}>
             <Grid item xs={12} className={classes.baseButtonsContainer} style={{ marginBottom: 70 }}>
@@ -629,7 +600,6 @@ const SiteTrackingEditor = ({ classes }) => {
                 />
             </Box>
             <Box className={'containerBody'}>
-                {PageHeader()}
                 {renderToast()}
                 <Box className='bodyBlock'>
                     {renderDialog()}

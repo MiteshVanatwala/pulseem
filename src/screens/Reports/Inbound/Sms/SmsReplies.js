@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
 import { ClientStatus } from '../../../../helpers/Constants';
-import { EditIcon, ExportIcon } from '../../../../assets/images/managment/index';
+import { EditIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
 import { TablePagination, ManagmentIcon } from '../../../../components/managment/index';
@@ -104,7 +104,7 @@ const SmsReplies = ({ classes }) => {
         return (
             <>
                 {/* <Divider /> */}
-                <Grid container spacing={2} className={classes.lineTopMarging} >
+                <Grid container spacing={2} className={clsx(classes.p20)}>
                     {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                         <Button
                             className={clsx(
@@ -250,7 +250,7 @@ const SmsReplies = ({ classes }) => {
                         style={{ width: '100%' }}
                     >
                         <Box className={classes.dFlex}>
-                            <Box style={{ width: '70%', textAlign: isRTL ? 'right' : 'left' }}>
+                            <Box style={{ width: '70%' }}>
                                 <Typography className={classes.font18}>{CellPhone}</Typography>
                                 <Typography className={clsx(classes.font14, classes.ellipsisText)}
                                     title={`${FirstName} ${LastName}`}
@@ -261,7 +261,7 @@ const SmsReplies = ({ classes }) => {
                                     disableHover={true}
                                     key='edit'
                                     classes={classes}
-                                    icon={EditIcon}
+                                    uIcon={<EditIcon width={18} height={20} className={'editIcon'} />}
                                     iconClass={clsx(classes.smallIcon)}
                                     rootClass={classes.paddingIcon}
                                     onClick={async () => {
@@ -474,7 +474,7 @@ const SmsReplies = ({ classes }) => {
 
 
     return (
-        <Box>
+        <Box className={classes.p20}>
             {/* <Box className={'topSection'}> */}
             {/* {renderHeader()} */}
             <Grid container>

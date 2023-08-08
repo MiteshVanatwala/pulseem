@@ -347,7 +347,7 @@ const Groups = ({ classes,
 
                     </Button> : null}
                     {isSms && <Button variant="outlined"
-                        className={clsx(classes.formControl, showTestGroups ? classes.buttonActiveGreen : classes.twoLineButton)}
+                        className={clsx(classes.formControl, showTestGroups ? classes.buttonActiveRed : classes.twoLineButton)}
                         onClick={() => handleShowTestGroup()}
                     >{t("sms.showTestGroups")}</Button>}
                     <FormControl className={clsx(classes.formControl, classes.dropDown)}>

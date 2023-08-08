@@ -1,7 +1,6 @@
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import Title from '../../../components/Wizard/Title';
-import { Grid } from '@material-ui/core';
+import { Grid, Box, Typography } from '@material-ui/core';
 import {
 	APICreateGroupData,
 	ApiCreateGroupPayload,
@@ -28,6 +27,7 @@ import {
 	GetTestGroups,
 	ApiSendCampaignData,
 } from './Types/WhatsappCampaign.types';
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import RightPane from './Components/RightPane';
 import LeftPane from './Components/LeftPane';
@@ -72,6 +72,8 @@ import AlertModal from '../Editor/Popups/AlertModal';
 import SendCampaignSuccess from './Popups/SendCampaignSuccess';
 import NoSetup from '../NoSetup/NoSetup';
 import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
+import { Title } from '../../../components/managment/Title';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const SendCampaign = ({
 	classes,
@@ -110,15 +112,11 @@ const SendCampaign = ({
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
-	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
-	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState<boolean>(false);
-	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [isSendCampaignSuccessOpen, setIsSendCampaignSuccessOpen] =
 		useState<boolean>(false);
 	const [newGroupName, setNewGroupName] = useState<string>('');
 
 	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
-	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
@@ -139,6 +137,10 @@ const SendCampaign = ({
 	>([]);
 	const [campaignSummary, setCampaignSummary] =
 		useState<ApiGetCampaignSummaryPayloadData>();
+	const [dialogType, setDialogType] = useState<any>({
+		type: '',
+		data: ''
+	});
 
 	useEffect(() => {
 		(async () => {
@@ -308,7 +310,7 @@ const SendCampaign = ({
 	};
 
 	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
-		handleSendDate(value);
+		handleSendDate(moment(value));
 	};
 
 	const handleRadioTime = (value: MaterialUiPickersDate | null) => {
@@ -441,7 +443,9 @@ const SendCampaign = ({
 							) {
 								setIsSummaryModal(true);
 							} else {
-								setExceedLimitModal(true);
+								setDialogType({
+									type: 'exceedDailyLimit'
+								})
 							}
 						} else {
 							setIsSummaryModal(true);
@@ -465,16 +469,11 @@ const SendCampaign = ({
 		setIsLoader(false);
 	};
 
-	const onDeleteClick = () => {
-		setIsDeleteCampaignOpen(true);
-	};
-
 	const onDeleteCampaign = async () => {
 		if (campaignID) {
 			const deleteData: commonAPIResponseProps = await dispatch<any>(
 				deleteCampaign(campaignID)
 			);
-			setIsDeleteCampaignOpen(false);
 			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 				navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
@@ -487,16 +486,19 @@ const SendCampaign = ({
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
-		setIsDeleteCampaignOpen(false);
 	};
 
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
 			case buttons.DELETE:
-				onDeleteClick();
+				setDialogType({
+					type: 'delete'
+				})
 				break;
 			case buttons.EXIT:
-				setIsExitCampaignOpen(true);
+				setDialogType({
+					type: 'exit'
+				})
 				break;
 			case buttons.SAVE:
 				onCampaignSave(true, true, true);
@@ -555,7 +557,9 @@ const SendCampaign = ({
 			setGroupSendValidationErrors([
 				translator('whatsappCampaign.groupNameRequired'),
 			]);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			})
 		}
 	};
 
@@ -693,7 +697,9 @@ const SendCampaign = ({
 		}
 		if (!isValidated) {
 			setGroupSendValidationErrors(validationErrors);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			})
 		}
 		return isValidated;
 	};
@@ -729,9 +735,107 @@ const SendCampaign = ({
 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 	};
 
-	const onExceedLimitYes = () => {
-		setExceedLimitModal(false);
-	};
+	const getExitDialog = () => ({
+    title: translator('whatsappManagement.LeaveCampaignCreation'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator('whatsappManagement.LeaveCampaignCreationDesc')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+      onExitCampaign();
+    }
+  })
+	
+	const getDeleteDialog = () => ({
+    title: translator('whatsapp.alertModal.DeleteText'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator('whatsapp.alertModal.DeleteTitle')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+      onDeleteCampaign();
+    }
+  })
+
+	const getValidationDialog = () => ({
+    title: translator('whatsappCampaign.sendValidation'),
+    showDivider: false,
+    content: (
+			<ul className={clsx(classes.noMargin, classes.mb20)}>
+				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
+					<li key={index} className={classes.validationAlertModalLi}>
+						{requiredField}
+					</li>
+				))}
+			</ul>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getExceedDailyLimit = () => ({
+    title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {`${translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage')}
+					${campaignSummary?.NextAvailableTime
+						? moment(campaignSummary?.NextAvailableTime).format('DD.MM.YYYY HH:MM')
+						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+				}`}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const renderDialog = () => {
+    const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'exit') {
+    	currentDialog = getExitDialog();
+		} else if (type === 'validation') {
+    	currentDialog = getValidationDialog();
+		} else if (type === 'delete') {
+			currentDialog = getDeleteDialog();
+		} else if (type === 'exceedDailyLimit') {
+			currentDialog = getExceedDailyLimit();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
 
 	return (
 		<DefaultScreen
@@ -739,16 +843,17 @@ const SendCampaign = ({
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}
-			containerClass={null}>
+			containerClass={classes.editorCont}
+		>
 			{isAccountSetup ? (
-				<div>
-					<div>
+				<Box className={"head"}>
+					<Box className={'topSection'}>
 						<Title
-							title={translator('whatsappCampaign.whatsappCampaign')}
+							Text={translator('whatsappCampaign.header')}
 							classes={classes}
-							stepNumber={2}
-							subTitle={translator('mainReport.sendSetting')}
 						/>
+					</Box>
+					<Box className={'containerBody'}>
 						<Grid container style={{ marginBottom: '40px' }}>
 							<Grid item md={7} xs={12}>
 								<LeftPane
@@ -806,7 +911,7 @@ const SendCampaign = ({
 							onFormButtonClick={onFormButtonClick}
 							displayBackButton={true}
 						/>
-					</div>
+					</Box>
 					<SummaryModal
 						classes={classes}
 						isOpen={isSummaryModal}
@@ -829,37 +934,9 @@ const SendCampaign = ({
 						setRandomlyCount={setRandomlyCount}
 						resetRandomCount={() => setRandomlyCount('')}
 					/>
-					<ValidationAlert
+					{/* <AlertModal
 						classes={classes}
-						isOpen={isValidationAlert}
-						onClose={() => setIsValidationAlert(false)}
-						title={translator('whatsappCampaign.sendValidation')}
-						requiredFields={groupSendValidationErrors}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={isDeleteCampaignOpen}
-						onClose={() => setIsDeleteCampaignOpen(false)}
-						title={translator('whatsapp.alertModal.DeleteText')}
-						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
-						type='delete'
-						onConfirmOrYes={() => onDeleteCampaign()}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={isExitCampaignOpen}
-						onClose={() => setIsExitCampaignOpen(false)}
-						title={translator('whatsappManagement.LeaveCampaignCreation')}
-						subtitle={translator(
-							'whatsappManagement.LeaveCampaignCreationDesc'
-						)}
-						type='delete'
-						onConfirmOrYes={() => onExitCampaign()}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={exceedLimitModal}
-						onClose={() => setExceedLimitModal(false)}
+						isOpen={true}
 						title={translator(
 							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
 						)}
@@ -873,8 +950,7 @@ const SendCampaign = ({
 								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
 						}`}
 						type='alert'
-						onConfirmOrYes={() => onExceedLimitYes()}
-					/>
+					/> */}
 					<SendCampaignSuccess
 						classes={classes}
 						isOpen={isSendCampaignSuccessOpen}
@@ -885,10 +961,11 @@ const SendCampaign = ({
 						onClose={() => setIsSendCampaignSuccessOpen(false)}
 					/>
 					{renderToast()}
-				</div>
+				</Box>
 			) : (
 				!isLoader && <NoSetup classes={classes} />
 			)}
+			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);

@@ -215,6 +215,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingLeft: summaryPadding[windowSize],
     overflowY: "auto",
   },
+  paddingSides5: {
+    paddingRight: 5,
+    paddingLeft: 5,
+  },
   paddingSides15: {
     paddingRight: 15,
     paddingLeft: 15,
@@ -399,7 +403,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingTop: "2rem",
   },
   pt5: {
-    paddingTop: 10,
+    paddingTop: 5,
   },
   pt10: {
     paddingTop: 10,
@@ -409,6 +413,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pt15: {
     paddingTop: 15
+  },
+  pt30: {
+    paddingTop: 30
   },
   pt50: {
     paddingTop: 50
@@ -798,6 +805,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: "transparent",
     },
   },
+  textCapitalize: {
+    textTransform: 'capitalize',
+  },
   blueLink: {
     color: '#0371ad',
     textTransform: 'capitalize',
@@ -932,7 +942,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: 30
     }
   },
-
+  greenButton: {
+    borderColor: '#5db85b',
+    backgroundColor: '#5db85b',
+    '&:hover': {
+      background: '#5db85b',
+    }
+  },
+  redButton: {
+    borderColor: '#F65026',
+    backgroundColor: '#F65026',
+    color: '#fff',
+    '&:hover': {
+      background: '#F65026',
+    },
+  },
   btnNohover: {
     '&:hover': {
       background: '#fff',
@@ -967,7 +991,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#ca332f",
   },
   buttonField: {
-    borderRadius: "5px",
+    // borderRadius: "5px",
     // border: "1px solid #bbb",
     outline: "none",
     padding: "8px 12px 8px 4px",
@@ -1075,6 +1099,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   templateModal: {
     // minWidth: "900px",
     minWidth: '60vw',
+    '& .preview-btn': {
+      height: 30,
+      background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+      color: '#fff',
+      fontWeight: 'bold'
+    },
     '& .category-container': {
       paddingLeft: 10,
       "@media screen and (max-width: 900px)": {
@@ -1970,8 +2000,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   activeTab: {
-    borderBottom: "4px solid #168ee3",
-    color: "#007bff !important",
+    borderBottom: "4px solid #ff2c44",
+    color: "#ff2c44 !important",
   },
   "@media screen and (max-width: 768px)": {
     width: "100%",
@@ -2424,10 +2454,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   autoCompleteTag: {
     '& .MuiAutocomplete-tag': {
-      backgroundColor: '#0371ad',
-      color: '#fff',
+      backgroundColor: '#fff',
+      border: 'solid 2px #F65026',
+      color: '#000',
+      fontWeight: 'bold',
       '& .MuiChip-deleteIcon': {
-        fill: '#fff'
+        fill: '#F65026'
       }
     }
   },
@@ -2879,10 +2911,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomRightRadius: isRTL ? '4px' : null,
     borderTopLeftRadius: isRTL ? null : '4px',
     borderTopRightRadius: isRTL ? '4px' : null,
-    border: '1px solid #277BFF',
+    border: '1px solid #f74f26',
     padding: '10px',
     marginBottom: '8px',
-    color: '#277BFF',
+    color: '#f74f26',
     cursor: 'pointer',
   },
   disabledBefore: {
@@ -2908,10 +2940,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTopLeftRadius: isRTL ? '4px' : null,
     borderTopRightRadius: isRTL ? null : '4px',
     // borderLeft: "none",
-    border: '1px solid #277BFF',
+    border: '1px solid #f74f26',
     padding: '10px',
     marginBottom: '8px',
-    color: '#277BFF',
+    color: '#f74f26',
     cursor: 'pointer',
   },
   disabledAfter: {
@@ -2937,10 +2969,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomRightRadius: isRTL ? '4px' : null,
     borderTopLeftRadius: isRTL ? null : '4px',
     borderTopRightRadius: isRTL ? '4px' : null,
-    border: '1px solid #277BFF',
+    border: '1px solid #f74f26',
     padding: '10px',
     marginBottom: '8px',
-    backgroundColor: '#277BFF',
+    backgroundColor: '#f74f26',
     color: '#ffffff',
     cursor: 'pointer',
   },
@@ -2954,10 +2986,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTopRightRadius: isRTL ? null : '4px',
     borderTopLeftRadius: isRTL ? '4px' : null,
     borderLeft: 'none',
-    border: '1px solid #277BFF',
+    border: '1px solid #f74f26',
     padding: '10px',
     marginBottom: '8px',
-    backgroundColor: '#277BFF',
+    backgroundColor: '#f74f26',
     color: '#ffffff',
     cursor: 'pointer',
   },
@@ -3200,7 +3232,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginInline: 3,
       borderBottom: "1px solid #d6d1e6",
       "&:hover": {
-        // borderBottom: "1px solid #000"
+        borderBottom: "1px solid #000"
       },
       '& label': {
         marginInline: 5
@@ -3266,6 +3298,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 14,
     width: 400,
     letterSpacing: 1
+  },
+  whatsapp: {
+    '& .MuiSelect-select': {
+      minHeight: '35px !important',
+    }
   },
   dialogZindex: {
     zIndex: '1000 !important'
@@ -3416,5 +3453,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   alignSelfCenter: {
     alignSelf: 'center'
+  },
+  smallActionIcons: {
+    '& button': {
+      minWidth: 45,
+    },
+    '& svg': {
+      padding: 3
+    },
+    '& p': {
+      fontSize: '12px !important'
+    },
+    '& .MuiBox-root': {
+      '& div': {
+        height: '20px !important',
+        width: '20px !important'
+      }
+    }
   }
 });

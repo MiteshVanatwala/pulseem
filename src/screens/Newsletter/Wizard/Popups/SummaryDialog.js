@@ -359,8 +359,7 @@ const SummaryDialog = ({ classes,
                                 handleSendCampaign()
                             }}
                             className={clsx(
-                                classes.dialogButton,
-                                classes.dialogConfirmButton,
+                                classes.btn, classes.btnRounded,
                                 FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
                             )}>
                             {t("sms.sendDialog")}
@@ -371,10 +370,8 @@ const SummaryDialog = ({ classes,
                             variant='contained'
                             size='small'
                             onClick={() => { setDialogType(null) }}
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogCancelButton
-                            )}>
+                            className={clsx(classes.btn, classes.btnRounded)}
+                        >
                             {t("sms.cancelDialog")}
                         </Button>
                     </Grid>

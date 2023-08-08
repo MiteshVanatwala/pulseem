@@ -358,15 +358,14 @@ const SmsMarketingDialog = ({
                     <Typography className={clsx(classes.f20, classes.bold)}>
                         {t("mainReport.yourMessage")}
                     </Typography>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} className={classes.pt10}>
                         <Grid item>
                             <Button
                                 variant='contained'
                                 size='medium'
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightBlue,
-                                    classes.backButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 disabled={!linkToCampaignEnabled}
                                 onClick={onAddLinkToCampaign}
@@ -377,9 +376,8 @@ const SmsMarketingDialog = ({
                                 variant='contained'
                                 size='medium'
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightBlue,
-                                    classes.backButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 disabled={!linkToUpdateEnabled}
                                 onClick={onAddLinkToUpdate}

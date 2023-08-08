@@ -244,25 +244,21 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		>
 			{toastMessage && renderToast()}
 			<Box className={clsx(classes.settingsContainer)}>
-				<Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? 'flex' : 'block' }}>
+				<Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'block' }}>
 					<Title Text={t("settings.accountSettings.title")} classes={classes}
 						ContainerStyle={{ width: '100% !important' }}
 						Element={<Box style={{ float: isRTL ? 'left' : 'right' }}>
 							<Button
 								className={clsx(
 									classes.btn,
-									classes.btnNohover,
-									classes.noBorder,
-									classes.link,
-									classes.textCapitalize,
-									"link"
+									classes.btnRounded,
+									classes.mr10
 								)}
 								onClick={() =>
 									handleVerification('cellphone')
 								}
 								startIcon={<MdMobileFriendly />}
 								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								style={{ backgroundColor: 'transparent' }}
 							>
 								<>
 									{t(
@@ -273,18 +269,13 @@ const AccountSettingsEditor = ({ classes }: any) => {
 							<Button
 								className={clsx(
 									classes.btn,
-									classes.btnNohover,
-									classes.noBorder,
-									classes.link,
-									classes.textCapitalize,
-									"link"
+									classes.btnRounded,
 								)}
 								onClick={() =>
 									handleVerification('email')
 								}
 								startIcon={<MdOutlineMarkEmailRead />}
 								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								style={{ backgroundColor: 'transparent' }}
 							>
 								<>
 									{t(

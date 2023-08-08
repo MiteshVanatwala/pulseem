@@ -502,7 +502,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                         classes.btnRounded,
                       )}
                       endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                      onClick={() => navigate(`${sitePrefix}Campaigns/SendSettings/${CampaignID}`)}
+                      onClick={() => window.location.href = `${sitePrefix}Campaigns/SendSettings/${CampaignID}`}
                     >
                       {t('campaigns.imgSendResource1.ToolTip')}
                     </Button>
@@ -828,29 +828,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
           })}
         </Box>
       ),
-      renderButtons: () => (
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleClose}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.Ok')}
-        </Button>
-      )
+      onConfirm: () => handleClose()
     }
   }
 
   const getDeleteDialog = (data = '') => ({
     title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}

@@ -202,7 +202,8 @@ const ChatTemplateModal = ({
 									borderRadius: '5px',
 									padding: '4px 8px',
 									width: 'auto',
-								}}>
+								}}
+							>
 								<span className={classes.quickReplyButtonText}>
 									{getValueByFieldName(button, 'whatsapp.websiteButtonText')}
 								</span>

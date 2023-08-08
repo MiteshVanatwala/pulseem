@@ -82,7 +82,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 1050,
   },
   mgmtTitleContainer: {
-    width: 'auto',
+    width: 'auto !important',
     background: '#F0F5FF',
     padding: `11px 31.69px 8px 31.69px`,
     borderTopRightRadius: 10,
@@ -553,6 +553,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& .MuiInputBase-root": {
       color: "rgba(0,0,0,0.40)",
     },
+  },
+  actionButton: {
+    height: 35,
+    display: 'inline-Block'
   },
   selectPlaceholder: {
     height: 0,
@@ -1072,7 +1076,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   avatarIcon: {
     fontFamily: "pulseemicons",
     color: "#fff",
-    fontSize: 18,
+    fontSize: 20,
   },
   checkIcon: {
     backgroundColor: "green",
@@ -1385,15 +1389,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   barChart: {
     width: '100%',
-    float: isRTL ? "left" : "right",
+    float: isRTL ? "right" : "left",
     "& canvas": {
       height: barHeight[windowSize],
     },
-    paddingLeft: windowSize !== "xs" ? 15 : 0,
-    // paddingRight: windowSize !== "xs" ? 15 : 0,
+    paddingLeft: windowSize !== "xs" && !isRTL ? 10 : 0,
+    paddingRight: windowSize !== "xs" && isRTL ? 10 : 0,
   },
   barContainer: {
-    width: windowSize !== "xs" ? "460px !important" : "100%",
+    width: windowSize !== "xs" ? "450px !important" : "100%",
   },
   fontWrap: {
     fontSize: "10px",
@@ -1417,7 +1421,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: "#0371AD",
     fontSize: 18,
     padding: '10px',
-    position: 'relative',
+    position: 'initial',
     [theme.breakpoints.down('xs')]: {
       padding: 0,
       height: 'auto',
@@ -1572,7 +1576,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     '& .bubbleNew': {
       marginTop: '-5px',
       position: 'absolute',
-      right: '0',
+      right: isRTL ? '' : 0,
+      left: isRTL ? 0 : '',
       '& .bubbleText': {
         color: '#000',
         position: 'absolute',
@@ -1663,8 +1668,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: "5px 0px",
   },
   lastReportsTabPanels: {
-    paddingRight: windowSize !== "xs" ? 25 : 0,
-    paddingLeft: windowSize !== "xs" ? 25 : 0,
+    paddingRight: windowSize !== "xs" ? 5 : 0,
+    paddingLeft: windowSize !== "xs" ? 5 : 0,
     '& .MuiDivider-root': {
       width: '100%',
       border: '1px #F0F5FF solid',

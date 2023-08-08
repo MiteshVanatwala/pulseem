@@ -56,8 +56,8 @@ export type ManagmentIconProps = {
 	classes: ClassesType['classes'];
 	key: string;
 	buttonKey: string;
-	icon: any;
-	uIcon: any;
+	icon?: any;
+	uIcon?: any;
 	lable: string;
 	disable?: boolean;
 	hide?: boolean;

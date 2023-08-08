@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, FormControlLabel, Checkbox } from '@material-ui/core'
-import { useTranslation } from 'react-i18next'
 import clsx from 'clsx'
+import { useTranslation } from 'react-i18next'
 
 export const RestorDialogContent = ({
   classes,
@@ -9,7 +9,7 @@ export const RestorDialogContent = ({
   currentChecked = [],
   dataIdVar = 'ID',
   dataLabeleVar = 'Name',
-  onChange = () => null
+  onChange
 }) => {
   const { t } = useTranslation()
 
