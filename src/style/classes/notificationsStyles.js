@@ -697,7 +697,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         maxHeight: '300px',
         overflow: 'auto',
         boxShadow: '0px 0px 6px #ababab',
-        borderBottom: 'solid 5px #0371ad',
+        borderBottom: 'solid 5px #ff3343',
         color: 'initial',
         borderBottomLeftRadius: '10px',
         borderBottomRightRadius: '10px',
