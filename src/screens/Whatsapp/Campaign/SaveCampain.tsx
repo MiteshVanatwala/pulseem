@@ -182,7 +182,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
-	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [templateTextCount, setTemplateTextCount] = useState<number>(0);
@@ -680,7 +679,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onTestSend = async (isSingle: boolean = false, campaignID: number) => {
 		setIsLoader(true);
-		setIsSummaryModal(false);
+		setDialogType({type: ''});
 		let payload: TestSendReq = {
 			WACampaignID: campaignID,
 		};
@@ -704,7 +703,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setRandomlyCount('');
 				} else {
 					if (quickSendData?.StatusCode === 10) {
-						setExceedLimitModal(true);
+						setDialogType({
+							type: 'exceedDailyLimit'
+						})
 						setRandomlyCount('');
 						if (
 							quickSendData?.Data &&
@@ -790,12 +791,18 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 									campaignSummaryData.Data.WhatsappTierID === 3
 								) {
 									if (campaignSummaryData?.Data?.WhatsappSmsLeft > 0) {
-										setIsSummaryModal(true);
+										setDialogType({
+											type: 'summary'
+										});
 									} else {
-										setExceedLimitModal(true);
+										setDialogType({
+											type: 'exceedDailyLimit'
+										})
 									}
 								} else {
-									setIsSummaryModal(true);
+									setDialogType({
+										type: 'summary'
+									});
 								}
 							} else {
 								setToastMessage({
@@ -935,10 +942,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 	};
 
-	const onExceedLimitYes = () => {
-		setExceedLimitModal(false);
-	};
-
 	const getExitDialog = () => ({
     title: translator('mainReport.handleExitTitle'),
     showDivider: false,
@@ -1020,6 +1023,61 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
     }
   })
 
+	const getSummary = () => ({
+    title: translator('whatsappCampaign.summary'),
+    showDivider: false,
+		showDefaultButtons: false,
+    content: (
+      <SummaryModal
+				classes={classes}
+				campaignName={''}
+				fromNumber={''}
+				onSummaryModalClose={() => setDialogType({type: ''})}
+				onConfirmOrYes={() => onTestSend(false, Number(campaignID || 0))}
+				selectedGroups={selectedTestGroup}
+				selectedFilterGroups={[]}
+				selectedFilterCampaigns={[]}
+				sendType={'1'}
+				sendDate={null}
+				sendTime={null}
+				isSpecialDateBefore={false}
+				daysBeforeAfter={''}
+				specialDatedropDown={{}}
+				spectialDateFieldID={'0'}
+				campaignSummary={campaignSummary}
+				randomlyCount={randomlyCount}
+				setRandomlyCount={setRandomlyCount}
+				resetRandomCount={() => setRandomlyCount('')}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getExceedDailyLimit = () => ({
+    title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {`${translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage')}
+					${campaignSummary?.NextAvailableTime
+						? moment(campaignSummary?.NextAvailableTime).format('DD.MM.YYYY HH:MM')
+						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+				}`}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
 	const renderDialog = () => {
     const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -1031,6 +1089,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			currentDialog = getValidationDialog();
 		} else if (type === 'testGroup') {
 			currentDialog = getTestGroupDialog();
+		} else if (type === 'exceedDailyLimit') {
+			currentDialog = getExceedDailyLimit();
+		} else if (type === 'summary') {
+			currentDialog = getSummary();
 		}
 
 		if (type) {
@@ -1505,45 +1567,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						isEditable={false}
 						buttonType={buttonType}
 						templateText={templateData.templateText}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={exceedLimitModal}
-						onClose={() => setExceedLimitModal(false)}
-						title={translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
-						)}
-						subtitle={`${translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${nextMessageAvailable
-								? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
-								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
-							}`}
-						type='alert'
-						onConfirmOrYes={() => onExceedLimitYes()}
-					/>
-
-					<SummaryModal
-						classes={classes}
-						isOpen={isSummaryModal}
-						campaignName={''}
-						fromNumber={''}
-						onSummaryModalClose={() => setIsSummaryModal(false)}
-						onConfirmOrYes={() => onTestSend(false, Number(campaignID || 0))}
-						selectedGroups={selectedTestGroup}
-						selectedFilterGroups={[]}
-						selectedFilterCampaigns={[]}
-						sendType={'1'}
-						sendDate={null}
-						sendTime={null}
-						isSpecialDateBefore={false}
-						daysBeforeAfter={''}
-						specialDatedropDown={{}}
-						spectialDateFieldID={'0'}
-						campaignSummary={campaignSummary}
-						randomlyCount={randomlyCount}
-						setRandomlyCount={setRandomlyCount}
-						resetRandomCount={() => setRandomlyCount('')}
 					/>
 				</>
 			) : (

@@ -218,7 +218,6 @@ export type FilterRecipientsDialogProps = {
 
 export type SummaryModalProps = {
 	classes: ClassesType['classes'];
-	isOpen: boolean;
 	campaignName: string;
 	fromNumber: string;
 	onSummaryModalClose: () => void;
