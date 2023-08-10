@@ -201,11 +201,12 @@ const SmsMarketingDialog = ({
                 setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.generalError'), showAnimtionCheck: false });
                 break;
             }
+            // Payment Required
             // no credit left 
+            case 402:
             case 405: {
-                setNoCreditLeft(true);
-                // setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.BULK_ENDED'), showAnimtionCheck: false });
                 // Show dialog with option to purchase a new SMS package
+                setNoCreditLeft(true);
                 break
             }
             default: {
@@ -215,7 +216,7 @@ const SmsMarketingDialog = ({
 
         setLoader(false);
         setTimeout(() => {
-            response?.StatusCode !== 405 && onConfirm();
+            response?.StatusCode !== 405 && response?.StatusCode !== 402 && onConfirm();
         }, 3000);
     }
     const handleValidation = () => {
