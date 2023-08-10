@@ -18,24 +18,23 @@ const NoCreditDialog = ({
     onCancel }) => {
     const { t } = useTranslation()
     const { isRTL } = useSelector(state => state.core)
-    const [packageType, setPackageType] = useState(1);
+    const { accountSettings, subAccount } = useSelector(state => state.common)
     const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
+    const [isAllowedToPurchase, setIsAllowedToPurchase] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch(getPackagesDetails());
+        if (subAccount?.length === 0) {
+            dispatch(getCommonFeatures({ forceRequest: true }))
+        }
     }, [])
 
-    const showPackageDialogType = async () => {
-        const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
-        if (!settings?.payload?.Data?.Account?.IsPaying) {
-            setPackageType(-1);
+    useEffect(() => {
+        if (subAccount) {
+            setIsAllowedToPurchase(accountSettings?.Account?.IsPaying && subAccount?.CompanyAdmin)
         }
-        else {
-            setPackageType(popUpType);
-        }
-        setIsOpenPackageDialog(true);
-    }
+    }, [subAccount])
 
     const handleDialogClose = () => {
         setIsOpenPackageDialog(false);
@@ -98,7 +97,16 @@ const NoCreditDialog = ({
         ),
         content: (
             <Box>
-                <Typography className={classes?.f18}>{RenderHtml(t('campaigns.newsLetterEditor.errors.SMS_BULK_ENDED_PURCHASE_OPTION'))}</Typography>
+                {
+                    (!isAllowedToPurchase)
+                        ?
+                        <>
+                            <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
+                            <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+                        </>
+                        :
+                        <Typography className={classes?.f18}>{RenderHtml(t('campaigns.newsLetterEditor.errors.SMS_BULK_ENDED_PURCHASE_OPTION'))}</Typography>
+                }
             </Box>
         ),
         showDefaultButtons: false,
@@ -108,18 +116,20 @@ const NoCreditDialog = ({
                 spacing={4}
                 className={clsx(classes?.dialogButtonsContainer, isRTL ? classes?.rowReverse : null)}
             >
-                <Grid item>
-                    <Button
-                        variant='contained'
-                        size='small'
-                        onClick={() => { showPackageDialogType() }}
-                        className={clsx(
-                            classes?.solidDialogButton,
-                            classes?.dialogConfirmButton
-                        )}>
-                        {t('dashboard.purchase')}
-                    </Button>
-                </Grid>
+                {isAllowedToPurchase &&
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={() => { setIsOpenPackageDialog(true) }}
+                            className={clsx(
+                                classes?.solidDialogButton,
+                                classes?.dialogConfirmButton
+                            )}>
+                            {t('dashboard.purchase')}
+                        </Button>
+                    </Grid>
+                }
                 <Grid item>
                     <Button
                         variant='contained'
@@ -129,7 +139,7 @@ const NoCreditDialog = ({
                             classes?.solidDialogButton,
                             classes?.dialogCancelButton
                         )}>
-                        {t('common.notNow')}
+                        {!isAllowedToPurchase ? t('common.cancel') : t('common.notNow')}
                     </Button>
                 </Grid>
             </Grid>
@@ -144,9 +154,9 @@ const NoCreditDialog = ({
         <BaseDialog
             classes={classes}
             open={isOpenPackageDialog}
-            {...packageType === -1 ? renderBillingSupportDialog() : renderPackagesListDialog()}
+            {...!isAllowedToPurchase ? renderBillingSupportDialog() : renderPackagesListDialog()}
         >
-            {packageType === -1 ? renderBillingSupportDialog().content : renderPackagesListDialog().content}
+            {!isAllowedToPurchase ? renderBillingSupportDialog().content : renderPackagesListDialog().content}
         </BaseDialog>
     </BaseDialog >
 }

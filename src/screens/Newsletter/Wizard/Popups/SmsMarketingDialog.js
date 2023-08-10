@@ -2,7 +2,6 @@ import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText
 import Switch from "react-switch";
 import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next';
-import LabeledTextField from '../../../../components/core/LabeledTextField';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { DateField } from '../../../../components/managment';
@@ -52,14 +51,19 @@ const SmsMarketingDialog = ({
 
     useEffect(() => {
         setIsLinksStatistics(smsMarketingModel.IsLinksStatistics ?? true);
-        setNumberVerified(isFromNumberVerified());
     }, []);
+
+    useEffect(() => {
+        setNumberVerified(isFromNumberVerified());
+    }, [verifiedNumbers]);
+
+
 
     const isFromNumberVerified = () => {
         const isVerified = verifiedNumbers.find((number) => {
             return number?.Number === smsModel.FromNumber && number?.IsOptIn === true;
         });
-        return isVerified?.length > 0 || smsModel.FromNumber === '';
+        return isVerified?.length > 0 || smsModel.FromNumber === '' || smsModel.FromNumber === accountSettings?.DefaultCellNumber;
     }
 
     const sendToOptions = [
