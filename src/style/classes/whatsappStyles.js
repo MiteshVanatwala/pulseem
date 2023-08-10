@@ -1060,7 +1060,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	alertModalAction: {
 		justifyContent: 'center',
 		'& button': {
-			color: '#fff',
 			width: '120px',
 			fontSize: '18px',
 			fontFamily: 'OpenSansHebrew',
@@ -1438,10 +1437,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	summaryModal: {
-		border: '2px solid #0371ad',
-		margin: '18px',
-		borderRadius: '4px',
-		padding: '14px 26px',
 		direction: isRTL ? 'rtl' : 'ltr',
 		position: 'relative',
 		width: '786px',
