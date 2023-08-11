@@ -29,7 +29,6 @@ export type dynamicButtonProps = {
 
 export type dynamicModalProps = {
 	classes: ClassesType['classes'];
-	isDynamcFieldModal: boolean;
 	onDynamcFieldModalClose: () => void;
 	onDynamcFieldModalSave: (updatedDynamicVariable: updatedVariable[]) => void;
 	personalFields: personalFieldDataProps;
