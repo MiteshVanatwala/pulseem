@@ -45,6 +45,8 @@ import WizardActions from "../../../components/Wizard/WizardActions";
 import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog.js";
 import SendResponseDialog from './Popups/SendResponseDialog';
 import UploadInProgressDialog from "./Popups/UploadInProgressDialog";
+import NoCreditDialog from './Popups/NoCreditDialog'
+import { CreditType } from "../../../Models/Payments/NoCreditPopUp";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -160,6 +162,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [quickSendClients, setQuickSendClients] = useState(null);
     const [totalClientsToSend, setTotalClientsToSend] = useState(0);
     const [reCheckAuth, setRecheckAuth] = useState(false);
+    const [noCreditLeft, setNoCreditLeft] = useState(false);
     const MAX_UPLOAD_LIMITATION = 5000;
 
     useEffect(() => {
@@ -374,11 +377,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }, 2000);
     }
     const SEND_PROC = {
+        400: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.LOCK_SENDING'), ShowContactSupport: true } },
         401: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.invaliApiKey'), ShowContactSupport: false } },
-        402: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.LOCK_SENDING'), ShowContactSupport: true } },
+        402: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.BULK_ENDED'), ShowContactSupport: true } },
         403: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.UNAUTHORIZED_FROM_EMAIL'), ShowContactSupport: true } },
         404: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.NO_RECIPIENTS'), ShowContactSupport: false } },
-        405: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.BULK_ENDED'), ShowContactSupport: true } },
+        405: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.generalError'), ShowContactSupport: true } },
         406: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.MONTHLY_RESTRICTIONS'), ShowContactSupport: true } },
         407: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.INVALID_CAMPAIGN_ID'), ShowContactSupport: false } },
         408: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.generalError'), ShowContactSupport: true } },
@@ -393,6 +397,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         else if (response?.StatusCode === 403) {
             setNewEmailVerification(newsletterInfo.FromEmail);
+        }
+        else if (response.StatusCode === 405 || response?.StatusCode === 402) {
+            setNoCreditLeft(true);
         }
         else {
             setDialogType(SEND_PROC[response?.StatusCode]);
@@ -1346,6 +1353,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 isOpen={dialogType?.type === 'SendResponse'}
                 key={'SendResponse'}
                 setDialogType={setDialogType}
+            />}
+            {noCreditLeft && <NoCreditDialog
+                classes={classes}
+                isOpen={noCreditLeft}
+                popUpType={CreditType.SMS}
+                onClose={() => setNoCreditLeft(false)}
+                onCancel={() => setNoCreditLeft(false)}
+                key={'123'}
             />}
             {/* //#region snacks */}
             {/* <Snackbar

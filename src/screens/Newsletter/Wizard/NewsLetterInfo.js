@@ -165,7 +165,6 @@ const NewsLetterInfo = ({ classes }) => {
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [campaignLoaded, setCampaignLoaded] = useState(false);
     const [newEditorDisabled, setNewEditorDisabled] = useState(false);
-    const [showEmoji, setShowEmoji] = useState(false);
     const [template, setTemplate] = useState('');
 
     const navigate = useNavigate();

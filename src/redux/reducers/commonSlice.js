@@ -142,7 +142,8 @@ export const commonSlice = createSlice({
     twoFactorAuthNumbers: [],
     accountSettings: null,
     accountFeatures: null,
-    isSweepingApproval: false
+    isSweepingApproval: false,
+    subAccount: null
   },
   extraReducers: builder => {
     builder
@@ -169,6 +170,7 @@ export const commonSlice = createSlice({
           SubAccountSettings: data?.SubAccountSettings
         };
         state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
+        state.subAccount = data;
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;

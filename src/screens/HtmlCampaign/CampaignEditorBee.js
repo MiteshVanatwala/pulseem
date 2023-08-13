@@ -81,7 +81,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI();
   const [showGallery, setShowGallery] = useState(false);
   const [showDocs, setShowDocuments] = useState(false);
-  const [isSiteTracking, setIsSiteTracking] = useState(false);
   const queryParams = new URLSearchParams(window.location.search)
   const isFromAutomation = queryParams.get("FromAutomation");
   const NodeToEdit = queryParams.get("NodeToEdit");
@@ -234,17 +233,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     initBeeToken();
   }
-  // const siteTrackingLogic = () => {
-  //   if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
-  //     const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
-  //     if (campaign?.HtmlData?.indexOf(domainName) > -1) {
-  //       setIsSiteTracking(true);
-  //     }
-  //     else {
-  //       setIsSiteTracking(false);
-  //     }
-  //   }
-  // }
   //#region Init Bee Token & Configuration
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
@@ -318,7 +306,7 @@ const CampaignEditor = ({ classes, ...props }) => {
               template = forceTemplate;
             }
             else {
-              template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
+            template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             }
 
             beeTest.start(config, template).then((instance) => {
@@ -390,12 +378,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
-      // if (isSiteTracking === true) {
-      //   if (!args.HtmlData.indexOf('ref') > -1) {
-      //     finalHtml = doaminWithClientRef(args.HtmlData);
-      //     finalJson = doaminWithClientRef(args.JsonData);
-      //   }
-      // }
       const response = await dispatch(saveCampaign({
         Name: campaign.Name,
         campaignId: args.campaignId,
