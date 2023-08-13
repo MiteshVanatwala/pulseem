@@ -53,7 +53,11 @@ const SendingMethod = ({
     }
 
     const handleDatePicker = (value) => {
-        setDate(moment(value))
+        const finalDate = moment(value, "YYYY-MM-DD HH:mm:ss");
+        finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
+        const newVal = finalDate.format();
+
+        setDate(newVal)
     }
 
     useEffect(() => {

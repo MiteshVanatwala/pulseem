@@ -360,19 +360,9 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
-  // const doaminWithClientRef = (str) => {
-  //   let finalStr = str;
-  //   const startIndex = finalStr.substring(finalStr.indexOf(accountSettings?.SubAccountSettings.DomainAddress));
-  //   const originalLink = startIndex.split(/[\s\n]+/);
-  //   let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
-  //   let newUrl = originUrl.trim();
-  //   if (newUrl.indexOf('ClientIDEnc') === -1) {
-  //     newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
-  //     finalStr = finalStr.replace(originUrl, newUrl);
-  //   }
-  //   return finalStr;
-  // }
   const onSave = async (args) => {
+    const reInit = saveRef.current?.reInitEditor;
+
     try {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
@@ -393,6 +383,10 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
         else if (saveRef.current?.showAnimation) {
           setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+        }
+
+        if (reInit) {
+          getData();
         }
       }
 
@@ -453,13 +447,13 @@ const CampaignEditor = ({ classes, ...props }) => {
   const handleExitCampaign = (saveBeforeExit = true) => {
     setDialog(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
-    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : '/react/Campaigns';
+    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
 
     if (saveBeforeExit) {
-      saveDesign(true, `${sitePrefix}Campaigns`, false);
+      saveDesign(true, redirectLink, false);
     }
     else {
-      window.location.href = `${sitePrefix}Campaigns`;
+      window.location.href = redirectLink;
     }
   }
   const onExit = () => {
@@ -605,6 +599,11 @@ const CampaignEditor = ({ classes, ...props }) => {
     await editorRef.current.save();
   }
 
+  const onBeforeReinit = async () => {
+    saveRef.current = { showAnimation: false, reInitEditor: true };
+    await editorRef.current.save();
+  }
+
   const showGalleryModal = () => {
     if (showGallery) {
       let dialog = {
@@ -665,7 +664,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           open={showDocs}
           onClose={() => { setShowDocuments(false); }}
           onCancel={() => { setShowDocuments(false); }}
-          onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
+          onConfirm={() => { setShowDocuments(false); onBeforeReinit(); }}
           {...dialog}>
           {dialog.content}
         </BaseDialog>
