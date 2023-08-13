@@ -14,7 +14,7 @@ import { BiSave } from 'react-icons/bi'
 import { Title } from "../../../components/managment/Title";
 import { Button, Grid, Box } from "@material-ui/core";
 import {
-    getAccountExtraData, getPreviousCampaignData, getPreviousLandingData, getTestGroups, getSmsMarketing
+    getAccountExtraData, getPreviousCampaignData, getPreviousLandingData, getTestGroups, getSmsMarketing, deleteSmsTotalMarketing
 } from "../../../redux/reducers/smsSlice";
 import { combinedGroup, addRecipient, addRecipients, createGroup, createAndGetGroupIdForManualSend, getGroupsBySubAccountId } from "../../../redux/reducers/groupSlice";
 import { getAuthorizeNumbers, getAuthorizedEmails, getCommonFeatures } from '../../../redux/reducers/commonSlice'
@@ -47,6 +47,7 @@ import SendResponseDialog from './Popups/SendResponseDialog';
 import UploadInProgressDialog from "./Popups/UploadInProgressDialog";
 import NoCreditDialog from './Popups/NoCreditDialog'
 import { CreditType } from "../../../Models/Payments/NoCreditPopUp";
+import DynamicConfirmDialog from "../../../components/DialogTemplates/DynamicConfirmDialog";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -62,6 +63,21 @@ const useStyles = makeStyles((theme) => ({
     noMaxWidth: {
         maxWidth: "none",
     },
+    flexEndTotalSms: {
+        display: 'flex',
+        alignSelf: 'flex-end',
+        justifyContent: 'flex-end',
+        paddingInline: 15,
+        fontSize: 13
+    },
+    deleteButton: {
+        background: 'none !important',
+        fontSize: '14px !important',
+        margin: 0,
+        padding: 0,
+        textTransform: 'capitalize',
+        color: '#CA332F'
+    }
 }));
 
 const useSnackRecipients = makeStyles((theme) => ({
@@ -163,6 +179,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [totalClientsToSend, setTotalClientsToSend] = useState(0);
     const [reCheckAuth, setRecheckAuth] = useState(false);
     const [noCreditLeft, setNoCreditLeft] = useState(false);
+    const [showDeleteSmsMarketingDialog, setShowDeleteSmsMarketingDialog] = useState(false);
     const MAX_UPLOAD_LIMITATION = 5000;
 
     useEffect(() => {
@@ -1048,6 +1065,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             });
         }
     }
+    const onConfirmDeleteSmsMarketing = async () => {
+        await dispatch(deleteSmsTotalMarketing(newsletterSettings?.CampaignID));
+        await dispatch(getEmailSendSettings(newsletterSettings?.CampaignID));
+    }
     const callbackShowTextGroups = async (showTestGroups) => {
         if (!showTestGroups && testGroups.length > 0) {
             setShowTestGroups(true);
@@ -1309,6 +1330,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                     </Stack>
                                 </>
                             } />
+                        <Box className={styles.flexEndTotalSms}>
+                            {smsMarketingIndication && <Box>
+                                <Button className={clsx(classes.link, styles.deleteButton)} onClick={() => setShowDeleteSmsMarketingDialog(true)}>
+                                    {t('campaigns.deleteTotalMarketing')}</Button>
+                            </Box>}
+                        </Box>
                     </Grid>
                 </Grid>
             </Box>
@@ -1366,21 +1393,18 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel={() => setNoCreditLeft(false)}
                 key={'123'}
             />}
-            {/* //#region snacks */}
-            {/* <Snackbar
-                open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}
-                autoHideDuration={5000}
-                onClose={() => { handleMainWarningPulse() }}
-                anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
+            {showDeleteSmsMarketingDialog && <DynamicConfirmDialog
+                classes={classes}
+                isOpen={showDeleteSmsMarketingDialog}
+                title={t('campaigns.deleteTotalMarketing')}
+                text={t('campaigns.deleteTotalMarketingDesc')}
+                onConfirm={() => {
+                    setShowDeleteSmsMarketingDialog(false);
+                    onConfirmDeleteSmsMarketing();
                 }}
-                style={{ zIndex: "9999" }}
-            >
-                <Alert severity="warning" className={severe.customcolor}>
-                    {t("smsReport.NoPulse")}
-                </Alert>
-            </Snackbar> */}
+                onCancel={() => setShowDeleteSmsMarketingDialog(false)}
+            />}
+            {/* //#region snacks */}
             <Snackbar
                 open={snackbarValues.snackBarPulseBoolean}
                 autoHideDuration={3000}
@@ -1409,20 +1433,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     {t("smsReport.timeAmount")}
                 </Alert>
             </Snackbar>
-            {/* <Snackbar
-                open={snackbarValues.snackbarMainPulse}
-                autoHideDuration={3000}
-                onClose={() => setSnackbarValues({ ...snackbarValues, snackBarMainBoolean: false })}
-                anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                }}
-                style={{ zIndex: "9999", marginTop: "60px" }}
-            >
-                <Alert severity="error" className={severe.customcolor}>
-                    {t("sms.fillRandomAmount")}
-                </Alert>
-            </Snackbar> */}
             <Snackbar
                 open={snackbarValues.recipientsSnackbar}
                 autoHideDuration={2000}
