@@ -37,7 +37,6 @@ import { actionButtonProps } from './Types/WhatsappCreator.types';
 import QuickReply from './Popups/QuickReply';
 import { useDispatch, useSelector } from 'react-redux';
 import WhatsappMobilePreview from './Components/WhatsappMobilePreview';
-import AlertModal from './Popups/AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {
 	getSavedTemplates,
@@ -66,7 +65,6 @@ import {
 } from '../Constant';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
-import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 import NoSetup from '../NoSetup/NoSetup';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import moment from 'moment';
@@ -94,7 +92,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
-	const [dialogType, setDialogType] = useState<any>({});
+	const [dialogType, setDialogType] = useState<any>({
+		type: ''
+	});
 	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const getSavedTemplateFields = async () => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
@@ -163,13 +163,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		fileLink: '',
 		fileType: '',
 	});
-	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
-	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
-	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] =
-		useState<boolean>(false);
 	const [linkCount, setlinkCount] = useState<number>(0);
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 
@@ -250,12 +246,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
 	}, [buttonType]);
 
-	useEffect(() => {
-		if (isCallToActionOpen && callToActionFieldRows?.length === 0) {
-			setCallToActionFieldRows([initialFieldRow]);
-		}
+	// useEffect(() => {
+		// if (isCallToActionOpen && callToActionFieldRows?.length === 0) {
+			// setCallToActionFieldRows([initialFieldRow]);
+		// }
 		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
-	}, [isCallToActionOpen]);
+	// }, [isCallToActionOpen]);
 
 	const onTemplateNameChange = (e: BaseSyntheticEvent) => {
 		setTemplateName(e.target.value);
@@ -852,9 +848,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const onButtonClick = (button: actionButtonProps) => {
 		if (button.buttonTitle?.includes(buttonTypes.CALL_TO_ACTION)) {
-			setIsCallToActionOpen(true);
+			setDialogType({
+				type: 'callToAction'
+			});
 		} else if (button.buttonTitle?.includes('quickReplay')) {
-			setIsQuickReplyOpen(true);
+			setDialogType({
+				type: 'quickReply'
+			});
 		} else if (button.buttonTitle?.includes('dynamicField')) {
 			if (templateData?.templateText?.length < templateTextLimit) {
 				const selectionEnd = templateTextRef.current?.selectionEnd;
@@ -1070,7 +1070,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const closeCallToAction = (isReset: Boolean) => {
-		setIsCallToActionOpen(false);
+		setDialogType({});
 		if (isReset && buttonType === 'callToAction') {
 			setCallToActionFieldRows([...templateData.templateButtons]);
 		}
@@ -1137,6 +1137,67 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
     }
   })
 
+	const getCallToAction = () => ({
+    title: translator('whatsapp.callToActionTitle'),
+    showDivider: false,
+		showDefaultButtons: false,
+		contentStyle: classes.noPadding,
+		paperStyle: classes.callToAction,
+    content: (
+      <ActionCallPopOver
+				closeCallToAction={(isReset) => closeCallToAction(isReset)}
+				classes={classes}
+				callToActionFieldRows={callToActionFieldRows}
+				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
+				phoneNumberField={phoneNumberField}
+				websiteField={websiteField}
+				addMore={() => addMore()}
+				updateTemplateData={(data: callToActionProps) =>
+					updateTemplateButton(data, buttonTypes.CALL_TO_ACTION)
+				}
+				isEditable={true}
+				buttonType={buttonType}
+				templateText={templateData.templateText}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+			onSubmitCampaign();
+    }
+  })
+
+	const getQuickReplyDialog = () => ({
+    title: translator('whatsapp.quickReply.title'),
+    showDivider: false,
+		showDefaultButtons: false,
+		contentStyle: classes.noPadding,
+		paperStyle: classes.callToAction,
+    content: (
+      <QuickReply
+				classes={classes}
+				closeQuickReply={() => setDialogType({})}
+				quickReplyButtons={quickReplyButtons}
+				setQuickReplyButtons={(data: quickReplyButtonProps[]) =>
+					setQuickReplyButtons(data)
+				}
+				updateTemplateData={(data: quickReplyButtonProps[]) =>
+					updateTemplateButton(data, buttonTypes.QUICK_REPLY)
+				}
+				templateButtons={templateData.templateButtons}
+				isEditable={true}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
 	const renderDialog = () => {
     const { data, type } = dialogType || {}
 		let currentDialog: any = {};
@@ -1146,6 +1207,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			currentDialog = getValidationDialog();
 		} else if (type === 'preview') {
 			currentDialog = getPreviewDialog();
+		} else if (type === 'callToAction') {
+			if (callToActionFieldRows?.length === 0) {
+				setCallToActionFieldRows([initialFieldRow]);
+			}
+			currentDialog = getCallToAction();
+		} else if (type === 'quickReply') {
+			currentDialog = getQuickReplyDialog();
 		}
 
 		if (type) {
@@ -1212,10 +1280,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 												setTemplateText={(text: string) => updateTemplateText(text)}
 												templateText={templateData.templateText}
 												templateTextRef={templateTextRef}
-												OnEditorActionButtonClick={() =>
-													buttonType === buttonTypes.QUICK_REPLY
-														? setIsQuickReplyOpen(true)
-														: setIsCallToActionOpen(true)
+												OnEditorActionButtonClick={() => setDialogType({type: buttonType === buttonTypes.QUICK_REPLY ? 'quickReply' : 'callToAction' })
 												}
 												dynamicFieldCount={dynamicFieldCount}
 												linkCount={linkCount}
@@ -1263,36 +1328,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 							</form>
 						</Box>
 					</Box>
-					<QuickReply
-						classes={classes}
-						isQuickReplyOpen={isQuickReplyOpen}
-						closeQuickReply={() => setIsQuickReplyOpen(false)}
-						quickReplyButtons={quickReplyButtons}
-						setQuickReplyButtons={(data: quickReplyButtonProps[]) =>
-							setQuickReplyButtons(data)
-						}
-						updateTemplateData={(data: quickReplyButtonProps[]) =>
-							updateTemplateButton(data, buttonTypes.QUICK_REPLY)
-						}
-						templateButtons={templateData.templateButtons}
-						isEditable={true}
-					/>
-					<ActionCallPopOver
-						isCallToActionOpen={isCallToActionOpen}
-						closeCallToAction={(isReset) => closeCallToAction(isReset)}
-						classes={classes}
-						callToActionFieldRows={callToActionFieldRows}
-						setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
-						phoneNumberField={phoneNumberField}
-						websiteField={websiteField}
-						addMore={() => addMore()}
-						updateTemplateData={(data: callToActionProps) =>
-							updateTemplateButton(data, buttonTypes.CALL_TO_ACTION)
-						}
-						isEditable={true}
-						buttonType={buttonType}
-						templateText={templateData.templateText}
-					/>
 				</>
 			) : (
 				!isLoader && <NoSetup classes={classes} />

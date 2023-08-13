@@ -950,11 +950,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   redButton: {
-    borderColor: '#F65026',
-    backgroundColor: '#F65026',
+    borderColor: '#FF3343',
+    backgroundColor: '#FF3343',
     color: '#fff',
     '&:hover': {
-      background: '#F65026',
+      background: '#FF3343',
     },
   },
   btnNohover: {
@@ -3419,5 +3419,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         width: '20px !important'
       }
     }
-  }
+  },
+  callToAction: {
+    minWidth: '70vw',
+    '& .MuiDialogActions-root': {
+      marginTop: 20
+    }
+  },
 });

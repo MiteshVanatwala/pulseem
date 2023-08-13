@@ -111,7 +111,7 @@ const SendCampaign = ({
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
 	const [isSendCampaignSuccessOpen, setIsSendCampaignSuccessOpen] =
-		useState<boolean>(false);
+		useState<boolean>(true);
 	const [newGroupName, setNewGroupName] = useState<string>('');
 
 	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
@@ -720,7 +720,9 @@ const SendCampaign = ({
 				await dispatch<any>(sendCampaign(sendCampaignPayload));
 			setIsLoader(false);
 			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
-				setIsSendCampaignSuccessOpen(true);
+				setDialogType({
+					type: 'sendCampaignSuccess'
+				});
 				setRandomlyCount('');
 			} else {
 				sendCampaignData?.Message
@@ -846,6 +848,24 @@ const SendCampaign = ({
     }
   })
 
+	const getSendCampaignSuccess = () => ({
+    title: translator('campaigns.campaignIsOnItsWay'),
+    showDivider: false,
+		showDefaultButtons: false,
+    content: (
+      <SendCampaignSuccess
+				classes={classes}
+				onBackToHome={() => navigate('/react')}
+				onBackToCampaigns={() =>
+					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
+				}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({type: ''});
+    }
+  })
+
 	const renderDialog = () => {
     const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -859,6 +879,8 @@ const SendCampaign = ({
 			currentDialog = getExceedDailyLimit();
 		} else if (type === 'summary') {
 			currentDialog = getSummary();
+		} else if (type === 'sendCampaignSuccess') {
+			currentDialog = getSendCampaignSuccess();
 		}
 
 		if (type) {
@@ -951,15 +973,6 @@ const SendCampaign = ({
 							displayBackButton={true}
 						/>
 					</Box>
-					<SendCampaignSuccess
-						classes={classes}
-						isOpen={isSendCampaignSuccessOpen}
-						onBackToHome={() => navigate('/react')}
-						onBackToCampaigns={() =>
-							navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
-						}
-						onClose={() => setIsSendCampaignSuccessOpen(false)}
-					/>
 					{renderToast()}
 				</Box>
 			) : (

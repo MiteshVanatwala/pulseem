@@ -97,16 +97,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '4px 8px',
 	},
 	whatsappActionButtons: {
-		backgroundColor: '#b7b7b7',
-		color: '#1c82b2',
+		backgroundColor: '#fff',
+		color: '#ff3343',
 		borderRadius: '6px',
 		padding: '0px 14px',
 		textTransform: 'none',
 		fontWeight: '600',
 		cursor: 'unset',
+		border: 'solid 1px #ff3343',
 		'&:hover': {
-			backgroundColor: '#b7b7b7',
-			color: '#1c82b2',
+			backgroundColor: '#ff3343',
+			color: '#fff',
+			cursor: 'pointer'
 		},
 	},
 	whatsappInfoButtons: {
@@ -175,9 +177,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	callToActionDialogHeaderDescription: {
-		fontSize: 12,
-		fontFamily: 'OpenSansHebrew',
-		marginTop: '-8px',
+		fontSize: 16,
+		// fontFamily: 'OpenSansHebrew',
+		// marginTop: '-8px',
 		textAlign: isRTL ? 'right' : 'left',
 	},
 	callToActionDialogHeaderTitle: {
@@ -1355,7 +1357,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		// direction: isRTL ? 'rtl' : 'ltr',
 	},
 	whatsappCampainHighlightText: {
-		backgroundColor: '#169bd5',
+		backgroundColor: '#ff3343',
 		color: '#ffffff',
 		padding: '0px 2px',
 		borderRadius: '4px',

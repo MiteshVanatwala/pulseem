@@ -134,7 +134,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const { contactID } = useParams();
 	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
 	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
-	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [newMessage, setNewMessage] = useState<string>('');
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
@@ -569,7 +568,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		updatedDynamicVariable: updatedVariable[]
 	) => {
 		setUpdatedDynamicVariableWithLinks(updatedDynamicVariable);
-		setIsDynamcFieldModal(false);
+		setDialogType({});
 	};
 
 	const changeContactReadStatus = (
@@ -854,6 +853,35 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
     }
   })
 
+	const getDynamicModalDialog = () => ({
+    title: translator('whatsappCampaign.dfieldTitle'),
+    showDivider: false,
+		showDefaultButtons: false,
+		contentStyle: classes.noPadding,
+    content: (
+			<DynamicModal
+				classes={classes}
+				onDynamcFieldModalClose={() => setDialogType({})}
+				personalFields={personalFields}
+				landingPageData={landingPages}
+				dynamicModalVariable={dynamicModalVariable}
+				onDynamcFieldModalSave={(updatedDynamicVariable) =>
+					onDynamcFieldModalSave(updatedDynamicVariable)
+				}
+				dynamicVariable={updatedDynamicVariable}
+				isTrackLink={isTrackLink}
+				setIsTrackLink={setIsTrackLink}
+				savedTemplate={savedTemplate}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
 	const renderDialog = () => {
     const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -861,6 +889,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			currentDialog = getValidationDialog();
 		} else if (type === 'exceedDailyLimit') {
 			currentDialog = getExceedDailyLimit();
+		} else if (type === 'dynamicModal') {
+			currentDialog = getDynamicModalDialog();
 		}
 
 		if (type) {
@@ -930,7 +960,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									setIsTemplateModal={setIsTemplateModal}
 									dynamicVariable={dynamicVariable}
 									updatedDynamicVariable={updatedDynamicVariable}
-									setIsDynamcFieldModal={setIsDynamcFieldModal}
+									setIsDynamcFieldModal={() => setDialogType({type: 'dynamicModal'})}
 									setDynamicModalVariable={setDynamicModalVariable}
 									savedTemplate={savedTemplate}
 									chatContacts={activeChatContacts}
@@ -955,21 +985,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 								/>
 							</div>
 						</div>
-						<DynamicModal
-							classes={classes}
-							isDynamcFieldModal={isDynamcFieldModal}
-							onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
-							personalFields={personalFields}
-							landingPageData={landingPages}
-							dynamicModalVariable={dynamicModalVariable}
-							onDynamcFieldModalSave={(updatedDynamicVariable) =>
-								onDynamcFieldModalSave(updatedDynamicVariable)
-							}
-							dynamicVariable={updatedDynamicVariable}
-							isTrackLink={isTrackLink}
-							setIsTrackLink={setIsTrackLink}
-							savedTemplate={savedTemplate}
-						/>
 					</>
 				) : (
 					!isLoader && <NoSetup classes={classes} />
