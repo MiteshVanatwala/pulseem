@@ -1335,7 +1335,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 smsMarketingModel={{ ...smsMarketingModel }}
                 onClose={() => setDialogType(null)}
                 onCancel={() => setDialogType(null)}
-                onConfirm={() => {
+                onConfirm={(e) => {
                     setDialogType(null);
                     setSmsMarketingIndication(true);
                 }}

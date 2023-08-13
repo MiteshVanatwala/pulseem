@@ -109,7 +109,7 @@ export const BaseDialog = ({
             variant='contained'
             size='small'
             disabled={confirmDisabled}
-            onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
+            onClick={(e: React.MouseEvent<Element, MouseEvent>) => onConfirm(e)}
             className={clsx(
               classes.solidDialogButton,
               classes.dialogConfirmButton
@@ -121,7 +121,7 @@ export const BaseDialog = ({
           <Button
             variant='contained'
             size='small'
-            onClick={(e: React.MouseEvent<HTMLElement>) => {
+            onClick={(e: React.MouseEvent<Element, MouseEvent>) => {
               if (onClose) {
                 onClose();
               }
