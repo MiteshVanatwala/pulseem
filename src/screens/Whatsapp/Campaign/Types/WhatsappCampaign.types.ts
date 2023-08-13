@@ -29,7 +29,6 @@ export type dynamicButtonProps = {
 
 export type dynamicModalProps = {
 	classes: ClassesType['classes'];
-	isDynamcFieldModal: boolean;
 	onDynamcFieldModalClose: () => void;
 	onDynamcFieldModalSave: (updatedDynamicVariable: updatedVariable[]) => void;
 	personalFields: personalFieldDataProps;
@@ -64,10 +63,8 @@ export type validationAlertModalProps = {
 
 export type SendCampaignSuccessModalProps = {
 	classes: ClassesType['classes'];
-	isOpen: boolean;
 	onBackToHome: () => void;
 	onBackToCampaigns: () => void;
-	onClose: () => void;
 };
 
 export type infoModalProps = {
@@ -218,7 +215,6 @@ export type FilterRecipientsDialogProps = {
 
 export type SummaryModalProps = {
 	classes: ClassesType['classes'];
-	isOpen: boolean;
 	campaignName: string;
 	fromNumber: string;
 	onSummaryModalClose: () => void;

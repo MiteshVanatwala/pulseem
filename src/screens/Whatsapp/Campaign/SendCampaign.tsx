@@ -37,7 +37,6 @@ import Buttons from './Components/Buttons';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import moment from 'moment';
 import Toast from '../../../components/Toast/Toast.component';
-import ValidationAlert from './Popups/ValidationAlert';
 import {
 	addRecipient,
 	addRecipients,
@@ -68,7 +67,6 @@ import {
 	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import { useNavigate, useParams } from 'react-router-dom';
-import AlertModal from '../Editor/Popups/AlertModal';
 import SendCampaignSuccess from './Popups/SendCampaignSuccess';
 import NoSetup from '../NoSetup/NoSetup';
 import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
@@ -89,7 +87,7 @@ const SendCampaign = ({
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
+	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(true);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [selectedGroups, setSelectedGroups] = useState<testGroupDataProps[]>(
 		[]
@@ -113,7 +111,7 @@ const SendCampaign = ({
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
 	const [isSendCampaignSuccessOpen, setIsSendCampaignSuccessOpen] =
-		useState<boolean>(false);
+		useState<boolean>(true);
 	const [newGroupName, setNewGroupName] = useState<string>('');
 
 	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
@@ -441,14 +439,18 @@ const SendCampaign = ({
 									moment(sendDate).diff(moment(), 'seconds') > 86400) ||
 								sendType === '3'
 							) {
-								setIsSummaryModal(true);
+								setDialogType({
+									type: 'summary'
+								})
 							} else {
 								setDialogType({
 									type: 'exceedDailyLimit'
 								})
 							}
 						} else {
-							setIsSummaryModal(true);
+							setDialogType({
+								type: 'summary'
+							})
 						}
 					} else {
 						setToastMessage({
@@ -705,8 +707,8 @@ const SendCampaign = ({
 	};
 
 	const onSummarySend = async () => {
-		setIsSummaryModal(false);
 		setIsLoader(true);
+		setDialogType({type: ''});
 		let sendCampaignPayload: ApiSendCampaignData = {
 			WACampaignID: Number(campaignID),
 		};
@@ -718,7 +720,9 @@ const SendCampaign = ({
 				await dispatch<any>(sendCampaign(sendCampaignPayload));
 			setIsLoader(false);
 			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
-				setIsSendCampaignSuccessOpen(true);
+				setDialogType({
+					type: 'sendCampaignSuccess'
+				});
 				setRandomlyCount('');
 			} else {
 				sendCampaignData?.Message
@@ -809,6 +813,59 @@ const SendCampaign = ({
     }
   })
 
+	const getSummary = () => ({
+    title: translator('whatsappCampaign.summary'),
+    showDivider: false,
+		showDefaultButtons: false,
+    content: (
+      <SummaryModal
+				classes={classes}
+				campaignName={''}
+				fromNumber={''}
+				onSummaryModalClose={() => setDialogType({type: ''})}
+				onConfirmOrYes={onSummarySend}
+				selectedGroups={selectedGroups}
+				selectedFilterGroups={selectedFilterGroups}
+				selectedFilterCampaigns={selectedFilterCampaigns}
+				sendType={sendType}
+				sendDate={sendDate}
+				sendTime={sendTime}
+				isSpecialDateBefore={isSpecialDateBefore}
+				daysBeforeAfter={daysBeforeAfter}
+				specialDatedropDown={specialDatedropDown}
+				spectialDateFieldID={spectialDateFieldID}
+				campaignSummary={campaignSummary}
+				randomlyCount={randomlyCount}
+				setRandomlyCount={setRandomlyCount}
+				resetRandomCount={() => setRandomlyCount('')}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getSendCampaignSuccess = () => ({
+    title: translator('campaigns.campaignIsOnItsWay'),
+    showDivider: false,
+		showDefaultButtons: false,
+    content: (
+      <SendCampaignSuccess
+				classes={classes}
+				onBackToHome={() => navigate('/react')}
+				onBackToCampaigns={() =>
+					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
+				}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({type: ''});
+    }
+  })
+
 	const renderDialog = () => {
     const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -820,6 +877,10 @@ const SendCampaign = ({
 			currentDialog = getDeleteDialog();
 		} else if (type === 'exceedDailyLimit') {
 			currentDialog = getExceedDailyLimit();
+		} else if (type === 'summary') {
+			currentDialog = getSummary();
+		} else if (type === 'sendCampaignSuccess') {
+			currentDialog = getSendCampaignSuccess();
 		}
 
 		if (type) {
@@ -912,54 +973,6 @@ const SendCampaign = ({
 							displayBackButton={true}
 						/>
 					</Box>
-					<SummaryModal
-						classes={classes}
-						isOpen={isSummaryModal}
-						campaignName={''}
-						fromNumber={''}
-						onSummaryModalClose={() => setIsSummaryModal(false)}
-						onConfirmOrYes={onSummarySend}
-						selectedGroups={selectedGroups}
-						selectedFilterGroups={selectedFilterGroups}
-						selectedFilterCampaigns={selectedFilterCampaigns}
-						sendType={sendType}
-						sendDate={sendDate}
-						sendTime={sendTime}
-						isSpecialDateBefore={isSpecialDateBefore}
-						daysBeforeAfter={daysBeforeAfter}
-						specialDatedropDown={specialDatedropDown}
-						spectialDateFieldID={spectialDateFieldID}
-						campaignSummary={campaignSummary}
-						randomlyCount={randomlyCount}
-						setRandomlyCount={setRandomlyCount}
-						resetRandomCount={() => setRandomlyCount('')}
-					/>
-					{/* <AlertModal
-						classes={classes}
-						isOpen={true}
-						title={translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
-						)}
-						subtitle={`${translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${
-							campaignSummary?.NextAvailableTime
-								? moment(campaignSummary?.NextAvailableTime).format(
-										'DD.MM.YYYY HH:MM'
-								  )
-								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
-						}`}
-						type='alert'
-					/> */}
-					<SendCampaignSuccess
-						classes={classes}
-						isOpen={isSendCampaignSuccessOpen}
-						onBackToHome={() => navigate('/react')}
-						onBackToCampaigns={() =>
-							navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
-						}
-						onClose={() => setIsSendCampaignSuccessOpen(false)}
-					/>
 					{renderToast()}
 				</Box>
 			) : (

@@ -1,6 +1,7 @@
 import ChatUi from './Component/ChatUi';
 import SideBar from './Component/SideBar';
 import './css/index.css';
+import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import {
 	APIWhatsappChatConversationStatusData,
@@ -68,11 +69,11 @@ import {
 } from '../Constant';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useParams } from 'react-router-dom';
-import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 import Toast from '../../../components/Toast/Toast.component';
 import NoSetup from '../NoSetup/NoSetup';
-import AlertModal from '../Editor/Popups/AlertModal';
 import moment from 'moment';
+import { Typography } from '@material-ui/core';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -89,9 +90,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
-	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
-	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
+	const [dialogType, setDialogType] = useState<any>({});
 	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
 			ConversationStatusId: 0,
@@ -134,7 +134,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const { contactID } = useParams();
 	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
 	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
-	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [newMessage, setNewMessage] = useState<string>('');
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
@@ -569,7 +568,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		updatedDynamicVariable: updatedVariable[]
 	) => {
 		setUpdatedDynamicVariableWithLinks(updatedDynamicVariable);
-		setIsDynamcFieldModal(false);
+		setDialogType({});
 	};
 
 	const changeContactReadStatus = (
@@ -612,7 +611,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 		if (!isValidated) {
 			setGroupSendValidationErrors(validationErrors);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			});
 		}
 		return isValidated;
 	};
@@ -698,7 +699,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				updateContactList();
 			} else {
 				if (sendWhatsappChat.StatusCode === 112) {
-					setExceedLimitModal(true);
+					setDialogType({
+						type: 'exceedDailyLimit'
+					});
 					// setNextMessageAvailable
 					if (
 						sendWhatsappChat?.Data &&
@@ -808,9 +811,102 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setSavedTemplate('');
 	};
 
-	const onExceedLimitYes = () => {
-		setExceedLimitModal(false);
-	};
+	const getExceedDailyLimit = () => ({
+    title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {`${translator(
+					'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
+				)} ${
+					nextMessageAvailable
+						? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
+						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+				}`}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getValidationDialog = () => ({
+    title: translator('whatsappCampaign.sendValidation'),
+    showDivider: false,
+    content: (
+			<ul className={clsx(classes.noMargin, classes.mb20)}>
+				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
+					<li key={index} className={classes.validationAlertModalLi}>
+						{requiredField}
+					</li>
+				))}
+			</ul>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getDynamicModalDialog = () => ({
+    title: translator('whatsappCampaign.dfieldTitle'),
+    showDivider: false,
+		showDefaultButtons: false,
+		contentStyle: classes.noPadding,
+    content: (
+			<DynamicModal
+				classes={classes}
+				onDynamcFieldModalClose={() => setDialogType({})}
+				personalFields={personalFields}
+				landingPageData={landingPages}
+				dynamicModalVariable={dynamicModalVariable}
+				onDynamcFieldModalSave={(updatedDynamicVariable) =>
+					onDynamcFieldModalSave(updatedDynamicVariable)
+				}
+				dynamicVariable={updatedDynamicVariable}
+				isTrackLink={isTrackLink}
+				setIsTrackLink={setIsTrackLink}
+				savedTemplate={savedTemplate}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const renderDialog = () => {
+    const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'validation') {
+			currentDialog = getValidationDialog();
+		} else if (type === 'exceedDailyLimit') {
+			currentDialog = getExceedDailyLimit();
+		} else if (type === 'dynamicModal') {
+			currentDialog = getDynamicModalDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
 
 	return (
 		<>
@@ -864,7 +960,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									setIsTemplateModal={setIsTemplateModal}
 									dynamicVariable={dynamicVariable}
 									updatedDynamicVariable={updatedDynamicVariable}
-									setIsDynamcFieldModal={setIsDynamcFieldModal}
+									setIsDynamcFieldModal={() => setDialogType({type: 'dynamicModal'})}
 									setDynamicModalVariable={setDynamicModalVariable}
 									savedTemplate={savedTemplate}
 									chatContacts={activeChatContacts}
@@ -889,49 +985,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 								/>
 							</div>
 						</div>
-						<DynamicModal
-							classes={classes}
-							isDynamcFieldModal={isDynamcFieldModal}
-							onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
-							personalFields={personalFields}
-							landingPageData={landingPages}
-							dynamicModalVariable={dynamicModalVariable}
-							onDynamcFieldModalSave={(updatedDynamicVariable) =>
-								onDynamcFieldModalSave(updatedDynamicVariable)
-							}
-							dynamicVariable={updatedDynamicVariable}
-							isTrackLink={isTrackLink}
-							setIsTrackLink={setIsTrackLink}
-							savedTemplate={savedTemplate}
-						/>
-						<ValidationAlert
-							classes={classes}
-							isOpen={isValidationAlert}
-							onClose={() => setIsValidationAlert(false)}
-							title={translator('whatsappCampaign.sendValidation')}
-							requiredFields={groupSendValidationErrors}
-						/>
-						<AlertModal
-							classes={classes}
-							isOpen={exceedLimitModal}
-							onClose={() => setExceedLimitModal(false)}
-							title={translator(
-								'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
-							)}
-							subtitle={`${translator(
-								'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-							)} ${
-								nextMessageAvailable
-									? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
-									: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
-							}`}
-							type='alert'
-							onConfirmOrYes={() => onExceedLimitYes()}
-						/>
 					</>
 				) : (
 					!isLoader && <NoSetup classes={classes} />
 				)}
+				{renderDialog()}
 				<Loader isOpen={isLoader} showBackdrop={true} />
 			</DefaultScreen>
 		</>

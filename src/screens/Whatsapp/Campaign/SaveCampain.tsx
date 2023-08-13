@@ -95,7 +95,6 @@ import {
 	resetToastData,
 	whatsappRoutes,
 } from '../Constant';
-import AlertModal from '../Editor/Popups/AlertModal';
 import { useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import SummaryModal from './Popups/SummaryModal';
@@ -177,12 +176,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [from, setFrom] = useState<string>('');
 	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const [isTestGroupModal, setIsTestGroupModal] = useState<boolean>(false);
-	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
-	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
-	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
-	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [templateTextCount, setTemplateTextCount] = useState<number>(0);
@@ -196,7 +191,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		fileLink: '',
 		fileType: '',
 	});
-	const [dialogType, setDialogType] = useState<any>({});
+	const [dialogType, setDialogType] = useState<any>({ type: '' });
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
 	const [templateData, setTemplateData] = useState<templateDataProps>({
@@ -498,7 +493,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const openDynamcFieldModal = async (variable: string) => {
 		setDynamicModalVariable(Number(variable?.replace(/[{}]/g, '')));
-		setIsDynamcFieldModal(true);
+		setDialogType({
+			type: 'dynamicModal'
+		});
 	};
 
 	const isUpdatedVaraiable = (variable: string) => {
@@ -680,7 +677,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onTestSend = async (isSingle: boolean = false, campaignID: number) => {
 		setIsLoader(true);
-		setIsSummaryModal(false);
+		setDialogType({type: ''});
 		let payload: TestSendReq = {
 			WACampaignID: campaignID,
 		};
@@ -704,7 +701,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setRandomlyCount('');
 				} else {
 					if (quickSendData?.StatusCode === 10) {
-						setExceedLimitModal(true);
+						setDialogType({
+							type: 'exceedDailyLimit'
+						})
 						setRandomlyCount('');
 						if (
 							quickSendData?.Data &&
@@ -790,12 +789,18 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 									campaignSummaryData.Data.WhatsappTierID === 3
 								) {
 									if (campaignSummaryData?.Data?.WhatsappSmsLeft > 0) {
-										setIsSummaryModal(true);
+										setDialogType({
+											type: 'summary'
+										});
 									} else {
-										setExceedLimitModal(true);
+										setDialogType({
+											type: 'exceedDailyLimit'
+										})
 									}
 								} else {
-									setIsSummaryModal(true);
+									setDialogType({
+										type: 'summary'
+									});
 								}
 							} else {
 								setToastMessage({
@@ -831,7 +836,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				(variable) => variable?.FieldTypeId === fieldNameIds?.LINK
 			)?.length
 		);
-		setIsDynamcFieldModal(false);
+		setDialogType({});
 	};
 
 	const saveCampaignCall = async (callFrom: string = '') => {
@@ -935,10 +940,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 	};
 
-	const onExceedLimitYes = () => {
-		setExceedLimitModal(false);
-	};
-
 	const getExitDialog = () => ({
     title: translator('mainReport.handleExitTitle'),
     showDivider: false,
@@ -1020,6 +1021,144 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
     }
   })
 
+	const getSummary = () => ({
+    title: translator('whatsappCampaign.summary'),
+    showDivider: false,
+		showDefaultButtons: false,
+    content: (
+      <SummaryModal
+				classes={classes}
+				campaignName={''}
+				fromNumber={''}
+				onSummaryModalClose={() => setDialogType({type: ''})}
+				onConfirmOrYes={() => onTestSend(false, Number(campaignID || 0))}
+				selectedGroups={selectedTestGroup}
+				selectedFilterGroups={[]}
+				selectedFilterCampaigns={[]}
+				sendType={'1'}
+				sendDate={null}
+				sendTime={null}
+				isSpecialDateBefore={false}
+				daysBeforeAfter={''}
+				specialDatedropDown={{}}
+				spectialDateFieldID={'0'}
+				campaignSummary={campaignSummary}
+				randomlyCount={randomlyCount}
+				setRandomlyCount={setRandomlyCount}
+				resetRandomCount={() => setRandomlyCount('')}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getExceedDailyLimit = () => ({
+    title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {`${translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage')}
+					${campaignSummary?.NextAvailableTime
+						? moment(campaignSummary?.NextAvailableTime).format('DD.MM.YYYY HH:MM')
+						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+				}`}
+      </Typography>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getCallToAction = () => ({
+    title: translator('whatsapp.callToActionTitle'),
+    showDivider: false,
+		showDefaultButtons: false,
+		contentStyle: classes.noPadding,
+		paperStyle: classes.callToAction,
+    content: (
+      <ActionCallPopOver
+				closeCallToAction={() => setDialogType({})}
+				classes={classes}
+				callToActionFieldRows={callToActionFieldRows}
+				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
+				phoneNumberField={phoneNumberField}
+				websiteField={websiteField}
+				addMore={() => { }}
+				updateTemplateData={() => { }}
+				isEditable={false}
+				buttonType={buttonType}
+				templateText={templateData.templateText}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getQuickReplyDialog = () => ({
+    title: translator('whatsapp.quickReply.title'),
+    showDivider: false,
+		showDefaultButtons: false,
+		contentStyle: classes.noPadding,
+		paperStyle: classes.callToAction,
+    content: (
+			<QuickReply
+				classes={classes}
+				closeQuickReply={() => setDialogType({})}
+				quickReplyButtons={quickReplyButtons}
+				setQuickReplyButtons={() => { }}
+				updateTemplateData={() => { }}
+				templateButtons={templateData.templateButtons}
+				isEditable={false}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getDynamicModalDialog = () => ({
+    title: translator('whatsappCampaign.dfieldTitle'),
+    showDivider: false,
+		showDefaultButtons: false,
+		contentStyle: classes.noPadding,
+    content: (
+			<DynamicModal
+				classes={classes}
+				onDynamcFieldModalClose={() => setDialogType({})}
+				personalFields={personalFields}
+				landingPageData={landingPages}
+				dynamicModalVariable={dynamicModalVariable}
+				onDynamcFieldModalSave={(updatedDynamicVariable) =>
+					onDynamcFieldModalSave(updatedDynamicVariable)
+				}
+				dynamicVariable={updatedDynamicVariable}
+				isTrackLink={isTrackLink}
+				setIsTrackLink={setIsTrackLink}
+				savedTemplate={savedTemplate}
+			/>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
 	const renderDialog = () => {
     const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -1031,6 +1170,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			currentDialog = getValidationDialog();
 		} else if (type === 'testGroup') {
 			currentDialog = getTestGroupDialog();
+		} else if (type === 'exceedDailyLimit') {
+			currentDialog = getExceedDailyLimit();
+		} else if (type === 'summary') {
+			currentDialog = getSummary();
+		} else if (type === 'callToAction') {
+			if (callToActionFieldRows?.length === 0) {
+				setCallToActionFieldRows([initialFieldRow]);
+			}
+			currentDialog = getCallToAction();
+		} else if (type === 'quickReply') {
+			currentDialog = getQuickReplyDialog();
+		} else if (type === 'dynamicModal') {
+			currentDialog = getDynamicModalDialog();
 		}
 
 		if (type) {
@@ -1193,11 +1345,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 																				}>
 																				<Button
 																					className={classes.whatsappActionButtons}
-																					onClick={() =>
-																						buttonType === 'quickReply'
-																							? setIsQuickReplyOpen(true)
-																							: setIsCallToActionOpen(true)
-																					}>
+																					onClick={() => setDialogType({type: buttonType === 'quickReply' ? 'quickReply' : 'callToAction'})}
+																				>
 																					{field.value}
 																				</Button>
 																			</Box>
@@ -1452,99 +1601,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							</form>
 						</Box>
 					</Box>
-
-					<DynamicModal
-						classes={classes}
-						isDynamcFieldModal={isDynamcFieldModal}
-						onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
-						personalFields={personalFields}
-						landingPageData={landingPages}
-						dynamicModalVariable={dynamicModalVariable}
-						onDynamcFieldModalSave={(updatedDynamicVariable) =>
-							onDynamcFieldModalSave(updatedDynamicVariable)
-						}
-						dynamicVariable={updatedDynamicVariable}
-						isTrackLink={isTrackLink}
-						setIsTrackLink={setIsTrackLink}
-						savedTemplate={savedTemplate}
-					/>
-
-					{/* <TestGroupModal
-						classes={classes}
-						isOpen={isTestGroupModal}
-						onClose={() => setIsTestGroupModal(false)}
-						title={translator('whatsappCampaign.sendTitle')}
-						testGroupData={testGroups}
-						selectedTestGroup={selectedTestGroup}
-						setSelectedTestGroup={(updatedSelectedGroup) =>
-							setSelectedTestGroup(updatedSelectedGroup)
-						}
-						onConfirmOrYes={() => onOkTestSending()}
-					/> */}
-
-					<QuickReply
-						classes={classes}
-						isQuickReplyOpen={isQuickReplyOpen}
-						closeQuickReply={() => setIsQuickReplyOpen(false)}
-						quickReplyButtons={quickReplyButtons}
-						setQuickReplyButtons={() => { }}
-						updateTemplateData={() => { }}
-						templateButtons={templateData.templateButtons}
-						isEditable={false}
-					/>
-					<ActionCallPopOver
-						isCallToActionOpen={isCallToActionOpen}
-						closeCallToAction={() => setIsCallToActionOpen(false)}
-						classes={classes}
-						callToActionFieldRows={callToActionFieldRows}
-						setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
-						phoneNumberField={phoneNumberField}
-						websiteField={websiteField}
-						addMore={() => { }}
-						updateTemplateData={() => { }}
-						isEditable={false}
-						buttonType={buttonType}
-						templateText={templateData.templateText}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={exceedLimitModal}
-						onClose={() => setExceedLimitModal(false)}
-						title={translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
-						)}
-						subtitle={`${translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${nextMessageAvailable
-								? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
-								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
-							}`}
-						type='alert'
-						onConfirmOrYes={() => onExceedLimitYes()}
-					/>
-
-					<SummaryModal
-						classes={classes}
-						isOpen={isSummaryModal}
-						campaignName={''}
-						fromNumber={''}
-						onSummaryModalClose={() => setIsSummaryModal(false)}
-						onConfirmOrYes={() => onTestSend(false, Number(campaignID || 0))}
-						selectedGroups={selectedTestGroup}
-						selectedFilterGroups={[]}
-						selectedFilterCampaigns={[]}
-						sendType={'1'}
-						sendDate={null}
-						sendTime={null}
-						isSpecialDateBefore={false}
-						daysBeforeAfter={''}
-						specialDatedropDown={{}}
-						spectialDateFieldID={'0'}
-						campaignSummary={campaignSummary}
-						randomlyCount={randomlyCount}
-						setRandomlyCount={setRandomlyCount}
-						resetRandomCount={() => setRandomlyCount('')}
-					/>
 				</>
 			) : (
 				!isLoader && <NoSetup classes={classes} />
