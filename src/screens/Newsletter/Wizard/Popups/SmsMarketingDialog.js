@@ -45,25 +45,28 @@ const SmsMarketingDialog = ({
     const [errors, setErrors] = useState({});
     const [isLinksStatistics, setIsLinksStatistics] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
+    const fromNumberRef = useRef('');
     const toggleLinkStatistics = () => {
         setIsLinksStatistics(!isLinksStatistics);
     };
 
     useEffect(() => {
         setIsLinksStatistics(smsMarketingModel.IsLinksStatistics ?? true);
+        fromNumberRef.current = smsModel.FromNumber;
     }, []);
 
     useEffect(() => {
         setNumberVerified(isFromNumberVerified());
-    }, [verifiedNumbers]);
+    }, [verifiedNumbers, fromNumberRef]);
 
+    
 
 
     const isFromNumberVerified = () => {
         const isVerified = verifiedNumbers.find((number) => {
-            return number?.Number === smsModel.FromNumber && number?.IsOptIn === true;
+            return number?.Number === fromNumberRef.current && number?.IsOptIn === true;
         });
-        return isVerified?.length > 0 || smsModel.FromNumber === '' || smsModel.FromNumber === accountSettings?.DefaultCellNumber;
+        return isVerified?.length > 0 || fromNumberRef.current === '' || fromNumberRef.current === accountSettings?.DefaultCellNumber;
     }
 
     const sendToOptions = [
@@ -122,15 +125,13 @@ const SmsMarketingDialog = ({
         if (!value) {
             return;
         }
+        fromNumberRef.current = value;
         setSmsModel({ ...smsModel, FromNumber: value });
         if (value === accountSettings?.DefaultCellNumber) {
             setNumberVerified(true);
         }
         else {
             if (value.length > 8) {
-                // const isVerified = verifiedNumbers.find((number) => {
-                //     return number?.Number === value && number?.IsOptIn === true;
-                // });
                 setNumberVerified(isFromNumberVerified());
             }
         }
@@ -314,6 +315,7 @@ const SmsMarketingDialog = ({
                             className={classes.NoPaddingtextField}
                             helperText={!!errors.FromNumber && errors.FromNumber}
                             error={!!errors.FromNumber}
+                            ref={fromNumberRef}
                             onLoadedData={(e) => {
                                 handleFromNumber(e.target.value);
                             }}
@@ -453,7 +455,7 @@ const SmsMarketingDialog = ({
                     variant='sms'
                     onClose={() => setNewSmsVerification(false)}
                     step={1}
-                    value={smsModel.FromNumber}
+                    value={fromNumberRef.current}
                 />}
                 {noCreditLeft && <NoCreditDialog
                     classes={classes}
