@@ -68,7 +68,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         left: isRTL ? 0 : 'auto',
         width: shortcutBoxWidth[windowSize],
         height: '100%',
-        maxHeight: '780px',
+        maxHeight: '720px',
         marginTop: windowSize !== 'xs' ? 49 : '',
         ['@media (max-width:1280px)']: {
             maxHeight: 'calc(100% - 65px)',
@@ -119,7 +119,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         width: '85%',
         background: '#fff',
         borderRadius: '20px',
-        marginBottom: windowSize === 'xs' ? 30 : 40,
+        marginBottom: windowSize === 'xs' ? 30 : 25,
         fontSize: '18px',
         position: 'relative',
         textTransform: 'capitalize',
@@ -172,7 +172,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         fontFamily: 'pulseemicons',
         height: '92px',
         fontSize: '30px',
-        marginBottom: 45,
+        marginBottom: 35,
         width: '85%',
         '&:hover': {
             background: 'none'

@@ -1543,14 +1543,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   dashboardBottomPaper: {
     [theme.breakpoints.up("lg")]: {
-      minHeight: 370,
+      // minHeight: 370,
     },
     [theme.breakpoints.down("xs")]: {
       margin: 10,
     },
     height: 'max-content',
     margin: 30,
-    paddingBottom: 25,
+    // paddingBottom: 25,
     borderRadius: 10,
     border: '3px solid #F0F5FF',
     '&.MuiPaper-elevation3': {
@@ -1668,6 +1668,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: "5px 0px",
   },
   lastReportsTabPanels: {
+    paddingTop: 10,
+    paddingBottom: 25,
     paddingRight: windowSize !== "xs" ? 5 : 0,
     paddingLeft: windowSize !== "xs" ? 5 : 0,
     '& .MuiDivider-root': {
