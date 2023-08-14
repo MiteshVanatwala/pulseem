@@ -14,6 +14,7 @@ import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import GroupTags from "../../components/Groups/GroupTags";
 import InputMask from 'react-input-mask';
+import { BiSave } from "react-icons/bi";
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -323,8 +324,8 @@ const Shopify = ({ classes }: any) => {
       {toastMessage && renderToast()}
       {
         !isPageLoading && (
-          <Box className={"formContainer"}>
-            <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15)}>
+          <Box className={clsx(classes.containerBody, classes.pt30)}>
+            <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15, classes.bold)}>
               {t('integrations.shopify.authenticate')}
             </Typography>
             <Box className={clsx(classes.dblock, classes.pb15)}>
@@ -336,12 +337,11 @@ const Shopify = ({ classes }: any) => {
                 {RenderHtml(t("integrations.shopify.insertShopifyURL"))}
               </Typography>
               <TextField
-                variant="outlined"
                 size="small"
                 name="DefaultFromName"
                 value={settings.store_name}
                 onChange={(event) => setSettings({ ...settings, store_name: event.target.value })}
-                className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                className={clsx(classes.dBlock, classes.shopifySettingTextBox)}
                 disabled={isAuthenticated}
                 placeholder="https://<store_id>.myshopify.com"
               />
@@ -363,12 +363,11 @@ const Shopify = ({ classes }: any) => {
                       {t("integrations.shopify.insertAPIKey")}
                     </Typography>
                     <TextField
-                      variant="outlined"
                       size="small"
                       name="DefaultFromName"
                       value={settings.api_key}
                       onChange={(event) => setSettings({ ...settings, api_key: event.target.value })}
-                      className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                      className={clsx(classes.dBlock, classes.shopifySettingTextBox)}
                       disabled={isAuthenticated}
                     />
                     {!!errors.api_key && (
@@ -387,12 +386,11 @@ const Shopify = ({ classes }: any) => {
                     {t("integrations.shopify.insertToken")}
                   </Typography>
                   <TextField
-                    variant="outlined"
                     size="small"
                     name="DefaultFromName"
                     value={settings.api_access_token}
                     onChange={(event) => setSettings({ ...settings, api_access_token: event.target.value })}
-                    className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                    className={clsx(classes.dBlock, classes.shopifySettingTextBox)}
                     disabled={isAuthenticated}
                   />
                   {!!errors.api_access_token && (
@@ -450,9 +448,8 @@ const Shopify = ({ classes }: any) => {
                           variant='contained'
                           size='medium'
                           className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen,
-                            classes.backButton
+                            classes.btn,
+                              classes.btnRounded
                           )}
                           color="primary"
                         >
@@ -472,9 +469,8 @@ const Shopify = ({ classes }: any) => {
                     variant='contained'
                     size='medium'
                     className={clsx(
-                      classes.actionButton,
-                      classes.actionButtonRed,
-                      classes.backButton
+                      classes.btn,
+                      classes.btnRounded
                     )}
                     color="primary"
                   >
@@ -486,9 +482,8 @@ const Shopify = ({ classes }: any) => {
                     variant='contained'
                     size='medium'
                     className={clsx(
-                      classes.actionButton,
-                      classes.actionButtonLightBlue,
-                      classes.backButton,
+                      classes.btn,
+                      classes.btnRounded,
                       classes.ml10
                     )}
                     color="primary"
@@ -505,8 +500,8 @@ const Shopify = ({ classes }: any) => {
 
       {
         isAuthenticated && (
-          <Box className={"formContainer"}>
-            <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15)}>
+          <Box className={classes.pt30}>
+            <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15, classes.bold)}>
               {t('integrations.shopify.insertClientToGroup')}
             </Typography>
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
@@ -672,11 +667,12 @@ const Shopify = ({ classes }: any) => {
                 variant='contained'
                 size='medium'
                 className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightGreen,
-                  classes.backButton
+                  classes.btn,
+                  classes.btnRounded,
+                  classes.redButton
                 )}
                 color="primary"
+                startIcon={<BiSave className={classes.colorWhite} />}
               >
                 {t("common.save")}
               </Button>
