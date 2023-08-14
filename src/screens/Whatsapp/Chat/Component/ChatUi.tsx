@@ -74,8 +74,10 @@ const ChatUi = ({
 	const muiclasses = useStyles();
 
 	useEffect(() => {
-		const chatDiv = document.getElementById('chat-messages');
-		chatDiv?.scroll({ top: chatDiv?.scrollHeight, behavior: 'auto' });
+		setTimeout(() => {
+			const chatDiv = document.getElementById('chat-messages');
+			chatDiv?.scroll({ top: chatDiv?.scrollHeight, behavior: 'auto' });
+		}, 1500)
 	}, [allWhatsappChat]);
 
 	useEffect(() => {

@@ -548,7 +548,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: "#636363",
   },
   colorWhite: {
-    color: "#fff",
+    color: "#fff !important",
   },
   colorGray: {
     color: "rgba(0,0,0,0.40)",
@@ -1179,7 +1179,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       pointerEvents: 'none'
     },
     "&.selected": {
-      border: "solid 5px #168ee3"
+      border: "solid 5px #ff3343"
     }
   },
   baseButtons: {
@@ -3293,10 +3293,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   InputMaskTextField: {
     padding: 10,
-    border: 'solid 1px #c4c4c4',
-    borderRadius: 4,
+    borderBottom: 'solid 1px #c4c4c4',
     fontSize: 14,
-    width: 400,
+    width: 390,
     letterSpacing: 1
   },
   whatsapp: {
@@ -3425,7 +3424,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   shopifySettingTextBox: {
     '& input': {
-      minWidth: '400px'
+      minWidth: '400px',
+      maxWidth: '400px',
+      paddingLeft: 5,
+      borderBottom: 'solid 1px #c4c4c4',
+      paddingTop: 10,
+      paddingBottom: 10,
     },
     '& .selectBox': {
       marginLeft: 30,
