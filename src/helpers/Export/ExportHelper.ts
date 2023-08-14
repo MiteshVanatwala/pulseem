@@ -69,7 +69,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 reject(error);
             }
         }
-        if (options.ReplaceNull === true) {
+        if (options.ReplaceNull === true && options.PropertyToReplace && options.PropertyDefaultReplaceValue) {
             try {
                 finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue) as unknown as ExportData;
             } catch (error) {
@@ -135,7 +135,7 @@ export async function OrderItems(data: ExportData | any, order: any, options: Ex
 }
 export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[], options: ExportOption) {
     const retValData: any = [];
-    data.forEach((o: Status) => {
+    data?.forEach((o: Status) => {
         const tempData = { ...o } as Status;
         if (options.ConvertStatusDescription === true) {
             if (o.STATUS || o.STATUS === 0) {

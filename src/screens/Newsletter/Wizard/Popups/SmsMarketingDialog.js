@@ -59,7 +59,7 @@ const SmsMarketingDialog = ({
         setNumberVerified(isFromNumberVerified());
     }, [verifiedNumbers, fromNumberRef]);
 
-    
+
 
 
     const isFromNumberVerified = () => {
@@ -214,7 +214,7 @@ const SmsMarketingDialog = ({
                 setToastMessage({ severity: 'success', color: 'success', message: response?.Message, showAnimtionCheck: true });
             }
         }
-
+        
         setLoader(false);
         setTimeout(() => {
             response?.StatusCode !== 405 && response?.StatusCode !== 402 && onConfirm();
@@ -474,7 +474,7 @@ const SmsMarketingDialog = ({
         cancelText: t("common.Cancel"),
         onClose: onClose,
         onCancel: onCancel,
-        onConfirm: () => { handleConfirm() }
+        onConfirm: (e) => { handleConfirm(e) }
     }
 
     return (

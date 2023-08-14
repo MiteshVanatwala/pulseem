@@ -351,7 +351,7 @@ const Editorbox = ({
             }
         });
     }
-    const debouncedCallback = debounce(getcredits, 1000);
+    const debouncedCallback = debounce(getcredits, 100);
     const onAddText = (text) => {
         text = text.trim();
         let afterUpdateCharCount =

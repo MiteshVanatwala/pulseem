@@ -923,24 +923,6 @@ const NewsLetterInfo = ({ classes }) => {
                     style={{ margin: '8px', }}
                     endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >{t('master.continueToNewEditor')}</Button>)
-
-                {/* 
-                <Button onClick={() => handleSubmit(true, false, true)}
-                        className={clsx( 
-                        classes.actionButton,
-                        classes.actionButtonLightGreen,
-                        classes.backButton,
-                        classes.ribbonContainer
-                    )}
-                    style={{ marginInlineStart: '8px' }}
-                    color="primary"
-                >
-                    {t('master.continueToNewEditor')}
-                    <div className="wrap">
-                        <span className="ribbon">{t('mainReport.newFeature')}</span>
-                    </div>
-                </Button>)
-        */}
             }
             else {
                 wizardButtons.push(<>

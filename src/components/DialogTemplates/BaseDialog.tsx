@@ -96,22 +96,22 @@ export const BaseDialog = ({
       >
         <Grid item>
           <Button
-            name="btnConfirm"
+            disabled={confirmDisabled}
+            onClick={(e: React.MouseEvent<Element, MouseEvent>) => onConfirm(e)}
             className={clsx(
               classes.btn,
               classes.btnRounded,
               "saveFixedDetails"
             )}
-            onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
           >
             <>{t(confirmText)}</>
           </Button>
         </Grid>
         <Grid item>
           <Button
-            variant="contained"
-            size="small"
-            onClick={(e: React.MouseEvent<HTMLElement>) => {
+            variant='contained'
+            size='small'
+            onClick={(e: React.MouseEvent<Element, MouseEvent>) => {
               if (onClose) {
                 onClose();
               }
