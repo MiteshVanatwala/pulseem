@@ -538,5 +538,9 @@
   "summaryModalTitle": "Campaign Summary",
   "feedback": "Feedback",
   "isResponse": "Is Response",
-  "statusName": "Status Name"
+  "statusName": "Status Name",
+  "verifiedCount": "Verified",
+  "verifiedTooltip": "Without \"preview\" clicks of links",
+  "SMSReportNote1": "We improve your click data!",
+  "SMSReportNote2": "On many mobile phones, previews of links attached to SMS counts as a clicks, <br />We've added a \"Verified Clicks\" column so you would know who actually clicked on your links!"
 }

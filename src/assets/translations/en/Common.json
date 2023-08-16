@@ -631,5 +631,6 @@
   "templateSaved": "Template successfully saved!",
   "templateNameIsRequired": "Template name is required",
   "loadMore": "Load More",
-  "noCampaignToRestore": "No campaigns for restore"
+  "noCampaignToRestore": "No campaigns for restore",
+  "doNotShow": "Do not show again"
 }
