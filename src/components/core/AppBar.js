@@ -50,7 +50,8 @@ const AppBarItem = ({
   const handleClose = () => {
     setOpen(false)
   }
-  const currentStyle = showIcon ? classes.appBarItemIcon : classes.appBarItemText
+  const currentStyle = showIcon ? classes.appBarItemIcon : classes.appBarItemText;
+  const appBarItemFontSize = window.screen.availWidth < 1500 ? classes.f14 : classes.f16;
   {/* Top menu */ }
   return (
     <Box
@@ -77,6 +78,7 @@ const AppBarItem = ({
           ref={buttonRef}
           className={clsx(
             currentStyle,
+            appBarItemFontSize,
             textStyle,
             chosen ? 'chosenText' : ''
           )}>
