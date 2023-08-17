@@ -599,10 +599,24 @@ const SmsReport = ({ classes }) => {
           className={classes.flex3}>
           <Grid container direction={'row'} className={classes.justifyEvenly}>
             <Grid item className={classes.plr10}>
-              {renderIntData(ClicksCount, 'blue', hrefs.ClickCount)}
+              <Tooltip
+                title={t('mainReport.clickCountTooltip')}
+                arrow
+                placement={'top'}
+                classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black }}
+              >
+                {renderIntData(ClicksCount, 'blue', hrefs.ClickCount)}
+              </Tooltip>
             </Grid>
             <Grid item className={classes.plr10}>
-              {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique)}
+              <Tooltip
+                title={t('mainReport.uniqueClickCountTooltip')}
+                arrow
+                placement={'top'}
+                classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black }}
+              >
+                {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique)}
+              </Tooltip>
             </Grid>
             <Grid item className={classes.plr10}>
               <Tooltip
