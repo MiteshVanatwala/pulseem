@@ -242,8 +242,8 @@ const SmsReport = ({ classes }) => {
     "UpdateDate": t('common.UpdateDate'),
     "SendDate": t('common.SendDate'),
     "ClicksCount": t('mainReport.clickCount'),
-    "VerifiedCount": t('mainReport.verifiedCount'),
     "UniqueClicksCount": t('common.ClicksUnique'),
+    "RealClicks": t('mainReport.verifiedCount'),
     "TotalSendPlan": t('mainReport.totalSendPlan'),
     "CreditsPerSms": t('mainReport.postCredits'),
     "IsResponse": t('mainReport.isResponse'),
@@ -823,7 +823,6 @@ const SmsReport = ({ classes }) => {
     return {
       title: t("mainReport.SMSReportNote1"),
       showDivider: true,
-      exitButton: false,
       content: (
         <>
           <Typography className={classes.f18}>
