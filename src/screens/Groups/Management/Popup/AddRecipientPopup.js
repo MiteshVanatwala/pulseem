@@ -11,9 +11,10 @@ import {
     AccordionDetails,
     makeStyles,
     FormControl,
-    Select,
-    MenuItem
+    MenuItem,
+    InputAdornment
 } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { DateField } from '../../../../components/managment/index'
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -30,7 +31,7 @@ import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
 import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
 import { changeClientStatus } from "../../../../redux/reducers/clientSlice";
-import { IoMdClose } from "react-icons/io";
+import { IoIosArrowDown, IoMdClose } from "react-icons/io";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { ReplaceExtraFieldHeader } from "../../../../helpers/UI/AccountExtraField";
 
@@ -56,7 +57,6 @@ const useStyles = makeStyles({
         borderRadius: 10,
         marginBottom: 16,
 
-        // margin: '0 !important',
         '& .MuiAccordionSummary-root': {
             minHeight: 30,
             maxHeight: 48,
@@ -179,22 +179,40 @@ const AddRecipientPopup = ({ classes,
     }
     const StatusDropdown = ({ data = [], onSelect = () => null, label = '', value = null }) => {
         return (
-            <FormControl variant="standard" className={classes.selectInputFormControl}>
+            <FormControl variant="standard" className={clsx(classes.selectInputFormControl, classes.w50)}>
                 <Select
+                    variant="standard"
                     labelId="statusSelect"
                     id="statusSelect"
                     label={label}
                     value={value}
                     onChange={(e) => onSelect(e.target.value)}
-                >
-                    {
-                        data.map((obj, idx) => <MenuItem
-                            key={idx}
-                            style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
-                            disabled={obj.status === -1 || obj.status === 5}
-                            value={obj.status}>{t(obj.text)}</MenuItem>
-                        )
+                    endAdornment={
+                        <InputAdornment
+                            className={classes.selectAdornment}
+                            position="end"
+                        >
+                            <IoIosArrowDown size={20} />
+                        </InputAdornment>
                     }
+                    MenuProps={{
+                        PaperProps: {
+                            style: {
+                                maxHeight: 150,
+                                direction: isRTL ? 'rtl' : 'ltr'
+                            },
+                        },
+                    }}
+                >
+                    {data.map((obj, idx) => (
+                        <MenuItem
+                            key={idx}
+                            disabled={obj.status === -1 || obj.status === 5}
+                            value={obj.status}
+                        >
+                            {t(obj.text)}
+                        </MenuItem>
+                    ))}
                 </Select>
             </FormControl >
         )
@@ -230,7 +248,6 @@ const AddRecipientPopup = ({ classes,
             else {
                 if (e.target.name === "Email") {
                     e.target.value = e.target.value.trim().replace(/ /g, "")
-                    // e.target.value = e.target.value.split('').reverse().join('')
                 }
                 setAddRecipientData({
                     ...addRecipientData, [e.target.name]: e.target.value
@@ -1170,9 +1187,9 @@ const AddRecipientPopup = ({ classes,
     }
 
     const STATUS_FORM = () => (
-        <Grid container direction='row' spacing={3}>
+        <Grid container direction='row'>
             <Grid item xs="12" sm="6">
-                <Grid container direction='row' spacing={3}>
+                <Grid container direction='row' className={classes.paddingSides15}>
                     <Grid item xs="12" sm="3">
                         <Typography title={t("common.emailStatus")} className={classes.alignDir}>{t('common.emailStatus')}</Typography>
                     </Grid>
@@ -1189,7 +1206,7 @@ const AddRecipientPopup = ({ classes,
                 </Grid>
             </Grid>
             <Grid item xs="12" sm="6">
-                <Grid container direction='row' spacing={3}>
+                <Grid container direction='row' spacing={3} className={classes.paddingSides15}>
                     <Grid item xs="12" sm="3">
                         <Typography title={t("common.smsStatus")} className={classes.alignDir}>{t('common.smsStatus')}</Typography>
                     </Grid>
@@ -1264,8 +1281,8 @@ const AddRecipientPopup = ({ classes,
             reduceTitle
             style={{ minWidth: 240 }}
             renderButtons={() => (
-                <div>
-                    {recipientData && <Box style={{ paddingInline: '5%' }} container spacing={2} className={clsx(classes.responsiveLinePadding, classes.mxAuto, classes.justifyCenterOfCenter, classes.flexWrap,)}>
+                <>
+                    {recipientData && <Box container className={clsx(classes.responsiveLinePadding, classes.mxAuto, classes.justifyCenterOfCenter, classes.flexWrap, classes.paddingSides15)}>
                         {STATUS_FORM()}
                     </Box>}
 
@@ -1335,7 +1352,7 @@ const AddRecipientPopup = ({ classes,
                         </Box>}
 
                     </Box>
-                </div>
+                </>
             )}
             customContainerStyle=""
             cancelText="common.Cancel"

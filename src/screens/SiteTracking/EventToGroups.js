@@ -117,7 +117,7 @@ const EventToGroups = ({
             >
                 <Box className={clsx('selectWrapper', { [classes.w100]: windowSize === 'xs' })}>
                     <FormControl
-                        variant="outlined"
+                        variant="standard"
                         className={clsx(classes.selectInputFormControl)}
                         style={{ minWidth: 100, marginTop: 12, width: windowSize === 'xs' ? '100%' : 'auto' }}
                     >

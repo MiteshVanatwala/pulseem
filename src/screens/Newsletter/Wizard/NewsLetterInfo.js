@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
-import { IoIosArrowDown, IoMdImages } from 'react-icons/io';
-import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, Button, FormControlLabel, Checkbox, InputAdornment } from '@material-ui/core'
+import { IoIosArrowDown } from 'react-icons/io';
+import { Grid, Box, Typography, TextField, makeStyles, FormControl, Button, FormControlLabel, Checkbox, InputAdornment, MenuItem } from '@material-ui/core'
+import Select from '@mui/material/Select';
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
@@ -617,13 +618,18 @@ const NewsLetterInfo = ({ classes }) => {
                         content:
                             <Box className='selectWrapper'>
                                 <Typography title={t("campaigns.newsLetterEditor.fromEmail")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromEmail")}</Typography>
-                                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} >
+                                <FormControl
+                                    className={clsx(classes.selectInputFormControl, classes.w100)}
+                                >
                                     <Select
-                                        labelId="FromEmail"
-                                        id="FromEmail"
-                                        displayEmpty
+                                        variant="standard"
                                         name="FromEmail"
                                         value={campaingnValues?.FromEmail}
+                                        className={classes.pbt5}
+                                        onChange={(event, val) => {
+                                            setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
+                                            setErrors({ ...errors, FromEmail: '' });
+                                        }}
                                         endAdornment={
                                             <InputAdornment
                                                 className={classes.selectAdornment}
@@ -632,31 +638,30 @@ const NewsLetterInfo = ({ classes }) => {
                                                 <IoIosArrowDown size={20} />
                                             </InputAdornment>
                                         }
-                                        inputProps={{ 'aria-label': 'Without label' }}
                                         MenuProps={{
-                                            style: {
-                                                paddingTop: 9,
-                                                paddingBottom: 9
-                                            }
-                                        }}
-                                        onChange={(event, val) => {
-                                            setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
-                                            setErrors({ ...errors, FromEmail: '' });
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 300,
+                                                },
+                                            },
                                         }}
                                     >
-                                        <option disabled value="-1" key="-1" className={classes.underlinedSelOptns}>{t("common.select")}</option>
+                                        <MenuItem
+                                            key='-1'
+                                            value='-1'
+                                            disabled
+                                        >
+                                            {t("common.select")}
+                                        </MenuItem>
                                         {verifiedEmails.map((item, index) => {
-                                            if (item.IsOptIn) {
-                                                return <option
-                                                    key={`exd_${index}`}
-                                                    value={item.Number}
-                                                    className={classes.underlinedSelOptns}
-                                                >
-                                                    {t(item.Number)}
-                                                </option>
-                                            }
-                                        }
-                                        )}
+                                            return <MenuItem
+                                                key={index}
+                                                value={item.Number}
+                                                name={item.Number}
+                                            >
+                                                {t(item.Number)}
+                                            </MenuItem>
+                                        })}
                                     </Select>
                                 </FormControl>
                                 <Typography className={clsx(errors.FromEmail ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -710,13 +715,34 @@ const NewsLetterInfo = ({ classes }) => {
                     {
                         content: <Box className='selectWrapper'>
                             <Typography title={t("campaigns.newsLetterEditor.personalization")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.personalization")}</Typography>
-                            <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} error={errors.FromEmail}>
+                            <FormControl
+                                className={clsx(classes.selectInputFormControl, classes.w100)}
+                            >
                                 <Select
-                                    labelId="personalization"
-                                    id="personalization"
-                                    displayEmpty
-                                    name='personalization'
+                                    variant="standard"
+                                    name="personalization"
                                     value={''}
+                                    className={classes.pbt5}
+                                    onChange={(event) => {
+                                        setCampaingnValues({
+                                            ...campaingnValues,
+                                            personalDatatoSubject: event.target.value,
+                                            Subject: `${campaingnValues.Subject} ##${event.target.value}##`
+                                        })
+                                    }}
+                                    renderValue={(selected) => {
+                                        if (!selected) {
+                                            return <MenuItem
+                                                    key=''
+                                                    value=''
+                                                    name=''
+                                                    disabled
+                                                >
+                                                    {t("common.select")}
+                                                </MenuItem>;
+                                        }
+                                        return selected;
+                                    }}
                                     endAdornment={
                                         <InputAdornment
                                             className={classes.selectAdornment}
@@ -725,40 +751,26 @@ const NewsLetterInfo = ({ classes }) => {
                                             <IoIosArrowDown size={20} />
                                         </InputAdornment>
                                     }
-                                    inputProps={{ 'aria-label': 'Without label' }}
                                     MenuProps={{
-                                        style: {
-                                            paddingTop: 9,
-                                            paddingBottom: 9
-                                        }
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: 300,
+                                                direction: isRTL ? 'rtl' : 'ltr'
+                                            },
+                                        },
                                     }}
-                                    onChange={(event) => {
-                                        setCampaingnValues(
-                                            {
-                                                ...campaingnValues,
-                                                personalDatatoSubject: event.target.value,
-                                                Subject: `${campaingnValues.Subject} ##${event.target.value}##`
-                                            })
-                                    }}
-                                    renderValue={(selected) => {
-                                        if (!selected) {
-                                            return <option>{t("common.select")}</option>;
-                                        }
-                                        return selected;
-                                    }}
-
-
                                 >
-                                    <option className={classes.underlinedSelOptns}>{t("common.select")}</option>;
-                                    {extraAccountDATA.map((item, index) => (
-                                        <option
-                                            key={`exd_${index}`}
+                                    <MenuItem key='' value='' disabled>{t("common.select")}</MenuItem>
+                                    {extraAccountDATA.map((item, index) => {
+                                        return <MenuItem
+                                            key={index}
                                             value={item.value}
-                                            className={classes.underlinedSelOptns}
+                                            name={item.value}
+                                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                                         >
                                             {t(item?.label)}
-                                        </option>
-                                    ))}
+                                        </MenuItem>
+                                    })}
                                 </Select>
                             </FormControl>
                         </Box>
