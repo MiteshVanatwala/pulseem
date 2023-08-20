@@ -628,5 +628,6 @@
   "templateSaved": "תבנית נשמרה בהצלחה!",
   "templateNameIsRequired": "אנא בחרו שם לתבנית",
   "loadMore": "טען עוד",
-  "noCampaignToRestore": "אין קמפיינים לשחזור"
+  "noCampaignToRestore": "אין קמפיינים לשחזור",
+  "doNotShow": "אל תציג שוב"
 }
