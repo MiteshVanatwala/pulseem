@@ -320,9 +320,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		} else {
 			whatsAppChatConversationStatusData?.payload?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: whatsAppChatConversationStatusData?.payload?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: whatsAppChatConversationStatusData?.payload?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -348,9 +348,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			});
 			whatsAppChatSessionStatus?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: whatsAppChatSessionStatus?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: whatsAppChatSessionStatus?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -713,9 +713,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				} else {
 					sendWhatsappChat?.Message
 						? setToastMessage({
-								...ToastMessages.ERROR,
-								message: sendWhatsappChat?.Message,
-						  })
+							...ToastMessages.ERROR,
+							message: sendWhatsappChat?.Message,
+						})
 						: setToastMessage(ToastMessages.ERROR);
 				}
 			}
@@ -763,7 +763,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					...contactsPaginationSetting,
 					hasMore:
 						whatsAppChatContactsData?.Data?.Items?.length <
-						contactsPaginationSetting?.PageSize
+							contactsPaginationSetting?.PageSize
 							? false
 							: true,
 					PageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
@@ -812,31 +812,30 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	};
 
 	const getExceedDailyLimit = () => ({
-    title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {`${translator(
+		title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{`${translator(
 					'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-				)} ${
-					nextMessageAvailable
-						? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
-						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
-				}`}
-      </Typography>
-    ),
-    onConfirm: async () => {
+				)} ${nextMessageAvailable
+					? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
+					: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+					}`}
+			</Typography>
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const getValidationDialog = () => ({
-    title: translator('whatsappCampaign.sendValidation'),
-    showDivider: false,
-    content: (
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		content: (
 			<ul className={clsx(classes.noMargin, classes.mb20)}>
 				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
 					<li key={index} className={classes.validationAlertModalLi}>
@@ -844,21 +843,21 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					</li>
 				))}
 			</ul>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const getDynamicModalDialog = () => ({
-    title: translator('whatsappCampaign.dfieldTitle'),
-    showDivider: false,
+		title: translator('whatsappCampaign.dfieldTitle'),
+		showDivider: false,
 		showDefaultButtons: false,
 		contentStyle: classes.noPadding,
-    content: (
+		content: (
 			<DynamicModal
 				classes={classes}
 				onDynamcFieldModalClose={() => setDialogType({})}
@@ -873,17 +872,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				setIsTrackLink={setIsTrackLink}
 				savedTemplate={savedTemplate}
 			/>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const renderDialog = () => {
-    const { type } = dialogType || {}
+		const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'validation') {
 			currentDialog = getValidationDialog();
@@ -906,7 +905,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				</BaseDialog>
 			)
 		}
-  }
+	}
 
 	return (
 		<>
@@ -960,7 +959,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									setIsTemplateModal={setIsTemplateModal}
 									dynamicVariable={dynamicVariable}
 									updatedDynamicVariable={updatedDynamicVariable}
-									setIsDynamcFieldModal={() => setDialogType({type: 'dynamicModal'})}
+									setIsDynamcFieldModal={() => setDialogType({ type: 'dynamicModal' })}
 									setDynamicModalVariable={setDynamicModalVariable}
 									savedTemplate={savedTemplate}
 									chatContacts={activeChatContacts}
@@ -991,7 +990,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				)}
 				{renderDialog()}
 				<Loader isOpen={isLoader} showBackdrop={true} />
-			</DefaultScreen>
+			</DefaultScreen >
 		</>
 	);
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Divider, Typography, Button } from '@material-ui/core';
+import { Box, Divider, Button } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import FORM_COMPANY_DETAILS from './Form_CompanyDetails';
 import FORM_ACCOUNT_DETAILS from './Form_AccountDetails';
 import Toast from '../../../components/Toast/Toast.component';
-import useCore from '../../../helpers/hooks/Core';
 import {
 	getAccountSettings,
 	updateDetails,
@@ -22,14 +21,24 @@ import {
 	MdArrowForwardIos,
 	MdMobileFriendly,
 	MdOutlineMarkEmailRead,
-} from "react-icons/md";
+} from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
+import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
+import { updateWhatsappTier } from '../../../redux/reducers/whatsappSlice';
+import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.types';
+import { apiStatus } from '../../Whatsapp/Constant';
+import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 
 const AccountSettingsEditor = ({ classes }: any) => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
 	const { account, ToastMessages } = useSelector((state: any) => state?.accountSettings);
+	const { WhatsappTierID } = useSelector(
+		(state: {
+			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.accountSettings?.SubAccountSettings
+	);
 	const { CoreToastMessages } = useSelector((state: any) => state?.core);
 	const [toastMessage, setToastMessage] = useState(null);
 	const [showLoader, setShowLoader] = useState(true);
@@ -72,6 +81,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		ExpiryDate: null
 
 	} as AccountSettings);
+	const [selectedTier, setSelectedTier] = useState<string>('1');
 
 	const renderToast = () => {
 		setTimeout(() => {
@@ -92,11 +102,11 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		setSettingRequest(account?.Data);
 	}, [account]);
 
-	// useEffect(() => {
-	// 	if (WhatsappTierID) {
-	// 		setSelectedTier(WhatsappTierID);
-	// 	}
-	// }, [WhatsappTierID]);
+	useEffect(() => {
+		if (WhatsappTierID) {
+			setSelectedTier(WhatsappTierID);
+		}
+	}, [WhatsappTierID]);
 
 	const handleUpdate = async (
 		updatedObject: AccountSettings,
@@ -111,11 +121,11 @@ const AccountSettingsEditor = ({ classes }: any) => {
 
 			try {
 				switch (saveType) {
-					case "company": {
+					case 'company': {
 						response = await dispatch(updateDetails(updatedObject));
 						break;
 					}
-					case "account":
+					case 'account':
 					default: {
 						response = await dispatch(updateSettings(updatedObject));
 					}
@@ -217,22 +227,22 @@ const AccountSettingsEditor = ({ classes }: any) => {
 				return false;
 			}
 		}
-	};
+	}
 
-	// const onTierChange = async (tier: string) => {
-	// 	const prevSelectedTier = selectedTier;
-	// 	setSelectedTier(tier);
-	// 	let { payload }: UpdateWhatsappTier = await dispatch<any>(
-	// 		updateWhatsappTier(tier)
-	// 	);
-	// 	if (payload.Status === apiStatus.SUCCESS) {
-	// 		setToastMessage(ToastMessages?.WHATSAPP_TIER_SAVED)
-	// 		await dispatch<any>(getCommonFeatures());
-	// 	} else {
-	// 		setSelectedTier(prevSelectedTier)
-	// 		setToastMessage(ToastMessages?.WHATSAPP_TIER_NOT_SAVED)
-	// 	}
-	// };
+	const onTierChange = async (tier: string) => {
+		const prevSelectedTier = selectedTier;
+		setSelectedTier(tier);
+		let { payload }: UpdateWhatsappTier = await dispatch<any>(
+			updateWhatsappTier(tier)
+		);
+		if (payload.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages?.WHATSAPP_TIER_SAVED)
+			await dispatch<any>(getCommonFeatures());
+		} else {
+			setSelectedTier(prevSelectedTier)
+			setToastMessage(ToastMessages?.WHATSAPP_TIER_NOT_SAVED)
+		}
+	};
 
 	return (
 		<DefaultScreen
@@ -244,7 +254,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		>
 			{toastMessage && renderToast()}
 			<Box className={clsx(classes.settingsContainer)}>
-				<Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'block' }}>
+				<Box className={clsx("head", classes.flexSpaceBetween)} style={{ display: windowSize !== 'xs' ? 'flex' : 'block' }}>
 					<Title Text={t("settings.accountSettings.title")} classes={classes}
 						ContainerStyle={{ width: '100% !important' }}
 						Element={<Box style={{ float: isRTL ? 'left' : 'right' }}>
@@ -304,13 +314,14 @@ const AccountSettingsEditor = ({ classes }: any) => {
 						}}
 					/>
 					<Divider style={{ marginTop: 35 }} />
-					{/* @ts-ignore */}
 					<FORM_ACCOUNT_DETAILS
 						classes={classes}
 						setToastMessage={setToastMessage}
 						ToastMessages={ToastMessages}
 						Settings={{ ...settingRequest as AccountSettings }}
 						OnUpdate={(updatedObject: AccountSettings) => handleUpdate(updatedObject, 'account', true)}
+						selectedTier={selectedTier}
+						onTierChange={onTierChange}
 					/>
 				</Box>
 			</Box>

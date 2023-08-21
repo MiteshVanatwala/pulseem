@@ -242,9 +242,9 @@ const ActionCallPopOver = ({
 	};
 
 	const getValidationDialog = () => ({
-    title: translator('whatsappCampaign.sendValidation'),
-    showDivider: false,
-    content: (
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		content: (
 			<ul className={clsx(classes.noMargin, classes.mb20)}>
 				{validationErrors?.map((requiredField: string, index: number) => (
 					<li key={index} className={classes.validationAlertModalLi}>
@@ -252,34 +252,34 @@ const ActionCallPopOver = ({
 					</li>
 				))}
 			</ul>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const getLimitDialog = () => ({
-    title: '',
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {translator('whatsapp.template.textLimitAlertDesc')}
-      </Typography>
-    ),
-    onConfirm: async () => {
+		title: '',
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsapp.template.textLimitAlertDesc')}
+			</Typography>
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
 			onConfirmTextLimit();
-    },
-  })
+		},
+	})
 
 	const renderDialog = () => {
-    const { data, type } = dialogType || {}
+		const { data, type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'limit') {
 			currentDialog = getLimitDialog();
@@ -300,7 +300,7 @@ const ActionCallPopOver = ({
 				</BaseDialog>
 			)
 		}
-  }
+	}
 
 	return (
 		<>
@@ -360,11 +360,11 @@ const ActionCallPopOver = ({
 													inputProps={
 														field.fieldName === 'whatsapp.phoneNumber'
 															? {
-																	maxLength: 20,
-																}
+																maxLength: 20,
+															}
 															: field.fieldName === 'whatsapp.websiteURL'
-															? { maxLength: 2000 }
-															: { maxLength: 20 }
+																? { maxLength: 2000 }
+																: { maxLength: 20 }
 													}
 													helperText={
 														field.fieldName === 'whatsapp.websiteURL'

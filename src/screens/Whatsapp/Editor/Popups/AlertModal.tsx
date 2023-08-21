@@ -16,6 +16,7 @@ const AlertModal = ({
 	subtitle,
 	children,
 	direction,
+	titleFontSize,
 }: AlertModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -32,7 +33,8 @@ const AlertModal = ({
 					{title?.length > 0 && (
 						<div
 							id='responsive-dialog-title'
-							className={classes.alertModalTitle}>
+							className={classes.alertModalTitle}
+							style={{ fontSize: titleFontSize ? titleFontSize : '' }}>
 							{title}
 						</div>
 					)}
@@ -42,7 +44,7 @@ const AlertModal = ({
 					<div
 						className={classes.alertModalContent}
 						style={{ direction: direction }}>
-						<div className={classes.alertModalContentText}>{subtitle}</div>
+						<div className={clsx(classes.alertModalContentText, classes.f15)}>{subtitle}</div>
 						<div className={classes.alertModalContentChildren}>{children}</div>
 					</div>
 					<Grid container className={classes.alertModalAction}>

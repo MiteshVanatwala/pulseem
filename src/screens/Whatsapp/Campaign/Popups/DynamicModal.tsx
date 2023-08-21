@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import DynamicModalFields from './DynamicModalFields';
 import { fieldIDs, fieldNames } from '../../Constant';
 import { useParams } from 'react-router-dom';
+import ValidationAlert from './ValidationAlert';
 
 const DynamicModal = ({
 	classes,
@@ -32,13 +33,15 @@ const DynamicModal = ({
 	const { campaignID } = useParams();
 	const { t: translator } = useTranslation();
 
-	const [navApp, setNavApp] = React.useState<string>('');
+	const [navApp, setNavApp] = React.useState<string>('Google Maps');
 	const [isDynamcVariableUpdated, setIsDynamcVariableUpdated] =
 		useState<boolean>(false);
 
 	const [activeDynamicButton, setActiveDynamicButton] = useState<string>(
 		'whatsappCampaign.pField'
 	);
+	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+	const [validationErrors, setValidationErrors] = useState<string[]>([]);
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
@@ -50,6 +53,47 @@ const DynamicModal = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dynamicVariable]);
+
+	useEffect(() => {
+		if (dynamicModalVariable !== 0) {
+			const activeModalData = dynamicVariable?.find(
+				(variable) => variable?.VariableIndex === dynamicModalVariable
+			);
+
+			if (activeModalData?.FieldTypeId) {
+				switch (activeModalData?.FieldTypeId) {
+					case 1:
+						setActiveDynamicButton('whatsappCampaign.pField');
+						break;
+					case 2:
+						setActiveDynamicButton('whatsappCampaign.text');
+						break;
+					case 3:
+						setActiveDynamicButton('whatsappCampaign.link');
+						break;
+					case 4:
+						setActiveDynamicButton('whatsappCampaign.lPage');
+						break;
+					case 5:
+						setActiveDynamicButton('whatsappCampaign.navigation');
+						break;
+
+					default:
+						setActiveDynamicButton('whatsappCampaign.pField');
+						break;
+				}
+			}
+
+			if (activeModalData?.FieldTypeId === 5) {
+				if (activeModalData?.VariableValue?.includes('https://waze.to/?q=')) {
+					setNavApp('Waze');
+				} else {
+					setNavApp('Google Maps');
+				}
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [dynamicModalVariable]);
 
 	useEffect(() => {
 		setUpdatedDynamicVariable([]);
@@ -99,8 +143,36 @@ const DynamicModal = ({
 		}
 	};
 
+	const validateDynamicField = () => {
+		let validationErrors: string[] = [];
+		let isValidated = true;
+		updatedDynamicVariable?.forEach((variable) => {
+			if (
+				variable?.FieldTypeId === 3 &&
+				// activeDynamicButton === 'whatsappCampaign.link' &&
+				!variable?.VariableValue?.includes('##WHATSAPPUnsubscribelink##')
+			) {
+				var isLinkValid = variable?.VariableValue?.match(
+					/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
+				);
+				if (isLinkValid == null) {
+					validationErrors.push(translator('whatsappCampaign.validLink'));
+					isValidated = false;
+				}
+			}
+		});
+
+		if (!isValidated) {
+			setValidationErrors([...validationErrors]);
+			setIsValidationAlert(true);
+		}
+		return isValidated;
+	};
+
 	const onSave = () => {
-		onDynamcFieldModalSave(updatedDynamicVariable);
+		if (validateDynamicField()) {
+			onDynamcFieldModalSave(updatedDynamicVariable);
+		}
 	};
 
 	const getfieldTypeId = (field: string) => {
@@ -127,7 +199,7 @@ const DynamicModal = ({
 	) => {
 		const isVariableUpdated = updatedDynamicVariable?.find(
 			(updatedVariable: updatedVariable) =>
-				updatedVariable.VariableIndex === dynamicModalVariable
+				updatedVariable?.VariableIndex === dynamicModalVariable
 		);
 		if (field === 'link') {
 			setIsTrackLink(isTrackLink);
@@ -135,7 +207,7 @@ const DynamicModal = ({
 		if (!!isVariableUpdated) {
 			const newDynamicVariables = updatedDynamicVariable.map(
 				(updatedVariable) => {
-					if (updatedVariable.VariableIndex !== dynamicModalVariable)
+					if (updatedVariable?.VariableIndex !== dynamicModalVariable)
 						return updatedVariable;
 
 					return {
@@ -163,8 +235,8 @@ const DynamicModal = ({
 	const getFieldValueByID = (fieldID: number) => {
 		const value = updatedDynamicVariable?.find(
 			(updatedVariable: updatedVariable) =>
-				updatedVariable.VariableIndex === dynamicModalVariable &&
-				updatedVariable.FieldTypeId === fieldID
+				updatedVariable?.VariableIndex === dynamicModalVariable &&
+				updatedVariable?.FieldTypeId === fieldID
 		)?.VariableValue;
 		return value ? value : '';
 	};

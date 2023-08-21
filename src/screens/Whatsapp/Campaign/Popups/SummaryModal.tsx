@@ -143,6 +143,18 @@ const SummaryModal = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [sendDate]);
 
+	useEffect(() => {
+		if (sendType === '2' && sendDate) {
+			const timeDiff = moment(sendDate).diff(moment(), 'seconds');
+			if (timeDiff <= 86400) {
+				setIsIn24HrWindow(true);
+			} else {
+				setIsIn24HrWindow(false);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sendDate]);
+
 	const onSavedTemplateChange = (templateData: savedTemplateDataProps) => {
 		let templatePreviewData: templatePreviewDataProps = {
 			templateData: {
@@ -168,10 +180,10 @@ const SummaryModal = ({
 			return translator('mainReport.birthday');
 		} else if (spectialDateFieldID === '2') {
 			return translator('mainReport.creationDay');
-		} else {
+		} else if (spectialDateFieldID !== '0') {
 			return (
 				specialDatedropDown &&
-				Object.entries(specialDatedropDown)[Number(spectialDateFieldID) - 3]
+				Object.entries(specialDatedropDown)[Number(spectialDateFieldID) - 3][1]
 			);
 		}
 	};
@@ -408,8 +420,8 @@ const SummaryModal = ({
 												isSpecialDateBefore
 													? translator('mainReport.before')
 													: translator('mainReport.after')
-											} ${getSpecialDay()} day at ${moment(sendTime)?.format(
-												'hh:mm a'
+											} ${getSpecialDay()} ${translator('whatsappCampaign.atTime')} ${moment(sendTime)?.format(
+												'HH:mm a'
 											)}`}
 									</span>
 								</Box>

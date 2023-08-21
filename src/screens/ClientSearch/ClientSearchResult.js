@@ -85,6 +85,11 @@ const useStyles = makeStyles({
     "@media screen and (max-width: 1160px)": {
       fontSize: '13px'
     }
+  },
+  actionButtons: {
+    "& button": {
+      minWidth: 'auto'
+    }
   }
 });
 const ClientSearchResult = ({ classes }) => {
@@ -1508,7 +1513,9 @@ const ClientSearchResult = ({ classes }) => {
         <Grid
           container
           direction='row'
-          justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}>
+          justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}
+          className={localClasses.actionButtons}
+          >
           {iconsMap.map(icon => (
             <Grid
               style={{ flex: 1, alignItems: 'center', }}

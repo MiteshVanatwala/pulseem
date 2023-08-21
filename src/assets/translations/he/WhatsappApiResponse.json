@@ -190,7 +190,7 @@
 		"6": "Campaign name is empty",
 		"7": "The campaign name exceeds 100 characters.",
 		"8": "Campaign with this sub account id does not exists",
-		"9": "This Campaign is already deleted.Yo are not allowed to update this campaign",
+		"9": "This Campaign is already deleted. You are not allowed to update this campaign",
 		"10": "You are not allow to edit this campaign",
 		"100": "Inetrnal Error"
 	},
@@ -243,7 +243,7 @@
 		"100": "Inetrnal Error"
 	},
 	"deleteCampaign": {
-		"1": "WhatsApp campaign deleted",
+		"1": "WhatsApp Campaign deleted successfully!",
 		"2": "WhatsApp campaign not found",
 		"3": "Sub account not found",
 		"4": "WhatsApp campaign already deleted",
@@ -270,7 +270,7 @@
 		"error": "Something went wrong"
 	},
 	"templateError": {
-		"invalidTemplateName": "Facebook is not able to create template with template name",
+		"invalidTemplateName": "שם תבנית אינו תקין",
 		"noTemplateText": "Template text is missing",
 		"noFooter": "Footer is missing",
 		"invalidPhone": "Phone number is not a valid phone number.",

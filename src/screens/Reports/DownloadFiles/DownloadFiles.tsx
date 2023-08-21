@@ -142,21 +142,22 @@ const DownloadFiles = ({ classes }: any) => {
         window.open(`/Pulseem/DownloadFile.aspx?fileFormat=${Type}&fileId=${fileID}`);
     }
 
-    const renderNameCell = (row: any) => {
-        return (
-            <CustomTooltip
-                key={row.id}
-                isSimpleTooltip={false}
-                classes={classes}
-                interactive={true}
-                arrow={true}
-                placement={'top'}
-                title={<Typography noWrap={false}>{row.FileName}</Typography>}
-                text={row.FileName} icon={undefined} style={undefined} titleStyle={undefined}>
-                <Typography noWrap={false}>{row.SourceFileName && row.SourceFileName != '' && row.SourceFileName != null ? row.SourceFileName : row.FileName}</Typography>
-            </CustomTooltip>
-        )
-    }
+  const renderNameCell = (row: any) => {
+    return (
+      <CustomTooltip
+        key={row.id}
+        isSimpleTooltip={false}
+        classes={classes}
+        interactive={true}
+        arrow={true}
+        placement={'top'}
+        titleStyle={undefined}
+        title={<Typography noWrap={false}>{row.FileName}</Typography>}
+        text={row.FileName} icon={undefined} style={undefined}>
+          <Typography noWrap={false}>{row.SourceFileName && row.SourceFileName != '' && row.SourceFileName != null ? row.SourceFileName : row.FileName}</Typography>
+      </CustomTooltip>
+    )
+  }
 
     const renderRow = (row: any) => {
         return (

@@ -39,6 +39,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import WhatsappMobilePreview from './Components/WhatsappMobilePreview';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {
+	deleteTemplate,
 	getSavedTemplates,
 	getSavedTemplatesById,
 	submitTemplates,
@@ -163,9 +164,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		fileLink: '',
 		fileType: '',
 	});
-	const [quickReplyButtons, setQuickReplyButtons] = useState<
-		quickReplyButtonProps[]
-	>(initialQuickReplyButtons);
+	const [quickReplyButtons, setQuickReplyButtons] = useState<quickReplyButtonProps[]>(initialQuickReplyButtons);
+	const [isDeleteTemplateOpen, setIsDeleteTemplateOpen] = useState<boolean>(false);
 	const [linkCount, setlinkCount] = useState<number>(0);
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 
@@ -247,10 +247,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	}, [buttonType]);
 
 	// useEffect(() => {
-		// if (isCallToActionOpen && callToActionFieldRows?.length === 0) {
-			// setCallToActionFieldRows([initialFieldRow]);
-		// }
-		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
+	// if (isCallToActionOpen && callToActionFieldRows?.length === 0) {
+	// setCallToActionFieldRows([initialFieldRow]);
+	// }
+	// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
 	// }, [isCallToActionOpen]);
 
 	const onTemplateNameChange = (e: BaseSyntheticEvent) => {
@@ -754,8 +754,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			templateData.templateText?.length > buttonTextLimits.callToAction
 		) {
 			validationErrors.push(
-				`${translator('whatsapp.alertModal.templateLengthError')} ${
-					buttonTextLimits.callToAction
+				`${translator('whatsapp.alertModal.templateLengthError')} ${buttonTextLimits.callToAction
 				}`
 			);
 			isValidated = false;
@@ -872,9 +871,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else if (button.buttonTitle?.includes('removalText')) {
 			setTemplateData({
 				...templateData,
-				templateText: `${templateData.templateText} ${
-					isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
-				}`?.substring(0, templateTextLimit),
+				templateText: `${templateData.templateText} ${isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
+					}`?.substring(0, templateTextLimit),
 			});
 		}
 	};
@@ -1016,27 +1014,28 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const onDeleteTemplate = async () => {
-		resetFields();
-		navigate(whatsappRoutes.CREATE_TEMPLATE);
-		// if (templateID) {
-		// 	const deleteData: deleteTemplateAPIProps = await dispatch<any>(
-		// 		deleteTemplate(templateID)
-		// 	);
-		// 	if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
-		// 		setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
-		// 		resetFields();
-		// 		navigate('/react/whatsapp/template/create');
-		// 	} else {
-		// 		deleteData?.payload?.Error
-		// 			? setToastMessage({
-		// 					...ToastMessages.ERROR,
-		// 					message: deleteData?.payload?.Error,
-		// 			  })
-		// 			: setToastMessage(ToastMessages.ERROR);
-		// 	}
-		// } else {
-		// 	resetFields();
-		// }
+		setIsDeleteTemplateOpen(false);
+		if (templateID) {
+			const deleteData = await dispatch<any>(deleteTemplate(templateID));
+			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+				setIsDeleteTemplateOpen(false);
+				await setToastMessage({
+					...ToastMessages.DELETE_TEMPLATE_SUCCESS,
+					message: deleteData?.payload?.Message,
+				})
+				resetFields();
+				setTimeout(() => {
+					navigate(whatsappRoutes.CREATE_TEMPLATE);
+				}, 1000);
+			} else {
+				deleteData?.payload?.Error
+					? setToastMessage({
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Error,
+					})
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		}
 	};
 
 	const onSubmitCampaign = async () => {
@@ -1077,26 +1076,26 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getDeleteDialog = () => ({
-    title: translator('whatsapp.alertModal.DeleteText'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {translator('whatsapp.alertModal.DeleteTitle')}
-      </Typography>
-    ),
-    onConfirm: async () => {
+		title: translator('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsapp.alertModal.DeleteTitle')}
+			</Typography>
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-      onDeleteTemplate();
-    }
-  })
+			onDeleteTemplate();
+		}
+	})
 
 	const getValidationDialog = () => ({
-    title: translator('whatsappCampaign.sendValidation'),
-    showDivider: false,
-    content: (
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		content: (
 			<ul className={clsx(classes.noMargin, classes.mb20)}>
 				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
 					<li key={index} className={classes.validationAlertModalLi}>
@@ -1104,22 +1103,22 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					</li>
 				))}
 			</ul>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const getPreviewDialog = () => ({
-    title: translator('whatsapp.alertModal.ConfirmText'),
-    showDivider: false,
-    content: (
-      <Box className={classes.alertModalContentMobile}>
+		title: translator('whatsapp.alertModal.ConfirmText'),
+		showDivider: false,
+		content: (
+			<Box className={classes.alertModalContentMobile}>
 				<div className={clsx(classes.pb25)}>{translator('whatsapp.alertModal.ConfirmTitle')}</div>
-				
+
 				<WhatsappMobilePreview
 					classes={classes}
 					templateData={templateData}
@@ -1127,24 +1126,24 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					fileData={fileData}
 				/>
 			</Box>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
 			onSubmitCampaign();
-    }
-  })
+		}
+	})
 
 	const getCallToAction = () => ({
-    title: translator('whatsapp.callToActionTitle'),
-    showDivider: false,
+		title: translator('whatsapp.callToActionTitle'),
+		showDivider: false,
 		showDefaultButtons: false,
 		contentStyle: classes.noPadding,
 		paperStyle: classes.callToAction,
-    content: (
-      <ActionCallPopOver
+		content: (
+			<ActionCallPopOver
 				closeCallToAction={(isReset) => closeCallToAction(isReset)}
 				classes={classes}
 				callToActionFieldRows={callToActionFieldRows}
@@ -1159,24 +1158,24 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				buttonType={buttonType}
 				templateText={templateData.templateText}
 			/>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
 			onSubmitCampaign();
-    }
-  })
+		}
+	})
 
 	const getQuickReplyDialog = () => ({
-    title: translator('whatsapp.quickReply.title'),
-    showDivider: false,
+		title: translator('whatsapp.quickReply.title'),
+		showDivider: false,
 		showDefaultButtons: false,
 		contentStyle: classes.noPadding,
 		paperStyle: classes.callToAction,
-    content: (
-      <QuickReply
+		content: (
+			<QuickReply
 				classes={classes}
 				closeQuickReply={() => setDialogType({})}
 				quickReplyButtons={quickReplyButtons}
@@ -1189,17 +1188,17 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateButtons={templateData.templateButtons}
 				isEditable={true}
 			/>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const renderDialog = () => {
-    const { data, type } = dialogType || {}
+		const { data, type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'delete') {
 			currentDialog = getDeleteDialog();
@@ -1229,7 +1228,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				</BaseDialog>
 			)
 		}
-  }
+	}
 
 	return (
 		<DefaultScreen
@@ -1280,7 +1279,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 												setTemplateText={(text: string) => updateTemplateText(text)}
 												templateText={templateData.templateText}
 												templateTextRef={templateTextRef}
-												OnEditorActionButtonClick={() => setDialogType({type: buttonType === buttonTypes.QUICK_REPLY ? 'quickReply' : 'callToAction' })
+												OnEditorActionButtonClick={() => setDialogType({ type: buttonType === buttonTypes.QUICK_REPLY ? 'quickReply' : 'callToAction' })
 												}
 												dynamicFieldCount={dynamicFieldCount}
 												linkCount={linkCount}

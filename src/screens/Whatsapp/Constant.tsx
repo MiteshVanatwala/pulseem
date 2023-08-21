@@ -11,7 +11,7 @@ import {
 	statusByNameProps,
 	statusProps,
 	TemplatesStatusIdByStatusName,
-	TierSetting,
+	TierSetting
 } from './management/Types/Management.types';
 
 export const whatsappRoutes = {
@@ -420,7 +420,7 @@ export const allCampaignInitialPagination: AllCampaignReq = {
 	isPagination: true,
 	pageNo: 1,
 	pageSize: 6,
-	isDeleted: false
+	isDeleted: false,
 };
 
 export const allReportInitialPagination: AllReportReq = {

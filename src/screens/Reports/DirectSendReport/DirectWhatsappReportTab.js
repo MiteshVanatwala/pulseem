@@ -31,7 +31,6 @@ const DirectWhatsappReportTab = ({
     handlePageChange = () => null,
     handleAdvanceSearch = () => null,
     clearSearch,
-    page,
     rowsPerPage,
     searchData,
     isSearching,
@@ -44,6 +43,7 @@ const DirectWhatsappReportTab = ({
     const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
     const { t } = useTranslation();
     const [showLoader, setLoader] = useState(false)
+    const [page, setPage] = useState(1);
 
     const handleSearch = async () => {
         setLoader(true);
@@ -88,12 +88,13 @@ const DirectWhatsappReportTab = ({
 
     const handlePageSearching = (val) => {
         searchRequest(rowsPerPage, val);
-        handlePageChange(val);
+        setPage(val);
     }
 
     const handleRowsPerPageSearching = (val) => {
         dispatch(setRowsPerPage(val))
-        searchRequest(val, page);
+        searchRequest(val, 0);
+        setPage(1);
     }
 
     const renderCell = (data, dataType, cutOff) => {
@@ -333,6 +334,7 @@ const DirectWhatsappReportTab = ({
                         size='large'
                         variant='contained'
                         onClick={() => {
+                            setPage(1);
                             clearSearch('whatsapp');
                         }}
                         className={classes.searchButton}

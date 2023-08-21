@@ -32,7 +32,7 @@ const Buttons = ({
 		// 	navigate(-1);
 		// }
 		navigate(`/react/whatsapp/campaign/edit/page1/${campaignID}`, {
-			state: { from: 'edit/page1' },
+			state: { from: `edit/page1/${campaignID}` },
 		});
 	};
 

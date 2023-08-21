@@ -75,6 +75,24 @@ const ChatTemplate = ({
 			return DOC;
 		}
 	};
+
+	const getIconName = (statusId: number) => {
+		switch (statusId) {
+			case 2:
+				return 'singleTick';
+			case 3:
+			case 6:
+				return 'doubleTick';
+			case 4:
+			case 5:
+			case 7:
+			case 11:
+				return 'cancel';
+			default:
+				return '';
+		}
+	}
+
 	const getInboundMessageContent = (message: APIWhatsappChatDetailData) => {
 		if (message?.Message?.length === 0 && message?.MediaUrl?.length === 0) {
 			return (
@@ -137,13 +155,16 @@ const ChatTemplate = ({
 			<>
 				{message?.MediaUrl?.length === 0 && <span>{message?.Message}</span>}
 				{message?.MediaUrl && message?.MediaUrl?.length > 0 && (
-					<ImagePreview
-						classes={classes}
-						className={`${classes.whatsappChat} chat__img`}
-						placeholderImg={imagePlaceholder}
-						errorImg={imagePlaceholderX}
-						src={message?.MediaUrl}
-					/>
+					<>
+						<ImagePreview
+							classes={classes}
+							className={`${classes.whatsappChat} chat__img`}
+							placeholderImg={imagePlaceholder}
+							errorImg={imagePlaceholderX}
+							src={message?.MediaUrl}
+						/>
+						{message?.Message}
+					</>
 				)}
 			</>
 		);
@@ -357,7 +378,7 @@ const ChatTemplate = ({
 					<span className={`${classes.whatsappChat} chat__msg-footer`}>
 						<span> {formatTime(message.MessageDate)} </span>
 						<Icon
-							id={message?.SmsStatusId === 2 ? 'singleTick' : 'doubleTick'}
+							id={getIconName(message?.SmsStatusId)}
 							aria-label={'sent'}
 							className={`${classes.whatsappChat} chat__msg-status-icon ${
 								message?.SmsStatusId === 6
@@ -402,7 +423,19 @@ const ChatTemplate = ({
 							key={msgIndex}
 							className={`${classes.whatsappChat} chat__msg chat__msg--sent`}>
 							<span>
-								{message.Message || translator('whatsappChat.messageErrorText')}
+							{
+								message?.MediaUrl && message?.MediaUrl?.length > 0 && (
+									<>
+										<ImagePreview
+											classes={classes}
+											className={`${classes.whatsappChat} chat__img`}
+											placeholderImg={imagePlaceholder}
+											errorImg={imagePlaceholderX}
+											src={message?.MediaUrl}
+										/>
+									</>
+								)}
+								{message.Message || (!message?.MediaUrl?.length ? translator('whatsappChat.messageErrorText') : '')}
 							</span>
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
 								{' '}
@@ -410,7 +443,7 @@ const ChatTemplate = ({
 							<span className={`${classes.whatsappChat} chat__msg-footer`}>
 								<span> {formatTime(message.MessageDate)} </span>
 								<Icon
-									id={message?.SmsStatusId === 2 ? 'singleTick' : 'doubleTick'}
+									id={getIconName(message?.SmsStatusId)}
 									aria-label={'sent'}
 									className={`${classes.whatsappChat} chat__msg-status-icon ${
 										message?.SmsStatusId === 6

@@ -72,6 +72,7 @@ import NoSetup from '../NoSetup/NoSetup';
 import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
 import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sitePrefix } from '../../../config';
 
 const SendCampaign = ({
 	classes,
@@ -409,9 +410,9 @@ const SendCampaign = ({
 			} else {
 				saveCampaignSettingData?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: saveCampaignSettingData?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: saveCampaignSettingData?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 				return apiStatus?.ERROR;
 			}
@@ -461,9 +462,9 @@ const SendCampaign = ({
 				} else {
 					campaignSummaryData?.Message
 						? setToastMessage({
-								...ToastMessages.ERROR,
-								message: campaignSummaryData?.Message,
-						  })
+							...ToastMessages.ERROR,
+							message: campaignSummaryData?.Message,
+						})
 						: setToastMessage(ToastMessages.ERROR);
 				}
 			}
@@ -478,13 +479,15 @@ const SendCampaign = ({
 			);
 			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
-				navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+				setTimeout(() => {
+					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+				}, 1000);
 			} else {
 				deleteData?.payload?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: deleteData?.payload?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
@@ -624,9 +627,9 @@ const SendCampaign = ({
 			setIsLoader(false);
 			createGroupData?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: createGroupData?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: createGroupData?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -708,7 +711,7 @@ const SendCampaign = ({
 
 	const onSummarySend = async () => {
 		setIsLoader(true);
-		setDialogType({type: ''});
+		setDialogType({ type: '' });
 		let sendCampaignPayload: ApiSendCampaignData = {
 			WACampaignID: Number(campaignID),
 		};
@@ -727,9 +730,9 @@ const SendCampaign = ({
 			} else {
 				sendCampaignData?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: sendCampaignData?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: sendCampaignData?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
@@ -740,43 +743,43 @@ const SendCampaign = ({
 	};
 
 	const getExitDialog = () => ({
-    title: translator('whatsappManagement.LeaveCampaignCreation'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {translator('whatsappManagement.LeaveCampaignCreationDesc')}
-      </Typography>
-    ),
-    onConfirm: async () => {
+		title: translator('whatsappManagement.LeaveCampaignCreation'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsappManagement.LeaveCampaignCreationDesc')}
+			</Typography>
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-      onExitCampaign();
-    }
-  })
-	
+			onExitCampaign();
+		}
+	})
+
 	const getDeleteDialog = () => ({
-    title: translator('whatsapp.alertModal.DeleteText'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {translator('whatsapp.alertModal.DeleteTitle')}
-      </Typography>
-    ),
-    onConfirm: async () => {
+		title: translator('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsapp.alertModal.DeleteTitle')}
+			</Typography>
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-      onDeleteCampaign();
-    }
-  })
+			onDeleteCampaign();
+		}
+	})
 
 	const getValidationDialog = () => ({
-    title: translator('whatsappCampaign.sendValidation'),
-    showDivider: false,
-    content: (
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		content: (
 			<ul className={clsx(classes.noMargin, classes.mb20)}>
 				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
 					<li key={index} className={classes.validationAlertModalLi}>
@@ -784,45 +787,45 @@ const SendCampaign = ({
 					</li>
 				))}
 			</ul>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const getExceedDailyLimit = () => ({
-    title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {`${translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage')}
+		title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{`${translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage')}
 					${campaignSummary?.NextAvailableTime
 						? moment(campaignSummary?.NextAvailableTime).format('DD.MM.YYYY HH:MM')
 						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
-				}`}
-      </Typography>
-    ),
-    onConfirm: async () => {
+					}`}
+			</Typography>
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const getSummary = () => ({
-    title: translator('whatsappCampaign.summary'),
-    showDivider: false,
+		title: translator('whatsappCampaign.summary'),
+		showDivider: false,
 		showDefaultButtons: false,
-    content: (
-      <SummaryModal
+		content: (
+			<SummaryModal
 				classes={classes}
 				campaignName={''}
 				fromNumber={''}
-				onSummaryModalClose={() => setDialogType({type: ''})}
+				onSummaryModalClose={() => setDialogType({ type: '' })}
 				onConfirmOrYes={onSummarySend}
 				selectedGroups={selectedGroups}
 				selectedFilterGroups={selectedFilterGroups}
@@ -839,40 +842,40 @@ const SendCampaign = ({
 				setRandomlyCount={setRandomlyCount}
 				resetRandomCount={() => setRandomlyCount('')}
 			/>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const getSendCampaignSuccess = () => ({
-    title: translator('campaigns.campaignIsOnItsWay'),
-    showDivider: false,
+		title: translator('campaigns.campaignIsOnItsWay'),
+		showDivider: false,
 		showDefaultButtons: false,
-    content: (
-      <SendCampaignSuccess
+		content: (
+			<SendCampaignSuccess
 				classes={classes}
-				onBackToHome={() => navigate('/react')}
+				onBackToHome={() => navigate(`${sitePrefix}`)}
 				onBackToCampaigns={() =>
 					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
 				}
 			/>
-    ),
-    onConfirm: async () => {
-			setDialogType({type: ''});
-    }
-  })
+		),
+		onConfirm: async () => {
+			setDialogType({ type: '' });
+		}
+	})
 
 	const renderDialog = () => {
-    const { type } = dialogType || {}
+		const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'exit') {
-    	currentDialog = getExitDialog();
+			currentDialog = getExitDialog();
 		} else if (type === 'validation') {
-    	currentDialog = getValidationDialog();
+			currentDialog = getValidationDialog();
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
 		} else if (type === 'exceedDailyLimit') {
@@ -896,7 +899,7 @@ const SendCampaign = ({
 				</BaseDialog>
 			)
 		}
-  }
+	}
 
 	return (
 		<DefaultScreen

@@ -50,7 +50,7 @@ const SearchLine = ({
     onFilterRequest,
     onSetPage,
     onSetIsSearching,
-    showAutoCompleteForm
+    showAutoCompleteForm = false
 }: SearchObject) => {
     const { t } = useTranslation();
     const localClasses = useStyles();
