@@ -687,7 +687,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     notificationUpdateContainerPopper: {
         left: isRTL ? '100px !important' : '-50px !important',
-        zIndex: 9,
+        zIndex: 999,
     },
     notificationUpdateContainer: {
         direction: isRTL ? 'rtl' : 'ltr',
