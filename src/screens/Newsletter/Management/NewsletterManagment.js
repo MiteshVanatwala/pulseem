@@ -34,6 +34,7 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 // import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
@@ -60,6 +61,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
   const [duplicateOptions, setDuplicateOptions] = useState([])
+  const [duplicateDialog, setDuplicateDialog] = useState({});
   // const { publicTemplates } = useSelector(state => state.campaignEditor);
 
   moment.locale(language)
@@ -397,18 +399,18 @@ const NewsletterManagnentScreen = ({ classes }) => {
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
-          setDialogType(
-            // !IsNewEditor && getCookie('O2NedtrPopup') && getCookie('O2NedtrPopup') !== "false" ?
-            showCautionNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 ?
-              {
-                type: 'cautionEditorChange',
-                data: { CampaignID: CampaignID }
-              }
-              : {
-                type: 'duplicate',
-                data: CampaignID
-              }
-          )
+          if (showCautionNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+            setDialogType({
+              type: 'cautionEditorChange',
+              data: { CampaignID: CampaignID }
+            });
+          } else {
+            const campaign = newslettersData?.find((e) => { return parseInt(e.CampaignID) === parseInt(CampaignID) });
+            setDuplicateDialog({
+              id: CampaignID,
+              name: campaign?.Name
+            });
+          }
         }
       },
       {
@@ -993,6 +995,23 @@ const NewsletterManagnentScreen = ({ classes }) => {
         isOpen={verificationDialog}
         onClose={() => setVerificationDialog(false)}
         onCancel={() => setVerificationDialog(false)}
+      />
+      <DuplicateCampaign
+        title={t('campaigns.dialogDuplicateTitle')}
+        classes={classes}
+        isOpen={!!duplicateDialog?.id}
+        duplicateOptions={[]}
+        handleClose={async (selectedOptions) => {
+          setDuplicateDialog({});
+          if (selectedOptions !== undefined)  {
+            clearSearch()
+            handleClose()
+            setPage(1)
+            await dispatch(duplicteCampaign({ CampaignID: duplicateDialog?.id, CloneOptions: selectedOptions }))
+            getData()
+          }
+        }}
+        campaignName={duplicateDialog?.name}
       />
       <Loader isOpen={showLoader} />
     </DefaultScreen >

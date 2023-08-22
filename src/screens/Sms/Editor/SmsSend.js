@@ -24,7 +24,7 @@ import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, saveManualClients,
   getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getTestGroups
 } from "../../../redux/reducers/smsSlice";
-import { getGroupsBySubAccountId, combinedGroup } from "../../../redux/reducers/groupSlice";
+import { getGroupsBySubAccountId, combinedGroup, createAndGetGroupIdForManualSend, addRecipient } from "../../../redux/reducers/groupSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
@@ -34,7 +34,8 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from '../../../redux/reducers/ConnectorsSlice';
-import { FlatObject } from "../../../helpers/Export/ExportHelper";
+import QuickManualUploadDialog from "../../Newsletter/Wizard/Popups/QuickManualUploadDialog";
+import { validatePhoneNumber } from "../../../helpers/Utils/common";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -958,6 +959,27 @@ const SmsSend = ({ classes, ...props }) => {
                   </span>
                 </div>
               ) : null}
+              {
+                areaData !== "" && (
+                  <Button
+                    style={{ marginInlineStart: 'auto', marginInlineEnd: 10 }}
+                    size='medium'
+                    color="primary"
+                    variant='contained'
+                    key={"extraButton"}
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton
+                    )}
+                    onClick={() => {
+                        setDialogType({ type: "quickMnualUpload" })
+                    }}
+                  >
+                    {t("campaigns.newsLetterSendSettings.quickMSend")}
+                  </Button>
+                )
+              }
               <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
           ) : null}
@@ -1345,21 +1367,21 @@ const SmsSend = ({ classes, ...props }) => {
     );
   }
 
-  const onSaveSettings = async (toggle, exit) => {
-    if (otpPassed === false) {
+  const onSaveSettings = async (toggle, exit, groupID) => {
+    if (!groupID && otpPassed === false) {
       setOTPOpen(true);
       return;
     }
-    if (selectedGroups.length <= 0) {
+    if (!groupID && selectedGroups.length <= 0) {
       setToastMessage(ToastMessages.NO_GROUPS);
       return;
     }
     setLoader(true);
     const requestPayload = {
       FutureDateTime: null,
-      Groups: selectedGroups.map((sg) => { return sg.GroupID }),
+      Groups: groupID || selectedGroups.map((sg) => { return sg.GroupID }),
       PulseSettings: {
-        PulseType: pulseType,
+        PulseType: groupID ? 1 : pulseType,
         TimeType: timeType,
         PulseAmount: pulseAmount,
         TimeInterval: timeInterval
@@ -1369,7 +1391,7 @@ const SmsSend = ({ classes, ...props }) => {
       },
       SendExeptional:
       {
-        Groups: selectedFilterGroups.map((c) => { return c.GroupID }),
+        Groups: groupID || selectedFilterGroups.map((c) => { return c.GroupID }),
         Campaigns: selectedFilterCampaigns.map((c) => { return c.SMSCampaignID }),
         ExceptionalDays: exceptionalDays
       },
@@ -1385,7 +1407,7 @@ const SmsSend = ({ classes, ...props }) => {
         SendDate: null
       }
     }
-    if (sendType === "2") {
+    if (!groupID && sendType === "2") {
       if (sendDate === null) {
         setsendType2Dialog(true);
         setLoader(false);
@@ -1397,7 +1419,7 @@ const SmsSend = ({ classes, ...props }) => {
         requestPayload.FutureDateTime = finalDate.format();
       }
     }
-    else if (sendType === "3") {
+    else if (!groupID && sendType === "3") {
       if (sendTime === null || daysBeforeAfter === "" || spectialDateFieldID === "0") {
         setspecialSettingValidation(true);
         setLoader(false);
@@ -1718,18 +1740,33 @@ const SmsSend = ({ classes, ...props }) => {
     }
     return null;
   }
-  const handleConfirmC = () => {
-    settotalRecords(0)
-    setContacts([]);
-    setareaData("");
-    setcolumnValidate(false);
-    setgroupNameInput("");
-    for (let i = 0; i < selectArray.length; i++) {
-      selectArray[i].isdisabled = false;
-      selectArray[i].idx = -1;
+  const handleConfirmC = async () => {
+    var req = [];
+    areaData.split('\n').map((q) => {
+      if (validatePhoneNumber(q.replace(',', ''))) {
+        req.push({ Phone: q.replace(',', '') })
+      }
+    });
+    setDialogType({ type: "" });
+    if (req.length) {
+      const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend());
+      let groupId = responseDefaultGroup?.payload || '1'
+      const finalPayload = {
+          ClientsData: req,
+          GroupIds: [groupId]
+      }
+      const r = await dispatch(addRecipient(finalPayload));
+  
+      if (r.payload.StatusCode === 201) {
+        onSaveSettings(false, "", groupId); 
+      }
+      else {
+        setToastMessage(ToastMessages.ERROR);
+        setLoader(false);
+      }
+    } else {
+      setToastMessage(ToastMessages.INVALID_NUMBER);
     }
-    setDialogType(null);
-    settypedData([]);
   };
   const handlePreviousPage = () => {
     Redirect({ url: `/react/sms/edit/${id}` });
@@ -2718,6 +2755,12 @@ const SmsSend = ({ classes, ...props }) => {
         </Alert>
       </Snackbar>
       {otpOpen && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+      {dialogType?.type === 'quickMnualUpload' && <QuickManualUploadDialog
+          classes={classes}
+          onClose={() => setDialogType(null)}
+          onCancel={() => setDialogType(null)}
+          onConfirm={() => handleConfirmC()}
+      />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );
