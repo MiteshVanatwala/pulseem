@@ -146,7 +146,6 @@ export type WhatsappChatSideBarProps = {
 
 export type chatModalProps = {
 	classes: ClassesType['classes'];
-	isOpen: boolean;
 	onClose: () => void;
 	savedTemplateList: savedTemplateListProps[];
 	onChoose: (
