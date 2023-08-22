@@ -148,8 +148,10 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   },
   appBarLogo: {
     marginInlineEnd: '1vw',
-    width: windowSize === 'xs' ? 125 : 143,
-    alignSelf: 'center'
+    width: windowSize === 'xs' ? 125 : 130,
+    alignSelf: 'center',
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   appBerSpace: {
     display: 'flex',
@@ -191,10 +193,6 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
           padding: '0 19px 0 16px'
         }
       },
-      '&:nth-child(2)': {
-        paddingLeft: isRTL ? 0 : 25.5,
-        paddingRight: isRTL ? 25.5 : 0
-      }
     }
   },
   appBarSettingIcon: {
