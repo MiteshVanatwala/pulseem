@@ -219,6 +219,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingRight: 5,
     paddingLeft: 5,
   },
+  paddingSides10: {
+    paddingRight: 10,
+    paddingLeft: 10,
+  },
   paddingSides15: {
     paddingRight: 15,
     paddingLeft: 15,
@@ -494,7 +498,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginTop: 15,
   },
   f12: {
-    fontSize: 12,
+    fontSize: `12px !important`,
   },
   mxAuto: {
     marginInline: "auto",
@@ -1984,11 +1988,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minWidth: 120,
     minHeight: 40,
     color: '#000',
-    background: '#E6E6E6',
+    background: '#FFF',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    border: '3px solid #fff',
-    borderBottom: 'none',
+    borderBottom: '4px solid #fff',
     '&.alignCenter': {
       display: 'flex',
       justifyContent: 'center',
@@ -1996,10 +1999,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   currentActiveTab: {
-    background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
-    color: "#fff !important",
+    borderBottom: 'solid 4px #ff3433',
+    color: "#ff3433 !important",
     '& svg': {
-      color: '#fff'
+      color: '#ff3433'
     }
   },
   activeTab: {

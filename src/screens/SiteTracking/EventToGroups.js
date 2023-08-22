@@ -213,7 +213,7 @@ const EventToGroups = ({
             </Box>
             {eventsCount > 1 && <Box className={classes.deleteButtonContainer}>
                 <Button onClick={() => { onDelete() }} className={clsx(classes.btn, classes.btnRounded)}>
-                    <BsTrash style={{ width: 30, height: 30, marginInlineStart: 0 }} />
+                    <BsTrash style={{ width: 20, height: 20, marginInlineStart: 0 }} />
                 </Button>
             </Box>
             }

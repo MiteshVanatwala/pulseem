@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText, InputAdornment } from '@material-ui/core'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, MenuItem, Checkbox, ListItemText, InputAdornment } from '@material-ui/core'
+import Select from '@mui/material/Select';
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -185,15 +186,14 @@ const ProductsReport = ({ classes }) => {
                 </Grid>
 
                 <Grid item>
-                    <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%', height: 29 }} >
+                    <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                         <Select
-                            style={{
-                                minWidth: 245
-                            }}
+                            variant="standard"
                             placeholder={t('report.ProductsReport.category')}
                             labelId="category"
                             id="category"
                             multiple
+                            style={{ minWidth: 300 }}
                             value={searchData.CategoryID}
                             endAdornment={
                                 <InputAdornment
@@ -208,28 +208,27 @@ const ProductsReport = ({ classes }) => {
                                 class: searchData.CategoryID.length === 0 ? classes.selectPlaceholderInput : classes.dNone
 
                             }}
-
                             MenuProps={{
-                                style: {
-                                    paddingTop: 9,
-                                    paddingBottom: 9
-                                }
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 300,
+                                        direction: isRTL ? 'rtl' : 'ltr'
+                                    },
+                                },
                             }}
                             renderValue={(selected) => productCategories.reduce((prev, next) => selected.indexOf(next.CategoryId) > -1 ? [...prev, next.CategoryName] : prev, []).join(', ')}
                             onChange={(e) => setSearchData({ ...searchData, CategoryID: typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value })}
                         >
                             {
                                 productCategories.map((obj, idx) =>
-                                    <MenuItem key={`op${obj.CategoryId}`} value={obj.CategoryId}
-                                        style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
-                                    >
+                                    <MenuItem key={`op${obj.CategoryId}`} value={obj.CategoryId}>
                                         <Checkbox size="small" color="primary" checked={searchData.CategoryID.indexOf(obj.CategoryId) > -1} />
                                         <ListItemText primary={t(obj.CategoryName)} />
                                     </MenuItem>
                                 )
                             }
                         </Select>
-                    </FormControl >
+                    </FormControl>
                 </Grid>
 
                 <Grid item>

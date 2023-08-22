@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer, Link,
-  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem
+  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, MenuItem, InputAdornment
 } from '@material-ui/core';
+import Select from '@mui/material/Select';
 import { TablePagination, DateField } from '../../../components/managment/index';
 import ControlPointIcon from '@material-ui/icons/ControlPoint';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
@@ -21,6 +22,7 @@ import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const RenderRow = ({
   classes,
@@ -430,21 +432,32 @@ const DirectEmailReportTab = ({
           />
         </Grid>
         <Grid item>
-          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+          <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
             <Select
+              variant="standard"
               autoWidth
               displayEmpty
-              className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
               value={Status}
-              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
+              endAdornment={
+                <InputAdornment
+                  className={classes.selectAdornment}
+                  position="end"
+                >
+                  <IoIosArrowDown size={20} />
+                </InputAdornment>
+              }
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200,
+                    direction: isRTL ? 'rtl' : 'ltr'
+                  },
+                },
+              }}
             >
-              <MenuItem value="" className={classes.dropDownItem}>
-                {t("common.Status")}
-              </MenuItem>
-              {EmailStatus.map(so => {
-                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
-              })}
+              <MenuItem value="">{t("common.Status")}</MenuItem>
+              {EmailStatus.map(so => <MenuItem key={so.id} value={so.id}>{t(so.value)}</MenuItem>)}
             </Select>
           </FormControl>
         </Grid>

@@ -242,6 +242,7 @@ const SummaryDialog = ({ classes,
                                 <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("sms.smsSummaryCampaignFrom")}:</span>
                             </Box>
                             <Box style={{ width: '100%' }}>
+                                {/* TODO - FocusTrap */}
                                 <Select
                                     style={{ width: '100%' }}
                                     className={classes.mt1}
@@ -260,9 +261,9 @@ const SummaryDialog = ({ classes,
                                     {[{
                                         Number: newsletterSendSummary?.FromEmail
                                     }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true })
-                                    ].map((obj) => (
+                                    ].map((obj, index) => (
                                         <option
-                                            key={obj.Number}
+                                            key={`ve_${index}`}
                                             value={obj.Number}
                                         >
                                             {obj.Number}

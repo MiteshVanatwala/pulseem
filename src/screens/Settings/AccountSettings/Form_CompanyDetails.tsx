@@ -4,11 +4,13 @@ import {
   Button,
   FormControl,
   Grid,
+  InputAdornment,
+  MenuItem,
   OutlinedInput,
-  Select,
   TextField,
   Typography
 } from "@material-ui/core";
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +37,7 @@ import ChangePassword from "./Password/ChangePassword";
 import { Title } from "../../../components/managment/Title";
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import ILLUSTRATION_DATA_ANALYSIS from "../../../assets/images/settings/Illustration_data_Analysis";
+import { IoIosArrowDown } from "react-icons/io";
 
 
 const FORM_COMPANY_DETAILS = ({
@@ -428,51 +431,42 @@ const FORM_COMPANY_DETAILS = ({
               alignItems="center"
             >
               <Typography>
-                <>
-                  {t(
-                    "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
-                  )}
-                </>
+                {t("settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth")}
               </Typography>
-              <FormControl
-                variant="outlined" className={classes.formControl}
-                style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10, maxWidth: 210, border: 'none' }}
-              >
+              <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                 <Select
-                  native
+                  variant="standard"
+                  autoWidth
+                  value={`${companyDetails?.TwoFactorAuthOptionID ?? 202}`}
+                  name="TwoFactorAuthOptionID"
+                  onChange={(e: SelectChangeEvent) => { handleTwoFactorOption(e) }}
+                  endAdornment={
+                    <InputAdornment
+                      className={classes.selectAdornment}
+                      position="end"
+                    >
+                      <IoIosArrowDown size={20} />
+                    </InputAdornment>
+                  }
                   MenuProps={{
                     PaperProps: {
                       style: {
-                        maxHeight: 40
+                        direction: isRTL ? 'rtl' : 'ltr'
                       },
-                    }
+                    },
                   }}
-                  input={<OutlinedInput />}
-                  inputProps={{
-                    'aria-label': 'Without label',
-                    style: {
-                      padding: 10,
-                      maxWidth: 210,
-                      paddingInlineStart: 15
-                    }
-                  }}
-                  autoWidth
-                  value={companyDetails?.TwoFactorAuthOptionID ?? 202}
-                  name="TwoFactorAuthOptionID"
-                  onChange={(e: any) => { handleTwoFactorOption(e) }}
                 >
                   {[
                     { name: t("settings.accountSettings.auth.everyDay"), value: 101 },
                     { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
-                  ].map((so, index) => {
+                  ].map((so) => {
                     return (
-                      <option
+                      <MenuItem
                         key={so.value}
                         value={so.value}
-                        className={classes.dropDownItem}
                       >
                         {so.name}
-                      </option>
+                      </MenuItem>
                     );
                   })}
                 </Select>

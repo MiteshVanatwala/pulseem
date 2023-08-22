@@ -75,7 +75,7 @@ const DynamicModalFields = ({
 					required
 					value={personalField}
 					displayEmpty
-					variant='outlined'
+					variant='standard'
 					className={classes.whatsappCampaignDynamicFieldPersonalField}
 					renderValue={
 						personalField !== ''

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip, Typography, InputAdornment, FormControl, Select } from "@material-ui/core";
+import { Tooltip, Typography, InputAdornment, FormControl, MenuItem } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
@@ -831,12 +832,15 @@ const SmsCreator = ({ classes }) => {
                   >
                     <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100, classes.noBorder)} >
                       <Select
+                        variant="standard"
                         inputProps={{ 'aria-label': 'Without label' }}
                         MenuProps={{
-                          style: {
-                            paddingTop: 9,
-                            paddingBottom: 9,
-                          }
+                          PaperProps: {
+                            style: {
+                              maxHeight: 200,
+                              direction: isRTL ? 'rtl' : 'ltr'
+                            },
+                          },
                         }}
                         value={selectValue}
                         onChange={handleSelectChange}
@@ -849,15 +853,14 @@ const SmsCreator = ({ classes }) => {
                           </InputAdornment>
                         }
                       >
-                        <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
+                        <MenuItem disabled value="Personilization">{t("mainReport.personalisationSelect")}</MenuItem>
                         {extraAccountDATA.map((item, i) => {
                           if (item.selected) {
-                            return (<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</option>)
+                            return (<MenuItem disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</MenuItem>)
                           }
                           else {
-                            return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</option>;
+                            return <MenuItem value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</MenuItem>;
                           }
-
                         })}
                       </Select>
                     </FormControl>

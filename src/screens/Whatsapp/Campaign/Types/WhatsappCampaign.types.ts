@@ -2,6 +2,7 @@ import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
 import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { SelectChangeEvent } from '@mui/material';
 
 export type smsProps = {
 	testGroups: [];
@@ -116,7 +117,7 @@ export type RightPaneProps = {
 	daysBeforeAfter: string;
 	handleSpecialDayChange: (e: BaseSyntheticEvent) => void;
 	spectialDateFieldID: string;
-	handleSelectChange: (e: BaseSyntheticEvent) => void;
+	handleSelectChange: (e: SelectChangeEvent) => void;
 	isSpecialDateBefore: boolean;
 	setIsSpecialDateBefore: (value: boolean) => void;
 	specialDatedropDown: specialDateDropDownPayload | undefined;

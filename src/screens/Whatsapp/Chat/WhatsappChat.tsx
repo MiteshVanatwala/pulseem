@@ -74,6 +74,7 @@ import NoSetup from '../NoSetup/NoSetup';
 import moment from 'moment';
 import { Typography } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { SelectChangeEvent } from '@mui/material';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -118,12 +119,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			IsNewMessage: false,
 		});
 
-	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
+	const handleUserStatus = (e: SelectChangeEvent, ClientNumber: string) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		setWhatsappChatCoversationStatus(
-			e.target.value,
+			Number(e.target.value),
 			activePhoneNumber,
 			ClientNumber
 		);
@@ -449,7 +450,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		return [];
 	};
 
-	const onActiveUserChange = (e: BaseSyntheticEvent) => {
+	const onActiveUserChange = (e: SelectChangeEvent) => {
 		setActivePhoneNumber(e.target.value?.replace(/\D/g, ''));
 		setAPIWhatsAppChatContacts(e.target.value?.replace(/\D/g, ''));
 	};

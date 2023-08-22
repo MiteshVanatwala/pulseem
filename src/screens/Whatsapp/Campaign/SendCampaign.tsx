@@ -72,6 +72,7 @@ import NoSetup from '../NoSetup/NoSetup';
 import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
 import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { SelectChangeEvent } from '@mui/material';
 
 const SendCampaign = ({
 	classes,
@@ -354,7 +355,7 @@ const SendCampaign = ({
 		}
 	};
 
-	const handleSelectChange = (e: BaseSyntheticEvent) => {
+	const handleSelectChange = (e: SelectChangeEvent) => {
 		if (e.target.value === '0') {
 			setDateFieldID('0');
 		} else {

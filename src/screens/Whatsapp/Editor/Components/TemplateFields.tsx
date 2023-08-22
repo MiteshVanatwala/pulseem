@@ -131,7 +131,7 @@ const TemplateFields = ({
 				<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 						<Typography className={classes.buttonHead}>
-							<>{translator('report.ProductsReport.category')}</>
+							{translator('report.ProductsReport.category')}
 						</Typography>
 						<FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} style={{ marginTop: 4 }}>
 							<Select

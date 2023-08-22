@@ -1,14 +1,13 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, Select, OutlinedInput, MenuItem, InputAdornment } from '@material-ui/core';
+import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, Select, OutlinedInput } from '@material-ui/core';
 // import Select from '@mui/material/Select';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { useState, useEffect } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
 import { getTwoFactorAuthValues } from '../../redux/reducers/commonSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { IoIosArrowDown } from 'react-icons/io';
 
 const ConfirmRadioDialog = ({
     classes,
@@ -94,21 +93,18 @@ const ConfirmRadioDialog = ({
                         </RadioGroup>
                     </FormControl>)
                     }
-                    {showEmailToNotify || <>
+                    {showEmailToNotify &&
                         <Box style={{ display: 'flex' }}>
                             <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                                 <Typography>{RenderHtml(t("recipient.exportGroups.notifyEmail"))}</Typography>
-                                <FormControl variant="standard" style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }}>
-                                    {/* TODO */}
-                                    {/* <Select
-                                        name="FromEmail"
+                                <FormControl variant="standard" className={clsx(classes.selectInputFormControl, classes.w100)}>
+                                    {/* TODO - Maximum call stack size exceeded. FocusTrap */}
+                                    {/* <Select                                        
                                         variant="standard"
+                                        name="FromEmail"
                                         displayEmpty
-                                        value={notifyEmail ?? -1}
-                                        onChange={(event) => {
-                                            // setNotifyEmail(event.target.value);
-                                        }}
-                                        label={RenderHtml(t("recipient.exportGroups.notifyEmail"))}
+                                        value={notifyEmail}
+                                        onChange={(event) => setNotifyEmail(event.target.value)}
                                         endAdornment={
                                             <InputAdornment
                                                 className={classes.selectAdornment}
@@ -131,7 +127,7 @@ const ConfirmRadioDialog = ({
                                             if (!item.IsDeleted) {
                                                 return <MenuItem
                                                     key={`exd_${index}`}
-                                                    value={item.AuthValue}
+                                                    value={`${item.AuthValue}`}
                                                 >
                                                     {t(item.AuthValue)}
                                                 </MenuItem>
@@ -175,7 +171,7 @@ const ConfirmRadioDialog = ({
                                 </FormControl>
                             </Box>
                         </Box>
-                    </>}
+                    }
                 </Grid>
             </Grid>
         ),

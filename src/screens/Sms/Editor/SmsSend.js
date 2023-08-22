@@ -1,5 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { IconButton, InputAdornment, Select, Tooltip } from "@material-ui/core";
+import {
+  IconButton,
+  InputAdornment,
+  Tooltip,
+  Typography,
+  Button,
+  Grid,
+  Box,
+  FormControlLabel,
+  FormControl,
+  RadioGroup,
+  Radio,
+  FormHelperText,
+  Divider,
+  TextField,
+  MenuItem
+} from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +35,6 @@ import { useParams } from 'react-router-dom';
 import { BsTrash, BsChevronDown, BsChevronUp, BsInfoCircle } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
-import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, saveManualClients,
   getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getTestGroups
@@ -1187,17 +1203,14 @@ const SmsSend = ({ classes, ...props }) => {
                   pointerEvents: sendType === "3" ? "auto" : "none",
                 }}
               >
-                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} >
+                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100, classes.mb10)}>
                   <Select
-                    placeholder={t("common.select")}
-                    style={{
-                      backgroundColor: "white",
-                      width: 300,
-                      outline: "none",
-                    }}
+                    placeholder={t('common.select')}
+                    variant="standard"
+                    displayEmpty
                     disabled={sendType === "3" ? false : true}
-                    onChange={(e) => { handleSelectChange(e) }}
                     value={sendType === "3" ? spectialDateFieldID : "0"}
+                    onChange={(event) => handleSelectChange(event)}
                     endAdornment={
                       <InputAdornment
                         className={classes.selectAdornment}
@@ -1206,23 +1219,27 @@ const SmsSend = ({ classes, ...props }) => {
                         <IoIosArrowDown size={20} />
                       </InputAdornment>
                     }
-                    inputProps={{ 'aria-label': 'Without label' }}
+                    className={classes.pbt5}
                     MenuProps={{
-                      style: {
-                        paddingTop: 9,
-                        paddingBottom: 9
-                      }
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300,
+                          direction: isRTL ? 'rtl' : 'ltr'
+                        },
+                      },
                     }}
-
                   >
-                    <option value="0">{t("common.select")}</option>
-                    <option value="1">{t("mainReport.birthday")}</option>
-                    <option value="2">{t("mainReport.creationDay")}</option>
+                    <MenuItem value='0'>{t('common.select')}</MenuItem>
+                    <MenuItem value='1'>{t('mainReport.birthday')}</MenuItem>
+                    <MenuItem value='2'>{t('mainReport.creationDay')}</MenuItem>
                     {extraData && Object.keys(extraData).map((item, i) => {
                       if (extraData[item]) {
-                        return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
+                        return item.toLowerCase().indexOf('extradate') > -1 && (
+                          <MenuItem value={i + 3} key={`extrakey_${i}`}>
+                            {Object.values(extraData[item])}
+                          </MenuItem>
+                        );
                       }
-                      return <></>
                     })}
                   </Select>
                 </FormControl>
@@ -1495,38 +1512,36 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const renderSummary = () => {
     return (
-      <>
-        <Summary
-          classes={classes}
-          campaignName={dataSaved.campaignName}
-          fromNumber={dataSaved.fromNumber}
-          textMsg={dataSaved.msg}
-          groups={selectedGroups}
-          summaryPayload={getCampaignSum}
-          onConfirm={onApiCall} sendType={sendType}
-          days={daysBeforeAfter}
-          after={afterClick}
-          time={sendTime}
-          handleCallback={handleSummary}
-          specialVal={SelectedSpecialValue}
-          sendDateTime={sendDate}
-          pulseTrue={togglePulse}
-          pulseInput1={pulseAmount}
-          pulseInput2={timeInterval}
-          pulsePer={pulsePer}
-          pulseReci={pulseReci}
-          hourName={hourName}
-          minName={minName}
-          toggleRandom={toggleRandom}
-          random={random}
-          estimationDate={estimationDate}
-          filteredGroups={selectedFilterGroups}
-          filteredCampaigns={selectedFilterCampaigns}
-          // displayCampaigns={totalCampaigns}
-          open={summModal}
-          pulseType={pulseType}
-        />
-      </>
+      <Summary
+        classes={classes}
+        campaignName={dataSaved.campaignName}
+        fromNumber={dataSaved.fromNumber}
+        textMsg={dataSaved.msg}
+        groups={selectedGroups}
+        summaryPayload={getCampaignSum}
+        onConfirm={onApiCall} sendType={sendType}
+        days={daysBeforeAfter}
+        after={afterClick}
+        time={sendTime}
+        handleCallback={handleSummary}
+        specialVal={SelectedSpecialValue}
+        sendDateTime={sendDate}
+        pulseTrue={togglePulse}
+        pulseInput1={pulseAmount}
+        pulseInput2={timeInterval}
+        pulsePer={pulsePer}
+        pulseReci={pulseReci}
+        hourName={hourName}
+        minName={minName}
+        toggleRandom={toggleRandom}
+        random={random}
+        estimationDate={estimationDate}
+        filteredGroups={selectedFilterGroups}
+        filteredCampaigns={selectedFilterCampaigns}
+        // displayCampaigns={totalCampaigns}
+        open={summModal}
+        pulseType={pulseType}
+      />
     );
   };
 
@@ -1763,7 +1778,7 @@ const SmsSend = ({ classes, ...props }) => {
     Redirect({ url: `${sitePrefix}sms/edit/${id}` });
   }
   const renderSendType2validation = () => {
-    return (<>
+    return (
       <BaseDialog
         classes={classes}
         open={sendType2Dialog}
@@ -1803,7 +1818,8 @@ const SmsSend = ({ classes, ...props }) => {
             {t("mainReport.confirmSms")}
           </Button>
         </div>
-      </BaseDialog></>)
+      </BaseDialog>
+    )
   }
   const renderSpecialModal = () => {
     return (<>
@@ -2616,31 +2632,29 @@ const SmsSend = ({ classes, ...props }) => {
 
   const renderSubHeader = () => {
     return (
-      <>
-        <Title
-          Element={(
-            <Box className='stepHead'>
-              <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
-                <span >1</span>
-              </Stack>
-              <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
-                <span className={'stepTitle'}>
-                  {t("mainReport.sendSetting")}
-                </span>
+      <Title
+        Element={(
+          <Box className='stepHead'>
+            <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
+              <span >1</span>
+            </Stack>
+            <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
+              <span className={'stepTitle'}>
+                {t("mainReport.sendSetting")}
+              </span>
 
-              </Stack>
-            </Box>
-          )}
-          classes={classes}
-          isIcon={false}
-          ContainerStyle={{
-            padding: 0,
-            minHeight: 42,
-            height: 'auto',
-            overflowY: 'hidden'
-          }}
-        />
-      </>
+            </Stack>
+          </Box>
+        )}
+        classes={classes}
+        isIcon={false}
+        ContainerStyle={{
+          padding: 0,
+          minHeight: 42,
+          height: 'auto',
+          overflowY: 'hidden'
+        }}
+      />
     )
   }
 
