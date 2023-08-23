@@ -1393,8 +1393,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& canvas": {
       height: barHeight[windowSize],
     },
-    paddingLeft: windowSize !== "xs" && !isRTL ? 10 : 0,
-    paddingRight: windowSize !== "xs" && isRTL ? 10 : 0,
   },
   barContainer: {
     width: windowSize !== "xs" ? "450px !important" : "100%",
