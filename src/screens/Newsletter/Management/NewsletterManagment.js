@@ -493,7 +493,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 !(Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false)) && (
                   <Grid
                     style={{ flex: 1, alignItems: 'center', }}
-                    className={clsx('rowIconContainer', classes.justifyCenter, classes.alignSelfCenter, classes.pt30, classes.paddingSides5)}
+                    className={clsx('rowIconContainer', classes.justifyCenter, classes.alignSelfCenter, classes.paddingSides5)}
                     item
                   >
                     <Button

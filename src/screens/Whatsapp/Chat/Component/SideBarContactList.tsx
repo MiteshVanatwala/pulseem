@@ -1,9 +1,9 @@
 import {
 	LinearProgress,
 	makeStyles,
-	MenuItem,
-	Select,
+	MenuItem
 } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import {
 	APIWhatsappChatSidebarContactsItemsData,
 	SideBarContactListProps,
@@ -101,10 +101,10 @@ const SideBarContactList = ({
 													<span
 														className={classes.whatsappSidebarStatusPadding}>
 														<Select
-															classes={{ root: muiclasses.selectSection }}
 															className={clsx(
 																classes.whatsappChatStatusSelect,
-																getStatusClass(contact.ConversationStatusId)
+																getStatusClass(contact.ConversationStatusId),
+																classes.f12
 															)}
 															MenuProps={{
 																PaperProps: {
@@ -114,21 +114,13 @@ const SideBarContactList = ({
 																},
 															}}
 															autoWidth
-															value={contact.ConversationStatusId}
+															value={`${contact.ConversationStatusId}`}
 															variant='standard'
-															style={{ fontSize: '12px' }}
-															onChange={(e) =>
-																handleUserStatus(e, contact.PhoneNumber)
-															}>
-															<MenuItem value={1}>
-																{translator('whatsappChat.open')}
-															</MenuItem>
-															<MenuItem value={2}>
-																{translator('whatsappChat.pending')}
-															</MenuItem>
-															<MenuItem value={3}>
-																{translator('whatsappChat.solved')}
-															</MenuItem>
+															onChange={(e: SelectChangeEvent) => handleUserStatus(e, contact.PhoneNumber)}
+														>
+															<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
+															<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
+															<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
 														</Select>
 													</span>
 

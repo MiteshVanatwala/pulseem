@@ -558,6 +558,42 @@ const Editorbox = ({
                                     placement="top"
                                     arrow
                                 >
+                                    {/* TODO - FocusTrap */}
+                                    {/* <Select
+                                        variant='standard'
+                                        value={selectValue}
+                                        onChange={handleSelectChange}
+                                        endAdornment={
+                                            <InputAdornment
+                                                className={classes.selectAdornment}
+                                                position="end"
+                                            >
+                                                <IoIosArrowDown size={20} />
+                                            </InputAdornment>
+                                        }
+                                        style={{
+                                            width: 200
+                                        }}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 300,
+                                                    direction: isRTL ? 'rtl' : 'ltr'
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem disabled value="Personilization">{t("mainReport.personalisationSelect")}</MenuItem>
+                                        {extraAccountDATA.map((item, i) => {
+                                            if (item.selected) {
+                                                return (<MenuItem disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</MenuItem>)
+                                            }
+                                            else {
+                                                return <MenuItem value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</MenuItem>;
+                                            }
+
+                                        })}
+                                    </Select> */}
                                     <select
                                         className={clsx(classes.selectVal, classes.sidebar)}
                                         value={selectValue}

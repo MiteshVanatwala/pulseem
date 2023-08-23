@@ -4,7 +4,7 @@ import {
 	FormControl,
 	Grid,
 	InputAdornment,
-	Select,
+	MenuItem,
 	Table,
 	TableCell,
 	TableContainer,
@@ -13,6 +13,7 @@ import {
 	TextField,
 	Typography,
 } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
 import clsx from 'clsx';
@@ -896,16 +897,14 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 								item
 								xs={6}
 								lg={2}
-								className={classes.whatsappManagementbuttonFieldFlexWrapper}
 							>
 								<Box className='selectWrapper'>
 									<FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
 										<Select
-											labelId="FromEmail"
-											id="FromEmail"
+											variant="standard"
 											displayEmpty
-											name="FromEmail"
 											value={templateStatusSearch}
+											onChange={(event: SelectChangeEvent) => setTemplateStatusSearch(event.target.value)}
 											endAdornment={
 												<InputAdornment
 													className={classes.selectAdornment}
@@ -914,28 +913,31 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 													<IoIosArrowDown size={20} />
 												</InputAdornment>
 											}
-											inputProps={{ 'aria-label': 'Without label' }}
 											MenuProps={{
-												style: {
-													paddingTop: 9,
-													paddingBottom: 9
-												}
+												PaperProps: {
+													style: {
+														maxHeight: 300,
+														direction: isRTL ? 'rtl' : 'ltr'
+													},
+												},
 											}}
-											onChange={(e: BaseSyntheticEvent) =>
-												setTemplateStatusSearch(e.target.value)
-											}
 										>
-											<option value="" key="-1" className={classes.underlinedSelOptns}>{translator("common.select")}</option>
+											<MenuItem
+												key=''
+												value='-1'
+												disabled
+											>
+												{translator("common.select")}
+											</MenuItem>
 											{
-												Object.keys(statusesByName)?.map((item: any, index: any) => (
-													<option
-														key={`exd_${index}`}
+												Object.keys(statusesByName)?.map((item: any, index: any) => {
+													return <MenuItem
+														key={index}
 														value={item}
-														className={classes.underlinedSelOptns}
 													>
 														{translator(statusesByName[item])}
-													</option>
-												))
+													</MenuItem>
+												})
 											}
 										</Select>
 									</FormControl>	

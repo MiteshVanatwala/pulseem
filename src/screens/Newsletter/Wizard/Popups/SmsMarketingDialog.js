@@ -265,6 +265,43 @@ const SmsMarketingDialog = ({
                         {t('campaigns.newsLetterEditor.sendSettings.smsMarketing.sendTo')}
                     </Typography>
                     <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%' }} error={!!errors.SendSmsTo}>
+                        {/* TODO - FocusTrap */}
+                        {/* <Select
+                            variant="standard"
+                            style={{
+                                height: 40
+                            }}
+                            placeholder={t('campaigns.newsLetterEditor.sendSettings.sendTo')}
+                            className={classes.select}
+                            // labelId="sendToSelect"
+                            // id="sendToSelect"
+                            value={smsModel.SendSmsTo}
+                            onChange={(e) => setSmsModel({ ...smsModel, SendSmsTo: e.target.value })}
+                            endAdornment={
+                                <InputAdornment
+                                    className={classes.selectAdornment}
+                                    position="end"
+                                >
+                                    <IoIosArrowDown size={20} />
+                                </InputAdornment>
+                            }
+                            MenuProps={{
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 300,
+                                        direction: isRTL ? 'rtl' : 'ltr'
+                                    },
+                                },
+                            }}
+                        >
+                            {
+                                sendToOptions.map((obj, idx) => <MenuItem
+                                    key={idx}
+                                    disabled={obj.value === -1}
+                                    value={obj.value}>{t(obj.text)}</MenuItem>
+                                )
+                            }
+                        </Select> */}
                         <Select
                             style={{
                                 height: 40

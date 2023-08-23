@@ -81,6 +81,7 @@ const UnsubscribeOrDeletePopup = ({
                         <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                             <Typography>{RenderHtml(t("recipient.unsubscribed.notifyEmail"))}</Typography>
                             <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                {/* TODO - FocusTrap */}
                                 <Select
                                     native
                                     displayEmpty

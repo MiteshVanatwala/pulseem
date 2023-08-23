@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
-    Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText, ListItemSecondaryAction, List, TextField, FormControl, Input, InputAdornment, Box, Select, MenuItem, Button
+    Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText, ListItemSecondaryAction, List, TextField, FormControl, Input, InputAdornment, Box, MenuItem, Button
 } from '@material-ui/core'
+import Select from '@mui/material/Select';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -39,7 +40,7 @@ const Groups = ({ classes,
     callbackShowTestGroup = () => null,
     uniqueKey = null
 }) => {
-    const { windowSize } = useSelector(state => state.core)
+    const { windowSize, isRTL } = useSelector(state => state.core)
     const { t } = useTranslation();
     const [groupNameSearch, setGroupNameSearch] = useState('');
     const [clearInput, setClearInput] = useState(false);
@@ -342,7 +343,7 @@ const Groups = ({ classes,
                     />
                 </FormControl>}
                 {showSortBy && <Box className={classes.filterButtonsContainer}>
-                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#ff3343", fontWeight: "600", textTransform: "capitalize" }}>
+                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", fontWeight: "600", textTransform: "capitalize" }}>
                         {windowSize !== 'xs' && <BsFilter style={{ fontSize: "22px", color: "#ff3343" }} />} {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
 
                     </Button> : null}
@@ -350,11 +351,23 @@ const Groups = ({ classes,
                         className={clsx(classes.formControl, showTestGroups ? classes.buttonActiveRed : classes.twoLineButton)}
                         onClick={() => handleShowTestGroup()}
                     >{t("sms.showTestGroups")}</Button>}
-                    <FormControl className={clsx(classes.formControl, classes.dropDown)}>
+                    <FormControl className={clsx(classes.dropDown)}>
                         <Select
-                            id="groupOrder"
+                            variant="standard"
+                            id='groupOrder'
                             value={sortBySelected}
                             onChange={handleSortBySelected}
+                            endAdornment={null}
+                            className={clsx(classes.paddingSides10)}
+                            style={{ color: 'inherit', fontSize: '0.875rem', lineHeight: '1.5rem' }}
+                            MenuProps={{
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 300,
+                                        direction: isRTL ? 'rtl' : 'ltr'
+                                    },
+                                },
+                            }}
                         >
                             {renderSortItems()}
                         </Select>

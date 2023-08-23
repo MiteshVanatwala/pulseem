@@ -8,10 +8,10 @@ import {
   Grid,
   InputAdornment,
   MenuItem,
-  Select,
   TextField,
   Typography,
 } from "@material-ui/core";
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Title } from "../../../components/managment/Title";
 import { useTranslation } from "react-i18next";
 import Toast from "../../../components/Toast/Toast.component";
@@ -355,25 +355,30 @@ const BillingSettingsEditor = ({ classes }: any) => {
             <Typography>
               <>{t("settings.billingSettings.fields.invoiceLang")}</>
             </Typography>
-            <FormControl
-              className={classes.formControl}
-              style={{ width: "100%", maxHeight: 20, maxWidth: 252 }}
-            >
+            <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
               <Select
+                variant="standard"
                 autoWidth
                 value={billingInfoValues.InvoiceLang}
-                style={{
-                  maxHeight: 40,
-                  overflow: "hidden",
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                }}
+                endAdornment={
+									<InputAdornment
+										className={classes.selectAdornment}
+										position="end"
+									>
+										<IoIosArrowDown size={20} />
+									</InputAdornment>
+								}
+                MenuProps={{
+									PaperProps: {
+										style: {
+											direction: isRTL ? 'rtl' : 'ltr'
+										},
+									},
+								}}
                 name="InvoiceLang"
-                onChange={(e: any) => handleChange(e)}
+                onChange={(e: SelectChangeEvent) => handleChange(e)}
               >
-                <MenuItem value="" className={classes.dropDownItem}>
-                  {t("common.Status")}
-                </MenuItem>
+                <MenuItem value="" className={classes.dropDownItem}>{t("common.Status")}</MenuItem>
                 {["עברית", "English"].map((so, index) => {
                   return (
                     <MenuItem
@@ -481,10 +486,11 @@ const BillingSettingsEditor = ({ classes }: any) => {
             error={!!errors.ExpMonth}
           >
             <Select
+              variant="standard"
               autoWidth
               value={cardDetails.ExpMonth}
               name="ExpMonth"
-              onChange={(e: any) => handleChangeCardDetails(e)}
+              onChange={(e: SelectChangeEvent) => handleChangeCardDetails(e)}
               endAdornment={
                 <InputAdornment
                   className={classes.selectAdornment}
@@ -493,6 +499,14 @@ const BillingSettingsEditor = ({ classes }: any) => {
                   <IoIosArrowDown size={20} />
                 </InputAdornment>
               }
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 270,
+                    direction: isRTL ? 'rtl' : 'ltr'
+                  },
+                },
+              }}
             >
               {Array.from({ length: 12 }, (v, i) => (
                 <MenuItem
@@ -521,6 +535,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
             error={!!errors.ExpYear}
           >
             <Select
+              variant="standard"
               autoWidth
               value={cardDetails.ExpYear}
               name="ExpYear"
@@ -533,6 +548,14 @@ const BillingSettingsEditor = ({ classes }: any) => {
                   <IoIosArrowDown size={20} />
                 </InputAdornment>
               }
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 270,
+                    direction: isRTL ? 'rtl' : 'ltr'
+                  },
+                },
+              }}
             >
               {Array.from({ length: 50 }, (v, i) => (
                 <MenuItem

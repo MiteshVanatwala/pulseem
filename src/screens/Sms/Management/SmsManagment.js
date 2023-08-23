@@ -12,24 +12,15 @@ import {
 	Grid,
 	Button,
 	TextField,
-	Box,
-	List,
-	ListItem,
-	ListItemAvatar,
-	Avatar,
-	ListItemText,
-	ListItemSecondaryAction,
+	Box
 } from '@material-ui/core';
 import {
 	AutomationIcon,
 	DeleteIcon,
 	DuplicateIcon,
 	EditIcon,
-	SendGreenIcon,
-	SearchIcon,
 	GroupsIcon,
-	PreviewIcon,
-	SendIcon
+	PreviewIcon
 } from '../../../assets/images/managment/index';
 import {
 	TablePagination,
@@ -50,7 +41,6 @@ import {
 } from '../../../redux/reducers/smsSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
@@ -347,15 +337,6 @@ const SmsManagnentScreen = ({ classes }) => {
 
 		const iconsMap = [
 			{
-				key: 'send',
-				uIcon: SendIcon,
-				lable: t('campaigns.imgSendResource1.ToolTip'),
-				remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
-				rootClass: classes.sendIcon,
-				textClass: classes.sendIconText,
-				href: `${sitePrefix}sms/send/${Id}`
-			},
-			{
 				key: 'preview',
 				uIcon: PreviewIcon,
 				lable: t('campaigns.Image1Resource1.ToolTip'),
@@ -446,6 +427,25 @@ const SmsManagnentScreen = ({ classes }) => {
 						/>
 					</Grid>
 				))}
+				{
+					!(Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false)) && (
+						<Grid
+							className={clsx('rowIconContainer', classes.paddingSides5, classes.alignSelfCenter)}
+							item
+						>
+							<Button
+								className={clsx(
+									classes.btn,
+									classes.btnRounded,
+								)}
+								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+								onClick={() => window.location.href = `${sitePrefix}sms/send/${Id}`}
+							>
+								{t('campaigns.imgSendResource1.ToolTip')}
+							</Button>
+						</Grid>
+					)
+				}
 			</Grid>
 		)
 	}
@@ -717,7 +717,6 @@ const SmsManagnentScreen = ({ classes }) => {
 		return {
 			title: t('campaigns.ShowGroupsTitle'),
 			showDivider: false,
-			icon: <div className={classes.dialogIconContent}>{'\uE0D5'}</div>,
 			content: (
 				<Box className={classes.gruopsDialogContent}>
 					{data.map((group) => {
@@ -729,26 +728,13 @@ const SmsManagnentScreen = ({ classes }) => {
 						);
 					})}
 				</Box>
-			),
-			renderButtons: () => (
-				<Button
-					variant='contained'
-					size='small'
-					onClick={handleClose}
-					className={clsx(
-						classes.gruopsDialogButton,
-						classes.dialogConfirmButton
-					)}>
-					{t('common.Ok')}
-				</Button>
-			),
+			)
 		};
 	};
 
 	const getDeleteDialog = (data = '') => ({
 		title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
 		showDivider: false,
-		icon: <Box className={classes.dialogAlertIcon}>!</Box>,
 		content: (
 			<Typography style={{ fontSize: 18 }}>
 				{t('campaigns.GridButtonColumnResource2.ConfirmText')}
@@ -765,7 +751,6 @@ const SmsManagnentScreen = ({ classes }) => {
 	const getDuplicateDialog = (data = '') => ({
 		title: t('campaigns.dialogDuplicateTitle'),
 		showDivider: false,
-		icon: <Box className={classes.dialogAlertIcon}>!</Box>,
 		content: (
 			<Typography style={{ fontSize: 18 }}>
 				{t('campaigns.dialogDuplicateContent')}
@@ -785,7 +770,6 @@ const SmsManagnentScreen = ({ classes }) => {
 			childrenPadding: false,
 			contentStyle: classes.pt2rem,
 			showDivider: false,
-			icon: <div className={classes.dialogIconContent}>{'\uE0F8'}</div>,
 			content: (
 				<Box>
 					<Preview
@@ -800,120 +784,109 @@ const SmsManagnentScreen = ({ classes }) => {
 						isSMS={true}
 					/>
 				</Box>
-			),
-			renderButtons: () => (
-				<Button
-					variant='contained'
-					size='small'
-					onClick={handleClose}
-					className={clsx(classes.confirmButton, classes.dialogConfirmButton)}>
-					{t('common.confirm')}
-				</Button>
-			),
+			)
 		};
 	};
 
-	const getVerifyDialog = (data = []) => {
-		if (!data || !Array.isArray(data)) return null;
-		return {
-			title: t('sms.verificationDialogTitle'),
-			showDivider: false,
-			icon: <div className={classes.dialogIconContent}>{'\uE11B'}</div>,
-			content: (
-				<Box>
-					<Typography style={{ fontSize: 15 }} align={'justify'}>
-						{t('sms.verificationBody')}
-						<b>{t('sms.oneTimeProcess')}</b>
-						{t('sms.foreachSubmission')}
-					</Typography>
-					<br />
-					<Typography style={{ fontSize: 15, textDecoration: 'underline' }}>
-						{t('sms.verificationNote')}
-					</Typography>
-					<hr />
-					<Box
-						style={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							marginBottom: 10,
-						}}>
-						<Typography style={{ fontSize: 15 }}>
-							{t('sms.numbersAccount')}
-						</Typography>
-						<Button
-							variant='contained'
-							size='small'
-							color='primary'
-							onClick={() => handleShortVerify()}>
-							{t('sms.verifyAnotherNumber')}
-						</Button>
-					</Box>
-					<List
-						style={{
-							padding: 0,
-							overflow: 'auto',
-							height: 'calc(100vh - 500px)',
-						}}>
-						{data.map((item) => {
-							return (
-								<ListItem
-									style={{ padding: 0 }}
-									key={`verificationNumber${item.ID}`}>
-									<ListItemAvatar style={{ minWidth: 25 }}>
-										<Avatar
-											className={
-												item.IsOptIn ? classes.checkIcon : classes.redIcon
-											}>
-											<div className={clsx(classes.avatarIcon)}>
-												{item.IsOptIn ? '\uE134' : '\uE0A7'}
-											</div>
-										</Avatar>
-									</ListItemAvatar>
-									<ListItemText
-										style={{ margin: 0 }}
-										primary={
-											<Grid container>
-												<Grid item>
-													<Typography variant='body2'>{item.Number}</Typography>
-												</Grid>
-												{!item.IsOptIn && (
-													<Grid item>
-														<Typography
-															className={classes.verifyLink}
-															onClick={() => handleShortVerify(item.Number)}>
-															{t('sms.verifyNumber')}
-														</Typography>
-													</Grid>
-												)}
-											</Grid>
-										}
-									/>
-									<ListItemSecondaryAction></ListItemSecondaryAction>
-								</ListItem>
-							);
-						})}
-					</List>
-				</Box>
-			),
-			renderButtons: () => (
-				<Button
-					variant='contained'
-					size='small'
-					style={{ maxWidth: 100 }}
-					onClick={handleClose}
-					className={clsx(
-						classes.gruopsDialogButton,
-						classes.dialogConfirmButton
-					)}>
-					{t('common.Ok')}
-				</Button>
-			),
-		};
-	};
+	// const getVerifyDialog = (data = []) => {
+	// 	if (!data || !Array.isArray(data)) return null;
+	// 	return {
+	// 		title: t('sms.verificationDialogTitle'),
+	// 		showDivider: false,
+	// 		content: (
+	// 			<Box>
+	// 				<Typography style={{ fontSize: 15 }} align={'justify'}>
+	// 					{t('sms.verificationBody')}
+	// 					<b>{t('sms.oneTimeProcess')}</b>
+	// 					{t('sms.foreachSubmission')}
+	// 				</Typography>
+	// 				<br />
+	// 				<Typography style={{ fontSize: 15, textDecoration: 'underline' }}>
+	// 					{t('sms.verificationNote')}
+	// 				</Typography>
+	// 				<hr />
+	// 				<Box
+	// 					style={{
+	// 						display: 'flex',
+	// 						justifyContent: 'space-between',
+	// 						marginBottom: 10,
+	// 					}}>
+	// 					<Typography style={{ fontSize: 15 }}>
+	// 						{t('sms.numbersAccount')}
+	// 					</Typography>
+	// 					<Button
+	// 						variant='contained'
+	// 						size='small'
+	// 						color='primary'
+	// 						onClick={() => handleShortVerify()}>
+	// 						{t('sms.verifyAnotherNumber')}
+	// 					</Button>
+	// 				</Box>
+	// 				<List
+	// 					style={{
+	// 						padding: 0,
+	// 						overflow: 'auto',
+	// 						height: 'calc(100vh - 500px)',
+	// 					}}>
+	// 					{data.map((item) => {
+	// 						return (
+	// 							<ListItem
+	// 								style={{ padding: 0 }}
+	// 								key={`verificationNumber${item.ID}`}>
+	// 								<ListItemAvatar style={{ minWidth: 25 }}>
+	// 									<Avatar
+	// 										className={
+	// 											item.IsOptIn ? classes.checkIcon : classes.redIcon
+	// 										}>
+	// 										<div className={clsx(classes.avatarIcon)}>
+	// 											{item.IsOptIn ? '\uE134' : '\uE0A7'}
+	// 										</div>
+	// 									</Avatar>
+	// 								</ListItemAvatar>
+	// 								<ListItemText
+	// 									style={{ margin: 0 }}
+	// 									primary={
+	// 										<Grid container>
+	// 											<Grid item>
+	// 												<Typography variant='body2'>{item.Number}</Typography>
+	// 											</Grid>
+	// 											{!item.IsOptIn && (
+	// 												<Grid item>
+	// 													<Typography
+	// 														className={classes.verifyLink}
+	// 														onClick={() => handleShortVerify(item.Number)}>
+	// 														{t('sms.verifyNumber')}
+	// 													</Typography>
+	// 												</Grid>
+	// 											)}
+	// 										</Grid>
+	// 									}
+	// 								/>
+	// 								<ListItemSecondaryAction></ListItemSecondaryAction>
+	// 							</ListItem>
+	// 						);
+	// 					})}
+	// 				</List>
+	// 			</Box>
+	// 		),
+	// 		renderButtons: () => (
+	// 			<Button
+	// 				variant='contained'
+	// 				size='small'
+	// 				style={{ maxWidth: 100 }}
+	// 				onClick={handleClose}
+	// 				className={clsx(
+	// 					classes.gruopsDialogButton,
+	// 					classes.dialogConfirmButton
+	// 				)}>
+	// 				{t('common.Ok')}
+	// 			</Button>
+	// 		),
+	// 	};
+	// };
 
 	const getShortVerifyDialog = (data = '') => ({
 		showDivider: false,
-		icon: <div className={classes.dialogIconContent}>{'\uE11B'}</div>,
 		content: (
 			<Box style={{ textAlign: 'center' }}>
 				<Typography align='center' style={{ fontWeight: 'bold', fontSize: 25 }}>
@@ -1040,7 +1013,7 @@ const SmsManagnentScreen = ({ classes }) => {
 			delete: getDeleteDialog(data),
 			duplicate: getDuplicateDialog(data),
 			preview: getPreviewDialog(data),
-			verify: getVerifyDialog(data),
+			// verify: getVerifyDialog(data),
 			shortVerify: getShortVerifyDialog(data),
 			verificationSent: getVerificationSentDialog(data),
 			verificationSuccess: getVerificationSuccessDialog(data),

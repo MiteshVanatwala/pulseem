@@ -562,6 +562,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginLeft: 5,
         alignSelf: 'flex-end',
         border: '1px solid #ff3343',
+        color: '#ff3343',
         borderRadius: '.2rem',
         padding: 3,
         height: 28,

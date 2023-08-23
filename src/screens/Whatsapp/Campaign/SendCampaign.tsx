@@ -73,6 +73,7 @@ import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
 import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
+import { SelectChangeEvent } from '@mui/material';
 
 const SendCampaign = ({
 	classes,
@@ -88,7 +89,7 @@ const SendCampaign = ({
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(true);
+	
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [selectedGroups, setSelectedGroups] = useState<testGroupDataProps[]>(
 		[]
@@ -111,8 +112,6 @@ const SendCampaign = ({
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
-	const [isSendCampaignSuccessOpen, setIsSendCampaignSuccessOpen] =
-		useState<boolean>(true);
 	const [newGroupName, setNewGroupName] = useState<string>('');
 
 	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
@@ -355,7 +354,7 @@ const SendCampaign = ({
 		}
 	};
 
-	const handleSelectChange = (e: BaseSyntheticEvent) => {
+	const handleSelectChange = (e: SelectChangeEvent) => {
 		if (e.target.value === '0') {
 			setDateFieldID('0');
 		} else {

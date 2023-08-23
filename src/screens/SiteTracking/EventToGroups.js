@@ -117,7 +117,7 @@ const EventToGroups = ({
             >
                 <Box className={clsx('selectWrapper', { [classes.w100]: windowSize === 'xs' })}>
                     <FormControl
-                        variant="outlined"
+                        variant="standard"
                         className={clsx(classes.selectInputFormControl)}
                         style={{ minWidth: 100, marginTop: 12, width: windowSize === 'xs' ? '100%' : 'auto' }}
                     >
@@ -213,7 +213,7 @@ const EventToGroups = ({
             </Box>
             {eventsCount > 1 && <Box className={classes.deleteButtonContainer}>
                 <Button onClick={() => { onDelete() }} className={clsx(classes.btn, classes.btnRounded)}>
-                    <BsTrash style={{ width: 30, height: 30, marginInlineStart: 0 }} />
+                    <BsTrash style={{ width: 20, height: 20, marginInlineStart: 0 }} />
                 </Button>
             </Box>
             }

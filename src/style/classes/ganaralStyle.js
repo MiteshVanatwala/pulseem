@@ -143,7 +143,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderRadius: 25,
       overflowX: "hidden",
       boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
-      backgroundColor: '#f5f5f5'
+      backgroundColor: '#f5f5f5',
     },
     "& .MuiDialog-paperWidthSm": {
       minWidth: minDialogWidth[windowSize],
@@ -218,6 +218,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   paddingSides5: {
     paddingRight: 5,
     paddingLeft: 5,
+  },
+  paddingSides10: {
+    paddingRight: 10,
+    paddingLeft: 10,
   },
   paddingSides15: {
     paddingRight: 15,
@@ -494,7 +498,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginTop: 15,
   },
   f12: {
-    fontSize: 12,
+    fontSize: `12px !important`,
   },
   mxAuto: {
     marginInline: "auto",
@@ -764,6 +768,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   font30: {
     fontSize: 30,
+  },
+  w50: {
+    width: '50%'
   },
   w100: {
     width: '100%'
@@ -1981,11 +1988,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minWidth: 120,
     minHeight: 40,
     color: '#000',
-    background: '#E6E6E6',
+    background: '#FFF',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    border: '3px solid #fff',
-    borderBottom: 'none',
+    borderBottom: '4px solid #fff',
     '&.alignCenter': {
       display: 'flex',
       justifyContent: 'center',
@@ -1993,10 +1999,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   currentActiveTab: {
-    background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
-    color: "#fff !important",
+    borderBottom: 'solid 4px #ff3433',
+    color: "#ff3433 !important",
     '& svg': {
-      color: '#fff'
+      color: '#ff3433'
     }
   },
   activeTab: {
@@ -2577,7 +2583,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .selectWrapper': {
         height: 'auto',
         '& .MuiSelect-root': {
-          padding: '7px 0 11px 11px'
+          padding: '7px 0 11px 0px'
         },
         '& .bottomAlignedSelect': {
           '& .MuiSelect-root': {
@@ -3237,7 +3243,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& label': {
         marginInline: 5
       },
-
+      '& .MuiInput-root': {
+        direction: isRTL ? 'rtl' : 'ltr',
+      },
       '& .MuiSelect-root': {
         minHeight: 25,
         maxHeight: 29,
@@ -3264,13 +3272,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .MuiSelect-select': {
         minWidth: 100,
         maxWidth: '100%',
-        // border: '1px solid #c4c4c4',
         borderRadius: 4,
-        paddingLeft: 10,
-        paddingRight: 10,
+        paddingLeft: 0,
+        paddingRight: 0,
         minHeight: 25,
         display: 'flex',
         alignItems: 'center',
+        '&:focus': {
+          backgroundColor: '#fff !important' 
+        }
       },
       '& svg': {
         color: '#ff3343',
@@ -3319,6 +3329,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pb25: {
     paddingBottom: 25
+  },
+  pbt5: {
+    paddingTop: 5,
+    paddingBottom: 5
   },
   pbt10: {
     paddingTop: 10,
@@ -3480,5 +3494,5 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiDialogActions-root': {
       marginTop: 20
     }
-  },
+  }
 });

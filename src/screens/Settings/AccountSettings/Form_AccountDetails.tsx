@@ -1,20 +1,21 @@
-import React, { useState, useEffect, BaseSyntheticEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	Box,
 	Button,
+	FormControl,
 	FormControlLabel,
 	Grid,
+	InputAdornment,
 	MenuItem,
-	OutlinedInput,
 	Radio,
 	RadioGroup,
-	Select,
 	TextField,
 	Typography,
 } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
 import { AccDtlPropTypes } from '../../../Models/Settings/AccountDetails';
@@ -22,6 +23,7 @@ import { IsNumberField } from '../../../helpers/Utils/Validations';
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -30,7 +32,7 @@ const FORM_ACCOUNT_DETAILS = ({
 	Settings,
 	OnUpdate,
 	selectedTier,
-	onTierChange,
+	onTierChange = () => {},
 }: AccDtlPropTypes) => {
 	const { t } = useTranslation();
 	const { isRTL } = useSelector((state: any) => state.core);
@@ -192,43 +194,45 @@ const FORM_ACCOUNT_DETAILS = ({
 							</a>
 						</Grid>
 						<Grid item xs={12} sm={6} md={8} className={'textBoxWrapper'}>
-							<Select
-								native
-								MenuProps={{
-									PaperProps: {
-										style: {
-											maxHeight: 40,
+							<FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+								<Select
+									variant="standard"
+									// disabled
+									autoWidth
+									value={selectedTier}
+									name='TwoFactorAuthOptionID'
+									onChange={(e: SelectChangeEvent) =>
+										onTierChange(e.target.value)
+									}
+									endAdornment={
+										<InputAdornment
+											className={classes.selectAdornment}
+											position="end"
+										>
+											<IoIosArrowDown size={20} />
+										</InputAdornment>
+									}
+									MenuProps={{
+										PaperProps: {
+											style: {
+												maxHeight: 300,
+												direction: isRTL ? 'rtl' : 'ltr'
+											},
 										},
-									},
-								}}
-								input={<OutlinedInput />}
-								inputProps={{
-									'aria-label': 'Without label',
-									style: {
-										padding: 10,
-										maxWidth: 210,
-										paddingInlineStart: 15,
-										paddingRight: isRTL ? '10px' : '22px',
-										paddingLeft: isRTL ? '22px' : '10px',
-									},
-								}}
-								autoWidth
-								value={selectedTier}
-								name='TwoFactorAuthOptionID'
-								onChange={(e: BaseSyntheticEvent) =>
-									onTierChange(e.target.value)
-								}>
-								{tierSetting?.map((tier, index) => {
-									return (
-										<option
-											key={index}
-											value={tier.value}
-											className={classes.dropDownItem}>
-											{t(tier.name)}
-										</option>
-									);
-								})}
-							</Select>
+									}}
+								>
+									{tierSetting?.map((tier, index) => {
+										return (
+											<MenuItem
+												key={index}
+												value={tier.value}
+											>
+												{t(tier.name)}
+											</MenuItem>
+										);
+									})}
+								</Select>
+							</FormControl>
 						</Grid>
 					</Grid>
 				</Grid>

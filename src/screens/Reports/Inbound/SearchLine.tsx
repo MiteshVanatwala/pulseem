@@ -316,7 +316,8 @@ const SearchLine = ({
                                 style={{
                                     width: 240,
                                 }}
-                                variant="outlined" />)
+                                className={clsx(classes.pbt10)}
+                            />)
                         }}
                     />
                 </FormControl>

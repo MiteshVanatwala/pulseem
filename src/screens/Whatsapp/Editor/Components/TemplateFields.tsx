@@ -1,5 +1,4 @@
 import React, {
-	BaseSyntheticEvent,
 	HtmlHTMLAttributes,
 	useEffect,
 	useState,
@@ -12,10 +11,12 @@ import {
 	TextField,
 	Typography,
 	Grid,
-	Select,
 	MenuItem,
 	Box,
+	InputAdornment,
+	FormControl,
 } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTranslation } from 'react-i18next';
 import { Autocomplete } from '@mui/material';
 import {
@@ -23,6 +24,7 @@ import {
 	getTemplateName,
 	getTemplateNameById,
 } from '../../Common';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const TemplateFields = ({
 	classes,
@@ -129,37 +131,37 @@ const TemplateFields = ({
 				<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 						<Typography className={classes.buttonHead}>
-							<>{translator('report.ProductsReport.category')}</>
+							{translator('report.ProductsReport.category')}
 						</Typography>
-
-						<Select
-							type='text'
-							onChange={(e: BaseSyntheticEvent) =>
-								onCategoryChange(e.target.value)
-							}
-							MenuProps={{
-								PaperProps: {
-									style: {
-										direction: isRTL ? 'rtl' : 'ltr',
+						<FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} style={{ marginTop: 4 }}>
+							<Select
+								variant="standard"
+								displayEmpty
+								value={category}
+								onChange={(event: SelectChangeEvent) => onCategoryChange(event.target.value)}
+								endAdornment={
+									<InputAdornment
+										className={classes.selectAdornment}
+										position="end"
+									>
+										<IoIosArrowDown size={20} />
+									</InputAdornment>
+								}
+								className={classes.pbt5}
+								MenuProps={{
+									PaperProps: {
+										style: {
+											maxHeight: 300,
+											direction: isRTL ? 'rtl' : 'ltr'
+										},
 									},
-								},
-							}}
-							style={{
-								borderBottom: 'solid 1px #ced4da'
-							}}
-							className={classes.buttonField}
-							placeholder={translator('report.ProductsReport.category')}
-							value={category}>
-							<MenuItem key={'marketing'} value={'marketing'}>
-								<>{translator('whatsapp.marketing')}</>
-							</MenuItem>
-							<MenuItem key={'utility'} value={'utility'}>
-								<>{translator('whatsapp.utility')}</>
-							</MenuItem>
-							<MenuItem key={'authentication'} value={'authentication'}>
-								<>{translator('whatsapp.authentication')}</>
-							</MenuItem>
-						</Select>
+								}}
+							>
+								<MenuItem key={'marketing'} value={'marketing'}>{translator('whatsapp.marketing')}</MenuItem>
+								<MenuItem key={'utility'} value={'utility'}>{translator('whatsapp.utility')}</MenuItem>
+								<MenuItem key={'authentication'} value={'authentication'}>{translator('whatsapp.authentication')}</MenuItem>
+							</Select>
+						</FormControl>
 					</Grid>
 				</Grid>
 			</Grid>

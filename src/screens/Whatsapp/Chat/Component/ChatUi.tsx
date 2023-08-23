@@ -6,7 +6,8 @@ import {
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
 } from '../Types/WhatsappChat.type';
-import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
+import { IconButton, makeStyles, MenuItem } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import { apiStatus } from '../../Constant';
@@ -61,20 +62,6 @@ const ChatUi = ({
     type: string;
   } | null>(null);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
-	const useStyles = makeStyles(() => ({
-		selectRoot: {
-			fontSize: '18px',
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
-		selectSection: {
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
-	}));
-	const muiclasses = useStyles();
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -152,38 +139,32 @@ const ChatUi = ({
 						{chatContacts.UserName || chatContacts.PhoneNumber || 'Pulseem'}
 						<span className={classes.whatsappChatUiStatusPadding}>
 							<Select
-								classes={{ root: muiclasses.selectSection }}
 								className={clsx(
 									classes.whatsappChatStatusSelect,
-									getStatusClass(chatContacts.ConversationStatusId)
+									getStatusClass(chatContacts.ConversationStatusId),
+									classes.f12
 								)}
 								autoWidth
-								value={chatContacts.ConversationStatusId || ''}
+								value={`${chatContacts?.ConversationStatusId || ''}`}
 								variant='standard'
 								style={
 									chatContacts.ConversationStatusId
 										? {
-												fontSize: '12px',
-												padding: '8px 0px 8px 8px',
-												position: 'absolute',
-												borderRadius: '10px',
-												textAlign: 'center',
-												marginTop: '-6px',
-										  }
+											padding: '8px 0px 8px 8px',
+											position: 'absolute',
+											borderRadius: '10px',
+											textAlign: 'center',
+											marginTop: '-6px',
+										}
 										: {
-												display: 'none',
-										  }
+											display: 'none',
+										}
 								}
-								onChange={(e) => handleUserStatus(e, chatContacts.PhoneNumber)}>
-								<MenuItem value={1}>
-									<>{translator('whatsappChat.open')}</>
-								</MenuItem>
-								<MenuItem value={2}>
-									{translator('whatsappChat.pending')}
-								</MenuItem>
-								<MenuItem value={3}>
-									{translator('whatsappChat.solved')}
-								</MenuItem>
+								onChange={(e: SelectChangeEvent) => handleUserStatus(e, chatContacts.PhoneNumber)}
+							>
+								<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
+								<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
+								<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
 							</Select>
 						</span>
 					</h2>

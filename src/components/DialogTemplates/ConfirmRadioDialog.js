@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, Select, OutlinedInput } from '@material-ui/core';
+// import Select from '@mui/material/Select';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { useState, useEffect } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
@@ -92,11 +93,47 @@ const ConfirmRadioDialog = ({
                         </RadioGroup>
                     </FormControl>)
                     }
-                    {showEmailToNotify && <>
+                    {showEmailToNotify &&
                         <Box style={{ display: 'flex' }}>
                             <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                                 <Typography>{RenderHtml(t("recipient.exportGroups.notifyEmail"))}</Typography>
-                                <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                <FormControl variant="standard" className={clsx(classes.selectInputFormControl, classes.w100)}>
+                                    {/* TODO - Maximum call stack size exceeded. FocusTrap */}
+                                    {/* <Select                                        
+                                        variant="standard"
+                                        name="FromEmail"
+                                        displayEmpty
+                                        value={notifyEmail}
+                                        onChange={(event) => setNotifyEmail(event.target.value)}
+                                        endAdornment={
+                                            <InputAdornment
+                                                className={classes.selectAdornment}
+                                                position="end"
+                                            >
+                                                <IoIosArrowDown size={20} />
+                                            </InputAdornment>
+                                        }
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 150,
+                                                    direction: isRTL ? 'rtl' : 'ltr'
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem disabled value="-1">{t("common.select")}</MenuItem>
+                                        {twoFactorAuthEmails.map((item, index) => {
+                                            if (!item.IsDeleted) {
+                                                return <MenuItem
+                                                    key={`exd_${index}`}
+                                                    value={`${item.AuthValue}`}
+                                                >
+                                                    {t(item.AuthValue)}
+                                                </MenuItem>
+                                            }
+                                        })}
+                                    </Select> */}
                                     <Select
                                         native
                                         displayEmpty
@@ -134,7 +171,7 @@ const ConfirmRadioDialog = ({
                                 </FormControl>
                             </Box>
                         </Box>
-                    </>}
+                    }
                 </Grid>
             </Grid>
         ),

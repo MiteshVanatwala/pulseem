@@ -1,13 +1,14 @@
 import {
     Box,
     Grid,
-    Select,
     Checkbox,
     TextField,
     Typography,
     FormControl,
-    InputAdornment
+    InputAdornment,
+    MenuItem
 } from '@material-ui/core'
+import Select from '@mui/material/Select';
 import clsx from "clsx";
 import { FaGoogle } from 'react-icons/fa';
 import { BiUpload } from 'react-icons/bi';
@@ -27,6 +28,7 @@ export const AdvancedSettings = ({
     removeAttachmentFile,
 }) => {
     const { t } = useTranslation();
+    const { isRTL } = useSelector((state) => state.core);
     const { accountFeatures } = useSelector((state) => state.common);
     return <Box pt={3}>
         <Typography className={localClasses.suHeading}>{t("common.AdvancedSettings")}</Typography>
@@ -35,8 +37,9 @@ export const AdvancedSettings = ({
                 <Typography title={t("campaigns.newsLetterEditor.mobileSupport")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.mobileSupport")}</Typography>
                 <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
-                        // native
+                        variant="standard"
                         displayEmpty
+                        className={classes.pbt5}
                         value={campaingnValues?.IsResponsive ? '1' : '0'}
                         onChange={(event) => {
                             setCampaingnValues({
@@ -61,19 +64,20 @@ export const AdvancedSettings = ({
                                 style: {
                                     maxHeight: 48 * 4.5 + 8,
                                     width: 250,
+                                    direction: isRTL ? 'rtl' : 'ltr'
                                 },
                             },
                         }}
                         inputProps={{ 'aria-label': 'Without label' }}
                     >
                         {MobileSupport.map((item) => (
-                            <option
+                            <MenuItem
                                 key={item.value}
                                 value={item.value}
-                                className={classes.underlinedSelOptns}
+                                name={item.value}
                             >
                                 {t(item.label)}
-                            </option>
+                            </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -104,8 +108,10 @@ export const AdvancedSettings = ({
                 <Typography title={t("campaigns.newsLetterEditor.language")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.language")}</Typography>
                 <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
+                        variant="standard"
                         displayEmpty
                         value={campaingnValues.LanguageCode}
+                        className={classes.pbt5}
                         onChange={(event) => {
                             setCampaingnValues({ ...campaingnValues, LanguageCode: event.target.value })
                         }}
@@ -126,19 +132,20 @@ export const AdvancedSettings = ({
                                 style: {
                                     maxHeight: 48 * 4.5 + 8,
                                     width: 250,
+                                    direction: isRTL ? 'rtl' : 'ltr'
                                 },
                             },
                         }}
                         inputProps={{ 'aria-label': 'Without label' }}
                     >
                         {LangugeCode.map((item) => (
-                            <option
+                            <MenuItem
                                 key={item.value}
                                 value={item.value}
-                                className={classes.underlinedSelOptns}
+                                name={item.value}
                             >
                                 {t(item.label)}
-                            </option>
+                            </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
