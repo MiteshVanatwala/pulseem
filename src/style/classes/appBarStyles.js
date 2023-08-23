@@ -32,7 +32,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     fontFamily: 'OpenSansHebrew',
     color: '#000',
     textTransform: 'none',
-    whiteSpace: 'wrap',
+    whiteSpace: 'nowrap',
     overflow: 'hidden',
     height: '100%',
     fontSize: appBarTitleTextSize[windowSize],
@@ -190,7 +190,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     '&>div': {
       '&:nth-child(1)': {
         '&>div': {
-          padding: '0 19px 0 16px'
+          padding: '0 10px'
         }
       },
     }
