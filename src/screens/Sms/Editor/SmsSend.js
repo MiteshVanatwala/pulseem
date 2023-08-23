@@ -1744,7 +1744,7 @@ const SmsSend = ({ classes, ...props }) => {
     var req = [];
     areaData.split('\n').map((q) => {
       if (validatePhoneNumber(q.replace(',', ''))) {
-        req.push({ Phone: q.replace(',', '') })
+        req.push({ Cellphone: q.replace(',', ''), Telephone: q.replace(',', '') })
       }
     });
     setDialogType({ type: "" });
