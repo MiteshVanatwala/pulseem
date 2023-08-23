@@ -24,7 +24,7 @@ const BulkStatus = ({ classes }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
+  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {} } = packagesDetails || {};
 
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
@@ -180,79 +180,92 @@ const BulkStatus = ({ classes }) => {
             </Typography>
             <Typography align='center' className={classes.f20}>{t('dashboard.yourBulkStatus')}</Typography>
           </Grid>
-          {<Grid
-            container
-            item xs={9}
-            className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
-            justifyContent='space-between'
-            onMouseEnter={() => showSmsPackage(true)}
-            onMouseLeave={() => showSmsPackage(false)}
+          <Grid 
+            container 
+            justifyContent='center'
+            style={{ maxHeight: '238px', overflow: 'auto' }}
           >
-            <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
-            {isShowSmsPackage && isAllowSms() ? (
-              <a
-                href="javascript:;"
-                onClick={() => showPackageDialogType(3)}
-                className={clsx(getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
-              >
-                {t('dashboard.purchase')}
-              </a>
-            )
-              :
-              (<Typography className={classes.bulkTitle}>
-                {Sms.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
-                {getBillingTypeText(Sms)}
-              </Typography>)
-            }
+            {<Grid
+              container
+              item xs={9}
+              className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
+              justifyContent='space-between'
+              onMouseEnter={() => showSmsPackage(true)}
+              onMouseLeave={() => showSmsPackage(false)}
+            >
+              <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
+              {isShowSmsPackage && isAllowSms() ? (
+                <a
+                  href="javascript:;"
+                  onClick={() => showPackageDialogType(3)}
+                  className={clsx(getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
+                >
+                  {t('dashboard.purchase')}
+                </a>
+              )
+                :
+                (<Typography className={classes.bulkTitle}>
+                  {Sms.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
+                  {getBillingTypeText(Sms)}
+                </Typography>)
+              }
+            </Grid>}
+            {<Grid
+              container
+              item xs={9}
+              className={getBillingTypeText(Newsletters) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
+              justifyContent='space-between'
+              onMouseEnter={() => showEmailPackage(true)}
+              onMouseLeave={() => showEmailPackage(false)}
+            >
+              <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
+              {isShowEmailPackage && isAllowNewsletter() ? (
+                <a
+                  href="javascript:;"
+                  onClick={() => showPackageDialogType(2)}
+                  className={clsx(getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
+                >
+                  {t('dashboard.purchase')}
+                </a>
+              )
+                :
+                (<Typography className={classes.bulkTitle}>
+                  {accountFeatures && accountFeatures.includes('37') && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
+                  {getBillingTypeText(Newsletters)}
+                </Typography>)
+              }
+            </Grid> }
+            {Mms.Credits > 0 && <Grid
+              container
+              item xs={9}
+              className={getBillingTypeText(Mms) === 0 ? classes.statusOutline : classes.statusBlue}
+              justifyContent='space-between'>
+              <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
+              <Typography className={classes.bulkTitle}>
+                {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
+              </Typography>
+            </Grid>}
+            {Notifications.FeatureExist && <Grid
+              container
+              item xs={9}
+              className={getBillingTypeText(Notifications) === 0 ? classes.statusOutline : classes.statusBlue}
+              justifyContent='space-between'>
+              <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
+              <Typography className={classes.bulkTitle}>
+                {t('dashboard.freeTrial')}
+              </Typography>
+            </Grid>}
+            {Whatsapp?.Credits > 0 && <Grid
+              container
+              item xs={9}
+              className={getBillingTypeText(Whatsapp) === 0 ? classes.statusOutline : classes.statusBlue}
+              justifyContent='space-between'>
+              <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
+              <Typography className={classes.bulkTitle}>
+                {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Whatsapp)}
+              </Typography>
+            </Grid>}
           </Grid>
-          }
-          {<Grid
-            container
-            item xs={9}
-            className={getBillingTypeText(Newsletters) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
-            justifyContent='space-between'
-            onMouseEnter={() => showEmailPackage(true)}
-            onMouseLeave={() => showEmailPackage(false)}
-          >
-            <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            {isShowEmailPackage && isAllowNewsletter() ? (
-              <a
-                href="javascript:;"
-                onClick={() => showPackageDialogType(2)}
-                className={clsx(getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
-              >
-                {t('dashboard.purchase')}
-              </a>
-            )
-              :
-              (<Typography className={classes.bulkTitle}>
-                {accountFeatures && accountFeatures.includes('37') && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
-                {getBillingTypeText(Newsletters)}
-              </Typography>)
-            }
-          </Grid>
-          }
-          {Mms.Credits > 0 && <Grid
-            container
-            item xs={9}
-            className={getBillingTypeText(Mms) === 0 ? classes.statusOutline : classes.statusBlue}
-            justifyContent='space-between'>
-            <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
-            <Typography className={classes.bulkTitle}>
-              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
-            </Typography>
-          </Grid>
-          }
-          {Notifications.FeatureExist && <Grid
-            container
-            item xs={9}
-            className={getBillingTypeText(Notifications) === 0 ? classes.statusOutline : classes.statusBlue}
-            justifyContent='space-between'>
-            <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
-            <Typography className={classes.bulkTitle}>
-              {t('dashboard.freeTrial')}
-            </Typography>
-          </Grid>}
         </Grid>
       </Paper>
     </>

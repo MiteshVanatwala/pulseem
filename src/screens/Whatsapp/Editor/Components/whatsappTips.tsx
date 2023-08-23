@@ -7,45 +7,35 @@ const WhatsappTips = ({ classes }: WhatsappTipsProps) => {
 		<div className={classes.whatsappTipsWrapper}>
 			{isRTL ? (
 				<>
-					<span className='title'>טיפים לאישור התבנית שלך</span>
-					<p>אל תיצור תבנית המורכבת מיותר מדי משתנים או תבנית כללית מאוד.</p>
-					<p>אל תכלול משתנים "צפים" - ללא טקסט לפני או אחרי המשתנה.</p>
+					<span className='title'>טעויות נפוצות המובילות לדחיית תבנית:</span>
+					<p>יותר מדי משתנים או תבנית כללית מאד</p>
+					<p>משתנים "צפים" - ללא טקסט לפני או אחרי המשתנה</p>
 					<p>
-						אל תכלול קישורים מקוצרים כלליים כגון: <b>bit.ly</b> or <b>goo.gl</b>
+						קישורים מקוצרים כלליים כגון: <b>bit.ly</b> or <b>goo.gl</b>
 					</p>
-					<p>
-						אל תוסיף קישורים הכוללים דומיינים שאינם שייכים לעסק ששולח את
-						הקמפיין.
-					</p>
-					<p>אל תערבב מספר שפות בתבנית - צור תבנית לכל שפה</p>
-					<p>יש להגיה בקפידה את הטקסט, האיות והפיסוק</p>
-					<p>לאחר אישור התבנית, לא ניתן לשנותה</p>
+					<p>קישורים הכוללים דומיינים שאינם שייכים לעסק שלכם</p>
+					<p>טעויות בטקסט, באיות או בפיסוק</p>
+					<span className='title'>
+						שימו לב! לאחר אישור התבנית, לא ניתן לשנותה
+					</span>
 				</>
 			) : (
 				<>
-					<span className='title'>Tips to get your template approved</span>
+					<span className='title'>
+						Common mistakes leading to rejection:
+					</span>
+					<p>Too many variables or a very general template.</p>
 					<p>
-						Don't create a template consisting of too many variables or a very
-						general template.
+						"Floating" variables - without text before or after the variable.
 					</p>
 					<p>
-						Don't include "floating" variables - without text before or after
-						the variable.
+						Generic shortened links such as: <b>bit.ly</b> or <b>goo.gl</b>
 					</p>
-					<p>
-						Don't include generic shortened links such as: <b>bit.ly</b> or{' '}
-						<b>goo.gl</b>
-					</p>
-					<p>
-						Don't add links inculding domains which are not belong to the
-						bussiness sending the campagin.
-					</p>
-					<p>
-						Don't mix multiple languages in the template - create a template for
-						each langauge
-					</p>
-					<p>The text, spelling and punctuation must be carefully proofread</p>
-					<p>Once the template is approved, it cannot be changed</p>
+					<p>Links to domains other than yours</p>
+					<p>Text, spelling and punctuation mistakes</p>
+					<span className='title'>
+						Please notice!  once the template is approved, it cannot be changed
+					</span>
 				</>
 			)}
 		</div>

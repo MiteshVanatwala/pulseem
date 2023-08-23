@@ -56,6 +56,13 @@ export const ClientStatus = {
         { id: 3, value: 'common.restricted' },
         { id: 4, value: 'client.clientStatus.email.Invalid' },
         { id: 5, value: 'common.Pending' }
+    ],
+    Whatsapp: [
+        { id: -1, value: 'common.noWhatsapp' },
+        { id: 0, value: 'common.statusActive' },
+        { id: 1, value: 'common.Unsubscribed' },
+        { id: 4, value: 'client.clientStatus.sms.Invalid' },
+        { id: 5, value: 'common.Pending' }
     ]
 };
 export const EventsOptions = [

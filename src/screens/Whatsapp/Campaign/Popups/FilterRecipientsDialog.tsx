@@ -246,6 +246,7 @@ const FilterRecipientsDialog = ({
 												showFilter={false}
 												callbackSelectAll={() => {}}
 												callbackReciFilter={() => {}}
+												showTestGroups={showTestGroups}
 											/>
 										</div>
 									</div>

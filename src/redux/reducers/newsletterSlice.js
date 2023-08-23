@@ -106,7 +106,10 @@ export const deleteCampaign = createAsyncThunk(
 export const duplicteCampaign = createAsyncThunk(
   'email/cloneCampaign', async (cloneSettings, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.put(`email/cloneCampaign`, cloneSettings);
+      // New clone
+      //const response = await PulseemReactInstance.put(`email/cloneCampaign`, cloneSettings);
+      // Old clone
+      const response = await PulseemReactInstance.put(`email/cloneCampaign/${cloneSettings?.CampaignID}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

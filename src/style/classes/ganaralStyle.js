@@ -2129,7 +2129,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   phoneDiv: {
     position: 'relative',
-    maxHeight: '340px',
+    maxHeight: '100%',
     overflowY: 'clip',
     "@media screen and (max-width: 960px)": {
       marginTop: 0,
@@ -2366,15 +2366,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer"
   },
   dialogExitButton: {
-    width: 25,
-    height: 25,
-    textAlign: "center",
-    color: "red",
-    borderRadius: 25,
-    fontWeight: "700",
-    position: "absolute",
-    top: "0.5rem",
-    cursor: "pointer",
+    fontSize: 30,
+    fontFamily: 'Assistant',
+    textAlign: 'center',
+    color: 'rgba(0, 0, 0, 0.7)',
+    fontWeight: '700',
+    position: 'absolute',
+    top: '0.2rem',
+    cursor: 'pointer',
   },
   btnBgExitDialog: {
     backgroundColor: "#0371ad",
@@ -2471,9 +2470,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "OpenSansHebrew",
     color: "#fff",
     textTransform: "capitalize",
-    width: 'auto',
+    width: 120,
     fontSize: 18,
-    borderRadius: 5,
+    borderRadius: 8,
     boxShadow: 'none !important',
     border: 'none !important'
   },
@@ -2582,11 +2581,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&:hover': {
       backgroundColor: 'transparent'
     }
-  },
-  elipsis: {
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
   },
   p5: {
     padding: 5

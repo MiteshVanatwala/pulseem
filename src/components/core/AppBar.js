@@ -228,7 +228,6 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const { t } = useTranslation();
   const routes = getRoutes(t, isClal, accountFeatures, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
-
   const returnToAdmin = () => {
     window.location = '/Pulseem/ReactRedirect.aspx';
   }
@@ -305,6 +304,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
       routes[2],
       routes[3],
       routes[4],
+      routes[5],
       { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: true },
       routes[6],
       // { title: t('master.Automations'), iconUnicode: '\ue087', href: '/react/Automations', isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount !== true },
@@ -330,7 +330,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
           open={open}
           anchorEl={topNavRef.current}
           role={undefined}
-          style={{ zIndex: '1', boxSizing: 'border-box', }}
+          style={{ zIndex: '999', boxSizing: 'border-box', }}
           transition
         >
           {({ TransitionProps }) => (
@@ -370,9 +370,9 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
                                 Redirect({ url: route.href })
                               }}
                               style={{ alignSelf: 'center', fontSize: route.key === 'directSendReport' ? 35 : null }}>
-                              {route.iconUnicode ? (<Typography
+                              {route?.iconUnicode || route?.icon ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
-                                {route.iconUnicode}
+                                {route?.iconUnicode || route?.icon}
                               </Typography>)
                                 : route.key === 'directSendReport' ? (<img
                                   style={{ paddingBottom: 5 }}
