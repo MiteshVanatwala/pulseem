@@ -18,6 +18,7 @@ import ChatFooterContent from './ChatFooterContent';
 import clsx from 'clsx';
 import ChatHeaderContent from './ChatHeaderContent';
 import { useTranslation } from 'react-i18next';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 const ChatUi = ({
 	classes,
@@ -56,7 +57,9 @@ const ChatUi = ({
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
-
+	const [dialogType, setDialogType] = useState<{
+    type: string;
+  } | null>(null);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const useStyles = makeStyles(() => ({
 		selectRoot: {
@@ -216,7 +219,7 @@ const ChatUi = ({
 					setIsDynamcFieldModal={setIsDynamcFieldModal}
 					newMessage={newMessage}
 					setNewMessage={setNewMessage}
-					setIsTemplateModal={setIsTemplateModal}
+					setIsTemplateModal={() => setDialogType({ type: 'chatTemplate'})}
 					savedTemplate={savedTemplate}
 					dynamicVariable={dynamicVariable}
 					whatsappChatSession={whatsappChatSession}
@@ -283,6 +286,47 @@ const ChatUi = ({
 		);
 	};
 
+	const getChatTemplateDialog = () => {
+		return {
+				title: translator('whatsappChat.chooseTemplate'),
+				showDivider: true,
+				showDefaultButtons: false,
+				content: (
+					<ChatTemplateModal
+						classes={classes}
+						onClose={() => setDialogType(null)}
+						savedTemplateList={savedTemplateList}
+						onChoose={(template, templateText) => {
+							onChoose(template, templateText);
+							setDialogType(null);
+						}}
+					/>
+				)
+		}
+}
+
+	const renderDialog = () => {
+		const { type } = dialogType || {}
+
+		if (type) {
+			const dialogContent: { [key: string]: {} } = {
+				chatTemplate: getChatTemplateDialog(),
+			}
+			const currentDialog: any = (type && dialogContent[type]) || {};
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					childrenStyle={classes.mb25}
+					onClose={() => setDialogType(null)}
+					onCancel={() => setDialogType(null)}
+					{...currentDialog}>
+					{currentDialog.content}
+				</BaseDialog>
+			)
+		}
+}
+
 	return (
 		<>
 			<div className={`${classes.whatsappChat} chat`}>
@@ -298,15 +342,7 @@ const ChatUi = ({
 					{/* Footer */}
 					{chatFooter()}
 				</div>
-				<ChatTemplateModal
-					classes={classes}
-					isOpen={isTemplateModal}
-					onClose={() => setIsTemplateModal(false)}
-					savedTemplateList={savedTemplateList}
-					onChoose={(template, templateText) =>
-						onChoose(template, templateText)
-					}
-				/>
+				{renderDialog()}
 				<Loader isOpen={isLoader} showBackdrop={true} />
 			</div>
 		</>

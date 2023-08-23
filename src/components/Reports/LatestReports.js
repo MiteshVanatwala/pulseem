@@ -218,7 +218,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
     return (
       <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
         <Box className={clsx(!showGraphs ? classes.tabPanel : null, classes.spaceBetween, classes.flexJustifyCenter, classes.flexWrap)}>
-          <Grid container>
+          <Grid container spacing={2}>
             <Grid item sm={5}>
               <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1)}>
                 {
