@@ -367,9 +367,8 @@ const ActionCallPopOver = ({
 																renderOptions(props, options, fIndex)
 															}
 															style={{ direction: isRTL ? 'rtl' : 'ltr' }}
-															renderInput={(params) => (
-																<TextField {...params} />
-															)}
+															// @ts-ignore
+															renderInput={(params) => (<TextField {...params} />)}
 															onChange={(_e, value) =>
 																onTypeOfActionFieldChange(value!, row, field)
 															}

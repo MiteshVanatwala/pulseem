@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, TextField, Tooltip } from '@material-ui/core';
+import { Link, TextField } from '@material-ui/core';
 import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
 import {
 	CampaignDetailByIdData,
@@ -19,7 +19,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	savedTemplateDataProps,
-	saveTemplateItemsProps,
+	// saveTemplateItemsProps,
 	templateDataProps,
 	templateListAPIProps,
 	templatePreviewDataProps,
@@ -80,8 +80,8 @@ const SummaryModal = ({
 
 	const [campaignDetails, setCampaignDetails] =
 		useState<CampaignDetailByIdData>();
-	const [templateDetails, setTemplateDetails] =
-		useState<saveTemplateItemsProps>();
+	// const [templateDetails, setTemplateDetails] =
+	// 	useState<saveTemplateItemsProps>();
 
 	const [templateData, setTemplateData] = useState<templateDataProps>({
 		templateText: '',
@@ -115,7 +115,7 @@ const SummaryModal = ({
 						templateData?.Status === apiStatus?.SUCCESS &&
 						templateData?.Data?.Items?.length > 0
 					) {
-						setTemplateDetails(templateData?.Data?.Items[0]);
+						// setTemplateDetails(templateData?.Data?.Items[0]);
 						const template = templateData?.Data?.Items[0];
 						onSavedTemplateChange(template?.Data);
 					}

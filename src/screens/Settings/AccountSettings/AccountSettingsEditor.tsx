@@ -101,7 +101,7 @@ const AccountSettingsEditor = () => {
 	}, []);
 
 	useEffect(() => {
-		setSettingRequest(accountSettings?.Data);
+		setSettingRequest(account?.Data);
 	}, [account]);
 
 	useEffect(() => {
