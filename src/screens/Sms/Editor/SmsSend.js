@@ -959,7 +959,8 @@ const SmsSend = ({ classes, ...props }) => {
                   </span>
                 </div>
               ) : null}
-              {
+              {/* Note: Quick Manual Send Button - This will be covered in phase 2 */}
+              {/* {
                 areaData !== "" && (
                   <Button
                     style={{ marginInlineStart: 'auto', marginInlineEnd: 10 }}
@@ -979,7 +980,7 @@ const SmsSend = ({ classes, ...props }) => {
                     {t("campaigns.newsLetterSendSettings.quickMSend")}
                   </Button>
                 )
-              }
+              } */}
               <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
           ) : null}
