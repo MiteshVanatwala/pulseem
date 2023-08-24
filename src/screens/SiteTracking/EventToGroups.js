@@ -155,7 +155,7 @@ const EventToGroups = ({
                     id={`input${currentEvent.id}`}
                     onChange={e => updateOperationData(e, "operatorValue", e.target.value)}
                     value={currentEvent && currentEvent.operatorValue}
-                    style={{ minWidth: 220, width: '100%', marginTop: 35 }}
+                    style={{ minWidth: 220, width: '100%', marginTop: 40 }}
                 />
             </Box>
         </Box>
