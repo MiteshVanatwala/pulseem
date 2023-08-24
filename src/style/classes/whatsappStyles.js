@@ -1148,8 +1148,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			paddingRight: '0px',
 			paddingTop: '12px',
 		},
-		'& span': {
-			lineHeight: '34px',
+		'& .note': {
+			lineHeight: '30px',
 			color: '#b11515',
 			fontWeight: 'bolder',
 		},
