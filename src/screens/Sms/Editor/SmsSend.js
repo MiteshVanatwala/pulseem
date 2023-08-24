@@ -960,7 +960,7 @@ const SmsSend = ({ classes, ...props }) => {
                 </div>
               ) : null}
               {/* Note: Quick Manual Send Button - This will be covered in phase 2 */}
-              {/* {
+              {
                 areaData !== "" && (
                   <Button
                     style={{ marginInlineStart: 'auto', marginInlineEnd: 10 }}
@@ -980,7 +980,7 @@ const SmsSend = ({ classes, ...props }) => {
                     {t("campaigns.newsLetterSendSettings.quickMSend")}
                   </Button>
                 )
-              } */}
+              }
               <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
           ) : null}
@@ -1368,7 +1368,7 @@ const SmsSend = ({ classes, ...props }) => {
     );
   }
 
-  const onSaveSettings = async (toggle, exit, groupID) => {
+  const onSaveSettings = async (toggle, exit, groupID = null) => {
     if (!groupID && otpPassed === false) {
       setOTPOpen(true);
       return;
@@ -1380,7 +1380,7 @@ const SmsSend = ({ classes, ...props }) => {
     setLoader(true);
     const requestPayload = {
       FutureDateTime: null,
-      Groups: groupID || selectedGroups.map((sg) => { return sg.GroupID }),
+      Groups: groupID ? [groupID] : selectedGroups.map((sg) => { return sg.GroupID }),
       PulseSettings: {
         PulseType: groupID ? 1 : pulseType,
         TimeType: timeType,
@@ -1392,7 +1392,7 @@ const SmsSend = ({ classes, ...props }) => {
       },
       SendExeptional:
       {
-        Groups: groupID || selectedFilterGroups.map((c) => { return c.GroupID }),
+        Groups: groupID ? [groupID] : selectedFilterGroups.map((c) => { return c.GroupID }),
         Campaigns: selectedFilterCampaigns.map((c) => { return c.SMSCampaignID }),
         ExceptionalDays: exceptionalDays
       },
@@ -1750,7 +1750,7 @@ const SmsSend = ({ classes, ...props }) => {
     });
     setDialogType({ type: "" });
     if (req.length) {
-      const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend());
+      const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend('SMS'));
       let groupId = responseDefaultGroup?.payload || '1'
       const finalPayload = {
           ClientsData: req,

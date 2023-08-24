@@ -406,7 +406,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setDialogType(null);
         setLoader(true);
 
-        const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend());
+        const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend(''));
         let groupId = responseDefaultGroup?.payload
 
         var req = [];
