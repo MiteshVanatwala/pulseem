@@ -1750,7 +1750,7 @@ const SmsSend = ({ classes, ...props }) => {
     });
     setDialogType({ type: "" });
     if (req.length) {
-      const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend('PulseemSMS_'));
+      const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend('PulseemSMS'));
       let groupId = responseDefaultGroup?.payload || '1'
       const finalPayload = {
           ClientsData: req,
