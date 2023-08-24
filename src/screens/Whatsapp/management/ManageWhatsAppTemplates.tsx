@@ -904,6 +904,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 											variant="standard"
 											displayEmpty
 											value={templateStatusSearch}
+											defaultValue={templateStatusSearch}
 											onChange={(event: SelectChangeEvent) => setTemplateStatusSearch(event.target.value)}
 											endAdornment={
 												<InputAdornment
@@ -922,11 +923,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 												},
 											}}
 										>
-											<MenuItem
-												key=''
-												value='-1'
-												disabled
-											>
+											<MenuItem key="" value="" disabled>
 												{translator("common.select")}
 											</MenuItem>
 											{

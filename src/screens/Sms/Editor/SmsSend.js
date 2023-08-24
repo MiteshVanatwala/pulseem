@@ -1901,7 +1901,7 @@ const SmsSend = ({ classes, ...props }) => {
             style={{ marginInlineStart: '8px' }}
             onClick={onHandleDelete}
           >
-            <BsTrash style={{ fontSize: "25", marginInlineStart: 0 }} />
+            <BsTrash style={{ fontSize: "20", marginInlineStart: 0 }} />
           </Button>
           <Button
             className={clsx(
@@ -2678,8 +2678,8 @@ const SmsSend = ({ classes, ...props }) => {
               </Grid>
             </Grid>
           </Box>
+          <WizardButtons />
         </Box>
-        <WizardButtons />
       </div>
       {renderDialog()}
       {renderSummary()}

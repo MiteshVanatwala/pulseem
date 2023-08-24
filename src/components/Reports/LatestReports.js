@@ -98,7 +98,8 @@ const LatestReports = ({ classes, t, isRTL }) => {
 
   let reports = {
     newsletter: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 0) : null,
-    sms: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 1) : null
+    sms: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 1) : null,
+    whatsapp: []
   }
 
   const { newsletter = null, sms = null } = reports || {};
@@ -125,7 +126,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
     );
   }
 
-  const renderTab = (tabType) => {
+  const renderTab = (tabType, index) => {
     if (!lastCampaignReport) {
       return;
     }
@@ -206,17 +207,16 @@ const LatestReports = ({ classes, t, isRTL }) => {
 
       },
       whatsapp: {
-        title: '',
-        buttonText: '',
-        redirect: '/'
-
+        title: t("whatsapp.whatsappTemplate"),
+        buttonText: t('whatsapp.NewWhatsappCampaign'),
+        redirect: `${sitePrefix}whatsapp/template/create`
       }
     }
 
-    const showGraphs = innerData && (innerData.length > 0);
-
+    const showGraphs = !!(innerData && (innerData.length > 0));
+    
     return (
-      <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
+      <TabPanel value={tabValue} index={index} key={`newsletterTabPanel_${tabType}`}>
         <Box className={clsx(!showGraphs ? classes.tabPanel : null, classes.spaceBetween, classes.flexJustifyCenter, classes.flexWrap)}>
           <Grid container spacing={2}>
             <Grid item sm={5}>
@@ -228,7 +228,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                       <Box key={index} className={classes.w100}>
                         {index === 0 && <Divider />}
                         <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex)} key={`${c.CampaignName}_${index}`}>
-                          <Box className={clsx(classes.flex2, classes.paddingSides5)}>
+                          <Box className={clsx(classes.flex2, classes.paddingSides5, classes.textCenter)}>
                             <BootstrapTooltip title={c.CampaignName} placement="top">
                               <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f14, classes.ellipsisText, classes.graphCampaignName)}>
                                 {c.CampaignName}
@@ -254,12 +254,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                     )
                   })) :
                     (
-                      <ButtonWithTitle
-                        classes={classes}
-                        title={NoDataObject[tabType].title}
-                        buttonText={NoDataObject[tabType].buttonText}
-                        redirect={NoDataObject[tabType].redirect}
-                      />
+                      <></>
                     )
                 }
               </Box>
@@ -272,6 +267,18 @@ const LatestReports = ({ classes, t, isRTL }) => {
               }
             </Grid>
           </Grid>
+          {!showGraphs && (
+            <Grid>
+              <Box className={classes.w100}>
+                <ButtonWithTitle
+                  classes={classes}
+                  title={NoDataObject[tabType].title}
+                  buttonText={NoDataObject[tabType].buttonText}
+                  redirect={NoDataObject[tabType].redirect}
+                />
+              </Box>
+            </Grid>
+          )}
         </Box>
       </TabPanel>
     );
@@ -324,9 +331,9 @@ const LatestReports = ({ classes, t, isRTL }) => {
 
         </Grid>
         <Grid item xs={12} className={classes.lastReportsTabPanels}>
-          {renderTab('newsletter')}
-          {renderTab('sms')}
-          {/* {renderTab('whatsapp')} */}
+          {renderTab('newsletter', 0)}
+          {renderTab('sms', 1)}
+          {renderTab('whatsapp', 2)}
         </Grid>
       </Grid>
     );

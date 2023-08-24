@@ -1272,8 +1272,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             <Badge variant="dot" color="primary" invisible={!pulseIndication}>
                                                 <Button
                                                     className={clsx(
-                                                        classes.actionButton,
-                                                        classes.actionButtonOutlinedBlue,
+                                                        classes.btn, classes.btnRounded,
                                                         selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0 || campaignValues.IsBestTime
                                                             || totalClientsToSend < 100
                                                             ? classes.disabled : null)}
@@ -1287,7 +1286,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Badge>
                                             <Tooltip
                                                 disableFocusListener
-                                                style={{ marginInlineEnd: isRTL ? 15 : 0, marginInlineStart: 10 }}
+                                                style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
                                                 title={t("smsReport.pulseSendTip")}
                                                 classes={{ tooltip: styles.customWidth }}
                                             >
@@ -1297,7 +1296,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <Badge variant="dot" color="primary" invisible={!segmantIndication}>
                                                 <Button
-                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                    className={clsx(classes.btn, classes.btnRounded)}
                                                     disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                     onClick={() => {
                                                         setFilterParameters(campaignValues);
@@ -1312,7 +1311,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
                                                 <Button
-                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                    className={clsx(classes.btn, classes.btnRounded)}
                                                     disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                     onClick={() => {
                                                         handleSmsMarketing();

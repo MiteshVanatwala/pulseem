@@ -630,5 +630,6 @@
   "templateNameIsRequired": "אנא בחרו שם לתבנית",
   "loadMore": "טען עוד",
   "ReadTime": "זמן קריאה",
-  "noCampaignToRestore": "אין קמפיינים לשחזור"
+  "noCampaignToRestore": "אין קמפיינים לשחזור",
+  "doNotShow": "אל תציג שוב"
 }
