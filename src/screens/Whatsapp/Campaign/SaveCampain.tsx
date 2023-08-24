@@ -973,7 +973,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								Element={null}
 							/>
 						</Grid>
-						<Grid item md={12} lg={6} className={classes.WhatsappCampainNotice}>
+						<Grid item md={12} lg={6} className={clsx(classes.WhatsappCampainNotice, classes.pt25)}>
 							<span style={{ lineHeight: '0' }}>
 								{translator('whatsappCampaign.note')}
 							</span>
@@ -1139,7 +1139,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								lg={6}>
 								<Grid container>
 									<Grid item xs={12} sm={12} md={12} lg={12}>
-										<Box className={classes.WhatsappCampainMobilePreviewBox}>
+										<Box className={clsx(classes.WhatsappCampainMobilePreviewBox, classes.pt10)}>
 											<WhatsappMobilePreview
 												classes={classes}
 												templateData={templateData}

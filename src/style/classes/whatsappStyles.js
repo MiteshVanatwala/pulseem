@@ -1139,7 +1139,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textAlign: 'center',
 		fontFamily: 'Assistant',
 		color: '#b11515',
-		paddingRight: isRTL ? '126px' : '0px',
 		fontSize: '17px',
 		letterSpacing: '0.5px',
 		lineHeight: '16px',
@@ -2745,6 +2744,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	WhatsappCampainMobilePreviewBox: {
 		maxWidth: '370px',
 		margin: '0 auto',
+		paddingTop: 40,
 	},
 	testSendWrapper: {
 		fontFamily: 'Assistant',

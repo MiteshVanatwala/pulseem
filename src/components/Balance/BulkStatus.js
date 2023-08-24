@@ -44,7 +44,7 @@ const BulkStatus = ({ classes }) => {
         return t('dashboard.perValidRecipients')
       }
       default: {
-        return product?.Credits && product?.Credits > 0 ? product?.Credits.toLocaleString() : 0;
+        return product?.Credits && product?.Credits > 0 ? parseFloat(product?.Credits.toFixed(2)).toLocaleString() : 0;
       }
     }
   }
