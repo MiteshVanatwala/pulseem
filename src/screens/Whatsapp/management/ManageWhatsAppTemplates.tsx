@@ -6,6 +6,7 @@ import {
 	InputAdornment,
 	MenuItem,
 	Table,
+	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
@@ -23,8 +24,7 @@ import {
 	DuplicateIcon,
 	EditIcon,
 	PreviewIcon,
-	SearchIcon,
-	SendIcon,
+	SearchIcon
 } from '../../../assets/images/managment/index';
 import ManagmentIcon from './Component/ManagmentIcon';
 import { Title } from '../../../components/managment/Title';
@@ -275,59 +275,54 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const renderStatusCell = (row: templateListItemsProps) => {
 		const { Status, RejectionReason } = row;
 		return (
-			<>
-				<Typography
-					className={clsx(classes.middleText, classes.whatsappTemplatesStatus, {
-						[classes.whatsappTemplateStatusCreated]: Status === 'Created',
-						[classes.whatsappTemplateStatusApproved]: Status === 'Approved',
-						[classes.whatsappTemplateStatusPending]: Status === 'Pending',
-						[classes.whatsappTemplateStatusReceived]: Status === 'Received',
-						[classes.whatsappTemplateStatusRejected]: Status === 'Rejected',
-					})}>
-					<>
-						<CustomTooltip
-							isSimpleTooltip={false}
-							interactive={true}
-							classes={{
-								tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-								arrow: classes.fBlack,
-							}}
-							arrow={true}
-							placement={'top'}
-							title={translator(statusesByName[Status] || Status)}
-							text={translator(statusesByName[Status] || Status)}
-							icon={undefined}
-							style={undefined}
-							titleStyle={undefined}>
-							<span>
-								{statusesByName[Status]
-									? translator(statusesByName[Status])
-									: Status}
-							</span>
-						</CustomTooltip>
-					</>
-					{Status === 'Rejected' && (
-						<Typography
-							onClick={() => onStatusResonClick(row)}
-							style={{ cursor: 'pointer', fontSize: '16px' }}
-							className={classes.whatsappTemplateStatusRejectedReason}>
-							{translator('whatsapp.displayError')}
-						</Typography>
-					)}
-				</Typography>
-			</>
+			<Typography
+				className={clsx(classes.middleText, classes.whatsappTemplatesStatus, {
+					[classes.whatsappTemplateStatusCreated]: Status === 'Created',
+					[classes.whatsappTemplateStatusApproved]: Status === 'Approved',
+					[classes.whatsappTemplateStatusPending]: Status === 'Pending',
+					[classes.whatsappTemplateStatusReceived]: Status === 'Received',
+					[classes.whatsappTemplateStatusRejected]: Status === 'Rejected',
+				})}
+			>
+				<CustomTooltip
+					isSimpleTooltip={false}
+					interactive={true}
+					classes={{
+						tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+						arrow: classes.fBlack,
+					}}
+					arrow={true}
+					placement={'top'}
+					title={translator(statusesByName[Status] || Status)}
+					text={translator(statusesByName[Status] || Status)}
+					icon={undefined}
+					style={undefined}
+					titleStyle={undefined}>
+					<span>
+						{statusesByName[Status]
+							? translator(statusesByName[Status])
+							: Status}
+					</span>
+				</CustomTooltip>
+				{Status === 'Rejected' && (
+					<Typography
+						onClick={() => onStatusResonClick(row)}
+						style={{ cursor: 'pointer', fontSize: '16px' }}
+						className={classes.whatsappTemplateStatusRejectedReason}>
+						{translator('whatsapp.displayError')}
+					</Typography>
+				)}
+			</Typography>
 		);
 	};
 
 	const renderCategoryCell = (categoryId: number) => {
 		return (
-			<>
-				<Typography
-					className={clsx(classes.middleText)}
-					style={{ textTransform: 'capitalize' }}>
-					{translator(`whatsapp.${categoryName[categoryId || 1]}`)}
-				</Typography>
-			</>
+			<Typography
+				className={clsx(classes.middleText)}
+				style={{ textTransform: 'capitalize' }}>
+				{translator(`whatsapp.${categoryName[categoryId || 1]}`)}
+			</Typography>
 		);
 	};
 
@@ -860,6 +855,124 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		}
   }
 
+	const renderTableHead = () => {
+    return (
+      <TableHead>
+				<TableRow classes={rowStyle}>
+					<TableCell classes={cellStyle} className={classes.flex3} align='center'>{translator('whatsapp.templateName')}</TableCell>
+					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{translator('sms.StatusResource1.HeaderText')}</TableCell>
+					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{translator('report.ProductsReport.category')}</TableCell>
+					<TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex5}></TableCell>
+				</TableRow>
+			</TableHead>
+    )
+  }
+
+	const renderRow = (row: templateListItemsProps, index: number) => {
+    return (
+      <TableRow
+				key={`templateMaganement_${row.Id}_${index}`}
+				classes={rowStyle}>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex3,
+						classes.tableCellBody
+					)}>
+					{renderNameCell(row)}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex2,
+						classes.tableCellBody
+					)}>
+					{renderStatusCell(row)}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex2,
+						classes.tableCellBody
+					)}>
+					{renderCategoryCell(row.CategoryId)}
+				</TableCell>
+				<TableCell
+					component='th'
+					scope='row'
+					className={clsx(
+						classes.flex5,
+						classes.tableCellRoot
+					)}>
+					{renderCellIcons(row)}
+				</TableCell>
+			</TableRow>
+    )
+  }
+
+  const renderPhoneRow = (row: templateListItemsProps, index: number) => {
+    return (
+			<TableRow
+			key={`templateMaganement_${row.Id}_${index}`}
+        component='div'
+        classes={rowStyle}>
+        <TableCell style={{ flex: 2 }} classes={{ root: classes.tableCellRoot }}
+          className={classes.p20}>
+          <Box className={classes.justifyBetween}>
+            <Box className={classes.inlineGrid}>
+							{renderNameCell(row)}
+            </Box>
+            <Box className={classes.inlineGrid}>
+							{renderStatusCell(row)}
+            </Box>
+          </Box>
+					<Box className={classes.pt5}>
+						<Typography
+							className={clsx(classes.middleText)}
+							style={{ textTransform: 'capitalize' }}
+						>
+							{translator('report.ProductsReport.category')}: {translator(`whatsapp.${categoryName[row.CategoryId || 1]}`)}
+						</Typography>
+					</Box>
+					<Box className={classes.pt10}>
+						{renderCellIcons(row)}
+					</Box>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
+	const renderTableBody = () => {
+		if (templateListData?.length === 0) {
+			return (
+				<Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }} >
+					<Typography>{translator('common.NoDataTryFilter')}</Typography>
+				</Box>
+			)
+		}
+    return (
+			<TableBody>
+				{ templateListData?.map(windowSize === 'xs' ? renderPhoneRow : renderRow) }
+			</TableBody>
+    )
+  }
+
+	const renderTable = () => {
+    return (
+      <TableContainer className={clsx(classes.tableStyle, windowSize === 'xs' ? classes.mt20 : '')}>
+        <Table className={classes.tableContainer}>
+					<>
+						{windowSize !== 'xs' && renderTableHead()}
+						{renderTableBody()}
+					</>
+        </Table>
+      </TableContainer>
+    )
+  }
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -950,8 +1063,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 										classes.btn,
 										classes.btnRounded
 									)}
-									endIcon={<SearchIcon />}>
-									<>{translator('campaigns.btnSearchResource1.Text')}</>
+									endIcon={<SearchIcon />}
+								>
+									{translator('campaigns.btnSearchResource1.Text')}
 								</Button>
 							</Grid>
 							{isSearching && (
@@ -964,8 +1078,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 											classes.btn,
 											classes.btnRounded
 										)}
-										endIcon={<ClearIcon />}>
-										<>{translator('common.clear')}</>
+										endIcon={<ClearIcon />}
+									>
+										{translator('common.clear')}
 									</Button>
 								</Grid>
 							)}
@@ -979,110 +1094,22 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							className={classes.manageTemplatesHeaderButtons}>
 							<div className={classes.manageTemplatesCreate}>
 								<Button onClick={onCreateTemplate} className={clsx(classes.btn, classes.btnRounded)}>
-									<>{translator('whatsappManagement.createTemplate')}</>
+									{translator('whatsappManagement.createTemplate')}
 								</Button>
 							</div>
 
 							<span className={classes.manageTemplatesCampaignCount}>
 								{totalRecord || 0}{' '}
-								<>{translator('whatsappManagement.templates')}</>
+								{translator('whatsappManagement.templates')}
 							</span>
 						</Grid>
 
 						<Grid
 							container
 							spacing={2}
-							className={clsx(classes.manageTemplatesTableWrapper)}>
-							<TableContainer>
-								<Table className={classes.tableContainer}>
-									{windowSize !== 'xs' && (
-										<TableHead>
-											<TableRow classes={rowStyle}>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex3}
-													align='center'>
-													<>{translator('whatsapp.templateName')}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex2}
-													align='center'>
-													<>{translator('sms.StatusResource1.HeaderText')}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex2}
-													align='center'>
-													<>{translator('report.ProductsReport.category')}</>
-												</TableCell>
-												<TableCell
-													classes={{ root: classes.tableCellRoot }}
-													className={classes.flex5}></TableCell>
-											</TableRow>
-										</TableHead>
-									)}
-									{templateListData?.length === 0 ? (
-										<Box
-											className={clsx(
-												classes.flex,
-												classes.justifyCenterOfCenter,
-												classes.noDataRow
-											)}>
-											<Typography>
-												<>{translator('common.NoDataTryFilter')}</>
-											</Typography>
-										</Box>
-									) : (
-										<>
-											{templateListData?.map(
-												(row: templateListItemsProps, index) => (
-													<TableRow
-														key={`templateMaganement_${row.Id}_${index}`}
-														classes={rowStyle}>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.flex3,
-																classes.tableCellBody
-															)}>
-															{renderNameCell(row)}
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.flex2,
-																classes.tableCellBody
-															)}>
-															{renderStatusCell(row)}
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.flex2,
-																classes.tableCellBody
-															)}>
-															{renderCategoryCell(row.CategoryId)}
-														</TableCell>
-														<TableCell
-															component='th'
-															scope='row'
-															className={clsx(
-																classes.flex5,
-																classes.tableCellRoot
-															)}>
-															{renderCellIcons(row)}
-														</TableCell>
-													</TableRow>
-												)
-											)}
-										</>
-									)}
-								</Table>
-							</TableContainer>
+							className={windowSize !== 'xs' ? classes.manageTemplatesTableWrapper : ''}
+						>
+							{renderTable()}
 						</Grid>
 						<Pagination
 							classes={classes}

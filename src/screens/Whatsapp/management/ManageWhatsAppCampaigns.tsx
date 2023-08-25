@@ -3,6 +3,7 @@ import {
 	Button,
 	Grid,
 	Table,
+	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
@@ -121,8 +122,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		fileType: '',
 	});
 
-	const [isRestoreDeletedModal, setIsRestoreDeletedModal] =
-		useState<boolean>(false);
 	const [infoModalData, setInfoModalData] = useState<string[]>([
 		'Group 1',
 		'Group 2',
@@ -277,7 +276,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					{recipients?.toLocaleString()}
 				</Typography>
 				<Typography className={classes.middleText}>
-					<>{translator('campaigns.recipients')}</>
+					{translator('campaigns.recipients')}
 				</Typography>
 			</>
 		);
@@ -290,14 +289,14 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					{messages.toLocaleString()}
 				</Typography>
 				<Typography className={classes.middleText}>
-					<>{translator('sms.CreditsResource1.HeaderText')}</>
+					{translator('sms.CreditsResource1.HeaderText')}
 				</Typography>
 			</>
 		);
 	};
 	const renderStatusCell = (status: number) => {
 		return (
-			<>
+			// <Box className={classes.justifyBetween}>
 				<Typography
 					className={clsx(classes.middleText, classes.whatsappCampaignStatus, {
 						[classes.whatsappCampaignStatusCreated]:
@@ -310,16 +309,15 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							status === campaignStatuses.FINISHED,
 						[classes.whatsappCampaignStatusCanceled]:
 							status === campaignStatuses.CANCELED,
-					})}>
-					<>
-						{translator(
-							`whatsappManagement.${campaignStatus[
-								status
-							]?.toLocaleLowerCase()}`
-						)}
-					</>
+					})}
+				>
+					{translator(
+						`whatsappManagement.${campaignStatus[
+							status
+						]?.toLocaleLowerCase()}`
+					)}
 				</Typography>
-			</>
+			// </Box>
 		);
 	};
 
@@ -494,10 +492,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					const templateData = templates[0];
 					onSavedTemplateChange(templateData?.Data);
 				}
-				// setIsPreviewCampaignOpen(true);
-				setDialogType({
-					type: 'preview'
-				})
+				setDialogType({type: 'preview'})
 			} else {
 				templateData?.payload?.Message
 					? setToastMessage({
@@ -511,10 +506,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 	const onGroups = (campaignId: string) => {
 		let modalData: string[] = [];
-		// setIsInfoModalOpen(true);
-		setDialogType({
-			type: 'group'
-		})
+		setDialogType({type: 'group'})
 		const campaign = campaignListData?.find(
 			(campaign: campaignDataProps) =>
 				campaignId === campaign.WACampaignID?.toString()
@@ -977,6 +969,138 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		}
   }
 
+	const renderTableHead = () => {
+    return (
+      <TableHead>
+				<TableRow classes={rowStyle}>
+					<TableCell classes={cellStyle} className={classes.flex3} align='center'>{translator('sms.GridBoundColumnResource2.HeaderText')}</TableCell>
+					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('campaigns.recipients')}</TableCell>
+					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('sms.CreditsResource1.HeaderText')}</TableCell>
+					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('sms.StatusResource1.HeaderText')}</TableCell>
+					<TableCell classes={{root: classes.tableCellRoot}} className={classes.flex5}></TableCell>
+				</TableRow>
+			</TableHead>
+    )
+  }
+
+	const renderRow = (campaign: campaignDataProps) => {
+    return (
+      <TableRow
+				key={campaign.WACampaignID}
+				classes={rowStyle}>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex3,
+						classes.tableCellBody
+					)}>
+					{renderNameCell(campaign)}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex1,
+						classes.tableCellBody
+					)}>
+					{renderRecipientsCell(campaign.TotalSendPlan)}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex1,
+						classes.tableCellBody
+					)}>
+					{renderMessagesCell(1)}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex1,
+						classes.tableCellBody
+					)}>
+					{renderStatusCell(campaign.Status)}
+				</TableCell>
+				<TableCell
+					component='th'
+					scope='row'
+					className={clsx(
+						classes.flex5,
+						classes.tableCellRoot
+					)}>
+					{renderCellIcons(campaign)}
+				</TableCell>
+			</TableRow>
+    )
+  }
+
+  const renderPhoneRow = (campaign: campaignDataProps) => {
+    return (
+			<TableRow
+        key={campaign.WACampaignID}
+        component='div'
+        classes={rowStyle}>
+        <TableCell style={{ flex: 2 }} classes={{ root: classes.tableCellRoot }}
+          className={classes.p20}>
+          <Box className={classes.justifyBetween}>
+            <Box className={classes.inlineGrid}>
+              {renderNameCell(campaign)}
+            </Box>
+            <Box className={classes.inlineGrid}>
+              {renderStatusCell(campaign.Status)}
+            </Box>
+          </Box>
+					<Grid container className={classes.pt5}>
+						<Grid item sm={6} xs={6}>
+							<Typography className={classes.middleText}>
+								{translator('campaigns.recipients')}: {campaign.TotalSendPlan?.toLocaleString()}
+							</Typography>
+						</Grid>
+						<Grid item sm={6} xs={6}>
+							<Typography className={classes.middleText}>
+								{translator('sms.CreditsResource1.HeaderText')}: {1}
+							</Typography>
+						</Grid>
+					</Grid>
+					<Box className={classes.pt10}>
+          	{renderCellIcons(campaign)}
+					</Box>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
+	const renderTableBody = () => {
+		if (campaignListData?.length === 0) {
+			return (
+				<Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }} >
+					<Typography>{translator('common.NoDataTryFilter')}</Typography>
+				</Box>
+			)
+		}
+    return (
+			<TableBody>
+				{ campaignListData?.map(windowSize === 'xs' ? renderPhoneRow : renderRow) }
+			</TableBody>
+    )
+  }
+
+	const renderTable = () => {
+    return (
+      <TableContainer className={clsx(classes.tableStyle, windowSize === 'xs' ? classes.mt20 : '')}>
+        <Table className={classes.tableContainer}>
+					<>
+						{windowSize !== 'xs' && renderTableHead()}
+						{renderTableBody()}
+					</>
+        </Table>
+      </TableContainer>
+    )
+  }
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -1068,8 +1192,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 									variant='contained'
 									onClick={onSearch}
 									className={clsx(classes.btn, classes.btnRounded)}
-									endIcon={<SearchIcon />}>
-									<>{translator('campaigns.btnSearchResource1.Text')}</>
+									endIcon={<SearchIcon />}
+								>
+									{translator('campaigns.btnSearchResource1.Text')}
 								</Button>
 							</Grid>
 							{isSearching && (
@@ -1079,8 +1204,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 										variant='contained'
 										onClick={clearSearch}
 										className={classes.searchButton}
-										endIcon={<ClearIcon />}>
-										<>{translator('common.clear')}</>
+										endIcon={<ClearIcon />}
+									>
+										{translator('common.clear')}
 									</Button>
 								</Grid>
 							)}
@@ -1099,136 +1225,33 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 										classes.btn, classes.btnRounded
 									)}
 									endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-									onClick={() => onCreateCampaign()}>
-									<>{translator('whatsappManagement.createCampaign')}</>
+									onClick={() => onCreateCampaign()}
+								>
+									{translator('whatsappManagement.createCampaign')}
 								</Button>
 								<Button
 									className={clsx(
 										classes.btn, classes.btnRounded
 									)}
 									endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-									onClick={() => setDialogType({ type: 'restoreDeleted' })}>
-									<>{translator('whatsappManagement.restore')}</>
+									onClick={() => setDialogType({ type: 'restoreDeleted' })}
+								>
+									{translator('whatsappManagement.restore')}
 								</Button>
 							</div>
 
 							<span className={classes.manageTemplatesCampaignCount}>
 								{totalRecord || 0}{' '}
-								<>{translator('whatsappManagement.campaigns')}</>
+								{translator('whatsappManagement.campaigns')}
 							</span>
 						</Grid>
 
 						<Grid
 							container
 							spacing={2}
-							className={classes.manageTemplatesTableWrapper}>
-							<TableContainer>
-								<Table className={classes.tableContainer}>
-									{windowSize !== 'xs' && (
-										<TableHead>
-											<TableRow classes={rowStyle}>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex3}
-													align='center'>
-													<>
-														{translator(
-															'sms.GridBoundColumnResource2.HeaderText'
-														)}
-													</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex1}
-													align='center'>
-													<>{translator('campaigns.recipients')}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex1}
-													align='center'>
-													<>{translator('sms.CreditsResource1.HeaderText')}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex1}
-													align='center'>
-													<>{translator('sms.StatusResource1.HeaderText')}</>
-												</TableCell>
-												<TableCell
-													classes={{ root: classes.tableCellRoot }}
-													className={classes.flex5}></TableCell>
-											</TableRow>
-										</TableHead>
-									)}
-									{campaignListData?.length === 0 ? (
-										<Box
-											className={clsx(
-												classes.flex,
-												classes.justifyCenterOfCenter
-											)}
-											style={{ height: 50 }}>
-											<Typography>
-												<>{translator('common.NoDataTryFilter')}</>
-											</Typography>
-										</Box>
-									) : (
-										<>
-											{campaignListData?.map((campaign: campaignDataProps) => (
-												<TableRow
-													key={campaign.WACampaignID}
-													classes={rowStyle}>
-													<TableCell
-														classes={cellStyle}
-														align='center'
-														className={clsx(
-															classes.flex3,
-															classes.tableCellBody
-														)}>
-														{renderNameCell(campaign)}
-													</TableCell>
-													<TableCell
-														classes={cellStyle}
-														align='center'
-														className={clsx(
-															classes.flex1,
-															classes.tableCellBody
-														)}>
-														{renderRecipientsCell(campaign.TotalSendPlan)}
-													</TableCell>
-													<TableCell
-														classes={cellStyle}
-														align='center'
-														className={clsx(
-															classes.flex1,
-															classes.tableCellBody
-														)}>
-														{renderMessagesCell(1)}
-													</TableCell>
-													<TableCell
-														classes={cellStyle}
-														align='center'
-														className={clsx(
-															classes.flex1,
-															classes.tableCellBody
-														)}>
-														{renderStatusCell(campaign.Status)}
-													</TableCell>
-													<TableCell
-														component='th'
-														scope='row'
-														className={clsx(
-															classes.flex5,
-															classes.tableCellRoot
-														)}>
-														{renderCellIcons(campaign)}
-													</TableCell>
-												</TableRow>
-											))}
-										</>
-									)}
-								</Table>
-							</TableContainer>
+							className={windowSize !== 'xs' ? classes.manageTemplatesTableWrapper : ''}
+						>
+							{renderTable()}
 						</Grid>
 						<Pagination
 							classes={classes}
@@ -1246,17 +1269,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							returnPageOne={false}
 						/>
 					</div>
-
-				{/* <RestoreDeletedModal
-						classes={classes}
-						title={translator('whatsappManagement.restoreDeleted')}
-						isOpen={isRestoreDeletedModal}
-						onClose={() => setIsRestoreDeletedModal(false)}
-						onConfirmOrYes={() => onRestoreDeleted()}
-						restoreIds={restoreIds}
-						setRestoreIds={(ids: string[]) => setRestoreIds(ids)}
-						deletedCampaignListData={deletedCampaignListData}
-					/> */}
 				</>
 			) : (
 				!isLoader && <NoSetup classes={classes} />
