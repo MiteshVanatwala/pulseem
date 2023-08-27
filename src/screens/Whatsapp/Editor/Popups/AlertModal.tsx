@@ -89,7 +89,7 @@ const AlertModal = ({
 									color='primary'
 									variant='contained'
 									onClick={onClose}>
-									<>{translator('whatsapp.alertModal.calcelButtonText')}</>
+									<>{translator('whatsapp.alertModal.no')}</>
 								</Button>
 							</>
 						)}

@@ -111,6 +111,7 @@
 		"phoneNumberError": "Phone Number - Required field",
 		"phoneNumberRangeError": "Please enter phone number in valid range",
 		"websiteTextError": "Website URL - Required field",
-		"templateId": "Template ID"
+		"templateId": "Template ID",
+		"no": "No"
 	}
 }

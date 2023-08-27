@@ -111,6 +111,7 @@
 		"phoneNumberError": "מספר טלפון - שדה חובהd",
 		"phoneNumberRangeError": "אנא הכנס מספר טלפון תקין",
 		"websiteTextError": "כתובת אתר - שדה חובה",
-		"templateId": "מזהה תבנית"
+		"templateId": "מזהה תבנית",
+		"no": "לא"
 	}
 }
