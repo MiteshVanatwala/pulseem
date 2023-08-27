@@ -1,15 +1,9 @@
-import {
-	Box,
-	TextField,
-	Typography,
-	MenuItem,
-	Grid,
-} from '@material-ui/core';
+import { Box, TextField, Typography, MenuItem, Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { campaignFielsProps, coreProps } from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
-import { BaseSyntheticEvent } from 'react';
+import { BaseSyntheticEvent, HtmlHTMLAttributes, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import {
 	getTemplateIdByName,
@@ -30,9 +24,17 @@ const CampaignFields = ({
 	phoneNumbersList,
 }: campaignFielsProps) => {
 	const { t: translator } = useTranslation();
-	const { windowSize } = useSelector(
+	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
+	const [autoCompleteOptions, setAutoCompleteOptions] = useState<string[]>([]);
+
+	useEffect(() => {
+		const autoCompleteList = savedTemplateList?.map((template) => {
+			return getTemplateName(template);
+		});
+		setAutoCompleteOptions(autoCompleteList);
+	}, [savedTemplateList]);
 
 	const onTemplateChange = (e: BaseSyntheticEvent) => {
 		if (e.target.textContent !== '') {
@@ -46,6 +48,22 @@ const CampaignFields = ({
 		} else {
 			onSavedTemplateChange('');
 		}
+	};
+
+	const renderOptions = (
+		props: HtmlHTMLAttributes<HTMLElement>,
+		option: string
+	) => {
+		return (
+			<Box
+				component='li'
+				{...props}
+				key={option}
+				title={option}
+				style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '100%' }}>
+				{option}
+			</Box>
+		);
 	};
 
 	return (
@@ -98,6 +116,7 @@ const CampaignFields = ({
 						onChange={(e: BaseSyntheticEvent) =>
 							onFromChange(e.target.value?.replace(/\D/g, ''))
 						}
+						dir={isRTL ? 'rtl' : 'ltr'}
 						value={from}>
 						{phoneNumbersList?.length > 0 ? (
 							phoneNumbersList?.map((phone: string, index: number) => (
@@ -133,12 +152,10 @@ const CampaignFields = ({
 								classes.success
 							)
 					}
-					options={savedTemplateList.map((template) =>
-						getTemplateName(template)
-					)}
-					renderInput={(params) => <TextField
-					//	{...params}
-					/>}
+					options={autoCompleteOptions}
+					renderOption={renderOptions}
+					// @ts-ignore
+					renderInput={(params) => <TextField {...params} />}
 					onChange={onTemplateChange}
 					value={getTemplateNameById(savedTemplateList, savedTemplate)}
 				/>

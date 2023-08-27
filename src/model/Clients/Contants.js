@@ -24,6 +24,7 @@ const CLIENT_CONSTANTS = {
 		WhatsappFailed: 20,
 		WhatsappRemoved: 21,
 		WhatsappUniqueClick: 22,
+		WhatsappRevenue: 23,
 	},
 	SMS_STATUS: {
 		NoSms: -1,
@@ -59,6 +60,7 @@ const CLIENT_CONSTANTS = {
 		ShowSmsActive: 21,
 		ShowSmsRemoved: 22,
 		ShowSmsErrored: 23,
+		ShowWhatsapp: 30,
 	},
 	QUERY_PARAMS: {
 		PageIndex: 1,

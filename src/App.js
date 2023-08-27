@@ -107,10 +107,10 @@ const renderRoutes = (classes, redirect) => {
         path={`/react/notifications/edit/:notificationID`}
         component={transferUrl('/Pulseem/notifications/Edit/', 'notification')}
       />
-      <Route
+      {/* <Route
         path={`/react/SendCampaign/:campaignID`}
         component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
-      />
+      /> */}
       <Route
         path={`/PreviewCampaign/:campaignID`}
         element={transferUrl('/Pulseem/PreviewCampaign.aspx?CampaignID=', 'campaign')}
@@ -249,7 +249,7 @@ const renderRoutes = (classes, redirect) => {
 
       <Route
         path={whatsappRoutes.CREATE_TEMPLATE}
-        element={<WhatsappCreator classes={classes} />}
+        element={<WhatsappCreator classes={classes} key="wa-create" />}
       />
 
       <Route
@@ -259,27 +259,27 @@ const renderRoutes = (classes, redirect) => {
 
       <Route
         path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
-        element={<SendCampaign classes={classes} />}
+        element={<SendCampaign classes={classes} key="wa-send" />}
       />
 
       <Route
         path={whatsappRoutes.TEMPLATE_MANAGEMENT}
-        element={<ManageWhatsAppTemplates classes={classes} />}
+        element={<ManageWhatsAppTemplates classes={classes}  key="wa-template-management" />}
       />
 
       <Route
         path={whatsappRoutes.REPORTS}
-        element={<WhatsappReports classes={classes} />}
+        element={<WhatsappReports classes={classes} key="wa-reports" />}
       />
 
       <Route
         path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
-        element={<ManageWhatsAppCampaigns classes={classes} />}
+        element={<ManageWhatsAppCampaigns classes={classes} key="wa-CAMPAIGN_MANAGEMENT" />}
       />
 
       <Route
         path={whatsappRoutes.EDIT_TEMPLATE}
-        element={<WhatsappCreator classes={classes} />}
+        element={<WhatsappCreator classes={classes} key="wa-edit" />}
       />
 
       <Route
@@ -289,16 +289,16 @@ const renderRoutes = (classes, redirect) => {
 
       <Route
         path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
-        element={<SendCampaign classes={classes} />}
+        element={<SendCampaign classes={classes} key="wa-send-campaign-page2" />}
       />
 
       <Route
         path={whatsappRoutes.CHAT}
-        element={<WhatsappChat classes={classes} />}
+        element={<WhatsappChat classes={classes} key="wa-chate" />}
       />
       <Route
         path={whatsappRoutes.CHAT_CONVERSATION}
-        element={<WhatsappChat classes={classes} />}
+        element={<WhatsappChat classes={classes} key="wa-chat-conversation" />}
       />
       <Route
         path='/NewWebForm/NewFormEdit/:id'

@@ -360,7 +360,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         {
           const requestPayload = searchData.whatsapp;
           requestPayload.IsExport = true;
-          response = await dispatch(getDirectReport(requestPayload));
+          response = await dispatch(getDirectReport(searchData.whatsapp));
 
           const exportOptions = {
             OrderItems: true,
@@ -418,8 +418,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             >
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
-              <Tab label={<span style={{ marginInlineEnd: 5 }}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100, localClasses.flexItems) }} value={2}
-                icon={<span className={classes.commingSoon}>{t("common.commingSoon")}</span>} />
+              <Tab label={t('master.whatsapp')} classes={{ root: clsx(classes.minWidth100, localClasses.flexItems) }} value={2} />
             </TabList>
             <Grid item>
               {!isArchive && tabValue !== 2 && <Button

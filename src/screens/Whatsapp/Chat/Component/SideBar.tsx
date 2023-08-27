@@ -11,6 +11,8 @@ import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
 import SideBarContactList from './SideBarContactList';
 import useDebounce from '../Hook/useDebounce';
+import { useSelector } from 'react-redux';
+import { coreProps } from '../../Campaign/Types/WhatsappCampaign.types';
 
 const SideBar = ({
 	classes,
@@ -19,9 +21,6 @@ const SideBar = ({
 	handleChatId,
 	onActiveUserChange,
 	sideChatContacts,
-	filteredSideChatContacts,
-	setFilteredSideChatContacts,
-	setContactsPaginationSetting,
 	phoneNumbersList,
 	handleUserStatus,
 	getStatusClass,
@@ -30,14 +29,16 @@ const SideBar = ({
 	fetchSearchedContacts,
 	contactsPaginationSetting,
 	isLoader,
+	filterBySelected,
+	setFilterBySelected,
 }: WhatsappChatSideBarProps) => {
-	const [filterBySelected, setFilterBySelected] = useState(0);
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [searchText, setSearchText] = useState<string>('');
 	const debouncedValue = useDebounce<string>(searchText, 500);
 
 	useEffect(() => {
-		fetchSearchedContacts(searchText, true);
+		fetchSearchedContacts(searchText, filterBySelected, true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedValue]);
 
@@ -55,35 +56,8 @@ const SideBar = ({
 	};
 
 	const handleFilter = (e: BaseSyntheticEvent) => {
-		let result = [];
-		let value = e.target.value;
 		setFilterBySelected(e.target.value);
-
-		if (e.target.value === 0) {
-			result = sideChatContacts;
-		} else {
-			result = sideChatContacts.filter(
-				(data: APIWhatsappChatSidebarContactsItemsData) => {
-					return data.ConversationStatusId === value;
-				}
-			);
-		}
-		if (e.target.value !== 0 && result?.length <= 0) {
-			setContactsPaginationSetting({
-				...contactsPaginationSetting,
-				hasMore: false,
-			});
-		}
-		if (
-			e.target.value === 0 &&
-			result?.length > contactsPaginationSetting?.PageSize
-		) {
-			setContactsPaginationSetting({
-				...contactsPaginationSetting,
-				hasMore: true,
-			});
-		}
-		setFilteredSideChatContacts(result);
+		fetchMoreContacts(searchText, Number(e.target.value), true);
 	};
 
 	return (
@@ -115,6 +89,13 @@ const SideBar = ({
 							value={filterBySelected}
 							variant='standard'
 							style={{ fontSize: '12px' }}
+							MenuProps={{
+								PaperProps: {
+									style: {
+										direction: isRTL ? 'rtl' : 'ltr',
+									},
+								},
+							}}
 							onChange={(e) => handleFilter(e)}>
 							<MenuItem value={0}>
 								{translator('whatsappChat.allStatus')}
@@ -153,11 +134,13 @@ const SideBar = ({
 				</div>
 				<SideBarContactList
 					classes={classes}
-					filteredSideChatContacts={filteredSideChatContacts}
+					ChatContacts={sideChatContacts}
 					handleChatId={handleChatId}
 					handleUserStatus={handleUserStatus}
 					getStatusClass={getStatusClass}
-					fetchMoreContacts={() => fetchMoreContacts(searchText)}
+					fetchMoreContacts={() =>
+						fetchMoreContacts(searchText, filterBySelected)
+					}
 					contactsPaginationSetting={contactsPaginationSetting}
 					isLoader={isLoader}
 					searchText={searchText}

@@ -30,7 +30,7 @@ const RecipientChart = ({ classes, }) => {
             return
         }
         else {
-            slidesCount++;
+            report.Total > 0 && slidesCount++;
         }
     })
 
@@ -48,7 +48,7 @@ const RecipientChart = ({ classes, }) => {
             centerTitle: 'dashboard.noNewsletters',
         },
         {
-            mainTitle: 'appBar.sms.title',
+            mainTitle: 'dashboard.smsWhatsapp',
             centerTitle: 'dashboard.noSMS'
         },
         {
@@ -80,27 +80,6 @@ const RecipientChart = ({ classes, }) => {
             }
         });
     }
-
-    // const renderCircleAdd = (innerTitle) => {
-    //     return (
-    //         <Grid item xs={12} sm={4} className={classes.doughnutGrid} key={`circleAdd${Math.round(Math.random() * 999999999)}`}>
-    //             <Typography align='center' className={classes.f20}>{t(innerTitle.mainTitle)}</Typography>
-    //             <Box className={classes.doughnutBox}>
-    //                 <Avatar className={classes.emptyDoughnut}>
-    //                     <Typography className={classes.noRecipients}>{t(innerTitle.centerTitle)}</Typography>
-    //                     <Button>
-    //                         <Box className={classes.dInlineBlock}>
-    //                             <div className={classes.addRecipientsIcon}>
-    //                                 {'\uE14F'}
-    //                             </div>
-    //                             <Typography className={classes.addRecipientsBtn}>{t('dashboard.add')}</Typography>
-    //                         </Box>
-    //                     </Button>
-    //                 </Avatar>
-    //             </Box>
-    //         </Grid>
-    //     )
-    // };
 
     const renderDoughnut = (report, index) => {
 
@@ -261,10 +240,6 @@ const RecipientChart = ({ classes, }) => {
                 className={classes.doughnutGrid}>
                 <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
                 <Box className={classes.doughnutBox}>
-                    {/* <Link
-                        href="#!"
-                        className={classes.chartLabel}
-                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link> */}
                     <Typography
                         href="#!"
                         className={classes.chartLabel}
@@ -391,7 +366,7 @@ const RecipientChart = ({ classes, }) => {
 
         return (
             <Grid container dir={'ltr'} className={classes.carouselChart}>
-                {recipientsReport && totalRecipientsReport > 0 ? renderArrows(carouselItem, 2, setCarouselItem, classes.carouselArrows) : null}
+                {recipientsReport && totalRecipientsReport > 0 ? renderArrows(carouselItem, recipientsReport.map((rr) => rr.Total)?.length, setCarouselItem, classes.carouselArrows) : null}
                 {recipientsReport && totalRecipientsReport > 0 ? (
                     <Carousel
                         showIndicators={false}
@@ -407,6 +382,7 @@ const RecipientChart = ({ classes, }) => {
                             if (report.Total) {
                                 return renderDoughnut(report, index)
                             }
+                            return null;
                             // else {
                             //     return renderCircleAdd(titles[index])
                             // }
@@ -446,9 +422,7 @@ const RecipientChart = ({ classes, }) => {
                     if (report.Total) {
                         return renderDoughnut(report, index)
                     }
-                    // else {
-                    //     return renderCircleAdd(titles[index])
-                    // }
+                    return null;
                 }) :
                     <ButtonWithTitle
                         innerStyle={{ minHeight: 210 }}

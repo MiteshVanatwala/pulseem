@@ -48,9 +48,11 @@ const ChatUi = ({
 	setDynamicVariable,
 	setSavedTemplate,
 	activeChatContacts,
-	filteredSideChatContacts,
+	ChatContacts,
 	isContactLoader,
 	updateContactList,
+	personalFields,
+	onChatTemplateDelete
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
@@ -107,6 +109,12 @@ const ChatUi = ({
 			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
 				setAllWhatsappChat(allWhatsAppChatData.payload?.Data?.Items);
 				updateContactList();
+				const element = document.getElementById('chat-messages');
+				if (element !== null) {
+					setTimeout(() => {
+						element.scrollTop = element.scrollHeight;
+					}, 2000)
+				}
 			} else {
 				setAllWhatsappChat(undefined);
 			}
@@ -212,8 +220,10 @@ const ChatUi = ({
 					whatsappChatSession={whatsappChatSession}
 					onChatSend={onChatSend}
 					activeChatContacts={activeChatContacts}
-					filteredSideChatContacts={filteredSideChatContacts}
+					ChatContacts={ChatContacts}
 					isContactLoader={isContactLoader}
+					personalFields={personalFields}
+					onChatTemplateDelete={onChatTemplateDelete}
 				/>
 			</footer>
 		);

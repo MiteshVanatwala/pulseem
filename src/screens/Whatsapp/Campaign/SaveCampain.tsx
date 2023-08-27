@@ -33,7 +33,6 @@ import {
 	phoneNumberAPIProps,
 	CampaignDetailById,
 	ApiQuickSend,
-	SubAccountSettings,
 	TestSendReq,
 	SaveQuickSendGroups,
 	ApiGetCampaignSummaryPayloadData,
@@ -43,10 +42,10 @@ import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
+	CommonRedux,
 	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
-	commonAPIResponseProps,
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	savedTemplateAPIProps,
@@ -66,9 +65,9 @@ import {
 	saveCampaign,
 	getCampaignDetailById,
 	quickSend,
-	deleteCampaign,
 	saveQuickSendGroups,
 	getWhatsAppCampaignSummary,
+	deleteCampaign,
 } from '../../../redux/reducers/whatsappSlice';
 import ValidationAlert from './Popups/ValidationAlert';
 import TestGroupModal from './Popups/TestGroupModal';
@@ -77,10 +76,12 @@ import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
 import {
+	adjustTemplateVariablesForLink,
 	checkSiteTrackingLink,
 	formatUpdatedDynamicVariable,
 	getDynamicFields,
 	getTemplatePreviewData,
+	getTextDirection,
 } from '../Common';
 import {
 	getAccountExtraData,
@@ -90,6 +91,8 @@ import {
 import Toast from '../../../components/Toast/Toast.component';
 import {
 	apiStatus,
+	buttonTextLimits,
+	buttonTypes,
 	buttons,
 	fieldNameIds,
 	resetToastData,
@@ -100,6 +103,8 @@ import { useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import SummaryModal from './Popups/SummaryModal';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
+import NoSetup from '../NoSetup/NoSetup';
+import moment from 'moment';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -110,11 +115,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
-
-	const SubAccountSettings = useSelector(
-		(state: {
-			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
-		}) => state.common?.commonSettings?.SubAccountSettings
+	const { SubAccountSettings } = useSelector(
+		(state: { common: CommonRedux }) => state.common?.accountSettings
 	);
 	const websiteField = [
 		{
@@ -141,7 +143,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			fieldName: 'whatsapp.country',
 			type: 'select',
 			placeholder: 'Select Your Country Code',
-			value: '+972 Israel',
+			value: '+972',
 		},
 		{
 			fieldName: 'whatsapp.phoneNumber',
@@ -169,6 +171,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		typeOfAction: 'phonenumber',
 		fields: phoneNumberField,
 	};
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
@@ -184,6 +187,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
+	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
+	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
+	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
+	const [templateTextCount, setTemplateTextCount] = useState<number>(0);
+	const [randomlyCount, setRandomlyCount] = useState<string>('');
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
 	const [fileData, setFileData] = useState<{
@@ -251,26 +259,109 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	useEffect(() => {
-		setIsLoader(true);
-		if (!testGroups || testGroups?.length === 0) {
-			dispatch(getTestGroups());
-		}
-		if (!personalFields || landingPages?.length <= 0) {
-			getDynamicModalValues();
-		}
 		(async () => {
-			await getSavedTemplateFields();
-			await getPhoneNumber();
-			setIsLoader(false);
-		})();
+			setIsLoader(true);
+			const { payload: phoneNumberData }: phoneNumberAPIProps =
+				await dispatch<any>(userPhoneNumbers());
+			if (
+				phoneNumberData?.Status === apiStatus.SUCCESS &&
+				phoneNumberData?.Data &&
+				phoneNumberData?.Data?.length > 0
+			) {
+				dispatch(getTestGroups());
+				if (!personalFields || landingPages?.length <= 0) {
+					getDynamicModalValues();
+				}
+				(async () => {
+					await getSavedTemplateFields();
+					await getPhoneNumber();
+					setIsLoader(false);
+				})();
 
-		// To fetch Sub Account Feature And Settings if not available
-		if(!SubAccountSettings?.DomainAddress) {
-			dispatch(getCommonFeatures())
-		}
+				// To fetch Sub Account Feature And Settings if not available
+				if (!SubAccountSettings?.DomainAddress) {
+					dispatch(getCommonFeatures());
+				}
+			} else {
+				setIsLoader(false);
+				setIsAccountSetup(false);
+			}
+		})();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if (buttonType === buttonTypes.CALL_TO_ACTION) {
+			setTemplateTextLimit(buttonTextLimits.callToAction);
+		} else {
+			setTemplateTextLimit(buttonTextLimits.quickReply);
+		}
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
+	}, [buttonType]);
+
+	useEffect(() => {
+		// getDynamicModalValues();\
+		const updatedPersonalField = {
+			FirstName: translator('smsReport.firstName'),
+			LastName: translator('smsReport.lastName'),
+			Email: translator('common.Mail'),
+			Telephone: translator('common.telephone'),
+			Cellphone: translator('common.Cellphone'),
+			Address: translator('common.address'),
+			BirthDate: translator('common.birthDate'),
+			City: translator('common.city'),
+			State: translator('common.state'),
+			Country: translator('common.country'),
+			Zip: translator('common.zip'),
+			Company: translator('common.company'),
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
+			ReminderDate: translator('recipient.reminderDate'),
+		};
+		setpersonalFields({ ...personalFields, ...updatedPersonalField });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isRTL]);
+
+	useEffect(() => {
+		let textCount = templateData?.templateText?.length;
+		updatedDynamicVariable?.forEach((dynamicVariable) => {
+			switch (dynamicVariable?.FieldTypeId) {
+				// Personal field , Text, Landing Page, Navigation
+				// case 1:
+				case 2:
+				case 4:
+				case 5:
+					textCount += dynamicVariable?.VariableValue?.length;
+					break;
+				// Link
+				case 3:
+					if (
+						dynamicVariable?.IsStatastic &&
+						checkSiteTrackingLink(
+							SubAccountSettings,
+							dynamicVariable?.VariableValue
+						)
+					) {
+						textCount += 35;
+					} else if (
+						dynamicVariable?.IsStatastic &&
+						dynamicVariable?.VariableValue === '##WHATSAPPUnsubscribelink##'
+					) {
+						textCount += 36;
+					} else {
+						textCount += dynamicVariable?.VariableValue?.length;
+					}
+					break;
+				default:
+					break;
+			}
+			textCount -= (dynamicVariable?.VariableIndex <= 10 ? 5 : 6) || 0;
+		});
+		setTemplateTextCount(textCount);
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
+	}, [updatedDynamicVariable, templateData]);
 
 	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
 		const updatedVariableWithSiteLink = variable?.map((variable) => {
@@ -292,7 +383,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				return variable;
 			} else {
 				if (
-					variable.VariableValue.includes('ref') &&
+					variable?.VariableValue.includes('ref') &&
 					!checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
 				) {
 					return {
@@ -317,9 +408,26 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);
 					setCampaignName(campaignData?.Data?.Name);
 					setFrom(campaignData?.Data?.FromNumber);
-					setUpdatedDynamicVariableWithLinks(
-						campaignData?.Data?.VariableValues
-					);
+					// chech siteLink and update dynamicvariable
+					const processedDynamicVariable =
+						campaignData?.Data?.VariableValues?.map((variable) => {
+							if (variable?.FieldTypeId === 1) {
+								return {
+									...variable,
+									VariableValue: variable.VariableValue?.replaceAll('#', ''),
+								};
+							}
+							return variable;
+						});
+
+					setUpdatedDynamicVariableWithLinks(processedDynamicVariable);
+					if (campaignData?.Data?.VariableValues?.length > 0) {
+						campaignData?.Data?.VariableValues?.forEach((variable) => {
+							if (variable?.IsStatastic === true) {
+								setIsTrackLink(true);
+							}
+						});
+					}
 					setlinkCount(
 						campaignData?.Data?.VariableValues?.filter(
 							(variable) => variable?.FieldTypeId === fieldNameIds?.LINK
@@ -341,9 +449,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const getDynamicModalValues = async () => {
 		const staticPersonalField: personalFieldDataProps = {
-			Status: translator('common.Status'),
-			SmsStatus: translator('common.smsStatus'),
-			CreationDate: translator('client.subscribedOn'),
 			FirstName: translator('smsReport.firstName'),
 			LastName: translator('smsReport.lastName'),
 			Email: translator('common.Mail'),
@@ -356,6 +461,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			Country: translator('common.country'),
 			Zip: translator('common.zip'),
 			Company: translator('common.company'),
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
 			ReminderDate: translator('recipient.reminderDate'),
 		};
 		const { payload: personalFieldData }: personalFieldAPIProps =
@@ -402,17 +510,22 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		let updatedVariable = variable?.replace(/[{}]/g, '');
 		const isAvaliable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariable) =>
-				dynamicVariable.VariableIndex === Number(updatedVariable)
+				dynamicVariable?.VariableIndex === Number(updatedVariable)
 		);
 		return !!isAvaliable;
 	};
 
 	const getUpdatedVariableValue = (variable: string) => {
 		let updatedVariable = variable?.replace(/[{}]/g, '');
-		const variableValue = updatedDynamicVariable?.find(
+		const matchedVariable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariable) =>
-				dynamicVariable.VariableIndex === Number(updatedVariable)
-		)?.VariableValue;
+				dynamicVariable?.VariableIndex === Number(updatedVariable)
+		);
+
+		const variableValue =
+			matchedVariable?.FieldTypeId === 1
+				? personalFields[matchedVariable?.VariableValue]
+				: matchedVariable?.VariableValue;
 
 		return variableValue ? variableValue : variable;
 	};
@@ -421,8 +534,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		let updatedVariables = getDynamicFields(tagData?.children);
 		const highlightVariables = (
 			<>
-				{updatedVariables?.map((variable) => (
+				{updatedVariables?.map((variable, index) => (
 					<strong
+						key={index}
 						className={clsx(
 							classes.whatsappCampainHighlightText,
 							`${isUpdatedVaraiable(variable) && 'updated'}`
@@ -484,7 +598,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			);
 		}
 		if (templateData?.variables) {
-			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
+			setDynamicFieldCount(
+				getDynamicFields(templatePreviewData?.templateData.templateText)?.length
+			);
 		}
 	};
 
@@ -507,6 +623,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const validateSaveCampaign = (validateDynamicVaraiable: boolean = false) => {
 		let validationErrors = [];
 		let isValidated = true;
+		if (templateTextCount > templateTextLimit) {
+			validationErrors.push(
+				`${translator(
+					'whatsapp.alertModal.templateLengthError'
+				)} ${templateTextLimit}`
+			);
+			isValidated = false;
+		}
 		if (campaignName?.length <= 0 || savedTemplate?.length <= 0) {
 			if (campaignName?.length <= 0 && savedTemplate?.length <= 0) {
 				validationErrors.push(translator('whatsappCampaign.setCampaign'));
@@ -518,10 +642,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			}
 			isValidated = false;
 		}
-		if (
-			validateDynamicVaraiable &&
-			savedTemplate?.length > 0 &&
-			getDynamicFields(templateData?.templateText)?.length !==
+		if (getDynamicFields(templateData?.templateText)?.length !==
 				updatedDynamicVariable?.length
 		) {
 			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
@@ -539,14 +660,18 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onDeleteCampaign = async () => {
+		// resetFields();
+		// navigate(whatsappRoutes.CREATE_CAMPAIGN_PAGE1);
 		if (campaignID) {
-			const deleteData: commonAPIResponseProps = await dispatch<any>(
+			const deleteData = await dispatch<any>(
 				deleteCampaign(campaignID)
 			);
 			setIsDeleteCampaignOpen(false);
 			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
-				navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+				setTimeout(() => {
+					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+				}, 1000);
 			} else {
 				deleteData?.payload?.Message
 					? setToastMessage({
@@ -562,6 +687,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onTestSend = async (isSingle: boolean = false, campaignID: number) => {
+		setIsLoader(true);
 		setIsSummaryModal(false);
 		setIsTestGroupModal(false);
 		let payload: TestSendReq = {
@@ -572,9 +698,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		} else {
 			payload.TestGroupsIds = selectedTestGroup?.map((group) => group?.GroupID);
 		}
+		if (Number(randomlyCount) > 0) {
+			payload.Random = Number(randomlyCount);
+		}
 		if (campaignID) {
 			if (validateSaveCampaign(true)) {
-				setIsLoader(true);
 				const { payload: quickSendData }: ApiQuickSend = await dispatch<any>(
 					quickSend(payload)
 				);
@@ -582,49 +710,70 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				if (quickSendData?.Status === apiStatus.SUCCESS) {
 					setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
 					setSelectedTestGroup([]);
+					setRandomlyCount('');
 				} else {
-					quickSendData?.Message
-						? setToastMessage({
-								...ToastMessages.ERROR,
-								message: quickSendData?.Message,
-						  })
-						: setToastMessage(ToastMessages.ERROR);
+					if (quickSendData?.StatusCode === 10) {
+						setExceedLimitModal(true);
+						setRandomlyCount('');
+						if (
+							quickSendData?.Data &&
+							quickSendData?.Data?.NextAvailableTime &&
+							quickSendData?.Data?.NextAvailableTime?.length > 0
+						) {
+							setNextMessageAvailable(quickSendData?.Data?.NextAvailableTime);
+						}
+					} else {
+						setRandomlyCount('');
+						if (quickSendData?.Message === 'Invalid phonenumber') {
+							setToastMessage(ToastMessages.INVALID_NUMBER);
+						} else {
+							setToastMessage({
+								...ToastMessages.QUICK_SEND_ERROR,
+								message:
+									quickSendData?.Message ||
+									ToastMessages.QUICK_SEND_ERROR?.message,
+							});
+						}
+					}
 				}
 				setIsTestGroupModal(false);
 			} else {
+				setIsLoader(false);
 				setIsTestGroupModal(false);
 				setIsValidationAlert(true);
 			}
+		} else {
+			setIsLoader(false);
 		}
 	};
 
 	const onOkTestSending = async () => {
-		setIsTestGroupModal(false);
-		let campaignIdForTestSend: number = Number(campaignID) || 0;
-		setIsLoader(true);
-		const saveCampaign = await onSaveCampaign(false, false);
-		campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
-		if (testSendSelection !== 'onecontact') {
+		if (validateSaveCampaign(true)) {
+			setIsTestGroupModal(false);
+			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
-			const { payload: quickSendGroupsData }: SaveQuickSendGroups =
-				await dispatch<any>(
-					saveQuickSendGroups({
-						WACampaignID: campaignIdForTestSend,
-						TestGroupsIds: selectedTestGroup?.map((group) => group?.GroupID),
-					})
-				);
-			if (quickSendGroupsData?.Status !== apiStatus.SUCCESS) {
-				quickSendGroupsData?.Message
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: quickSendGroupsData?.Message,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
-				return;
+			const saveCampaign = await onSaveCampaign('testSend', false, false);
+			campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
+			if (testSendSelection !== 'onecontact') {
+				setIsLoader(true);
+				const { payload: quickSendGroupsData }: SaveQuickSendGroups =
+					await dispatch<any>(
+						saveQuickSendGroups({
+							WACampaignID: campaignIdForTestSend,
+							TestGroupsIds: selectedTestGroup?.map((group) => group?.GroupID),
+						})
+					);
+				if (quickSendGroupsData?.Status !== apiStatus.SUCCESS) {
+					quickSendGroupsData?.Message
+						? setToastMessage({
+								...ToastMessages.ERROR,
+								message: quickSendGroupsData?.Message,
+						  })
+						: setToastMessage(ToastMessages.ERROR);
+					return;
+				}
 			}
-		}
-		if (campaignIdForTestSend) {
-			if (validateSaveCampaign(true)) {
+			if (campaignIdForTestSend) {
 				if (!campaignID) {
 					navigate(
 						`/react/whatsapp/campaign/edit/page1/${campaignIdForTestSend}`
@@ -633,14 +782,31 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				if (testSendSelection === 'onecontact') {
 					onTestSend(true, campaignIdForTestSend);
 				} else {
-					if (campaignID) {
+					if (campaignIdForTestSend) {
 						setIsLoader(true);
 						const { payload: campaignSummaryData }: ApiGetCampaignSummary =
-							await dispatch<any>(getWhatsAppCampaignSummary(campaignID));
+							await dispatch<any>(
+								getWhatsAppCampaignSummary(campaignIdForTestSend?.toString())
+							);
 						if (campaignSummaryData.Status === apiStatus.SUCCESS) {
 							if (campaignSummaryData?.Data?.FinalCount > 0) {
 								setCampaignSummary(campaignSummaryData?.Data);
-								setIsSummaryModal(true);
+								setNextMessageAvailable(
+									campaignSummaryData?.Data?.NextAvailableTime
+								);
+								if (
+									campaignSummaryData.Data.WhatsappTierID === 1 ||
+									campaignSummaryData.Data.WhatsappTierID === 2 ||
+									campaignSummaryData.Data.WhatsappTierID === 3
+								) {
+									if (campaignSummaryData?.Data?.WhatsappSmsLeft > 0) {
+										setIsSummaryModal(true);
+									} else {
+										setExceedLimitModal(true);
+									}
+								} else {
+									setIsSummaryModal(true);
+								}
 							} else {
 								setToastMessage({
 									...ToastMessages.ERROR,
@@ -658,8 +824,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					}
 				}
 			}
+			setIsLoader(false);
+		} else {
+			setIsTestGroupModal(false);
+			setIsValidationAlert(true);
 		}
-		setIsLoader(false);
 	};
 
 	const onDynamcFieldModalSave = (
@@ -674,19 +843,27 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setIsDynamcFieldModal(false);
 	};
 
-	const saveCampaignCall = async () => {
+	const saveCampaignCall = async (callFrom: string = '') => {
+		const savedTemplateData: savedTemplateListProps | undefined =
+			savedTemplateList?.find(
+				(template) => template.TemplateId === savedTemplate
+			);
 		const reqData: saveCampaignDataProps = {
 			WACampaignID: Number(campaignID) || 0,
 			TemplateId: savedTemplate,
-			Variables: formatUpdatedDynamicVariable(
-				updatedDynamicVariable,
-				personalFields,
-				landingPages
-			),
+			Variables: formatUpdatedDynamicVariable(updatedDynamicVariable),
 			name: campaignName,
 			fromnumber: from,
-			IsTestCampaign: isTestSend,
+			IsTestCampaign:
+				callFrom === 'send' || callFrom === 'save' ? false : isTestSend,
 		};
+		if (savedTemplateData && savedTemplateData?.Data?.types) {
+			reqData.Variables = adjustTemplateVariablesForLink(
+				savedTemplateData?.Data?.types,
+				formatUpdatedDynamicVariable(updatedDynamicVariable)
+			);
+		}
+
 		const { payload }: saveCampaignResponseProps = await dispatch<any>(
 			saveCampaign(reqData)
 		);
@@ -694,12 +871,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onSaveCampaign = async (
+		from: string = '',
 		showSuccess: boolean = true,
 		isNavigate: boolean = true
 	) => {
 		if (validateSaveCampaign(true)) {
 			setIsLoader(true);
-			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+			const data: saveCampaignResponsePayloadProps = await saveCampaignCall(
+				from
+			);
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				if (showSuccess) {
@@ -723,16 +903,17 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 
-	const onSubmit = async (e: BaseSyntheticEvent) => {
-		e.preventDefault();
+	const onSubmit = async () => {
 		if (validateSaveCampaign()) {
 			setIsLoader(true);
-			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+			const data: saveCampaignResponsePayloadProps = await saveCampaignCall(
+				'send'
+			);
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`/react/whatsapp/campaign/edit/page2/${data.Data.WACampaignId}`,
-					{ state: { from: 'edit/page1' } }
+					`/react/whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}`,
+					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}` } }
 				);
 			} else {
 				data?.Message
@@ -747,7 +928,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
 			case buttons.SAVE:
-				onSaveCampaign();
+				onSaveCampaign('save');
 				break;
 			case buttons.DELETE:
 				onDeleteClick();
@@ -755,13 +936,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			case buttons.EXIT:
 				setIsExitCampaignOpen(true);
 				break;
-
+			case buttons.SEND:
+				onSubmit();
+				break;
 			default:
 				break;
 		}
 	};
 	const onExitCampaign = () => {
 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+	};
+
+	const onExceedLimitYes = () => {
+		setExceedLimitModal(false);
 	};
 
 	return (
@@ -771,427 +958,502 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			classes={classes}
 			customPadding={true}
 			containerClass={null}>
-			{renderToast()}
-			<Grid
-				className={classes.WhatsappCampainHeaderWrapper}
-				container
-				alignItems='center'>
-				<Grid item>
-					<Title
-						Text={translator('whatsappCampaign.header')}
-						Classes={classes}
-						ContainerStyle={{}}
-						Element={null}
-					/>
-				</Grid>
-				<Grid item className={classes.WhatsappCampainNotice}>
-					<>{translator('whatsappCampaign.note')}</>
+			{isAccountSetup ? (
+				<>
+					{renderToast()}
+					<Grid
+						className={classes.WhatsappCampainHeaderWrapper}
+						container
+						alignItems='center'>
+						<Grid item md={12} lg={6} className={classes.WhatsappCampainHeader}>
+							<Title
+								Text={translator('whatsappCampaign.header')}
+								Classes={classes}
+								ContainerStyle={{}}
+								Element={null}
+							/>
+						</Grid>
+						<Grid item md={12} lg={6} className={clsx(classes.WhatsappCampainNotice, classes.pt25)}>
+							<div className='note'>
+								{translator('whatsappCampaign.note1')}
+							</div>
+							<div className='note'>
+								{translator('whatsappCampaign.note2')}
+								<span>
+									{' '} - {' '}<>{translator('whatsappCampaign.checkLimit')}</>{' '}
+									<a
+										href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+										target='_blank'
+										rel='noreferrer'>
+										<>{translator('whatsappCampaign.here')}</>
+									</a>
+								</span>
+							</div>
+						</Grid>
+					</Grid>
 					<br />
-					<span>
-						<>{translator('whatsappCampaign.checkLimit')}</>{' '}
-						<a
-							href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-							target='_blank'
-							rel='noreferrer'>
-							<>{translator('whatsappCampaign.here')}</>
-						</a>
-					</span>
-				</Grid>
-			</Grid>
-			<br />
-			<form onSubmit={(e: BaseSyntheticEvent) => onSubmit(e)}>
-				<Grid container className={classes.WhatsappCampainP1}>
-					<Grid className={classes.WhatsappCampainP1Left} item md={12} lg={6}>
-						<Grid container>
+					<form onSubmit={onSubmit}>
+						<Grid container className={classes.WhatsappCampainP1}>
 							<Grid
+								className={classes.WhatsappCampainP1Left}
 								item
-								className={classes.WhatsappCampainFields}
 								md={12}
-								lg={12}>
-								<CampaignFields
-									classes={classes}
-									savedTemplateList={savedTemplateList}
-									savedTemplate={savedTemplate}
-									onSavedTemplateChange={(templateId) =>
-										onSavedTemplateChange(templateId)
-									}
-									campaignName={campaignName}
-									onCampaignNameChange={(campaignName) =>
-										setCampaignName(campaignName)
-									}
-									from={from}
-									onFromChange={(from) => setFrom(from)}
-									showValidation={showValidation}
-									phoneNumbersList={phoneNumbersList}
-								/>
-							</Grid>
-							<Grid
-								item
-								className={classes.WhatsappCampainTextarea}
-								md={12}
-								lg={12}>
-								<div className={classes.whatsappCampainHighlightContent}>
-									<div className={classes.whatsappCampainHighlightTextWrapper}>
-										{/* @ts-ignore */}
-										<Highlighter
-											searchWords={dynamicVariable}
-											autoEscape={true}
-											textToHighlight={templateData.templateText}
-											highlightTag={(tagData: tagDataProps) =>
-												highlightText(tagData)
+								lg={6}>
+								<Grid container>
+									<Grid
+										item
+										className={classes.WhatsappCampainFields}
+										md={12}
+										lg={12}>
+										<CampaignFields
+											classes={classes}
+											savedTemplateList={savedTemplateList}
+											savedTemplate={savedTemplate}
+											onSavedTemplateChange={(templateId) =>
+												onSavedTemplateChange(templateId)
 											}
+											campaignName={campaignName}
+											onCampaignNameChange={(campaignName) =>
+												setCampaignName(campaignName)
+											}
+											from={from}
+											onFromChange={(from) => setFrom(from)}
+											showValidation={showValidation}
+											phoneNumbersList={phoneNumbersList}
 										/>
-									</div>
-									<Box
-										className={classes.whatsappCampaignActionButtonsWrapper}
-										id='buttons-wrapper'>
-										{templateData.templateButtons?.map(
-											(button: quickReplyButtonProps | callToActionRowProps) =>
-												button.fields.map(
+									</Grid>
+									<Grid
+										item
+										className={classes.WhatsappCampainTextarea}
+										md={12}
+										lg={12}>
+										<div className={classes.whatsappCampainHighlightContent}>
+											<div
+												className={classes.whatsappCampainHighlightTextWrapper}
+												style={{
+													direction: getTextDirection(
+														templateData.templateText,
+														isRTL
+													),
+												}}>
+												{/* @ts-ignore */}
+												<Highlighter
+													searchWords={dynamicVariable}
+													autoEscape={true}
+													textToHighlight={templateData.templateText}
+													highlightTag={(tagData: tagDataProps) =>
+														highlightText(tagData)
+													}
+												/>
+											</div>
+											<Box
+												className={classes.whatsappCampaignActionButtonsWrapper}
+												id='buttons-wrapper'>
+												{templateData.templateButtons?.map(
 													(
-														field:
-															| quickReplyButtonsFieldProps
-															| callToActionFieldProps
+														button: quickReplyButtonProps | callToActionRowProps
 													) =>
-														(field.fieldName === 'whatsapp.websiteButtonText' ||
-															field.fieldName ===
-																'whatsapp.phoneButtonText') && (
-															<Box
-																key={button.id}
-																className={
-																	classes.whatsappCampaignActionButtonsBox
-																}>
-																<Button
-																	className={classes.whatsappActionButtons}
-																	onClick={() =>
-																		buttonType === 'quickReply'
-																			? setIsQuickReplyOpen(true)
-																			: setIsCallToActionOpen(true)
-																	}>
-																	{field.value}
-																</Button>
-															</Box>
+														button.fields.map(
+															(
+																field:
+																	| quickReplyButtonsFieldProps
+																	| callToActionFieldProps
+															) =>
+																(field.fieldName ===
+																	'whatsapp.websiteButtonText' ||
+																	field.fieldName ===
+																		'whatsapp.phoneButtonText') && (
+																	<Box
+																		key={button.id}
+																		className={
+																			classes.whatsappCampaignActionButtonsBox
+																		}>
+																		<Button
+																			className={classes.whatsappActionButtons}
+																			onClick={() =>
+																				buttonType === 'quickReply'
+																					? setIsQuickReplyOpen(true)
+																					: setIsCallToActionOpen(true)
+																			}>
+																			{field.value}
+																		</Button>
+																	</Box>
+																)
 														)
-												)
-										)}
-									</Box>
-								</div>
-								<Box className={classes.whatsappSmallInfoDiv}>
-									<span className={classes.textInfoWrapper}>
-										{isRTL && <>{linkCount}&nbsp;</>}
-										<span className={classes.textInfo}>
-											{linkCount === 1 ? (
-												<>{translator('whatsappCampaign.link')}</>
-											) : (
-												<>{translator('whatsappCampaign.links')}</>
-											)}
-										</span>
-										{!isRTL && <>&nbsp;{linkCount}</>}
-									</span>
+												)}
+											</Box>
+										</div>
+										<Box className={classes.whatsappSmallInfoDiv}>
+											<span className={classes.textInfoWrapper}>
+												{isRTL && <>{linkCount}&nbsp;</>}
+												<span className={classes.textInfo}>
+													{linkCount === 1 ? (
+														<>{translator('whatsappCampaign.link')}</>
+													) : (
+														<>{translator('whatsappCampaign.links')}</>
+													)}
+												</span>
+												{!isRTL && <>&nbsp;{linkCount}</>}
+											</span>
 
-									<span className={classes.textInfoWrapper}>
-										{isRTL && <>{dynamicFieldCount}&nbsp;</>}
-										<span className={classes.textInfo}>
-											{dynamicFieldCount === 1 ? (
-												<>{translator('whatsappCampaign.dfield')}</>
-											) : (
-												<>{translator('whatsappCampaign.dfields')}</>
-											)}
-										</span>
-										{!isRTL && <>&nbsp;{dynamicFieldCount}</>}
-									</span>
+											<span className={classes.textInfoWrapper}>
+												{isRTL && <>{dynamicFieldCount}&nbsp;</>}
+												<span className={classes.textInfo}>
+													{dynamicFieldCount === 1 ? (
+														<>{translator('whatsappCampaign.dfield')}</>
+													) : (
+														<>{translator('whatsappCampaign.dfields')}</>
+													)}
+												</span>
+												{!isRTL && <>&nbsp;{dynamicFieldCount}</>}
+											</span>
 
-									<span className={classes.textInfoWrapper}>
-										{isRTL && (
-											<>{templateData.templateText?.length}/1024&nbsp;</>
-										)}
-										<span className={classes.textInfo}>
-											<>{translator('whatsappCampaign.char')}</>
-										</span>
-										{!isRTL && (
-											<>&nbsp;{templateData.templateText?.length}/1024</>
-										)}
-									</span>
-								</Box>
-							</Grid>
-						</Grid>
-					</Grid>
-					<Grid className={classes.WhatsappCampainP1Right} item md={12} lg={6}>
-						<Grid container>
-							<Grid item xs={12} sm={12} md={12} lg={12}>
-								<Box className={classes.WhatsappCampainMobilePreviewBox}>
-									<WhatsappMobilePreview
-										classes={classes}
-										templateData={templateData}
-										buttonType={buttonType}
-										fileData={fileData}
-									/>
-								</Box>
+											<span
+												className={clsx(
+													classes.textInfoWrapper,
+													`${
+														templateTextCount > templateTextLimit &&
+														'limit-exceed'
+													}`
+												)}>
+												{isRTL && (
+													<>
+														{templateTextCount}/{templateTextLimit}&nbsp;
+													</>
+												)}
+												<span className={classes.textInfo}>
+													<>{translator('whatsappCampaign.char')}</>
+												</span>
+												{!isRTL && (
+													<>
+														&nbsp;{templateTextCount}/{templateTextLimit}
+													</>
+												)}
+											</span>
+										</Box>
+									</Grid>
+								</Grid>
 							</Grid>
 							<Grid
-								className={classes.WhatsappCampainMobilePreviewBox}
+								className={classes.WhatsappCampainP1Right}
 								item
-								xs={12}
-								sm={12}
 								md={12}
-								lg={12}>
-								<Box
-									className={clsx(classes.switchDiv, classes.testSendWrapper)}>
-									<FormGroup>
-										<Switch
-											checked={isTestSend}
-											onChange={() => setIsTestSend(!isTestSend)}
-											className={clsx(
-												{ [classes.rtlSwitch]: isRTL },
-												classes.WhatsappCampainSwitch
-											)}
-										/>
-									</FormGroup>
-
-									<Box className={classes.radio}>
-										<Typography style={{ fontSize: '18px' }}>
-											<>{translator('whatsappCampaign.tsend')}</>
-										</Typography>
-										<Typography className={classes.whatsappDescSwitch}>
-											<>{translator('whatsappCampaign.tsendDesc')}</>
-										</Typography>
-									</Box>
-								</Box>
-
-								{isTestSend && (
-									<Box className={clsx(classes.radio, classes.testSendRadio)}>
-										<RadioGroup
-											aria-labelledby='demo-controlled-radio-buttons-group'
-											defaultValue='onecontact'
-											name='radio-buttons-group'
-											onChange={(e: BaseSyntheticEvent) =>
-												onChangeTestSendRadio(e.target.value)
-											}>
-											<FormControlLabel
-												value='onecontact'
-												control={
-													<Radio
-														className={classes.WhatsappCampainRadioButton}
-													/>
-												}
-												label={
-													<Typography style={{ fontSize: 16 }}>
-														<>{translator('whatsappCampaign.oneContact')}</>
-													</Typography>
-												}
+								lg={6}>
+								<Grid container>
+									<Grid item xs={12} sm={12} md={12} lg={12}>
+										<Box className={clsx(classes.WhatsappCampainMobilePreviewBox, classes.pt10)}>
+											<WhatsappMobilePreview
+												classes={classes}
+												templateData={templateData}
+												buttonType={buttonType}
+												fileData={fileData}
 											/>
-											<Stack direction='row' spacing={0.5} height={40}>
-												<TextField
-													required
-													size='small'
-													id='templateName'
-													placeholder={translator(
-														'whatsappCampaign.oneContactPlaceholder'
+										</Box>
+									</Grid>
+									<Grid
+										className={classes.WhatsappCampainMobilePreviewBox}
+										item
+										xs={12}
+										sm={12}
+										md={12}
+										lg={12}>
+										<Box
+											className={clsx(
+												classes.switchDiv,
+												classes.testSendWrapper
+											)}>
+											<FormGroup>
+												<Switch
+													checked={isTestSend}
+													onChange={() => setIsTestSend(!isTestSend)}
+													className={clsx(
+														{ [classes.rtlSwitch]: isRTL },
+														classes.WhatsappCampainSwitch
 													)}
-													className={clsx(classes.buttonField, classes.success)}
-													disabled={testSendSelection !== 'onecontact'}
+												/>
+											</FormGroup>
+
+											<Box className={classes.radio}>
+												<Typography style={{ fontSize: '18px' }}>
+													<>{translator('whatsappCampaign.tsend')}</>
+												</Typography>
+												<Typography className={classes.whatsappDescSwitch}>
+													<>{translator('whatsappCampaign.tsendDesc')}</>
+												</Typography>
+											</Box>
+										</Box>
+
+										{isTestSend && (
+											<Box
+												className={clsx(classes.radio, classes.testSendRadio)}>
+												<RadioGroup
+													aria-labelledby='demo-controlled-radio-buttons-group'
+													defaultValue='onecontact'
+													name='radio-buttons-group'
 													onChange={(e: BaseSyntheticEvent) =>
-														setTestSendOneContact(
-															e.target.value?.replace(/\D/g, '')
-														)
-													}
-													value={testSendOneContact}
-												/>
-												<Button
-													disabled={
-														testSendSelection !== 'onecontact' ||
-														testSendOneContact?.length === 0
-													}
-													variant='outlined'
-													color='primary'
-													className={classes.testOneContactSendButton}
-													onClick={() => onOkTestSending()}>
-													<>{translator('whatsappCampaign.sendButton')}</>
-												</Button>
-											</Stack>
-											<br />
-											<Stack
-												direction='row'
-												alignItems={'center'}
-												spacing={0.5}
-												height={40}>
-												<FormControlLabel
-													value='testgroup'
-													control={
-														<Radio
-															className={classes.WhatsappCampainRadioButton}
-														/>
-													}
-													label={
-														<Typography style={{ fontSize: 16 }}>
-															<>{translator('whatsappCampaign.testGroups')}</>
-														</Typography>
-													}
-												/>
-												<span className={classes.testSendNewTag}>
-													<>{translator('mainReport.newFeature')}</>
-												</span>
-											</Stack>
-											{testSendSelection === 'testgroup' && (
-												<Stack>
-													<div className={classes.rightForm}>
-														<div
-															className={classes.contactGroupDiv}
-															onClick={() => {
-																setIsTestGroupModal(true);
-															}}>
-															{selectedTestGroup.length <= 0 && (
-																<div>
-																	{' '}
-																	<>{translator('mainReport.ChooseLinks')}</>
-																</div>
+														onChangeTestSendRadio(e.target.value)
+													}>
+													<FormControlLabel
+														value='onecontact'
+														control={
+															<Radio
+																className={classes.WhatsappCampainRadioButton}
+															/>
+														}
+														label={
+															<Typography style={{ fontSize: 16 }}>
+																<>{translator('whatsappCampaign.oneContact')}</>
+															</Typography>
+														}
+													/>
+													<Stack direction='row' spacing={0.5} height={40}>
+														<TextField
+															required
+															size='small'
+															id='templateName'
+															placeholder={translator(
+																'whatsappCampaign.oneContactPlaceholder'
 															)}
-															{selectedTestGroup.length > 0 ? (
-																<div className={classes.mappedGroup}>
-																	{selectedTestGroup.map((item, index) => {
-																		return (
-																			<div
-																				key={index}
-																				className={classes.selectedGroupsDiv}>
-																				<span className={classes.nameGroup}>
-																					{item.GroupName}
-																				</span>
-																				<RiCloseFill
-																					className={classes.groupCloseicn}
-																					onClick={(event) => {
-																						onRemoveGroupSelection(
-																							event,
-																							item.GroupID
-																						);
-																					}}
-																				/>
-																			</div>
-																		);
-																	})}
+															className={clsx(
+																classes.buttonField,
+																classes.success
+															)}
+															disabled={testSendSelection !== 'onecontact'}
+															onChange={(e: BaseSyntheticEvent) =>
+																setTestSendOneContact(
+																	e.target.value
+																		?.replace(/\D/g, '')
+																		?.substr(0, 18)
+																)
+															}
+															value={testSendOneContact}
+														/>
+														<Button
+															disabled={
+																testSendSelection !== 'onecontact' ||
+																testSendOneContact?.length === 0
+															}
+															variant='outlined'
+															color='primary'
+															className={classes.testOneContactSendButton}
+															onClick={() => onOkTestSending()}>
+															<>{translator('whatsappCampaign.sendButton')}</>
+														</Button>
+													</Stack>
+													<br />
+													<Stack
+														direction='row'
+														alignItems={'center'}
+														spacing={0.5}
+														height={40}>
+														<FormControlLabel
+															value='testgroup'
+															control={
+																<Radio
+																	className={classes.WhatsappCampainRadioButton}
+																/>
+															}
+															label={
+																<Typography style={{ fontSize: 16 }}>
+																	<>
+																		{translator('whatsappCampaign.testGroups')}
+																	</>
+																</Typography>
+															}
+														/>
+														<span className={classes.testSendNewTag}>
+															<>{translator('mainReport.newFeature')}</>
+														</span>
+													</Stack>
+													{testSendSelection === 'testgroup' && (
+														<Stack>
+															<div className={classes.rightForm}>
+																<div
+																	className={classes.contactGroupDiv}
+																	onClick={() => {
+																		setIsTestGroupModal(true);
+																	}}>
+																	{selectedTestGroup.length <= 0 && (
+																		<div>
+																			{' '}
+																			<>
+																				{translator('mainReport.ChooseLinks')}
+																			</>
+																		</div>
+																	)}
+																	{selectedTestGroup.length > 0 ? (
+																		<div className={classes.mappedGroup}>
+																			{selectedTestGroup.map((item, index) => {
+																				return (
+																					<div
+																						key={index}
+																						className={
+																							classes.selectedGroupsDiv
+																						}>
+																						<span className={classes.nameGroup}>
+																							{item.GroupName}
+																						</span>
+																						<RiCloseFill
+																							className={classes.groupCloseicn}
+																							onClick={(event) => {
+																								onRemoveGroupSelection(
+																									event,
+																									item.GroupID
+																								);
+																							}}
+																						/>
+																					</div>
+																				);
+																			})}
+																		</div>
+																	) : null}
 																</div>
-															) : null}
-														</div>
-													</div>
-												</Stack>
-											)}
-										</RadioGroup>
-									</Box>
-								)}
+															</div>
+														</Stack>
+													)}
+												</RadioGroup>
+											</Box>
+										)}
+									</Grid>
+								</Grid>
 							</Grid>
 						</Grid>
-					</Grid>
-				</Grid>
-				<Grid container>
-					<Buttons
-						displayBackButton={false}
+						<Grid container>
+							<Buttons
+								displayBackButton={false}
+								classes={classes}
+								onFormButtonClick={(buttonName: string) =>
+									onFormButtonClick(buttonName)
+								}
+							/>
+						</Grid>
+					</form>
+
+					<DynamicModal
 						classes={classes}
-						onFormButtonClick={(buttonName: string) =>
-							onFormButtonClick(buttonName)
+						isDynamcFieldModal={isDynamcFieldModal}
+						onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
+						personalFields={personalFields}
+						landingPageData={landingPages}
+						dynamicModalVariable={dynamicModalVariable}
+						onDynamcFieldModalSave={(updatedDynamicVariable) =>
+							onDynamcFieldModalSave(updatedDynamicVariable)
 						}
+						dynamicVariable={updatedDynamicVariable}
+						isTrackLink={isTrackLink}
+						setIsTrackLink={setIsTrackLink}
+						savedTemplate={savedTemplate}
 					/>
-				</Grid>
-			</form>
 
+					<ValidationAlert
+						classes={classes}
+						isOpen={isValidationAlert}
+						onClose={() => setIsValidationAlert(false)}
+						title={translator('whatsappCampaign.sendValidation')}
+						requiredFields={groupSendValidationErrors}
+					/>
+
+					<TestGroupModal
+						classes={classes}
+						isOpen={isTestGroupModal}
+						onClose={() => setIsTestGroupModal(false)}
+						title={translator('whatsappCampaign.sendTitle')}
+						testGroupData={testGroups}
+						selectedTestGroup={selectedTestGroup}
+						setSelectedTestGroup={(updatedSelectedGroup) =>
+							setSelectedTestGroup(updatedSelectedGroup)
+						}
+						onConfirmOrYes={() => onOkTestSending()}
+					/>
+
+					<QuickReply
+						classes={classes}
+						isQuickReplyOpen={isQuickReplyOpen}
+						closeQuickReply={() => setIsQuickReplyOpen(false)}
+						quickReplyButtons={quickReplyButtons}
+						setQuickReplyButtons={() => {}}
+						updateTemplateData={() => {}}
+						templateButtons={templateData.templateButtons}
+						isEditable={false}
+					/>
+					<ActionCallPopOver
+						isCallToActionOpen={isCallToActionOpen}
+						closeCallToAction={() => setIsCallToActionOpen(false)}
+						classes={classes}
+						callToActionFieldRows={callToActionFieldRows}
+						setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
+						phoneNumberField={phoneNumberField}
+						websiteField={websiteField}
+						addMore={() => {}}
+						updateTemplateData={() => {}}
+						isEditable={false}
+						buttonType={buttonType}
+						templateText={templateData.templateText}
+					/>
+
+					<AlertModal
+						classes={classes}
+						isOpen={isDeleteCampaignOpen}
+						onClose={() => setIsDeleteCampaignOpen(false)}
+						title={translator('whatsappManagement.deleteCampaign')}
+						subtitle={translator('whatsappManagement.deleteCampaignDesc')}
+						type='delete'
+						onConfirmOrYes={() => onDeleteCampaign()}
+					/>
+					<AlertModal
+						classes={classes}
+						isOpen={isExitCampaignOpen}
+						onClose={() => setIsExitCampaignOpen(false)}
+						title={translator('mainReport.handleExitTitle')}
+						subtitle={translator('mainReport.leaveCampaign')}
+						type='delete'
+						onConfirmOrYes={() => onExitCampaign()}
+					/>
+					<AlertModal
+						classes={classes}
+						isOpen={exceedLimitModal}
+						onClose={() => setExceedLimitModal(false)}
+						title={translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
+						)}
+						subtitle={`${translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
+						)} ${
+							nextMessageAvailable
+								? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
+								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+						}`}
+						type='alert'
+						onConfirmOrYes={() => onExceedLimitYes()}
+					/>
+
+					<SummaryModal
+						classes={classes}
+						isOpen={isSummaryModal}
+						campaignName={''}
+						fromNumber={''}
+						onSummaryModalClose={() => setIsSummaryModal(false)}
+						onConfirmOrYes={async () => await onTestSend(false, Number(campaignID || 0))}
+						selectedGroups={selectedTestGroup}
+						selectedFilterGroups={[]}
+						selectedFilterCampaigns={[]}
+						sendType={'1'}
+						sendDate={null}
+						sendTime={null}
+						isSpecialDateBefore={false}
+						daysBeforeAfter={''}
+						specialDatedropDown={{}}
+						spectialDateFieldID={'0'}
+						campaignSummary={campaignSummary}
+						randomlyCount={randomlyCount}
+						setRandomlyCount={setRandomlyCount}
+						resetRandomCount={async () => await setRandomlyCount('')}
+					/>
+				</>
+			) : (
+				!isLoader && <NoSetup classes={classes} />
+			)}
 			<Loader isOpen={isLoader} showBackdrop={true} />
-			<DynamicModal
-				classes={classes}
-				isDynamcFieldModal={isDynamcFieldModal}
-				onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
-				personalFields={personalFields}
-				landingPageData={landingPages}
-				dynamicModalVariable={dynamicModalVariable}
-				onDynamcFieldModalSave={(updatedDynamicVariable) =>
-					onDynamcFieldModalSave(updatedDynamicVariable)
-				}
-				dynamicVariable={updatedDynamicVariable}
-				isTrackLink={isTrackLink}
-				setIsTrackLink={setIsTrackLink}
-				savedTemplate={savedTemplate}
-			/>
-
-			<ValidationAlert
-				classes={classes}
-				isOpen={isValidationAlert}
-				onClose={() => setIsValidationAlert(false)}
-				title={translator('whatsappCampaign.sendValidation')}
-				requiredFields={groupSendValidationErrors}
-			/>
-
-			<TestGroupModal
-				classes={classes}
-				isOpen={isTestGroupModal}
-				onClose={() => setIsTestGroupModal(false)}
-				title={translator('whatsappCampaign.sendTitle')}
-				testGroupData={testGroups}
-				selectedTestGroup={selectedTestGroup}
-				setSelectedTestGroup={(updatedSelectedGroup) =>
-					setSelectedTestGroup(updatedSelectedGroup)
-				}
-				onConfirmOrYes={() => onOkTestSending()}
-			/>
-
-			<QuickReply
-				classes={classes}
-				isQuickReplyOpen={isQuickReplyOpen}
-				closeQuickReply={() => setIsQuickReplyOpen(false)}
-				quickReplyButtons={quickReplyButtons}
-				setQuickReplyButtons={() => {}}
-				updateTemplateData={() => {}}
-				templateButtons={templateData.templateButtons}
-				isEditable={false}
-			/>
-			<ActionCallPopOver
-				isCallToActionOpen={isCallToActionOpen}
-				closeCallToAction={() => setIsCallToActionOpen(false)}
-				classes={classes}
-				callToActionFieldRows={callToActionFieldRows}
-				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
-				phoneNumberField={phoneNumberField}
-				websiteField={websiteField}
-				addMore={() => {}}
-				updateTemplateData={() => {}}
-				isEditable={false}
-				buttonType={buttonType}
-				templateText={templateData.templateText}
-			/>
-
-			<AlertModal
-				classes={classes}
-				isOpen={isDeleteCampaignOpen}
-				onClose={() => setIsDeleteCampaignOpen(false)}
-				title={translator('whatsapp.alertModal.DeleteText')}
-				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
-				type='delete'
-				onConfirmOrYes={() => onDeleteCampaign()}
-			/>
-			<AlertModal
-				classes={classes}
-				isOpen={isExitCampaignOpen}
-				onClose={() => setIsExitCampaignOpen(false)}
-				title={translator('whatsappManagement.LeaveCampaignCreation')}
-				subtitle={translator('whatsappManagement.LeaveCampaignCreationDesc')}
-				type='delete'
-				onConfirmOrYes={() => onExitCampaign()}
-			/>
-			<SummaryModal
-				classes={classes}
-				isOpen={isSummaryModal}
-				campaignName={''}
-				fromNumber={''}
-				onSummaryModalClose={() => setIsSummaryModal(false)}
-				onConfirmOrYes={() => onTestSend(false, Number(campaignID || 0))}
-				selectedGroups={selectedTestGroup}
-				selectedFilterGroups={[]}
-				selectedFilterCampaigns={[]}
-				sendType={'1'}
-				sendDate={null}
-				sendTime={null}
-				isSpecialDateBefore={false}
-				daysBeforeAfter={''}
-				specialDatedropDown={[]}
-				spectialDateFieldID={'0'}
-				campaignSummary={campaignSummary}
-			/>
 		</DefaultScreen>
 	);
 };

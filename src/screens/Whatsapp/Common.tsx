@@ -1,4 +1,5 @@
 import {
+	ApiErrorResponse,
 	buttonsDataProps,
 	callToActionProps,
 	quickReplyButtonProps,
@@ -12,14 +13,14 @@ import {
 	templatePreviewDataProps,
 } from './Editor/Types/WhatsappCreator.types';
 import uniqid from 'uniqid';
+import WhatsappApiResponse from '../../assets/translations/en/WhatsappApiResponse.json';
 import {
 	landingPageDataProps,
-	personalFieldDataProps,
 	SubAccountSettings,
 	updatedVariable,
 } from './Campaign/Types/WhatsappCampaign.types';
 import { APIWhatsappChatVariablesData } from './Chat/Types/WhatsappChat.type';
-import { buttonTypes } from './Constant';
+import { buttonTypes, fileTypes } from './Constant';
 
 //This regex will test dynamic field having two digits in side (i.e. {{10}});
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
@@ -71,6 +72,20 @@ export const getLastDynamicFieldByValue = (value: string) => {
 
 export const getVariableValue = (variable: string) => {
 	return variable?.replace(/[{}]/g, '');
+};
+
+export const getFileType = (fileLink: string) => {
+	if (
+		fileLink?.includes('.png') ||
+		fileLink?.includes('.jpeg') ||
+		fileLink?.includes('.jpg')
+	) {
+		return fileTypes.IMAGE;
+	} else if (fileLink?.includes('.pdf')) {
+		return fileTypes.DOCUMENT;
+	} else if (fileLink?.includes('.mp4')) {
+		return fileTypes.VIDEO;
+	}
 };
 
 export const getTemplateIdByName = (
@@ -165,7 +180,7 @@ export const getTemplatePreviewData = (
 									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
-									value: '+972 Israel',
+									value: button?.phoneCode || '+972',
 								},
 								{
 									fieldName: 'whatsapp.phoneNumber',
@@ -244,7 +259,10 @@ export const getTemplatePreviewData = (
 			}
 		}
 		if (cardData?.media?.length > 0) {
+			// getFileType(fileData?.fileLink)
 			templatePreviewData.fileData.fileLink = cardData?.media[0];
+			templatePreviewData.fileData.fileType =
+				getFileType(cardData?.media[0]) || '';
 		}
 	};
 
@@ -336,31 +354,170 @@ export const getCampaignLink = (
 };
 
 export const formatUpdatedDynamicVariable = (
-	updatedDynamicVariable: updatedVariable[],
-	personalFields: personalFieldDataProps,
-	landingPages: landingPageDataProps[]
+	updatedDynamicVariable: updatedVariable[]
 ): updatedVariable[] => {
 	const formattedDynamicVariable: updatedVariable[] =
 		updatedDynamicVariable.map((dynamicVariable) => {
 			if (dynamicVariable?.FieldTypeId === 1) {
 				return {
 					...dynamicVariable,
-					VariableValue: `##${getKeyByValue(
-						personalFields,
-						dynamicVariable?.VariableValue
-					)}##`,
-				};
-			}
-			if (dynamicVariable?.FieldTypeId === 4) {
-				return {
-					...dynamicVariable,
-					VariableValue: getCampaignLink(
-						landingPages,
-						dynamicVariable?.VariableValue
-					),
+					VariableValue: `##${dynamicVariable?.VariableValue}##`,
 				};
 			}
 			return dynamicVariable;
 		});
 	return formattedDynamicVariable;
+};
+
+export const checkLanguage = (text: string, isRTL: boolean) => {
+	let isEnglish = false;
+	let isHebrew = false;
+	let isContainAlphabates = false;
+	if (text?.length > 0) {
+		for (var i = 0; i < text?.length; i++) {
+			if (!/[^a-zA-Z\u0590-\u05FF]/.test(text?.charAt(i))) {
+				isContainAlphabates = true;
+				if (/[\u0590-\u05FF]/.test(text?.charAt(i))) {
+					isHebrew = true;
+				}
+				if (/[a-zA-Z]/.test(text?.charAt(i))) {
+					isEnglish = true;
+				}
+			}
+		}
+	} else {
+		return 'Both';
+	}
+	if (isEnglish && isHebrew) {
+		return 'Both';
+	} else if (!isEnglish && !isHebrew) {
+		if (isContainAlphabates) {
+			return 'Both';
+		} else {
+			return isRTL ? 'Hebrew' : 'English';
+		}
+	} else {
+		return isEnglish ? 'English' : 'Hebrew';
+	}
+};
+
+export const getTextDirection = (text: string, isRTL: boolean) => {
+	const language = checkLanguage(text, isRTL);
+	switch (language) {
+		case 'Both':
+			return isRTL ? 'rtl' : 'ltr';
+		case 'English':
+			return 'ltr';
+		case 'Hebrew':
+			return 'rtl';
+
+		default:
+			return 'ltr';
+	}
+};
+
+export const getApiErrorResponseMessage = (
+	messageKey: string,
+	responseCode: number | string
+): string => {
+	const apiErrorResponse: ApiErrorResponse = WhatsappApiResponse;
+	if (apiErrorResponse[messageKey][responseCode]) {
+		return messageKey === 'twilio'
+			? `WhatsappApiResponse.${messageKey}.${responseCode}.message`
+			: `WhatsappApiResponse.${messageKey}.${responseCode}`;
+	} else {
+		return 'WhatsappApiResponse.common.error';
+	}
+};
+
+export const getErrorMessageFromTwilioLink = (link: string): string => {
+	const errorCode = link?.split('/');
+	return getApiErrorResponseMessage(
+		'twilio',
+		Number(errorCode[errorCode?.length - 1])
+	);
+};
+
+export const getFileNameFromLink = (fileLink: string) => {
+	const fileName = fileLink?.split('_orignal_');
+	return fileName?.length > 0 ? fileName[fileName?.length - 1] : '';
+};
+
+export const isShowTierAlert = (
+	messageLeft: number,
+	messageRequired: number,
+	whatsappTierID: number,
+	sendType: string,
+	isIn24HrWindow: boolean
+) => {
+	if (whatsappTierID !== 4) {
+		if (sendType === '1' || (sendType === '2' && isIn24HrWindow)) {
+			if (messageLeft < messageRequired) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+};
+
+export const adjustTemplateVariablesForLink = (
+	templateData: savedTemplateTypesProps,
+	updatedDynamicVariable: updatedVariable[]
+) => {
+	const {
+		templateData: { templateText },
+	} = getTemplatePreviewData(templateData);
+	const DynamicFieldsIndex = getDynamicFieldIndex(templateText);
+	const adjustedDynamicVariableForLinks = DynamicFieldsIndex?.map(
+		(fieldIndex, index) => {
+			const variable = updatedDynamicVariable?.find(
+				(dynamicVariable) => dynamicVariable?.VariableIndex === index + 1
+			)!;
+			if (
+				variable &&
+				variable?.IsStatastic !== true &&
+				(variable?.FieldTypeId === 3 ||
+					variable?.FieldTypeId === 4 ||
+					variable?.FieldTypeId === 5)
+			) {
+				let adjustedVariable = variable;
+				if (
+					templateText.charAt(fieldIndex - 1) !== ' ' &&
+					adjustedVariable?.VariableValue?.charAt(0) !== ' '
+				) {
+					adjustedVariable = {
+						...variable,
+						VariableValue: ` ${adjustedVariable?.VariableValue}`,
+					};
+				}
+				if (
+					templateText.charAt(
+						index + 1 <= 9 ? fieldIndex + 5 : fieldIndex + 5
+					) !== ' ' &&
+					adjustedVariable?.VariableValue?.charAt(
+						adjustedVariable?.VariableValue?.length - 1
+					) !== ' '
+				) {
+					if (
+						templateText?.length !==
+						(index + 1 <= 9 ? fieldIndex + 5 : fieldIndex + 5)
+					) {
+						adjustedVariable = {
+							...variable,
+							VariableValue: `${adjustedVariable?.VariableValue} `,
+						};
+					}
+				}
+				return adjustedVariable;
+			} else {
+				return variable;
+			}
+		}
+	);
+	return adjustedDynamicVariableForLinks;
 };

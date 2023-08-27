@@ -17,6 +17,7 @@ import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { ImWhatsapp } from 'react-icons/im';
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
 import { HandleExportData } from '../../../../helpers/Export/ExportHelper';
+import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
 
 const WhatsappInbound = ({ classes }) => {
     const dispatch = useDispatch();
@@ -27,9 +28,8 @@ const WhatsappInbound = ({ classes }) => {
     const [dialog, setDialog] = useState(null);
     const [showLoader, setShowLoader] = useState(true);
     const [isSearching, setIsSearching] = useState(false);
-    const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
     const { inboundWhatsappReport } = useSelector(state => state.whatsapp);
-    const { windowSize } = useSelector(state => state.core);
+    const { windowSize, rowsPerPage } = useSelector(state => state.core);
     const { accountFeatures } = useSelector(state => state.common);
 
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
@@ -37,8 +37,8 @@ const WhatsappInbound = ({ classes }) => {
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const { id } = useParams();
     const defaultRequest = {
-        FromDate: null,
-        ToDate: null,
+        FromDate: moment().subtract(30, 'days').utcOffset(0).format('YYYY-MM-DD HH:mm').toString(),
+        ToDate: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm').toString(),
         FromNumber: '',
         ToNumber: '',
         TextMessage: '',
@@ -128,7 +128,7 @@ const WhatsappInbound = ({ classes }) => {
             <>
                 <Grid item className={clsx(classes.groupsLableContainer, classes.mb15)} >
                     <Typography className={classes.groupsLable}>
-                        {`${inboundWhatsappReport?.Message} ${t('common.Clients')}`}
+                        {`${inboundWhatsappReport?.Message} ${t('master.responses')}`}
                     </Typography>
                 </Grid>
                 <TableContainer className={classes.tableStyle}>
@@ -267,8 +267,7 @@ const WhatsappInbound = ({ classes }) => {
     }
 
     const handlePageChange = (val) => {
-        setRowsPerPage(val);
-        setRequest({ ...request, PageSize: val });
+        dispatch(setRowsPerPage(val))
     }
 
     const renderTablePagination = () => {

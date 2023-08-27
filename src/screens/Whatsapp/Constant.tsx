@@ -10,6 +10,7 @@ import {
 	statusByNameProps,
 	statusProps,
 	TemplatesStatusIdByStatusName,
+	TierSetting,
 } from './management/Types/Management.types';
 
 export const whatsappRoutes = {
@@ -17,7 +18,7 @@ export const whatsappRoutes = {
 	CREATE_CAMPAIGN_PAGE1: '/react/whatsapp/campaign/create/page1',
 	CREATE_CAMPAIGN_PAGE2: '/react/whatsapp/campaign/create/page2',
 	TEMPLATE_MANAGEMENT: '/react/whatsapp/templatemanagement',
-	REPORTS: '/react/whatsapp/reports',
+	REPORTS: '/react/reports/whatsappreports',
 	CAMPAIGN_MANAGEMENT: '/react/whatsapp/campaignmanagement',
 	EDIT_TEMPLATE: '/react/whatsapp/template/edit/:templateID',
 	EDIT_CAMPAIGN_PAGE1: '/react/whatsapp/campaign/edit/page1/:campaignID',
@@ -96,6 +97,7 @@ export enum reportCellNames {
 	REMOVED = 'Removed',
 	FAILED = 'Failed',
 	REVENUE = 'Revenue',
+	COST = 'Cost',
 }
 
 export enum APIStatuses {
@@ -147,17 +149,13 @@ export const countryCodes = [
 	'+257 BI',
 	'+855 KH',
 	'+237 CM',
-	'+1 CA',
 	'+238 CV',
 	'+1-345 KY',
 	'+236 CF',
 	'+235 TD',
 	'+56 CL',
 	'+86 CN',
-	'+53 CX',
-	'+61 CC',
 	'+57 CO',
-	'+269 KM',
 	'+243 CD',
 	'+242 CG',
 	'+682 CK',
@@ -216,7 +214,6 @@ export const countryCodes = [
 	'+1-876 JM',
 	'+81 JP',
 	'+962 JO',
-	'+7 KZ',
 	'+254 KE',
 	'+686 KI',
 	'+850 KP',
@@ -265,7 +262,6 @@ export const countryCodes = [
 	'+227 NE',
 	'+234 NG',
 	'+683 NU',
-	'+672 NF',
 	'+1-670 MP',
 	'+47 NO',
 	'+968 OM',
@@ -423,6 +419,7 @@ export const allCampaignInitialPagination: AllCampaignReq = {
 	isPagination: true,
 	pageNo: 1,
 	pageSize: 6,
+	isDeleted: false,
 };
 
 export const allReportInitialPagination: AllReportReq = {
@@ -433,3 +430,26 @@ export const allReportInitialPagination: AllReportReq = {
 	pageNo: 1,
 	pageSize: 6,
 };
+
+export const tierSetting: TierSetting[] = [
+	{
+		name: 'settings.accountSettings.actDetails.fields.tier1',
+		value: '1',
+		messageLimit: 1000,
+	},
+	{
+		name: 'settings.accountSettings.actDetails.fields.tier2',
+		value: '2',
+		messageLimit: 10000,
+	},
+	{
+		name: 'settings.accountSettings.actDetails.fields.tier3',
+		value: '3',
+		messageLimit: 100000,
+	},
+	{
+		name: 'settings.accountSettings.actDetails.fields.tier4',
+		value: '4',
+		messageLimit: 'unlimited',
+	},
+];
