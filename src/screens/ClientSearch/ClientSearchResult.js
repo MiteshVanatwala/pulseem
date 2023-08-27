@@ -743,13 +743,13 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
           <Typography className={classes.whatsappReportErrorCell}>
             {/* {LogSms_ErrorType} */}
-            {t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
           </Typography>
         </>),
         web: ({ LogSms_ErrorType = '', ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
             {/* {LogSms_ErrorType} */}
-            {t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
           </Typography>
         )
       },
