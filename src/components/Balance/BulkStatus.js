@@ -262,7 +262,7 @@ const BulkStatus = ({ classes }) => {
               justifyContent='space-between'>
               <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
               <Typography className={classes.bulkTitle}>
-                {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Whatsapp)}
+                {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(Whatsapp)} ${t('common.NIS')}`}
               </Typography>
             </Grid>}
           </Grid>
