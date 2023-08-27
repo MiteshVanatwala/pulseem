@@ -48,7 +48,7 @@ const RecipientChart = ({ classes, }) => {
             centerTitle: 'dashboard.noNewsletters',
         },
         {
-            mainTitle: 'appBar.sms.title',
+            mainTitle: 'dashboard.smsWhatsapp',
             centerTitle: 'dashboard.noSMS'
         },
         {
