@@ -107,10 +107,10 @@ const renderRoutes = (classes, redirect) => {
         path={`/react/notifications/edit/:notificationID`}
         component={transferUrl('/Pulseem/notifications/Edit/', 'notification')}
       />
-      <Route
+      {/* <Route
         path={`/react/SendCampaign/:campaignID`}
         component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
-      />
+      /> */}
       <Route
         path={`/PreviewCampaign/:campaignID`}
         element={transferUrl('/Pulseem/PreviewCampaign.aspx?CampaignID=', 'campaign')}

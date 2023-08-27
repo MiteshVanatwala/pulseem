@@ -362,8 +362,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        //href: `/react/Campaigns/SendSettings/${CampaignID}`
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        href: `/react/Campaigns/SendSettings/${CampaignID}`
+        //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -865,7 +865,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const getDuplicateDialog = (campaignId, campaignName) => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    // OLD
     content: (
       <>
         <Typography align='center'
