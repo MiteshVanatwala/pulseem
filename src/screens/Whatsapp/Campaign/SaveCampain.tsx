@@ -974,19 +974,21 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							/>
 						</Grid>
 						<Grid item md={12} lg={6} className={clsx(classes.WhatsappCampainNotice, classes.pt25)}>
-							<span style={{ lineHeight: '0' }}>
-								{translator('whatsappCampaign.note')}
-							</span>
-							<br />
-							<span>
-								<>{translator('whatsappCampaign.checkLimit')}</>{' '}
-								<a
-									href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-									target='_blank'
-									rel='noreferrer'>
-									<>{translator('whatsappCampaign.here')}</>
-								</a>
-							</span>
+							<div className='note'>
+								{translator('whatsappCampaign.note1')}
+							</div>
+							<div className='note'>
+								{translator('whatsappCampaign.note2')}
+								<span>
+									{' '} - {' '}<>{translator('whatsappCampaign.checkLimit')}</>{' '}
+									<a
+										href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+										target='_blank'
+										rel='noreferrer'>
+										<>{translator('whatsappCampaign.here')}</>
+									</a>
+								</span>
+							</div>
 						</Grid>
 					</Grid>
 					<br />
