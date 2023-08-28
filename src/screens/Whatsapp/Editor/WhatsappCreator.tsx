@@ -1168,6 +1168,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 										onFormButtonClick(buttonName)
 									}
 									displayBackButton={false}
+									displayDeleteButton={!!templateID}
 								/>
 							</Grid>
 						</Grid>

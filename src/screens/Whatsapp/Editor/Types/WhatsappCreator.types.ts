@@ -102,6 +102,7 @@ export type ButtonsProps = {
 	classes: ClassesType['classes'];
 	onFormButtonClick: (buttonName: string) => void;
 	displayBackButton: boolean;
+	displayDeleteButton?: boolean;
 };
 
 export type campaignPage1ButtonsProps = {
