@@ -167,5 +167,8 @@ export const PulseemFeatures = {
   OTPSUGGESTION: '40',
   BEE_EDITOR: '41',
   REVENUE: '42',
-  BEE_AMP: '43'
+  BEE_AMP: '43',
+  BEE_ENABLE_GOOGLE_FONTS: '44',
+  DISABLE_TWO_FACTOR_AUTH: '45',
+  WHATSAPP: '46'
 }

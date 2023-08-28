@@ -1,10 +1,10 @@
 import Icon from './Icon';
 import {
-	APIWhatsappChatSidebarContactsItemsData,
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
+import { IconButton, MenuItem } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -41,22 +41,12 @@ const SideBar = ({
 		fetchSearchedContacts(searchText, filterBySelected, true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedValue]);
-
-	const useStyles = makeStyles(() => ({
-		selectSection: {
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
-	}));
-	const muiclasses = useStyles();
-
 	const handleSearch = (e: BaseSyntheticEvent) => {
 		setSearchText(e.target.value.toLowerCase());
 	};
 
-	const handleFilter = (e: BaseSyntheticEvent) => {
-		setFilterBySelected(e.target.value);
+	const handleFilter = (e: SelectChangeEvent) => {
+		setFilterBySelected(Number(e.target.value));
 		fetchMoreContacts(searchText, Number(e.target.value), true);
 	};
 
@@ -82,11 +72,10 @@ const SideBar = ({
 					/>
 					<span>
 						<Select
-							classes={{ root: muiclasses.selectSection }}
 							className={classes.whatsappMainChatStatusSelect}
 							autoWidth
-							defaultValue={0}
-							value={filterBySelected}
+							defaultValue='0'
+							value={`${filterBySelected}`}
 							variant='standard'
 							style={{ fontSize: '12px' }}
 							MenuProps={{
@@ -96,14 +85,11 @@ const SideBar = ({
 									},
 								},
 							}}
-							onChange={(e) => handleFilter(e)}>
-							<MenuItem value={0}>
-								{translator('whatsappChat.allStatus')}
-							</MenuItem>
+							onChange={(e: SelectChangeEvent) => handleFilter(e)}
+						>
+							<MenuItem value={0}>{translator('whatsappChat.allStatus')}</MenuItem>
 							<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
-							<MenuItem value={2}>
-								{translator('whatsappChat.pending')}
-							</MenuItem>
+							<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
 							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
 						</Select>
 					</span>

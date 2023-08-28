@@ -93,13 +93,17 @@ const Templates = ({
         <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
           {renderHtml(templateDetails.Html)}
         </Box>
-        <div id='name' className={clsx(classes.textCenter, classes.pt5, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
+        <div id='name' className={clsx(classes.textCenter, classes.pt10, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
         <div id='buttons' className={clsx(classes.textCenter, classes.p5, classes.pb25)}>
           <Button
             className={clsx(
-              classes.solidDialogButton,
-              classes.dialogConfirmBlueButton,
-              classes.p5
+              // classes.solidDialogButton,
+              // classes.dialogConfirmBlueButton,
+              classes.p5,
+              classes.btn,
+              classes.btnRounded,
+              classes.textCapitalize,
+              'preview-btn'
             )}
             onClick={() => {
               setSelectedTemplate(templateDetails);
@@ -107,7 +111,7 @@ const Templates = ({
             }}
           >
             <Typography
-              className={clsx(classes.dBlock, classes.f14)}
+              className={clsx(classes.dBlock, classes.f12)}
             >
               {t('common.Preview')}
             </Typography>
@@ -115,10 +119,13 @@ const Templates = ({
 
           <Button
             className={clsx(
-              classes.solidDialogButton,
-              classes.dialogConfirmButton,
+              // classes.solidDialogButton,
+              // classes.dialogConfirmButton,
+              classes.btn,
+              classes.btnRounded,
               classes.ml5,
-              classes.p5
+              classes.p5,
+              classes.textCapitalize,
             )}
             onClick={() => {
               onClose(templateDetails)

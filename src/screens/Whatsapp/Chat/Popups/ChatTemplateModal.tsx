@@ -1,7 +1,5 @@
-import { Button, Box, Dialog, Grid } from '@material-ui/core';
-import { useMediaQuery } from '@mui/material';
+import { Button, Grid } from '@material-ui/core';
 import { useTheme } from '@mui/material/styles';
-import { Close, InfoOutlined } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import '../css/ChatTemplate.css';
 import { FaChevronRight } from 'react-icons/fa';
@@ -27,13 +25,10 @@ import { getTemplateName } from '../../Common';
 
 const ChatTemplateModal = ({
 	classes,
-	isOpen,
-	onClose,
 	onChoose,
 	savedTemplateList,
 }: chatModalProps) => {
 	const theme = useTheme();
-	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 	const { t: translator } = useTranslation();
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
@@ -202,7 +197,8 @@ const ChatTemplateModal = ({
 									borderRadius: '5px',
 									padding: '4px 8px',
 									width: 'auto',
-								}}>
+								}}
+							>
 								<span className={classes.quickReplyButtonText}>
 									{getValueByFieldName(button, 'whatsapp.websiteButtonText')}
 								</span>
@@ -259,82 +255,59 @@ const ChatTemplateModal = ({
 		}
 	};
 	return (
-		<>
-			<Dialog
-				fullScreen={fullScreen}
-				open={isOpen}
-				onClose={onClose}
-				aria-labelledby='responsive-dialog-title'
-				className={classes.templateListWrapper}>
-				<div className={classes.templateListModal}>
-					<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-						<>{translator('whatsappChat.chooseTemplate')}</>
-					</div>
-					<Box className={classes.alertModalClose}>
-						<Close fontSize={'small'} onClick={onClose} />
-					</Box>
-					<Box className={classes.alertModalInfoWrapper}>
-						<Box className={classes.alertModalInfo}>
-							<InfoOutlined fontSize={'small'} onClick={onClose} />
-						</Box>
-					</Box>
-					<div className={classes.templateListModalContent}>
-						<ul className={classes.chooseTemplateModalUl}>
-							{savedTemplateList?.map(
-								(template: savedTemplateListProps, index: number) => (
-									<section
-										className='accordion'
-										key={`templatelist_${template.TemplateId}_${index}`}>
-										<input
-											type='checkbox'
-											name='collapse'
-											id={template?.TemplateId}
-										/>
-										<h2 className='handle'>
-											<label htmlFor={template?.TemplateId}>
-												<FaChevronRight
-													style={{
-														marginRight: '10px',
-														fontSize: '0.7rem',
-														fontFamily: 'fontawesome',
-													}}
-												/>
-												{getTemplateName(template)}
-											</label>
-										</h2>
-										<div className='content'>
-											<Grid
-												container
-												className={
-													classes.chatTemplateModalTemplateDataWrapper
-												}>
-												<Grid item>
-													<p>{getTemplateText(template)}</p>
-												</Grid>
-												<Grid item>
-													<Button
-														className='ok-button'
-														size='small'
-														variant='contained'
-														color='primary'
-														autoFocus
-														onClick={() =>
-															onChoose(template, getTemplateText(template))
-														}>
-														<>{translator('whatsappChat.choose')}</>
-													</Button>
-												</Grid>
-											</Grid>
-											<Grid container>{getButton(template?.Data?.types)}</Grid>
-										</div>
-									</section>
-								)
-							)}
-						</ul>
-					</div>
-				</div>
-			</Dialog>
-		</>
+		<div className={classes.templateListModalContent}>
+			<ul className={classes.chooseTemplateModalUl}>
+				{savedTemplateList?.map(
+					(template: savedTemplateListProps, index: number) => (
+						<section
+							className='accordion'
+							key={`templatelist_${template.TemplateId}_${index}`}>
+							<input
+								type='checkbox'
+								name='collapse'
+								id={template?.TemplateId}
+							/>
+							<h2 className='handle'>
+								<label htmlFor={template?.TemplateId}>
+									<FaChevronRight
+										style={{
+											marginRight: '10px',
+											fontSize: '0.7rem',
+											fontFamily: 'fontawesome',
+										}}
+									/>
+									{getTemplateName(template)}
+								</label>
+							</h2>
+							<div className='content'>
+								<Grid
+									container
+									className={
+										classes.chatTemplateModalTemplateDataWrapper
+									}>
+									<Grid item>
+										<p>{getTemplateText(template)}</p>
+									</Grid>
+									<Grid item>
+										<Button
+											className='ok-button'
+											size='small'
+											variant='contained'
+											color='primary'
+											autoFocus
+											onClick={() => onChoose(template, getTemplateText(template))}
+										>
+											{translator('whatsappChat.choose')}
+										</Button>
+									</Grid>
+								</Grid>
+								<Grid container>{getButton(template?.Data?.types)}</Grid>
+							</div>
+						</section>
+					)
+				)}
+			</ul>
+		</div>
 	);
 };
 

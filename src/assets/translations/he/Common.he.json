@@ -454,7 +454,7 @@
   "yourCampaignOnItsWay": "הקמפיין שלך בדרך",
   "folderAlreadyExists": "תיקייה עם שם זה כבר קיימת. יש לבחור שם אחר.",
   "maxImageSize": "הקובץ גדול מדי, נסו שנית",
-  "smsBulkTitle": "חבילות SMS",
+  "smsBulkTitle": "SMS חבילות",
   "smsBulk": "חבילת SMS",
   "newsletterBulkTitle": "חבילות דיוור",
   "newsletterBulk": "חבילת דיוור",
@@ -595,8 +595,6 @@
   "filesNotUploaded": "קבצים נכשלו: ",
   "saveAndContinue": "שמור והמשך",
   "backToAutomation": "חזור לאוטומציה",
-  "dearCustomer": "לקוח יקר",
-  "systemFailureNotice": "שלום. יש כרגע תקלה במערכת שליחת המיילים.<br/> אנו מטפלים בבעיה והיא תיפטר בשעות הקרובות.<br/>אנו זמינים לשאלות  ב 035240290 <a href='mailto:support@pulseem.co.il'>support@pulseem.co.il</a>",
   "backToHome": "לדף הבית",
   "backToCampaigns": "לניהול קמפיינים",
   "showError": "הצג שגיאה",
@@ -613,6 +611,7 @@
   "xssError": "המערכת לא מאפשרת הזנת קוד Html/Scripts או כל שרשור לא טקסטואלי!",
   "remove": "הסר",
   "searchByCampaign": "חפש לפי קמפיין",
+  "new": "חדש",
   "savedSuccessfully": "נשמר בהצלחה",
   "fileDownloads": "הורדת קבצים",
   "fileDownloadError": "אופס... משהו השתבש בעת הורדת הקובץ",
@@ -631,5 +630,6 @@
   "templateNameIsRequired": "אנא בחרו שם לתבנית",
   "loadMore": "טען עוד",
   "noCampaignToRestore": "אין קמפיינים לשחזור",
-  "doNotShow": "אל תציג שוב"
+  "doNotShow": "אל תציג שוב",
+  "ReadTime": "זמן קריאה"
 }

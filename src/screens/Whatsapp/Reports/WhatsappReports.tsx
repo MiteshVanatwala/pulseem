@@ -430,7 +430,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				<>
 					<Title
 						Text={translator('whatsappReport.report')}
-						Classes={classes}
+						classes={classes}
 						ContainerStyle={{}}
 						Element={null}
 					/>

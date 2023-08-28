@@ -1,5 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip } from "@material-ui/core";
+import {
+  IconButton,
+  InputAdornment,
+  Tooltip,
+  Typography,
+  Button,
+  Grid,
+  Box,
+  FormControlLabel,
+  FormControl,
+  RadioGroup,
+  Radio,
+  FormHelperText,
+  Divider,
+  TextField,
+  MenuItem
+} from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,11 +32,9 @@ import { AiOutlineExclamationCircle, AiOutlineClose } from "react-icons/ai";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useParams } from 'react-router-dom';
-import { BsTrash, BsChevronDown, BsChevronUp } from 'react-icons/bs';
-import Gif from '../../../assets/images/managment/check-circle.gif';
+import { BsTrash, BsChevronDown, BsChevronUp, BsInfoCircle } from "react-icons/bs";
+import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
-import Title from '../../../components/Wizard/Title'
-import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, saveManualClients,
   getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getTestGroups
@@ -28,13 +43,17 @@ import { getGroupsBySubAccountId, combinedGroup } from "../../../redux/reducers/
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
-import { FaExclamationCircle } from 'react-icons/fa';
-import { logout } from '../../../helpers/Api/PulseemReactAPI';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
-import useRedirect from '../../../helpers/Routes/Redirect';
-import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { sendToTeamChannel } from '../../../redux/reducers/ConnectorsSlice';
-import { FlatObject } from "../../../helpers/Export/ExportHelper";
+import { FaExclamationCircle } from 'react-icons/fa'
+import { logout } from '../../../helpers/Api/PulseemReactAPI'
+import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
+import useRedirect from "../../../helpers/Routes/Redirect";
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { sitePrefix } from '../../../config';
+import { Title } from "../../../components/managment/Title";
+import { Stack } from "@mui/material";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { IoIosArrowDown } from "react-icons/io";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -192,6 +211,7 @@ const SmsSend = ({ classes, ...props }) => {
       }
       case 8: {
         setDialogType({ type: "englishLetterDialog" });
+        break;
       }
       default: {
         break;
@@ -764,42 +784,38 @@ const SmsSend = ({ classes, ...props }) => {
             title={t("smsReport.whomtoSendTip")}
             classes={{ tooltip: classes.customWidth }}
           >
-            <span className={classes.bodyInfo}>i</span>
+            <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+              <BsInfoCircle />
+            </IconButton>
           </Tooltip>
         </Grid>
         <Grid item md={12} xs={12} className={classes.tabDiv}>
           <Grid item md={12} xs={12}
             className={
-              groupClick
-                ? clsx(classes.tab1, classes.activeTab)
-                : clsx(classes.tab1)
+              clsx(classes.btnTab, 'alignCenter', { [classes.currentActiveTab]: !!groupClick })
             }
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setgroupClick(true);
+              setmanualClick(false);
+            }}
           >
-            <span
-              onClick={() => {
-                setgroupClick(true);
-                setmanualClick(false);
-              }}
-              style={{ cursor: "pointer" }}
-            >
+            <span>
               {t("mainReport.groups")}
             </span>
           </Grid>
           <Grid item md={12} xs={12}
             className={
-              manualClick
-                ? clsx(classes.tab1, classes.activeTab)
-                : clsx(classes.tab1)
+              clsx(classes.btnTab, 'alignCenter', { [classes.currentActiveTab]: !!manualClick })
             }
+            style={{ marginInlineEnd: "7px", cursor: "pointer" }}
+            onClick={() => {
+              setgroupClick(false);
+              settoggleChecked(false)
+              setmanualClick(true);
+            }}
           >
-            <span
-              style={{ marginInlineEnd: "7px", cursor: "pointer" }}
-              onClick={() => {
-                setgroupClick(false);
-                settoggleChecked(false)
-                setmanualClick(true);
-              }}
-            >
+            <span style={{ marginInlineEnd: 15 }}>
               {t("mainReport.manual")}
             </span>
             <Tooltip
@@ -807,7 +823,9 @@ const SmsSend = ({ classes, ...props }) => {
               title={t("smsReport.manualTip")}
               classes={{ tooltip: classes.customWidth }}
             >
-              <span className={classes.bodyInfo}>i</span>
+              <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                <BsInfoCircle />
+              </IconButton>
             </Tooltip>
           </Grid>
 
@@ -891,7 +909,9 @@ const SmsSend = ({ classes, ...props }) => {
                     classes={{ tooltip: classes.customWidth }}
                     style={{ marginInlineStart: "5px" }}
                   >
-                    <span className={classes.bodyInfo}>i</span>
+                    <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                      <BsInfoCircle />
+                    </IconButton>
                   </Tooltip>
                 </div>
               ) : null}
@@ -928,7 +948,9 @@ const SmsSend = ({ classes, ...props }) => {
                   classes={{ tooltip: classes.customWidth }}
                   style={{ marginInlineStart: "5px" }}
                 >
-                  <span className={classes.bodyInfo}>i</span>
+                  <IconButton style={{ paddingInline: 5, paddingBlock: 0, marginTop: -10 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                    <BsInfoCircle />
+                  </IconButton>
                 </Tooltip>
               </div>
             ) : null}
@@ -937,25 +959,31 @@ const SmsSend = ({ classes, ...props }) => {
             <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
               {areaData !== "" ? (
                 <div>
-                  <span
-                    className={classes.addManualDiv}
+                  <Button
+                    className={clsx(
+                      classes.ml5,
+                      classes.btn, classes.btnRounded)}
                     onClick={() => {
                       handlePasted();
                     }}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                   >
                     {t("sms.editFields")}
-                  </span>
-                  <span
-                    className={classes.clearDiv}
+                  </Button>
+                  <Button
+                    className={clsx(
+                      classes.ml5,
+                      classes.btn, classes.btnRounded)}
                     onClick={() => {
                       setareaData("");
                       setContacts([]);
                       settypedData([]);
                       settotalRecords(0)
                     }}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                   >
                     {t("sms.clearList")}
-                  </span>
+                  </Button>
                 </div>
               ) : null}
               <span>{t("sms.totalRecords")}:  {totalRecords}</span>
@@ -1169,37 +1197,52 @@ const SmsSend = ({ classes, ...props }) => {
                 }
               />
               <Box
-                className={classes.dateBox}
+                className={clsx(classes.dateBox, 'selectWrapper')}
                 style={{
                   marginTop: 10,
                   pointerEvents: sendType === "3" ? "auto" : "none",
                 }}
               >
-                <select
-                  placeholder={t("common.select")}
-                  style={{
-                    border: "1px solid #818181",
-                    backgroundColor: "white",
-                    padding: "10px",
-                    borderRadius: "4px",
-                    width: '100%',
-                    outline: "none",
-                    marginBottom: "10px",
-                  }}
-                  disabled={sendType === "3" ? false : true}
-                  onChange={(e) => { handleSelectChange(e) }}
-                  value={sendType === "3" ? spectialDateFieldID : "0"}
-                >
-                  <option value="0">{t("common.select")}</option>
-                  <option value="1">{t("mainReport.birthday")}</option>
-                  <option value="2">{t("mainReport.creationDay")}</option>
-                  {extraData && Object.keys(extraData).map((item, i) => {
-                    if (extraData[item]) {
-                      return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
+                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100, classes.mb10)}>
+                  <Select
+                    placeholder={t('common.select')}
+                    variant="standard"
+                    displayEmpty
+                    disabled={sendType === "3" ? false : true}
+                    value={sendType === "3" ? spectialDateFieldID : "0"}
+                    onChange={(event) => handleSelectChange(event)}
+                    endAdornment={
+                      <InputAdornment
+                        className={classes.selectAdornment}
+                        position="end"
+                      >
+                        <IoIosArrowDown size={20} />
+                      </InputAdornment>
                     }
-                    return <></>
-                  })}
-                </select>
+                    className={classes.pbt5}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300,
+                          direction: isRTL ? 'rtl' : 'ltr'
+                        },
+                      },
+                    }}
+                  >
+                    <MenuItem value='0'>{t('common.select')}</MenuItem>
+                    <MenuItem value='1'>{t('mainReport.birthday')}</MenuItem>
+                    <MenuItem value='2'>{t('mainReport.creationDay')}</MenuItem>
+                    {extraData && Object.keys(extraData).map((item, i) => {
+                      if (extraData[item]) {
+                        return item.toLowerCase().indexOf('extradate') > -1 && (
+                          <MenuItem value={i + 3} key={`extrakey_${i}`}>
+                            {Object.values(extraData[item])}
+                          </MenuItem>
+                        );
+                      }
+                    })}
+                  </Select>
+                </FormControl>
               </Box>
 
               <Box
@@ -1317,7 +1360,9 @@ const SmsSend = ({ classes, ...props }) => {
             title={t("smsReport.pulseSendTip")}
             classes={{ tooltip: classes.customWidth }}
           >
-            <span className={classes.bodyInfo}>i</span>
+            <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+              <BsInfoCircle />
+            </IconButton>
           </Tooltip>
         </div>
         <div
@@ -1418,7 +1463,7 @@ const SmsSend = ({ classes, ...props }) => {
         setToastMessage(ToastMessages.SUCCESS);
       }
       else if (toggle && exit === "exit") {
-        Redirect({ url: "/react/SMSCampaigns" });
+        Redirect({ url: `${sitePrefix}SMSCampaigns` });
       }
       else {
         let response = await dispatch(getCampaignSumm(requestPayload.SmsCampaignID));
@@ -1467,38 +1512,36 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const renderSummary = () => {
     return (
-      <>
-        <Summary
-          classes={classes}
-          campaignName={dataSaved.campaignName}
-          fromNumber={dataSaved.fromNumber}
-          textMsg={dataSaved.msg}
-          groups={selectedGroups}
-          summaryPayload={getCampaignSum}
-          onConfirm={onApiCall} sendType={sendType}
-          days={daysBeforeAfter}
-          after={afterClick}
-          time={sendTime}
-          handleCallback={handleSummary}
-          specialVal={SelectedSpecialValue}
-          sendDateTime={sendDate}
-          pulseTrue={togglePulse}
-          pulseInput1={pulseAmount}
-          pulseInput2={timeInterval}
-          pulsePer={pulsePer}
-          pulseReci={pulseReci}
-          hourName={hourName}
-          minName={minName}
-          toggleRandom={toggleRandom}
-          random={random}
-          estimationDate={estimationDate}
-          filteredGroups={selectedFilterGroups}
-          filteredCampaigns={selectedFilterCampaigns}
-          // displayCampaigns={totalCampaigns}
-          open={summModal}
-          pulseType={pulseType}
-        />
-      </>
+      <Summary
+        classes={classes}
+        campaignName={dataSaved.campaignName}
+        fromNumber={dataSaved.fromNumber}
+        textMsg={dataSaved.msg}
+        groups={selectedGroups}
+        summaryPayload={getCampaignSum}
+        onConfirm={onApiCall} sendType={sendType}
+        days={daysBeforeAfter}
+        after={afterClick}
+        time={sendTime}
+        handleCallback={handleSummary}
+        specialVal={SelectedSpecialValue}
+        sendDateTime={sendDate}
+        pulseTrue={togglePulse}
+        pulseInput1={pulseAmount}
+        pulseInput2={timeInterval}
+        pulsePer={pulsePer}
+        pulseReci={pulseReci}
+        hourName={hourName}
+        minName={minName}
+        toggleRandom={toggleRandom}
+        random={random}
+        estimationDate={estimationDate}
+        filteredGroups={selectedFilterGroups}
+        filteredCampaigns={selectedFilterCampaigns}
+        // displayCampaigns={totalCampaigns}
+        open={summModal}
+        pulseType={pulseType}
+      />
     );
   };
 
@@ -1704,7 +1747,7 @@ const SmsSend = ({ classes, ...props }) => {
     if (id) {
       dispatch(deleteSms(id));
       setDialogType(null);
-      Redirect({ url: "/react/SMSCampaigns" });
+      Redirect({ url: `${sitePrefix}SMSCampaigns` });
     }
   };
   const renderToast = () => {
@@ -1732,10 +1775,10 @@ const SmsSend = ({ classes, ...props }) => {
     settypedData([]);
   };
   const handlePreviousPage = () => {
-    Redirect({ url: `/react/sms/edit/${id}` });
+    Redirect({ url: `${sitePrefix}sms/edit/${id}` });
   }
   const renderSendType2validation = () => {
-    return (<>
+    return (
       <BaseDialog
         classes={classes}
         open={sendType2Dialog}
@@ -1775,7 +1818,8 @@ const SmsSend = ({ classes, ...props }) => {
             {t("mainReport.confirmSms")}
           </Button>
         </div>
-      </BaseDialog></>)
+      </BaseDialog>
+    )
   }
   const renderSpecialModal = () => {
     return (<>
@@ -1836,74 +1880,68 @@ const SmsSend = ({ classes, ...props }) => {
       <div className={classes.creatorButtons}>
         <div className={classes.rightMostContainer}>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue,
+              classes.btn,
+              classes.btnRounded,
               classes.backButton,
               isRTL && windowSize !== 'xs' && windowSize !== 'sm' ? classes.marginLeftAuto : windowSize !== 'xs' && windowSize !== 'sm' ? classes.marginRightAuto : null
             )}
+            startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             color="primary"
-            style={{ margin: '8px' }}
+            style={{ marginInlineStart: '8px' }}
             onClick={() => { handlePreviousPage() }}>
-            <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
             {t("smsReport.back")}
           </Button>
           <Button
-            variant='contained'
-            size='medium'
+
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonRed
+              classes.btn,
+              classes.btnRounded,
             )}
-            style={{ margin: '8px', padding: '9px 0' }}
+            style={{ marginInlineStart: '8px' }}
             onClick={onHandleDelete}
           >
-            <BsTrash style={{ fontSize: "25" }} />
+            <BsTrash style={{ fontSize: "25", marginInlineStart: 0 }} />
           </Button>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue,
+              classes.btn,
+              classes.btnRounded,
               classes.backButton
             )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             color="primary"
-            style={{ margin: '8px' }}
+            style={{ marginInlineStart: '8px' }}
             onClick={() => { setDialogType({ type: "exit" }) }}>
             {t('mainReport.exitSms')}
           </Button>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue,
+              classes.btn,
+              classes.btnRounded,
               classes.backButton
             )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             color="primary"
-            style={{ margin: '8px' }}
+            style={{ marginInlineStart: '8px' }}
             onClick={() => {
               onSaveSettings(true);
             }}>
             {t('mainReport.saveSms')}
           </Button>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen,
+              classes.btn,
+              classes.btnRounded,
               classes.backButton
             )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             color="primary"
             style={{
-              margin: '8px',
+              marginInlineStart: '8px',
               pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
-              backgroundColor:
-                selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
+              // backgroundColor:
+              //   selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
             }}
             onClick={() => {
               onSaveSettings(false)
@@ -2071,9 +2109,7 @@ const SmsSend = ({ classes, ...props }) => {
     return {
       showDivider: false,
       icon: (
-        <AiOutlineExclamationCircle
-          style={{ fontSize: 30, color: "#fff" }}
-        />
+        <AiOutlineExclamationCircle />
       ),
       content: (
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
@@ -2083,12 +2119,11 @@ const SmsSend = ({ classes, ...props }) => {
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
-              variant='contained'
-              size='small'
               onClick={() => setDialogType(null)}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton
+                classes.btn,
+                classes.btnRounded,
+                classes.middle
               )}>
               {t("common.Ok")}
             </Button>
@@ -2103,9 +2138,8 @@ const SmsSend = ({ classes, ...props }) => {
   const manualUploadDialog = () => {
     return {
       title: t('sms.columnAdjustment'),
-      showDivider: true,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\u0056'}
         </div>
       ),
@@ -2146,7 +2180,9 @@ const SmsSend = ({ classes, ...props }) => {
               classes={{ tooltip: classes.customWidth }}
               sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
             >
-              <Typography className={classes.bodyInfo}>i</Typography>
+              <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                <BsInfoCircle />
+              </IconButton>
             </Tooltip>
           </Box>
           <Box className={classes.sidebar} style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
@@ -2253,9 +2289,8 @@ const SmsSend = ({ classes, ...props }) => {
   const cautionDialog = () => {
     return {
       title: t('common.Notice'),
-      showDivider: true,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\u0056'}
         </div>
       ),
@@ -2273,9 +2308,8 @@ const SmsSend = ({ classes, ...props }) => {
   const pulseDialog = () => {
     return {
       title: t('smsReport.pulseSending'),
-      showDivider: true,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\u0056'}
         </div>
       ),
@@ -2460,13 +2494,10 @@ const SmsSend = ({ classes, ...props }) => {
   const deleteDialog = () => {
     return {
       title: t('mainReport.deleteCamp'),
-      showDivider: true,
       confirmText: t("common.Yes"),
       disableBackdropClick: true,
       icon: (
-        <AiOutlineExclamationCircle
-          style={{ fontSize: 30, color: "#fff" }}
-        />
+        <AiOutlineExclamationCircle />
       ),
       content: (
         <Box className={classes.bodyTextDialog}>
@@ -2484,12 +2515,9 @@ const SmsSend = ({ classes, ...props }) => {
   const exitDialog = () => {
     return {
       title: t('mainReport.handleExitTitle'),
-      showDivider: true,
       disableBackdropClick: true,
       icon: (
-        <AiOutlineExclamationCircle
-          style={{ fontSize: 30, color: "#fff" }}
-        />
+        <AiOutlineExclamationCircle />
       ),
       content: (
         <Box>
@@ -2499,7 +2527,7 @@ const SmsSend = ({ classes, ...props }) => {
       showDefaultButtons: true,
       confirmText: t("common.Yes"),
       cancelText: t("common.No"),
-      onClose: () => { Redirect({ url: "/react/SMSCampaigns" }); },
+      onClose: () => { Redirect({ url: `${sitePrefix}SMSCampaigns` }); },
       onCancel: () => { setDialogType(null) },
       onConfirm: () => { onSaveSettings(true, "exit") }
     }
@@ -2511,7 +2539,7 @@ const SmsSend = ({ classes, ...props }) => {
       content: (
         <Box>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <img src={Gif} style={{ width: "150px", height: "150px" }} alt="" />
+            <img src={Gif} style={{ width: "150px", height: "150px" }} alt="Success" />
             <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               {t("sms.campaignIsOnItsWay")}
@@ -2525,7 +2553,7 @@ const SmsSend = ({ classes, ...props }) => {
                 color: "#ffffff",
                 borderRadius: "10px"
               }}
-              onClick={() => { Redirect({ url: "/react/SMSCampaigns" }) }}>{t("common.confirm")}</span>
+              onClick={() => { Redirect({ url: `${sitePrefix}SMSCampaigns` }) }}>{t("common.confirm")}</span>
           </div>
         </Box>
       ),
@@ -2576,9 +2604,7 @@ const SmsSend = ({ classes, ...props }) => {
     return {
       showDivider: false,
       icon: (
-        <AiOutlineExclamationCircle
-          style={{ fontSize: 30, color: "#fff" }}
-        />
+        <AiOutlineExclamationCircle />
       ),
       content: (
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
@@ -2587,12 +2613,11 @@ const SmsSend = ({ classes, ...props }) => {
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.englishLetterNotApprovedDescription"))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
-              variant='contained'
-              size='small'
               onClick={() => setDialogType(null)}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton
+                classes.btn,
+                classes.btnRounded,
+                classes.middle
               )}>
               {t("common.Ok")}
             </Button>
@@ -2604,27 +2629,56 @@ const SmsSend = ({ classes, ...props }) => {
       onConfirm: () => { setDialogType(null) }
     }
   }
-  return (
-    <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true}>
-      {renderToast()}
-      <div>
 
-        <div>
-          <Title title={t("mainReport.smsCampaign")}
-            classes={classes}
-            stepNumber={2}
-            subTitle={t("mainReport.sendSetting")}
-          />
-          <Grid container style={{ marginBottom: "40px" }}>
-            <Grid item md={7} xs={12}>
-              {renderBody()}
+  const renderSubHeader = () => {
+    return (
+      <Title
+        Element={(
+          <Box className='stepHead'>
+            <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
+              <span >1</span>
+            </Stack>
+            <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
+              <span className={'stepTitle'}>
+                {t("mainReport.sendSetting")}
+              </span>
+
+            </Stack>
+          </Box>
+        )}
+        classes={classes}
+        isIcon={false}
+        ContainerStyle={{
+          padding: 0,
+          minHeight: 42,
+          height: 'auto',
+          overflowY: 'hidden'
+        }}
+      />
+    )
+  }
+
+  return (
+    <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true} containerClass={classes.editorCont}>
+      <Box className={"head"}>
+        <Title Text={t("mainReport.smsCampaign")} classes={classes} />
+      </Box>
+      <div>
+        <Box className={'containerBody'}>
+          {renderSubHeader()}
+          {renderToast()}
+          <Box className='bodyBlock'>
+            <Grid container style={{ marginBottom: "40px" }}>
+              <Grid item md={7} xs={12}>
+                {renderBody()}
+              </Grid>
+              <Grid item md={1} xs={12}></Grid>
+              <Grid item md={4} xs={12}>
+                {renderRight()}
+              </Grid>
             </Grid>
-            <Grid item md={1} xs={12}></Grid>
-            <Grid item md={4} xs={12}>
-              {renderRight()}
-            </Grid>
-          </Grid>
-        </div>
+          </Box>
+        </Box>
         <WizardButtons />
       </div>
       {renderDialog()}

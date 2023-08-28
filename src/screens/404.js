@@ -2,7 +2,6 @@ import { Grid, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { RenderHtml } from '../helpers/Utils/HtmlUtils';
-import useRedirect from '../helpers/Routes/Redirect';
 import DefaultScreen from './DefaultScreen';
 
 const PageNotFound = ({ classes }) => {
@@ -17,9 +16,6 @@ const PageNotFound = ({ classes }) => {
                     <Typography>
                         {RenderHtml(t('common.pageNotFound'))}
                     </Typography>
-                    {/* <Button onClick={() => { Redirect({ url: '/react' }) }}>
-                        Go back home
-                    </Button> */}
                 </Grid>
             </Grid>
         </DefaultScreen>

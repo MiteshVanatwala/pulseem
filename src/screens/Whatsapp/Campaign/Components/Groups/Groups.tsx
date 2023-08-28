@@ -8,10 +8,10 @@ import {
 	Input,
 	InputAdornment,
 	Box,
-	Select,
 	MenuItem,
 	Button,
 } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -48,7 +48,7 @@ const Groups = ({
 	uniqueKey,
 	showTestGroups
 }: GroupsProps) => {
-	const { windowSize } = useSelector(
+	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { t: translator } = useTranslation();
@@ -110,7 +110,7 @@ const Groups = ({
 			);
 		});
 	};
-	const handleSortBySelected = (event: BaseSyntheticEvent) => {
+	const handleSortBySelected = (event: SelectChangeEvent) => {
 		setSortBy(event.target.value);
 		sortBy(event.target.value, sortDirection);
 	};
@@ -221,12 +221,12 @@ const Groups = ({
 								onClick={callbackReciFilter}
 								style={{
 									height: '36px',
-									color: '#1D82B3',
+									color: '#ff3343',
 									fontWeight: '600',
 									textTransform: 'capitalize',
 								}}>
 								{windowSize !== 'xs' && (
-									<BsFilter style={{ fontSize: '22px', color: '#1D82B3' }} />
+									<BsFilter style={{ fontSize: '22px', color: '#ff3343' }} />
 								)}{' '}
 								{isFilterSelected ? (
 									<BsDot
@@ -246,18 +246,32 @@ const Groups = ({
 							className={clsx(
 								classes.formControl,
 								showTestGroups
-									? classes.buttonActiveGreen
+									? classes.buttonActiveRed
 									: classes.twoLineButton
 							)}
 							onClick={() => handleShowTestGroup()}>
 							<>{translator('sms.showTestGroups')}</>
 						</Button>
 						<FormControl
-							className={clsx(classes.formControl, classes.whatsappDropDown)}>
+							className={clsx(classes.whatsappDropDown)}
+						>
 							<Select
+								variant="standard"
 								id='groupOrder'
 								value={sortBySelected}
-								onChange={handleSortBySelected}>
+								onChange={handleSortBySelected}
+								endAdornment={null}
+								className={clsx(classes.paddingSides10)}
+								style={{ color: 'inherit', fontSize: '0.875rem', lineHeight: '1.5rem' }}
+								MenuProps={{
+									PaperProps: {
+										style: {
+											maxHeight: 300,
+											direction: isRTL ? 'rtl' : 'ltr'
+										},
+									},
+								}}
+							>
 								{renderSortItems()}
 							</Select>
 						</FormControl>

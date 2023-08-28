@@ -8,12 +8,14 @@ const actionURL = isProdMode
   : process.env.REACT_APP_ACTION_URL;
 const siteTrackingURL = process.env.REACT_APP_TRACKING_URL;
 const siteTrackingScriptUrl = process.env.REACT_APP_TRACKING_SCRIPT;
+const sitePrefix = process.env.REACT_APP_SITE_PREFIX;
 
 export {
   apiURL,
   actionURL,
   isProdMode,
-  siteTrackingURL, 
+  sitePrefix,
+  siteTrackingURL,
   //demoSiteTrackingURL,
   siteTrackingScriptUrl,
 };

@@ -68,7 +68,6 @@ const EmojiPicker = ({ classes, boxStyles, OnSelectEmoji }: PickerObject) => {
 						alt='emoji picker'
 						src={Emoj}
 						style={{
-							marginInlineEnd: '8px',
 							width: 36,
 							height: 29,
 						}}

@@ -54,7 +54,6 @@ const UnsubscribeOrDeletePopup = ({
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [limitationWarning, setLimitationWarning] = useState(false);
-    // const [allData, setAllData] = useState(null);
     const [enteredValue, setEnteredValues] = useState(null);
     const [confirmUnsubscsribe, setConfirmUnsubscsribe] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -82,6 +81,7 @@ const UnsubscribeOrDeletePopup = ({
                         <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                             <Typography>{RenderHtml(t("recipient.unsubscribed.notifyEmail"))}</Typography>
                             <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                {/* TODO - FocusTrap */}
                                 <Select
                                     native
                                     displayEmpty
@@ -221,12 +221,14 @@ const UnsubscribeOrDeletePopup = ({
         if (confirmUnsubscsribe === true) {
             handleUnsubSubmit();
         }
+
     }, [confirmUnsubscsribe, unsubscribeOption]);
 
     useEffect(() => {
         if (confirmDelete === true && finalData) {
             openConfirmDialog();
         }
+
     }, [confirmDelete]);
 
     const openConfirmDialog = () => {
@@ -618,10 +620,9 @@ const UnsubscribeOrDeletePopup = ({
                 classes={classes}
                 open={confirm || isSubmitted}
                 title={t("common.systemNotice")}
-                icon={<div className={classes.dialogIconContent}>
+                icon={<div className={clsx(classes.dialogIconContent, 'unicode')}>
                     {'\uE0D5'}
                 </div>}
-                showDivider={true}
                 onClose={DialogObject[dialogType].summaryOnClose}
                 onCancel={DialogObject[dialogType].summaryOnClose}
                 onConfirm={DialogObject[dialogType].onSummaryConfirm}
@@ -641,11 +642,11 @@ const UnsubscribeOrDeletePopup = ({
                 classes={classes}
                 open={limitationWarning}
                 title={t("common.systemNotice")}
-                icon={<div className={classes.dialogIconContent}>
+                icon={<div className={clsx(classes.dialogIconContent, 'unicode')}>
                     {'\uE0D5'}
                 </div>}
                 showDefaultButtons={false}
-                showDivider={true}
+                showDivider={false}
                 onClose={() => { setLimitationWarning(false) }}
                 onCancel={() => { setLimitationWarning(false) }}
                 renderButtons={() => {
@@ -727,10 +728,9 @@ const UnsubscribeOrDeletePopup = ({
                     </Box>}
                 </Box>
             }
-            icon={< div className={classes.dialogIconContent} >
+            icon={< div className={clsx(classes.dialogIconContent, 'unicode')} >
                 {'\uE0D5'}
             </div >}
-            showDivider={true}
             onClose={onClose}
             onCancel={onClose}
             onConfirm={DialogObject[dialogType].onConfirm}

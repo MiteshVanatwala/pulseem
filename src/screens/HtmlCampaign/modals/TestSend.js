@@ -1,7 +1,8 @@
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import clsx from "clsx";
 import { TextField, Box } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
+import { RiSendPlaneFill } from 'react-icons/ri'
 import PulseemRadio from '../../../components/Controlls/PulseemRadio'
 import "moment/locale/he";
 import { useSelector } from "react-redux";
@@ -19,6 +20,7 @@ const TestSend = ({
     const [recipient, setRecipient] = useState('');
     const [sendSendMethod, setSendMethod] = useState("1");
     const [toastMessage, setToastMessage] = useState(null);
+    //eslint-disable-next-line
     const [selectedGroups, setTestGroups] = useState([]);
     const { isRTL } = useSelector(state => state.core);
     const { ToastMessages } = useSelector(state => state.campaignEditor);
@@ -137,7 +139,10 @@ const TestSend = ({
                     customContainerStyle={classes.dialogZindex}
                     open={isOpen}
                     title={t('mainReport.testSend')}
-                    showDivider={true}
+                    icon={<div className={classes.dialogIconContent}>
+                        <RiSendPlaneFill />
+                    </div>}
+                    showDivider={false}
                     onClose={onClose}
                     onCancel={onClose}
                     onConfirm={prepareForSubmit}

@@ -1,4 +1,5 @@
-import { FormControl, FormControlLabel, Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Radio, FormHelperText, Divider } from "@material-ui/core";
+import { FormControl, FormControlLabel, Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Radio, FormHelperText, Divider, InputAdornment, MenuItem } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -8,6 +9,7 @@ import clsx from "clsx";
 import { Stack } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import DynamicConfirmDialog from "../DialogTemplates/DynamicConfirmDialog";
+import { IoIosArrowDown } from "react-icons/io";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -260,7 +262,7 @@ const SendingMethod = ({
                                     />
                                 </Box>
                                 <Box
-                                    className={classes.dateBox}
+                                    className={clsx(classes.dateBox, classes.pbt15)}
                                     style={{
                                         marginTop: 10,
                                         pointerEvents: campaign.SendingMethod === 2 ? "auto" : "none",
@@ -278,7 +280,7 @@ const SendingMethod = ({
                                         timePickerOpen={campaign.timePickerOpen}
                                     />
                                 </Box>
-                                <Stack direction='row' alignItems='center'>
+                                <Stack direction='row' alignItems='center' className={classes.pbt15}>
                                     <Checkbox
                                         className={classes.ml20}
                                         disabled={campaign.SendingMethod !== 2 || disabled}
@@ -338,32 +340,44 @@ const SendingMethod = ({
                                         pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
                                     }}
                                 >
-                                    <select
-                                        placeholder={t("common.select")}
-                                        style={{
-                                            border: "1px solid #818181",
-                                            backgroundColor: "white",
-                                            padding: "10px",
-                                            borderRadius: "4px",
-                                            width: 300,
-                                            outline: "none",
-                                            marginBottom: "10px",
-                                        }}
-                                        disabled={campaign.SendingMethod === 3 ? false : true}
-                                        onChange={(e) => { handleSelectChange(e) }}
-                                        value={campaign.SendingMethod === 3 ? campaign?.AutoSendingByUserField?.toString() : "0"}
+                                    <FormControl
+                                        className={clsx(classes.selectInputFormControl, classes.w100, classes.mb10)}
                                     >
-                                        <option value="0">{t("common.select")}</option>
-                                        <option value="5">{t("mainReport.birthday")}</option>
-                                        <option value="6">{t("common.reminder_date")}</option>
-                                        <option value="7">{t("mainReport.creationDay")}</option>
-                                        {extraData && Object.keys(extraData).map((item, i) => {
-                                            if (extraData[item]) {
-                                                return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 1} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
+                                        <Select
+                                            variant="standard"
+                                            name="sendingMethod"
+                                            disabled={campaign.SendingMethod === 3 ? false : true}
+                                            onChange={(e) => { handleSelectChange(e) }}
+                                            value={campaign.SendingMethod === 3 ? campaign?.AutoSendingByUserField?.toString() : "0"}
+                                            className={classes.pbt5}
+                                            endAdornment={
+                                                <InputAdornment
+                                                    className={classes.selectAdornment}
+                                                    position="end"
+                                                >
+                                                    <IoIosArrowDown size={20} />
+                                                </InputAdornment>
                                             }
-                                            return <></>
-                                        })}
-                                    </select>
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    style: {
+                                                        maxHeight: 200,
+                                                        direction: isRTL ? 'rtl' : 'ltr'
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            <MenuItem value='0'>{t("common.select")}</MenuItem>
+                                            <MenuItem value='5'>{t("mainReport.birthday")}</MenuItem>
+                                            <MenuItem value='6'>{t("common.reminder_date")}</MenuItem>
+                                            <MenuItem value='7'>{t("mainReport.creationDay")}</MenuItem>
+                                            {extraData && Object.keys(extraData).map((item, i) => {
+                                                if (extraData[item]) {
+                                                    return item.toLowerCase().indexOf('extradate') > -1 && <MenuItem key={`extrakey_${i}`} value={i + 1}>{Object.values(extraData[item])}</MenuItem>;
+                                                }
+                                            })}
+                                        </Select>
+                                    </FormControl>
                                 </Box>
 
                                 <Box
@@ -414,7 +428,7 @@ const SendingMethod = ({
                                     </div>
                                 </Box>
                                 <Box
-                                    className={classes.dateBox}
+                                    className={clsx(classes.dateBox, classes.pbt15)}
                                     style={{
                                         marginTop: 10,
                                         pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",

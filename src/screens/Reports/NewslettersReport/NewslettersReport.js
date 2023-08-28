@@ -3,16 +3,14 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Checkbox, Tooltip
+  Grid, Button, TextField, Box, Checkbox, Tooltip, FormControlLabel
 } from '@material-ui/core'
-import Switch from "react-switch";
-import { SearchIcon, ExportIcon, ReportsIcon } from '../../../assets/images/managment/index'
+import { ReportsIcon, GroupRemoval } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, SearchField
 } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
@@ -29,6 +27,10 @@ import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageM
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -178,7 +180,7 @@ const NewslettersReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/${id}`,
+      href: `${sitePrefix}ClientSearchResult/${id}`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -236,7 +238,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   useEffect(() => {
-    if (accountFeatures && accountFeatures.includes('42')) {
+    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.REVENUE) > -1) {
       setHasRevenue(true);
     }
   }, [accountFeatures])
@@ -298,7 +300,9 @@ const NewslettersReport = ({ classes }) => {
     } catch (error) {
       console.log(error);
     }
-    setLoader(false);
+    finally {
+      setLoader(false);
+    }
   }
 
 
@@ -393,10 +397,10 @@ const NewslettersReport = ({ classes }) => {
       <Grid
         container
         spacing={2}
-        className={classes.lineTopMarging}>
+        className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
-            variant='outlined'
+            variant="standard"
             size='small'
             value={notificationNameSearch}
             onKeyPress={handleSearchKeyPress}
@@ -432,40 +436,38 @@ const NewslettersReport = ({ classes }) => {
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Switch
-            checked={isDemoSend}
-            onColor="#0371ad"
-            handleDiameter={20}
-            uncheckedIcon={false}
-            checkedIcon={false}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-            height={15}
-            width={40}
-            className={clsx({ [classes.rtlSwitch]: isRTL })}
-            onChange={() => setIsDemoSend(!isDemoSend)}
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+                switchType='ios'
+                classes={classes}
+                checked={isDemoSend}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+                onChange={() => setIsDemoSend(!isDemoSend)}
+              />
+            }
+            label={t('mainReport.locShowTestCampaigns.Text')}
           />
-          <Typography style={{ marginInlineStart: 8 }}>
-            {t('mainReport.locShowTestCampaigns.Text')}
-          </Typography>
         </Grid>
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -489,18 +491,16 @@ const NewslettersReport = ({ classes }) => {
             {t('mainReport.compareCampaigns')}
           </Button>
         </Grid>} */}
-        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
-              newslettersReports.length > 0 ? null : classes.disabled
+              classes.btn,
+              classes.btnRounded,
+              newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialog('exportFormat')}
             disabled={isSearching && !searchResults?.length}
-            startIcon={<ExportIcon />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
         </Grid>}
@@ -517,32 +517,32 @@ const NewslettersReport = ({ classes }) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex4} align='center'>{t('campaigns.camapignName')}</TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.locTotalSendPlan.HeaderText")}</span></TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex3} align='center'></TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen)} align='center'></TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t('campaigns.camapignName')}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.locTotalSendPlan.HeaderText")}</span></TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex3, classes.f16)} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen, classes.f16)} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
-          {hasRevenue && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
+          {hasRevenue && <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.f16)} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
       </TableHead>
     )
   }
 
-  const renderCellIcons = (row) => {
-    const { CampaignID } = row
+  const renderCellIcons = (RowIcon, row, index, mgmtIconProps) => {
 
     return (
-      <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }}>
+      <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }} className={'rowIconContainer'}>
         <ManagmentIcon
           classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
-          icon={ReportsIcon}
-          lable={t('mainReport.locGraph.HeaderText')}
-          href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
+          uIcon={<RowIcon width={18} height={20} className={'rowIcon'} />}
+          // lable={t('mainReport.locGraph.HeaderText')}
+          // href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
+          {...mgmtIconProps}
         />
       </Box>
     )
@@ -595,7 +595,7 @@ const NewslettersReport = ({ classes }) => {
             }}
           />}
         </Grid>
-        <Grid item className={clsx(windowSize !== 'xs' && classes.w80)}>
+        <Grid item className={clsx(windowSize !== 'xs' ? classes.w80 : '', 'rowTitle')}>
           <Tooltip
             arrow
             title={row.Name}
@@ -633,7 +633,7 @@ const NewslettersReport = ({ classes }) => {
   }
   const renderPercetangeData = (percentage = 0, type, data = {}, clickable = true) => {
     const { title = '', href = '', icon = '', onClick } = data;
-    const innerHref = clickable ? href : '';
+    // const innerHref = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }} >
         {/* <Typography component={innerHref ? 'a' : 'p'} */}
@@ -685,8 +685,8 @@ const NewslettersReport = ({ classes }) => {
             className={clsx(classes.middleWrapText, colorTextStyle[type])}>
             {title}
           </Typography>
-        </Box>
-      </Tooltip>
+        </Box >
+      </Tooltip >
     );
   }
 
@@ -713,7 +713,7 @@ const NewslettersReport = ({ classes }) => {
 
   }
   const renderRevenueData = (value, type, data = {}) => {
-    const { href = '', textStyle = null, isRevenueCol = false, onClick = () => null } = data
+    const { textStyle = null, isRevenueCol = false, onClick = () => null } = data
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : VoidFunction}>
         <Typography
@@ -738,7 +738,7 @@ const NewslettersReport = ({ classes }) => {
     )
   }
 
-  const renderRow = (row) => {
+  const renderRow = (row, index) => {
     const {
       CampaignID,
       Name,
@@ -837,26 +837,24 @@ const NewslettersReport = ({ classes }) => {
         <TableCell classes={borderCellStyle}
           align='center'
           className={clsx(classes.flex1, classes.hideOnSmallScreen)}>
-          <ManagmentIcon
-            classes={classes}
-            textClass={classes.lineHeight1point2}
-            uIcon={<div className={clsx(classes.managmentUicon, classes.f25, !RemovedClients || RemovedClients === 0 ? classes.disabled : null)}>
-              {'\uE15D'}
-            </div>}
-            lable={hrefs.RemoveReasons.title}
-            href={hrefs.RemoveReasons.href}
-            onClick={() => {
+          {renderCellIcons(GroupRemoval, row, index, {
+            lable: hrefs.RemoveReasons.title,
+            href: hrefs.RemoveReasons.href,
+            onClick: () => {
               setCookie('newsletterReportlastPage', page)
-            }}
-            disable={!RemovedClients || RemovedClients === 0}
-          />
+            },
+            disable: !RemovedClients || RemovedClients === 0,
+          })}
         </TableCell>
         <TableCell
           component="th"
           scope="row"
           classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
           className={classes.flex1}>
-          {renderCellIcons(row)}
+          {renderCellIcons(ReportsIcon, row, index, {
+            lable: t('mainReport.locGraph.HeaderText'),
+            href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`
+          })}
         </TableCell>
         {hasRevenue && <TableCell
           classes={noBorderCellStyle}
@@ -887,7 +885,7 @@ const NewslettersReport = ({ classes }) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} >
           <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
             {renderNameCell(row)}
           </Box>
@@ -1028,8 +1026,10 @@ const NewslettersReport = ({ classes }) => {
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={t('mainReport.logPageHeaderResource1.Text')} Classes={classes} ShowDivider={true} />
-      {renderSearchSection()}
+      <Box className={'topSection'}>
+        <Title Text={t('mainReport.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

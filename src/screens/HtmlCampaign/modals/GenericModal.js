@@ -17,10 +17,13 @@ const GenericModal = ({
         customContainerStyle={classes.dialogZindex}
         open={isOpen}
         title={t(modalData.title)}
+        icon={<div className={classes.dialogIconContent}>
+          {modalData.icon}
+        </div>}
         cancelText="common.No"
         confirmText="common.Yes"
         disableBackdropClick={true}
-        showDivider={true}
+        showDivider={false}
         onClose={modalData.onClose}
         onCancel={modalData.onCancel}
         onConfirm={modalData.onConfirm}

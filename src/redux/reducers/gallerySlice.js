@@ -1,4 +1,4 @@
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const getFileGallery = createAsyncThunk(
