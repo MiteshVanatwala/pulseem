@@ -131,8 +131,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
 	const [restoreIds, setRestoreIds] = useState<string[]>([]);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(false);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
 		[]
 	);
@@ -184,10 +184,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						pageSize: Number(rowsPerPage),
 					});
 				}
-			} else {
-				setIsLoader(false);
-				setIsAccountSetup(false);
+				setIsAccountSetup(true);
 			}
+			setIsLoader(false);
 		})();
 		/**
 		 * we disable it because we want to run this code only when component loads

@@ -30,17 +30,17 @@ const Gallery = ({
     callbackSelectFile,
     folderType = PulseemFolderType.CLIENT_IMAGES,
     multiSelect = false,
-    selected = [],
+    selected = '',
     forceReload = false }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [folders, setFolders] = useState(null);
     const [folderName, setFolderName] = useState('');
     const [scrollIndex, setScrollIndex] = useState(0);
-    const [selectedFile, setSelectedFile] = useState(multiSelect ? selected : null);
+    const [selectedFile, setSelectedFile] = useState(!multiSelect ? selected : null);
     const [toastMessage, setToastMessage] = useState(null);
     const [selectedNode, setSelectedNode] = useState('k_0');
-    const [selectedFileURL, setSelectedFileURL] = useState(multiSelect ? [] : null);
+    const [selectedFileURL, setSelectedFileURL] = useState(multiSelect ? [] : selected);
     const [selectedFolder, setSelectedFolder] = useState('main');
     const [folderCreationState, setShowFolderCreation] = useState(false);
     const { windowSize, language, isRTL } = useSelector(state => state.core)

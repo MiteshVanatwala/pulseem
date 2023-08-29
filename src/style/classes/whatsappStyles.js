@@ -3104,7 +3104,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	whatsappFileUploadWrapper: {
-		width: '34%',
 		'@media screen and (max-width: 1279px)': {
 			width: '100%',
 		},
