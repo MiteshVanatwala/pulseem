@@ -1,4 +1,5 @@
 import React, { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
+import clsx from "clsx";
 import DefaultScreen from '../../DefaultScreen';
 import uniqid from 'uniqid';
 import { Title } from '../../../components/managment/Title';
@@ -30,7 +31,7 @@ import {
 } from './Types/WhatsappCreator.types';
 import { ClassesType } from '../../Classes.types';
 import { useTranslation } from 'react-i18next';
-import { Box, Grid } from '@material-ui/core';
+import { Box, Button, Grid } from '@material-ui/core';
 import WhatsappTemplateEditor from './Components/WhatsappTemplateEditor';
 import { actionButtonProps } from './Types/WhatsappCreator.types';
 import QuickReply from './Popups/QuickReply';
@@ -71,6 +72,11 @@ import NoSetup from '../NoSetup/NoSetup';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import moment from 'moment';
 import FileUpload from './Components/FileUpload';
+import Gallery from '../../../components/Gallery/Gallery.component';
+import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { RandomID } from '../../../helpers/Functions/functions';
+import { getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -95,6 +101,28 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	>([]);
 	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+	const [dialogType, setDialogType] = useState<{
+    type: string;
+  } | null>(null);
+	const [isGalleryConfirmed, setIsFileSelected] = useState(false);
+	const [campaingnValues, setCampaingnValues] = useState({
+		LanguageCode: 0,
+		CampaignID: "",
+		Name: "",
+		Subject: "",
+		personalDatatoSubject: "",
+		FromName: "",
+		FromEmail: "-1",
+		WebViewLocation: 1,
+		PreviewText: "",
+		PrintLocation: 0,
+		UnsubscribeLocation: 2,
+		UpdateClient: 0,
+		IsResponsive: 1,
+		FilesProperties: [],
+		HtmlToEdit: '',
+		HtmlToSend: ''
+})
 	const getSavedTemplateFields = async () => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
@@ -1075,6 +1103,76 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
+	const handleSelectedImage = async (file: any) => {
+		console.log(file);
+		setDialogType(null);
+		
+		if (!file || file === '') return;
+
+		setFileData({
+			fileLink: file,
+			fileType: '',
+		});
+
+		const existsFiles = [];
+		if (file) {
+			let fileName = file.split('/')[file.split('/').length - 1];
+			const newFile = {
+					Name: fileName,
+					FileName: fileName,
+					FolderType: PulseemFolderType.CLIENT_IMAGES,
+					FileURL: file,
+					ID: RandomID()
+			}
+			existsFiles.push(newFile);
+			// const response = await dispatch(getCreditsByFileTotalBytes({ ...campaingnValues, FilesProperties: [...existsFiles] }));
+			// console.log(response)
+		}
+}
+
+	const renderGalleryDialog = () => {
+		return {
+				showDivider: false,
+				title: translator("common.documentGallery"),
+				content: (
+					<Gallery
+						classes={classes}
+						isConfirm={isGalleryConfirmed}
+						forceReload={true}
+						callbackSelectFile={handleSelectedImage}
+						multiSelect={false}
+						selected={fileData?.fileLink || ''}
+						folderType={PulseemFolderType.CLIENT_IMAGES}
+					/>
+				),
+				onConfirm: () => {
+					setIsFileSelected(true);
+				}
+		};
+	}
+
+	const renderDialog = () => {
+		const { type = "" } = dialogType || {};
+
+		const dialogContent: { [key: string]: {} } = {
+			gallary: renderGalleryDialog(),
+		}
+
+		const currentDialog: any = dialogContent[type] || {};
+		return (
+				dialogType && <BaseDialog
+						classes={classes}
+						open={dialogType}
+						onCancel={() => setDialogType(null)}
+						onClose={() => setDialogType(null)}
+						renderButtons={currentDialog.renderButtons || null}
+						{...currentDialog}
+					>
+						{currentDialog.content}
+				</BaseDialog>
+		)
+	}
+
 	return (
 		<DefaultScreen
 			subPage={'create'}
@@ -1135,12 +1233,40 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 									/>
 
 									<Grid className={classes.whatsappFileUploadWrapper} item>
-										<FileUpload
-											classes={classes}
-											buttonType={buttonType}
-											fileData={fileData}
-											setFileData={(fileData) => uploadFile(fileData)}
-										/>
+										<Grid container spacing={1}>
+											<Grid item>
+												<FileUpload
+													classes={classes}
+													buttonType={buttonType}
+													fileData={fileData}
+													setFileData={(fileData) => uploadFile(fileData)}
+												/>
+											</Grid>
+											<Grid item
+												style={{
+													paddingTop: 60,
+													paddingLeft: 10
+												}}
+											>
+												<Button
+													variant='contained'
+													size='medium'
+													className={clsx(
+														classes.actionButton,
+														classes.actionButtonLightBlue,
+														classes.backButton,
+                            classes.mt50
+													)}
+													color='primary'
+													onClick={() => {
+														setIsFileSelected(false);
+														setDialogType({ type: 'gallary' });
+													}}
+												>
+													{translator('common.SelectFile')}
+												</Button>
+											</Grid>
+										</Grid>
 									</Grid>
 								</Grid>
 
@@ -1240,6 +1366,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			) : (
 				!isLoader && <NoSetup classes={classes} />
 			)}
+			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
