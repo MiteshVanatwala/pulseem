@@ -31,7 +31,12 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     textTransform: 'none',
     fontSize: 26,
     borderRadius: 0,
-    fontFamily: 'pulseemicons'
+    fontFamily: 'pulseemicons',
+    '& .header-whatsapp-icon': {
+      width: '24px',
+      height: '24px',
+      marginBottom: '4px',
+    },
   },
   appBarItemBorder: {
     borderBottom: '1px solid black',
@@ -155,7 +160,12 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   phoneAppBarItemIcon: {
     fontFamily: 'pulseemicons',
     textAlign: 'center',
-    fontSize: 23
+    fontSize: 23,
+    '& .header-whatsapp-icon': {
+      width: '24px',
+      height: '24px',
+      fill: 'black',
+    },
   },
   chosenText: {
     fontWeight: 'bold'

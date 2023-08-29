@@ -5,6 +5,7 @@ import 'react-h5-audio-player/lib/styles.css';
 import {
 	getTemplatePreviewData,
 	getTemplateTextWithVariable,
+	getTextDirection,
 } from '../../Common';
 import { fileTypes } from '../../Constant';
 import {
@@ -74,6 +75,24 @@ const ChatTemplate = ({
 			return DOC;
 		}
 	};
+
+	const getIconName = (statusId: number) => {
+		switch (statusId) {
+			case 2:
+				return 'singleTick';
+			case 3:
+			case 6:
+				return 'doubleTick';
+			case 4:
+			case 5:
+			case 7:
+			case 11:
+				return 'cancel';
+			default:
+				return '';
+		}
+	}
+
 	const getInboundMessageContent = (message: APIWhatsappChatDetailData) => {
 		if (message?.Message?.length === 0 && message?.MediaUrl?.length === 0) {
 			return (
@@ -136,13 +155,16 @@ const ChatTemplate = ({
 			<>
 				{message?.MediaUrl?.length === 0 && <span>{message?.Message}</span>}
 				{message?.MediaUrl && message?.MediaUrl?.length > 0 && (
-					<ImagePreview
-						classes={classes}
-						className={`${classes.whatsappChat} chat__img`}
-						placeholderImg={imagePlaceholder}
-						errorImg={imagePlaceholderX}
-						src={message?.MediaUrl}
-					/>
+					<>
+						<ImagePreview
+							classes={classes}
+							className={`${classes.whatsappChat} chat__img`}
+							placeholderImg={imagePlaceholder}
+							errorImg={imagePlaceholderX}
+							src={message?.MediaUrl}
+						/>
+						{message?.Message}
+					</>
 				)}
 			</>
 		);
@@ -215,7 +237,13 @@ const ChatTemplate = ({
 														</a>
 													</Grid>
 												)}
-											<pre>
+											<pre
+												style={{
+													direction: getTextDirection(
+														templateData.templateText,
+														isRTL
+													),
+												}}>
 												{getTemplateTextWithVariable(
 													templateData?.templateText,
 													variables
@@ -244,47 +272,66 @@ const ChatTemplate = ({
 												{templateData?.templateButtons?.map(
 													(
 														button: quickReplyButtonProps | callToActionRowProps
-													) => (
-														<Grid item key={button.id}>
-															{button.typeOfAction === 'phonenumber' ? (
-																<a
-																	target='_blank'
-																	href={`tel:${getValueByFieldName(
-																		button,
-																		'whatsapp.phoneNumber'
-																	)}`}
-																	rel='noreferrer'>
-																	<i
-																		className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
-																	<span
-																		className={classes.callToActionButtonText}>
-																		{getValueByFieldName(
+													) => {
+														const textDirection = getTextDirection(
+															templateData.templateText,
+															isRTL
+														);
+														const buttonStyles = {
+															paddingLeft:
+																textDirection === 'ltr' ? '8px' : '0px',
+															paddingRight:
+																textDirection === 'ltr' ? '0px' : '8px',
+														};
+														return (
+															<Grid
+																item
+																key={button.id}
+																style={{
+																	direction: textDirection,
+																}}>
+																{button.typeOfAction === 'phonenumber' ? (
+																	<a
+																		target='_blank'
+																		href={`tel:${getValueByFieldName(
 																			button,
-																			'whatsapp.phoneButtonText'
-																		)}
-																	</span>
-																</a>
-															) : (
-																<a
-																	href={getValueByFieldName(
-																		button,
-																		'whatsapp.websiteURL'
-																	)}
-																	target='_blank'
-																	rel='noreferrer'>
-																	<i
-																		className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
-																	<span
-																		className={classes.callToActionButtonText}>
-																		{getValueByFieldName(
+																			'whatsapp.phoneNumber'
+																		)}`}
+																		rel='noreferrer'>
+																		<i
+																			className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
+																		<span
+																			className={classes.callToActionButtonText}
+																			style={buttonStyles}>
+																			{getValueByFieldName(
+																				button,
+																				'whatsapp.phoneButtonText'
+																			)}
+																		</span>
+																	</a>
+																) : (
+																	<a
+																		href={getValueByFieldName(
 																			button,
-																			'whatsapp.websiteButtonText'
+																			'whatsapp.websiteURL'
 																		)}
-																	</span>
-																</a>
-															)}
-														</Grid>
-													)
+																		target='_blank'
+																		rel='noreferrer'>
+																		<i
+																			className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
+																		<span
+																			className={classes.callToActionButtonText}
+																			style={buttonStyles}>
+																			{getValueByFieldName(
+																				button,
+																				'whatsapp.websiteButtonText'
+																			)}
+																		</span>
+																	</a>
+																)}
+															</Grid>
+														);
+													}
 												)}
 											</div>
 										)}
@@ -292,10 +339,15 @@ const ChatTemplate = ({
 							</>
 						)}
 						{buttonType === 'quickReply' && (
-							<>
-								<div className={classes.quickReplyButtonWrapper}>
-									{templateData?.templateButtons?.map(
-										(button: quickReplyButtonProps | callToActionRowProps) => (
+							<div className={classes.quickReplyButtonWrapper}>
+								{templateData?.templateButtons?.map(
+									(button: quickReplyButtonProps | callToActionRowProps) => {
+										const buttonName = getValueByFieldName(
+											button,
+											'whatsapp.websiteButtonText'
+										);
+										const textDirection = getTextDirection(buttonName, isRTL);
+										return (
 											<div
 												key={button.id}
 												className={`${classes.whatsappMobileMessage} sent quick-reply-button`}
@@ -304,24 +356,21 @@ const ChatTemplate = ({
 													borderRadius: '5px',
 													padding: '4px 8px',
 													width:
-														getValueByFieldName(
-															button,
-															'whatsapp.websiteButtonText'
-														)?.length <= templateData?.templateText?.length
+														buttonName?.length <=
+														templateData?.templateText?.length
 															? 'auto'
 															: '',
 												}}>
-												<span className={classes.quickReplyButtonText}>
-													{getValueByFieldName(
-														button,
-														'whatsapp.websiteButtonText'
-													)}
-												</span>
+												<div
+													className={classes.quickReplyButtonText}
+													style={{ direction: textDirection }}>
+													{buttonName}
+												</div>
 											</div>
-										)
-									)}
-								</div>
-							</>
+										);
+									}
+								)}
+							</div>
 						)}
 					</div>
 
@@ -329,7 +378,7 @@ const ChatTemplate = ({
 					<span className={`${classes.whatsappChat} chat__msg-footer`}>
 						<span> {formatTime(message.MessageDate)} </span>
 						<Icon
-							id={message?.SmsStatusId === 2 ? 'singleTick' : 'doubleTick'}
+							id={getIconName(message?.SmsStatusId)}
 							aria-label={'sent'}
 							className={`${classes.whatsappChat} chat__msg-status-icon ${
 								message?.SmsStatusId === 6
@@ -373,14 +422,28 @@ const ChatTemplate = ({
 						<p
 							key={msgIndex}
 							className={`${classes.whatsappChat} chat__msg chat__msg--sent`}>
-							<span>{message.Message}</span>
+							<span>
+							{
+								message?.MediaUrl && message?.MediaUrl?.length > 0 && (
+									<>
+										<ImagePreview
+											classes={classes}
+											className={`${classes.whatsappChat} chat__img`}
+											placeholderImg={imagePlaceholder}
+											errorImg={imagePlaceholderX}
+											src={message?.MediaUrl}
+										/>
+									</>
+								)}
+								{message.Message || (!message?.MediaUrl?.length ? translator('whatsappChat.messageErrorText') : '')}
+							</span>
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
 								{' '}
 							</span>
 							<span className={`${classes.whatsappChat} chat__msg-footer`}>
 								<span> {formatTime(message.MessageDate)} </span>
 								<Icon
-									id={message?.SmsStatusId === 2 ? 'singleTick' : 'doubleTick'}
+									id={getIconName(message?.SmsStatusId)}
 									aria-label={'sent'}
 									className={`${classes.whatsappChat} chat__msg-status-icon ${
 										message?.SmsStatusId === 6

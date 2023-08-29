@@ -6,6 +6,7 @@ import { Box, Grid } from '@material-ui/core';
 import {
 	callToActionFieldProps,
 	callToActionRowProps,
+	coreProps,
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	ReduxUserProps,
@@ -15,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { fileTypes } from '../../Constant';
+import { checkLanguage, getFileType, getTextDirection } from '../../Common';
 
 const WhatsappMobilePreview = ({
 	classes,
@@ -24,9 +26,11 @@ const WhatsappMobilePreview = ({
 }: whatsappMobilePreviewProps) => {
 	const { templateText, templateButtons } = templateData;
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
 	let time = new Date().toLocaleTimeString('en-US');
 
+	const [textDirection, setTextDirection] = useState<string>('ltr');
 	const [mobileTime, setMobileTime] = useState<string>(time);
 	const [quickReplyWidth, setQuickReplyWidth] = useState<string>('');
 
@@ -46,6 +50,14 @@ const WhatsappMobilePreview = ({
 	useEffect(() => {
 		setQuickReplyWidth(getQuickReplyWidth());
 	}, [templateText, fileData, templateButtons]);
+
+	useEffect(() => {
+		const direction = checkLanguage(templateText, isRTL);
+		if (direction !== 'Both') {
+			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [templateText]);
 
 	const setUpdateTime = () => {
 		let time = new Date()
@@ -67,20 +79,6 @@ const WhatsappMobilePreview = ({
 				}
 			)?.value || ''
 		);
-	};
-
-	const getFileType = () => {
-		if (
-			fileData?.fileLink?.includes('.png') ||
-			fileData?.fileLink?.includes('.jpeg') ||
-			fileData?.fileLink?.includes('.jpg')
-		) {
-			return fileTypes.IMAGE;
-		} else if (fileData?.fileLink?.includes('.pdf')) {
-			return fileTypes.DOCUMENT;
-		} else if (fileData?.fileLink?.includes('.mp4')) {
-			return fileTypes.VIDEO;
-		}
 	};
 	return (
 		<Box className={classes.phoneDiv}>
@@ -148,14 +146,16 @@ const WhatsappMobilePreview = ({
 																	className={
 																		classes.whatsappMobileMessageTextAndImage
 																	}>
-																	{getFileType() === fileTypes.IMAGE &&
+																	{getFileType(fileData?.fileLink) ===
+																		fileTypes.IMAGE &&
 																		fileData?.fileLink?.length > 0 && (
 																			<img
 																				src={fileData?.fileLink}
 																				alt='uploaded-file-preview'
 																			/>
 																		)}
-																	{getFileType() === fileTypes.VIDEO &&
+																	{getFileType(fileData?.fileLink) ===
+																		fileTypes.VIDEO &&
 																		fileData?.fileLink?.length > 0 && (
 																			<a
 																				href={fileData?.fileLink}
@@ -168,7 +168,8 @@ const WhatsappMobilePreview = ({
 																				/>
 																			</a>
 																		)}
-																	{getFileType() === fileTypes.DOCUMENT &&
+																	{getFileType(fileData?.fileLink) ===
+																		fileTypes.DOCUMENT &&
 																		fileData?.fileLink?.length > 0 && (
 																			<Grid container alignItems='center'>
 																				<img
@@ -196,7 +197,19 @@ const WhatsappMobilePreview = ({
 																				</a>
 																			</Grid>
 																		)}
-																	<pre>{templateText}</pre>
+																	<pre
+																		style={{
+																			direction:
+																				templateText?.length > 0
+																					? textDirection === 'rtl'
+																						? 'rtl'
+																						: 'ltr'
+																					: isRTL
+																					? 'rtl'
+																					: 'ltr',
+																		}}>
+																		{templateText}
+																	</pre>
 																</div>
 															)}
 															{buttonType === 'callToAction' &&
@@ -291,14 +304,7 @@ const WhatsappMobilePreview = ({
 																		style={{
 																			margin: '2px 0px 0px 0px',
 																			borderRadius: '5px',
-																			padding: '4px 8px',
-																			width:
-																				getValueByFieldName(
-																					button,
-																					'whatsapp.websiteButtonText'
-																				)?.length <= templateText?.length
-																					? quickReplyWidth
-																					: '',
+																			padding: '4px 8px'
 																		}}>
 																		<span
 																			className={classes.quickReplyButtonText}>

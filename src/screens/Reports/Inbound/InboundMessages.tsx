@@ -50,15 +50,13 @@ const InboundMessages = ({ classes }: ClassesType) => {
                         >
                             {
                                 InboundTypes.map((it, idx) => {
-                                    const label = translator(it.name);
+                                    // const label = translator(it.name);
                                     return !it.disabled && <Tab
                                         key={it.key}
                                         value={it.value}
                                         classes={{ root: clsx(classes.minWidth100, it.isNewFeature ? localClasses.flexItems : null) }}
                                         //@ts-ignore
-                                        icon={it.isNewFeature ? <span className={classes.commingSoon}>{translator('common.commingSoon')}</span> : ''}
-                                        //@ts-ignore
-                                        label={it.isNewFeature ? <span style={{ marginInlineEnd: 5 }}>{translator(it.name)}</span> : translator(it.name)}
+                                        label={translator(it.name)}
                                     />
                                 })
                             }

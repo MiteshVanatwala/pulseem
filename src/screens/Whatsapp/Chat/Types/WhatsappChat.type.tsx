@@ -1,6 +1,9 @@
 import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
-import { updatedVariable } from '../../Campaign/Types/WhatsappCampaign.types';
+import {
+	personalFieldDataProps,
+	updatedVariable,
+} from '../../Campaign/Types/WhatsappCampaign.types';
 import {
 	savedTemplateListProps,
 	savedTemplateTypesProps,
@@ -31,7 +34,7 @@ export type WhatsappChatUiProps = {
 	savedTemplate: string;
 	activePhoneNumber: string;
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	whatsappChatSession: APIWhatsappChatSessionData;
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
@@ -50,11 +53,13 @@ export type WhatsappChatUiProps = {
 	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
 	isContactLoader: boolean;
 	updateContactList: () => void;
+	personalFields: personalFieldDataProps;
+	onChatTemplateDelete: () => void;
 };
 
 export type SideBarContactListProps = {
 	classes: ClassesType['classes'];
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	handleChatId: (
 		e: BaseSyntheticEvent,
 		Contacts: APIWhatsappChatSidebarContactsItemsData
@@ -93,8 +98,10 @@ export type ChatFooterContentProps = {
 	whatsappChatSession: APIWhatsappChatSessionData;
 	onChatSend: () => void;
 	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	isContactLoader: boolean;
+	personalFields: personalFieldDataProps;
+	onChatTemplateDelete: () => void;
 };
 
 export type ChatTemplateProps = {
@@ -117,24 +124,24 @@ export type WhatsappChatSideBarProps = {
 	onActiveUserChange: (e: BaseSyntheticEvent) => void;
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	sideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
-	setFilteredSideChatContacts: (
-		filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[]
-	) => void;
-	setContactsPaginationSetting: (
-		contactsPaginationSetting: ContactsPaginationSetting
-	) => void;
 	phoneNumbersList: string[];
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
 	activePhoneNumber: string;
-	fetchMoreContacts: (searchText: string) => void;
+	fetchMoreContacts: (
+		searchText: string,
+		ChatStatus: number,
+		isPaginationReset?: boolean
+	) => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	fetchSearchedContacts: (
 		searchText: string,
+		ChatStatus: number,
 		isPaginationReset: boolean
 	) => void;
 	isLoader: boolean;
+	filterBySelected: number;
+	setFilterBySelected: (filterId: number) => void;
 };
 
 export type chatModalProps = {
@@ -293,12 +300,14 @@ export type APISendWhatsappChatData = {
 
 export type APISendWhatsappChatDataData = {
 	Data: APISendWhatsappChatData;
+	NextAvailableTime?: string;
 };
 
 export type APISendWhatsappChatPayload = {
 	Status: string;
 	Message: string;
 	Data: APISendWhatsappChatDataData;
+	StatusCode: number;
 };
 
 export type APISendWhatsappChat = {
@@ -321,6 +330,7 @@ export type APIGetWhatsappChatContactsReq = {
 	pageSize: number;
 	Searchtext?: string;
 	UserNumber?: string;
+	ChatStatus: number;
 };
 
 export type Timer = {

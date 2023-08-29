@@ -4,6 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import { Close } from '@material-ui/icons';
 import { AlertModalProps } from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 
 const AlertModal = ({
 	classes,
@@ -14,6 +15,8 @@ const AlertModal = ({
 	title,
 	subtitle,
 	children,
+	direction,
+	titleFontSize,
 }: AlertModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -29,15 +32,18 @@ const AlertModal = ({
 					{title?.length > 0 && (
 						<div
 							id='responsive-dialog-title'
-							className={classes.alertModalTitle}>
+							className={classes.alertModalTitle}
+							style={{ fontSize: titleFontSize ? titleFontSize : '' }}>
 							{title}
 						</div>
 					)}
 					<Box className={classes.alertModalClose}>
 						<Close fontSize={'small'} onClick={onClose} />
 					</Box>
-					<div className={classes.alertModalContent}>
-						<div className={classes.alertModalContentText}>{subtitle}</div>
+					<div
+						className={classes.alertModalContent}
+						style={{ direction: direction }}>
+						<div className={clsx(classes.alertModalContentText, classes.f15)}>{subtitle}</div>
 						<div className={classes.alertModalContentChildren}>{children}</div>
 					</div>
 					<Grid container className={classes.alertModalAction}>
@@ -83,7 +89,7 @@ const AlertModal = ({
 									color='primary'
 									variant='contained'
 									onClick={onClose}>
-									<>{translator('whatsapp.alertModal.calcelButtonText')}</>
+									<>{translator('whatsapp.alertModal.no')}</>
 								</Button>
 							</>
 						)}

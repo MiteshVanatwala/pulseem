@@ -150,6 +150,7 @@ const DownloadFiles = ({ classes }: any) => {
         interactive={true}
         arrow={true}
         placement={'top'}
+        titleStyle={undefined}
         title={<Typography noWrap={false}>{row.FileName}</Typography>}
         text={row.FileName} icon={undefined} style={undefined}>
           <Typography noWrap={false}>{row.SourceFileName && row.SourceFileName != '' && row.SourceFileName != null ? row.SourceFileName : row.FileName}</Typography>
