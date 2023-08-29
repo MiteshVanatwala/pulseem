@@ -1392,7 +1392,7 @@ const SmsSend = ({ classes, ...props }) => {
       },
       SendExeptional:
       {
-        Groups: groupID ? [groupID] : selectedFilterGroups.map((c) => { return c.GroupID }),
+        Groups: selectedFilterGroups.map((c) => { return c.GroupID }),
         Campaigns: selectedFilterCampaigns.map((c) => { return c.SMSCampaignID }),
         ExceptionalDays: exceptionalDays
       },
