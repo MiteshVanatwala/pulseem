@@ -188,7 +188,7 @@ const BulkStatus = ({ classes }) => {
               </Typography>
             </Box>
             <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })}>
-              <Button className={clsx(classes.btn, classes.btnRounded, !isAllowNewsletter() ? classes.btnDisabled : '')}>
+              <Button className={clsx(classes.btn, classes.btnRounded)}>
                 {t('dashboard.purchase')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               </Button>
@@ -215,7 +215,7 @@ const BulkStatus = ({ classes }) => {
               </Typography>
             </Box>
             <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') })}>
-              <Button className={clsx(classes.btn, classes.btnRounded, !isAllowSms() ? classes.btnDisabled : '')}>
+              <Button className={clsx(classes.btn, classes.btnRounded)}>
                 {t('dashboard.purchase')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               </Button>
@@ -266,7 +266,7 @@ const BulkStatus = ({ classes }) => {
             <Box className={clsx(classes.flex2, classes.textCenter)}>
             </Box>
             <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType(3)}>
-              <Button className={clsx(classes.btn, classes.btnRounded, classes.btnDisabled)}>
+              <Button className={clsx(classes.btn, classes.btnRounded)}>
                 {t('dashboard.freeTrial')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               </Button>
@@ -290,7 +290,7 @@ const BulkStatus = ({ classes }) => {
                 {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Whatsapp)}
               </Box>
               <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType(4)}>
-                <Button className={clsx(classes.btn, classes.btnRounded, classes.btnDisabled)}>
+                <Button className={clsx(classes.btn, classes.btnRounded)}>
                   {t('dashboard.purchase')}
                   {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 </Button>
