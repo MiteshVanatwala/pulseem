@@ -56,8 +56,8 @@ const AppBarItem = ({
   return (
     <Box
       zIndex='tooltip'
-      onMouseOver={handleOpen}
-      onMouseLeave={handleClose}
+      // onMouseOver={handleOpen}
+      // onMouseLeave={handleClose}
       className={clsx(classes.appBarItemContainer)}>
       <Box
         style={{ whiteSpace: 'nowrap' }}
@@ -193,7 +193,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const { companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
   const { accountSettings, accountFeatures } = useSelector(state => state.common);
   const phoneMenuButtonRef = useRef(null)
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const topNavRef = useRef(null)
 
@@ -204,7 +204,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   }, [accountSettings])
 
   const handleOpen = () => {
-    // setOpen(!open)
+    setOpen(!open)
   }
   const { t } = useTranslation();
   const { username } = useSelector(state => state.user)
