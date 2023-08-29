@@ -1742,6 +1742,7 @@ const SmsSend = ({ classes, ...props }) => {
     return null;
   }
   const handleConfirmC = async () => {
+    setLoader(true);
     var req = [];
     areaData.split('\n').map((q) => {
       if (validatePhoneNumber(q.replace(',', ''))) {
@@ -1767,6 +1768,7 @@ const SmsSend = ({ classes, ...props }) => {
       }
     } else {
       setToastMessage(ToastMessages.INVALID_NUMBER);
+      setLoader(false);
     }
   };
   const handlePreviousPage = () => {
