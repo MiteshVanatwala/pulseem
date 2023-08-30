@@ -98,6 +98,7 @@ const DuplicateCampaign = ({
               control={
                 <Checkbox
                   color="primary"
+                  disabled={duplicateOptions.indexOf(CloneOptions.Groups) === -1}
                   inputProps={{ "aria-label": "secondary checkbox" }}
                   onClick={() => handleDuplicateOptions(CloneOptions.Pulses)}
                   checked={duplicateOptions.indexOf(CloneOptions.Pulses) > -1}
