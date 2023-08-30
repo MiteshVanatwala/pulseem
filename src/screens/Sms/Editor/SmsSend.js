@@ -244,6 +244,7 @@ const SmsSend = ({ classes, ...props }) => {
         setFilterGroups(selectedGroups);
       }
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Campaigns.length !== 0) {
+        setbsDot(true);
         const selectedCampaigns = [];
         const seCampaigns = campaignSettings.SendExeptional.Campaigns;
         for (var h = 0; h < seCampaigns.length; h++) {
@@ -255,7 +256,8 @@ const SmsSend = ({ classes, ...props }) => {
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1 && campaignSettings.SendExeptional.ExceptionalDays !== '') {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
-
+        setbsDot(true);
+        setFilterValues({ ...filterValues, dontSend: true });
       }
       if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
@@ -969,12 +971,12 @@ const SmsSend = ({ classes, ...props }) => {
                     variant='contained'
                     key={"extraButton"}
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightGreen,
-                        classes.backButton
+                      classes.actionButton,
+                      classes.actionButtonLightGreen,
+                      classes.backButton
                     )}
                     onClick={() => {
-                        setDialogType({ type: "quickMnualUpload" })
+                      setDialogType({ type: "quickMnualUpload" })
                     }}
                   >
                     {t("campaigns.newsLetterSendSettings.quickMSend")}
@@ -988,6 +990,19 @@ const SmsSend = ({ classes, ...props }) => {
       </Grid>
     );
   };
+  useEffect(() => {
+    const resetDays = () => {
+      setExceptionalDays('');
+      setFilterValues({ ...filterValues, exceptionalDays: '', days: '' });
+      settoggleReci(false);
+    }
+    if (!filterValues.dontSend) {
+      resetDays();
+    }
+    else {
+      settoggleReci(true);
+    }
+  }, [filterValues.dontSend])
   const handleFilterConfirm = () => {
     let formIsvalid = true;
     settoggleReci(filterValues.dontSend);
@@ -1754,13 +1769,13 @@ const SmsSend = ({ classes, ...props }) => {
       const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend('PulseemSMS'));
       let groupId = responseDefaultGroup?.payload || '1'
       const finalPayload = {
-          ClientsData: req,
-          GroupIds: [groupId]
+        ClientsData: req,
+        GroupIds: [groupId]
       }
       const r = await dispatch(addRecipient(finalPayload));
-  
+
       if (r.payload.StatusCode === 201) {
-        onSaveSettings(false, "", groupId); 
+        onSaveSettings(false, "", groupId);
       }
       else {
         setToastMessage(ToastMessages.ERROR);
@@ -1959,7 +1974,7 @@ const SmsSend = ({ classes, ...props }) => {
     setDialogType(null);
     setFilterGroups(campaignSettings?.SendExeptional?.Groups ?? []);
     setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns ?? []);
-    // setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
+    setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : exceptionalDays);
     setFilterValues({
       dontSend: toggleReci,
       days: exceptionalDays
@@ -1981,7 +1996,7 @@ const SmsSend = ({ classes, ...props }) => {
               checked={filterValues.dontSend}
               color="primary"
               inputProps={{ "aria-label": "secondary checkbox" }}
-              onClick={(e) => 
+              onClick={(e) =>
                 setFilterValues({
                   ...filterValues,
                   dontSend: e.target.checked,
@@ -2759,10 +2774,10 @@ const SmsSend = ({ classes, ...props }) => {
       </Snackbar>
       {otpOpen && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
       {dialogType?.type === 'quickMnualUpload' && <QuickManualUploadDialog
-          classes={classes}
-          onClose={() => setDialogType(null)}
-          onCancel={() => setDialogType(null)}
-          onConfirm={() => handleConfirmC()}
+        classes={classes}
+        onClose={() => setDialogType(null)}
+        onCancel={() => setDialogType(null)}
+        onConfirm={() => handleConfirmC()}
       />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
