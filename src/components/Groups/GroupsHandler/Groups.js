@@ -88,7 +88,7 @@ const Groups = ({ classes,
         return groupList && groupList.length > 0 ? groupList?.filter((g) => {
             return g.GroupName.trim().toLowerCase().indexOf(groupNameSearch?.trim().toLowerCase()) > -1;
         }).map((group) => {
-            const isExist = selectedList?.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
+            const isExist = selectedList?.map((group) => { return group[groupIdKey] }).indexOf(group[groupIdKey]) > -1;
             return (<ListItem id={group[groupIdKey]} key={group[groupIdKey]} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
                 onMouseEnter={() => setIsHover(group[groupIdKey])}
                 onMouseLeave={() => setIsHover(null)}
@@ -117,28 +117,61 @@ const Groups = ({ classes,
 
     const renderCampaigns = () => {
         return groupList && groupList.length > 0 ? groupList?.filter((c) => {
-            return c.Name.toLowerCase().includes(groupNameSearch.toLowerCase());
-        }).map((campaign) => {
-            const isExist = selectedList.map((c) => { return c.CampaignID }).includes(campaign.CampaignID);
-            return (<ListItem id={campaign.CampaignID} key={campaign.CampaignID} onClick={() => onSelectGroup(campaign)} style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setIsHover(campaign.CampaignID)}
-                onMouseLeave={() => setIsHover(null)}
-                className={groupHover === campaign.CampaignID ? classes.hoverListItem : null}
-            >
-                <ListItemAvatar>
-                    <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
-                        {isExist ?
-                            (<FaCheck className={clsx(classes.green)} />)
-                            :
-                            (<HiUserGroup className={clsx(classes.blue)} />)
-                        }
-                    </Avatar>
-                </ListItemAvatar>
-                <ListItemText className={'groupText'} title={campaign.Name}
-                    primary={campaign.Name}
-                />
-            </ListItem>)
+            return c.Name.toLowerCase().indexOf(groupNameSearch.toLowerCase()) > -1;
+        }).map((camp) => {
+            if (isSms) {
+                const isExist = selectedList.map((c) => { return c.SMSCampaignID }).indexOf(camp.SMSCampaignID) > -1;
+                return (<ListItem id={camp.SMSCampaignID}
+                    key={camp.SMSCampaignID}
+                    onClick={() => onSelectGroup(camp)} style={{ cursor: 'pointer' }}
+                    onMouseEnter={() => {
+                        setIsHover(camp.SMSCampaignID)
+                    }}
+                    onMouseLeave={() => setIsHover(null)}
+                    className={groupHover === camp.SMSCampaignID ? classes.hoverListItem : null}
+                >
+                    <ListItemAvatar>
+                        <Avatar
+                            className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                            {isExist ?
+                                (<FaCheck className={clsx(classes.green)} />)
+                                :
+                                (<HiUserGroup className={clsx(classes.blue)} />)
+                            }
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText className={'groupText'} title={camp.Name}
+                        primary={camp.Name}
+                    />
+                </ListItem>)
+            }
+            else {
+                const isExist = selectedList.map((c) => { return c.CampaignID }).indexOf(camp.CampaignID) > -1;
+                return (<ListItem id={camp.CampaignID}
+                    key={camp.CampaignID}
+                    onClick={() => onSelectGroup(camp)} style={{ cursor: 'pointer' }}
+                    onMouseEnter={() => {
+                        setIsHover(camp.CampaignID)
+                    }}
+                    onMouseLeave={() => setIsHover(null)}
+                    className={groupHover === camp.CampaignID ? classes.hoverListItem : null}
+                >
+                    <ListItemAvatar>
+                        <Avatar
+                            className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                            {isExist ?
+                                (<FaCheck className={clsx(classes.green)} />)
+                                :
+                                (<HiUserGroup className={clsx(classes.blue)} />)
+                            }
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText className={'groupText'} title={camp.Name}
+                        primary={camp.Name}
+                    />
+                </ListItem>)
+            }
+
         }) : ''
     }
 

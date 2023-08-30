@@ -16,9 +16,9 @@ const GroupTags = ({ classes,
     onRemoveGroup = () => null,
     style = null,
     dropDownProps = {
-        groups: null,
-        selectedGroups: [],
-        onChange: () => false
+        groups: {},
+        selectedGroups: {},
+        onChange: {}
     },
     error = '',
     helperText = '',

@@ -171,6 +171,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
+            disabled={!landingPagesDeletedData || landingPagesDeletedData?.length === 0}
             variant='contained'
             size='medium'
             className={clsx(

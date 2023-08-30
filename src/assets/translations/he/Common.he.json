@@ -631,5 +631,7 @@
   "recipient": "דו”/ח נמען",
   "search": "חיפוש",
   "createdDate": "נוצר בתאריך",
-  "recipientGroups": "קבוצות נמענים"
+  "recipientGroups": "קבוצות נמענים",
+  "noCampaignToRestore": "אין קמפיינים לשחזור",
+  "doNotShow": "אל תציג שוב"
 }

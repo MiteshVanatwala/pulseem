@@ -34,7 +34,7 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
-import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
+// import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures } = useSelector(state => state.common);
@@ -60,7 +60,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
   const [duplicateOptions, setDuplicateOptions] = useState([])
-  const { publicTemplates } = useSelector(state => state.campaignEditor);
+  // const { publicTemplates } = useSelector(state => state.campaignEditor);
 
   moment.locale(language)
   const [verificationDialog, setVerificationDialog] = useState(false)
@@ -76,14 +76,14 @@ const NewsletterManagnentScreen = ({ classes }) => {
     getData();
   }, [dispatch]);
 
-  useEffect(() => {
-    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-    dispatch(getAllTemplatesBySubaccountId());
-  }, [])
+  // useEffect(() => {
+  //   if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+  //   dispatch(getAllTemplatesBySubaccountId());
+  // }, [])
 
-  useEffect(() => {
-    dispatch(getPublicTemplates(isRTL));
-  }, [isRTL])
+  // useEffect(() => {
+  //   dispatch(getPublicTemplates(isRTL));
+  // }, [isRTL])
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -92,6 +92,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
     setSearchResults(null);
     setSearching(false);
   }
+
+  useEffect(() => {
+    if (duplicateOptions.indexOf(CloneOptions.Groups) === -1 && duplicateOptions.indexOf(CloneOptions.Pulses) !== -1) {
+      handleDuplicateOptions(CloneOptions.Pulses);
+    }
+  }, [duplicateOptions])
 
   const renderSearchLine = () => {
     const handleKeyDown = (event) => {
@@ -915,6 +921,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
               control={
                 <Checkbox
                   color="primary"
+                  disabled={duplicateOptions.indexOf(CloneOptions.Groups) === -1}
                   inputProps={{ "aria-label": "secondary checkbox" }}
                   onClick={() => handleDuplicateOptions(CloneOptions.Pulses)}
                   checked={duplicateOptions.indexOf(CloneOptions.Pulses) > -1}

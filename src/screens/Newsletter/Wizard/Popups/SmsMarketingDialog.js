@@ -13,6 +13,7 @@ import VerificationDialog from '../../../../components/DialogTemplates/Verificat
 import { Loader } from '../../../../components/Loader/Loader';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import Toast from '../../../../components/Toast/Toast.component';
+import { logout } from '../../../../helpers/Api/PulseemReactAPI';
 
 const SmsMarketingDialog = ({
     classes,
@@ -48,7 +49,15 @@ const SmsMarketingDialog = ({
 
     useEffect(() => {
         setIsLinksStatistics(smsMarketingModel.IsLinksStatistics ?? true);
-    }, [])
+        setNumberVerified(isFromNumberVerified());
+    }, []);
+
+    const isFromNumberVerified = () => {
+        const isVerified = verifiedNumbers.find((number) => {
+            return number?.Number === smsModel.FromNumber && number?.IsOptIn === true;
+        });
+        return isVerified?.length > 0;
+    }
 
     const sendToOptions = [
         {
@@ -112,10 +121,10 @@ const SmsMarketingDialog = ({
         }
         else {
             if (value.length > 8) {
-                const isVerified = verifiedNumbers.find((number) => {
-                    return number?.Number === value;
-                });
-                setNumberVerified(isVerified);
+                // const isVerified = verifiedNumbers.find((number) => {
+                //     return number?.Number === value && number?.IsOptIn === true;
+                // });
+                setNumberVerified(isFromNumberVerified());
             }
         }
     }
@@ -164,10 +173,6 @@ const SmsMarketingDialog = ({
 
                 const r = await dispatch(setSmsMarketing(smsCampaignPayload));
                 handleTotalMarketingResponse(r.payload);
-                setLoader(false);
-                setTimeout(() => {
-                    onConfirm();
-                }, 3000);
             }
         }
 
@@ -180,6 +185,7 @@ const SmsMarketingDialog = ({
                 break;
             }
             case 401: {
+                logout();
                 //Invalid api key
                 break;
             }
@@ -187,10 +193,20 @@ const SmsMarketingDialog = ({
             case 500: {
                 break;
             }
+            // no credit left 
+            case 405: {
+                setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.BULK_ENDED'), showAnimtionCheck: false });
+                break
+            }
             default: {
                 setToastMessage({ severity: 'success', color: 'success', message: response?.Message, showAnimtionCheck: true });
             }
         }
+
+        setLoader(false);
+        setTimeout(() => {
+            response?.StatusCode !== 405 && onConfirm();
+        }, 3000);
     }
     const handleValidation = () => {
         const tempErrors = {};
@@ -425,10 +441,8 @@ const SmsMarketingDialog = ({
                     isOpen={newSmsVerification}
                     variant='sms'
                     onClose={() => setNewSmsVerification(false)}
-                    Option={{
-                        Step: 1,
-                        Value: smsModel.FromNumber
-                    }}
+                    step={1}
+                    value={smsModel.FromNumber}
                 />}
                 <Loader isOpen={showLoader} />
             </Grid>
@@ -451,7 +465,7 @@ const SmsMarketingDialog = ({
                 {...currentDialog}>
                 {currentDialog.content}
             </BaseDialog>
-            { toastMessage &&  <Toast data={toastMessage} /> }
+            {toastMessage && <Toast data={toastMessage} />}
         </>
     )
 }

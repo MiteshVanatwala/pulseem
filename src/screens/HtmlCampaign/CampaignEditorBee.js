@@ -79,7 +79,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI();
   const [showGallery, setShowGallery] = useState(false);
   const [showDocs, setShowDocuments] = useState(false);
-  const [isSiteTracking, setIsSiteTracking] = useState(false);
   const queryParams = new URLSearchParams(window.location.search)
   const isFromAutomation = queryParams.get("FromAutomation");
   const NodeToEdit = queryParams.get("NodeToEdit");
@@ -228,17 +227,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     initBeeToken();
   }
-  // const siteTrackingLogic = () => {
-  //   if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
-  //     const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
-  //     if (campaign?.HtmlData?.indexOf(domainName) > -1) {
-  //       setIsSiteTracking(true);
-  //     }
-  //     else {
-  //       setIsSiteTracking(false);
-  //     }
-  //   }
-  // }
   //#region Init Bee Token & Configuration
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
@@ -365,30 +353,14 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
-  // const doaminWithClientRef = (str) => {
-  //   let finalStr = str;
-  //   const startIndex = finalStr.substring(finalStr.indexOf(accountSettings?.SubAccountSettings.DomainAddress));
-  //   const originalLink = startIndex.split(/[\s\n]+/);
-  //   let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
-  //   let newUrl = originUrl.trim();
-  //   if (newUrl.indexOf('ClientIDEnc') === -1) {
-  //     newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
-  //     finalStr = finalStr.replace(originUrl, newUrl);
-  //   }
-  //   return finalStr;
-  // }
   const onSave = async (args) => {
+    const reInit = saveRef.current?.reInitEditor;
+
     try {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
-      // if (isSiteTracking === true) {
-      //   if (!args.HtmlData.indexOf('ref') > -1) {
-      //     finalHtml = doaminWithClientRef(args.HtmlData);
-      //     finalJson = doaminWithClientRef(args.JsonData);
-      //   }
-      // }
       const response = await dispatch(saveCampaign({
         Name: campaign.Name,
         campaignId: args.campaignId,
@@ -400,11 +372,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         if (saveRef.current?.redirectAfterSave) {
           localStorage.setItem('reloadBeeEditor', 1);
           window.location = saveRef.current?.redirectUrl ?? `/react/Campaigns/SendSettings/${args.campaignId}`;
-          // window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
           return false;
         }
         else if (saveRef.current?.showAnimation) {
           setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+        }
+
+        if (reInit) {
+          getData();
         }
       }
 
@@ -617,6 +592,11 @@ const CampaignEditor = ({ classes, ...props }) => {
     await editorRef.current.save();
   }
 
+  const onBeforeReinit = async () => {
+    saveRef.current = { showAnimation: false, reInitEditor: true };
+    await editorRef.current.save();
+  }
+
   const showGalleryModal = () => {
     if (showGallery) {
       let dialog = {
@@ -674,7 +654,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           open={showDocs}
           onClose={() => { setShowDocuments(false); }}
           onCancel={() => { setShowDocuments(false); }}
-          onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
+          onConfirm={() => { setShowDocuments(false); onBeforeReinit(); }}
           {...dialog}>
           {dialog.content}
         </BaseDialog>

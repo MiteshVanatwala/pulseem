@@ -453,7 +453,7 @@
   "campaignQuality": "The Quality of the Campaign",
   "campaignQualitySummary": "Determined according to the data of the openings and clicks, Ram Ipsom Dolor Sit Emt, Editing Consumer Elit Goller Montferrer Sobert Lorem Shevetz Yahul",
   "billingCredits": "Total credits sent",
-  "postCredits": "Credit per SMS",
+  "postCredits": "Per SMS",
   "smsCampaign" : "Create New SMS Campaign",
   "sendSetting" : "Send Settings",
   "whomTosend" : "To whom to send?",
@@ -538,5 +538,11 @@
   "summaryModalTitle": "Campaign Summary",
   "feedback": "Feedback",
   "isResponse": "Is Response",
-  "statusName": "Status Name"
+  "statusName": "Status Name",
+  "verifiedCount": "Verified",
+  "verifiedTooltip": "Manual clicks, without preview auto-clicks",
+  "SMSReportNote1": "We improve your click data!",
+  "SMSReportNote2": "Some mobile phones scan the links when receiving an SMS, which might trigger a false click event.<br />We've added \"Verified Clicks\" column so you will know who actually clicked on your links.",
+  "clickCountTooltip": "Sum of all clicks, including duplicates",
+  "uniqueClickCountTooltip": "Sum of all clicks, without duplicates"
 }

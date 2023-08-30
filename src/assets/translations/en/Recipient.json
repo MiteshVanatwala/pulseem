@@ -132,5 +132,6 @@
   "unsubSetting1Tooltip": "Example: When typing a cellphone number, this setting will also unsubscribe the email address linked to it",
   "unsubSettings": "Unsubscribe settings",
   "newsletterCampaign": "Newsletter Campaign",
-  "smsCampaign": "SMS Campaign"
+  "smsCampaign": "SMS Campaign",
+  "maxUploadLimitation": "You are able to upload up to 5,000 recipients at once"
 }

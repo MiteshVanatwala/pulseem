@@ -39,6 +39,7 @@ export const getSettingsItem = (
     { title: t('master.RadMenuItemResource23.Text'), href: '/Pulseem/ExtraFieldsDefinition.aspx?fromreact=true', iconSrc: StarMenuIcon, isShow: true },
     { title: t('master.linkApiSettingsResource1.Text'), href: '/Pulseem/ApiSettings.aspx?fromreact=true', iconSrc: CodeMenuIcon, isShow: true },
     { key: 'SiteTracking', title: t('master.siteTracking'), href: '/react/SiteTracking', iconSrc: FaBinoculars, isFaIcon: true, isShow: true },
+    { key: 'Integrations', title: t('integrations.title'), href: '/react/Integrations', iconSrc: SettingsMenuIcon, isShow: true },
   ],
 });
 

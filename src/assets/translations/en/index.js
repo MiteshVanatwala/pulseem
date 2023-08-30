@@ -26,6 +26,7 @@ import whatsappCampaign from './WhatsappCampaign.json';
 import whatsappManagement from './WhatsappManagement.json';
 import whatsappReport from './WhatsappReport.json';
 import whatsappChat from './WhatsappChat.json';
+import integrations from './Integrations.json'
 
 export const en = {
 	automations,
@@ -51,6 +52,7 @@ export const en = {
 	mmsreport,
 	languages,
 	settings,
+	integrations,
 	whatsapp,
 	whatsappCampaign,
 	whatsappManagement,
