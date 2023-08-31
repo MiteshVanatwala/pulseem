@@ -426,7 +426,6 @@ const ClientSearchResult = ({ props, classes }) => {
               OrderItems: true,
               FormatDate: true,
               ConvertStatusToString: false,
-              //Statuses: location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue ? ClientStatus.Sms : ClientStatus.Whatsapp,
               DeleteProperties: deletedProperties.length > 0 ? deletedProperties : null,
               Order: Object.keys(exportColumnHeader.current),
               ReplaceNull: true
@@ -436,7 +435,7 @@ const ClientSearchResult = ({ props, classes }) => {
               // Pay attention -> We set XLSX for better header's order.
               // CSV not supporting numeric extra fields order.
               result = await SwitchStatusByCondition(result, ClientStatus.Email, true);
-              result = await SwitchStatusByCondition(result, location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue ? ClientStatus.Sms : ClientStatus.Whatsapp, false);
+              result = await SwitchStatusByCondition(result, ClientStatus.Sms, false);
 
               ExportFile({
                 data: result,
