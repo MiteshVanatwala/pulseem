@@ -35,7 +35,7 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from '../../../redux/reducers/ConnectorsSlice';
 import QuickManualUploadDialog from "../../Newsletter/Wizard/Popups/QuickManualUploadDialog";
-import { validatePhoneNumber } from "../../../helpers/Utils/common";
+import { IsValidPhone } from "../../../helpers/Utils/Validations";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -1759,8 +1759,8 @@ const SmsSend = ({ classes, ...props }) => {
   const handleConfirmC = async () => {
     setLoader(true);
     var req = [];
-    areaData.split('\n').map((q) => {
-      if (validatePhoneNumber(q.replace(',', ''))) {
+    areaData.split('\n').forEach((q) => {
+      if (IsValidPhone(q.replace(',', ''))) {
         req.push({ Cellphone: q.replace(',', ''), Telephone: q.replace(',', '') })
       }
     });
