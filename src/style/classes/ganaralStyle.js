@@ -1984,14 +1984,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   btnTab: {
     fontSize: 20,
     textTransform: "capitalize",
-    // padding: 2,
     minWidth: 120,
     minHeight: 40,
     color: '#000',
-    background: '#FFF',
+    background: '#E6E6E6',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    borderBottom: '4px solid #fff',
+    border: '3px solid #fff',
+    borderBottom: 'none',
     '&.alignCenter': {
       display: 'flex',
       justifyContent: 'center',
@@ -1999,10 +1999,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   currentActiveTab: {
-    borderBottom: 'solid 4px #ff3433',
-    color: "#ff3433 !important",
+    background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: "#fff !important",
     '& svg': {
-      color: '#ff3433'
+      color: '#fff',
     }
   },
   activeTab: {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, Tooltip, FormControlLabel, Checkbox
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControlLabel, Tooltip, Checkbox
 } from '@material-ui/core'
 import {
   TablePagination, DateField, SearchField
@@ -31,6 +31,9 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -58,6 +61,7 @@ const SmsReport = ({ classes }) => {
   const [hasRevenue, setHasRevenue] = useState(false);
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
+  const [showNoticeDialog, setShowNoticeDialog] = useState(false);
 
   moment.locale(language)
 
@@ -228,6 +232,7 @@ const SmsReport = ({ classes }) => {
     "UpdateDate": t('common.UpdateDate'),
     "SendDate": t('common.SendDate'),
     "ClicksCount": t('mainReport.clickCount'),
+    "VerifiedCount": t('mainReport.verifiedCount'),
     "UniqueClicksCount": t('common.ClicksUnique'),
     "RealClicks": t('mainReport.verifiedCount'),
     "TotalSendPlan": t('mainReport.totalSendPlan'),
@@ -584,7 +589,7 @@ const SmsReport = ({ classes }) => {
       success,
       ClicksCount,
       UniqueClicksCount,
-      RealClicks,
+      RealClicks = 0,
       removed,
       replies,
       CreditsPerSms,
@@ -674,7 +679,7 @@ const SmsReport = ({ classes }) => {
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex3}>
+          className={classes.flex2}>
           <Grid container direction={'row'} className={classes.justifyEvenly} style={{ flexWrap: 'initial' }}>
             <Grid item className={classes.plr10}>
               {renderIntData(CreditsPerSms, '', { title: t("mainReport.postCredits") })}
@@ -709,6 +714,7 @@ const SmsReport = ({ classes }) => {
       ClicksCount,
       RealClicks,
       UniqueClicksCount,
+      RealClicks = 0,
       removed,
       failure,
       totalSent,
@@ -862,12 +868,12 @@ const SmsReport = ({ classes }) => {
     return {
       title: t("mainReport.SMSReportNote1"),
       showDivider: true,
+      exitButton: false,
       content: (
         <>
           <Typography className={classes.f18}>
             {RenderHtml(t("mainReport.SMSReportNote2"))}
           </Typography>
-
           <FormControlLabel
             label={t("common.doNotShow")}
             className={classes.pt10}
@@ -893,14 +899,11 @@ const SmsReport = ({ classes }) => {
     }
   }
 }
-
   const renderDialog = () => {
     const { type } = dialogType || {}
-
     const dialogContent = {
       featureNotice: getFeatureNoticeDialog(),
     }
-
     if (dialogContent[type]) {
       const currentDialog = dialogContent[type] || {}
       return (
@@ -942,6 +945,7 @@ const SmsReport = ({ classes }) => {
         options={ExportFileTypes}
       />
       <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
+      {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={true} />
       {renderDialog()}
     </DefaultScreen>
