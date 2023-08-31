@@ -209,7 +209,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     height: 0
   },
   phoneAppBarPaperContainer: {
-    zIndex: '1',
+    zIndex: 99999,
     boxSizing: 'border-box',
     top: 3,
     width: '100%',

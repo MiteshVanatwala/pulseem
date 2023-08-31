@@ -56,8 +56,8 @@ const AppBarItem = ({
   return (
     <Box
       zIndex='tooltip'
-      // onMouseOver={handleOpen}
-      // onMouseLeave={handleClose}
+      onMouseOver={handleOpen}
+      onMouseLeave={handleClose}
       className={clsx(classes.appBarItemContainer)}>
       <Box
         style={{ whiteSpace: 'nowrap' }}

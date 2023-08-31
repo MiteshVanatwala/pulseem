@@ -196,7 +196,7 @@ const ChangePassword = ({
         LowerChar: !!trimValue?.match(lowerCaseLetters),
         SpecialChar: !!trimValue?.match(specialLetters),
         UpperChar: !!trimValue?.match(upperCaseLetters),
-        PasswordLength: trimValue.length + 1,
+        PasswordLength: trimValue.length,
         NumberChar: !!trimValue?.match(numbers),
       } as ValidPassword;
 
