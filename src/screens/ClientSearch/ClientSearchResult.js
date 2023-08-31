@@ -425,8 +425,7 @@ const ClientSearchResult = ({ props, classes }) => {
             const exportOptions = {
               OrderItems: true,
               FormatDate: true,
-              ConvertStatusToString: true,
-              Statuses: location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue ? ClientStatus.Sms : ClientStatus.Whatsapp,
+              ConvertStatusToString: false,
               DeleteProperties: deletedProperties.length > 0 ? deletedProperties : null,
               Order: Object.keys(exportColumnHeader.current),
               ReplaceNull: true
