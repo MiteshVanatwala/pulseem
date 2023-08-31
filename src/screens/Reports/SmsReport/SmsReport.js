@@ -31,9 +31,6 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
-import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
-import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -61,7 +58,6 @@ const SmsReport = ({ classes }) => {
   const [hasRevenue, setHasRevenue] = useState(false);
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
-  const [showNoticeDialog, setShowNoticeDialog] = useState(false);
 
   moment.locale(language)
 
@@ -712,7 +708,6 @@ const SmsReport = ({ classes }) => {
       SendDate,
       UpdateDate,
       ClicksCount,
-      RealClicks,
       UniqueClicksCount,
       RealClicks = 0,
       removed,
