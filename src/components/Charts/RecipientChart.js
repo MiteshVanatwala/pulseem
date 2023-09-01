@@ -261,9 +261,13 @@ const RecipientChart = ({ classes, }) => {
                 className={classes.doughnutGrid}>
                 <Box className={classes.doughnutBox}>
                     <Link
-                        href="#!"
+                        href="#"
                         className={classes.chartLabel}
-                        onClick={() => openReports(report.ReportSection, "total")}>
+                        onClick={(e) => {
+                            e.preventDefault();
+                            openReports(report.ReportSection, "total");
+                        }}
+                    >
                         <Typography className={'centerText'}>{t(titles[index].mainTitle)}</Typography>
                         <Divider />
                         <Typography className={'quantity'}>{report.Total.toLocaleString()}</Typography>
