@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { Link, MenuItem, Select, Typography } from "@material-ui/core";
+import { FormControl, InputAdornment, Link, MenuItem } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { Box, Grid, Button } from "@material-ui/core";
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
@@ -15,6 +16,7 @@ import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
 import { Loader } from "../../../../components/Loader/Loader";
+import { IoIosArrowDown } from "react-icons/io";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -242,34 +244,53 @@ const SummaryDialog = ({ classes,
                                 <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("sms.smsSummaryCampaignFrom")}:</span>
                             </Box>
                             <Box style={{ width: '100%' }}>
-                                {/* TODO - FocusTrap */}
-                                <Select
-                                    style={{ width: '100%' }}
-                                    className={classes.mt1}
-                                    autoWidth={false}
-                                    native
-                                    value={fromEmail}
-                                    displayEmpty
-                                    onChange={handleFromEmailChanged}
-                                    inputProps={{
-                                        'aria-label': 'Without label',
-                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
-                                        style: { width: '100%' }
-                                    }}
-                                    variant='outlined'
+                                <FormControl
+                                    variant="standard"
+                                    className={clsx(classes.selectInputFormControl, classes.w100, classes.mb10)}
                                 >
-                                    {[{
-                                        Number: newsletterSendSummary?.FromEmail
-                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true })
-                                    ].map((obj, index) => (
-                                        <option
-                                            key={`ve_${index}`}
-                                            value={obj.Number}
-                                        >
-                                            {obj.Number}
-                                        </option>
-                                    ))}
-                                </Select>
+                                    <Select
+                                        variant="standard"
+                                        style={{ width: '100%' }}
+                                        className={classes.pbt5}
+                                        autoWidth={false}
+                                        value={fromEmail}
+                                        displayEmpty
+                                        onChange={handleFromEmailChanged}
+                                        inputProps={{
+                                            'aria-label': 'Without label',
+                                            className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
+                                            style: { width: '100%' }
+                                        }}
+                                        endAdornment={
+                                            <InputAdornment
+                                                className={classes.selectAdornment}
+                                                position="end"
+                                            >
+                                                <IoIosArrowDown size={20} />
+                                            </InputAdornment>
+                                        }
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 300,
+                                                    direction: isRTL ? 'rtl' : 'ltr'
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        {[{
+                                            Number: newsletterSendSummary?.FromEmail
+                                        }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true })
+                                        ].map((obj, index) => (
+                                            <MenuItem
+                                                key={`ve_${index}`}
+                                                value={obj.Number}
+                                            >
+                                                {obj.Number}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             </Box>
                             <Box className={classes.sumChild}>
                                 <Link className={clsx(classes.link)}

@@ -1,13 +1,14 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, Select, OutlinedInput } from '@material-ui/core';
-// import Select from '@mui/material/Select';
+import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, InputAdornment, MenuItem } from '@material-ui/core';
+import Select from '@mui/material/Select';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { useState, useEffect } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
 import { getTwoFactorAuthValues } from '../../redux/reducers/commonSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const ConfirmRadioDialog = ({
     classes,
@@ -98,13 +99,13 @@ const ConfirmRadioDialog = ({
                             <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                                 <Typography>{RenderHtml(t("recipient.exportGroups.notifyEmail"))}</Typography>
                                 <FormControl variant="standard" className={clsx(classes.selectInputFormControl, classes.w100)}>
-                                    {/* TODO - Maximum call stack size exceeded. FocusTrap */}
-                                    {/* <Select                                        
+                                    <Select                                        
                                         variant="standard"
                                         name="FromEmail"
                                         displayEmpty
-                                        value={notifyEmail}
-                                        onChange={(event) => setNotifyEmail(event.target.value)}
+                                        value={notifyEmail ?? -1}
+                                        onChange={event => setNotifyEmail(event.target.value)}
+                                        className={classes.pbt5}
                                         endAdornment={
                                             <InputAdornment
                                                 className={classes.selectAdornment}
@@ -116,7 +117,7 @@ const ConfirmRadioDialog = ({
                                         MenuProps={{
                                             PaperProps: {
                                                 style: {
-                                                    maxHeight: 150,
+                                                    maxHeight: 200,
                                                     direction: isRTL ? 'rtl' : 'ltr'
                                                 },
                                             },
@@ -133,40 +134,6 @@ const ConfirmRadioDialog = ({
                                                 </MenuItem>
                                             }
                                         })}
-                                    </Select> */}
-                                    <Select
-                                        native
-                                        displayEmpty
-                                        value={notifyEmail ?? -1}
-                                        onChange={(event, val) => {
-                                            setNotifyEmail(event.target.value);
-                                        }}
-                                        label={RenderHtml(t("recipient.exportGroups.notifyEmail"))}
-                                        name="FromEmail"
-                                        input={
-                                            <OutlinedInput />
-                                        }
-                                        MenuProps={{
-                                            PaperProps: {
-                                                style: {
-                                                    width: '100%',
-                                                },
-                                            },
-                                        }}
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                    >
-                                        <option disabled value="-1" key="-1">{t("common.select")}</option>
-                                        {twoFactorAuthEmails.map((item, index) => {
-                                            if (!item.IsDeleted) {
-                                                return <option
-                                                    key={`exd_${index}`}
-                                                    value={item.AuthValue}
-                                                >
-                                                    {t(item.AuthValue)}
-                                                </option>
-                                            }
-                                        }
-                                        )}
                                     </Select>
                                 </FormControl>
                             </Box>

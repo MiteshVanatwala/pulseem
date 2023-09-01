@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Tooltip, Typography, ClickAwayListener } from "@material-ui/core";
+import { Tooltip, Typography, InputAdornment, MenuItem, FormControl } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
-import FormGroup from "@material-ui/core/FormGroup";
 import Toast from '../Toast/Toast.component';
 import Waze from "../../assets/images/waze.png";
 import { BsArrowClockwise } from "react-icons/bs";
@@ -27,12 +27,12 @@ import SearchIcon from "@material-ui/icons/Search";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
-import Switch from "react-switch";
 import clsx from "clsx";
 import { Loader } from "../Loader/Loader";
 import EmojiPicker from "../Emojis/EmojiPicker";
 import debounce from 'lodash.debounce';
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
+import { IoIosArrowDown } from "react-icons/io";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -558,58 +558,48 @@ const Editorbox = ({
                                     placement="top"
                                     arrow
                                 >
-                                    {/* TODO - FocusTrap */}
-                                    {/* <Select
-                                        variant='standard'
-                                        value={selectValue}
-                                        onChange={handleSelectChange}
-                                        endAdornment={
-                                            <InputAdornment
-                                                className={classes.selectAdornment}
-                                                position="end"
-                                            >
-                                                <IoIosArrowDown size={20} />
-                                            </InputAdornment>
-                                        }
-                                        style={{
-                                            width: 200
-                                        }}
-                                        MenuProps={{
-                                            PaperProps: {
-                                                style: {
-                                                    maxHeight: 300,
-                                                    direction: isRTL ? 'rtl' : 'ltr'
+                                    <FormControl
+                                        variant="standard"
+                                        className={clsx(classes.selectInputFormControl)}
+                                    >
+                                        <Select
+                                            variant='standard'
+                                            value={selectValue}
+                                            onChange={handleSelectChange}
+                                            endAdornment={
+                                                <InputAdornment
+                                                    className={classes.selectAdornment}
+                                                    position="end"
+                                                >
+                                                    <IoIosArrowDown size={20} />
+                                                </InputAdornment>
+                                            }
+                                            style={{
+                                                width: 200
+                                            }}
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    style: {
+                                                        maxHeight: 200,
+                                                        direction: isRTL ? 'rtl' : 'ltr'
+                                                    },
                                                 },
-                                            },
-                                        }}
-                                    >
-                                        <MenuItem disabled value="Personilization">{t("mainReport.personalisationSelect")}</MenuItem>
-                                        {extraAccountDATA.map((item, i) => {
-                                            if (item.selected) {
-                                                return (<MenuItem disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</MenuItem>)
-                                            }
-                                            else {
-                                                return <MenuItem value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</MenuItem>;
-                                            }
-
-                                        })}
-                                    </Select> */}
-                                    <select
-                                        className={clsx(classes.selectVal, classes.sidebar)}
-                                        value={selectValue}
-                                        onChange={handleSelectChange}
-                                    >
-                                        <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
-                                        {extraAccountDATA.map((item, i) => {
-                                            if (item.selected) {
-                                                return (<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</option>)
-                                            }
-                                            else {
-                                                return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</option>;
-                                            }
-
-                                        })}
-                                    </select>
+                                            }}
+                                        >
+                                            <MenuItem disabled value="Personilization">{t("mainReport.personalisationSelect")}</MenuItem>
+                                            {extraAccountDATA.map((item, i) => {
+                                                return (
+                                                    <MenuItem
+                                                        value={[Object.keys(item)[0]]}
+                                                        key={`extrakey_${i}`}
+                                                        disabled={item.selected}
+                                                    >
+                                                        {item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}
+                                                    </MenuItem>
+                                                );
+                                            })}
+                                        </Select>
+                                    </FormControl>
                                 </Tooltip>
                             </Box>
                             <Box className={classes.addDiv} tabIndex="0" onBlur={() => { seteditmenuClick(false) }}>
