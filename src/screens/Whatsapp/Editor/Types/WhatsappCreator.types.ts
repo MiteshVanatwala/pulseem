@@ -48,6 +48,7 @@ export type FileUploadProps = {
 	};
 	setFileData: (fileData: File | undefined) => void;
 	buttonType: string;
+	sourceFileSize?: string
 };
 
 export type ReduxUserProps = {

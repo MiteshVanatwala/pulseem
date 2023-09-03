@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { FileUploadProps, coreProps } from '../Types/WhatsappCreator.types';
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import AlertModal from '../Popups/AlertModal';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ const FileUpload = ({
 	fileData,
 	buttonType,
 	setFileData,
+	sourceFileSize = ''
 }: FileUploadProps) => {
 	const { t: translator } = useTranslation();
 	const [isFileUploadAlert, setIsFileUploadAlert] = useState<boolean>(false);
@@ -20,6 +21,12 @@ const FileUpload = ({
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
 	const units = ['bytes', 'KB', 'MB'];
+
+	useEffect(() => {
+		if (sourceFileSize !== '') {
+			setFileSize(niceBytes(sourceFileSize));
+		}
+	}, [sourceFileSize])
 
 	const checkFileUploadAvailability = (e: BaseSyntheticEvent) => {
 		if (buttonType === 'quickReply') {
@@ -89,7 +96,7 @@ const FileUpload = ({
 							}}>
 							{fileData?.fileLink
 								?.split('/')
-								[fileData?.fileLink?.split('/')?.length - 1]?.substring(0, 25) +
+							[fileData?.fileLink?.split('/')?.length - 1]?.substring(0, 25) +
 								'...'}
 							&emsp;
 							<i

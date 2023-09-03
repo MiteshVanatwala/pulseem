@@ -137,8 +137,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
 	const [restoreIds, setRestoreIds] = useState<string[]>([]);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(false);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
 		[]
 	);
@@ -190,10 +190,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						pageSize: Number(rowsPerPage),
 					});
 				}
-			} else {
-				setIsLoader(false);
-				setIsAccountSetup(false);
+				setIsAccountSetup(true);
 			}
+			setIsLoader(false);
 		})();
 		/**
 		 * we disable it because we want to run this code only when component loads
@@ -504,9 +503,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			} else {
 				templateData?.payload?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: templateData?.payload?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: templateData?.payload?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
@@ -673,9 +672,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		} else {
 			deleteData?.payload?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: deleteData?.payload?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: deleteData?.payload?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -693,9 +692,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		} else {
 			deleteData?.payload?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: deleteData?.payload?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: deleteData?.payload?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -714,9 +713,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		} else {
 			restoreCampaignData?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: restoreCampaignData?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: restoreCampaignData?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -1092,11 +1091,10 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						isOpen={isPreviewCampaignOpen}
 						onClose={() => setIsPreviewCampaignOpen(false)}
 						// title={translator('whatsappManagement.preview')}
-						title={`${translator('whatsapp.alertModal.templateId')}: ${
-							campaignListData?.find(
-								(campaign) => Number(activeRowId) === campaign?.WACampaignID
-							)?.TemplateId || ''
-						}`}
+						title={`${translator('whatsapp.alertModal.templateId')}: ${campaignListData?.find(
+							(campaign) => Number(activeRowId) === campaign?.WACampaignID
+						)?.TemplateId || ''
+							}`}
 						titleFontSize={'18px'}
 						subtitle={''}
 						onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
