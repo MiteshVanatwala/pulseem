@@ -29,17 +29,17 @@ const Gallery = ({
     callbackSelectFile,
     folderType = PulseemFolderType.CLIENT_IMAGES,
     multiSelect = false,
-    selected = '',
+    selected = [],
     forceReload = false }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [folders, setFolders] = useState(null);
     const [folderName, setFolderName] = useState('');
     const [scrollIndex, setScrollIndex] = useState(0);
-    const [selectedFile, setSelectedFile] = useState(!multiSelect ? selected : null);
+    const [selectedFile, setSelectedFile] = useState(multiSelect ? selected : null);
     const [toastMessage, setToastMessage] = useState(null);
     const [selectedNode, setSelectedNode] = useState('k_0');
-    const [selectedFileURL, setSelectedFileURL] = useState(multiSelect ? [] : selected);
+    const [selectedFileURL, setSelectedFileURL] = useState(multiSelect ? [] : null);
     const [selectedFolder, setSelectedFolder] = useState('main');
     const [folderCreationState, setShowFolderCreation] = useState(false);
     const { windowSize, language, isRTL } = useSelector(state => state.core)
@@ -82,7 +82,7 @@ const Gallery = ({
     }, [gallery])
 
     useEffect(() => {
-        initGallery();
+        initGallery(true);
     }, [])
 
     const useTreeItemStyles = makeStyles((theme) => ({
@@ -185,13 +185,13 @@ const Gallery = ({
     const handleSelectFile = (fileUrl, fileIndex) => () => {
         setSelectedFile(multiSelect ?
             (
-                selectedFile.indexOf(fileIndex) == -1 ?
+                selectedFile?.indexOf(fileIndex) === -1 ?
                     [...selectedFile, fileIndex] : selectedFile.filter(obj => obj !== fileIndex)
             )
             : fileIndex);
         setSelectedFileURL(multiSelect ?
             (
-                selectedFileURL.indexOf(fileUrl) == -1 ?
+                selectedFileURL?.indexOf(fileUrl) === -1 ?
                     [...selectedFileURL, fileUrl] : selectedFileURL.filter(obj => obj !== fileUrl)
             )
             : fileUrl);
