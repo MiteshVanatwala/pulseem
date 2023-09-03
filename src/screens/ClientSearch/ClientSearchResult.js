@@ -63,6 +63,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { getErrorMessageFromTwilioLink } from "../Whatsapp/Common";
+import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -126,7 +127,7 @@ const ClientSearchResult = ({ classes }) => {
   const [clientToEdit, setClientToEdit] = useState(null);
   const [isDownloadProgress, setIsDownloadProgress] = useState(false);
   const [emailToNotify, setEmailToNotify] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -239,7 +240,7 @@ const ClientSearchResult = ({ classes }) => {
           TestStatusOfEmailElseSms: searchParams.get("TestStatusOfEmailElseSms") ? parseInt(searchParams.get("TestStatusOfEmailElseSms")) : null, // 0 or null = sms, 1 = email
           Switch: searchParams.get("Switch"), // Not in use for now.
           CountryOrRegion: searchParams.get("CountryOrRegion"),// Not in use for now.
-          GroupIds: searchParams.get("GroupIds").split(',').map((g) => { return parseInt(g) }), // List of 1 groupId
+          GroupIds: searchParams.get("GroupIds") ? searchParams.get("GroupIds").split(',').map((g) => { return parseInt(g) }) : [], // List of 1 groupId
           NodeID: searchParams.get("NodeID") ?? "", // Not in use for now
           CampaignID: searchParams.get("CampaignID") ? parseInt(searchParams.get("CampaignID")) : null,
           FromDate: searchParams.get("FromDate"),
@@ -248,6 +249,11 @@ const ClientSearchResult = ({ classes }) => {
         }
       }
 
+      if (overwriteObject.ResultTitle === null) {
+        overwriteObject = getCookie('recipientSearchResultSearchparam');
+      } else {
+        setCookie('recipientSearchResultSearchparam', JSON.stringify(overwriteObject));
+      }
       let isSmsReport = false;
 
       if (document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
@@ -1349,6 +1355,7 @@ const ClientSearchResult = ({ classes }) => {
         {(searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) &&
           <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
             {revenueSummary && <SummaryRow
+              classes={classes}
               data={revenueSummary} />
             }
           </Grid>},

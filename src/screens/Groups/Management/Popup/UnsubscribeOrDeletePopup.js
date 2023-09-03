@@ -3,14 +3,15 @@ import {
     Grid,
     Typography,
     FormControlLabel,
-    OutlinedInput,
     Button,
     FormControl,
     FormLabel,
     RadioGroup,
     Radio,
-    Select
+    InputAdornment,
+    MenuItem
 } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { BsInfoCircleFill } from "react-icons/bs";
@@ -27,6 +28,7 @@ import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { getTwoFactorAuthValues } from '../../../../redux/reducers/commonSlice';
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
+import { IoIosArrowDown } from "react-icons/io";
 
 const UnsubscribeOrDeletePopup = ({
     classes,
@@ -80,39 +82,48 @@ const UnsubscribeOrDeletePopup = ({
                     {showEmailToNotify && <Box style={{ display: 'flex' }}>
                         <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                             <Typography>{RenderHtml(t("recipient.unsubscribed.notifyEmail"))}</Typography>
-                            <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
-                                {/* TODO - FocusTrap */}
+                            <FormControl
+                                variant="standard"
+                                className={clsx(classes.selectInputFormControl)}
+                            >
                                 <Select
-                                    native
+                                    variant="standard"
                                     displayEmpty
                                     value={notifyEmail}
+                                    className={classes.pbt5}
                                     onChange={(event, val) => {
                                         setNotifyEmail(event.target.value);
                                     }}
                                     label={t("recipient.unsubscribed.notifyEmail")}
                                     name="FromEmail"
-                                    input={
-                                        <OutlinedInput />
+                                    endAdornment={
+                                        <InputAdornment
+                                            className={classes.selectAdornment}
+                                            position="end"
+                                        >
+                                            <IoIosArrowDown size={20} />
+                                        </InputAdornment>
                                     }
                                     MenuProps={{
                                         PaperProps: {
                                             style: {
-                                                width: '100%',
+                                                maxHeight: 300,
+                                                direction: isRTL ? 'rtl' : 'ltr'
                                             },
                                         },
                                     }}
-                                    inputProps={{ 'aria-label': 'Without label' }}
                                 >
-                                    <option disabled value="-1" key="-1">{t("common.select")}</option>
-                                    {twoFactorAuthEmails.map((item, index) => {
-                                        return <option
-                                            key={`exd_${index}`}
-                                            value={item.AuthValue}
-                                        >
-                                            {t(item.AuthValue)}
-                                        </option>
+                                    <MenuItem disabled value="-1" key="-1">{t("common.select")}</MenuItem>
+                                    {
+                                        twoFactorAuthEmails.map((item, index) => {
+                                            return <MenuItem
+                                                key={`exd_${index}`}
+                                                value={item.AuthValue}
+                                            >
+                                                {t(item.AuthValue)}
+                                            </MenuItem>
+                                        })
                                     }
-                                    )}
                                 </Select>
                             </FormControl>
                         </Box>

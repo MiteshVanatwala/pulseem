@@ -1,4 +1,5 @@
-import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText, Box, FormGroup, TextField, Link } from '@material-ui/core'
+import { Button, FormControl, Grid, Typography, MenuItem, FormHelperText, Box, FormGroup, TextField, Link, InputAdornment } from '@material-ui/core'
+import Select from '@mui/material/Select';
 import Switch from "react-switch";
 import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,7 @@ import Toast from '../../../../components/Toast/Toast.component';
 import { logout } from '../../../../helpers/Api/PulseemReactAPI';
 import { CreditType } from '../../../../Models/Payments/NoCreditPopUp';
 import NoCreditDialog from '../Popups/NoCreditDialog'
+import { IoIosArrowDown } from 'react-icons/io';
 
 const SmsMarketingDialog = ({
     classes,
@@ -265,18 +267,13 @@ const SmsMarketingDialog = ({
                         {t('campaigns.newsLetterEditor.sendSettings.smsMarketing.sendTo')}
                     </Typography>
                     <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%' }} error={!!errors.SendSmsTo}>
-                        {/* TODO - FocusTrap */}
-                        {/* <Select
+                        <Select
                             variant="standard"
-                            style={{
-                                height: 40
-                            }}
                             placeholder={t('campaigns.newsLetterEditor.sendSettings.sendTo')}
-                            className={classes.select}
-                            // labelId="sendToSelect"
-                            // id="sendToSelect"
+                            id="sendToSelect"
                             value={smsModel.SendSmsTo}
                             onChange={(e) => setSmsModel({ ...smsModel, SendSmsTo: e.target.value })}
+                            style={{ height: 40 }}
                             endAdornment={
                                 <InputAdornment
                                     className={classes.selectAdornment}
@@ -297,26 +294,6 @@ const SmsMarketingDialog = ({
                             {
                                 sendToOptions.map((obj, idx) => <MenuItem
                                     key={idx}
-                                    disabled={obj.value === -1}
-                                    value={obj.value}>{t(obj.text)}</MenuItem>
-                                )
-                            }
-                        </Select> */}
-                        <Select
-                            style={{
-                                height: 40
-                            }}
-                            placeholder={t('campaigns.newsLetterEditor.sendSettings.sendTo')}
-                            className={classes.select}
-                            labelId="sendToSelect"
-                            id="sendToSelect"
-                            value={smsModel.SendSmsTo}
-                            onChange={(e) => setSmsModel({ ...smsModel, SendSmsTo: e.target.value })}
-                        >
-                            {
-                                sendToOptions.map((obj, idx) => <MenuItem
-                                    key={idx}
-                                    style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
                                     disabled={obj.value === -1}
                                     value={obj.value}>{t(obj.text)}</MenuItem>
                                 )
