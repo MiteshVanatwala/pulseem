@@ -29,7 +29,7 @@ const Gallery = ({
     callbackSelectFile,
     folderType = PulseemFolderType.CLIENT_IMAGES,
     multiSelect = false,
-    selected = [],
+    selected,
     forceReload = false }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();

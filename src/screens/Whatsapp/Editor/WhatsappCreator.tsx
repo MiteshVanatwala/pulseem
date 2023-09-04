@@ -1088,17 +1088,19 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const handleSelectedImage = async (fileUrl: any) => {
-		const fileProp = gallery[""].filter((g: any) => { return g.FileURL === fileUrl });
-
 		setDialogType(null);
-
+		
 		if (!fileUrl || fileUrl === '') return;
+
+		const fileProp = gallery[""].filter((g: any) => { return g.FileURL === fileUrl });
 
 		setFileData({
 			fileLink: fileUrl,
-			fileType: '',
+			fileType: "0",
 			properties: fileProp && fileProp[0].Properties
 		});
+
+		setIsFileSelected(true);
 	}
 
 	const renderGalleryDialog = () => {
@@ -1112,7 +1114,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					forceReload={true}
 					callbackSelectFile={handleSelectedImage}
 					multiSelect={false}
-					selected={fileData?.fileLink || ''}
+					selected={fileData}
 					folderType={PulseemFolderType.CLIENT_IMAGES}
 				/>
 			),
