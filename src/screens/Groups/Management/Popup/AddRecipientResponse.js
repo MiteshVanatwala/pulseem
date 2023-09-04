@@ -34,8 +34,8 @@ const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message
           style={{ margin: '0 auto' }}
           onClick={onClose}
           className={clsx(
-            classes.dialogButton,
-            classes.dialogConfirmButton
+            classes.btn,
+            classes.btnRounded
           )}>
           {t('common.confirm')}
         </Button>
