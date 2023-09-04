@@ -212,9 +212,9 @@ export const deleteSms = createAsyncThunk(
 
 export const duplicteSms = createAsyncThunk(
 	'smsCampaign/cloneSmsCampaign',
-	async (id, thunkAPI) => {
+	async (cloneSettings, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.put(`smsCampaign/cloneSmsCampaign/${id}`);
+			const response = await PulseemReactInstance.put(`smsCampaign/cloneSmsCampaign`, cloneSettings);
 			return response.data;
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -472,7 +472,7 @@ export const smsSlice = createSlice({
 			SUCCESS: { severity: 'success', color: 'success', message: 'sms.saved', showAnimtionCheck: true },
 			QUICK_SEND_SUCCESSS: { severity: 'success', color: 'success', message: 'sms.quickSend', showAnimtionCheck: true },
 			SAVE_SETTINGS: { severity: 'success', color: 'success', message: 'sms.settings_saved', showAnimtionCheck: true },
-			ERROR: { severity: 'error', color: 'error', message: 'sms.error', showAnimtionCheck: true },
+			ERROR: { severity: 'error', color: 'error', message: 'sms.error', showAnimtionCheck: false },
 			OTP: { severity: 'success', color: 'success', message: 'sms.otpVerifiedSuccess', showAnimtionCheck: true },
 			INVALID_NUMBER: { severity: 'error', color: 'error', message: "sms.invalidNumber", showAnimtionCheck: false },
 			QUICK_SEND_ERROR: { severity: 'error', color: 'error', message: "sms.errorQuickSend", showAnimtionCheck: false },

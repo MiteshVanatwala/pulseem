@@ -61,6 +61,7 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 
 const SmsManagnentScreen = ({ classes }) => {
 	const { language, windowSize, rowsPerPage } = useSelector(
@@ -90,6 +91,7 @@ const SmsManagnentScreen = ({ classes }) => {
 	const [restoreArray, setRestoreArray] = useState([]);
 	const [showLoader, setLoader] = useState(true);
 	const [newSmsVerification, setNewSmsVerification] = useState(false);
+	const [duplicateDialog, setDuplicateDialog] = useState({});
 	const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
 	const dispatch = useDispatch();
 	moment.locale(language);
@@ -365,7 +367,7 @@ const SmsManagnentScreen = ({ classes }) => {
 	};
 
 	const renderCellIcons = (row) => {
-		const { Status, Groups, AutomationID, Id, AutomationTriggerInActive } = row;
+		const { Name, Status, Groups, AutomationID, Id, AutomationTriggerInActive } = row;
 
 		const iconsMap = [
 			{
@@ -407,9 +409,9 @@ const SmsManagnentScreen = ({ classes }) => {
 				lable: t('campaigns.lnkEditResource1.ToolTip'),
 				rootClass: classes.paddingIcon,
 				onClick: () => {
-					setDialogType({
-						type: 'duplicate',
-						data: Id,
+					setDuplicateDialog({
+						id: Id,
+						name: Name
 					});
 				},
 			},
@@ -1048,6 +1050,32 @@ const SmsManagnentScreen = ({ classes }) => {
 		renderButtons: () => null,
 	});
 
+	const onDuplicateCampaign = async (selectedOptions) => {
+		handleClose();
+		const response = await dispatch(duplicteSms({ CampaignId: duplicateDialog?.id, CloneOptions: selectedOptions }))
+		handleDuplicateResponse(response?.payload);
+	}
+	const handleDuplicateResponse = (response) => {
+		switch (response?.StatusCode) {
+			case 201:
+			default: {
+				clearSearch();
+				getData();
+				setPage(1);
+				// Show success
+				break;
+			}
+			case 404: {
+				// Show campaign not found
+				break;
+			}
+			case 405: {
+				// Show Maximum monthly campaigns created or bulk ended
+				break;
+			}
+		}
+	}
+
 	const renderDialog = () => {
 		const { data, type } = dialogType || {};
 
@@ -1087,6 +1115,20 @@ const SmsManagnentScreen = ({ classes }) => {
 			{renderTablePagination()}
 			{renderDialog()}
 			{newSmsVerification && <VerificationDialog classes={classes} isOpen={newSmsVerification} variant='sms' onClose={() => setNewSmsVerification(false)} />}
+			<DuplicateCampaign
+        isSms={true}
+				title={t('campaigns.dialogDuplicateTitle')}
+				classes={classes}
+				isOpen={!!duplicateDialog?.id}
+				duplicateOptions={[]}
+				handleClose={async (selectedOptions) => {
+					if (selectedOptions !== undefined) {
+						onDuplicateCampaign(selectedOptions);
+					}
+					setDuplicateDialog({});
+				}}
+				campaignName={duplicateDialog?.name}
+      />
 			<Loader isOpen={showLoader} />
 		</DefaultScreen>
 	)

@@ -137,9 +137,9 @@ export const combinedGroup = createAsyncThunk(
         }
     })
 export const createAndGetGroupIdForManualSend = createAsyncThunk(
-    'Group/CreateAndGetGroupIdForManualSend', async (_, thunkAPI) => {
+    'Group/CreateAndGetGroupIdForManualSend', async (campaignType, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.get(`Group/CreateAndGetGroupIdForManualSend`);
+            const response = await PulseemReactInstance.get(`Group/CreateAndGetGroupIdForManualSend/${campaignType}`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
