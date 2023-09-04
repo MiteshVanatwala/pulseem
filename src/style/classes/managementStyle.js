@@ -2033,7 +2033,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     '& span': {
       padding: '2px 9px',
       '&.Mui-checked': {
-        color: '#0371ad'
+        color: '#ff3343'
       }
     }
   },
