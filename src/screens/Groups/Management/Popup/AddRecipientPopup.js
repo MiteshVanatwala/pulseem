@@ -323,6 +323,7 @@ const AddRecipientPopup = ({ classes,
                     code: 201,
                     message: recipientData ? ToastMessages.RECIPIENT_UPDATED : ToastMessages.RECIPIENT_ADDED,
                     Func: () => {
+                        selectGroup([]);
                         new Promise(async (resolutionFunc, rejectionFunc) => {
                             resolutionFunc(onAddRecipient());
                         }).then((res) => {
