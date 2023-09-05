@@ -734,12 +734,12 @@ const UnsubscribeOrDeletePopup = ({
                     </Box>
                     {showDropBox && <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
-                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
+                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} className={clsx(classes.paddingSides15, classes.pt5)} />
                         </label>
                     </Box>}
                 </Box>
             }
-            icon={< div className={clsx(classes.dialogIconContent, 'unicode')} >
+            icon={<div className={clsx(classes.dialogIconContent, 'unicode', classes.pt10)} >
                 {'\uE0D5'}
             </div >}
             onClose={onClose}
