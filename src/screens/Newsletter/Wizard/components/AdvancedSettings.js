@@ -40,7 +40,7 @@ export const AdvancedSettings = ({
                         variant="standard"
                         displayEmpty
                         className={classes.pbt5}
-                        value={campaingnValues?.IsResponsive ? '1' : '0'}
+                        value={campaingnValues?.IsResponsive ? 1 : 0}
                         onChange={(event) => {
                             setCampaingnValues({
                                 ...campaingnValues,
