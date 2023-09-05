@@ -426,18 +426,21 @@ const AddRecipientPopup = ({ classes,
                         gridSize: { xs: 12, sm: 3 }
                     },
                     {
-                        content: <TextField
-                            id="outlined-basic"
-                            label=""
-                            variant="outlined"
-                            name="LastName"
-                            value={addRecipientData.LastName}
-                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
-                            autoComplete="off"
-                            onChange={handleChange}
-                            error={errors.LastName}
-                            helperText={errors.LastName}
-                        />,
+                        content: <>
+                            <TextField
+                                id="outlined-basic"
+                                label=""
+                                variant="outlined"
+                                name="LastName"
+                                value={addRecipientData.LastName}
+                                className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
+                                autoComplete="off"
+                                onChange={handleChange}
+                            />
+                            {!!errors.LastName && (
+                                <Typography className={clsx(classes.errorText, classes.f14)}>{errors.LastName}</Typography>
+                            )}
+                        </>,
                         gridSize: { xs: 12, sm: 9 }
                     }
                     ]}
@@ -473,32 +476,35 @@ const AddRecipientPopup = ({ classes,
                         gridSize: { xs: 12, sm: 3 }
                     },
                     {
-                        content: <TextField
-                            id="outlined-basic"
-                            label=""
-                            variant="outlined"
-                            name="Cellphone"
-                            value={addRecipientData.Cellphone}
-                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
-                            autoComplete="off"
-                            onKeyPress={IsNumberField}
-                            onChange={(e) => {
-                                if (e.target.value.length === 1 && e.target.value === "-") {
-                                    return;
-                                }
-                                let tempVal = e.target.value
-                                if (!tempVal) {
-                                    handleChange(e)
-                                }
-                                else if (IsValidPhone(tempVal)) {
-                                    handleChange(e)
-                                }
-                            }}
-                            inputProps={{ maxlength: 16 }}
-                            error={errors.Cellphone}
-                            helperText={errors.Cellphone}
-                            onBlur={handleBlur}
-                        />,
+                        content: <>
+                            <TextField
+                                id="outlined-basic"
+                                label=""
+                                variant="outlined"
+                                name="Cellphone"
+                                value={addRecipientData.Cellphone}
+                                className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
+                                autoComplete="off"
+                                onKeyPress={IsNumberField}
+                                onChange={(e) => {
+                                    if (e.target.value.length === 1 && e.target.value === "-") {
+                                        return;
+                                    }
+                                    let tempVal = e.target.value
+                                    if (!tempVal) {
+                                        handleChange(e)
+                                    }
+                                    else if (IsValidPhone(tempVal)) {
+                                        handleChange(e)
+                                    }
+                                }}
+                                inputProps={{ maxlength: 16 }}
+                                onBlur={handleBlur}
+                            />
+                            {!!errors.Cellphone && (
+                                <Typography className={clsx(classes.errorText, classes.f14)}>{errors.Cellphone}</Typography>
+                            )}
+                        </>,
                         gridSize: { xs: 12, sm: 9 }
                     }
                     ]}
@@ -511,21 +517,24 @@ const AddRecipientPopup = ({ classes,
                         gridSize: { xs: 12, sm: 3 }
                     },
                     {
-                        content: <TextField
-                            id="outlined-basic"
-                            label=""
-                            variant="outlined"
-                            name="Email"
-                            value={addRecipientData.Email}
-                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
-                            autoComplete="off"
-                            onChange={handleEmailValue}
-                            error={errors.Email}
-                            helperText={errors.Email}
-                            onBlur={handleBlur}
-                            style={{ textAlign: 'left' }}
-                            maxlength={100}
-                        />,
+                        content: <>
+                            <TextField
+                                id="outlined-basic"
+                                label=""
+                                variant="outlined"
+                                name="Email"
+                                value={addRecipientData.Email}
+                                className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
+                                autoComplete="off"
+                                onChange={handleEmailValue}
+                                onBlur={handleBlur}
+                                style={{ textAlign: 'left' }}
+                                maxlength={100}
+                            />
+                            {!!errors.Email && (
+                                <Typography className={clsx(classes.errorText, classes.f14)}>{errors.Email}</Typography>
+                            )}
+                        </>,
                         gridSize: { xs: 12, sm: 9 }
                     }
                     ]}
@@ -559,75 +568,87 @@ const AddRecipientPopup = ({ classes,
         const MobileView = <SimpleGrid
             gridArr={[
                 {
-                    content: <TextField
-                        id="outlined-basic"
-                        label=""
-                        placeholder={t("common.first_name")}
-                        variant="outlined"
-                        name="FirstName"
-                        value={addRecipientData.FirstName}
-                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
-                        autoComplete="off"
-                        onChange={handleChange}
-                        error={errors.FirstName}
-                        helperText={errors.FirstName}
-                    />
+                    content: <>
+                        <TextField
+                            id="outlined-basic"
+                            label=""
+                            placeholder={t("common.first_name")}
+                            variant="outlined"
+                            name="FirstName"
+                            value={addRecipientData.FirstName}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
+                            autoComplete="off"
+                            onChange={handleChange}
+                        />
+                        {!!errors.FirstName && (
+                            <Typography className={clsx(classes.errorText, classes.f14)}>{errors.FirstName}</Typography>
+                        )}
+                    </>
                 },
                 {
-                    content: <TextField
-                        id="outlined-basic"
-                        label=""
-                        placeholder={t("common.last_name")}
-                        variant="outlined"
-                        name="LastName"
-                        value={addRecipientData.LastName}
-                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
-                        autoComplete="off"
-                        onChange={handleChange}
-                        error={errors.LastName}
-                        helperText={errors.LastName}
-                    />
+                    content: <>
+                        <TextField
+                            id="outlined-basic"
+                            label=""
+                            placeholder={t("common.last_name")}
+                            variant="outlined"
+                            name="LastName"
+                            value={addRecipientData.LastName}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
+                            autoComplete="off"
+                            onChange={handleChange}
+                        />
+                        {!!errors.LastName && (
+                            <Typography className={clsx(classes.errorText, classes.f14)}>{errors.LastName}</Typography>
+                        )}
+                    </>
                 },
                 {
-                    content: <TextField
-                        id="rec_email"
-                        label=""
-                        placeholder={t("common.email")}
-                        variant="outlined"
-                        name="Email"
-                        value={addRecipientData.Email}
-                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
-                        autoComplete="off"
-                        onChange={handleChange}
-                        error={errors.Email}
-                        helperText={errors.Email}
-                        onBlur={handleBlur}
-                    />
+                    content: <>
+                        <TextField
+                            id="rec_email"
+                            label=""
+                            placeholder={t("common.email")}
+                            variant="outlined"
+                            name="Email"
+                            value={addRecipientData.Email}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
+                            autoComplete="off"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        {!!errors.Email && (
+                            <Typography className={clsx(classes.errorText, classes.f14)}>{errors.Email}</Typography>
+                        )}
+                    </>
                 },
                 {
-                    content: <TextField
-                        id="rec_cellphone"
-                        label=""
-                        placeholder={t("common.cellphone")}
-                        variant="outlined"
-                        name="Cellphone"
-                        value={addRecipientData.Cellphone}
-                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
-                        autoComplete="off"
-                        onChange={(e) => {
-                            let tempVal = e.target.value
-                            if (!tempVal) {
-                                handleChange(e)
-                            }
-                            else if (IsValidPhone(tempVal)) {
-                                handleChange(e)
-                            }
-                        }}
-                        inputProps={{ maxlength: 12 }}
-                        error={errors.Cellphone}
-                        helperText={errors.Cellphone}
-                        onBlur={handleBlur}
-                    />
+                    content: <>
+                        <TextField
+                            id="rec_cellphone"
+                            label=""
+                            placeholder={t("common.cellphone")}
+                            variant="outlined"
+                            name="Cellphone"
+                            value={addRecipientData.Cellphone}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
+                            autoComplete="off"
+                            onChange={(e) => {
+                                let tempVal = e.target.value
+                                if (!tempVal) {
+                                    handleChange(e)
+                                }
+                                else if (IsValidPhone(tempVal)) {
+                                    handleChange(e)
+                                }
+                            }}
+                            inputProps={{ maxlength: 12 }}
+                            onBlur={handleBlur}
+                        />
+                        {!!errors.Cellphone && (
+                            <Typography className={clsx(classes.errorText, classes.f14)}>{errors.Cellphone}</Typography>
+                        )}
+                    </>
                 },
                 {
                     content: <TextField
