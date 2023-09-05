@@ -1077,7 +1077,7 @@ const AddRecipientPopup = ({ classes,
                 dropDownProps={{
                     onChange: (e, val, reason, details) => {
                         if (reason === "remove-option" || val.length === 0) {
-                            handleRemoveFromGroups(recipientData.Cellphone || recipientData.Email, reason === "remove-option" ? [details?.option?.GroupID] : selectedLocalGroups)
+                            handleRemoveFromGroups(recipientData?.Cellphone || recipientData?.Email, reason === "remove-option" ? [details?.option?.GroupID] : selectedLocalGroups)
                         }
                         const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
                         recipientData ? setSelectedLocalGroups(idArr) : selectGroup(idArr)
