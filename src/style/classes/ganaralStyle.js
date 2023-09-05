@@ -3315,6 +3315,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   whatsapp: {
     '& .MuiSelect-select': {
       minHeight: '35px !important',
+    },
+    '& .MuiSelect-icon': {
+      top: 15
     }
   },
   dialogZindex: {
