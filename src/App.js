@@ -68,6 +68,7 @@ import WhatsappReports from './screens/Whatsapp/Reports/WhatsappReports';
 import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAppCampaigns';
 import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
 import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
+import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 import Integrations from './screens/Integrations/Integrations';
 
 const renderRoutes = (classes, redirect) => {
@@ -355,8 +356,8 @@ const renderRoutes = (classes, redirect) => {
         component={transferUrl('/Pulseem/AccountReport.aspx')}
       />
       <Route
-        path={`/ClientReport`}
-        component={transferUrl('/Pulseem/ClientReport.aspx')}
+        path={`/react/Reports/Recipient`}
+        element={<RecipientReport classes={classes} />}
       />
       <Route
         path={`/EmailAutoReports`}
@@ -502,6 +503,11 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         path="*" element={<PageNotFound classes={classes} />}
+      />
+      <Route
+        exact
+        path={'/react/reports/recipient'}
+        element={<RecipientReport classes={classes} />}
       />
     </Routes>
   )

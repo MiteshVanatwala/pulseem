@@ -314,6 +314,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   borderAround: {
     border: "1px solid #000",
   },
+  greyBorderAround: {
+    border: "1px solid #d3d3d3",
+  },
   alignItemsCenter: {
     alignItems: "center",
   },
@@ -374,6 +377,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pe10: {
     paddingInlineEnd: 10,
   },
+  pe5: {
+    paddingInlineEnd: 5,
+  },
   p10: {
     padding: 10,
   },
@@ -420,7 +426,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingTop: 14,
   },
   pt15: {
-    paddingTop: 15
+    paddingTop: '15px !important'
   },
   pt25: {
     paddingTop: 25
@@ -506,6 +512,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   f12: {
     fontSize: `12px !important`,
+  },
+  f13: {
+    fontSize: 13,
   },
   mxAuto: {
     marginInline: "auto",
@@ -3442,6 +3451,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   cursorPointer: {
     cursor: 'pointer'
+  },
+  flexGrow1: {
+    flexGrow: 1
   },
   shopifySettingTextBox: {
     '& input': {
