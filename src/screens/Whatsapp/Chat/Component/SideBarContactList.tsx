@@ -15,10 +15,12 @@ import { lastMessage } from './data';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
+import { coreProps } from '../../Campaign/Types/WhatsappCampaign.types';
+import { useSelector } from 'react-redux';
 
 const SideBarContactList = ({
 	classes,
-	filteredSideChatContacts,
+	ChatContacts,
 	handleChatId,
 	handleUserStatus,
 	getStatusClass,
@@ -28,7 +30,7 @@ const SideBarContactList = ({
 }: SideBarContactListProps) => {
 	const { t: translator } = useTranslation();
 	const { contactID } = useParams();
-
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const useStyles = makeStyles(() => ({
 		selectSection: {
 			'&:focus': {
@@ -49,18 +51,18 @@ const SideBarContactList = ({
 				id='contact-list-div'
 				className={`${classes.whatsappChat} sidebar__contacts`}>
 				<InfiniteScroll
-					dataLength={filteredSideChatContacts?.length}
+					dataLength={ChatContacts?.length}
 					next={fetchMoreContacts}
 					hasMore={contactsPaginationSetting?.hasMore}
 					loader={<LinearProgress />}
 					scrollableTarget='contact-list-div'>
-					{filteredSideChatContacts?.length === 0 && !isLoader ? (
+					{ChatContacts?.length === 0 && !isLoader ? (
 						<div className={classes.noContactDiv}>
 							<>{translator('whatsappChat.noContacts')}</>
 						</div>
 					) : (
 						<>
-							{filteredSideChatContacts.map(
+							{ChatContacts.map(
 								(
 									contact: APIWhatsappChatSidebarContactsItemsData,
 									i: number
@@ -104,6 +106,13 @@ const SideBarContactList = ({
 																classes.whatsappChatStatusSelect,
 																getStatusClass(contact.ConversationStatusId)
 															)}
+															MenuProps={{
+																PaperProps: {
+																	style: {
+																		direction: isRTL ? 'rtl' : 'ltr',
+																	},
+																},
+															}}
 															autoWidth
 															value={contact.ConversationStatusId}
 															variant='standard'

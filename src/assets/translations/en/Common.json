@@ -72,6 +72,7 @@
   "Opens": "Opens",
   "Status": "Status",
   "smsStatus": "Sms Status",
+  "whatsappStatus": "Cellular Status",
   "emailStatus": "Email Status",
   "ClicksUnique": "Unique Clicks",
   "ErrorEmail": "Error",
@@ -547,7 +548,7 @@
   "ReplyText": "Reply Text",
   "statusActive": "Active",
   "invalid": "Invalid",
-  "noSms": "Not registered for Sms",
+  "noSms": "Not registered for Sms/Whatsapp",
   "noEmail": "Not registered for Email",
   "restricted": "Restricted",
   "deleteFromAllGroups": "Remove from groups",
@@ -636,5 +637,6 @@
   "createdDate": "Created Date",
   "recipientGroups": "Recipient Groups",
   "noCampaignToRestore": "No campaigns for restore",
-  "doNotShow": "Do not show again"
+  "doNotShow": "Do not show again",
+  "ReadTime": "Read Time"
 }
