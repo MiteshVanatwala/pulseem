@@ -424,7 +424,7 @@ const SmsMarketingDialog = ({
                                             toggleLinkStatistics(!isLinksStatistics);
                                             setSmsModel({ ...smsModel, IsLinksStatistics: !isLinksStatistics });
                                         }}
-                                        onColor="#28a745"
+                                        onColor="#ff3343"
                                         checkedIcon={false}
                                         uncheckedIcon={false}
                                         handleDiameter={30}

@@ -461,9 +461,9 @@ const Editorbox = ({
                         </Typography>
                         <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
                     </Box>
-                    <Box className={classes.funcDiv}>
+                    <Box className={clsx(classes.funcDiv, classes.dFlex)}>
                         <Box
-                            className={isRTL ? classes.emojiHe : classes.emoji}
+                            className={clsx(classes.paddingSides10, isRTL ? classes.emojiHe : classes.emoji)}
                         >
                             {isRTL ? (
                                 <>
@@ -516,7 +516,7 @@ const Editorbox = ({
                                 boxStyles={{ alignItems: 'center' }}
                             />
                         </Box>
-                        <Box className={classes.baseButtons}>
+                        <Box className={clsx(classes.baseButtons, classes.paddingSides10)}>
                             <Tooltip
                                 disableFocusListener
                                 title={t("mainReport.removalMsgTooltip")}
@@ -525,7 +525,7 @@ const Editorbox = ({
                                 arrow
                             >
                                 <Button
-                                    className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null)}
+                                    className={clsx(classes.btn, classes.btnRounded, classes.marginSides5, removalMessageButtonDisabled ? classes.disabled : null)}
                                     onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                                 >
                                     <Typography className={classes.editorLink}>+</Typography>
@@ -540,7 +540,7 @@ const Editorbox = ({
                                 arrow
                             >
                                 <Button
-                                    className={classes.infoButtons}
+                                    className={clsx(classes.btn, classes.btnRounded, classes.marginSides5)}
                                     onClick={removalLinkDisabled ? null : onRemovalLink}
                                 >
                                     <Typography className={classes.editorLink}>+</Typography>
@@ -602,22 +602,25 @@ const Editorbox = ({
                                     </FormControl>
                                 </Tooltip>
                             </Box>
-                            <Box className={classes.addDiv} tabIndex="0" onBlur={() => { seteditmenuClick(false) }}>
-                                <Typography
-                                    className={classes.addButtons}
+                            <Box className={clsx(classes.addDiv, classes.paddingSides10)} tabIndex="0">
+                                <Button
+                                    className={clsx(classes.btn, classes.btnRounded)}
                                     onClick={() => {
                                         seteditmenuClick(!editmenuClick);
                                     }}
                                 >
                                     <AiOutlinePlusCircle className={classes.addOptionsIcon} />
                                     {t("mainReport.add")}
-                                </Typography>
+                                </Button>
                                 {editmenuClick ? (
-                                    <Box className={classes.dropDiv} style={{
-                                        top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-120px" : "-170px") : null,
-                                        right: isRTL ? 'auto' : 0,
-                                        left: isRTL ? 0 : 'auto',
-                                    }}>
+                                    <Box
+                                        className={classes.dropDiv} 
+                                        style={{
+                                            top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-120px" : "-170px") : null,
+                                            right: isRTL ? 'auto' : 0,
+                                            left: isRTL ? 0 : 'auto',
+                                        }}
+                                    >
 
                                         <Typography
                                             className={classes.dropCon}
@@ -625,6 +628,7 @@ const Editorbox = ({
                                                 setDialogType({ type: 'latestLP' });
                                                 seteditmenuClick(false);
                                             }}
+                                            onBlur={() => seteditmenuClick(false)}
                                         >
                                             {t("mainReport.landingLink")}
                                         </Typography>
@@ -635,6 +639,7 @@ const Editorbox = ({
                                                     setDialogType({ type: 'latestCampaigns' });
                                                     seteditmenuClick(false);
                                                 }}
+                                                onBlur={() => seteditmenuClick(false)}
                                             >
                                                 {t("mainReport.campLink")}
                                             </Typography>
@@ -645,6 +650,7 @@ const Editorbox = ({
                                                 setDialogType({ type: 'waze' })
                                                 seteditmenuClick(false);
                                             }}
+                                            onBlur={() => seteditmenuClick(false)}
                                         >
                                             {t("mainReport.waize")}
                                         </Typography>
