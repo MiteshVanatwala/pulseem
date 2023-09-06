@@ -280,7 +280,7 @@ const SummaryDialog = ({ classes,
                                     >
                                         {[{
                                             Number: newsletterSendSummary?.FromEmail
-                                        }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true })
+                                        }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.FromEmail })
                                         ].map((obj, index) => (
                                             <MenuItem
                                                 key={`ve_${index}`}
