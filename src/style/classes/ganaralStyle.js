@@ -231,6 +231,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingRight: 25,
     paddingLeft: 25,
   },
+  marginSides5: {
+    marginRight: 5,
+    marginLeft: 5,
+  },
   copyClip: {
     border: "1px solid #3476b0",
     padding: 5,
@@ -3315,6 +3319,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   whatsapp: {
     '& .MuiSelect-select': {
       minHeight: '35px !important',
+    },
+    '& .MuiSelect-icon': {
+      top: 15
     }
   },
   dialogZindex: {

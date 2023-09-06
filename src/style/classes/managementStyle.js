@@ -759,13 +759,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     borderRadius: 6,
   },
   tablePaginationSelect: {
-    "& .MuiSelect-icon": {
-      color: "#000",
-    },
     '& svg': {
       color: '#F65026',
       marginLeft: -30,
-      fontSize: 30
+      fontSize: 20,
+      top: 5,
     },
     '& .MuiSelect-select': {
       '&:focus': {
@@ -2033,7 +2031,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     '& span': {
       padding: '2px 9px',
       '&.Mui-checked': {
-        color: '#0371ad'
+        color: '#ff3343'
       }
     }
   },

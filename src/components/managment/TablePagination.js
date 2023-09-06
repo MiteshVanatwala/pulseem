@@ -64,7 +64,7 @@ export const TablePagination = ({
           variant='standard'
           SelectProps={{
             native: true,
-            IconComponent: () => <IoIosArrowDown />
+            IconComponent: () => <IoIosArrowDown className='MuiSelect-icon' />
           }}
           value={rowsPerPage}
           onChange={handleRowsPerPageChange}>

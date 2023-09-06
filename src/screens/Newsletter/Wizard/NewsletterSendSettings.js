@@ -1251,8 +1251,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 }
                             </Stack>
                         </Grid>
-                        <Grid item xs={12} md={1}></Grid>
-                        <Grid item md={4} xs={12}>
+                        <Grid item md={5} xs={12}>
                             <SendingMethod
                                 disabled={newsletterSettings?.Status !== 1}
                                 classes={classes}

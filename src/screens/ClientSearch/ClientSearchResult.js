@@ -1961,8 +1961,8 @@ const ClientSearchResult = ({ classes }) => {
                       setDialog(null)
                     }}
                     className={clsx(
-                      classes.solidDialogButton,
-                      classes.dialogConfirmButton
+                      classes.btn,
+                      classes.btnRounded
                     )}>
                     {t('common.confirm')}
                   </Button>

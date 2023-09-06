@@ -77,7 +77,7 @@ const AddGroupPopUp = ({
             handleResponses(response, {
                 S_201: {
                     code: 201,
-                    message: ToastMessages.GROUP_UPDATED,
+                    message: ToastMessages.GROUP_CREATED,
                     Func: () => {
                         new Promise(async (resolutionFunc, rejectionFunc) => {
                             await dispatch(getGroupsBySubAccountId())

@@ -559,7 +559,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
 
         '&:hover':
         {
-            backgroundColor: "#6495ED",
+            background: "linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)",
             color: "#fff",
             zIndex: "9"
         }
