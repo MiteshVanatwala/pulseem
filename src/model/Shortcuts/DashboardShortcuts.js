@@ -137,7 +137,7 @@ export const DASHBOARD_SHORTCUT = {
         },
         {
           title: 'master.RadMenuItemResource18.Text',
-          link: '/Pulseem/ClientReport.aspx'
+          link: '/react/Reports/Recipient'
         },
         {
           title: 'master.RadMenuItemResource30.Text',

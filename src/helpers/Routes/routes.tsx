@@ -352,7 +352,7 @@ export const getRoutes = (
         { title: t('master.AbTestsReport.Text'), href: '/Pulseem/AbTestsReport.aspx?fromreact=true', isShow: false },
         { title: t('master.RadMenuItemResource15.Text'), href: '/Pulseem/AccountReport.aspx?fromreact=true', isShow: true },
         { title: t('master.RadMenuItemResource16.Text'), href: '/Pulseem/CampaignComparison.aspx?fromreact=true', isShow: false },
-        { title: t('master.RadMenuItemResource18.Text'), href: '/Pulseem/ClientReport.aspx?fromreact=true', isShow: true },
+        { title: t('master.RadMenuItemResource18.Text'), href: '/react/Reports/Recipient', isShow: true },
         { title: t('master.RadMenuItemResource30.Text'), href: '/Pulseem/EmailAutoReports.aspx?fromreact=true', isShow: true },
         { title: t('master.locRemovedReason.Text'), href: '/Pulseem/RemovedStats.aspx?fromreact=true', isShow: true },
         { key: 'productsReport', title: t('report.ProductsReport.products'), href: '/react/Reports/ProductsReport', isShow: true },

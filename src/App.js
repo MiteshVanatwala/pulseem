@@ -361,8 +361,8 @@ const renderRoutes = (classes, redirect) => {
         element={<ProductsReport classes={classes} />}
       />
       <Route
-        path={`/ClientReport`}
-        element={transferUrl('/Pulseem/ClientReport.aspx')}
+        path={`/react/Reports/Recipient`}
+        element={<RecipientReport classes={classes} />}
       />
       <Route
         path={`/EmailAutoReports`}
