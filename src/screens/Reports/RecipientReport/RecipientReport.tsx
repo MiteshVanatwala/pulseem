@@ -279,7 +279,7 @@ const RecipientReport = ({ classes }: any) => {
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
-      <Title Text={t('common.recipient')} classes={classes} ShowDivider={true} />
+      <Title Text={t('common.recipient')} classes={classes} />
 
       <Grid container spacing={2} className={classes.pt15}>
         <Grid item md={3}>
