@@ -420,15 +420,14 @@ const ClientSearchResult = ({ classes }) => {
         case 201: {
           const promiseArray = [];
           let orderList = [];
-          orderList = data.Clients.map((ol) => { return FlatObject(ol) });
-          if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue
-           && (searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue
-           && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
-            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
+          const deletedProperties = [];
+          orderList = data.Clients.map((ol) => ol);
+          if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && (searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) {
+            deletedProperties.push("Revenue");
           }
           if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
             searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
+            deletedProperties.push("SendDate");
           }
 
           Promise.all(promiseArray).then(() => {
@@ -474,6 +473,7 @@ const ClientSearchResult = ({ classes }) => {
           break;
         }
       }
+
     }
     setLoader(false);
     setIsDownloadProgress(false);
