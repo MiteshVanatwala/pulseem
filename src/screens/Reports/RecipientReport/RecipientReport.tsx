@@ -14,24 +14,22 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import SummaryLine from './SummaryLine';
+import moment from 'moment';
+import { resetRecipientReportData } from "../../../redux/reducers/recipientsReportSlice";
+import { ManagmentIcon, TablePagination } from '../../../components/managment';
 
 const RecipientReport = ({ classes }: any) => {
-  const { language, windowSize, rowsPerPage, isRTL } = useSelector((state: any) => state.core);
+  const { windowSize, isRTL } = useSelector((state: any) => state.core);
   const { recipientsReportData } = useSelector((state: any) => state.recipientReports)
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [searchFields, setSearchFields] = useState({
-    Email: '',
-    Cellphone: ''
-  });
+  const [isSearching, setIsSearching] = useState<boolean>(false);
   const [openGroupModal, toggleGroupModal] = useState(false);
   const [openSMSCampaignPreviewModal, toggleSMSCampaignPreviewModal] = useState(false);
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const headCellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
-  const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
-  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) }
-  // console.log(recipientsReportData)
 
   type reportRequest = {
     Email: string;
@@ -40,26 +38,47 @@ const RecipientReport = ({ classes }: any) => {
     SmsPageIndex: number;
     WhatsappPageIndex: number;
     IsExport: boolean;
-
   };
-  const getReportData = async () => {
 
-    const req = {
-      Email: searchFields.Email,
-      Cellphone: searchFields.Cellphone,
+  const [filterRequest, setFilterRequest] = useState<reportRequest>({
+    Email: '',
+    Cellphone: '',
+    PageIndex: 1,
+    SmsPageIndex: 1,
+    WhatsappPageIndex: 1,
+    IsExport: false
+  });
+
+  const getReportData = async () => {
+    //@ts-ignore
+    await dispatch(getRecipientsReportData(filterRequest));
+  }
+
+
+  const resetFilter = () => {
+    setFilterRequest({
+      IsExport: false,
       PageIndex: 1,
       SmsPageIndex: 1,
       WhatsappPageIndex: 1,
-      IsExport: false
-    } as reportRequest;
-
-    //@ts-ignore
-    await dispatch(getRecipientsReportData(req));
+      Email: '',
+      Cellphone: ''
+    })
   }
 
   useEffect(() => {
+    if (!isSearching && (filterRequest.Email !== '' || filterRequest.Cellphone !== '')) {
+      dispatch(resetRecipientReportData());
+      resetFilter();
+    }
+    if (isSearching) {
+      getReportData();
+    }
+  }, [isSearching])
+
+  useEffect(() => {
     getReportData();
-  }, [searchFields])
+  }, [filterRequest.PageIndex, filterRequest.SmsPageIndex, filterRequest.WhatsappPageIndex]);
 
   const renderNewsLetterTableHead = () => {
     return (
@@ -87,21 +106,66 @@ const RecipientReport = ({ classes }: any) => {
     )
   }
 
+  const renderNewsletterPagination = () => {
+    return (
+      <Box className={clsx(classes.flexJustifyCenter, classes.paddingInline25)}>
+        <TablePagination
+          classes={classes}
+          rows={recipientsReportData?.CampaignStatistics?.Sent ?? 0}
+          rowsPerPage={5}
+          page={filterRequest.PageIndex}
+          onPageChange={e => setFilterRequest({ ...filterRequest, PageIndex: e })}
+        />
+      </Box>
+    )
+  }
+  const renderSmsPagination = () => {
+    return (
+      <Box className={clsx(classes.flexJustifyCenter, classes.paddingInline25)}>
+        <TablePagination
+          classes={classes}
+          rows={recipientsReportData?.SmsCampaignStatistics?.Sent ?? 0}
+          rowsPerPage={5}
+          page={filterRequest.SmsPageIndex}
+          onPageChange={e => setFilterRequest({ ...filterRequest, SmsPageIndex: e })}
+        />
+      </Box>
+    )
+  }
+  const renderWhasappPagination = () => {
+    return (
+      <Box className={clsx(classes.flexJustifyCenter, classes.paddingInline25)}>
+        <TablePagination
+          classes={classes}
+          rows={recipientsReportData?.WhatsappCampaignStatistics?.Sent ?? 0}
+          rowsPerPage={5}
+          page={filterRequest.WhatsappPageIndex}
+          onPageChange={e => setFilterRequest({ ...filterRequest, WhatsappPageIndex: e })}
+        />
+      </Box>
+    )
+  }
+
   const renderNewsLetterTableBody = () => {
     return (
       <TableBody>
-        {recipientsReportData?.Campaigns?.map(renderNewsletterRow)}
-        <TableRow classes={rowStyle} onClick={() => { }} className={classes.cursorPointer}>
-          <TableCell className={classes.p10}>
-            {t('common.loadMore')}
-          </TableCell>
-        </TableRow>
+        {recipientsReportData?.campaigns?.length === 0 ? (
+          <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
+            <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+              <Grid item md={6} className={classes.flexGrow1}>{t('common.NoDataTryFilter')}</Grid>
+            </Grid>
+          </Box>
+        ) : (
+          <>
+            <>{recipientsReportData?.Campaigns?.map(renderNewsletterRow)}</>
+            {renderNewsletterPagination()}
+          </>
+        )}
       </TableBody>
     )
   }
 
   const renderNewsletterRow = (row: any) => {
-    console.log(row);
     return (
       <TableRow
         key={row.CampaignID}
@@ -131,15 +195,12 @@ const RecipientReport = ({ classes }: any) => {
           {t(`common.${row.OpeningCount > 0 ? 'Yes' : 'No'}`)}
         </TableCell>
         <TableCell
-          component="th"
-          scope="row"
-          classes={{ root: classes.tableCellRoot }}
+          classes={cellStyle}
           className={classes.flex1}>
-          <img
-            src={PreviewIcon}
-            className={clsx(classes.managmentIcon, classes.cursorPointer)}
-            onClick={() => pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${row?.CampaignID}&fromreact=true`)}
-            alt=""
+          <ManagmentIcon
+            classes={classes}
+            icon={null}
+            uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} />}
           />
         </TableCell>
       </TableRow>
@@ -172,24 +233,30 @@ const RecipientReport = ({ classes }: any) => {
     )
   }
 
-  const renderSMSTableBody = () => {
+  const renderTableBody = (campaignType: string) => {
     return (
       <TableBody>
-        {recipientsReportData?.SmsCampaigns?.map(renderSMSRow)}
-        <TableRow classes={rowStyle} onClick={() => { }} className={classes.cursorPointer}>
-          <TableCell className={classes.p10}>
-            {t('common.loadMore')}
-          </TableCell>
-        </TableRow>
+        {(campaignType === 'sms' && !recipientsReportData?.SmsCampaigns) || (campaignType === 'whatsapp' && (!recipientsReportData?.WhatsappCampaigns)) ? (
+          <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
+            <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+              <Grid item md={6} className={classes.flexGrow1}>{t('common.NoDataTryFilter')}</Grid>
+            </Grid>
+          </Box>
+        ) : (
+          <>
+            <>{campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map(renderRow) : recipientsReportData?.WhatsappCampaigns?.map(renderRow)}</>
+            <>{campaignType === 'sms' ? renderSmsPagination() : renderWhasappPagination()}</>
+          </>
+        )}
       </TableBody>
     )
   }
 
-  const renderSMSRow = (row: any) => {
+  const renderRow = (row: any) => {
     console.log(row);
     return (
       <TableRow
-        key={row.CampaignID}
+        key={row.SMSCampaignID ?? row.WACampaignID}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
@@ -305,8 +372,16 @@ const RecipientReport = ({ classes }: any) => {
           type="tel"
           variant='outlined'
           size='small'
-          value={searchFields.Email}
-          onChange={(e) => setSearchFields({ ...searchFields, Email: e.target.value })}
+          value={filterRequest.Email}
+          onChange={(e) => {
+            setFilterRequest({ ...filterRequest, Email: e.target.value })
+            setIsSearching(false);
+          }}
+          onKeyDown={(e) => {
+            if (e?.keyCode === 13) {
+              setIsSearching(true);
+            }
+          }}
           className={clsx(classes.textField, classes.minWidth252)}
           placeholder={t('common.Mail')}
         />
@@ -322,39 +397,48 @@ const RecipientReport = ({ classes }: any) => {
           type="tel"
           variant='outlined'
           size='small'
-          value={searchFields.Cellphone}
-          onChange={(e) => setSearchFields({ ...searchFields, Cellphone: e.target.value })}
+          value={filterRequest.Cellphone}
+          onChange={(e) => {
+            setFilterRequest({ ...filterRequest, Cellphone: e.target.value })
+            setIsSearching(false);
+          }}
+          onKeyDown={(e) => {
+            if (e?.keyCode === 13) {
+              setIsSearching(true);
+            }
+          }}
           className={clsx(classes.textField, classes.minWidth252)}
           placeholder={t('common.Cellphone')}
         />
       </Grid>
 
-      <Grid item>
-        <Grid item>
+      <Grid item md={3}>
+        <Button
+          onClick={() => {
+            setIsSearching(true);
+          }}
+          className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+          {t<string>('campaigns.btnSearchResource1.Text')}
+        </Button>
+        {isSearching &&
           <Button
-            onClick={handleSearch}
-            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            onClick={() => {
+              setIsSearching(false);
+            }}
+            className={clsx(classes.btn, classes.btnRounded, classes.ml15)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
-            {t<string>('campaigns.btnSearchResource1.Text')}
+            {t('common.clear')}
           </Button>
-        </Grid>
-        {/* {isSearching && <Grid item>
-    <Button
-      onClick={clearSearch}
-      className={clsx(classes.btn, classes.btnRounded)}
-      endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
-      {t('common.clear')}
-    </Button>
-  </Grid>} */}
+        }
       </Grid>
+
     </Grid>
-  }
-  const handleSearch = () => {
-    console.log('search');
   }
 
   const renderClientDetails = () => {
-    return <Grid container spacing={2} className={clsx(classes.greyBorderAround, classes.pr25, classes.pe25)}>
+    const dateTimeFormat = 'DD/MM/YYYY, HH:mm a';
+    return <Grid container spacing={2} className={clsx(classes.mgmtTitleContainer, classes.pr25, classes.pe25)}>
       <Grid item md='auto' className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.first_name')}</div>
         <div className={classes.pt10}>{recipientsReportData?.ClientFirstName}</div>
@@ -373,7 +457,7 @@ const RecipientReport = ({ classes }: any) => {
       </Grid>
       <Grid item md='auto' className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.createdDate')}</div>
-        <div className={classes.pt10}>{recipientsReportData?.ClientCreationDate}</div>
+        <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(dateTimeFormat)}</div>
       </Grid>
       <Grid item md='auto' className={clsx(classes.flexGrow1, classes.pt15)}>
         <img src={GroupsIcon} style={{ height: 20 }} />
@@ -389,34 +473,6 @@ const RecipientReport = ({ classes }: any) => {
     </Grid>
   }
 
-  const SummaryResult = (CampaignStatistics: any) => {
-    console.log(CampaignStatistics);
-    return <Box className={clsx(classes.p10, classes.mt10, classes.colorBlue)}>
-      <Grid container spacing={2} className={clsx(classes.greyBorderAround, classes.pr25, classes.pe25)}>
-        <Grid item md={2} className={classes.flexGrow1}>
-          <div className={clsx(classes.bold)}>{t('common.Sent')}</div>
-          <div className={classes.pt10}>{CampaignStatistics?.Sent}</div>
-        </Grid>
-        <Grid item md={2} className={classes.flexGrow1}>
-          <div className={clsx(classes.bold)}>{t('common.Opened')}</div>
-          <div className={classes.pt10}>{CampaignStatistics?.Opened}</div>
-        </Grid>
-        <Grid item md={2} className={classes.flexGrow1}>
-          <div className={clsx(classes.bold)}>{t('common.NoOpened')}</div>
-          <div className={classes.pt10}>{CampaignStatistics?.UnOpened}</div>
-        </Grid>
-        <Grid item md={2} className={classes.flexGrow1}>
-          <div className={clsx(classes.bold)}>{t('common.Clicks')}</div>
-          <div className={classes.pt10}>{CampaignStatistics?.Clicks}</div>
-        </Grid>
-        <Grid item md={4} className={classes.flexGrow1}>
-          <div className={clsx(classes.bold)}>{t('recipient.Bounced')}</div>
-          <div className={classes.pt10}>{CampaignStatistics?.ErrorCount}</div>
-        </Grid>
-      </Grid>
-    </Box>
-  }
-
   return (
     <DefaultScreen
       currentPage="downloadfiles"
@@ -428,7 +484,7 @@ const RecipientReport = ({ classes }: any) => {
         {renderSearchSection()}
       </Box>
 
-      {recipientsReportData?.ClientID && recipientsReportData?.ClientID > 0 && <>
+      {recipientsReportData?.ClientID > 0 && <>
         <Box className={clsx(classes.p10, classes.mt20, classes.colorBlue, classes.bgLightGray)}>
           {renderClientDetails()}
         </Box>
@@ -436,8 +492,8 @@ const RecipientReport = ({ classes }: any) => {
           <Grid container>
             <Grid md={6}>
               <Box className={classes.p5}>
-                <div className={clsx(classes.bold, classes.pb15)}>{t('recipient.newsletterCampaign')}</div>
-                <SummaryResult CampaignStatistics={recipientsReportData?.CampaignStatistics} />
+                <Title Text={t('recipient.newsletterCampaign')} classes={classes} isIcon={false} />
+                <SummaryLine classes={classes} Stats={recipientsReportData?.CampaignStatistics} />
                 <TableContainer className={clsx(classes.tableStyle)}>
                   <Table className={classes.tableContainer}>
                     {windowSize !== 'xs' && renderNewsLetterTableHead()}
@@ -448,12 +504,24 @@ const RecipientReport = ({ classes }: any) => {
             </Grid>
             <Grid md={6}>
               <Box className={classes.p5}>
-                <div className={clsx(classes.bold, classes.pb15)}>{t('recipient.smsCampaign')}</div>
-                <SummaryResult CampaignStatistics={recipientsReportData?.CampaignStatistics} />
+                <Title Text={t('recipient.smsCampaign')} classes={classes} isIcon={false} />
+                <SummaryLine classes={classes} Stats={recipientsReportData?.SmsCampaignStatistics} />
                 <TableContainer className={clsx(classes.tableStyle)}>
                   <Table className={classes.tableContainer}>
                     {windowSize !== 'xs' && renderSMSTableHead()}
-                    {renderSMSTableBody()}
+                    {renderTableBody('sms')}
+                  </Table>
+                </TableContainer>
+              </Box>
+            </Grid>
+            <Grid md={12}>
+              <Box className={classes.p5}>
+                <Title Text={t('recipient.whatsappCampaign')} classes={classes} isIcon={false} />
+                <SummaryLine classes={classes} Stats={recipientsReportData?.WhatsappCampaignStatistics} />
+                <TableContainer className={clsx(classes.tableStyle)}>
+                  <Table className={classes.tableContainer}>
+                    {windowSize !== 'xs' && renderSMSTableHead()}
+                    {renderTableBody('whatsapp')}
                   </Table>
                 </TableContainer>
               </Box>

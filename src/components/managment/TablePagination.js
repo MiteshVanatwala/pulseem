@@ -53,7 +53,7 @@ export const TablePagination = ({
   }
 
   const renderRowNumbers = () => {
-    return (
+    return rowsPerPageOptions.length > 0 ? (
       <Grid item className={classes.tablePadingtonGridItem}>
         <Typography>
           {t('common.rowNumber')}
@@ -77,7 +77,7 @@ export const TablePagination = ({
           ))}
         </TextField>
       </Grid>
-    )
+    ) : (<></>)
   }
 
   const renderPageNumbers = () => {
@@ -133,7 +133,7 @@ export const TablePagination = ({
       container
       justifyContent='space-between'
       className={classes.tablePadingtonGridContainer} style={style} >
-      {renderRowNumbers()}
+      {rowsPerPageOptions.length > 0 && renderRowNumbers()}
       {renderPageNumbers()}
     </Grid>
   )

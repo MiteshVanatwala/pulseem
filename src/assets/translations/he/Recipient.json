@@ -133,5 +133,6 @@
   "unsubSettings": "הגדרות הסרה מחשבון",
   "newsletterCampaign": "קמפיין ניוזלטר",
   "smsCampaign": "קמפיין SMS",
-  "maxUploadLimitation": "באפשרותך להעלות עד 5,000 נמענים בבת אחת"
+  "maxUploadLimitation": "באפשרותך להעלות עד 5,000 נמענים בבת אחת",
+  "whatsappCampaign": "קמפיין Whatsapp"
 }

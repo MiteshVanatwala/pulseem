@@ -3513,5 +3513,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiDialogActions-root': {
       marginTop: 20
     }
+  },
+  paddingInline25: {
+    paddingInline: 25
   }
 });
