@@ -108,10 +108,6 @@ const renderRoutes = (classes, redirect) => {
         element={<SmsSend classes={classes} />}
       />
       <Route
-        path={`${sitePrefix}SendCampaign/:campaignID`}
-        component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
-      /> */}
-      <Route
         path={`/PreviewCampaign/:campaignID`}
         component={transferUrl('/Pulseem/PreviewCampaign.aspx?CampaignID=', 'campaign')}
       />
@@ -210,10 +206,6 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`/SMSSmartResponses`}
         component={transferUrl('/Pulseem/SMSSmartResponses.aspx')}
-      />
-      <Route
-        path={`/ResponsesReport`}
-        component={transferUrl('/Pulseem/ResponsesReport.aspx')}
       />
       <Route
         path={`/SMSPreviewCampaign/:id`}

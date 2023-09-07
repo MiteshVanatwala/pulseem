@@ -194,7 +194,7 @@ export const getRoutes = (
         },
         {
           title: t("master.linkSMSResponsesReport.Text"),
-          href: "/Pulseem/ResponsesReport.aspx?fromreact=true",
+          href: "/react/reports/Inbound",
           isShow: true,
         },
         {

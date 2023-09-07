@@ -39,7 +39,7 @@ import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, saveManualClients,
   getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getTestGroups
 } from "../../../redux/reducers/smsSlice";
-import { getGroupsBySubAccountId, combinedGroup } from "../../../redux/reducers/groupSlice";
+import { getGroupsBySubAccountId, combinedGroup, createAndGetGroupIdForManualSend, addRecipient } from "../../../redux/reducers/groupSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
@@ -54,6 +54,8 @@ import { Title } from "../../../components/managment/Title";
 import { Stack } from "@mui/material";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
+import QuickManualUploadDialog from "../../Newsletter/Wizard/Popups/QuickManualUploadDialog";
+import { IsValidPhone } from "../../../helpers/Utils/Validations";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -263,6 +265,7 @@ const SmsSend = ({ classes, ...props }) => {
         setFilterGroups(selectedGroups);
       }
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Campaigns.length !== 0) {
+        setbsDot(true);
         const selectedCampaigns = [];
         const seCampaigns = campaignSettings.SendExeptional.Campaigns;
         for (var h = 0; h < seCampaigns.length; h++) {
@@ -274,7 +277,8 @@ const SmsSend = ({ classes, ...props }) => {
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1 && campaignSettings.SendExeptional.ExceptionalDays !== '') {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
-
+        setbsDot(true);
+        setFilterValues({ ...filterValues, dontSend: true });
       }
       if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
@@ -986,6 +990,28 @@ const SmsSend = ({ classes, ...props }) => {
                   </Button>
                 </div>
               ) : null}
+              {/* Note: Quick Manual Send Button - This will be covered in phase 2 */}
+              {
+                areaData !== "" && (
+                  <Button
+                    style={{ marginInlineStart: 'auto', marginInlineEnd: 10 }}
+                    size='medium'
+                    color="primary"
+                    variant='contained'
+                    key={"extraButton"}
+                    className={clsx(
+                      classes.actionButton,
+                      classes.actionButtonLightGreen,
+                      classes.backButton
+                    )}
+                    onClick={() => {
+                      setDialogType({ type: "quickMnualUpload" })
+                    }}
+                  >
+                    {t("campaigns.newsLetterSendSettings.quickMSend")}
+                  </Button>
+                )
+              }
               <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
           ) : null}
@@ -993,6 +1019,19 @@ const SmsSend = ({ classes, ...props }) => {
       </Grid>
     );
   };
+  useEffect(() => {
+    const resetDays = () => {
+      setExceptionalDays('');
+      setFilterValues({ ...filterValues, exceptionalDays: '', days: '' });
+      settoggleReci(false);
+    }
+    if (!filterValues.dontSend) {
+      resetDays();
+    }
+    else {
+      settoggleReci(true);
+    }
+  }, [filterValues.dontSend])
   const handleFilterConfirm = () => {
     let formIsvalid = true;
     settoggleReci(filterValues.dontSend);
@@ -1390,21 +1429,21 @@ const SmsSend = ({ classes, ...props }) => {
     );
   }
 
-  const onSaveSettings = async (toggle, exit) => {
-    if (otpPassed === false) {
+  const onSaveSettings = async (toggle, exit, groupID = null) => {
+    if (!groupID && otpPassed === false) {
       setOTPOpen(true);
       return;
     }
-    if (selectedGroups.length <= 0) {
+    if (!groupID && selectedGroups.length <= 0) {
       setToastMessage(ToastMessages.NO_GROUPS);
       return;
     }
     setLoader(true);
     const requestPayload = {
       FutureDateTime: null,
-      Groups: selectedGroups.map((sg) => { return sg.GroupID }),
+      Groups: groupID ? [groupID] : selectedGroups.map((sg) => { return sg.GroupID }),
       PulseSettings: {
-        PulseType: pulseType,
+        PulseType: groupID ? 1 : pulseType,
         TimeType: timeType,
         PulseAmount: pulseAmount,
         TimeInterval: timeInterval
@@ -1430,7 +1469,7 @@ const SmsSend = ({ classes, ...props }) => {
         SendDate: null
       }
     }
-    if (sendType === "2") {
+    if (!groupID && sendType === "2") {
       if (sendDate === null) {
         setsendType2Dialog(true);
         setLoader(false);
@@ -1442,7 +1481,7 @@ const SmsSend = ({ classes, ...props }) => {
         requestPayload.FutureDateTime = finalDate.format();
       }
     }
-    else if (sendType === "3") {
+    else if (!groupID && sendType === "3") {
       if (sendTime === null || daysBeforeAfter === "" || spectialDateFieldID === "0") {
         setspecialSettingValidation(true);
         setLoader(false);
@@ -1761,18 +1800,35 @@ const SmsSend = ({ classes, ...props }) => {
     }
     return null;
   }
-  const handleConfirmC = () => {
-    settotalRecords(0)
-    setContacts([]);
-    setareaData("");
-    setcolumnValidate(false);
-    setgroupNameInput("");
-    for (let i = 0; i < selectArray.length; i++) {
-      selectArray[i].isdisabled = false;
-      selectArray[i].idx = -1;
+  const handleConfirmC = async () => {
+    setLoader(true);
+    var req = [];
+    areaData.split('\n').forEach((q) => {
+      if (IsValidPhone(q.replace(',', ''))) {
+        req.push({ Cellphone: q.replace(',', ''), Telephone: q.replace(',', '') })
+      }
+    });
+    setDialogType({ type: "" });
+    if (req.length) {
+      const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend('PulseemSMS'));
+      let groupId = responseDefaultGroup?.payload || '1'
+      const finalPayload = {
+        ClientsData: req,
+        GroupIds: [groupId]
+      }
+      const r = await dispatch(addRecipient(finalPayload));
+
+      if (r.payload.StatusCode === 201) {
+        onSaveSettings(false, "", groupId);
+      }
+      else {
+        setToastMessage(ToastMessages.ERROR);
+        setLoader(false);
+      }
+    } else {
+      setToastMessage(ToastMessages.INVALID_NUMBER);
+      setLoader(false);
     }
-    setDialogType(null);
-    settypedData([]);
   };
   const handlePreviousPage = () => {
     Redirect({ url: `${sitePrefix}sms/edit/${id}` });
@@ -1957,7 +2013,7 @@ const SmsSend = ({ classes, ...props }) => {
     setDialogType(null);
     setFilterGroups(campaignSettings?.SendExeptional?.Groups ?? []);
     setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns ?? []);
-    // setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
+    setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : exceptionalDays);
     setFilterValues({
       dontSend: toggleReci,
       days: exceptionalDays
@@ -1979,7 +2035,7 @@ const SmsSend = ({ classes, ...props }) => {
               checked={filterValues.dontSend}
               color="primary"
               inputProps={{ "aria-label": "secondary checkbox" }}
-              onClick={(e) => 
+              onClick={(e) =>
                 setFilterValues({
                   ...filterValues,
                   dontSend: e.target.checked,
@@ -2772,6 +2828,12 @@ const SmsSend = ({ classes, ...props }) => {
         </Alert>
       </Snackbar>
       {otpOpen && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+      {dialogType?.type === 'quickMnualUpload' && <QuickManualUploadDialog
+        classes={classes}
+        onClose={() => setDialogType(null)}
+        onCancel={() => setDialogType(null)}
+        onConfirm={() => handleConfirmC()}
+      />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );

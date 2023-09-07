@@ -31,3 +31,5 @@ export const convertHyphensToword = (input: any) => {
 		return accumulator;
 	}, []).join(' ')
 }
+
+export const validatePhoneNumber = (phone: any) => /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phone); 

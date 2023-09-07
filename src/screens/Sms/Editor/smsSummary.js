@@ -28,11 +28,11 @@ const SmsSummary = ({ classes,
   const { isRTL } = useSelector(state => state.core)
 
   const { t } = useTranslation();
-  let totalFiletered = groups.reduce(function (a, b) {
+  let totalFiletered = groups?.length > 0 && groups.reduce(function (a, b) {
     return parseInt(a) + parseInt(b['Recipients']);
   }, 0) - summaryPayload.FinalCount;
 
-  if (isNaN(totalFiletered)) {
+  if (!totalFiletered || isNaN(totalFiletered)) {
     totalFiletered = 0;
   }
 
