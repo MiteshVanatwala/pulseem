@@ -82,7 +82,7 @@ export const DASHBOARD_SHORTCUT = {
         },
         {
           title: 'master.linkSMSResponsesReport.Text',
-          link: '/Pulseem/ResponsesReport.aspx'
+          link: '/react/reports/Inbound'
         }
       ]
     },
