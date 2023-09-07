@@ -283,15 +283,12 @@ const RecipientReport = ({ classes }: any) => {
           {t(`common.${row?.ClicksCount > 0 ? 'Yes' : 'No'}`)}
         </TableCell>
         <TableCell
-          component="th"
-          scope="row"
-          classes={{ root: classes.tableCellRoot }}
+          classes={cellStyle}
           className={classes.flex1}>
-          <img
-            src={PreviewIcon}
-            className={clsx(classes.managmentIcon, classes.cursorPointer)}
-            onClick={() => toggleSMSCampaignPreviewModal(true)}
-            alt=""
+          <ManagmentIcon
+            classes={classes}
+            icon={null}
+            uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} />}
           />
         </TableCell>
       </TableRow>
