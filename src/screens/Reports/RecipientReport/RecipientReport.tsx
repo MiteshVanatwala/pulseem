@@ -11,13 +11,14 @@ import { ConvertEmailStatusText, ConvertSmsStatusText } from '../../../helpers/U
 import { PreviewIcon } from '../../../assets/images/managment';
 import { FormatDate } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { pulseemNewTab } from '../../../helpers/Functions/functions';
-import { Preview } from '../../../components/Notifications/Preview/Preview';
+import { RandomID, pulseemNewTab } from '../../../helpers/Functions/functions';
+import { Preview } from '../../../components/Notifications/Preview/Preview.js';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import SummaryLine from './SummaryLine';
 import moment from 'moment';
 import { resetRecipientReportData } from "../../../redux/reducers/recipientsReportSlice";
 import { ManagmentIcon, TablePagination } from '../../../components/managment';
+import { getSmsByID } from '../../../redux/reducers/smsSlice';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -26,7 +27,8 @@ const RecipientReport = ({ classes }: any) => {
   const dispatch = useDispatch();
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [openGroupModal, toggleGroupModal] = useState(false);
-  const [openSMSCampaignPreviewModal, toggleSMSCampaignPreviewModal] = useState(false);
+  const [smsPreviewModel, setSmsPreviewModel] = useState<any>(null);
+  const [previewCampaign, setPreviewCampaign] = useState<any>({ isSms: false, campaignId: null, show: false });
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const headCellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
@@ -168,7 +170,7 @@ const RecipientReport = ({ classes }: any) => {
   const renderNewsletterRow = (row: any) => {
     return (
       <TableRow
-        key={row.CampaignID}
+        key={RandomID()}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
@@ -198,6 +200,7 @@ const RecipientReport = ({ classes }: any) => {
           classes={cellStyle}
           className={classes.flex1}>
           <ManagmentIcon
+            // onClick={}
             classes={classes}
             icon={null}
             uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} />}
@@ -253,10 +256,9 @@ const RecipientReport = ({ classes }: any) => {
   }
 
   const renderRow = (row: any) => {
-    console.log(row);
     return (
       <TableRow
-        key={row.SMSCampaignID ?? row.WACampaignID}
+        key={RandomID()}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
@@ -299,8 +301,6 @@ const RecipientReport = ({ classes }: any) => {
     return (
       <BaseDialog
         classes={classes}
-        // customContainerStyle={classes.beeTemplate}
-        // contentStyle={classes.beeTemplate}
         open={openGroupModal}
         showDivider={false}
         onClose={() => toggleGroupModal(false)}
@@ -323,7 +323,9 @@ const RecipientReport = ({ classes }: any) => {
     )
   }
 
-  const SMSCampaignPreviewModal = () => {
+  const SMSCampaignPreviewModal = async () => {
+    const sms = await dispatch({ type: "getSmsByID", payload: previewCampaign.campaignId });
+    setSmsPreviewModel(sms?.payload);
     return (
       <BaseDialog
         classes={classes}
@@ -514,7 +516,7 @@ const RecipientReport = ({ classes }: any) => {
             <Grid md={12}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.whatsappCampaign')} classes={classes} isIcon={false} />
-                <SummaryLine classes={classes} Stats={recipientsReportData?.WhatsappCampaignStatistics} />
+                <SummaryLine classes={classes} Stats={recipientsReportData?.WhatsappCampaignStatistics?.Sent > 0 ? recipientsReportData?.WhatsappCampaignStatistics : null} />
                 <TableContainer className={clsx(classes.tableStyle)}>
                   <Table className={classes.tableContainer}>
                     {windowSize !== 'xs' && renderSMSTableHead()}
@@ -528,7 +530,7 @@ const RecipientReport = ({ classes }: any) => {
       </>}
 
       {groupModal()}
-      {SMSCampaignPreviewModal()}
+      {previewCampaign.show && previewSmsCampaign()}
     </DefaultScreen>
   )
 }
