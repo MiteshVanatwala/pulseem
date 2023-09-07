@@ -530,7 +530,7 @@ const RecipientReport = ({ classes }: any) => {
       </>}
 
       {groupModal()}
-      {previewCampaign.show && previewSmsCampaign()}
+      {/* {previewCampaign.show && previewSmsCampaign()} */}
     </DefaultScreen>
   )
 }
