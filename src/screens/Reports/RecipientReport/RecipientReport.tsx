@@ -323,40 +323,40 @@ const RecipientReport = ({ classes }: any) => {
     )
   }
 
-  const SMSCampaignPreviewModal = async () => {
-    const sms = await dispatch({ type: "getSmsByID", payload: previewCampaign.campaignId });
-    setSmsPreviewModel(sms?.payload);
-    return (
-      <BaseDialog
-        classes={classes}
-        // customContainerStyle={classes.beeTemplate}
-        // contentStyle={classes.beeTemplate}
-        open={openSMSCampaignPreviewModal}
-        showDivider={false}
-        onClose={() => toggleSMSCampaignPreviewModal(false)}
-        onCancel={() => toggleSMSCampaignPreviewModal(false)}
-        onConfirm={() => toggleSMSCampaignPreviewModal(false)}
-        // reduceTitle
-        // title={t('common.recipientGroups')}
-        showDefaultButtons={false}
-        exitButton={true}
-        maxHeight='50vh'
-      >
-        <Preview
-          classes={classes}
-          mobileFullsize={true}
-          model={{}}
-          ShowRedirectButton={
-            false
-            // data.RedirectButtonText && data.RedirectButtonText !== ''
-          }
-          showTitle={false}
-          showID={true}
-          isSMS={true}
-        />
-      </BaseDialog>
-    )
-  }
+  // const SMSCampaignPreviewModal = async () => {
+  //   const sms = await dispatch({ type: "getSmsByID", payload: previewCampaign.campaignId });
+  //   setSmsPreviewModel(sms?.payload);
+  //   return (
+  //     <BaseDialog
+  //       classes={classes}
+  //       // customContainerStyle={classes.beeTemplate}
+  //       // contentStyle={classes.beeTemplate}
+  //       open={openSMSCampaignPreviewModal}
+  //       showDivider={false}
+  //       onClose={() => toggleSMSCampaignPreviewModal(false)}
+  //       onCancel={() => toggleSMSCampaignPreviewModal(false)}
+  //       onConfirm={() => toggleSMSCampaignPreviewModal(false)}
+  //       // reduceTitle
+  //       // title={t('common.recipientGroups')}
+  //       showDefaultButtons={false}
+  //       exitButton={true}
+  //       maxHeight='50vh'
+  //     >
+  //       <Preview
+  //         classes={classes}
+  //         mobileFullsize={true}
+  //         model={{}}
+  //         ShowRedirectButton={
+  //           false
+  //           // data.RedirectButtonText && data.RedirectButtonText !== ''
+  //         }
+  //         showTitle={false}
+  //         showID={true}
+  //         isSMS={true}
+  //       />
+  //     </BaseDialog>
+  //   )
+  // }
 
   const renderSearchSection = () => {
     return <Grid container spacing={2}
