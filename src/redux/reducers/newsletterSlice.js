@@ -94,8 +94,7 @@ export const deleteCampaign = createAsyncThunk(
   'email/deleteEmailCampaign/', async (id, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.delete(`email/deleteEmailCampaign/${id}`);
-      console.log("RESPONSEDELETE:", response)
-      return response.data
+      return response?.status
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

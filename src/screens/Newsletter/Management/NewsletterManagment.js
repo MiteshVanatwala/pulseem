@@ -36,11 +36,13 @@ import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
+import Toast from '../../../components/Toast/Toast.component';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures } = useSelector(state => state.common);
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
+  const { ToastMessages } = useSelector(state => state.client);
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
@@ -62,8 +64,21 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const navigate = useNavigate();
   const [duplicateOptions, setDuplicateOptions] = useState([])
   const { publicTemplates } = useSelector(state => state.campaignEditor);
+  const [toastMessage, setToastMessage] = useState(null);
 
-  moment.locale(language)
+  moment.locale(language);
+
+  const renderToast = () => {
+    if (toastMessage) {
+        setTimeout(() => {
+            setToastMessage(null);
+        }, 3000);
+        return (
+            <Toast data={toastMessage} />
+        );
+    }
+    return null;
+  }
 
   const getData = async () => {
     await dispatch(getNewslatterData())
@@ -843,8 +858,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
-      await dispatch(deleteCampaign(data))
-      getData()
+      const response = await dispatch(deleteCampaign(data))
+      if (response && response?.payload === 200) {
+        setToastMessage(ToastMessages.CAMPAIGN_DELETED_SUCCESS);
+        getData();
+      }
     }
   })
 
@@ -977,6 +995,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderDialog()}
       <VerificationDialog isOpen={dialogType?.type === "verifyEmail"} onClose={() => setDialogType(null)} variant="email" classes={classes} />
       <Loader isOpen={showLoader} />
+      {renderToast()}
     </DefaultScreen >
   )
 }
