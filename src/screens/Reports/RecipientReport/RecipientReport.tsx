@@ -7,7 +7,7 @@ import { Title } from '../../../components/managment/Title';
 import { getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
 import { GroupsIcon } from '../../../assets/images/managment';
-import { ConvertColorStatus, ConvertNewsletterStatusText, ConvertSmsStatusText } from '../../../helpers/UI/TableText';
+import { ConvertClientStatus, ConvertNewsletterStatusText, SourceType } from '../../../helpers/UI/TableText';
 import { PreviewIcon } from '../../../assets/images/managment';
 import { FormatDate } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -499,6 +499,14 @@ const RecipientReport = ({ classes }: any) => {
       <Grid item md='auto' className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.cellphone')}</div>
         <div className={classes.pt10}>{recipientsReportData?.ClientCellphone}</div>
+      </Grid>
+      <Grid item md='auto' className={classes.flexGrow1}>
+        <div className={clsx(classes.bold)}>{t('common.Status')}</div>
+        <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.EMAIL, recipientsReportData?.ClientStatus))}</div>
+      </Grid>
+      <Grid item md='auto' className={classes.flexGrow1}>
+        <div className={clsx(classes.bold)}>{t('common.smsStatus')}</div>
+        <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.SMS, recipientsReportData?.ClientSMSStatus))}</div>
       </Grid>
       <Grid item md='auto' className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.createdDate')}</div>
