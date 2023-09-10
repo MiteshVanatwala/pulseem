@@ -182,6 +182,7 @@ export const clientSlice = createSlice({
       RECIPIENT_ADDED: { severity: 'success', color: 'success', message: 'recipient.addRecipientSuccess', showAnimtionCheck: false },
       RECIPIENT_UPDATED: { severity: 'success', color: 'success', message: 'recipient.updateRecipientSuccess', showAnimtionCheck: false },
       RECIPIENT_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'recipient.incorrectRecipientInput', showAnimtionCheck: false },
+      CAMPAIGN_DELETED_SUCCESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.sendSettings.deleted', showAnimtionCheck: false },
     }
   },
   reducers: {
