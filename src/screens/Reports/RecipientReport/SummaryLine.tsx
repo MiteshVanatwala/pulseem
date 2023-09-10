@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 type SummaryObj = {
     Stats: Stats,
+    CampaignType: string,
     classes: any
 }
 
@@ -13,9 +14,10 @@ type Stats = {
     UnOpened: number;
     Clicks: number;
     ErrorCount: number;
+    RealClicks?: number;
 }
 
-const SummaryLine = ({ classes, Stats }: SummaryObj) => {
+const SummaryLine = ({ classes, Stats, CampaignType }: SummaryObj) => {
     const { t } = useTranslation();
     if (Stats) {
         return <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
@@ -24,14 +26,21 @@ const SummaryLine = ({ classes, Stats }: SummaryObj) => {
                     <Box className={clsx(classes.bold)}>{t('common.Sent')}</Box>
                     <Box className={classes.pt10}>{Stats?.Sent}</Box>
                 </Grid>
-                <Grid item md={2} className={classes.flexGrow1}>
-                    <Box className={clsx(classes.bold)}>{t('common.Opened')}</Box>
-                    <Box className={classes.pt10}>{Stats?.Opened}</Box>
-                </Grid>
-                <Grid item md={2} className={classes.flexGrow1}>
-                    <Box className={clsx(classes.bold)}>{t('common.NoOpened')}</Box>
-                    <Box className={classes.pt10}>{Stats?.UnOpened}</Box>
-                </Grid>
+                {CampaignType === 'sms' &&
+                    <Grid item md={2} className={classes.flexGrow1}>
+                        <Box className={clsx(classes.bold)}>{t('mainReport.verifiedCount')}</Box>
+                        <Box className={classes.pt10}>{Stats?.RealClicks}</Box>
+                    </Grid>}
+                {CampaignType === 'email' && <>
+                    <Grid item md={2} className={classes.flexGrow1}>
+                        <Box className={clsx(classes.bold)}>{t('common.Opened')}</Box>
+                        <Box className={classes.pt10}>{Stats?.Opened}</Box>
+                    </Grid>
+                    <Grid item md={2} className={classes.flexGrow1}>
+                        <Box className={clsx(classes.bold)}>{t('common.NoOpened')}</Box>
+                        <Box className={classes.pt10}>{Stats?.UnOpened}</Box>
+                    </Grid>
+                </>}
                 <Grid item md={2} className={classes.flexGrow1}>
                     <Box className={clsx(classes.bold)}>{t('common.Clicks')}</Box>
                     <Box className={classes.pt10}>{Stats?.Clicks}</Box>
@@ -41,7 +50,7 @@ const SummaryLine = ({ classes, Stats }: SummaryObj) => {
                     <Box className={classes.pt10}>{Stats?.ErrorCount}</Box>
                 </Grid>
             </Grid>
-        </Box>
+        </Box >
     }
     return <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
         <Grid container spacing={2} className={clsx(classes.greyBorderAround, classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>

@@ -2,12 +2,12 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer } from '@material-ui/core';
+import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography } from '@material-ui/core';
 import { Title } from '../../../components/managment/Title';
 import { getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
 import { GroupsIcon } from '../../../assets/images/managment';
-import { ConvertEmailStatusText, ConvertSmsStatusText } from '../../../helpers/UI/TableText';
+import { ConvertColorStatus, ConvertNewsletterStatusText, ConvertSmsStatusText } from '../../../helpers/UI/TableText';
 import { PreviewIcon } from '../../../assets/images/managment';
 import { FormatDate } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -19,6 +19,7 @@ import moment from 'moment';
 import { resetRecipientReportData } from "../../../redux/reducers/recipientsReportSlice";
 import { ManagmentIcon, TablePagination } from '../../../components/managment';
 import { getSmsByID } from '../../../redux/reducers/smsSlice';
+import { Loader } from '../../../components/Loader/Loader';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -29,6 +30,7 @@ const RecipientReport = ({ classes }: any) => {
   const [openGroupModal, toggleGroupModal] = useState(false);
   const [smsPreviewModel, setSmsPreviewModel] = useState<any>(null);
   const [previewCampaign, setPreviewCampaign] = useState<any>({ isSms: false, campaignId: null, show: false });
+  const [showLoader, setShowLoader] = useState<boolean>(false);
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const headCellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
@@ -52,8 +54,10 @@ const RecipientReport = ({ classes }: any) => {
   });
 
   const getReportData = async () => {
+    setShowLoader(true);
     //@ts-ignore
     await dispatch(getRecipientsReportData(filterRequest));
+    setShowLoader(false);
   }
 
 
@@ -112,6 +116,7 @@ const RecipientReport = ({ classes }: any) => {
     return (
       <Box className={clsx(classes.flexJustifyCenter, classes.paddingInline25)}>
         <TablePagination
+          style={{ 'justifyContent': 'center' } as any}
           classes={classes}
           rows={recipientsReportData?.CampaignStatistics?.Sent ?? 0}
           rowsPerPage={5}
@@ -125,6 +130,7 @@ const RecipientReport = ({ classes }: any) => {
     return (
       <Box className={clsx(classes.flexJustifyCenter, classes.paddingInline25)}>
         <TablePagination
+          style={{ 'justifyContent': 'center' } as any}
           classes={classes}
           rows={recipientsReportData?.SmsCampaignStatistics?.Sent ?? 0}
           rowsPerPage={5}
@@ -138,6 +144,7 @@ const RecipientReport = ({ classes }: any) => {
     return (
       <Box className={clsx(classes.flexJustifyCenter, classes.paddingInline25)}>
         <TablePagination
+          style={{ 'justifyContent': 'center' } as any}
           classes={classes}
           rows={recipientsReportData?.WhatsappCampaignStatistics?.Sent ?? 0}
           rowsPerPage={5}
@@ -168,6 +175,8 @@ const RecipientReport = ({ classes }: any) => {
   }
 
   const renderNewsletterRow = (row: any) => {
+    const statusText = ConvertNewsletterStatusText(row.Status);
+
     return (
       <TableRow
         key={RandomID()}
@@ -188,7 +197,18 @@ const RecipientReport = ({ classes }: any) => {
           classes={cellStyle}
           align='center'
           className={classes.flex2}>
-          {t(`${ConvertEmailStatusText(row.Status)}`)}
+          <Typography className={clsx(
+            classes.middleText,
+            classes.recipientsStatus,
+            {
+              [classes.recipientsStatusCreated]: row?.Status === 1,
+              [classes.recipientsStatusSent]: row?.Status === 4,
+              [classes.recipientsStatusSending]: row?.Status === 2,
+              [classes.recipientsStatusCanceled]: row?.Status === 5
+            }
+          )}>
+            {t(statusText)}
+          </Typography>
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -255,6 +275,31 @@ const RecipientReport = ({ classes }: any) => {
     )
   }
 
+  const renderStatusCell = (status: number) => {
+    const statuses = {
+      1: 'common.Created',
+      2: 'common.Sending',
+      3: 'campaigns.Stopped',
+      4: 'common.Sent',
+      5: 'campaigns.Canceled',
+      6: 'campaigns.Optin',
+      7: 'campaigns.Approve'
+    } as any;
+
+    return (
+      <Typography className={clsx(classes.middleText, classes.recipientsStatus,
+        {
+          [classes.recipientsStatusCreated]: status === 1,
+          [classes.recipientsStatusSent]: status === 4,
+          [classes.recipientsStatusSending]: status === 2,
+          [classes.recipientsStatusCanceled]: status === 5
+        }
+      )}
+      >
+        {t(statuses[status])}
+      </Typography>
+    )
+  }
   const renderRow = (row: any) => {
     return (
       <TableRow
@@ -276,7 +321,8 @@ const RecipientReport = ({ classes }: any) => {
           classes={cellStyle}
           align='center'
           className={classes.flex2}>
-          {t(`${ConvertSmsStatusText(`${row.SmsStatus}`)}`)}
+          {renderStatusCell(row.SmsStatus)}
+          {/* {t(`${ConvertSmsStatusText(`${row.SmsStatus}`)}`)} */}
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -482,7 +528,7 @@ const RecipientReport = ({ classes }: any) => {
         <Title Text={t('common.recipient')} classes={classes} />
         {renderSearchSection()}
       </Box>
-
+      <Loader isOpen={showLoader} />
       {recipientsReportData?.ClientID > 0 && <>
         <Box className={clsx(classes.p10, classes.mt20, classes.colorBlue, classes.bgLightGray)}>
           {renderClientDetails()}
@@ -492,7 +538,7 @@ const RecipientReport = ({ classes }: any) => {
             <Grid md={6}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.newsletterCampaign')} classes={classes} isIcon={false} />
-                <SummaryLine classes={classes} Stats={recipientsReportData?.CampaignStatistics} />
+                <SummaryLine classes={classes} Stats={recipientsReportData?.CampaignStatistics} CampaignType={'email'} />
                 <TableContainer className={clsx(classes.tableStyle)}>
                   <Table className={classes.tableContainer}>
                     {windowSize !== 'xs' && renderNewsLetterTableHead()}
@@ -504,7 +550,7 @@ const RecipientReport = ({ classes }: any) => {
             <Grid md={6}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.smsCampaign')} classes={classes} isIcon={false} />
-                <SummaryLine classes={classes} Stats={recipientsReportData?.SmsCampaignStatistics} />
+                <SummaryLine classes={classes} Stats={recipientsReportData?.SmsCampaignStatistics} CampaignType={'sms'} />
                 <TableContainer className={clsx(classes.tableStyle)}>
                   <Table className={classes.tableContainer}>
                     {windowSize !== 'xs' && renderSMSTableHead()}
@@ -516,7 +562,9 @@ const RecipientReport = ({ classes }: any) => {
             <Grid md={12}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.whatsappCampaign')} classes={classes} isIcon={false} />
-                <SummaryLine classes={classes} Stats={recipientsReportData?.WhatsappCampaignStatistics?.Sent > 0 ? recipientsReportData?.WhatsappCampaignStatistics : null} />
+                <SummaryLine classes={classes}
+                  Stats={recipientsReportData?.WhatsappCampaignStatistics?.Sent > 0 ? recipientsReportData?.WhatsappCampaignStatistics : null}
+                  CampaignType={'whatsapp'} />
                 <TableContainer className={clsx(classes.tableStyle)}>
                   <Table className={classes.tableContainer}>
                     {windowSize !== 'xs' && renderSMSTableHead()}
