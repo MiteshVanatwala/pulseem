@@ -16,6 +16,7 @@ type Stats = {
     ErrorCount: number;
     RealClicks?: number;
     ReadCount?: number;
+    UniqueClicksCount?: number;
 }
 
 const SummaryLine = ({ classes, Stats, CampaignType }: SummaryObj) => {
@@ -42,10 +43,16 @@ const SummaryLine = ({ classes, Stats, CampaignType }: SummaryObj) => {
                         <Box className={classes.pt10}>{Stats?.UnOpened}</Box>
                     </Grid>
                 </>}
-                {CampaignType === 'whatsapp' && <Grid item md={2} className={classes.flexGrow1}>
-                    <Box className={clsx(classes.bold)}>{t('common.read')}</Box>
-                    <Box className={classes.pt10}>{Stats?.ReadCount}</Box>
-                </Grid>}
+                {CampaignType === 'whatsapp' && <>
+                    <Grid item md={2} className={classes.flexGrow1}>
+                        <Box className={clsx(classes.bold)}>{t('common.read')}</Box>
+                        <Box className={classes.pt10}>{Stats?.ReadCount}</Box>
+                    </Grid>
+                    <Grid item md={2} className={classes.flexGrow1}>
+                        <Box className={clsx(classes.bold)}>{t('common.ClicksUnique')}</Box>
+                        <Box className={classes.pt10}>{Stats?.UniqueClicksCount}</Box>
+                    </Grid>
+                </>}
                 <Grid item md={2} className={classes.flexGrow1}>
                     <Box className={clsx(classes.bold)}>{t('common.Clicks')}</Box>
                     <Box className={classes.pt10}>{Stats?.Clicks}</Box>

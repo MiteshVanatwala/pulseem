@@ -158,7 +158,7 @@ const RecipientReport = ({ classes }: any) => {
   const renderNewsLetterTableBody = () => {
     return (
       <TableBody>
-        {recipientsReportData?.campaigns?.length === 0 ? (
+        {!recipientsReportData?.campaigns ? (
           <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
             <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
               <Grid item md={6} className={classes.flexGrow1}>{t('common.NoDataTryFilter')}</Grid>
