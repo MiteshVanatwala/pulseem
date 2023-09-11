@@ -158,7 +158,7 @@ const RecipientReport = ({ classes }: any) => {
   const renderNewsLetterTableBody = () => {
     return (
       <TableBody>
-        {!recipientsReportData?.campaigns ? (
+        {!recipientsReportData?.Campaigns ? (
           <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
             <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
               <Grid item md={6} className={classes.flexGrow1}>{t('common.NoDataTryFilter')}</Grid>
@@ -513,7 +513,8 @@ const RecipientReport = ({ classes }: any) => {
         <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(dateTimeFormat)}</div>
       </Grid>
       <Grid item md='auto' className={clsx(classes.flexGrow1, classes.pt15)}>
-        <img src={GroupsIcon} style={{ height: 20 }} />
+        {/* @ts-ignore */}
+        <img src={GroupsIcon} style={{ height: 20 }} alt="" />
         <div
           className={clsx(classes.p5, classes.dInlineBlock, classes.link)}
           style={{ verticalAlign: 'super' }}
