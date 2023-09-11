@@ -70,6 +70,7 @@ import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
 import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 import Integrations from './screens/Integrations/Integrations';
+import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -448,8 +449,8 @@ const renderRoutes = (classes, redirect) => {
         component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
       />
       <Route
-        path={`/ApiSettings`}
-        component={transferUrl('/Pulseem/ApiSettings.aspx')}
+        path={`${sitePrefix}ApiSettings`}
+        element={<ApiSettings classes={classes} />}
       />
       {/* Support */}
       <Route

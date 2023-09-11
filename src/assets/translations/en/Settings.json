@@ -151,5 +151,11 @@
 			"lowerChar": "Lowercase letter (En)",
 			"number": "Number"
 		}
+	},
+	"apiSettings":{
+		"title": "API Settings",
+		"exportDirectRemovals": "Export Direct Removals",
+		"mainApiDesc": "<b>Main API</b> - Provides ability to add an email campaign, to manage subscribers and groups from your system.",
+		"directSendApiDesc": "<b>Direct Send API</b> - Direct send provides ability to send email like SMTP server. Most effective for CRM & ERP systems. All reports available only thru API."
 	}
 }
