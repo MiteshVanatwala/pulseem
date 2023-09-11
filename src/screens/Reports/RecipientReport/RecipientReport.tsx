@@ -20,6 +20,11 @@ import { resetRecipientReportData } from "../../../redux/reducers/recipientsRepo
 import { ManagmentIcon, TablePagination } from '../../../components/managment';
 import { getSmsByID } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
+import WhatsappMobilePreview from '../../Whatsapp/Editor/Components/WhatsappMobilePreview';
+import { templateListAPIProps, toastProps } from '../../Whatsapp/Editor/Types/WhatsappCreator.types';
+import { getSavedTemplatesPreviewById } from '../../../redux/reducers/whatsappSlice';
+import { apiStatus, resetToastData } from '../../Whatsapp/Constant';
+import Toast from '../../../components/Toast/Toast.component';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -34,6 +39,15 @@ const RecipientReport = ({ classes }: any) => {
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const headCellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
+  const [dialogType, setDialogType] = useState<{
+    type: string;
+    data: any
+  } | null>(null);
+  const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
+  const ToastMessages = useSelector(
+    (state: { whatsapp: { ToastMessages: toastProps } }) => state.whatsapp.ToastMessages
+  );
 
   type reportRequest = {
     Email: string;
@@ -62,6 +76,7 @@ const RecipientReport = ({ classes }: any) => {
 
 
   const resetFilter = () => {
+    setIsSearching(false);
     setFilterRequest({
       IsExport: false,
       PageIndex: 1,
@@ -71,16 +86,6 @@ const RecipientReport = ({ classes }: any) => {
       Cellphone: ''
     })
   }
-
-  useEffect(() => {
-    if (!isSearching && (filterRequest.Email !== '' || filterRequest.Cellphone !== '')) {
-      dispatch(resetRecipientReportData());
-      resetFilter();
-    }
-    if (isSearching) {
-      getReportData();
-    }
-  }, [isSearching])
 
   useEffect(() => {
     getReportData();
@@ -220,7 +225,12 @@ const RecipientReport = ({ classes }: any) => {
           classes={cellStyle}
           className={classes.flex1}>
           <ManagmentIcon
-            // onClick={}
+            onClick={() => {
+              setDialogType({
+                type: 'newsletterpreview',
+                data: {}
+              })
+            }}
             classes={classes}
             icon={null}
             uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} />}
@@ -267,8 +277,8 @@ const RecipientReport = ({ classes }: any) => {
           </Box>
         ) : (
           <>
-            <>{campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map(renderRow) : recipientsReportData?.WhatsappCampaigns?.map(renderRow)}</>
-            <>{campaignType === 'sms' ? renderSmsPagination() : renderWhasappPagination()}</>
+            {campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map((row: any) => renderRow(row, campaignType)) : recipientsReportData?.WhatsappCampaigns?.map((row: any) => renderRow(row, campaignType))}
+            {campaignType === 'sms' ? renderSmsPagination() : renderWhasappPagination()}
           </>
         )}
       </TableBody>
@@ -300,7 +310,7 @@ const RecipientReport = ({ classes }: any) => {
       </Typography>
     )
   }
-  const renderRow = (row: any) => {
+  const renderRow = (row: any, campaignType: string) => {
     return (
       <TableRow
         key={RandomID()}
@@ -337,6 +347,42 @@ const RecipientReport = ({ classes }: any) => {
             classes={classes}
             icon={null}
             uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} />}
+            onClick={async () => {
+              if (campaignType === 'sms') {
+                // const sms: any = await dispatch(getSmsByID(row.SMSCampaignID));
+                // setDialogType({
+                //   type: 'preview',
+                //   data: sms?.payload
+                // })
+              } else if (campaignType === 'whatsapp') {
+                if (row.TemplateID) {
+                  const templateData: templateListAPIProps = await dispatch<any>(
+                    getSavedTemplatesPreviewById({
+                      templateId: row.TemplateID,
+                    })
+                  );
+                  console.log(templateData)
+                  if (templateData.payload.Status === apiStatus.SUCCESS) {
+                    const templates = templateData.payload?.Data?.Items;
+                    if (templates && templates?.length > 0) {
+                      const templateData: any = templates[0];
+                      console.log(templateData)
+                      setDialogType({
+                        type: 'preview',
+                        data: templateData?.Data
+                      })
+                    }
+                  } else {
+                    templateData?.payload?.Message
+                      ? setToastMessage({
+                        ...ToastMessages.ERROR,
+                        message: templateData?.payload?.Message,
+                      })
+                      : setToastMessage(ToastMessages.ERROR);
+                  }
+                }
+              }
+            }}
           />
         </TableCell>
       </TableRow>
@@ -418,13 +464,11 @@ const RecipientReport = ({ classes }: any) => {
           variant='outlined'
           size='small'
           value={filterRequest.Email}
-          onChange={(e) => {
-            setFilterRequest({ ...filterRequest, Email: e.target.value })
-            setIsSearching(false);
-          }}
+          onChange={(e) => setFilterRequest({ ...filterRequest, Email: e.target.value })}
           onKeyDown={(e) => {
             if (e?.keyCode === 13) {
               setIsSearching(true);
+              getReportData()
             }
           }}
           className={clsx(classes.textField, classes.minWidth252)}
@@ -443,13 +487,11 @@ const RecipientReport = ({ classes }: any) => {
           variant='outlined'
           size='small'
           value={filterRequest.Cellphone}
-          onChange={(e) => {
-            setFilterRequest({ ...filterRequest, Cellphone: e.target.value })
-            setIsSearching(false);
-          }}
+          onChange={(e) => setFilterRequest({ ...filterRequest, Cellphone: e.target.value })}
           onKeyDown={(e) => {
             if (e?.keyCode === 13) {
               setIsSearching(true);
+              getReportData();
             }
           }}
           className={clsx(classes.textField, classes.minWidth252)}
@@ -461,6 +503,7 @@ const RecipientReport = ({ classes }: any) => {
         <Button
           onClick={() => {
             setIsSearching(true);
+            getReportData()
           }}
           className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
@@ -469,7 +512,8 @@ const RecipientReport = ({ classes }: any) => {
         {isSearching &&
           <Button
             onClick={() => {
-              setIsSearching(false);
+              dispatch(resetRecipientReportData());
+              resetFilter();
             }}
             className={clsx(classes.btn, classes.btnRounded, classes.ml15)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
@@ -526,6 +570,105 @@ const RecipientReport = ({ classes }: any) => {
       <Grid item md='auto' className={clsx(classes.flexGrow1, classes.pt20)}></Grid>
     </Grid>
   }
+
+  const getSMSPreviewDialog = (data: any = {}) => {
+		return {
+      title: t('whatsappManagement.preview'),
+			childrenPadding: false,
+			contentStyle: classes.pt2rem,
+			showDivider: false,
+			content: (
+				<Box>
+					<Preview
+						classes={classes}
+						mobileFullsize={true}
+						model={data}
+						ShowRedirectButton={
+							data?.RedirectButtonText && data?.RedirectButtonText !== ''
+						}
+						showTitle={false}
+						showID={true}
+						isSMS={true}
+					/>
+				</Box>
+			)
+		};
+	};
+
+  const getWhatsappPreviewDialog = (templateData: any = {}, buttonType: string = '', fileData: any = {}) => ({
+    title: t('whatsappManagement.preview'),
+    showDivider: false,
+    content: (
+      <Box className={classes.alertModalContentMobile}>
+				<WhatsappMobilePreview
+					classes={classes}
+					templateData={templateData}
+					buttonType={buttonType}
+					fileData={fileData}
+				/>
+			</Box>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+  const getNewsletterPreviewDialog = (templateData: any = {}) => ({
+    title: t('whatsappManagement.preview'),
+    showDivider: false,
+    content: (
+      <Box className={classes.alertModalContentMobile}>
+				Newsletter Preview
+			</Box>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+  const renderDialog = () => {
+		const { type, data } = dialogType || {}
+
+		if (type) {
+			const dialogContent: { [key: string]: {} } = {
+				preview: getSMSPreviewDialog(data),
+        whatsapp: getWhatsappPreviewDialog(data),
+        newsletterpreview: getNewsletterPreviewDialog(data),
+			}
+			const currentDialog: any = (type && dialogContent[type]) || {};
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					childrenStyle={classes.mb25}
+					onClose={() => setDialogType(null)}
+					onCancel={() => setDialogType(null)}
+					{...currentDialog}>
+					{currentDialog.content}
+				</BaseDialog>
+			)
+		}
+	}
+
+  const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+  const renderToast = () => {
+		if (toastMessage.message?.length > 0) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} />;
+		}
+		return null;
+	};
 
   return (
     <DefaultScreen
@@ -587,6 +730,8 @@ const RecipientReport = ({ classes }: any) => {
       </>}
 
       {groupModal()}
+      {renderDialog()}
+      {renderToast()}
       {/* {previewCampaign.show && previewSmsCampaign()} */}
     </DefaultScreen>
   )
