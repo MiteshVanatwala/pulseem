@@ -595,7 +595,7 @@
   "newsLetterMgmt": {
     "emailVerification": {
       "emailVerificationBtnText": "אימות אימייל",
-      "popupTitle": "אימות כתובת אימייל לשליחה",
+      "popupTitle": "אימות כתובת מייל לשליחה",
       "popupDesc1": "על מנת להבטיח את אבטחת חשבונך, עלינו לאמת שכתובת אימייל זאת שייכת לך",
       "popupDesc2": "זהו תהליך חד פעמי לכל כתובת אימייל המשמשת לשליחה",
       "firstSlide": {

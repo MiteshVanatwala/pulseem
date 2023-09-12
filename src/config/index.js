@@ -9,6 +9,7 @@ const actionURL = isProdMode
 const siteTrackingURL = process.env.REACT_APP_TRACKING_URL;
 const siteTrackingScriptUrl = process.env.REACT_APP_TRACKING_SCRIPT;
 const sitePrefix = process.env.REACT_APP_SITE_PREFIX;
+const UIApiSwaggerURL = process.env.REACT_APP_UI_API_SWAGGER_URL;
 
 export {
   apiURL,
@@ -18,4 +19,5 @@ export {
   siteTrackingURL,
   //demoSiteTrackingURL,
   siteTrackingScriptUrl,
+  UIApiSwaggerURL
 };

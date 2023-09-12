@@ -1,31 +1,51 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Divider, Button } from '@material-ui/core';
+import { Box, Divider, Button, Typography, TextField, makeStyles, Link } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { Loader } from '../../../components/Loader/Loader';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import {
     MdArrowBackIos,
     MdArrowForwardIos,
+    MdAutorenew,
     MdMobileFriendly,
+    MdOutlineAutorenew,
     MdOutlineMarkEmailRead,
 } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
-import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
-import { getAccountSettings } from '../../../redux/reducers/AccountSettingsSlice';
+import { getApiKey, generateApiKey } from '../../../redux/reducers/AccountSettingsSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
+// @ts-ignore
+import CopyToClipboard from 'react-copy-to-clipboard';
+import { UIApiSwaggerURL } from '../../../config';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { HiOutlineRefresh } from 'react-icons/hi';
+import { BiExport } from 'react-icons/bi';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+
+const useStyles = makeStyles({
+    pwdEveButton: {
+        padding: 5
+    },
+    customIcon: {
+        '& .MuiButton-startIcon': {
+            marginRight: 'unset !important',
+            marginLeft: 'unset !important'
+        }
+    }
+});
 
 const ApiSettings = ({ classes }: any) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const { isRTL, windowSize } = useSelector((state: any) => state.core);
-    const { account, ToastMessages } = useSelector((state: any) => state?.accountSettings);
-    const { CoreToastMessages } = useSelector((state: any) => state?.core);
+    const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setShowLoader] = useState(false);
     const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
@@ -35,6 +55,12 @@ const ApiSettings = ({ classes }: any) => {
     const [verificationStep, setVerificationStep] = useState(0);
     const [emailToVerify, setEmailToVerify] = useState<string>('');
     const [cellphoneToVerify, setCellphoneToVerify] = useState<string>('');
+    const [apiKey, setApiKey] = useState<string>('');
+    const [showApiKey, setShowApiKey] = useState<boolean>(false);
+    const [copyStatus, setCopyStatus] = useState<boolean>(false);
+    const [showRegenerate, setShowRegenerate] = useState<boolean>(false);
+
+    const localClasses = useStyles();
 
     const renderToast = () => {
         setTimeout(() => {
@@ -43,79 +69,47 @@ const ApiSettings = ({ classes }: any) => {
         return <Toast data={toastMessage} />;
     };
 
-
-    // const getData = async () => {
-    // 	await dispatch(getAccountSettings());
-    // 	setShowLoader(false);
-    // }
-    // useEffect(() => {
-    // 	getData();
-    // }, []);
-
-    const handleResponses = async (response: any, updatedObject: AccountSettings) => {
-        switch (response?.StatusCode || response?.payload?.StatusCode) {
-            case 201: {
-                setToastMessage(ToastMessages.SETTINGS_SAVED);
-                break;
-            }
-            case 401: {
-                logout();
-                break;
-            }
-            case 400: {
-                switch (response?.payload?.Message) {
-                    case 'Email': {
-                        setToastMessage(ToastMessages.INVALID_EMAIL);
-                        break;
-                    }
-                    case 'Cellphone': {
-                        setToastMessage(ToastMessages.INVALID_CELLPHONE);
-                        break;
-                    }
-                    case 'AuthCompanyEmail': {
-                        setEmailToVerify(updatedObject.Email);
-                        setVerificationStep(1);
-                        setToastMessage(ToastMessages.VERIFY_EMAIL);
-                        handleVerification('email2fa');
-                        break;
-                    }
-                    case 'AuthCompanyCellphone': {
-                        setCellphoneToVerify(updatedObject.CellPhone);
-                        setVerificationStep(1);
-                        setToastMessage(ToastMessages.VERIFY_CELLPHONE);
-                        handleVerification('sms2fa');
-                        break;
-                    }
-                    case 'AuthEmail': {
-                        setEmailToVerify(updatedObject.DefaultFromMail);
-                        setVerificationStep(1);
-                        setToastMessage(ToastMessages.VERIFY_EMAIL);
-                        handleVerification('email');
-                        break;
-                    }
-                    case 'AuthCellphone': {
-                        setCellphoneToVerify(updatedObject.DefaultCellNumber);
-                        setVerificationStep(1);
-                        setToastMessage(ToastMessages.VERIFY_CELLPHONE);
-                        handleVerification('cellphone');
-                        break;
-                    }
-                }
-                break;
-            }
-            case 403: {
-                setToastMessage(CoreToastMessages?.XSS_ERROR);
-                await dispatch(getAccountSettings());
-                break;
-            }
-            case 200:
-            case 500:
-            default: {
-                setToastMessage(ToastMessages?.GENERAL_ERROR);
-                break;
-            }
+    useEffect(() => {
+        if (showApiKey && apiKey === '') {
+            requestApiKey();
         }
-    };
+    }, [showApiKey])
+
+    useEffect(() => {
+        requestApiKey();
+    }, [])
+
+    const requestApiKey = async () => {
+        const response = await dispatch(getApiKey()) as any;
+        const payload = response?.payload;
+
+        if (payload.StatusCode === 401) {
+            logout();
+        }
+        else if (payload?.StatusCode === 500) {
+            setToastMessage(ToastMessages?.GENERAL_ERROR);
+        }
+        else {
+            setApiKey(payload?.Data);
+        }
+    }
+
+    const reGenerateApiKey = async () => {
+        setApiKey('');
+        setShowRegenerate(false)
+        const response = await dispatch(generateApiKey()) as any;
+        const payload = response?.payload;
+
+        if (payload.StatusCode === 401) {
+            logout();
+        }
+        else if (payload?.StatusCode === 500) {
+            setToastMessage(ToastMessages?.GENERAL_ERROR);
+        }
+        else {
+            setApiKey(payload?.Data);
+        }
+    }
 
     const handleVerification = (type: string) => {
         switch (type) {
@@ -139,6 +133,13 @@ const ApiSettings = ({ classes }: any) => {
                 return false;
             }
         }
+    }
+
+    const handleCopyScript = () => {
+        setCopyStatus(true);
+        setTimeout(() => {
+            setCopyStatus(false);
+        }, 1000);
     }
 
     return (
@@ -197,9 +198,9 @@ const ApiSettings = ({ classes }: any) => {
                                     classes.btnRounded,
                                 )}
                                 onClick={() =>
-                                    handleVerification('email')
+                                    window.open('/Pulseem/ExportRemovals.aspx')
                                 }
-                                startIcon={<MdOutlineMarkEmailRead />}
+                                startIcon={<BiExport />}
                                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             >
                                 <>
@@ -212,16 +213,160 @@ const ApiSettings = ({ classes }: any) => {
                     />
                 </Box>
                 <Box className={"containerBody"}>
-                <Box>
-                    <ul>
-                        <li>{RenderHtml(t('settings.apiSettings.mainApiDesc'))}</li>
-                        <li>{RenderHtml(t('settings.apiSettings.directSendApiDesc'))}</li>
-                    </ul>
-                </Box>
-                <Divider />
-                    AAA
+                    <Box className={classes.p10} style={{ marginTop: 15 }}>
+                        <Typography
+                            className={classes.gruopsDialogText}>
+                            <FiberManualRecordIcon
+                                className={classes.gruopsDialogBullet} />
+                            {RenderHtml(t('settings.apiSettings.mainApiDesc'))}
+                        </Typography>
+                        <Typography
+                            className={classes.gruopsDialogText}>
+                            <FiberManualRecordIcon
+                                className={classes.gruopsDialogBullet} />
+                            {RenderHtml(t('settings.apiSettings.directSendApiDesc'))}
+                        </Typography>
+                    </Box>
+                    <Divider style={{ marginTop: 15 }} />
+                    <Box className={clsx(classes.p10)} style={{ width: '100%' }}>
+                        <Box className={clsx(classes.flex)}>
+                            <Box style={{ display: 'flex', flexDirection: windowSize !== 'xs' ? 'row' : 'column', alignItems: windowSize !== 'xs' ? 'flex-end' : '' }}>
+                                <Typography className={clsx(classes.managementTitle, classes.font20)} style={{ maxWidth: windowSize !== 'xs' ? 90 : '' }}>{t('integrations.shopify.apiKey')}:</Typography>
+                                <Box className={clsx(classes.mr10, classes.ml10)}>
+                                    <TextField
+                                        type={showApiKey ? "text" : "password"}
+                                        id="outlined-basic"
+                                        name="ConfirmPassword"
+                                        label=""
+                                        variant="outlined"
+                                        value={apiKey}
+                                        style={{ minWidth: windowSize !== 'xs' ? 650 : 320, width: '100%' }}
+                                        className={clsx(
+                                            classes.textField,
+                                            localClasses.customIcon
+                                        )}
+                                        inputProps={{
+                                            style: {
+                                                paddingInline: 15
+                                            },
+                                            autocomplete: "new-password"
+                                        }}
+                                        disabled
+
+                                        InputProps={{
+
+                                            endAdornment: (
+                                                <>
+                                                    <CustomTooltip
+                                                        text={null}
+                                                        titleStyle={{ fontSize: 14 }}
+                                                        arrow
+                                                        isSimpleTooltip={false}
+                                                        classes={classes}
+                                                        interactive={true}
+                                                        placement={'top'}
+                                                        title={RenderHtml(t("settings.apiSettings.showApiKey"))}
+                                                        style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
+                                                        children={
+                                                            <Button
+                                                                onClick={() => setShowApiKey(!showApiKey)}
+                                                                className={localClasses.pwdEveButton}
+                                                                startIcon={<div className={classes.copyIcon}>{showApiKey ? (
+                                                                    <VisibilityOff style={{ fontSize: 18 }} />
+                                                                ) : (
+                                                                    <Visibility style={{ fontSize: 18 }} />
+                                                                )}</div>}
+                                                            >
+                                                                {" "}
+                                                            </Button>
+                                                        }
+                                                        icon={null}
+                                                    />
+                                                    <CustomTooltip
+                                                        text={null}
+                                                        titleStyle={{ fontSize: 14 }}
+                                                        arrow
+                                                        isSimpleTooltip={false}
+                                                        classes={classes}
+                                                        interactive={true}
+                                                        placement={'top'}
+                                                        title={RenderHtml(t("settings.apiSettings.createNewApiKey"))}
+                                                        style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
+                                                        children={
+                                                            <Button
+                                                                onClick={() => setShowRegenerate(true)}
+                                                                className={localClasses.pwdEveButton}
+                                                                startIcon={<div className={classes.copyIcon}>{<HiOutlineRefresh style={{ fontSize: 18 }} />}</div>}
+                                                            >
+                                                                {" "}
+                                                            </Button>
+                                                        }
+                                                        icon={null}
+                                                    />
+                                                    <CustomTooltip
+                                                        text={null}
+                                                        titleStyle={{ fontSize: 14 }}
+                                                        arrow
+                                                        isSimpleTooltip={false}
+                                                        classes={classes}
+                                                        interactive={true}
+                                                        placement={'top'}
+                                                        title={RenderHtml(t("notifications.copy"))}
+                                                        style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
+                                                        children={
+                                                            <CopyToClipboard text={apiKey} onCopy={handleCopyScript}>
+                                                                <Button
+                                                                    className={localClasses.pwdEveButton}
+                                                                    startIcon={<div className={classes.copyIcon}>{copyStatus ? '\uE134' : '\ue0b0'}</div>}
+                                                                >
+                                                                    {" "}
+                                                                </Button>
+                                                            </CopyToClipboard>
+                                                        }
+                                                        icon={null}
+                                                    />
+
+
+                                                </>
+                                            ),
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+                        </Box>
+                        <Box className={clsx(classes.flex, classes.alignItemsCenter)} style={{ width: '100%' }}>
+                            <Box style={{ display: 'flex', flexDirection: windowSize !== 'xs' ? 'row' : 'column', alignItems: 'center', height: windowSize !== 'xs' ? 60 : '' }}>
+                                <Typography className={clsx(classes.managementTitle, classes.font20)}>{t('settings.apiSettings.apiAddress')}</Typography>
+                                <Box className={clsx(classes.mr10, classes.ml10)}>
+                                    <Link className={classes.font18} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={UIApiSwaggerURL}>{UIApiSwaggerURL}</Link>
+                                </Box>
+                            </Box>
+                        </Box>
+                        {/* Explanations */}
+                        <Box className={classes.mt25} style={{ maxWidth: 768 }}>
+                            {RenderHtml(t('settings.apiSettings.mainApiExplainTitle'))}
+                            {RenderHtml(t('settings.apiSettings.mainApiExplainDesc'))}
+                        </Box>
+                    </Box>
                 </Box>
             </Box>
+            {showRegenerate && <BaseDialog
+                classes={classes}
+                open={showRegenerate}
+                onClose={() => {
+                    setShowRegenerate(false)
+                }}
+                onCancel={() => {
+                    setShowRegenerate(false)
+                }}
+                onConfirm={() => {
+                    reGenerateApiKey()
+                }}
+                showDefaultButtons={true}
+                title={t('integrations.shopify.apiKey')}
+            >
+                {RenderHtml(t('settings.apiSettings.reGenerateConfirm'))}
+            </BaseDialog>}
             {tfaEmailVerification && <VerificationDialog
                 variant="emailTFA"
                 textButtonOnSuccess={t('common.close')}

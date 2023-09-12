@@ -2665,7 +2665,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderBottomLeftRadius: 20,
       borderBottomRightRadius: 20,
       border: "2px solid #F0F5FF",
-      backgroundCOlor: '#fff',
+      backgroundColor: '#fff',
       paddingInline: 17.2,
       '& .settingsWrapper': {
         '& .mgmtTitle': {
