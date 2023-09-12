@@ -163,7 +163,7 @@ const Groups = ({ classes }) => {
         {
             label: t("recipient.sms/mms"),
             classes: cellStyle,
-            className: clsx(classes.flex3, classes.textUppercase),
+            className: clsx(classes.flex3),
             align: "center",
         },
         {
