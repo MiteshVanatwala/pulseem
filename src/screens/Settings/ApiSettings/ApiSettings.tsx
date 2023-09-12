@@ -10,9 +10,7 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 import {
     MdArrowBackIos,
     MdArrowForwardIos,
-    MdAutorenew,
     MdMobileFriendly,
-    MdOutlineAutorenew,
     MdOutlineMarkEmailRead,
 } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
@@ -23,11 +21,12 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 // @ts-ignore
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { UIApiSwaggerURL } from '../../../config';
+import { UIApiSwaggerURL, DirectApiSwaggerURL } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { HiOutlineRefresh } from 'react-icons/hi';
 import { BiExport } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import PulseemRadio from '../../../components/Controlls/PulseemRadio';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -59,6 +58,7 @@ const ApiSettings = ({ classes }: any) => {
     const [showApiKey, setShowApiKey] = useState<boolean>(false);
     const [copyStatus, setCopyStatus] = useState<boolean>(false);
     const [showRegenerate, setShowRegenerate] = useState<boolean>(false);
+    const [isMainApi, setIsMainApi] = useState<boolean>(true);
 
     const localClasses = useStyles();
 
@@ -141,6 +141,23 @@ const ApiSettings = ({ classes }: any) => {
             setCopyStatus(false);
         }, 1000);
     }
+
+    const handleApiType = (e: any) => {
+        setIsMainApi(e.target.value === '1')
+    }
+
+    const radios = [
+        {
+            value: "1",
+            className: classes.radioButtonActive,
+            label: t("settings.apiSettings.mainApi"),
+        },
+        {
+            value: "2",
+            className: classes.radioButtonActive,
+            label: t("settings.apiSettings.directApi"),
+        }
+    ];
 
     return (
         <DefaultScreen
@@ -336,9 +353,18 @@ const ApiSettings = ({ classes }: any) => {
                         </Box>
                         <Box className={clsx(classes.flex, classes.alignItemsCenter)} style={{ width: '100%' }}>
                             <Box style={{ display: 'flex', flexDirection: windowSize !== 'xs' ? 'row' : 'column', alignItems: 'center', height: windowSize !== 'xs' ? 60 : '' }}>
-                                <Typography className={clsx(classes.managementTitle, classes.font20)}>{t('settings.apiSettings.apiAddress')}</Typography>
+                                {/* <Typography className={clsx(classes.managementTitle, classes.font20)}>{t('settings.apiSettings.apiAddress')}</Typography> */}
+                                <PulseemRadio
+                                    classes={classes}
+                                    name={"apiType"}
+                                    onChange={(e: any) => handleApiType(e)}
+                                    value={isMainApi ? '1' : '2'}
+                                    radioOptions={radios}
+                                    isVerical={true}
+                                />
                                 <Box className={clsx(classes.mr10, classes.ml10)}>
-                                    <Link className={classes.font18} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={UIApiSwaggerURL}>{UIApiSwaggerURL}</Link>
+                                    {isMainApi && <Link className={classes.font18} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={UIApiSwaggerURL}>{UIApiSwaggerURL}</Link>}
+                                    {!isMainApi && <Link className={classes.font18} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={DirectApiSwaggerURL}>{DirectApiSwaggerURL}</Link>}
                                 </Box>
                             </Box>
                         </Box>

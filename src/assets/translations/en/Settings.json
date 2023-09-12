@@ -162,6 +162,8 @@
 		"apiAddress": "API Address: ",
 		"reGenerateConfirm": "Creating a new API key will revoke the previous key.<br/>Are you sure you want to create a new API key?",
 		"createNewApiKey": "Regenerate Api Key",
-		"showApiKey": "<p style='direction: ltr'>Show/Hide API Key</p>"
+		"showApiKey": "<p style='direction: ltr'>Show/Hide API Key</p>",
+		"mainApi": "Main API URL Address",
+		"directApi": "Direct Send API URL Address"
 	}
 }
