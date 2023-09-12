@@ -1,5 +1,6 @@
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
+import uniqid from 'uniqid';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography } from '@material-ui/core';
@@ -21,11 +22,10 @@ import { ManagmentIcon, TablePagination } from '../../../components/managment';
 import { getSmsByID } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import WhatsappMobilePreview from '../../Whatsapp/Editor/Components/WhatsappMobilePreview';
-import { templateListAPIProps, toastProps } from '../../Whatsapp/Editor/Types/WhatsappCreator.types';
+import { buttonsDataProps, callToActionProps, quickReplyButtonProps, savedTemplateCallToActionProps, savedTemplateCardProps, savedTemplateDataProps, savedTemplateMediaProps, savedTemplateQuickReplyProps, savedTemplateTextProps, templateDataProps, templateListAPIProps, toastProps } from '../../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { getSavedTemplatesPreviewById } from '../../../redux/reducers/whatsappSlice';
 import { apiStatus, resetToastData } from '../../Whatsapp/Constant';
 import Toast from '../../../components/Toast/Toast.component';
-import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const RecipientReport = ({ classes }: any) => {
@@ -35,8 +35,6 @@ const RecipientReport = ({ classes }: any) => {
   const dispatch = useDispatch();
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [openGroupModal, toggleGroupModal] = useState(false);
-  const [smsPreviewModel, setSmsPreviewModel] = useState<any>(null);
-  const [previewCampaign, setPreviewCampaign] = useState<any>({ isSms: false, campaignId: null, show: false });
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const headCellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -50,6 +48,31 @@ const RecipientReport = ({ classes }: any) => {
   const ToastMessages = useSelector(
     (state: { whatsapp: { ToastMessages: toastProps } }) => state.whatsapp.ToastMessages
   );
+  const [buttonType, setButtonType] = useState<string>('');
+	const [fileData, setFileData] = useState<{
+		fileLink: string;
+		fileType: string;
+	}>({
+		fileLink: '',
+		fileType: '',
+	});
+  const [templateData, setTemplateData] = useState<templateDataProps>({
+		templateText: '',
+		templateButtons: [],
+	});
+
+  let updatedTemplateData: templateDataProps = {
+		templateText: '',
+		templateButtons: [],
+	};
+	let updatedButtonType: string = '';
+	let updatedFileData: {
+		fileLink: string;
+		fileType: string;
+	} = {
+		fileLink: '',
+		fileType: '',
+	};
 
   type reportRequest = {
     Email: string;
@@ -227,11 +250,14 @@ const RecipientReport = ({ classes }: any) => {
           className={classes.flex1}>
           <ManagmentIcon
             onClick={async () => {
-              const response: any = await dispatch(getCampaignInfo(row.CampaignID));
-              setDialogType({
-                type: 'newsletterpreview',
-                data: response?.payload?.Message?.HtmlToEdit
-              })
+              pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${row.CampaignID}&fromreact=true`)
+              // setShowLoader(true);
+              // const response: any = await dispatch(getCampaignInfo(row.CampaignID));
+              // setShowLoader(false);
+              // setDialogType({
+              //   type: 'newsletterpreview',
+              //   data: response?.payload?.Message?.HtmlToEdit
+              // })
             }}
             classes={classes}
             icon={null}
@@ -312,6 +338,158 @@ const RecipientReport = ({ classes }: any) => {
       </Typography>
     )
   }
+
+
+  // Whatsapp
+  const onSavedTemplateChange = (templateData: savedTemplateDataProps) => {
+		if (templateData) {
+			setUpdatedTemplateData(templateData);
+		}
+		setFileData(updatedFileData);
+		setButtonType(updatedButtonType);
+		setTemplateData(updatedTemplateData);
+	};
+
+  const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
+		if ('quick-reply' in templateData?.types) {
+			saveQuickreplyTemplate(templateData);
+		}
+		if ('call-to-action' in templateData?.types) {
+			saveCallToActionTemplate(templateData);
+		} else if ('card' in templateData?.types) {
+			saveCardTemplate(templateData);
+		} else if ('media' in templateData?.types) {
+			saveMediaTemplate(templateData);
+		} else if ('text' in templateData?.types) {
+			saveTextTemplate(templateData);
+		}
+	};
+
+  const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
+		const quickReplyData: savedTemplateQuickReplyProps =
+			templateData?.types['quick-reply'];
+		updatedButtonType = 'quickReply';
+		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
+		updatedTemplateData.templateText = quickReplyData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
+		const callToActionData: savedTemplateCallToActionProps =
+			templateData?.types['call-to-action'];
+		updatedButtonType = 'callToAction';
+		const buttonData = setButtonsData(
+			'callToAction',
+			callToActionData?.actions
+		);
+		updatedTemplateData.templateText = callToActionData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
+		const cardData: savedTemplateCardProps = templateData?.types['card'];
+		updatedTemplateData.templateText = cardData?.title;
+		if (cardData?.actions?.length > 0) {
+			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
+				updatedButtonType = 'callToAction';
+				const buttonData = setButtonsData('callToAction', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			} else {
+				updatedButtonType = 'quickReply';
+				const buttonData = setButtonsData('quickReply', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			}
+		}
+		if (cardData?.media?.length > 0) {
+			updatedFileData.fileLink = cardData?.media[0];
+		}
+	};
+
+	const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
+		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
+		updatedTemplateData.templateText = mediaData?.body;
+		if (mediaData?.media?.length > 0) {
+			updatedFileData.fileLink = mediaData?.media[0];
+			updatedFileData.fileType = mediaData?.media_type;
+		}
+	};
+
+	const saveTextTemplate = (templateData: savedTemplateDataProps) => {
+		const textData: savedTemplateTextProps = templateData?.types['text'];
+		updatedTemplateData.templateText = textData?.body;
+	};
+
+  const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
+		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
+		switch (buttonType) {
+			case 'quickReply':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					return {
+						id: uniqid(),
+						typeOfAction: '',
+						fields: [
+							{
+								fieldName: 'whatsapp.websiteButtonText',
+								type: 'text',
+								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+								value: button.title,
+							},
+						],
+					};
+				});
+				return buttonData ? buttonData : [];
+			case 'callToAction':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					if (button?.type === 'PHONE_NUMBER') {
+						return {
+							id: uniqid(),
+							typeOfAction: 'phonenumber',
+							fields: [
+								{
+									fieldName: 'whatsapp.phoneButtonText',
+									type: 'text',
+									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
+									value: button.title,
+								},
+								{
+									fieldName: 'whatsapp.country',
+									type: 'select',
+									placeholder: 'Select Your Country Code',
+									value: '+972',
+								},
+								{
+									fieldName: 'whatsapp.phoneNumber',
+									type: 'tel',
+									placeholder: 'whatsapp.phoneNumberPlaceholder',
+									value: button.phone,
+								},
+							],
+						};
+					} else {
+						return {
+							id: uniqid(),
+							typeOfAction: 'website',
+							fields: [
+								{
+									fieldName: 'whatsapp.websiteButtonText',
+									type: 'text',
+									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+									value: button.title,
+								},
+								{
+									fieldName: 'whatsapp.websiteURL',
+									type: 'text',
+									placeholder: 'whatsapp.websiteURLPlaceholder',
+									value: button.url,
+								},
+							],
+						};
+					}
+				});
+				return buttonData ? buttonData : [];
+		}
+	};
+
   const renderRow = (row: any, campaignType: string) => {
     return (
       <TableRow
@@ -351,27 +529,30 @@ const RecipientReport = ({ classes }: any) => {
             uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} />}
             onClick={async () => {
               if (campaignType === 'sms') {
+                setShowLoader(true);
                 const sms: any = await dispatch(getSmsByID(row.SMSCampaignID));
+                setShowLoader(false);
                 setDialogType({
                   type: 'preview',
                   data: sms?.payload
                 })
               } else if (campaignType === 'whatsapp') {
                 if (row.TemplateID) {
+                  setShowLoader(true);
                   const templateData: templateListAPIProps = await dispatch<any>(
                     getSavedTemplatesPreviewById({
                       templateId: row.TemplateID,
                     })
                   );
-                  console.log(templateData)
+                  setShowLoader(false);
                   if (templateData.payload.Status === apiStatus.SUCCESS) {
                     const templates = templateData.payload?.Data?.Items;
                     if (templates && templates?.length > 0) {
                       const templateData: any = templates[0];
-                      console.log(templateData)
+                      onSavedTemplateChange(templateData?.Data);
                       setDialogType({
-                        type: 'preview',
-                        data: templateData?.Data
+                        type: 'whatsapp',
+                        data: ''
                       })
                     }
                   } else {
@@ -579,6 +760,7 @@ const RecipientReport = ({ classes }: any) => {
 			childrenPadding: false,
 			contentStyle: classes.pt2rem,
 			showDivider: false,
+      showDefaultButtons: false,
 			content: (
 				<Box>
 					<Preview
@@ -597,9 +779,10 @@ const RecipientReport = ({ classes }: any) => {
 		};
 	};
 
-  const getWhatsappPreviewDialog = (templateData: any = {}, buttonType: string = '', fileData: any = {}) => ({
+  const getWhatsappPreviewDialog = () => ({
     title: t('whatsappManagement.preview'),
     showDivider: false,
+    showDefaultButtons: false,
     content: (
       <Box className={classes.alertModalContentMobile}>
 				<WhatsappMobilePreview
@@ -642,7 +825,7 @@ const RecipientReport = ({ classes }: any) => {
 		if (type) {
 			const dialogContent: { [key: string]: {} } = {
 				preview: getSMSPreviewDialog(data),
-        whatsapp: getWhatsappPreviewDialog(data),
+        whatsapp: getWhatsappPreviewDialog(),
         newsletterpreview: getNewsletterPreviewDialog(data),
 			}
 			const currentDialog: any = (type && dialogContent[type]) || {};
