@@ -23,7 +23,7 @@
 			"securitySettings": "הגדרות אבטחת חשבון",
 			"btnChangePwd": "שינוי סיסמא",
 			"btnUpdate": "שמירת הגדרות",
-			"btnVerifyEmail": "אימות כתובת אימייל לשליחה",
+			"btnVerifyEmail": "אימות מייל לשליחה",
 			"btnVerifyNumber": "אימות מספר לשליחה"
 		},
 		"actDetails": {
@@ -151,5 +151,20 @@
 			"lowerChar": "אות קטנה באנגלית",
 			"number": "מספר"
 		}
+	},
+	"apiSettings": {
+		"title": "הגדרות API",
+		"exportDirectRemovals": "ייצא הסרות ישירות",
+		"mainApiDesc": "<b>API ראשי</b> - מאפשר להוסיף קמפיין דיוור אלקטרוני, לנהל נמענים וקבוצות מתוך המערכת שלכם.",
+		"directSendApiDesc": "<b>API שליחה ישירה</b> - שליחה ישירה מאפשרת לשלוח דיוורים כמו שרת SMTP. מתאים במיוחד למערכות CRM ו ERP. כל הדוחות מנוהלים באמצעות ה API בלבד.",
+		"mainApiExplainTitle": "<b><u>זהו החיבור שניתן להישתמש על מנת להתממשק למערכת פולסים על ידי שימוש  Web Service וה API:</u></b>",
+		"mainApiExplainDesc": "<p>חיבור זה המאפשר מעבר דו כיווני של מידע בין מערכות פנימיות (כגון: אתרי אינטרנט, קופות, מערכות CRM ועוד...) ולבין פולסים.</p><p style='margin-top: 20px'><b>חדש!</b><br/>שדרגנו את מערכת ה API שלנו כך שהיא תהיה יותר נוחה לשימוש.</span><br/><span>לעיון במתודות והפעולות Web Service במערכת החדשה שלנו, </span> <a href='https://ui-api.pulseem.com/swagger/index.html' class='direct-send-link' target='_blank'>לחצו כאן.</a> </p><p style='margin-top: 20px'>אם יש לכם שאלות, צרו קשר עם צוות התמיכה שלנו בטלפון <a href='tel:03-5240290'>03-5240290</a> או בכתובת האימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>.</p><p style='margin-top: 20px'>לידיעתך, דוחות שנעשו עם ממשק ה- API החדש יציגו את הנתונים רק על קמפיינים שנשלחו דרך המערכת החדשה.</p>",
+		"apiAddress": "כתובת הממשק: ",
+		"apiDirectAddress": "כתובת API לשליחה ישירה: ",
+		"reGenerateConfirm": "יצירת מפתח חדש תבטל את המפתח הקודם.<br/> האם אתה בטוח שברצונך ליצור מפתח חדש?",
+		"createNewApiKey": "<p style='direction: rtl'>צור מפתח API חדש</p>",
+		"showApiKey": "<p style='direction: rtl'>הצג/הסתר מפתח API</p>",
+		"mainApi": "כתובת URL API ראשי",
+		"directApi": "כתובת URL API שליחה ישירה"
 	}
 }
