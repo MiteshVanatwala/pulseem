@@ -25,6 +25,8 @@ import { templateListAPIProps, toastProps } from '../../Whatsapp/Editor/Types/Wh
 import { getSavedTemplatesPreviewById } from '../../../redux/reducers/whatsappSlice';
 import { apiStatus, resetToastData } from '../../Whatsapp/Constant';
 import Toast from '../../../components/Toast/Toast.component';
+import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -181,7 +183,6 @@ const RecipientReport = ({ classes }: any) => {
 
   const renderNewsletterRow = (row: any) => {
     const statusText = ConvertNewsletterStatusText(row.Status);
-
     return (
       <TableRow
         key={RandomID()}
@@ -225,10 +226,11 @@ const RecipientReport = ({ classes }: any) => {
           classes={cellStyle}
           className={classes.flex1}>
           <ManagmentIcon
-            onClick={() => {
+            onClick={async () => {
+              const response: any = await dispatch(getCampaignInfo(row.CampaignID));
               setDialogType({
                 type: 'newsletterpreview',
-                data: {}
+                data: response?.payload?.Message?.HtmlToEdit
               })
             }}
             classes={classes}
@@ -349,11 +351,11 @@ const RecipientReport = ({ classes }: any) => {
             uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} />}
             onClick={async () => {
               if (campaignType === 'sms') {
-                // const sms: any = await dispatch(getSmsByID(row.SMSCampaignID));
-                // setDialogType({
-                //   type: 'preview',
-                //   data: sms?.payload
-                // })
+                const sms: any = await dispatch(getSmsByID(row.SMSCampaignID));
+                setDialogType({
+                  type: 'preview',
+                  data: sms?.payload
+                })
               } else if (campaignType === 'whatsapp') {
                 if (row.TemplateID) {
                   const templateData: templateListAPIProps = await dispatch<any>(
@@ -407,7 +409,7 @@ const RecipientReport = ({ classes }: any) => {
         <div>
           {
             recipientsReportData?.ClientToGroups?.map((group: any) => {
-              return <li className={classes.p5}>{group.GroupName}</li>
+              return <li key={RandomID()} className={classes.p5}>{group.GroupName}</li>
             })
           }
         </div>
@@ -616,12 +618,14 @@ const RecipientReport = ({ classes }: any) => {
     }
   })
 
-  const getNewsletterPreviewDialog = (templateData: any = {}) => ({
+  const getNewsletterPreviewDialog = (templateData: string = '') => ({
     title: t('whatsappManagement.preview'),
     showDivider: false,
+    customContainerStyle: classes.beeTemplate,
+    showDefaultButtons: false,
     content: (
-      <Box className={classes.alertModalContentMobile}>
-				Newsletter Preview
+      <Box>
+				{RenderHtml(templateData)}
 			</Box>
     ),
     onConfirm: async () => {
@@ -634,7 +638,7 @@ const RecipientReport = ({ classes }: any) => {
 
   const renderDialog = () => {
 		const { type, data } = dialogType || {}
-
+    
 		if (type) {
 			const dialogContent: { [key: string]: {} } = {
 				preview: getSMSPreviewDialog(data),
@@ -687,7 +691,7 @@ const RecipientReport = ({ classes }: any) => {
         </Box>
         <Box className={clsx(classes.mt20)}>
           <Grid container>
-            <Grid md={6}>
+            <Grid item md={6}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.newsletterCampaign')} classes={classes} isIcon={false} />
                 <SummaryLine classes={classes} Stats={recipientsReportData?.CampaignStatistics} CampaignType={'email'} />
@@ -699,7 +703,7 @@ const RecipientReport = ({ classes }: any) => {
                 </TableContainer>
               </Box>
             </Grid>
-            <Grid md={6}>
+            <Grid item md={6}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.smsCampaign')} classes={classes} isIcon={false} />
                 <SummaryLine classes={classes} Stats={recipientsReportData?.SmsCampaignStatistics} CampaignType={'sms'} />
@@ -711,7 +715,7 @@ const RecipientReport = ({ classes }: any) => {
                 </TableContainer>
               </Box>
             </Grid>
-            <Grid md={12}>
+            <Grid item md={12}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.whatsappCampaign')} classes={classes} isIcon={false} />
                 <SummaryLine classes={classes}

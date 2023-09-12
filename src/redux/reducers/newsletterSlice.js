@@ -206,7 +206,7 @@ export const saveCampaignInfo = createAsyncThunk(
     })
   });
 export const getCampaignInfo = createAsyncThunk(
-  'email/GetCampaignInfo', async (campaignId, thunkAPI) => {
+  'email/GetCampaignInfo', async (campaignId, _, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`email/GetCampaignInfo/${campaignId}`);
       return response.data

@@ -94,7 +94,7 @@ export const getCreditsforSMS = createAsyncThunk(
 
 export const getSmsByID = createAsyncThunk(
 	'smsCampaign/GetSmsCampaignById',
-	async (id, thunkAPI) => {
+	async (id, _, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.get(`smsCampaign/GetSmsCampaignById/${id}`);
 			return JSON.parse(response.data);
