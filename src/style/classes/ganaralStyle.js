@@ -3523,11 +3523,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   desktop: {
     boxSizing: 'border-box',
     '& .ep_container': {
-      width: 'auto',
+      width: 'calc(50vw)',
       margin: '0px auto',
       position: 'relative',
       transform: 'scale(0.7)',
-      marginTop: '-70px',
       '& .ep_base': {
         width: 90,
         height: 50,
@@ -3558,10 +3557,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       },
       '& .ep_content': {
-        width: 'auto',
-        height: 'calc(60vh)',
-        left: '50',
-        // marginLeft: -210,
+        width: '-webkit-fill-available',
+        height: 'calc(43vh)',
         overflow: 'auto',
         '&:before': {
           content: "",
@@ -3576,7 +3573,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       },
       '& .ep_screen': {
         width: 'auto',
-        height: 'calc(70vh)',
+        height: 'calc(50vh)',
         position: 'relative',  
         background: '#fff',
         border: '20px solid #474e5d',
@@ -3673,6 +3670,46 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '&::-webkit-scrollbar-thumb': {
         borderRadius: '5px'
+    }
+  },
+  mobilePreview: {
+    position: 'relative',
+    width: 360,
+    height: 640,
+    margin: 'auto',
+    border: '16px black solid',
+    borderTopWidth: 60,
+    borderBottomWidth: 60,
+    borderRadius: 36,
+    '&:before': {
+      content: '',
+      display: 'block',
+      width: 60,
+      height: 5,
+      position: 'absolute',
+      top: -30,
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      background: '#333',
+      borderRadius: 10,
+    },
+    '&:after': {
+      content: '',
+      display: 'block',
+      width: 35,
+      height: 35,
+      position: 'absolute',
+      left: '50%',
+      bottom: -65,
+      transform: 'translate(-50%, -50%)',
+      background: '#333',
+      borderRadius: '50%'
+    },
+    '& .content': {
+      width: 'auto',
+      height: 'auto',
+      background: 'white',
+      overflow: 'auto'
     }
   }
 });

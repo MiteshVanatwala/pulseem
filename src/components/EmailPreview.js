@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
 import { Grid, Box, Tab, Tabs } from '@material-ui/core'
 import clsx from 'clsx';
 import { FaDesktop, FaMobile } from 'react-icons/fa';
@@ -32,6 +30,20 @@ export const EmailPreview = ({
   showDevices = true,
 }) => {
   const [previewDeviceSelected, setPreviewDevice] = useState(showDevices === false ? 0 : 0);
+
+  useEffect(() => {
+    if (previewDeviceSelected === 1) {
+      setTimeout(() => {
+        var meta = document.createElement('meta');
+        meta.name = "viewport";
+        meta.content = "width=1280,initial-scale="+window.innerWidth/1280;
+        const ele = document.querySelector('.mobileHTML')
+        if (ele !== null) {
+          ele.appendChild(meta);
+        }
+      }, 1000);
+    }
+  }, [previewDeviceSelected])
   
   const handleDeviceChange = (event, newValue) => {
     setPreviewDevice(newValue);
@@ -71,22 +83,34 @@ export const EmailPreview = ({
 
   const mobilePreview = () => {
     return (
-      <div className={clsx(classes.mobileBG, 'mobileBg', classes.pt2rem)} style={{ margin: 'auto'}}>
-        <Box className={classes.mobilePreviewContainer}>
-          <div
-            className={clsx(classes.pt50, classes.p50)}
-            dangerouslySetInnerHTML={{ __html: data }}
-            style={{transform: 'scale(0.7)'}}
-          >
+      // <div className={clsx(classes.pt50)}>
+      //   <div className={clsx(classes.mobileBG, 'mobileBg')} style={{ margin: 'auto'}}>
+      //     <Box className={classes.mobilePreviewContainer}>
+      //       <div
+      //         className={clsx(classes.pt50, classes.p50)}
+      //         dangerouslySetInnerHTML={{ __html: data }}
+      //         style={{transform: 'scale(0.5)'}}
+      //       >
+      //       </div>
+      //     </Box>
+      //   </div>
+      // </div>
+      <div className={classes.mt20}>
+        <div className={clsx(classes.mobilePreview)}>
+          <div className="content">
+            <div
+              dangerouslySetInnerHTML={{ __html: data }}
+              className='mobileHTML'
+            />
           </div>
-        </Box>
+        </div>
       </div>
     )
   }
 
   return (
     <>
-      <Grid className={classes.beeTemplate}>
+      <Grid className={classes.beeTemplate} style={{ minWidth: 'calc(50vw)'}}>
         <Box className={clsx(classes.mt2, classes.dBlock)}>
           <Tabs
             value={previewDeviceSelected}
