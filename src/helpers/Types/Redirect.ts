@@ -5,4 +5,5 @@ export type generalPropTypes = {
 export type RedirectPropTypes = {
     url: string;
     openNewTab: boolean;
+    preventRedirect?: boolean;
 };
