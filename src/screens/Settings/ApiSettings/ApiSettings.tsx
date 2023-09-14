@@ -52,7 +52,6 @@ const ApiSettings = ({ classes }: any) => {
     const [tfaEmailVerification, setTfaEmailVerification] = useState(false);
     const [tfaSmsVerification, setTfaSmsVerification] = useState(false);
     const [verificationStep, setVerificationStep] = useState(0);
-    const [emailToVerify, setEmailToVerify] = useState<string>('');
     const [cellphoneToVerify, setCellphoneToVerify] = useState<string>('');
     const [apiKey, setApiKey] = useState<string>('');
     const [showApiKey, setShowApiKey] = useState<boolean>(false);
@@ -171,10 +170,10 @@ const ApiSettings = ({ classes }: any) => {
             <Box className={'topSection'}>
                 <Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'block' }}>
                     <Title Text={t("settings.apiSettings.title")} classes={classes}
-                        ContainerStyle={{ width: '100% !important', flexDirection: windowSize !== 'xs' ? 'row' : 'column' }}
+                        ContainerStyle={{ width: '100% !important', flexDirection: windowSize !== 'xs' ? 'row' : 'column', 'padding': windowSize === 'xs' ? '10px 15px 10px 15px' : '11px 31.69px 8px 31.69px' }}
                         Element={<Box style={{ float: isRTL ? 'left' : 'right' }}>
                             <Button
-                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 200, marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
+                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
                                 className={clsx(
                                     classes.btn,
                                     classes.btnRounded,
@@ -193,7 +192,7 @@ const ApiSettings = ({ classes }: any) => {
                                 </>
                             </Button>
                             <Button
-                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 200, marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
+                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
                                 className={clsx(
                                     classes.btn,
                                     classes.btnRounded,
@@ -212,7 +211,7 @@ const ApiSettings = ({ classes }: any) => {
                                 </>
                             </Button>
                             <Button
-                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 200, marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
+                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
                                 className={clsx(
                                     classes.btn,
                                     classes.btnRounded,
@@ -356,7 +355,6 @@ const ApiSettings = ({ classes }: any) => {
                         </Box>
                         <Box className={clsx(classes.flex, classes.alignItemsCenter)} style={{ width: '100%' }}>
                             <Box style={{ display: 'flex', flexDirection: windowSize !== 'xs' ? 'row' : 'column', alignItems: 'center', height: windowSize !== 'xs' ? 60 : '' }}>
-                                {/* <Typography className={clsx(classes.managementTitle, classes.font20)}>{t('settings.apiSettings.apiAddress')}</Typography> */}
                                 <PulseemRadio
                                     classes={classes}
                                     name={"apiType"}
@@ -402,7 +400,7 @@ const ApiSettings = ({ classes }: any) => {
                 classes={classes}
                 isOpen={tfaEmailVerification}
                 step={verificationStep}
-                value={verificationStep > 0 && emailToVerify}
+                value={null}
                 onClose={() => {
                     setTfaEmailVerification(false);
                     setVerificationStep(0);
@@ -414,7 +412,7 @@ const ApiSettings = ({ classes }: any) => {
                 variant="email"
                 isOpen={emailVerificationPopup}
                 step={verificationStep}
-                value={verificationStep > 0 && emailToVerify}
+                value={null}
                 onClose={() => {
                     setEmailVerificationPopup(false);
                     setVerificationStep(0);
@@ -425,7 +423,7 @@ const ApiSettings = ({ classes }: any) => {
                 classes={classes}
                 isOpen={tfaSmsVerification}
                 step={verificationStep}
-                value={verificationStep > 0 && cellphoneToVerify}
+                value={null}
                 onClose={() => {
                     setTfaSmsVerification(false);
                     setVerificationStep(0);
@@ -436,7 +434,7 @@ const ApiSettings = ({ classes }: any) => {
                 classes={classes}
                 variant="sms"
                 step={verificationStep}
-                value={verificationStep > 0 && cellphoneToVerify}
+                value={null}
                 isOpen={smsVerificationPopup}
                 onClose={() => {
                     setSmsVerificationPopup(false);
