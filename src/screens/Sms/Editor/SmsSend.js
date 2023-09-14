@@ -928,7 +928,7 @@ const SmsSend = ({ classes, ...props }) => {
                     onChange={inputGroup}
                     value={groupValue}
                   />
-                  <Button className={clsx(classes.saveBtn, !groupValue || groupValue === '' ? classes.disabled : null)} onClick={handleCombined}>
+                  <Button className={clsx(classes.btn, classes.btnRounded, classes.mlr10, !groupValue || groupValue === '' ? classes.disabled : null)} onClick={handleCombined}>
                     {t("mainReport.save")}
                   </Button>
                   {groupNameExist ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#", groupValue)}</span> : null}
@@ -1000,9 +1000,8 @@ const SmsSend = ({ classes, ...props }) => {
                     variant='contained'
                     key={"extraButton"}
                     className={clsx(
-                      classes.actionButton,
-                      classes.actionButtonLightGreen,
-                      classes.backButton
+                      classes.btn,
+                      classes.btnRounded
                     )}
                     onClick={() => {
                       setDialogType({ type: "quickMnualUpload" })
@@ -1869,7 +1868,7 @@ const SmsSend = ({ classes, ...props }) => {
             onClick={() => {
               setsendType2Dialog(false);
             }}
-            className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+            className={clsx(classes.btn, classes.btnRounded)}
           >
             {t("mainReport.confirmSms")}
           </Button>
@@ -1916,7 +1915,7 @@ const SmsSend = ({ classes, ...props }) => {
             onClick={() => {
               setspecialSettingValidation(false);
             }}
-            className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+            className={clsx(classes.btn, classes.btnRounded)}
           >
             {t("mainReport.confirmSms")}
           </Button>
