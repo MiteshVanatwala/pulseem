@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Tooltip, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
@@ -215,6 +215,7 @@ const SmsCreator = ({ classes }) => {
 			TotalRecipients: 1
 		}
 	};
+	const smsMessageRef = useRef(null);
 
 	useEffect(() => {
 		setAlignment(isRTL ? "right" : "left");
@@ -779,6 +780,7 @@ const SmsCreator = ({ classes }) => {
 							onChange={onMsgChange}
 							onSelect={handleMsgSelect}
 							value={smsModel.Text}
+							ref={smsMessageRef}
 						></textarea>
 
 						<Box className={classes.smallInfoDiv}>
@@ -1158,7 +1160,8 @@ const SmsCreator = ({ classes }) => {
 	const validationCheckpoint = async (callbackFunc) => {
 		if (validationCheck()) {
 			if (isSiteTracking === true) {
-				if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics) {
+				const smsMessagValue = smsMessageRef.current.value;
+				if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') == -1) {
 					let text = smsModel.Text;
 					const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
 					const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
@@ -1196,7 +1199,7 @@ const SmsCreator = ({ classes }) => {
 			if (isSave) {
 				setToastMessage(ToastMessages.SUCCESS);
 				setTimeout(() => {
-					Redirect({ url: `/react/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + FromAutomation + "&NodeToEdit=" + NodeToEdit : ""}` });
+					Redirect({ url: `/react/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + FromAutomation + "&NodeToEdit=" + NodeToEdit : ""}`, preventRedirect: true});
 					setToastMessage(null);
 				}, 1500);
 			} else if (returnToAutomation) {

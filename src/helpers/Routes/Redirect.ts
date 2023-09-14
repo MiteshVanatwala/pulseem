@@ -5,12 +5,12 @@ const useRedirect = () => {
     const navigate = useNavigate();
 
     const Redirect = (RedirectProps: RedirectPropTypes) => {
-        let { url = "", openNewTab = false } = RedirectProps;
+        let { url = "", openNewTab = false, preventRedirect = false } = RedirectProps;
         if (openNewTab) {
             window.open(url);
             return false;
         }
-        if (url.toLowerCase().indexOf("aspx") > -1 || url.toLowerCase().indexOf('/pulseem/') > -1 || window.location.pathname === url) {
+        if (url.toLowerCase().indexOf("aspx") > -1 || url.toLowerCase().indexOf('/pulseem/') > -1 || (preventRedirect === false && window.location.pathname === url)) {
             window.location.href = url;
         } else {
             navigate(url);

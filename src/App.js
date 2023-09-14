@@ -211,10 +211,6 @@ const renderRoutes = (classes, redirect) => {
         element={transferUrl('/Pulseem/SMSSmartResponses.aspx')}
       />
       <Route
-        path={`/ResponsesReport`}
-        element={transferUrl('/Pulseem/ResponsesReport.aspx')}
-      />
-      <Route
         path={`/SMSPreviewCampaign/:id`}
         element={transferUrl('/Pulseem/SMSPreviewCampaign.aspx?SMSCampaignID=', 'id')}
       />
