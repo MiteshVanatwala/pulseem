@@ -168,12 +168,13 @@ const ApiSettings = ({ classes }: any) => {
             containerClass={clsx(classes.management, classes.mb50)}
         >
             {toastMessage && renderToast()}
-            <Box className={clsx(classes.settingsContainer)}>
+            <Box className={'topSection'}>
                 <Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'block' }}>
                     <Title Text={t("settings.apiSettings.title")} classes={classes}
-                        ContainerStyle={{ width: '100% !important' }}
+                        ContainerStyle={{ width: '100% !important', flexDirection: windowSize !== 'xs' ? 'row' : 'column' }}
                         Element={<Box style={{ float: isRTL ? 'left' : 'right' }}>
                             <Button
+                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 200, marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
                                 className={clsx(
                                     classes.btn,
                                     classes.btnRounded,
@@ -192,6 +193,7 @@ const ApiSettings = ({ classes }: any) => {
                                 </>
                             </Button>
                             <Button
+                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 200, marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
                                 className={clsx(
                                     classes.btn,
                                     classes.btnRounded,
@@ -210,6 +212,7 @@ const ApiSettings = ({ classes }: any) => {
                                 </>
                             </Button>
                             <Button
+                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 200, marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
                                 className={clsx(
                                     classes.btn,
                                     classes.btnRounded,
@@ -257,7 +260,7 @@ const ApiSettings = ({ classes }: any) => {
                                         label=""
                                         variant="outlined"
                                         value={apiKey}
-                                        style={{ minWidth: windowSize !== 'xs' ? 650 : 320, width: '100%' }}
+                                        style={{ minWidth: windowSize !== 'xs' ? 650 : 'unset', width: '100%' }}
                                         className={clsx(
                                             classes.textField,
                                             localClasses.customIcon
@@ -360,11 +363,11 @@ const ApiSettings = ({ classes }: any) => {
                                     onChange={(e: any) => handleApiType(e)}
                                     value={isMainApi ? '1' : '2'}
                                     radioOptions={radios}
-                                    isVerical={true}
+                                    isVerical={windowSize !== 'xs'}
                                 />
                                 <Box className={clsx(classes.mr10, classes.ml10)}>
-                                    {isMainApi && <Link className={classes.font18} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={UIApiSwaggerURL}>{UIApiSwaggerURL}</Link>}
-                                    {!isMainApi && <Link className={classes.font18} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={DirectApiSwaggerURL}>{DirectApiSwaggerURL}</Link>}
+                                    {isMainApi && <Link className={windowSize !== 'xs' ? classes.font18 : classes.font14} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={UIApiSwaggerURL}>{UIApiSwaggerURL}</Link>}
+                                    {!isMainApi && <Link className={windowSize !== 'xs' ? classes.font18 : classes.font14} style={{ width: '100%', alignSelf: 'center', marginTop: 2, display: 'block', textDecoration: 'underline' }} href={DirectApiSwaggerURL}>{DirectApiSwaggerURL}</Link>}
                                 </Box>
                             </Box>
                         </Box>

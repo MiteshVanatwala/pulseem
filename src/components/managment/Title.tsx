@@ -21,19 +21,21 @@ export const Title = ({
 }: TitleObject) => {
   return (
     <Box
-    className={clsx(
-      classes.flex,
-      classes.alignItemsCenter,
-      classes.mgmtTitleContainer
+      className={clsx(
+        classes.flex,
+        classes.alignItemsCenter,
+        classes.mgmtTitleContainer
       )}
       style={ContainerStyle}
     >
-      {isIcon && <ListIcon className={classes.mr15} />}
-      {Text && (
-        <Typography className={clsx(classes.managementTitle, "mgmtTitle")}>
-          {Text}
-        </Typography>
-      )}
+      <Box className={clsx(classes.flex, classes.alignItemsCenter)}>
+        {isIcon && <ListIcon className={classes.mr15} />}
+        {Text && (
+          <Typography className={clsx(classes.managementTitle, "mgmtTitle")}>
+            {Text}
+          </Typography>
+        )}
+      </Box>
       {Element && (
         <Box className={clsx(classes.managementTitle, "mgmtTitle")}>
           {Element}

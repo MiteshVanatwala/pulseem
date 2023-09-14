@@ -760,6 +760,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   m5: {
     margin: ".5rem",
   },
+  font12: {
+    fontSize: 12,
+  },
   font13: {
     fontSize: 13,
   },
