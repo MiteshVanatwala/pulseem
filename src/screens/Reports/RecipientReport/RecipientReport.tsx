@@ -26,7 +26,8 @@ import { buttonsDataProps, callToActionProps, quickReplyButtonProps, savedTempla
 import { getSavedTemplatesPreviewById } from '../../../redux/reducers/whatsappSlice';
 import { apiStatus, resetToastData } from '../../Whatsapp/Constant';
 import Toast from '../../../components/Toast/Toast.component';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
+import { EmailPreview } from '../../../components/EmailPreview';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -250,14 +251,14 @@ const RecipientReport = ({ classes }: any) => {
           className={classes.flex1}>
           <ManagmentIcon
             onClick={async () => {
-              pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${row.CampaignID}&fromreact=true`)
-              // setShowLoader(true);
-              // const response: any = await dispatch(getCampaignInfo(row.CampaignID));
-              // setShowLoader(false);
-              // setDialogType({
-              //   type: 'newsletterpreview',
-              //   data: response?.payload?.Message?.HtmlToEdit
-              // })
+              // pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${row.CampaignID}&fromreact=true`)
+              setShowLoader(true);
+              const response: any = await dispatch(getCampaignInfo(row.CampaignID));
+              setShowLoader(false);
+              setDialogType({
+                type: 'newsletterpreview',
+                data: response?.payload?.Message?.HtmlToEdit
+              })
             }}
             classes={classes}
             icon={null}
@@ -808,7 +809,10 @@ const RecipientReport = ({ classes }: any) => {
     showDefaultButtons: false,
     content: (
       <Box>
-				{RenderHtml(templateData)}
+        <EmailPreview
+          classes={classes}
+          data={templateData}
+        />
 			</Box>
     ),
     onConfirm: async () => {

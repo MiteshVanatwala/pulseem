@@ -383,6 +383,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   p10: {
     padding: 10,
   },
+  p50: {
+    padding: 50,
+  },
   pbt5: {
     padding: "5px 0",
   },
@@ -3516,5 +3519,194 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   paddingInline25: {
     paddingInline: 25
+  },
+  desktop: {
+    boxSizing: 'border-box',
+    '& .ep_container': {
+      width: 'calc(50vw)',
+      margin: '0px auto',
+      position: 'relative',
+      transform: 'scale(0.7)',
+      '& .ep_base': {
+        width: 90,
+        height: 50,
+        bottom: -70,
+        left: '45%',
+        background: '#e8ebf0',
+        position: 'absolute',
+        '&:before': {
+          content: "",
+          position: 'absolute',
+          top: 0,
+          borderLeft: '13px solid transparent',
+          borderRight: '0px solid transparent',
+          borderBottom: '50px solid #e8ebf0',
+          left: -13,
+        },
+        '&:after': {
+          content: "",
+          position: 'absolute',
+          top: 0,
+          borderRight: '13px solid transparent',
+          borderLeft: '0px solid transparent',
+          borderBottom: '50px solid #e8ebf0',
+          right: -13,
+        },
+        '& .ep_div': {
+          position: 'absolute',
+        }
+      },
+      '& .ep_content': {
+        // HTML Content
+        // width: '-webkit-fill-available',
+        // height: 'calc(43vh)',
+        
+        // iFrame
+        width: '100%',
+        height: '100%',
+        
+        overflow: 'auto',
+        '&:before': {
+          content: "",
+          position: 'absolute',
+          right: -90,
+          width: 200,
+          height: 300,
+          transform: 'rotate(45deg)',
+          background: 'linear-gradient(to bottom, rgba(255,255,255,0.1) 0%,rgba(255,255,255,0) 100%)',
+          zIndex: 5,
+        }
+      },
+      '& .ep_screen': {
+        width: 'auto',
+        height: 'calc(50vh)',
+        position: 'relative',  
+        background: '#fff',
+        border: '20px solid #474e5d',
+        borderRadius: 10,
+        '&:after': {
+          width: 8,
+          height: 8,
+          borderRadius: 8,
+          bottom: -10,
+          margin: '0 0 -4px -4px',
+          background: '#e8ebf0'
+        }
+      },
+      '& .ep_monitor': {
+        '& .ep_div': {
+          position: 'absolute'
+        },
+        '&:before': {
+          content: "",
+          position: 'absolute',
+          left: '50%',
+          top: -10,
+          margin: '-3px 0 0 -3px',
+          width: 6,
+          height: 6,
+          borderRadius: 6,
+          background: '#a5adbd'
+        },
+        '&:after': {
+          content: "",
+          position: 'absolute',
+          left: '50%',
+        }
+      },
+      '& .ep_foot': {
+        background: '#e8ebf0',
+        zIndex: 1,
+      },
+      '& .ep_top': {
+        width: 116,
+        height: 5,
+        bottom: -5,
+        left: '50%',
+        marginLeft: -58,
+        '&:before': {
+          content: "",
+          position: 'absolute',
+          top: 0,
+          borderLeft: '16px solid transparent',
+          borderRight: '0px solid transparent',
+          borderBottom: '5px solid #e8ebf0',
+          left: -16,
+        },
+        '&:after': {
+          content: "",
+          position: 'absolute',
+          top: 0,
+          borderRight: '16px solid transparent',
+          borderLeft: '0px solid transparent',
+          borderBottom: '5px solid #e8ebf0',
+          right: -16,
+        }
+      },
+      '& .ep_bottom': {
+        width: 150,
+        height: 5,
+        bottom: -10,
+        left: '50%',
+        marginLeft: -75,
+        zIndex: 999,
+      },
+      '& .ep_shadow': {
+        position: 'absolute',
+        width: 350,
+        height: 15,
+        left: '50%',
+        marginLeft: -175,
+        zIndex: -1,
+        bottom: -20,
+        background: 'radial-gradient(ellipse at center, rgb(150 150 150) 0%,rgb(255 255 255) 53%,rgb(255 255 255) 55%,rgba(46,204,113,0) 55%,rgba(46,204,113,0) 100%)',
+      }
+    },
+  },
+  mobilePreview: {
+    position: 'relative',
+    width: 360,
+    height: 640,
+    margin: 'auto',
+    border: '16px black solid',
+    borderTopWidth: 60,
+    borderBottomWidth: 60,
+    borderRadius: 36,
+    '&:before': {
+      content: '',
+      display: 'block',
+      width: 60,
+      height: 5,
+      position: 'absolute',
+      top: -30,
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      background: '#333',
+      borderRadius: 10,
+    },
+    '&:after': {
+      content: '',
+      display: 'block',
+      width: 35,
+      height: 35,
+      position: 'absolute',
+      left: '50%',
+      bottom: -65,
+      transform: 'translate(-50%, -50%)',
+      background: '#333',
+      borderRadius: '50%'
+    },
+    '& .content': {
+      // HTML Content
+      width: 'auto',
+      height: 'auto',
+
+      // iFrame
+      width: '100%',
+      height: '100%',
+      
+      background: 'white',
+      overflow: 'auto'
+    }
   }
 });

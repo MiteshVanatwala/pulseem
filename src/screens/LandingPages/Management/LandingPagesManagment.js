@@ -445,13 +445,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
             ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
           })}`}
           style={{ cursor: subscribtions ? 'pointer' : null, textDecoration: subscribtions ? 'underline' : null }}
-          component='a'
-          href={`${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({
-            ...CLIENT_CONSTANTS.QUERY_PARAMS,
-            CampaignID: ID,
-            PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
-            ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
-          })}`}
           onClick={(e) => {
             e.preventDefault();
             if (Submits && Submits > 0) {
@@ -728,7 +721,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='landingPages'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>
         <Title Text={t('landingPages.logPageHeaderResource1.Text')} classes={classes} />
         {renderSearchLine()}
