@@ -248,7 +248,7 @@ const ApiSettings = ({ classes }: any) => {
                         </Typography>
                     </Box>
                     <Divider style={{ marginTop: 15 }} />
-                    <Box className={clsx(classes.p20)} style={{ width: '100%' }}>
+                    <Box className={clsx(classes.p20)} >
                         <Box className={clsx(classes.flex)}>
                             <Box style={{ display: 'flex', flexDirection: windowSize !== 'xs' ? 'row' : 'column', alignItems: windowSize !== 'xs' ? 'flex-end' : '' }}>
                                 <Typography className={clsx(classes.managementTitle, classes.font20)} style={{ maxWidth: windowSize !== 'xs' ? 90 : '' }}>{t('integrations.shopify.apiKey')}:</Typography>
