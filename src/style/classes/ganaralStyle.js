@@ -3557,8 +3557,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       },
       '& .ep_content': {
-        width: '-webkit-fill-available',
-        height: 'calc(43vh)',
+        // HTML Content
+        // width: '-webkit-fill-available',
+        // height: 'calc(43vh)',
+        
+        // iFrame
+        width: '100%',
+        height: '100%',
+        
         overflow: 'auto',
         '&:before': {
           content: "",
@@ -3657,21 +3663,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
   },
-  mobilePreviewContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    overflowY: 'auto',
-    position: 'absolute',
-    width: 350,
-    top: 60,
-    left: 50,
-    '&::-webkit-scrollbar': {
-        width: '5px'
-    },
-    '&::-webkit-scrollbar-thumb': {
-        borderRadius: '5px'
-    }
-  },
   mobilePreview: {
     position: 'relative',
     width: 360,
@@ -3706,8 +3697,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderRadius: '50%'
     },
     '& .content': {
+      // HTML Content
       width: 'auto',
       height: 'auto',
+
+      // iFrame
+      width: '100%',
+      height: '100%',
+      
       background: 'white',
       overflow: 'auto'
     }

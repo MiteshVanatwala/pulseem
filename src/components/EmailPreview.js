@@ -3,6 +3,7 @@ import { Grid, Box, Tab, Tabs } from '@material-ui/core'
 import clsx from 'clsx';
 import { FaDesktop, FaMobile } from 'react-icons/fa';
 import { RenderHtml } from '../helpers/Utils/HtmlUtils';
+import { actionURL } from '../config';
 
 
 function TabPanel(props) {
@@ -27,6 +28,7 @@ function TabPanel(props) {
 export const EmailPreview = ({
   classes,
   data = '',
+  CampaignID = '',
   showDevices = true,
 }) => {
   const [previewDeviceSelected, setPreviewDevice] = useState(showDevices === false ? 0 : 0);
@@ -65,7 +67,12 @@ export const EmailPreview = ({
             <div class="ep_container">
               <div class="ep_screen ep_monitor">
                 <div class="ep_div ep_content">
-                  {RenderHtml(data)}
+                  {/* {RenderHtml(data)} */}
+                  <iframe
+                    src={`${actionURL}PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true}`}
+                    border="no"
+                    style={{ border: "none !important", width: '100%', height: '100%' }}
+                  />
                 </div>
                 <div class="ep_base">
                   <div class="ep_div ep_grey-shadow"></div>
@@ -83,6 +90,7 @@ export const EmailPreview = ({
 
   const mobilePreview = () => {
     return (
+      // Pulseem half mobile screen
       // <div className={clsx(classes.pt50)}>
       //   <div className={clsx(classes.mobileBG, 'mobileBg')} style={{ margin: 'auto'}}>
       //     <Box className={classes.mobilePreviewContainer}>
@@ -98,9 +106,15 @@ export const EmailPreview = ({
       <div className={classes.mt20}>
         <div className={clsx(classes.mobilePreview)}>
           <div className="content">
-            <div
+            {/* CSS Mobile */}
+            {/* <div
               dangerouslySetInnerHTML={{ __html: data }}
               className='mobileHTML'
+            /> */}
+            <iframe
+              src={`${actionURL}PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true}`}
+              border="no"
+              style={{ border: "none !important", width: '100%', height: '100%' }}
             />
           </div>
         </div>
