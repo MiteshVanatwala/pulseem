@@ -786,7 +786,8 @@ const SmsManagnentScreen = ({ classes }) => {
 						isSMS={true}
 					/>
 				</Box>
-			)
+			),
+			showDefaultButtons: false
 		};
 	};
 
