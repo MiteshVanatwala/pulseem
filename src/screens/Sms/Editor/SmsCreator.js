@@ -856,10 +856,10 @@ const SmsCreator = ({ classes }) => {
                         <MenuItem disabled value="Personilization">{t("mainReport.personalisationSelect")}</MenuItem>
                         {extraAccountDATA.map((item, i) => {
                           if (item.selected) {
-                            return (<MenuItem disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</MenuItem>)
+                            return (<MenuItem disabled value={Object.keys(item)[0]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</MenuItem>)
                           }
                           else {
-                            return <MenuItem value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</MenuItem>;
+                            return <MenuItem value={Object.keys(item)[0]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</MenuItem>;
                           }
                         })}
                       </Select>
