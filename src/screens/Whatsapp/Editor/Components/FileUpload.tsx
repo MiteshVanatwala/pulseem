@@ -69,6 +69,7 @@ const FileUpload = ({
 					open={!!alert}
 					onCancel={() => setAlert('')}
 					onClose={() => setAlert('')}
+					onConfirm={() => setAlert('')}
 					renderButtons={null}
 				>
 					<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
