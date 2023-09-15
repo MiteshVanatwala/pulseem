@@ -1205,7 +1205,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 		'& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track': {
-			backgroundColor: '#19762b',
+			backgroundColor: '#FF3343',
 			opacity: '1',
 		},
 	},
