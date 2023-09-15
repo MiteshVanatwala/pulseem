@@ -863,6 +863,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tablePadingtonGridContainer: {
     paddingBlock: 10,
   },
+  selectHideDefaultCaretIcon: {
+    '& .arrow': {
+      display: 'initial !important',
+      '& .MuiSvgIcon-root': {
+        display: 'none',
+      }
+    }
+  },
   phoneSearchBar: {
     border: "1px solid #797979",
     borderRadius: "50px",
