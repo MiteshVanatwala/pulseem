@@ -1195,20 +1195,19 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 								>
 									{translator('campaigns.btnSearchResource1.Text')}
 								</Button>
-							</Grid>
-							{isSearching && (
-								<Grid item>
+
+								{isSearching && (
 									<Button
 										size='large'
 										variant='contained'
 										onClick={clearSearch}
-										className={classes.searchButton}
+										className={clsx(classes.btn, classes.btnRounded, classes.mleft5)}
 										endIcon={<ClearIcon />}
 									>
 										{translator('common.clear')}
 									</Button>
-								</Grid>
-							)}
+								)}
+							</Grid>
 						</Grid>
 					</Box>
 

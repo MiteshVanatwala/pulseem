@@ -28,6 +28,7 @@ import { apiStatus, resetToastData } from '../../Whatsapp/Constant';
 import Toast from '../../../components/Toast/Toast.component';
 import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
 import { EmailPreview } from '../../../components/EmailPreview';
+import { actionURL } from '../../../config';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -257,7 +258,8 @@ const RecipientReport = ({ classes }: any) => {
               setShowLoader(false);
               setDialogType({
                 type: 'newsletterpreview',
-                data: response?.payload?.Message?.HtmlToEdit
+                data: row.CampaignID
+                // data: response?.payload?.Message?.HtmlToEdit
               })
             }}
             classes={classes}
@@ -808,11 +810,15 @@ const RecipientReport = ({ classes }: any) => {
     customContainerStyle: classes.beeTemplate,
     showDefaultButtons: false,
     content: (
-      <Box>
-        <EmailPreview
+      <Box style={{ minHeight: 'calc(70vh)', height: 'calc(70vh)'}}>
+        <iframe
+          src={`${actionURL}PreviewCampaign.aspx?CampaignID=${templateData}&fromreact=true`}
+          style={{ border: "none !important", width: '100%', height: '100%' }}
+        />
+        {/* <EmailPreview
           classes={classes}
           data={templateData}
-        />
+        /> */}
 			</Box>
     ),
     onConfirm: async () => {

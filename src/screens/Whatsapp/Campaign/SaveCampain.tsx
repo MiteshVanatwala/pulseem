@@ -178,7 +178,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [campaignName, setCampaignName] = useState<string>('');
 	const [from, setFrom] = useState<string>('');
 	const [showValidation, setShowValidation] = useState<boolean>(false);
-	const [isTestGroupModal, setIsTestGroupModal] = useState<boolean>(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
@@ -967,7 +966,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				type: '',
 				data: ''
 			});
-			onExitCampaign();
+			onSaveCampaign('save', true, true);
 		}
 	})
 
@@ -1014,8 +1013,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		content: (
 			<TestGroupModal
 				classes={classes}
-				isOpen={isTestGroupModal}
-				onClose={() => setIsTestGroupModal(false)}
+				onClose={() => setDialogType(null)}
 				title={translator('whatsappCampaign.sendTitle')}
 				testGroupData={testGroups}
 				selectedTestGroup={selectedTestGroup}
@@ -1534,11 +1532,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 																	<div className={classes.rightForm}>
 																		<div
 																			className={classes.contactGroupDiv}
-																			onClick={() => {
-																				setIsTestGroupModal(true);
-																			}}>
+																		>
 																			{selectedTestGroup.length <= 0 && (
-																				<div>
+																				<div
+																					onClick={() => setDialogType({type: 'testGroup'})}
+																				>
 																					{' '}
 																					<>
 																						{translator('mainReport.ChooseLinks')}
@@ -1559,7 +1557,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 																								</span>
 																								<RiCloseFill
 																									className={classes.groupCloseicn}
-																									onClick={(event) => {
+																									onClick={(event: any) => {
+																										event?.preventDefault();
 																										onRemoveGroupSelection(
 																											event,
 																											item.GroupID

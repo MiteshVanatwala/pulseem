@@ -1326,7 +1326,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 									<Grid className={classes.whatsappFileUploadWrapper} item>
 										<Grid container spacing={1}>
-											<Grid item>
+											<Grid item className={buttonType === 'quickReply' ? classes.disabled : ''}>
 												<FileUpload
 													classes={classes}
 													buttonType={buttonType}
@@ -1354,6 +1354,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 														setIsFileSelected(false);
 														setDialogType({ type: 'gallery' });
 													}}
+													disabled={buttonType === 'quickReply'}
 												>
 													{translator('common.SelectFile')}
 												</Button>

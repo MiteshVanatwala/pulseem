@@ -282,7 +282,7 @@ const SiteTrackingEditor = ({ classes }) => {
                             classes.middle
                         )}
                         style={{ margin: !showCancel ? '0 auto' : null }}>
-                        {t('common.confirm')}
+                        {t('common.Ok')}
                     </Button>
                 </Box>
             )
