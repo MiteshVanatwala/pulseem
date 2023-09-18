@@ -966,7 +966,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				type: '',
 				data: ''
 			});
-			onExitCampaign();
+			onSaveCampaign('save', true, true);
 		}
 	})
 
