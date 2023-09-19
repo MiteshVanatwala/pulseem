@@ -348,10 +348,10 @@ const Groups = ({ classes,
 
                     </Button> : null}
                     {isSms && <Button variant="outlined"
-                        className={clsx(classes.formControl, showTestGroups ? classes.buttonActiveRed : classes.twoLineButton)}
+                        className={clsx(classes.formControl, classes.ml5, classes.mt1, showTestGroups ? classes.buttonActiveRed : classes.twoLineButton)}
                         onClick={() => handleShowTestGroup()}
                     >{t("sms.showTestGroups")}</Button>}
-                    <FormControl className={clsx(classes.dropDown)}>
+                    <FormControl className={clsx(classes.dropDown, classes.mt1)}>
                         <Select
                             variant="standard"
                             id='groupOrder'
@@ -372,7 +372,7 @@ const Groups = ({ classes,
                             {renderSortItems()}
                         </Select>
                     </FormControl>
-                    <Button style={{ margin: selectedList.length > 0 && showFilter && windowSize === 'xs' ? '5px 0px' : null }} className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={() => { handleSortDirection() }}>
+                    <Button style={{ margin: selectedList.length > 0 && showFilter && windowSize === 'xs' ? '5px 0px' : null }} className={clsx(classes.mt1, classes.formControl, classes.dropDown, classes.controlField)} onClick={() => { handleSortDirection() }}>
                         {sortDirection === 'asc' ? <BiSortDown /> : <BiSortUp />}
                     </Button>
                 </Box>
