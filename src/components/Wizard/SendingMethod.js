@@ -9,7 +9,7 @@ import clsx from "clsx";
 import { Stack } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import DynamicConfirmDialog from "../DialogTemplates/DynamicConfirmDialog";
-import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowDown, IoIosInformationCircle } from "react-icons/io";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -162,7 +162,7 @@ const SendingMethod = ({
                 >
                     {t("notifications.whenToSend")}
                 </h2>
-                <FormControl component="fieldset">
+                <FormControl component="fieldset" className={classes.dBlock}>
                     <Accordion expanded={campaign.SendingMethod === 1}
                         onChange={() => handleSendType(1)}
                         className={classes.noShadowAccordion}
@@ -215,7 +215,7 @@ const SendingMethod = ({
                                         title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}
                                         style={{ marginInlineStart: "5px" }}
                                     >
-                                        <span className={classes.bodyInfo}>i</span>
+                                        <div><IoIosInformationCircle size={20} /></div>
                                     </Tooltip>
                                 </Stack>
                             </Stack>
@@ -303,7 +303,7 @@ const SendingMethod = ({
                                         classes={{ tooltip: styles.customWidth }}
                                         style={{ marginInlineStart: "5px" }}
                                     >
-                                        <span className={classes.bodyInfo}>i</span>
+                                        <div><IoIosInformationCircle size={20} /></div>
                                     </Tooltip>
                                 </Stack>
                             </Stack>

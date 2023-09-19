@@ -48,6 +48,7 @@ import UploadInProgressDialog from "./Popups/UploadInProgressDialog";
 import NoCreditDialog from './Popups/NoCreditDialog'
 import { CreditType } from "../../../Models/Payments/NoCreditPopUp";
 import DynamicConfirmDialog from "../../../components/DialogTemplates/DynamicConfirmDialog";
+import { IoIosInformationCircle } from "react-icons/io";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -1102,7 +1103,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                     title={t("smsReport.whomtoSendTip")}
                                     classes={{ tooltip: styles.customWidth }}
                                 >
-                                    <span className={classes.bodyInfo}>i</span>
+                                    <div><IoIosInformationCircle size={20} /></div>
                                 </Tooltip>
                             </Stack>
                             <Stack
@@ -1236,12 +1237,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                 <span>{t("mainReport.totalReci")}: {totalClientsToSend.toLocaleString()}</span>
                                                 <Tooltip
                                                     placement={'bottom'}
-                                                    disableFocusListener
+                                                    // disableFocusListener
                                                     title={t("smsReport.finalReciTip")}
                                                     classes={{ tooltip: styles.customWidth }}
                                                     style={{ marginInlineStart: "5px" }}
                                                 >
-                                                    <span className={classes.bodyInfo}>i</span>
+                                                    <div><IoIosInformationCircle size={20} /></div>
                                                 </Tooltip>
                                             </Stack>
                                         </Stack>
@@ -1267,8 +1268,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Stack
                                             direction="row"
                                             justifyContent="center"
-                                            alignItems="center">
-                                            <Badge variant="dot" color="primary" invisible={!pulseIndication}>
+                                            alignItems="center"
+                                            className={clsx(classes.dFlex, classes.flexWrap)}
+                                        >
+                                            <Badge variant="dot" color="primary" invisible={!pulseIndication} className={clsx(classes.ml5, classes.mt1)}>
                                                 <Button
                                                     className={clsx(
                                                         classes.btn, classes.btnRounded,
@@ -1288,12 +1291,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                 style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
                                                 title={t("smsReport.pulseSendTip")}
                                                 classes={{ tooltip: styles.customWidth }}
+                                                className={clsx(classes.ml5, classes.mt1)}
                                             >
-                                                <span className={classes.bodyInfo}>i</span>
+                                                <div><IoIosInformationCircle size={20} /></div>
                                             </Tooltip>
-                                        </Stack>
-                                        <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <Badge variant="dot" color="primary" invisible={!segmantIndication}>
+
+                                            <Badge variant="dot" color="primary" invisible={!segmantIndication} className={clsx(classes.ml5, classes.mt1)}>
                                                 <Button
                                                     className={clsx(classes.btn, classes.btnRounded)}
                                                     disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
@@ -1306,9 +1309,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                     {t('mainReport.recipientFilter')}
                                                 </Button>
                                             </Badge>
-                                        </Stack>
-                                        <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
+
+                                            <Badge variant="dot" color="primary" invisible={!smsMarketingIndication} className={clsx(classes.ml5, classes.mt1)}>
                                                 <Button
                                                     className={clsx(classes.btn, classes.btnRounded)}
                                                     disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}

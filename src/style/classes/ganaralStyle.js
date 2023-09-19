@@ -940,7 +940,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minHeight: 34,
     color: '#000',
     "@media screen and (max-width: 400px)": {
-      maxWidth: 200
+      // maxWidth: 200
     },
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
