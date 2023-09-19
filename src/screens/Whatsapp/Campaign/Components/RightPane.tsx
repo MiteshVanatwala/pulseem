@@ -172,14 +172,13 @@ const RightPane = ({
 									disabled={sendType === '3' ? false : true}
 									value={sendType === '3' ? spectialDateFieldID : '0'}
 									onChange={(event: SelectChangeEvent) => handleSelectChange(event)}
-									endAdornment={
-										<InputAdornment
-											className={classes.selectAdornment}
-											position="end"
-										>
-											<IoIosArrowDown size={20} />
-										</InputAdornment>
-									}
+									IconComponent={() => {
+										return <IoIosArrowDown size={20}
+											style={{
+												position: 'absolute',
+												pointerEvents: 'none'
+											}} />
+									}}
 									className={classes.pbt5}
 									MenuProps={{
 										PaperProps: {
