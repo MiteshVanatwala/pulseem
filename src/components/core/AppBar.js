@@ -267,6 +267,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
     const reportsOptions = routes.find(r => r.key === 'reports').options
     const smallRoutes = [
       routes[0],
+      routes[1],
       routes[2],
       routes[3],
       routes[4],
