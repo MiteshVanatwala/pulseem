@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Typography, Grid, TextField, IconButton } from '@material-ui/core'
-
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { IoIosArrowDown } from 'react-icons/io';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { useSelector } from 'react-redux';
 
 export const TablePagination = ({
   classes,
@@ -16,8 +17,8 @@ export const TablePagination = ({
   returnPageOne = true,
   style = null
 }) => {
-
   const { t } = useTranslation()
+  const { windowSize } = useSelector(state => state.core);
   const pages = Math.ceil(rows / rowsPerPage)
   const [innerPage, setPage] = useState('');
   const [isTyping, setTyping] = useState(false);
@@ -85,7 +86,8 @@ export const TablePagination = ({
     return (
       <Grid
         item
-        className={classes.tablePadingtonGridItem}>
+        className={clsx(classes.tablePadingtonGridItem, windowSize === "xs" ? classes.w100 : '')}
+      >
         {page > 1 &&
           <IconButton
             onClick={() => {

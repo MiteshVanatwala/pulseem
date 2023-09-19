@@ -844,7 +844,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tablePadingtonArrow: {
     transform: isRTL ? "rotateY(0deg)" : "rotateY(180deg)",
-    marginInlineStart: 10,
+    marginInlineStart: isRTL ? 0 : 10,
     padding: 10,
     color: '#F65026'
   },
