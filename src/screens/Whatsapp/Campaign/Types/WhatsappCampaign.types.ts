@@ -95,7 +95,7 @@ export type selectedFilterCampaignsProps = {
 
 export type testGroupModalProps = {
 	classes: ClassesType['classes'];
-	isOpen: boolean;
+	isOpen?: boolean;
 	onClose: () => void;
 	onConfirmOrYes: () => void;
 	title: string;

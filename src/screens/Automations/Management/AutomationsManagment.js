@@ -799,7 +799,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='automations'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>
         <Title Text={t('automations.logPageHeaderResource1.Text')} classes={classes} />
         {renderSearchLine()}
