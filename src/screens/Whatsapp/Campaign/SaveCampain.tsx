@@ -388,7 +388,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			}
 			return variable;
 		});
-		setUpdatedDynamicVariable(updatedVariableWithSiteLink);
+
+		const consolidatedVars = updatedVariableWithSiteLink.reduce((result: any, newVar: updatedVariable) => {
+			updatedDynamicVariable.map((existingVar: updatedVariable) => {
+				if (newVar.VariableIndex !== existingVar.VariableIndex) {
+					result.push(existingVar);
+					return result;
+				}
+			});
+			result.push(newVar);
+			return result;
+		}, []);
+
+		setUpdatedDynamicVariable(consolidatedVars.length ? consolidatedVars : updatedVariableWithSiteLink);
 	};
 
 	const setCampaignDetail = (templateList: savedTemplateListProps[]) => {
