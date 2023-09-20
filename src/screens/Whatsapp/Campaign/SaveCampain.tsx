@@ -173,7 +173,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize } = useSelector((state: { core: coreProps }) => state.core);
 	// const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [campaignName, setCampaignName] = useState<string>('');
 	const [from, setFrom] = useState<string>('');
@@ -1224,6 +1224,28 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	}
 
+	const limitNotice = () => {
+		return (
+			<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
+				<span style={{ lineHeight: '0' }}>
+					{translator('whatsappCampaign.note1')}
+				</span>
+
+				<div className={classes.pt10}>
+					{translator('whatsappCampaign.note2')}{' '}
+					<>{translator('whatsappCampaign.checkLimit')}</>{' '}
+					<a
+						href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+						target='_blank'
+						rel='noreferrer'
+					>
+						<>{translator('whatsappCampaign.here')}</>
+					</a>
+				</div>
+			</Grid>
+		)
+	}
+
 	return (
 		<DefaultScreen
 			subPage={'create'}
@@ -1238,36 +1260,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							<Title
 								Text={translator('whatsappCampaign.header')}
 								classes={classes}
-								subTitle={<>
-									<Grid
-										className={clsx(classes.WhatsappCampainHeaderWrapper)}
-										container
-										alignItems='center'
-										style={{
-										}}
-									>
-										<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
-											<span style={{ lineHeight: '0' }}>
-												{translator('whatsappCampaign.note1')}
-											</span>
-
-											<div className={classes.pt10}>
-												{translator('whatsappCampaign.note2')}{' '}
-												<>{translator('whatsappCampaign.checkLimit')}</>{' '}
-												<a
-													href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-													target='_blank'
-													rel='noreferrer'
-												>
-													<>{translator('whatsappCampaign.here')}</>
-												</a>
-											</div>
-										</Grid>
-									</Grid>
-								</>}
+								subTitle={(windowSize === 'lg' || windowSize === 'md') && limitNotice()}
 							/>
 						</Box>
 						<Box className={'containerBody'}>
+							{(windowSize !== 'lg' && windowSize !== 'md') && limitNotice()}
 							{renderToast()}
 							<br />
 							<form onSubmit={onSubmit}>
