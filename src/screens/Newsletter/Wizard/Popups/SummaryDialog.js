@@ -36,7 +36,7 @@ const SummaryDialog = ({ classes,
     const [subDetailsActive, setsubDetailsActive] = useState(false);
     const [subRecipientsDetails, setsubRecipients] = useState(false);
     const [fromEmail, setFromEmail] = useState(null);
-    const { isRTL } = useSelector(state => state.core);
+    const { isRTL, windowSize } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails, isSweepingApproval } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
@@ -239,7 +239,7 @@ const SummaryDialog = ({ classes,
             <>
                 <Box style={{ fontSize: "22px", marginTop: "5px" }}>
                     <Box className={classes.baseSum} style={{ display: 'flex', width: '100%' }}>
-                        <Box className={classes.sumLeft} style={{ width: '50%' }}>
+                        <Box className={classes.sumLeft} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
                             <Box>
                                 <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("sms.smsSummaryCampaignFrom")}:</span>
                             </Box>
@@ -333,8 +333,8 @@ const SummaryDialog = ({ classes,
                                 </Link>
                             </Box>
                         </Box>
-                        {PreviewURL && <Box className={classes.sumRight} style={{ width: '50%' }}>
-                            <Stack direction='column' alignItems='center' spacing={2}>
+                        {PreviewURL && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
+                            <Stack direction='column' alignItems='center' spacing={2} className={classes.paddingInline25}>
                                 <Stack className={classes.previewIframe}>
                                     {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
                                 </Stack>
