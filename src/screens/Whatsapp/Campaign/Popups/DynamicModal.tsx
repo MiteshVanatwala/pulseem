@@ -309,7 +309,7 @@ const DynamicModal = ({
 					/>
 				</Grid>
 			</Box>
-			<DialogActions>
+			<DialogActions className={classes.pt25}>
 				<Button
 					onClick={() => onClose()}
 					variant='contained'
