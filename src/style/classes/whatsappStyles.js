@@ -863,11 +863,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: '#525252',
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
-		width: '508px',
-		height: '345px',
-		marginLeft: '-25px',
-		marginRight: '-25px',
-		marginTop: '-25px',
+		width: '100%',
+		height: '100%',
 	},
 
 	templateListWrapper: {},
@@ -1027,9 +1024,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	testGroupModalContentSearch: {
 		marginBottom: '10px',
-		marginTop: '24px',
 	},
 	testGroupModalGroupList: {
+		minHeight: '253px',
 		maxHeight: '253px',
 		overflowY: 'auto',
 	},
