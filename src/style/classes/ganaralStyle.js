@@ -192,7 +192,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#fff",
     whiteSpace: "pre-line",
     paddingInlineEnd: isRTL ? 15 : 0,
-    paddingInlineStart: isRTL ? 0 : 15
+    paddingInlineStart: isRTL ? 0 : 15,
+    overflowX: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
   resetDialogTitle: {
     fontSize: "2rem",
@@ -3137,6 +3140,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& svg': {
       fontSize: 30
+    },
+    '& .dialogTitle': {
+      width: '85%' 
     }
   },
   textRight: {
