@@ -274,14 +274,7 @@ const SmsMarketingDialog = ({
                             value={smsModel.SendSmsTo}
                             onChange={(e) => setSmsModel({ ...smsModel, SendSmsTo: e.target.value })}
                             style={{ height: 40 }}
-                            endAdornment={
-                                <InputAdornment
-                                    className={classes.selectAdornment}
-                                    position="end"
-                                >
-                                    <IoIosArrowDown size={20} />
-                                </InputAdornment>
-                            }
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             MenuProps={{
                                 PaperProps: {
                                     style: {

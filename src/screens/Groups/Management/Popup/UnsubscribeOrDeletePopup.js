@@ -8,7 +8,6 @@ import {
     FormLabel,
     RadioGroup,
     Radio,
-    InputAdornment,
     MenuItem
 } from "@material-ui/core";
 import Select from '@mui/material/Select';
@@ -96,14 +95,7 @@ const UnsubscribeOrDeletePopup = ({
                                     }}
                                     label={t("recipient.unsubscribed.notifyEmail")}
                                     name="FromEmail"
-                                    endAdornment={
-                                        <InputAdornment
-                                            className={classes.selectAdornment}
-                                            position="end"
-                                        >
-                                            <IoIosArrowDown size={20} />
-                                        </InputAdornment>
-                                    }
+                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     MenuProps={{
                                         PaperProps: {
                                             style: {

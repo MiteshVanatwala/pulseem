@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { FormControl, InputAdornment, Link, MenuItem } from "@material-ui/core";
+import { FormControl, Link, MenuItem } from "@material-ui/core";
 import Select from '@mui/material/Select';
 import { Box, Grid, Button } from "@material-ui/core";
 import { FaChevronDown } from 'react-icons/fa';
@@ -261,14 +261,7 @@ const SummaryDialog = ({ classes,
                                             className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
                                             style: { width: '100%' }
                                         }}
-                                        endAdornment={
-                                            <InputAdornment
-                                                className={classes.selectAdornment}
-                                                position="end"
-                                            >
-                                                <IoIosArrowDown size={20} />
-                                            </InputAdornment>
-                                        }
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                         MenuProps={{
                                             PaperProps: {
                                                 style: {

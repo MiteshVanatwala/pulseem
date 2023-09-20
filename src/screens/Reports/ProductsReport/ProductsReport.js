@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, MenuItem, Checkbox, ListItemText, InputAdornment } from '@material-ui/core'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
 import Select from '@mui/material/Select';
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
@@ -195,14 +195,7 @@ const ProductsReport = ({ classes }) => {
                             multiple
                             style={{ minWidth: 300 }}
                             value={searchData.CategoryID}
-                            endAdornment={
-                                <InputAdornment
-                                    className={classes.selectAdornment}
-                                    position="end"
-                                >
-                                    <IoIosArrowDown size={20} />
-                                </InputAdornment>
-                            }
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             inputProps={{
                                 placeholder: t('report.ProductsReport.category'),
                                 class: searchData.CategoryID.length === 0 ? classes.selectPlaceholderInput : classes.dNone

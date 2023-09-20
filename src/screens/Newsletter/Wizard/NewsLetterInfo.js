@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { IoIosArrowDown } from 'react-icons/io';
-import { Grid, Box, Typography, TextField, makeStyles, FormControl, Button, FormControlLabel, Checkbox, InputAdornment, MenuItem } from '@material-ui/core'
+import { Grid, Box, Typography, TextField, makeStyles, FormControl, Button, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core'
 import Select from '@mui/material/Select';
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
@@ -630,14 +630,7 @@ const NewsLetterInfo = ({ classes }) => {
                                             setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
                                             setErrors({ ...errors, FromEmail: '' });
                                         }}
-                                        endAdornment={
-                                            <InputAdornment
-                                                className={classes.selectAdornment}
-                                                position="end"
-                                            >
-                                                <IoIosArrowDown size={20} />
-                                            </InputAdornment>
-                                        }
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                         MenuProps={{
                                             PaperProps: {
                                                 style: {
@@ -743,14 +736,7 @@ const NewsLetterInfo = ({ classes }) => {
                                         }
                                         return selected;
                                     }}
-                                    endAdornment={
-                                        <InputAdornment
-                                            className={classes.selectAdornment}
-                                            position="end"
-                                        >
-                                            <IoIosArrowDown size={20} />
-                                        </InputAdornment>
-                                    }
+                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     MenuProps={{
                                         PaperProps: {
                                             style: {

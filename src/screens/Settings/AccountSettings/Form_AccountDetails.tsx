@@ -204,14 +204,7 @@ const FORM_ACCOUNT_DETAILS = ({
 									onChange={(e: SelectChangeEvent) =>
 										onTierChange(e.target.value)
 									}
-									endAdornment={
-										<InputAdornment
-											className={classes.selectAdornment}
-											position="end"
-										>
-											<IoIosArrowDown size={20} />
-										</InputAdornment>
-									}
+									IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
 									MenuProps={{
 										PaperProps: {
 											style: {

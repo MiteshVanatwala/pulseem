@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   IconButton,
-  InputAdornment,
   Tooltip,
   Typography,
   Button,
@@ -1249,14 +1248,7 @@ const SmsSend = ({ classes, ...props }) => {
                     disabled={sendType === "3" ? false : true}
                     value={sendType === "3" ? spectialDateFieldID : "0"}
                     onChange={(event) => handleSelectChange(event)}
-                    endAdornment={
-                      <InputAdornment
-                        className={classes.selectAdornment}
-                        position="end"
-                      >
-                        <IoIosArrowDown size={20} />
-                      </InputAdornment>
-                    }
+                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                     className={classes.pbt5}
                     MenuProps={{
                       PaperProps: {

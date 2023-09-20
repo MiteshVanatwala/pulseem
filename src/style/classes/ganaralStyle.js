@@ -3315,6 +3315,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
+  dropdownIconComponent: {
+    position: 'absolute',
+    pointerEvents: 'none'
+  },
   iconTab: {
     '& .MuiTab-wrapper': {
       display: 'inline-block',

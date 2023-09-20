@@ -11,8 +11,7 @@ import {
     AccordionDetails,
     makeStyles,
     FormControl,
-    MenuItem,
-    InputAdornment
+    MenuItem
 } from "@material-ui/core";
 import Select from '@mui/material/Select';
 import { DateField } from '../../../../components/managment/index'
@@ -187,14 +186,7 @@ const AddRecipientPopup = ({ classes,
                     label={label}
                     value={value}
                     onChange={(e) => onSelect(e.target.value)}
-                    endAdornment={
-                        <InputAdornment
-                            className={classes.selectAdornment}
-                            position="end"
-                        >
-                            <IoIosArrowDown size={20} />
-                        </InputAdornment>
-                    }
+                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                     MenuProps={{
                         PaperProps: {
                             style: {

@@ -5,7 +5,6 @@ import {
     TextField,
     Typography,
     FormControl,
-    InputAdornment,
     MenuItem
 } from '@material-ui/core'
 import Select from '@mui/material/Select';
@@ -47,14 +46,7 @@ export const AdvancedSettings = ({
                                 IsResponsive: Number(event.target.value) === 1 ? true : false
                             })
                         }}
-                        endAdornment={
-                            <InputAdornment
-                                className={classes.selectAdornment}
-                                position="end"
-                            >
-                                <IoIosArrowDown size={20} />
-                            </InputAdornment>
-                        }
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         renderValue={(selected) => {
                             const lc = MobileSupport.find(e => { return e.value === selected });
                             return t(lc?.label);
@@ -115,14 +107,7 @@ export const AdvancedSettings = ({
                         onChange={(event) => {
                             setCampaingnValues({ ...campaingnValues, LanguageCode: event.target.value })
                         }}
-                        endAdornment={
-                            <InputAdornment
-                                className={classes.selectAdornment}
-                                position="end"
-                            >
-                                <IoIosArrowDown size={20} />
-                            </InputAdornment>
-                        }
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         renderValue={(selected) => {
                             const lc = LangugeCode.find(e => { return e.value === selected });
                             return t(lc?.label);

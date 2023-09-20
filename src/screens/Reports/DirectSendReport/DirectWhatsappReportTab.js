@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import {
     Box, Button, Grid, Table, TableContainer,
     TableCell, Link, FormControl, MenuItem,
-    TableHead, TableRow, TextField, Typography, TableBody, InputAdornment
+    TableHead, TableRow, TextField, Typography, TableBody
 } from '@material-ui/core';
 import Select from '@mui/material/Select';
 import {
@@ -280,14 +280,7 @@ const DirectWhatsappReportTab = ({
                             displayEmpty
                             value={Status}
                             onChange={(e) => handleSearchInput(e.target.value, 'Status', 'whatsapp')}
-                            endAdornment={
-                                <InputAdornment
-                                  className={classes.selectAdornment}
-                                  position="end"
-                                >
-                                  <IoIosArrowDown size={20} />
-                                </InputAdornment>
-                            }
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             MenuProps={{
                                 PaperProps: {
                                     style: {

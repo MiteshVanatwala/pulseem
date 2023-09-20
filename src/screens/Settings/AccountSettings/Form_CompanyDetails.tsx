@@ -4,9 +4,7 @@ import {
   Button,
   FormControl,
   Grid,
-  InputAdornment,
   MenuItem,
-  OutlinedInput,
   TextField,
   Typography
 } from "@material-ui/core";
@@ -440,14 +438,7 @@ const FORM_COMPANY_DETAILS = ({
                   value={`${companyDetails?.TwoFactorAuthOptionID ?? 202}`}
                   name="TwoFactorAuthOptionID"
                   onChange={(e: SelectChangeEvent) => { handleTwoFactorOption(e) }}
-                  endAdornment={
-                    <InputAdornment
-                      className={classes.selectAdornment}
-                      position="end"
-                    >
-                      <IoIosArrowDown size={20} />
-                    </InputAdornment>
-                  }
+                  IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                   MenuProps={{
                     PaperProps: {
                       style: {

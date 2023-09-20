@@ -8,7 +8,6 @@ import {
 	Radio,
 	FormHelperText,
 	Divider,
-	InputAdornment,
 	MenuItem,
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -172,14 +171,7 @@ const RightPane = ({
 									disabled={sendType === '3' ? false : true}
 									value={sendType === '3' ? spectialDateFieldID : '0'}
 									onChange={(event: SelectChangeEvent) => handleSelectChange(event)}
-									endAdornment={
-										<InputAdornment
-											className={classes.selectAdornment}
-											position="end"
-										>
-											<IoIosArrowDown size={20} />
-										</InputAdornment>
-									}
+									IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
 									className={classes.pbt5}
 									MenuProps={{
 										PaperProps: {

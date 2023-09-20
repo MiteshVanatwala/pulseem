@@ -13,7 +13,6 @@ import {
 	Grid,
 	MenuItem,
 	Box,
-	InputAdornment,
 	FormControl,
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -140,14 +139,7 @@ const TemplateFields = ({
 								displayEmpty
 								value={category}
 								onChange={(event: SelectChangeEvent) => onCategoryChange(event.target.value)}
-								endAdornment={
-									<InputAdornment
-										className={classes.selectAdornment}
-										position="end"
-									>
-										<IoIosArrowDown size={20} />
-									</InputAdornment>
-								}
+								IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
 								className={classes.pbt5}
 								MenuProps={{
 									PaperProps: {

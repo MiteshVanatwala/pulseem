@@ -1,4 +1,4 @@
-import { FormControl, FormControlLabel, Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Radio, FormHelperText, Divider, InputAdornment, MenuItem } from "@material-ui/core";
+import { FormControl, FormControlLabel, Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Radio, FormHelperText, Divider, MenuItem } from "@material-ui/core";
 import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -350,14 +350,7 @@ const SendingMethod = ({
                                             onChange={(e) => { handleSelectChange(e) }}
                                             value={campaign.SendingMethod === 3 ? campaign?.AutoSendingByUserField?.toString() : "0"}
                                             className={classes.pbt5}
-                                            endAdornment={
-                                                <InputAdornment
-                                                    className={classes.selectAdornment}
-                                                    position="end"
-                                                >
-                                                    <IoIosArrowDown size={20} />
-                                                </InputAdornment>
-                                            }
+                                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                             MenuProps={{
                                                 PaperProps: {
                                                     style: {
