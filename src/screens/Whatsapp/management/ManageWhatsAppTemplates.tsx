@@ -3,7 +3,6 @@ import {
 	Button,
 	FormControl,
 	Grid,
-	InputAdornment,
 	MenuItem,
 	Table,
 	TableBody,
@@ -1019,15 +1018,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 											value={templateStatusSearch}
 											defaultValue={templateStatusSearch}
 											onChange={(event: SelectChangeEvent) => setTemplateStatusSearch(event.target.value)}
-											className={classes.selectHideDefaultCaretIcon}
-											endAdornment={
-												<InputAdornment
-													className={classes.selectAdornment}
-													position="end"
-												>
-													<IoIosArrowDown size={20} className='MuiSelect-icon arrow' />
-												</InputAdornment>
-											}
+											IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
 											MenuProps={{
 												PaperProps: {
 													style: {

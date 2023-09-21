@@ -280,14 +280,7 @@ const DirectSMSReportTab = ({
               displayEmpty
               value={Status}
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'sms')}
-              endAdornment={
-                <InputAdornment
-                  className={classes.selectAdornment}
-                  position="end"
-                >
-                  <IoIosArrowDown size={20} />
-                </InputAdornment>
-              }
+              IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
               MenuProps={{
                 PaperProps: {
                   style: {

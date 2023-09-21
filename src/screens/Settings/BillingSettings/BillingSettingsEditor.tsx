@@ -360,14 +360,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
                 variant="standard"
                 autoWidth
                 value={billingInfoValues.InvoiceLang}
-                endAdornment={
-									<InputAdornment
-										className={classes.selectAdornment}
-										position="end"
-									>
-										<IoIosArrowDown size={20} />
-									</InputAdornment>
-								}
+                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                 MenuProps={{
 									PaperProps: {
 										style: {
@@ -491,14 +484,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
               value={cardDetails.ExpMonth}
               name="ExpMonth"
               onChange={(e: SelectChangeEvent) => handleChangeCardDetails(e)}
-              endAdornment={
-                <InputAdornment
-                  className={classes.selectAdornment}
-                  position="end"
-                >
-                  <IoIosArrowDown size={20} />
-                </InputAdornment>
-              }
+              IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
               MenuProps={{
                 PaperProps: {
                   style: {
@@ -540,14 +526,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
               value={cardDetails.ExpYear}
               name="ExpYear"
               onChange={(e: any) => handleChangeCardDetails(e)}
-              endAdornment={
-                <InputAdornment
-                  className={classes.selectAdornment}
-                  position="end"
-                >
-                  <IoIosArrowDown size={20} />
-                </InputAdornment>
-              }
+              IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
               MenuProps={{
                 PaperProps: {
                   style: {

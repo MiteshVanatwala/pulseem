@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { FormControl, InputAdornment, Link, MenuItem } from "@material-ui/core";
+import { FormControl, Link, MenuItem } from "@material-ui/core";
 import Select from '@mui/material/Select';
 import { Box, Grid, Button } from "@material-ui/core";
 import { FaChevronDown } from 'react-icons/fa';
@@ -36,7 +36,7 @@ const SummaryDialog = ({ classes,
     const [subDetailsActive, setsubDetailsActive] = useState(false);
     const [subRecipientsDetails, setsubRecipients] = useState(false);
     const [fromEmail, setFromEmail] = useState(null);
-    const { isRTL } = useSelector(state => state.core);
+    const { isRTL, windowSize } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails, isSweepingApproval } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
@@ -239,7 +239,7 @@ const SummaryDialog = ({ classes,
             <>
                 <Box style={{ fontSize: "22px", marginTop: "5px" }}>
                     <Box className={classes.baseSum} style={{ display: 'flex', width: '100%' }}>
-                        <Box className={classes.sumLeft} style={{ width: '50%' }}>
+                        <Box className={classes.sumLeft} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
                             <Box>
                                 <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("sms.smsSummaryCampaignFrom")}:</span>
                             </Box>
@@ -261,14 +261,7 @@ const SummaryDialog = ({ classes,
                                             className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
                                             style: { width: '100%' }
                                         }}
-                                        endAdornment={
-                                            <InputAdornment
-                                                className={classes.selectAdornment}
-                                                position="end"
-                                            >
-                                                <IoIosArrowDown size={20} />
-                                            </InputAdornment>
-                                        }
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                         MenuProps={{
                                             PaperProps: {
                                                 style: {
@@ -333,8 +326,8 @@ const SummaryDialog = ({ classes,
                                 </Link>
                             </Box>
                         </Box>
-                        {PreviewURL && <Box className={classes.sumRight} style={{ width: '50%' }}>
-                            <Stack direction='column' alignItems='center' spacing={2}>
+                        {PreviewURL && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
+                            <Stack direction='column' alignItems='center' spacing={2} className={classes.paddingInline25}>
                                 <Stack className={classes.previewIframe}>
                                     {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
                                 </Stack>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Tooltip, Typography, InputAdornment, MenuItem, FormControl } from "@material-ui/core";
+import { Tooltip, Typography, MenuItem, FormControl } from "@material-ui/core";
 import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -566,14 +566,7 @@ const Editorbox = ({
                                             variant='standard'
                                             value={selectValue}
                                             onChange={handleSelectChange}
-                                            endAdornment={
-                                                <InputAdornment
-                                                    className={classes.selectAdornment}
-                                                    position="end"
-                                                >
-                                                    <IoIosArrowDown size={20} />
-                                                </InputAdornment>
-                                            }
+                                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                             style={{
                                                 width: 200
                                             }}

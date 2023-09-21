@@ -1049,6 +1049,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         fontSize: 12
     },
     filterButtonsContainer: {
+        paddingBottom: 5,
         '& *:not(svg):not(span)': {
             marginInlineEnd: 5
         },
@@ -1063,9 +1064,6 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         },
         "@media screen and (max-width: 480px)": {
             marginInline: 10,
-            '& *:not(svg):not(span):not(.MuiInputBase-formControl)': {
-                marginTop: 5
-            },
         },
         '& .MuiInputBase-formControl': {
             width: '100%',

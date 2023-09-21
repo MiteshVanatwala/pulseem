@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import GroupTags from '../../components/Groups/GroupTags'
 import { EventConditions } from '../../helpers/Constants'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
-import { Typography, TextField, Box, Button, InputAdornment, MenuItem } from '@material-ui/core';
+import { Typography, TextField, Box, Button, MenuItem } from '@material-ui/core';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { updateMetaData, deleteMetaData } from '../../redux/reducers/siteTrackingSlice';
@@ -127,14 +127,7 @@ const EventToGroups = ({
                             onChange={e => updateOperationData(e, "operatorKey", e.target.value)}
                             style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left', maxHeight: 57 }}
                             className={clsx('bottomAlignedSelect', classes.p10)}
-                            endAdornment={
-                                <InputAdornment
-                                    className={classes.selectAdornment}
-                                    position="end"
-                                >
-                                    <IoIosArrowDown size={20} />
-                                </InputAdornment>
-                            }
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             PaperProps={{
                                 style: {
                                     transform: 'translateX(10px) translateY(50px)',

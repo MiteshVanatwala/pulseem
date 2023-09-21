@@ -400,7 +400,7 @@ const RecipientChart = ({ classes, }) => {
                         showIndicators={false}
                         showStatus={false}
                         showThumbs={false}
-                        showArrows={false}
+                        showArrows={true}
                         selectedItem={carouselItem}>
                         {recipientsReport.map((report, index) => {
                             if ((report.ReportSection === 2 && !Notifications.FeatureExist)

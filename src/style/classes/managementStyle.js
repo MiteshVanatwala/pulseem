@@ -844,7 +844,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tablePadingtonArrow: {
     transform: isRTL ? "rotateY(0deg)" : "rotateY(180deg)",
-    marginInlineStart: 10,
+    marginInlineStart: isRTL ? 0 : 10,
     padding: 10,
     color: '#F65026'
   },
@@ -1351,13 +1351,28 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       width: "100%",
     },
     position: "relative",
+    "& .control-arrow": {
+      color: "#000 !important"
+    },
+    '& .carousel .control-next.control-arrow:before': {
+      borderLeft: '15px solid #000',
+    },
+    '& .carousel .control-arrow:before, .carousel.carousel-slider .control-arrow:before': {
+      margin: '0px 10px',
+      borderTop: '15px solid transparent',
+      borderBottom: '15px solid transparent'
+    },
+    '& .carousel.carousel-slider .control-arrow:before': {
+      margin: '0px 10px',
+      borderTop: '15px solid transparent',
+      borderBottom: '15px solid transparent'
+    },
+    '& .carousel .control-prev.control-arrow:before': {
+      borderRight: '15px solid #000'
+    },
   },
   carouselArrows: {
-    display: "flex",
-    justifyContent: "space-between",
-    width: "100%",
-    position: "absolute",
-    zIndex: 1,
+    display: 'none',
   },
   carouselTipsArrows: {
     display: "flex",

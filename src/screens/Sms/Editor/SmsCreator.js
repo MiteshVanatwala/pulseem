@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip, Typography, InputAdornment, FormControl, MenuItem } from "@material-ui/core";
+import { Tooltip, Typography, FormControl, MenuItem } from "@material-ui/core";
 import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
@@ -844,14 +844,7 @@ const SmsCreator = ({ classes }) => {
                         }}
                         value={selectValue}
                         onChange={handleSelectChange}
-                        endAdornment={
-                          <InputAdornment
-                            className={classes.selectAdornment}
-                            position="end"
-                          >
-                            <IoIosArrowDown size={20} />
-                          </InputAdornment>
-                        }
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                       >
                         <MenuItem disabled value="Personilization">{t("mainReport.personalisationSelect")}</MenuItem>
                         {extraAccountDATA.map((item, i) => {

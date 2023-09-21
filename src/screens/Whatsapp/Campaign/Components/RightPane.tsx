@@ -8,7 +8,6 @@ import {
 	Radio,
 	FormHelperText,
 	Divider,
-	InputAdornment,
 	MenuItem,
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';

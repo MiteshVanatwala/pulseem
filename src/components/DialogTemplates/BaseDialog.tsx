@@ -145,9 +145,9 @@ export const BaseDialog = ({
         direction="row"
         justifyContent={"space-between"}
       >
-        <Stack direction={isRTL ? "row-reverse" : "row"}>
+        <Stack direction={isRTL ? "row-reverse" : "row"} className={classes.w100}>
           {RenderIcon()}
-          <Stack alignSelf="center">
+          <Stack alignSelf="center" className="dialogTitle">
             {renderTitle ? renderTitle() : RenderTitleDefault()}
           </Stack>
         </Stack>

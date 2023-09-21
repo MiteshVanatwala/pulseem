@@ -154,14 +154,7 @@ const RecipientsTab = ({ classes }) => {
             className={styles.selectEmpty}
             inputProps={{ "aria-label": "Without label" }}
             value={selectintial}
-            endAdornment={
-              <InputAdornment
-                className={classes.selectAdornment}
-                position="end"
-              >
-                <IoIosArrowDown size={20} />
-              </InputAdornment>
-            }
+            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
             MenuProps={{
                 PaperProps: {
                     style: {

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, InputAdornment, MenuItem } from '@material-ui/core';
+import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, MenuItem } from '@material-ui/core';
 import Select from '@mui/material/Select';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { useState, useEffect } from 'react';
@@ -106,14 +106,7 @@ const ConfirmRadioDialog = ({
                                         value={notifyEmail ?? -1}
                                         onChange={event => setNotifyEmail(event.target.value)}
                                         className={classes.pbt5}
-                                        endAdornment={
-                                            <InputAdornment
-                                                className={classes.selectAdornment}
-                                                position="end"
-                                            >
-                                                <IoIosArrowDown size={20} />
-                                            </InputAdornment>
-                                        }
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                         MenuProps={{
                                             PaperProps: {
                                                 style: {

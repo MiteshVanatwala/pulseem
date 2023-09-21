@@ -192,7 +192,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#fff",
     whiteSpace: "pre-line",
     paddingInlineEnd: isRTL ? 15 : 0,
-    paddingInlineStart: isRTL ? 0 : 15
+    paddingInlineStart: isRTL ? 0 : 15,
+    overflowX: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
   resetDialogTitle: {
     fontSize: "2rem",
@@ -943,7 +946,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minHeight: 34,
     color: '#000',
     "@media screen and (max-width: 400px)": {
-      maxWidth: 200
+      // maxWidth: 200
     },
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
@@ -1935,7 +1938,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     cursor: "pointer",
-
+    width: '100%',
     "&:hover": {
       backgroundColor: "#efefef",
     },
@@ -2998,10 +3001,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomRightRadius: isRTL ? '4px' : null,
     borderTopLeftRadius: isRTL ? null : '4px',
     borderTopRightRadius: isRTL ? '4px' : null,
-    border: '1px solid #f74f26',
+    border: '1px solid #FF3343',
     padding: '10px',
     marginBottom: '8px',
-    backgroundColor: '#f74f26',
+    backgroundColor: '#FF3343',
     color: '#ffffff',
     cursor: 'pointer',
   },
@@ -3140,6 +3143,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& svg': {
       fontSize: 30
+    },
+    '& .dialogTitle': {
+      width: '85%' 
     }
   },
   textRight: {
@@ -3311,6 +3317,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         right: isRTL ? 'auto' : 10,
       }
     }
+  },
+  dropdownIconComponent: {
+    position: 'absolute',
+    pointerEvents: 'none'
   },
   iconTab: {
     '& .MuiTab-wrapper': {
