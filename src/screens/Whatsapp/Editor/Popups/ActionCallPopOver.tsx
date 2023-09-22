@@ -12,9 +12,11 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
+	FormGroup,
 	Grid,
 	IconButton,
 	MenuItem,
+	Switch,
 	TextField,
 	Typography,
 } from '@material-ui/core';
@@ -250,7 +252,7 @@ const ActionCallPopOver = ({
 				onClose={() => closeCallToAction(true)}
 				aria-labelledby='form-dialog-title'
 				fullWidth
-				maxWidth='md'>
+				maxWidth='lg'>
 				<DialogTitle
 					id='form-dialog-title'
 					className={classes.callToActionDialogHeaderTitle}>
@@ -274,7 +276,7 @@ const ActionCallPopOver = ({
 							{callToActionFieldRows.map(
 								(row: callToActionRowProps, index: number) => (
 									<Grid container spacing={3} key={'TOC' + index}>
-										<Grid item xs={12} sm={6} md={3}>
+										<Grid item xs={12} sm={6} md={2}>
 											<Typography>
 												<>{translator('whatsapp.typeOfAction')}</>
 											</Typography>
@@ -302,8 +304,8 @@ const ActionCallPopOver = ({
 										</Grid>
 
 										{row?.fields.map(
-											(field: callToActionFieldProps, fIndex: number) =>
-												field.type !== 'select' ? (
+											(field: callToActionFieldProps, fIndex: number) => {
+												return field.type && (field.type !== 'select' ? (
 													<Grid
 														item
 														xs={12}
@@ -396,8 +398,51 @@ const ActionCallPopOver = ({
 															))}
 														</TextField> */}
 													</Grid>
-												)
+												))
+											}
 										)}
+										{
+											row.typeOfAction === 'website' && (
+												<Grid
+													item
+													xs={12}
+													sm={6}
+													md={3}
+												>
+													<Box className={classes.switchDiv}>
+														<FormGroup>
+															<Switch
+																className={
+																	isRTL
+																		? clsx(
+																				classes.reactSwitchHe,
+																				'react-switch',
+																				'dynamic-link-switch'
+																			)
+																		: clsx(
+																				classes.reactSwitch,
+																				'react-switch',
+																				'dynamic-link-switch'
+																			)
+																}
+																checked={row?.fields.length>1 && row?.fields[2]?.value === 'true'}
+																onChange={() => onTypeOfActionFieldChange(
+																	`${row?.fields[2]?.value === 'true' ? 'false' : 'true'}`,
+																	row,
+																	row?.fields[2]
+																)}
+															/>
+														</FormGroup>
+														<Box>
+															<Typography className='keep-track'>{translator('mainReport.keepTrack')}</Typography>
+														</Box>
+													</Box>
+													<Box>
+														<Typography className='keep-track-desc'>{translator('mainReport.keepDesc')}</Typography>
+													</Box>
+												</Grid>
+											)
+										}
 										{isEditable && (
 											<Grid item md={1}>
 												<Typography style={{ visibility: 'hidden' }}>
@@ -415,7 +460,7 @@ const ActionCallPopOver = ({
 							)}
 						</Grid>
 
-						<DialogActions>
+						<DialogActions className={classes.pt50}>
 							{callToActionFieldRows?.length < 2 && (
 								<Button variant='contained' color='primary' onClick={addMore}>
 									<>{translator('whatsapp.quickReply.addMore')}</>

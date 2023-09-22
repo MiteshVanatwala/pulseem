@@ -218,6 +218,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			placeholder: 'whatsapp.websiteURLPlaceholder',
 			value: '',
 		},
+		{
+			fieldName: 'mainReport.keepTrack',
+			type: '',
+			placeholder: '',
+			value: 'false',
+		},
 	];
 	const phoneNumberField = [
 		{
