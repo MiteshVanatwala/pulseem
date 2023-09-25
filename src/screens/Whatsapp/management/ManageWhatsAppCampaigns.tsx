@@ -939,7 +939,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
   }
 
 	const renderDialog = () => {
-    const { data, type } = dialogType || {}
+    const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'duplicate') {
     	currentDialog = getDuplicateDialog();

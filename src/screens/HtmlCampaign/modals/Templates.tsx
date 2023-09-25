@@ -94,15 +94,14 @@ const Templates = ({
           {renderHtml(templateDetails.Html)}
         </Box>
         <div id='name' className={clsx(classes.textCenter, classes.pt10, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
-        <div id='buttons' className={clsx(classes.textCenter, classes.p5, classes.pb25)}>
+        <div id='buttons' className={clsx(classes.textCenter, classes.pb25)}>
           <Button
             className={clsx(
-              // classes.solidDialogButton,
-              // classes.dialogConfirmBlueButton,
               classes.p5,
               classes.btn,
               classes.btnRounded,
               classes.textCapitalize,
+              classes.mt1,
               'preview-btn'
             )}
             onClick={() => {
@@ -119,13 +118,12 @@ const Templates = ({
 
           <Button
             className={clsx(
-              // classes.solidDialogButton,
-              // classes.dialogConfirmButton,
               classes.btn,
               classes.btnRounded,
               classes.ml5,
               classes.p5,
               classes.textCapitalize,
+              classes.mt1
             )}
             onClick={() => {
               onClose(templateDetails)

@@ -272,7 +272,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const renderStatusCell = (row: templateListItemsProps) => {
-		const { Status, RejectionReason } = row;
+		const { Status } = row;
 		return (
 			<Typography
 				className={clsx(classes.middleText, classes.whatsappTemplatesStatus, {
@@ -825,7 +825,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
   })
 
   const renderDialog = () => {
-    const { data, type } = dialogType || {}
+    const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'duplicate') {
     	currentDialog = getDuplicateDialog();
