@@ -118,7 +118,9 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const handlePreview = async (ID) => {
+    setLoader(true);
     const item = await dispatch(getNotificationById(ID));
+    setLoader(false);
     setDialogType({
       type: 'preview',
       data: item.payload
@@ -425,15 +427,6 @@ const NotificationManagement = ({ classes }) => {
 
     const iconsMap = [
       {
-        key: 'send',
-        uIcon: SendIcon,
-        lable: t('notifications.buttons.send'),
-        remove: StatusID !== 0,
-        rootClass: classes.sendIcon,
-        textClass: classes.sendIconText,
-        href: `${sitePrefix}Notification/send/${ID}`
-      },
-      {
         key: 'preview',
         uIcon: PreviewIcon,
         lable: t('notifications.buttons.preview'),
@@ -505,6 +498,25 @@ const NotificationManagement = ({ classes }) => {
             />
           </Grid>
         ))}
+        {
+          StatusID === 0 && (
+            <Grid
+              className={clsx('rowIconContainer', classes.justifyCenter, classes.alignSelfCenter, classes.paddingSides5)}
+              item
+            >
+              <Button
+                className={clsx(
+                  classes.btn,
+                  classes.btnRounded,
+                )}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                onClick={() => window.location.href = `${sitePrefix}Notification/send/${ID}`}
+              >
+                {t('campaigns.imgSendResource1.ToolTip')}
+              </Button>
+            </Grid>
+          )
+        }
       </Grid>
     )
   }

@@ -91,7 +91,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managementTitle: {
     fontSize: windowSize === "xs" ? 20 : 29,
     fontFamily: "Assistant",
-    fontWeight: "bold",
     whiteSpace: windowSize === "xs" ? "break-spaces" : null,
     fontWeight: 500,
     color: '#4D4D4D',
@@ -410,11 +409,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   textColorRed: {
     color: "#E74C3C",
-  },
-  actionButton: {
-    color: "white",
-    fontSize: 18,
-    textTransform: "none",
   },
   actionButtonLightGreen: {
     backgroundColor: "#27AE60",
@@ -1577,16 +1571,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   bulkStatusContainer: {
-    ['@media (max-width:1550px)']: {
-      '& div': {
-        // zoom: '95%',
-      }
-    },
-    ['@media (max-width:1280px)']: {
-      '& div': {
-        // zoom: '100%',
-      }
-    },
     '& .MuiDivider-root': {
       width: '100%',
       border: '1px #F0F5FF solid',
@@ -1639,7 +1623,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: 100,
     marginBottom: 10,
   },
-
   activeTab: {
     background: blue,
     borderRadius: 5,
@@ -2059,21 +2042,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   carouselContainer: {
-    display: 'flex'
-  },
-  implementButtonFlex: {
-    maxHeight: '45',
-    marginBottom: 5,
-    marginRight: 5,
-    marginInlineStart: 'auto',
-    lineHeight: windowSize === 'xs' ? 1 : null,
-    "@media screen and (max-width: 540px)": {
-      marginTop: 5,
-      marginLeft: 38
-    },
-  },
-
-  carouselContainer: {
     display: 'flex',
     flexDirection: 'row !important',
     flexWrap: 'nowrap',
@@ -2207,5 +2175,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 15,
     marginInlineStart: 'auto',
     lineHeight: windowSize === 'xs' ? 1 : null,
+    "@media screen and (max-width: 540px)": {
+      marginTop: 5,
+      marginLeft: 38
+    },
   }
 });

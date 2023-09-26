@@ -190,7 +190,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: '1rem',
     fontWeight: "500",
     color: "#fff",
-    whiteSpace: "pre-line",
     paddingInlineEnd: isRTL ? 15 : 0,
     paddingInlineStart: isRTL ? 0 : 15,
     overflowX: 'hidden',
@@ -3710,14 +3709,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderRadius: '50%'
     },
     '& .content': {
-      // HTML Content
-      width: 'auto',
-      height: 'auto',
-
-      // iFrame
       width: '100%',
       height: '100%',
-      
       background: 'white',
       overflow: 'auto'
     }
