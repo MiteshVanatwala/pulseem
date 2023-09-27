@@ -79,7 +79,7 @@ export const BaseDialog = ({
   const RenderTitleDefault = () => (
     <>
       <Typography
-        style={{ textAlign: 'center', marginTop: 15, color: "#000", direction: isRTL ? 'rtl' : 'ltr' }}
+        style={{ textAlign: 'center', marginTop: 5, marginBottom: 5, color: "#000", direction: isRTL ? 'rtl' : 'ltr' }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,

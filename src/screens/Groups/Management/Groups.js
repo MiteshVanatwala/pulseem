@@ -50,6 +50,7 @@ import queryString from 'query-string';
 import { ClientStatus } from "../../../helpers/Constants";
 import { DeletePropertyFromArrayObject, HandleExportData, ReplaceExtraFieldHeader, SwitchStatusByCondition } from '../../../helpers/Export/ExportHelper';
 import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
+import MergeGroupPopUp from './Popup/MergeGroupPopUp';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -144,7 +145,8 @@ const Groups = ({ classes }) => {
         EXPORT_ALL: "EXPORT_ALL",
         EXPORT_SELECTED: "EXPORT_SELECTED",
         SIMPLY_CLUB: "SIMPLY_CLUB",
-        EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
+        EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS",
+        MERGE_GROUP: "MERGE_GROUP",
     };
     const TABLE_HEAD = [
         {
@@ -381,6 +383,20 @@ const Groups = ({ classes }) => {
                         onClick={() => setDialog(DialogType.ADD_GROUP)}
                     >
                         {t("group.new")}
+                    </Button>
+                </Grid>
+                <Grid item xs={colSize}>
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonLightGreen
+                        )}
+                        onClick={() => setDialog(DialogType.MERGE_GROUP)}
+                        disabled={selectedGroups.length < 2}
+                    >
+                        {t("group.mergeGroup")}
                     </Button>
                 </Grid>
                 {windowSize !== "xs" && (
@@ -2094,6 +2110,19 @@ const Groups = ({ classes }) => {
                         addAnotherRecCallback={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
                         getData={() => getData(null)}
                         handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions) }}
+                    />
+                }
+                case DialogType.MERGE_GROUP: {
+                    return <MergeGroupPopUp
+                        classes={classes}
+                        isOpen={dialog === DialogType.MERGE_GROUP}
+                        selectedGroupId={selectedGroups}
+                        onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                        setLoader={setLoader}
+                        windowSize={windowSize}
+                        ToastMessages={ToastMessages}
+                        setToastMessage={setToastMessage}
+                        getData={() => getData(null)}
                     />
                 }
                 case DialogType.EDIT_GROUP: {

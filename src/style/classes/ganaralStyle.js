@@ -946,6 +946,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       height: "110px",
     },
   },
+  mergeGroup: {
+    '& .MuiPaper-root': {
+      maxWidth: 'calc(40vw)',
+      width: 'calc(40vw)',
+    }
+  },
   templateModal: {
     // minWidth: "900px",
     minWidth: '60vw',
@@ -2375,7 +2381,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: 'rgba(0, 0, 0, 0.7)',
     fontWeight: '700',
     position: 'absolute',
-    top: '0.2rem',
+    top: '0.7rem',
     cursor: 'pointer',
   },
   btnBgExitDialog: {
