@@ -86,7 +86,6 @@ const useStyles = makeStyles({
 });
 
 const AddRecipientPopup = ({ classes,
-    isFullScreen = false,
     isOpen = false,
     onClose,
     windowSize,
@@ -1278,81 +1277,8 @@ const AddRecipientPopup = ({ classes,
         )
     }
 
-    return isFullScreen ? (<>
-        <Box className={clsx(localClasses.contentBox, classes.mt10)}>
-            {
-                ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
-            }
-            <>
-                <Box container spacing={2} className={clsx(classes.responsiveLinePadding, classes.maxWidth540, classes.mxAuto, classes.justifyCenterOfCenter, classes.flexWrap, classes.pt0, classes.pb0)}>
-                    <Box
-                        item
-                        xs={windowSize === "xs" && 12}
-                        sm={4}
-                        md={4}
-                        className={clsx(classes.txtCenter, classes.mt5)}
-                    >
-                        <Button
-                            className={clsx(
 
-                                classes.dialogButtonResponive,
-                                classes.btn,
-                                classes.btnRounded
-                            )}
-                            onClick={onClose}
-                        >
-                            {t("group.cancel")}
-                        </Button>
-                    </Box>
-                    <Box
-                        item
-                        xs={windowSize === "xs" && 12}
-                        sm={4}
-                        md={4}
-                        className={clsx(classes.txtCenter, classes.mt5)}
-                    >
-                        <Button
-                            className={clsx(
-
-                                classes.dialogButtonResponive,
-                                classes.btn,
-                                classes.btnRounded,
-                                classes.textCapitalize
-                            )}
-
-                            onClick={() => handleSubmit(onRecipientAdded)}
-                        >
-                            {t("group.ok")}
-                        </Button>
-                    </Box>
-                    {!recipientData && windowSize !== "xs" && <Box
-                        item
-                        xs={windowSize === "xs" && 12}
-                        sm={4}
-                        md={4}
-                        className={clsx(classes.txtCenter, classes.mt5, classes.maxContent)}
-                    >
-                        <Button
-                            className={clsx(
-                                classes.maxContent,
-
-                                classes.dialogButtonResponive,
-                                classes.btn,
-                                classes.btnRounded
-                            )}
-                            onClick={() => handleSubmit(() => {
-                                setAccountExtraFields(null)
-                                setAddRecipientData(DEFAULT_RECIPIENT_DATA)
-                            })}
-                        >
-                            {t("recipient.addAnotherRecipient")}
-                        </Button>
-                    </Box>}
-
-                </Box>
-            </>
-        </Box>
-    </>) : (
+    return (
         <BaseDialog
             classes={classes}
             open={isOpen}
@@ -1451,7 +1377,7 @@ const AddRecipientPopup = ({ classes,
             </Box>
             <Loader isOpen={showLaoder} />
         </BaseDialog>
-    )
+    );
 };
 
 export default AddRecipientPopup;

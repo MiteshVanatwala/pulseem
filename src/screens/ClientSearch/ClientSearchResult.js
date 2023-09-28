@@ -1903,7 +1903,6 @@ const ClientSearchResult = ({ classes }) => {
           }
 
           return <AddRecipientPopup
-            isFullScreen={true}
             classes={classes}
             isOpen={selectedClients.length === 1 && dialog === DialogType.EDIT_RECIPIENT}
             onClose={() => { setDialog(null); setSelectedClients([]); }}
