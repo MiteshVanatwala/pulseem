@@ -51,6 +51,7 @@ import { ClientStatus } from "../../../helpers/Constants";
 import { DeletePropertyFromArrayObject, HandleExportData, ReplaceExtraFieldHeader, SwitchStatusByCondition } from '../../../helpers/Export/ExportHelper';
 import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
 import Sort from '../../../components/Sort/Sort';
+import { SortColumns, SortDirection } from '../../../Models/PushNotifications/Enums';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -85,8 +86,8 @@ const Groups = ({ classes }) => {
     const pageProperty = useRef();
     const qs = (window.location.search && queryString.parse(window.location.search)) || state;
     const exportColumnHeader = useRef(null);
-    const [sortDirection, setSortDirection] = useState('asc');
-    const [sortBySelected, setSortBy] = useState('Group Name');
+    const [sortDirection, setSortDirection] = useState(SortDirection.ASC);
+    const [sortBySelected, setSortBy] = useState(SortColumns.GROUP_NAME);
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -178,15 +179,15 @@ const Groups = ({ classes }) => {
 
     const groupSortOptions = [
         {
-            value: "Group Name",
+            value: SortColumns.GROUP_NAME,
             text: t("notifications.sort_by_group"),
         },
         {
-            value: "Creation Date",
+            value: SortColumns.CREATION_DATE,
             text: t("notifications.sort_by_creation"),
         },
         {
-            value: "Update Date",
+            value: SortColumns.UPDATE_DATE,
             text: t("notifications.sort_by_updated"),
         },
     ];
@@ -264,7 +265,7 @@ const Groups = ({ classes }) => {
             ...serachData,
             PageIndex: 1
         });
-        const selected = sortDirection === 'asc' ? 'desc' : 'asc';
+        const selected = sortDirection === SortDirection.ASC ? SortDirection.DESC : SortDirection.ASC;
         setSortDirection(selected);
     }
 
