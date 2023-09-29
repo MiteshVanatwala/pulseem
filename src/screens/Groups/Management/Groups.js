@@ -50,6 +50,7 @@ import queryString from 'query-string';
 import { ClientStatus } from "../../../helpers/Constants";
 import { DeletePropertyFromArrayObject, HandleExportData, ReplaceExtraFieldHeader, SwitchStatusByCondition } from '../../../helpers/Export/ExportHelper';
 import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
+import Sort from '../../../components/Sort/Sort';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -84,6 +85,8 @@ const Groups = ({ classes }) => {
     const pageProperty = useRef();
     const qs = (window.location.search && queryString.parse(window.location.search)) || state;
     const exportColumnHeader = useRef(null);
+    const [sortDirection, setSortDirection] = useState('asc');
+    const [sortBySelected, setSortBy] = useState('Group Name');
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -172,6 +175,22 @@ const Groups = ({ classes }) => {
             align: "center",
         },
     ];
+
+    const groupSortOptions = [
+        {
+            value: "Group Name",
+            text: t("notifications.sort_by_group"),
+        },
+        {
+            value: "Creation Date",
+            text: t("notifications.sort_by_creation"),
+        },
+        {
+            value: "Update Date",
+            text: t("notifications.sort_by_updated"),
+        },
+    ];
+
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -184,7 +203,7 @@ const Groups = ({ classes }) => {
         dispatch(getGroupsBySubAccountId());
     }
     const getData = async (customSearch = null) => {
-        const search = { ...serachData, PageSize: rowsPerPage, ...customSearch };
+        const search = { ...serachData, PageSize: rowsPerPage, ...customSearch, SortBy: sortBySelected, SortDir: sortDirection };
         setLoader(true);
         await dispatch(getGroups(search));
         if (!extraData || extraData.length === 0) {
@@ -218,7 +237,7 @@ const Groups = ({ classes }) => {
     }
     useEffect(() => {
         reSearch();
-    }, [dispatch, serachData.PageIndex, rowsPerPage]);
+    }, [dispatch, serachData.PageIndex, rowsPerPage, sortBySelected, sortDirection]);
 
     useEffect(() => {
         if (serachData.SearchTerm !== '') {
@@ -230,7 +249,24 @@ const Groups = ({ classes }) => {
         if (qs?.NewGroup === 'true') {
             setDialog(DialogType.ADD_GROUP)
         }
-    }, [])
+    }, []);
+
+    const handleSortBySelected = (event) => {
+        setSearchData({
+            ...serachData,
+            PageIndex: 1
+        });
+		setSortBy(event.target.value);
+	};
+
+    const handleSortDirection = () => {
+        setSearchData({
+            ...serachData,
+            PageIndex: 1
+        });
+        const selected = sortDirection === 'asc' ? 'desc' : 'asc';
+        setSortDirection(selected);
+    }
 
     const renderSearchSection = () => {
         const handleKeyDown = (event) => {
@@ -362,6 +398,16 @@ const Groups = ({ classes }) => {
                         </Button>
                     </Grid>
                 )}
+                <Grid item className={classes.marginLeftAuto}>
+                    <Sort
+                        sortItems={groupSortOptions}
+                        sortBySelected={sortBySelected}
+                        sortDirection={sortDirection}
+                        handleSortDirection={handleSortDirection}
+                        handleSortBySelected={handleSortBySelected}
+                        classes={classes}
+                    />
+                </Grid>
             </Grid>
         );
     };
