@@ -19,7 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
-import { GrFormAdd } from "react-icons/gr";
+import { GrFormAdd, GrFormSubtract } from "react-icons/gr";
 import { addRecipient, deleteRecipients } from "../../../../redux/reducers/groupSlice";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
@@ -105,7 +105,7 @@ const AddRecipientPopup = ({ classes,
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
     const [accountExtraFields, setAccountExtraFields] = useState(null);
-    const [activeTab, setActiveTab] = useState(0)
+    const [expandedIndexes, setExpandedIndexes] = useState([0])
     const [errors, setErrors] = useState({
         Email: '',
         Cellphone: '',
@@ -276,26 +276,26 @@ const AddRecipientPopup = ({ classes,
             }
 
             setErrors({ ...tempError })
-            setActiveTab(0);
+            setExpandedIndexes([0]);
 
             return;
         } else if (data.ClientsData.Email && !IsValidEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             setErrors({ ...tempError })
-            setActiveTab(0);
+            setExpandedIndexes([0]);
             return
         }
         else if (!data.ClientsData.Email && data.ClientsData.Cellphone &&
             (data.ClientsData.Cellphone.length < 10 || data.ClientsData.Cellphone.length > 12)) {
             tempError.Cellphone = t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength)
             setErrors({ ...tempError })
-            setActiveTab(0);
+            setExpandedIndexes([0]);
             return
         }
         else if (!recipientData && selectedGroups.length === 0 && selectedLocalGroups.length === 0) {
             tempError.Groups = t(ADD_RECIPIENT_REQUIRED_ERRORS.Groups)
             setErrors({ ...tempError })
-            setActiveTab(4);
+            setExpandedIndexes([4]);
             return
         }
         try {
@@ -331,13 +331,13 @@ const AddRecipientPopup = ({ classes,
                             setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
                             document.getElementById("rec_cellphone").classList.add("error");
                             document.getElementById("rec_cellphone").focus();
-                            setActiveTab(0);
+                            setExpandedIndexes([0]);
                         }
                         else if (addRecipientData.Email) {
                             setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
                             document.getElementById("rec_email").classList.add("error");
                             document.getElementById("rec_email").focus();
-                            setActiveTab(0);
+                            setExpandedIndexes([0]);
                         }
                     }
                 },
@@ -1242,7 +1242,7 @@ const AddRecipientPopup = ({ classes,
     const ActiveForm = (label, index) => {
         return (
             <Accordion
-                expanded={activeTab === index}
+                expanded={expandedIndexes.indexOf(index) !== -1}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
                 key={index}
             >
@@ -1250,15 +1250,13 @@ const AddRecipientPopup = ({ classes,
                     expandIcon={""}
                     aria-controls="panel1a-content"
                     id="panel1a-header"
-                    onClick={() => {
-                        setActiveTab(index)
-                    }}
+                    onClick={() => setExpandedIndexes(expandedIndexes.indexOf(index) === -1 ? expandedIndexes.concat(index) : expandedIndexes.filter(item => item !== index))}
 
                 >
                     <Box className={classes.fullWidth}>
                         <Typography align="left" className={clsx(classes.font18, classes.bold, localClasses.headLabel)}>{t(label)}
                             {
-                                activeTab !== index && <GrFormAdd size={26} className={localClasses.accordionIcons} />
+                                expandedIndexes.indexOf(index) === -1 ? <GrFormAdd size={26} className={localClasses.accordionIcons} /> : <GrFormSubtract size={26} className={localClasses.accordionIcons} />
                             }
                         </Typography>
                         {/* <Box style={{ padding: '0 5px' }}>
