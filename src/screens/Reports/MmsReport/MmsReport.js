@@ -65,7 +65,8 @@ const MmsReport = ({ classes }) => {
     useEffect(() => {
         const getMmsData = async () => {
             setLoader(true);
-            await dispatch(getMmsReport(isDemoSend));
+            const mmsResponse  = await dispatch(getMmsReport(isDemoSend));
+            setFilteredResults(mmsResponse?.payload);
             setLoader(false);
             await dispatch(getMmsGraph());
         }
