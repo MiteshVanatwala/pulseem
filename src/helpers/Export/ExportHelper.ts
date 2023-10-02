@@ -181,21 +181,23 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
     return retValData as ExportData;
 }
 export async function ReplaceNull(obj: ExportData | any, property: string, val: string = '') {
-    obj.forEach((o: { [x: string]: string; }) => {
-        if (!property || property === '') {
-            Object.keys(o).forEach((key: any) => {
-                const currentValue = o[key];
-                if (currentValue === null || currentValue === undefined) {
-                    o[key] = '';
-                }
-            });
-        }
-        else {
-            if (o[property] === null || o[property] === '') {
-                o[property] = val;
+    return new Promise((resolve) => {
+        obj?.forEach((o: { [x: string]: string; }) => {
+            if (!property || property === '') {
+                Object.keys(o).forEach((key: any) => {
+                    const currentValue = o[key];
+                    if (currentValue === null || currentValue === undefined || currentValue === 'null') {
+                        o[key] = '';
+                    }
+                });
             }
-        }
-
+            else {
+                if (o[property] === null || o[property] === '' || o[property] === 'null') {
+                    o[property] = val;
+                }
+            }
+        });
+        resolve(obj);
     });
 }
 export async function BooleanToNumber(obj: ExportData | any, property: string, isBoolean: boolean = false) {

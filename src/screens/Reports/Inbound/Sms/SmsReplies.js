@@ -137,10 +137,6 @@ const SmsReplies = ({ classes }) => {
         setShowLoader(true);
         let response = await dispatch(getSmsReplies({ ...request, IsExport: true }));
         let finalData = response?.payload?.Data;
-        finalData = await ReplaceNull(finalData, 'FirstName', '');
-        finalData = await ReplaceNull(finalData, 'LastName', '');
-        finalData = await ReplaceNull(finalData, 'CellPhone', '');
-        finalData = await ReplaceNull(finalData, 'CampaignName', '');
         finalData = await DeletePropertyFromArrayObject(finalData, ['Status']);
 
         const exportOptions = {
@@ -154,7 +150,12 @@ const SmsReplies = ({ classes }) => {
         };
 
         try {
-            const result = await HandleExportData(finalData, exportOptions);
+            let result = await HandleExportData(finalData, exportOptions);
+        
+            result = await ReplaceNull(result, 'FirstName', '');
+            result = await ReplaceNull(result, 'LastName', '');
+            result = await ReplaceNull(result, 'CellPhone', '');
+            result = await ReplaceNull(result, 'CampaignName', '');
 
             ExportFile({
                 data: result,
