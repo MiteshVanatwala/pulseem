@@ -589,6 +589,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			if (button.typeOfAction === 'phonenumber') {
 				const countryCode = getValueByFieldName(button, 'whatsapp.country');
 				apiButtonData.phoneCode = '+' + countryCode?.replace(/\D/g, '');
+			} else if (button.typeOfAction === 'website') {
+				apiButtonData.keepTrackOfLinks = getValueByFieldName(button, 'mainReport.keepTrack') === 'true'
 			}
 			return apiButtonData;
 		});
