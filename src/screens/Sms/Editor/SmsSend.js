@@ -150,6 +150,13 @@ const SmsSend = ({ classes, ...props }) => {
     dontSend: false,
     days: ''
   });
+  const [filterDialogValues, setFilterDialogValues] = useState({
+    dontSend: false,
+    days: '',
+    exceptionalDays: '',
+    selectedFilterCampaigns:  [],
+    selectedFilterGroups: []
+  });
 
   //#endregion
   useEffect(() => {
@@ -383,6 +390,17 @@ const SmsSend = ({ classes, ...props }) => {
       getSavedData();
     }
   }, []);
+
+  useEffect(() => {
+    if (dialogType?.type === 'filterRecipients') {
+      setFilterDialogValues({
+        dontSend: filterValues.dontSend,
+        exceptionalDays: filterValues.exceptionalDays,
+        selectedFilterCampaigns,
+        selectedFilterGroups
+      });
+    }
+  }, [dialogType])
 
   const getSavedData = async () => {
     if (id) {
@@ -1019,24 +1037,33 @@ const SmsSend = ({ classes, ...props }) => {
   };
   useEffect(() => {
     const resetDays = () => {
-      setExceptionalDays('');
-      setFilterValues({ ...filterValues, exceptionalDays: '', days: '' });
+      setFilterDialogValues({
+        ...filterDialogValues,
+        exceptionalDays: ''
+      })
       settoggleReci(false);
     }
-    if (!filterValues.dontSend) {
+    if (!filterDialogValues.dontSend) {
       resetDays();
     }
     else {
       settoggleReci(true);
     }
-  }, [filterValues.dontSend])
+  }, [filterDialogValues.dontSend])
   const handleFilterConfirm = () => {
+    setFilterValues({
+      dontSend: filterDialogValues.dontSend,
+      exceptionalDays: filterDialogValues.exceptionalDays
+    });
+    setExceptionalDays(filterDialogValues.exceptionalDays);
+    setFilterGroups(filterDialogValues.selectedFilterGroups);
+    setFilterCampaigns(filterDialogValues.selectedFilterCampaigns);
     let formIsvalid = true;
-    settoggleReci(filterValues.dontSend);
-    if (filterValues.dontSend) {
+    settoggleReci(filterDialogValues.dontSend);
+    if (filterDialogValues.dontSend) {
       formIsvalid = validationCheck();
       if (formIsvalid) {
-        if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) {
+        if (filterDialogValues.selectedFilterGroups.length !== 0 || filterDialogValues.exceptionalDays !== "" || filterDialogValues.selectedFilterCampaigns.length !== 0) {
           setbsDot(true);
           setsnackbarRecipients(true);
         }
@@ -1046,7 +1073,7 @@ const SmsSend = ({ classes, ...props }) => {
       }
     }
     else {
-      if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) {
+      if (filterDialogValues.selectedFilterGroups.length !== 0 || filterDialogValues.exceptionalDays !== "" || filterDialogValues.selectedFilterCampaigns.length !== 0) {
         setsnackbarRecipients(true);
         setbsDot(true);
       }
@@ -1104,13 +1131,16 @@ const SmsSend = ({ classes, ...props }) => {
   const handleReciInput = (e) => {
     const re = /^[0-9\b]+$/;
     if (e.target.value === '' || re.test(e.target.value)) {
-      setExceptionalDays(e.target.value);
+      setFilterDialogValues({
+        ...filterDialogValues,
+        exceptionalDays: e.target.value,
+      })
       setRecipientsBool(false);
     }
 
   }
   const validationCheck = () => {
-    if (exceptionalDays === "") {
+    if (filterDialogValues.exceptionalDays === "") {
       setRecipientsBool(true);
       setRecipientsSnackbar(true);
       return false;
@@ -1999,18 +2029,7 @@ const SmsSend = ({ classes, ...props }) => {
       </div>
     );
   }
-  //#region Filter modal
-  const handleCancelFilter = () => {
-    setDialogType(null);
-    setFilterGroups(campaignSettings?.SendExeptional?.Groups ?? []);
-    setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns ?? []);
-    setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : exceptionalDays);
-    setFilterValues({
-      dontSend: toggleReci,
-      days: exceptionalDays
-    })
-  }
-  const filterRecipientsDialog = () => {
+  const filterRecipientsDialog = () => {    
     return {
       title: t('mainReport.recipientFilter'),
       showDivider: true,
@@ -2023,14 +2042,14 @@ const SmsSend = ({ classes, ...props }) => {
             className={classes.reciCheckoxContainer}
           >
             <Checkbox
-              checked={filterValues.dontSend}
+              checked={filterDialogValues.dontSend}
               color="primary"
               inputProps={{ "aria-label": "secondary checkbox" }}
               onClick={(e) =>
-                setFilterValues({
-                  ...filterValues,
+                setFilterDialogValues({
+                  ...filterDialogValues,
                   dontSend: e.target.checked,
-                  days: ''
+                  exceptionalDays: '',
                 })
               }
             />
@@ -2040,14 +2059,14 @@ const SmsSend = ({ classes, ...props }) => {
             <div style={{ marginRight: isRTL ? 'auto' : null, marginLeft: !isRTL ? 'auto' : null }}>
               <input
                 type="text"
-                disabled={toggleReci ? false : true}
+                disabled={!filterDialogValues.dontSend}
                 className={
-                  toggleReci
+                  filterDialogValues.dontSend
                     ? RecipientsBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive, classes.success)
                     : clsx(classes.pulseInsert)
                 }
                 onChange={(e) => { handleReciInput(e) }}
-                value={exceptionalDays}
+                value={filterDialogValues.exceptionalDays}
                 maxLength="3"
               />
             </div>
@@ -2067,7 +2086,7 @@ const SmsSend = ({ classes, ...props }) => {
                   showSelectAll={false}
                   isNotifications={false}
                   list={showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups]}
-                  selectedList={selectedFilterGroups}
+                  selectedList={filterDialogValues.selectedFilterGroups}
                   callbackUpdateGroups={callbackUpdateGroupFilterd}
                   callbackSelectedGroups={callbackFilteredGroups}
                   callbackShowTestGroup={callbackShowTestGroup}
@@ -2091,7 +2110,7 @@ const SmsSend = ({ classes, ...props }) => {
                   isNotifications={false}
                   isCampaign={true}
                   list={finishedCampaigns}
-                  selectedList={selectedFilterCampaigns}
+                  selectedList={filterDialogValues.selectedFilterCampaigns}
                   callbackUpdateGroups={callbackUpdateCampaignFilter}
                   callbackSelectedGroups={callbackFiltertedCampaigns}
                   noSelectionText={t("sms.NoFilteredCampaigns")}
@@ -2104,13 +2123,17 @@ const SmsSend = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: true,
-      onCancel: () => { handleCancelFilter() },
-      onClose: () => { handleCancelFilter() },
+      onCancel: () => setDialogType(null),
+      onClose: () => setDialogType(null),
       onConfirm: () => { handleFilterConfirm() }
     }
   }
   const callbackUpdateGroupFilterd = (groups) => {
     setFilterGroups(groups);
+    setFilterDialogValues({
+      ...filterDialogValues,
+      selectedFilterGroups: groups,
+    });
   }
   const callbackShowTestGroup = async (showTestGroups) => {
     if (!showTestGroups && testGroups.length > 0) {
@@ -2124,30 +2147,45 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
   const callbackFilteredGroups = (group) => {
-    const found = selectedFilterGroups
+    const found = filterDialogValues.selectedFilterGroups
       .map((g) => {
         return g.GroupID;
       })
       .includes(group.GroupID);
     if (found) {
-      setFilterGroups(selectedFilterGroups.filter((c) => c.GroupID !== group.GroupID));
+      setFilterDialogValues({
+        ...filterDialogValues,
+        selectedFilterGroups: filterDialogValues.selectedFilterGroups.filter((c) => c.GroupID !== group.GroupID)
+      });
     } else {
-      setFilterGroups([...selectedFilterGroups, group]);
+      setFilterDialogValues({
+        ...filterDialogValues,
+        selectedFilterGroups: [...filterDialogValues.selectedFilterGroups, group]
+      });
     }
   }
   const callbackUpdateCampaignFilter = (campaigns) => {
-    setFilterCampaigns(campaigns)
+    setFilterDialogValues({
+      ...filterDialogValues,
+      selectedFilterCampaigns: campaigns
+    })
   }
   const callbackFiltertedCampaigns = (campaign) => {
-    const found = selectedFilterCampaigns
+    const found = filterDialogValues.selectedFilterCampaigns
       .map((c) => {
         return c.SMSCampaignID;
       })
       .includes(campaign.SMSCampaignID);
     if (found) {
-      setFilterCampaigns(selectedFilterCampaigns.filter((c) => c.SMSCampaignID !== campaign.SMSCampaignID))
+      setFilterDialogValues({
+        ...filterDialogValues,
+        selectedFilterCampaigns: filterDialogValues.selectedFilterCampaigns.filter((c) => c.SMSCampaignID !== campaign.SMSCampaignID)
+      })
     } else {
-      setFilterCampaigns([...selectedFilterCampaigns, campaign]);
+      setFilterDialogValues({
+        ...filterDialogValues,
+        selectedFilterCampaigns: [...filterDialogValues.selectedFilterCampaigns, campaign]
+      })
     }
   }
   //#endregion
