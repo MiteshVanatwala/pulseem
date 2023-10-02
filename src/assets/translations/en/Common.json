@@ -642,5 +642,6 @@
   "createdDate": "Created Date",
   "recipientGroups": "Recipient Groups",
   "noCampaignToRestore": "No campaigns for restore",
-  "doNotShow": "Do not show again"
+  "doNotShow": "Do not show again",
+  "ArchiveAccess": "Archive Access"
 }

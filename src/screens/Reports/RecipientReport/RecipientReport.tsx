@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import uniqid from 'uniqid';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography } from '@material-ui/core';
+import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Title } from '../../../components/managment/Title';
 import { getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
@@ -83,6 +83,7 @@ const RecipientReport = ({ classes }: any) => {
     SmsPageIndex: number;
     WhatsappPageIndex: number;
     IsExport: boolean;
+    ArchiveAccess?: boolean
   };
 
   const [filterRequest, setFilterRequest] = useState<reportRequest>({
@@ -91,7 +92,8 @@ const RecipientReport = ({ classes }: any) => {
     PageIndex: 1,
     SmsPageIndex: 1,
     WhatsappPageIndex: 1,
-    IsExport: false
+    IsExport: false,
+    ArchiveAccess: false
   });
 
   const getReportData = async () => {
@@ -110,13 +112,14 @@ const RecipientReport = ({ classes }: any) => {
       SmsPageIndex: 1,
       WhatsappPageIndex: 1,
       Email: '',
-      Cellphone: ''
+      Cellphone: '',
+      ArchiveAccess: false
     })
   }
 
   useEffect(() => {
     getReportData();
-  }, [filterRequest.PageIndex, filterRequest.SmsPageIndex, filterRequest.WhatsappPageIndex]);
+  }, [filterRequest.PageIndex, filterRequest.SmsPageIndex, filterRequest.WhatsappPageIndex, filterRequest.ArchiveAccess]);
 
   const renderNewsLetterTableHead = () => {
     return (
@@ -685,7 +688,7 @@ const RecipientReport = ({ classes }: any) => {
         />
       </Grid>
 
-      <Grid item md={3}>
+      <Grid item>
         <Button
           onClick={() => {
             setIsSearching(true);
@@ -706,6 +709,23 @@ const RecipientReport = ({ classes }: any) => {
             {t('common.clear')}
           </Button>
         }
+      </Grid>
+
+      <Grid item style={{ display: 'none' }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              inputProps={{ "aria-label": "secondary checkbox" }}
+              onClick={() => setFilterRequest({
+                ...filterRequest,
+                ArchiveAccess: !filterRequest.ArchiveAccess
+              })}
+              checked={filterRequest.ArchiveAccess}
+            />
+          }
+          label={t("common.ArchiveAccess")}
+        />
       </Grid>
 
     </Grid>
