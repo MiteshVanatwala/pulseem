@@ -111,25 +111,25 @@ const Shopify = ({ classes }: any) => {
   }
 
   const submitForm = async () => {
-    if (settings.RegisterEventActive || settings.PurchaseEventActive || settings.AbandonedEventActive) {
-      setErrors({
-        ...errors,
-        group_not_selected: '',
-      })
-      setShowLoader(true);
-      const request = {
-        IntegrationSource: LU_Plugin.Shopify,
-        JsonData: JSON.stringify({ ...settings })
-      } as IntegrationRequest;
-      const response = await dispatch(setIntegration(request));
-      handleSubmitFormResponse(response);
-      setShowLoader(false);
-    } else {
-      setErrors({
-        ...errors,
-        group_not_selected: t(`integrations.shopify.selectGroup`),
-      })
-    }
+    // if (settings.RegisterEventActive || settings.PurchaseEventActive || settings.AbandonedEventActive) {
+    setErrors({
+      ...errors,
+      group_not_selected: '',
+    })
+    setShowLoader(true);
+    const request = {
+      IntegrationSource: LU_Plugin.Shopify,
+      JsonData: JSON.stringify({ ...settings })
+    } as IntegrationRequest;
+    const response = await dispatch(setIntegration(request));
+    handleSubmitFormResponse(response);
+    setShowLoader(false);
+    // } else {
+    //   setErrors({
+    //     ...errors,
+    //     group_not_selected: t(`integrations.shopify.selectGroup`),
+    //   })
+    // }
   }
 
   const handleSubmitFormResponse = (response: any) => {
