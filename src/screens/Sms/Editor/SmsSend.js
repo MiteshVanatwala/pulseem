@@ -2384,10 +2384,39 @@ const SmsSend = ({ classes, ...props }) => {
           <Typography>{RenderHtml(t("sms.reset_manual_upload_notice"))}</Typography>
         </Box>
       ),
-      showDefaultButtons: true,
+      showDefaultButtons: false,
       onClose: () => { setDialogType({ type: "manualUpload" }); },
-      onCancel: () => { setDialogType({ type: "manualUpload" }); },
-      onConfirm: () => { handleConfirmC() }
+      renderButtons: () =>
+      (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              onClick={handleConfirmC}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}
+            >
+              {t('common.Yes')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => setDialogType({ type: "manualUpload" })}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}
+            >
+              {t('common.No')}
+            </Button>
+          </Grid>
+        </Grid>
+      ),
     }
   }
   const pulseDialog = () => {
