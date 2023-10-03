@@ -603,19 +603,17 @@ const AutomationsManagnentScreen = ({ classes }) => {
       title: t('automations.restoreCampaignTitle'),
       showDivider: false,
       icon: (
-        <div className={clsx(classes.dialogIconContent, 'unicode')}>
+        <div className={classes.dialogIconContent}>
           {'\uE185'}
         </div>
       ),
-      content: restoreArray?.length > 0 ? (
+      content: (
         <RestorDialogContent
           classes={classes}
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
         />
-      ) : (
-        <Typography className={clsx(classes.bold, classes.textCenter)}>{t('common.NoData')}</Typography>
       ),
       onConfirm: async () => {
         handleClose()
