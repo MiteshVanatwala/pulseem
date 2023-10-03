@@ -129,7 +129,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
-	const [restoreIds, setRestoreIds] = useState<string[]>([]);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(false);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
@@ -711,7 +710,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		setIsLoader(true);
 		const { payload: restoreCampaignData }: restoreCampaignData =
 			await dispatch<any>(
-				restoreWhatsAppCampaigns(restoreIds?.map((id) => Number(id)))
+				restoreWhatsAppCampaigns(restoreArray?.map((id: any) => Number(id)))
 			);
 		setIsLoader(false);
 		if (restoreCampaignData?.Status === apiStatus.SUCCESS) {
