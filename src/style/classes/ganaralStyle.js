@@ -3524,9 +3524,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   callToAction: {
-    minWidth: '70vw',
+    minWidth: '90vw',
+    "& .MuiDialog-paperWidthSm": {
+      minWidth: '80vw',
+      maxWidth: '80vw',
+    },
+    "& .MuiDialog-paperScrollPaper": {
+      maxHeight: '100%'
+    },
     '& .MuiDialogActions-root': {
       marginTop: 20
+    },
+    '& .keep-track': {
+      paddingTop: 5,
+    },
+    '& .keep-track-desc': {
+      color: '#aaa'
     }
   },
   paddingInline25: {

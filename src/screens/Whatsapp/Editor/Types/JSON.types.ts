@@ -12,7 +12,7 @@ export type quickReplyButton = {
 };
 
 export type callToActionButton = {
-	[key: string]: string;
+	[key: string]: string | boolean;
 	type: string;
 	title: string;
 };

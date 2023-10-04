@@ -162,6 +162,7 @@ export type ApiButtonData = {
 	phone?: string;
 	url?: string;
 	phoneCode?: string;
+	keepTrackOfLinks?: boolean;
 };
 
 export type templateDataProps = {
