@@ -412,6 +412,7 @@ const ActionCallPopOver = ({
 													<Box className={classes.switchDiv}>
 														<FormGroup>
 															<Switch
+																disabled={!isEditable}
 																className={
 																	isRTL
 																		? clsx(
