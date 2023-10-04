@@ -1132,7 +1132,7 @@ const AddRecipientPopup = ({ classes,
                 code: 201,
                 message: ToastMessages.STATUS_UPDATED,
                 Func: () => {
-                    onAddRecipient(false);
+                    onAddRecipient();
                     setAddRecipientData({ ...addRecipientData, Status: val })
                 }
             },
@@ -1172,7 +1172,7 @@ const AddRecipientPopup = ({ classes,
                 code: 201,
                 message: ToastMessages.STATUS_UPDATED,
                 Func: () => {
-                    onAddRecipient(false);
+                    onAddRecipient();
                     setAddRecipientData({ ...addRecipientData, SmsStatus: val })
                 }
             },

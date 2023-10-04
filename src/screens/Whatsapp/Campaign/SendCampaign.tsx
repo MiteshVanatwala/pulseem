@@ -754,7 +754,7 @@ const SendCampaign = ({
 				type: '',
 				data: ''
 			});
-			onExitCampaign();
+			onCampaignSave(true, true, true)
 		}
 	})
 

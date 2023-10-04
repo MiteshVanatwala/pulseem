@@ -1753,8 +1753,8 @@ const SmsCreator = ({ classes }) => {
       showDefaultButtons: true,
       confirmText: t("common.Yes"),
       cancelText: t("common.No"),
-      onClose: () => { handleExit(true) },
-      onCancel: () => { handleExit(true) },
+      onClose: () => { handleExit(false) },
+      onCancel: () => { handleExit(false) },
       onConfirm: () => { validationCheckpoint(() => handleExit(true)); }
     }
   }

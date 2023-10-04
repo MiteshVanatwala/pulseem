@@ -14,6 +14,8 @@ import {
 	MenuItem,
 	TextField,
 	Typography,
+	FormGroup,
+	Switch,
 } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import {
@@ -86,7 +88,7 @@ const ActionCallPopOver = ({
 			(r: callToActionRowProps) => {
 				if (r.id !== row.id) return r;
 				const updatedFields = r.fields.map((f: callToActionFieldProps) => {
-					if (field.fieldName === f.fieldName) {
+					if (field?.fieldName === f?.fieldName) {
 						if (field.fieldName !== 'whatsapp.phoneNumber')
 							return { ...f, value: value?.replace(/_/g, '') };
 						return { ...f, value: value?.replace(/\D/g, '') };
@@ -313,7 +315,7 @@ const ActionCallPopOver = ({
 					{callToActionFieldRows.map(
 						(row: callToActionRowProps, index: number) => (
 							<Grid container spacing={3} key={'TOC' + index}>
-								<Grid item xs={12} sm={6} md={3}>
+								<Grid item xs={12} sm={6} md={2}>
 									<Typography>
 										<>{translator('whatsapp.typeOfAction')}</>
 									</Typography>
@@ -342,7 +344,7 @@ const ActionCallPopOver = ({
 
 								{row?.fields.map(
 									(field: callToActionFieldProps, fIndex: number) =>
-										field.type !== 'select' ? (
+									 field.type && (field.type !== 'select' ? (
 											<Grid
 												item
 												xs={12}
@@ -416,7 +418,50 @@ const ActionCallPopOver = ({
 												/>
 											</Grid>
 										)
-								)}
+								))}
+								{
+									row.typeOfAction === 'website' && (
+										<Grid
+											item
+											xs={12}
+											sm={6}
+											md={3}
+										>
+											<Box className={classes.switchDiv}>
+												<FormGroup>
+													<Switch
+														disabled={!isEditable}
+														className={
+															isRTL
+																? clsx(
+																		classes.reactSwitchHe,
+																		'react-switch',
+																		'dynamic-link-switch'
+																	)
+																: clsx(
+																		classes.reactSwitch,
+																		'react-switch',
+																		'dynamic-link-switch'
+																	)
+														}
+														checked={row?.fields.length>1 && row?.fields[2]?.value === 'true'}
+														onChange={() => onTypeOfActionFieldChange(
+															`${row?.fields[2]?.value === 'true' ? 'false' : 'true'}`,
+															row,
+															row?.fields[2]
+														)}
+													/>
+												</FormGroup>
+												<Box>
+													<Typography className='keep-track'>{translator('mainReport.keepTrack')}</Typography>
+												</Box>
+											</Box>
+											<Box>
+												<Typography className='keep-track-desc'>{translator('mainReport.keepDesc')}</Typography>
+											</Box>
+										</Grid>
+									)
+								}
 								{isEditable && (
 									<Grid item md={1}>
 										<Typography style={{ visibility: 'hidden' }}>
@@ -434,7 +479,7 @@ const ActionCallPopOver = ({
 					)}
 				</Grid>
 
-				<DialogActions>
+			<DialogActions className={classes.pt50}>
 					<Grid container>
 						<Grid item md={6}>
 							{callToActionFieldRows?.length < 2 && (

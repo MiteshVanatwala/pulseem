@@ -528,7 +528,7 @@
   "columnAdjustment": "התאמת עמודות",
   "totalRecipients": "סה\"כ נמענים",
   "adjustTitle": "התאם כותרת",
-  "reset_manual_upload_notice": "לחיצה על \"אישור\" תמחק את רשימת הנמענים שהזנת לתיבת הנמענים.<br/><b>האם אתה בטוח?</b>",
+  "reset_manual_upload_notice": "<b>בטוחים שברצונכם לבטל את הפעולה?</b><br/>לחיצה על \"כן\" תמחק את הנמענים שהעליתם לתיבת ההעלאה הידנית",
   "groupNameExists": "קבוצה עם השם '#groupName#' כבר קיימת.",
   "every": "כל",
   "percent": "אחוז",

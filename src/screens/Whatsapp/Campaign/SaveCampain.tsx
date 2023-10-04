@@ -131,6 +131,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			placeholder: 'whatsapp.websiteURLPlaceholder',
 			value: '',
 		},
+		{
+			fieldName: 'mainReport.keepTrack',
+			type: '',
+			placeholder: '',
+			value: 'false',
+		},
 	];
 	const phoneNumberField = [
 		{
@@ -1105,7 +1111,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		showDivider: false,
 		showDefaultButtons: false,
 		contentStyle: classes.noPadding,
-		paperStyle: classes.callToAction,
+		customContainerStyle: classes.callToAction,
 		content: (
 			<ActionCallPopOver
 				closeCallToAction={() => setDialogType({})}
