@@ -48,8 +48,8 @@ import { VoidFunction } from '../../../helpers/Types/common';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import queryString from 'query-string';
 import { ClientStatus } from "../../../helpers/Constants";
-import { DeletePropertyFromArrayObject, HandleExportData, ReplaceExtraFieldHeader, SwitchStatusByCondition } from '../../../helpers/Export/ExportHelper';
-import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
+import { HandleExportData, ReplaceExtraFieldHeader } from '../../../helpers/Export/ExportHelper';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 import Sort from '../../../components/Sort/Sort';
 import { SortColumns, SortDirection } from '../../../Models/PushNotifications/Enums';
 
@@ -204,7 +204,7 @@ const Groups = ({ classes }) => {
         dispatch(getGroupsBySubAccountId());
     }
     const getData = async (customSearch = null) => {
-        const search = { ...serachData, PageSize: rowsPerPage, ...customSearch, SortBy: sortBySelected, SortDir: sortDirection };
+        const search = { ...serachData, PageSize: rowsPerPage, ...customSearch, SortByField: sortBySelected, SortDirection: sortDirection };
         setLoader(true);
         await dispatch(getGroups(search));
         if (!extraData || extraData.length === 0) {

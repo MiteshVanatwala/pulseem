@@ -45,11 +45,11 @@ export enum eResponseType {
     UNAUTHORIZED = 401
 }
 export enum SortDirection {
-    ASC = 'ASC',
-    DESC = 'DESC'
+    DESC = 0,
+    ASC = 1
 }
 export enum SortColumns {
-    GROUP_NAME = 'GROUP_NAME',
-    CREATION_DATE = 'CREATION_DATE',
-    UPDATE_DATE = 'UPDATE_DATE'
+    GROUP_NAME = 'GroupName',
+    CREATION_DATE = 'CreationDate',
+    UPDATE_DATE = 'UpdateDate'
 }
