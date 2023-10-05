@@ -51,6 +51,7 @@ export type QuickReply = {
 	types: QuickReplyTypes;
 	isSaveOnly?: boolean;
 	id?: number;
+	codeExpirationTime?: number;
 };
 
 export type QuickReplyTypes = {

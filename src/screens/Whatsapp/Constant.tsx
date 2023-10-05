@@ -3,6 +3,7 @@ import {
 	AllCampaignReq,
 	AllReportReq,
 	AllTemplateReq,
+	AuthenticationMockTemplateType,
 	ButtonTextLimits,
 	campaignStatusProps,
 	CategoryId,
@@ -453,3 +454,14 @@ export const tierSetting: TierSetting[] = [
 		messageLimit: 'unlimited',
 	},
 ];
+
+export const authenticationMockTemplate: AuthenticationMockTemplateType = {
+	authenticationEn: {
+		body: '{{1}} is your verification code. For your security, do not share this code.',
+		subtitle: 'The code expires in X minutes'
+	},
+	authenticationHebrew: {
+		body: `{{1}} הוא קוד האימות שלך. מטעמי אבטחה, אין לשתף את הקוד הזה.`,
+		subtitle: 'תוקף הקוד הזה יפוג בעוד X דקות'
+	}
+}

@@ -32,6 +32,9 @@ const QuickReply = ({
 	updateTemplateData,
 	templateButtons,
 	isEditable,
+	isDeletionAllowed = true,
+	canAddMoreButtons = true,
+	maxButtonTextLength = 20
 }: quickReplyProps) => {
 	const { t: translator } = useTranslation();
 	const onSubmit = (e: BaseSyntheticEvent) => {
@@ -40,7 +43,7 @@ const QuickReply = ({
 		updateTemplateData(quickReplyButtons);
 		closeQuickReply();
 	};
-	const MAX_BUTTON_TEXT_LENGTH = 20;
+	const MAX_BUTTON_TEXT_LENGTH = maxButtonTextLength;
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const button = {
 		id: uniqid(),
@@ -112,10 +115,14 @@ const QuickReply = ({
 				</IconButton>
 			</DialogTitle>
 			<DialogContent>
-				<DialogContentText
-					className={classes.quickReplayDialogHeaderDescription}>
-					<>{translator('whatsapp.quickReply.titleDescription')}</>
-				</DialogContentText>
+				{
+					canAddMoreButtons && (
+						<DialogContentText
+							className={classes.quickReplayDialogHeaderDescription}>
+							<>{translator('whatsapp.quickReply.titleDescription')}</>
+						</DialogContentText>
+					)
+				}
 				<form onSubmit={onSubmit}>
 					{quickReplyButtons?.map((button) => (
 						<Grid
@@ -158,7 +165,7 @@ const QuickReply = ({
 									)}
 								</Grid>
 							</Grid>
-							{isEditable && (
+							{isDeletionAllowed && isEditable && (
 								<DeleteOutlinedIcon
 									className={classes.quickReplyDelete}
 									onClick={() => onDeleteButton(button)}
@@ -167,7 +174,7 @@ const QuickReply = ({
 						</Grid>
 					))}
 					<DialogActions>
-						{isEditable && (
+						{canAddMoreButtons && isEditable && (
 							<Button
 								variant='contained'
 								color='primary'
