@@ -1259,7 +1259,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 										(category === 'authenticationEn' || category === 'authenticationHebrew') && (
 											<Grid item className={clsx(classes.pt15, classes.pb10, classes.dFlex)}>
 												<Typography className={clsx(classes.pt5)}>
-													{translator('whatsapp.codeExpirationTime')}
+													{translator('whatsapp.codeExpirationTime') + ' (' + translator('common.minutes') + ')'}
 												</Typography>
 												<TextField
 													required
