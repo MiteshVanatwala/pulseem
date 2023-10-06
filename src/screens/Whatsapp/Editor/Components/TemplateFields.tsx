@@ -150,9 +150,10 @@ const TemplateFields = ({
 									},
 								}}
 							>
-								<MenuItem key={'marketing'} value={'marketing'}>{translator('whatsapp.marketing')}</MenuItem>
-								<MenuItem key={'utility'} value={'utility'}>{translator('whatsapp.utility')}</MenuItem>
-								<MenuItem key={'authentication'} value={'authentication'}>{translator('whatsapp.authentication')}</MenuItem>
+								<MenuItem value={'marketing'}>{translator('whatsapp.marketing')}</MenuItem>
+								<MenuItem value={'utility'}>{translator('whatsapp.utility')}</MenuItem>
+								<MenuItem value='authenticationEn'>{translator('whatsapp.authenticationEn')}</MenuItem>
+								<MenuItem value='authenticationHebrew'>{translator('whatsapp.authenticationHebrew')}</MenuItem>
 							</Select>
 						</FormControl>
 					</Grid>

@@ -26,6 +26,7 @@ export type WhatsappCreatorProps = {
 		fileLink: string;
 		fileType: string;
 	};
+	category?: string;
 };
 
 export type TemplateFieldsProps = {
@@ -141,6 +142,9 @@ export type quickReplyProps = {
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
 	templateButtons: templateDataProps['templateButtons'];
 	isEditable: boolean;
+	isDeletionAllowed?: boolean;
+	canAddMoreButtons?: boolean;
+	maxButtonTextLength?: number;
 };
 
 export type quickReplyButtonsFieldProps = {
