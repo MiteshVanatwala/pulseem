@@ -115,3 +115,13 @@ export type UpdateWhatsappTierPayload = {
 export type UpdateWhatsappTier = {
 	payload: UpdateWhatsappTierPayload;
 };
+
+export type authenticationMockTemplateObject = {
+	body: string;
+	subtitle: string
+}
+export type AuthenticationMockTemplateType = {
+	[key: string]: authenticationMockTemplateObject;
+	authenticationEn: authenticationMockTemplateObject;
+	authenticationHebrew: authenticationMockTemplateObject;
+}
