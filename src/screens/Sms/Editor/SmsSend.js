@@ -2395,7 +2395,13 @@ const SmsSend = ({ classes, ...props }) => {
         >
           <Grid item>
             <Button
-              onClick={handleConfirmC}
+              onClick={() => {
+                setDialogType(null);
+                setareaData("");
+                setContacts([]);
+                settypedData([]);
+                settotalRecords(0);
+              }}
               className={clsx(
                 classes.btn,
                 classes.btnRounded
