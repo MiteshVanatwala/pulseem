@@ -284,7 +284,7 @@ const SmsSend = ({ classes, ...props }) => {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
         setbsDot(true);
-        setFilterValues({ ...filterValues, dontSend: true });
+        setFilterValues({ ...filterValues, dontSend: true, exceptionalDays: `${campaignSettings.SendExeptional.ExceptionalDays}` });
       }
       if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
