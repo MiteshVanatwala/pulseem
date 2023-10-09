@@ -10,3 +10,5 @@ export const GetTextAreaSelection = (elementId: string) => {
 
     return sel;
 }
+
+export const RemoveConsecutiveSpaces = (text: string) => text.replace(/\s\s+/g, ' ');
