@@ -983,13 +983,40 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				{translator('mainReport.leaveCampaign')}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-			onSaveCampaign('save', true, true);
-		}
+		renderButtons: () =>
+      (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              onClick={() => {
+                setDialogType(null);
+								onSaveCampaign('save', true, true);
+              }}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}
+            >
+              {translator('common.Yes')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}
+            >
+              {translator('common.No')}
+            </Button>
+          </Grid>
+        </Grid>
+      ),
 	})
 
 	const getDeleteDialog = () => ({
