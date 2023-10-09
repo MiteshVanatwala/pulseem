@@ -419,11 +419,13 @@ const SmsReplies = ({ classes }) => {
             case 200: {
                 actions?.S_200?.Func?.();
                 actions?.S_200?.message && setToastMessage(actions?.S_200?.message);
+                setDialog(null);
                 break;
             }
             case 201: {
                 actions?.S_201?.Func?.();
                 actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
+                setDialog(null);
                 break;
             }
             case 400: {
