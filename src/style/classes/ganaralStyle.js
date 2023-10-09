@@ -3521,7 +3521,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   callToAction: {
-    minWidth: '90vw',
+    minWidth: '65vw',
     "& .MuiDialog-paperWidthSm": {
       minWidth: '80vw',
       maxWidth: '80vw',
