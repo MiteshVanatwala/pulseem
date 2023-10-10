@@ -243,20 +243,20 @@ const NewsLetterInfo = ({ classes }) => {
     //     setShowEmoji(false);
     // }
 
-    useEffect(() => {
-        const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
-        if (htmlTemplate && htmlTemplate !== '') {
-            setNewEditorDisabled(true);
-            setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
-            sessionStorage.removeItem("Newlsetter_Html_Template");
-        }
-        if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-        if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
-    }, []);
+    // useEffect(() => {
+    //     const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
+    //     if (htmlTemplate && htmlTemplate !== '') {
+    //         setNewEditorDisabled(true);
+    //         setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
+    //         sessionStorage.removeItem("Newlsetter_Html_Template");
+    //     }
+    //     if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    //     if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
+    // }, []);
     
-    useEffect(() => {
-        dispatch(getPublicTemplates(isRTL));
-    }, [isRTL])
+    // useEffect(() => {
+    //     dispatch(getPublicTemplates(isRTL));
+    // }, [isRTL])
 
     const setDefaultEmailAndName = () => {
         if (accountSettings) {
