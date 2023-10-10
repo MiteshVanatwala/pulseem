@@ -5,6 +5,7 @@ import {
 import clsx from 'clsx';
 import { Select } from '@mui/material';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
+import { SortDirection } from '../../Models/PushNotifications/Enums';
 
 const Sort = ({
   classes,
@@ -33,7 +34,7 @@ const Sort = ({
         </Select>
       </FormControl>
       <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={handleSortDirection} style={{ height: 40 }}>
-          {sortDirection === 'asc' ? <BiSortDown /> : <BiSortUp />}
+          {sortDirection === SortDirection.ASC ? <BiSortDown /> : <BiSortUp />}
       </Button>  
     </>
   )
