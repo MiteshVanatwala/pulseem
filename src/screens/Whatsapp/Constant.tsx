@@ -392,6 +392,11 @@ export const categoryName: CategoryName = {
 	3: 'authentication',
 };
 
+export enum authenticationTypes {
+	AUTHENTICATIONEN = 'AUTHENTICATIONEN',
+	AUTHENTICATIONHEBREW = 'AUTHENTICATIONHEBREW'
+}
+
 export const campaignStatus: campaignStatusProps = {
 	1: 'Created',
 	2: 'Sending',
@@ -457,11 +462,11 @@ export const tierSetting: TierSetting[] = [
 ];
 
 export const authenticationMockTemplate: AuthenticationMockTemplateType = {
-	authenticationEn: {
+	AUTHENTICATIONEN: {
 		body: '{{1}} is your verification code. For your security, do not share this code.',
 		subtitle: 'The code expires in X minutes'
 	},
-	authenticationHebrew: {
+	AUTHENTICATIONHEBREW: {
 		body: `{{1}} הוא קוד האימות שלך. מטעמי אבטחה, אין לשתף את הקוד הזה.`,
 		subtitle: 'תוקף הקוד הזה יפוג בעוד X דקות'
 	}

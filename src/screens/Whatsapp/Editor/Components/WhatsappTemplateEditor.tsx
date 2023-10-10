@@ -15,6 +15,7 @@ import { Box, Button, makeStyles, Tooltip } from '@material-ui/core';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { ClassesType } from '../../../Classes.types';
 import { checkLanguage } from '../../Common';
+import { authenticationTypes } from '../../Constant';
 
 const WhatsappTemplateEditor = ({
 	classes,
@@ -133,7 +134,7 @@ const WhatsappTemplateEditor = ({
 			<div className={classes.WhatsappTextareaWrapper}>
 				<textarea
 					required
-					disabled={category === 'authenticationEn' || category === 'authenticationHebrew'}
+					disabled={category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW}
 					ref={templateTextRef}
 					placeholder={translator('whatsapp.template.textareaPlaceholder')}
 					maxLength={templateTextLimit}
@@ -176,7 +177,7 @@ const WhatsappTemplateEditor = ({
 												{field.value}
 											</Button>
 											{
-												category !== 'authenticationEn' && category !== 'authenticationHebrew' && (
+												category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && (
 													<DeleteOutlinedIcon
 														style={{ color: 'red', cursor: 'pointer' }}
 														onClick={() => {
@@ -216,7 +217,7 @@ const WhatsappTemplateEditor = ({
 			</Box>
 
 			{
-				category !== 'authenticationEn' && category !== 'authenticationHebrew' && (	
+				category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && (	
 					<Box className={classes.whatsappFuncDiv}>
 						<Box className={classes.whatsappBaseButtons}>
 							{actionButtons.map((button) => (

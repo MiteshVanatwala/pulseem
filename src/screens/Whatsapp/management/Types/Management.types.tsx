@@ -122,6 +122,6 @@ export type authenticationMockTemplateObject = {
 }
 export type AuthenticationMockTemplateType = {
 	[key: string]: authenticationMockTemplateObject;
-	authenticationEn: authenticationMockTemplateObject;
-	authenticationHebrew: authenticationMockTemplateObject;
+	AUTHENTICATIONEN: authenticationMockTemplateObject;
+	AUTHENTICATIONHEBREW: authenticationMockTemplateObject;
 }

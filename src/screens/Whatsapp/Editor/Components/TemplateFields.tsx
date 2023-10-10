@@ -24,6 +24,7 @@ import {
 	getTemplateNameById,
 } from '../../Common';
 import { IoIosArrowDown } from 'react-icons/io';
+import { authenticationTypes } from '../../Constant';
 
 const TemplateFields = ({
 	classes,
@@ -152,8 +153,8 @@ const TemplateFields = ({
 							>
 								<MenuItem value={'marketing'}>{translator('whatsapp.marketing')}</MenuItem>
 								<MenuItem value={'utility'}>{translator('whatsapp.utility')}</MenuItem>
-								<MenuItem value='authenticationEn'>{translator('whatsapp.authenticationEn')}</MenuItem>
-								<MenuItem value='authenticationHebrew'>{translator('whatsapp.authenticationHebrew')}</MenuItem>
+								<MenuItem value={authenticationTypes.AUTHENTICATIONEN}>{translator('whatsapp.authenticationEn')}</MenuItem>
+								<MenuItem value={authenticationTypes.AUTHENTICATIONHEBREW}>{translator('whatsapp.authenticationHebrew')}</MenuItem>
 							</Select>
 						</FormControl>
 					</Grid>
