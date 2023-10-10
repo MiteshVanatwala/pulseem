@@ -217,9 +217,9 @@ const LatestReports = ({ classes, t, isRTL }) => {
     
     return (
       <TabPanel value={tabValue} index={index} key={`newsletterTabPanel_${tabType}`}>
-        <Box className={clsx(!showGraphs ? classes.tabPanel : null, classes.spaceBetween, classes.flexJustifyCenter, classes.flexWrap)}>
+        <Box className={clsx(!showGraphs ? classes.tabPanel : null, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexJustifyCenter, classes.flexWrap)}>
           <Grid container spacing={2}>
-            <Grid item sm={5}>
+            <Grid item sm={12} md={5} className={classes.w100}>
               <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1)}>
                 {
                   showGraphs ? (innerData.map((c, index) => {
@@ -259,7 +259,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                 }
               </Box>
             </Grid>
-            <Grid item sm={7}>
+            <Grid item sm={12} md={7} className={classes.w100}>
               {showGraphs &&
                 <Box className={classes.barChart}>
                   <Bar data={reportData.data} options={barOptions} />
