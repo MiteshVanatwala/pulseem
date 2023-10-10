@@ -4,6 +4,7 @@ import {
 	campaignDataProps,
 	reportDataProps,
 } from '../../Campaign/Types/WhatsappCampaign.types';
+import { authenticationClass } from './JSON.types';
 
 export type WhatsappCreatorProps = {
 	classes: ClassesType[];
@@ -259,6 +260,7 @@ export type savedTemplateTypesProps = {
 	media: savedTemplateMediaProps;
 	text: savedTemplateTextProps;
 	card: savedTemplateCardProps;
+	'whatsapp/authentication': authenticationClass
 };
 
 export type savedTemplateDataProps = {

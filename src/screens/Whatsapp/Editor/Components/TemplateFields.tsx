@@ -24,6 +24,7 @@ import {
 	getTemplateName,
 	getTemplateNameById,
 } from '../../Common';
+import { authenticationTypes } from '../../Constant';
 
 const TemplateFields = ({
 	classes,
@@ -157,10 +158,10 @@ const TemplateFields = ({
 							<MenuItem key={'utility'} value={'utility'}>
 								{translator('whatsapp.utility')}
 							</MenuItem>
-							<MenuItem value='authenticationEn'>
+							<MenuItem value={authenticationTypes.AUTHENTICATIONEN}>
 								{translator('whatsapp.authenticationEn')}
 							</MenuItem>
-							<MenuItem value='authenticationHebrew'>
+							<MenuItem value={authenticationTypes.AUTHENTICATIONHEBREW}>
 								{translator('whatsapp.authenticationHebrew')}
 							</MenuItem>
 						</Select>

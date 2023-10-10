@@ -60,6 +60,7 @@ import {
 	APIStatuses,
 	apiStatus,
 	authenticationMockTemplate,
+	authenticationTypes,
 	buttonTextLimits,
 	buttonTypes,
 	categoryName,
@@ -95,7 +96,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			state.whatsapp.ToastMessages
 	);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [codeExpirationTime, setCodeExpirationTime] = useState<number>(0);
+	const [codeExpirationTime, setCodeExpirationTime] = useState<number | undefined>(0);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [savedTemplateList, setSavedTemplateList] = useState<
@@ -190,6 +191,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		useState<boolean>(false);
 	const [linkCount, setlinkCount] = useState<number>(0);
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
+	const [authenticationButtonText, setAuthenticationButtonText] = useState<string>('');
 
 	let updatedTemplateData: templateDataProps = {
 		templateText: '',
@@ -276,7 +278,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	}, [isCallToActionOpen]);
 
 	useEffect(() => {
-		if (category === 'authenticationEn' || category === 'authenticationHebrew') {
+		if (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) {
+			console.log(updatedTemplateData);
 			const button = {
 				id: uniqid(),
 				typeOfAction: '',
@@ -285,11 +288,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						fieldName: 'whatsapp.websiteButtonText',
 						type: 'text',
 						placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-						value: translator('whatsapp.copyCode', { lng: category === 'authenticationEn' ? 'en' : 'he' }),
+						value: authenticationButtonText || translator('whatsapp.copyCode', { lng: category === authenticationTypes.AUTHENTICATIONEN ? 'en' : 'he' }),
 					},
 				],
 			};
 
+			console.log(category);
 			setTemplateData({
 				...templateData,
 				templateText: `${authenticationMockTemplate[category].body} \n\n ${authenticationMockTemplate[category].subtitle.replace('X', `${codeExpirationTime}`)}`,
@@ -564,9 +568,16 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				setSavedTemplate(templateId);
 				setTemplateName(templateName);
 				setFileData(updatedFileData);
-				setButtonType(updatedButtonType);
-				setTemplateData(updatedTemplateData);
-				setCategory(categoryName[templates?.CategoryId || 1]);
+				
+				if (templates?.CategoryId === 3) {
+					setCodeExpirationTime(templates?.Data?.types?.['whatsapp/authentication']?.code_expiration_minutes)
+					setAuthenticationButtonText(templates?.Data?.types?.['whatsapp/authentication']?.actions[0].copy_code_text)
+					setButtonType(buttonTypes.QUICK_REPLY);
+				} else {
+					setTemplateData(updatedTemplateData);
+					setButtonType(updatedButtonType);
+				}
+				setCategory(templates?.CategoryId === 3 ? templates?.Category : categoryName[templates?.CategoryId || 1]);
 				if (updatedTemplateData?.templateButtons?.length > 0) {
 					if (updatedButtonType === buttonTypes.QUICK_REPLY) {
 						setQuickReplyButtons(updatedTemplateData.templateButtons);
@@ -698,9 +709,18 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				variables: variables,
 				language: templateLanguage,
 				TemplateCategory: category?.toUpperCase(),
-				codeExpirationTime: codeExpirationTime,
 				isSaveOnly: isSave ? true : false,
-				types: {
+				types: (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW)
+				? {
+					authentication: {
+						add_security_recommendation: true,
+            code_expiration_minutes: Number(codeExpirationTime),
+            actions: [{
+							type: 'COPY_CODE',
+							copy_code_text: getValueByFieldName(templateData.templateButtons[0], 'whatsapp.websiteButtonText')
+						}]
+					},
+				} : {
 					'quick-reply': {
 						body: templateData.templateText,
 						actions: getQuickReplyActions(),
@@ -829,7 +849,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			isValidated = false;
 		}
 
-		if ((category === 'authenticationEn' || category === 'authenticationHebrew') && codeExpirationTime > 90) {
+		if ((category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) && (codeExpirationTime || 0) > 90) {
 			validationErrors.push(translator('whatsapp.codeExpirationMessage'));
 			isValidated = false;
 		}
@@ -1256,7 +1276,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 									/>
 
 									{
-										(category === 'authenticationEn' || category === 'authenticationHebrew') && (
+										(category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) && (
 											<Grid item className={clsx(classes.pt15, classes.pb10, classes.dFlex)}>
 												<Typography className={clsx(classes.pt5)}>
 													{translator('whatsapp.codeExpirationTime') + ' (' + translator('common.minutes') + ')'}
@@ -1280,7 +1300,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 													className={classes.mlr10}
 												/>
 												{
-													codeExpirationTime > 90 && (
+													(codeExpirationTime || 0) > 90 && (
 														<Typography className={clsx(classes.pt5, classes.f13, classes.textRed)}>
 															{translator('whatsapp.codeExpirationMessage')}
 														</Typography>
@@ -1291,7 +1311,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 									}
 
 									{
-										category !== 'authenticationEn' && category !== 'authenticationHebrew' && (
+										category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && (
 											<Grid className={classes.whatsappFileUploadWrapper} item>
 												<Grid container spacing={1}>
 													<Grid item>
@@ -1375,9 +1395,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						}
 						templateButtons={templateData.templateButtons}
 						isEditable={true}
-						isDeletionAllowed={category !== 'authenticationEn' && category !== 'authenticationHebrew'}
-						canAddMoreButtons={category !== 'authenticationEn' && category !== 'authenticationHebrew'}
-						maxButtonTextLength={category !== 'authenticationEn' && category !== 'authenticationHebrew' ? 20 : 25}
+						isDeletionAllowed={category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW}
+						canAddMoreButtons={category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW}
+						maxButtonTextLength={category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW ? 20 : 25}
 					/>
 					<ActionCallPopOver
 						isCallToActionOpen={isCallToActionOpen}
