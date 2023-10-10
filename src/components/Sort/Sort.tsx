@@ -34,7 +34,7 @@ const Sort = ({
         </Select>
       </FormControl>
       <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={handleSortDirection} style={{ height: 40 }}>
-          {sortDirection === SortDirection.ASC ? <BiSortDown /> : <BiSortUp />}
+          {sortDirection === SortDirection.DESC ? <BiSortDown /> : <BiSortUp />}
       </Button>  
     </>
   )
