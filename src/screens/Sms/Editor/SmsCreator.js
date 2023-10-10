@@ -1893,9 +1893,9 @@ const SmsCreator = ({ classes }) => {
     return (
       <>
         <Title
-          Element={(
+          Text={(
             <Box className='stepHead'>
-              <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
+              <Stack className={'stepNum'} alignItems={'center'}>
                 <span >1</span>
               </Stack>
               <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
@@ -1924,27 +1924,10 @@ const SmsCreator = ({ classes }) => {
   return (
     <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true} containerClass={classes.editorCont}>
       <Box className={"head"}>
-        <Title Element={
-          <Box className={classes.flex}>
-            {t("mainReport.smsCampaign")}
-            <Tooltip
-              arrow
-              style={{ color: '#000' }}
-              title={t("mainReport.toolTip1")}
-              classes={{
-                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                arrow: classes.fBlack
-              }}
-              enterTouchDelay={50}
-              placement={"top"}>
-              <IconButton style={{ paddingBlock: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
-                <BsInfoCircle />
-              </IconButton>
-            </Tooltip>
-          </Box>
-
-        } classes={classes} />
-
+        <Title
+          Text={t('mainReport.smsCampaign')}
+          classes={classes}
+        />
       </Box>
       <Box className={'containerBody'}>
         {renderSubHeader()}

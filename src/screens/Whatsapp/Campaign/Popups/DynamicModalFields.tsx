@@ -142,6 +142,7 @@ const DynamicModalFields = ({
 					className={classes.whatsappCampaignDynamicFieldTextarea}
 					onChange={(e: BaseSyntheticEvent) => setTextInput(e.target.value)}
 					value={textInput}
+					onKeyDown={e => e.key === 'Enter' && e.preventDefault()}
 				/>
 			)}
 

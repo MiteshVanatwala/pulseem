@@ -4,6 +4,7 @@ import {
 	campaignDataProps,
 	reportDataProps,
 } from '../../Campaign/Types/WhatsappCampaign.types';
+import { authenticationClass } from './JSON.types';
 
 export type WhatsappCreatorProps = {
 	classes: ClassesType[];
@@ -26,6 +27,7 @@ export type WhatsappCreatorProps = {
 		fileLink: string;
 		fileType: string;
 	};
+	category?: string;
 };
 
 export type TemplateFieldsProps = {
@@ -141,6 +143,9 @@ export type quickReplyProps = {
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
 	templateButtons: templateDataProps['templateButtons'];
 	isEditable: boolean;
+	isDeletionAllowed?: boolean;
+	canAddMoreButtons?: boolean;
+	maxButtonTextLength?: number;
 };
 
 export type quickReplyButtonsFieldProps = {
@@ -254,6 +259,7 @@ export type savedTemplateTypesProps = {
 	media: savedTemplateMediaProps;
 	text: savedTemplateTextProps;
 	card: savedTemplateCardProps;
+	'whatsapp/authentication': authenticationClass;
 };
 
 export type savedTemplateDataProps = {
