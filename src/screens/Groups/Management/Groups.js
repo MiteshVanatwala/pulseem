@@ -86,8 +86,8 @@ const Groups = ({ classes }) => {
     const pageProperty = useRef();
     const qs = (window.location.search && queryString.parse(window.location.search)) || state;
     const exportColumnHeader = useRef(null);
-    const [sortDirection, setSortDirection] = useState(SortDirection.ASC);
-    const [sortBySelected, setSortBy] = useState(SortColumns.GROUP_NAME);
+    const [sortDirection, setSortDirection] = useState(SortDirection.DESC);
+    const [sortBySelected, setSortBy] = useState(SortColumns.CREATION_DATE);
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
