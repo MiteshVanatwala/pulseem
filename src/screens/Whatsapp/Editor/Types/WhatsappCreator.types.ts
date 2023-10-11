@@ -171,6 +171,11 @@ export type ApiButtonData = {
 	phoneCode?: string;
 };
 
+export type quickReplyButtons = {
+	id: string;
+	title: string
+};
+
 export type templateDataProps = {
 	templateText: string;
 	templateButtons: quickReplyButtonProps[] | callToActionProps;
@@ -260,7 +265,8 @@ export type savedTemplateTypesProps = {
 	media: savedTemplateMediaProps;
 	text: savedTemplateTextProps;
 	card: savedTemplateCardProps;
-	'whatsapp/authentication': authenticationClass
+	'whatsapp/authentication': authenticationClass,
+	'authentication': authenticationClass
 };
 
 export type savedTemplateDataProps = {
@@ -269,6 +275,7 @@ export type savedTemplateDataProps = {
 };
 
 export type savedTemplateListProps = {
+	CategoryId: number;
 	CreatedDate: string | null;
 	Data: savedTemplateDataProps;
 	RejectionReason: string;
@@ -379,6 +386,7 @@ export type getTemplateByIdDataAPIProps = {
 	SavedApiWhatsappTemplatesId: number;
 	TemplateId: string;
 	TemplateName: string;
+	Language?: string;
 };
 
 export type getTemplateByIdPayloadAPIProps = {
