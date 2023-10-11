@@ -415,6 +415,7 @@ const ActionCallPopOver = ({
 														onTypeOfActionFieldChange(value!, row, field)
 													}
 													value={field.value}
+													disabled={!isEditable}
 												/>
 											</Grid>
 										)
