@@ -90,6 +90,8 @@ import {
 import Toast from '../../../components/Toast/Toast.component';
 import {
 	apiStatus,
+	authenticationMockTemplate,
+	authenticationTypes,
 	buttonTextLimits,
 	buttonTypes,
 	buttons,
@@ -600,25 +602,58 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (templateData) {
 			templatePreviewData = getTemplatePreviewData(templateData?.types);
 		}
-		setFileData(templatePreviewData?.fileData);
-		setButtonType(templatePreviewData?.buttonType);
-		setTemplateData(templatePreviewData?.templateData);
-		setDynamicVariable(
-			getDynamicFields(templatePreviewData?.templateData.templateText)
-		);
-		if (templatePreviewData?.buttonType === 'quickReply') {
-			setQuickReplyButtons(templatePreviewData?.templateData.templateButtons);
+		if (savedTemplateData?.CategoryId === 3) {
+			renderAuthenticationPreview(savedTemplateData);
 		} else {
-			setCallToActionFieldRows(
-				templatePreviewData?.templateData.templateButtons
+			setFileData(templatePreviewData?.fileData);
+			setButtonType(templatePreviewData?.buttonType);
+			setTemplateData(templatePreviewData?.templateData);
+			setDynamicVariable(
+				getDynamicFields(templatePreviewData?.templateData.templateText)
 			);
-		}
-		if (templateData?.variables) {
-			setDynamicFieldCount(
-				getDynamicFields(templatePreviewData?.templateData.templateText)?.length
-			);
+			if (templatePreviewData?.buttonType === 'quickReply') {
+				setQuickReplyButtons(templatePreviewData?.templateData.templateButtons);
+			} else {
+				setCallToActionFieldRows(
+					templatePreviewData?.templateData.templateButtons
+				);
+			}
+			if (templateData?.variables) {
+				setDynamicFieldCount(
+					getDynamicFields(templatePreviewData?.templateData.templateText)?.length
+				);
+			}
 		}
 	};
+
+	const renderAuthenticationPreview = (templateData: any) => {
+		setButtonType('quickReply');
+		const buttons = [{
+			id: uniqid(),
+			typeOfAction: '',
+			fields: [
+				{
+					fieldName: 'whatsapp.websiteButtonText',
+					type: 'text',
+					placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+					value: templateData.Data?.types?.['authentication']?.actions[0].copy_code_text,
+				},
+			],
+		}];
+		let template = `${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].body}`;
+		if (templateData.Data?.types?.authentication?.code_expiration_minutes) {
+			template += `\n\n ${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].subtitle.replace('X', `${templateData.Data?.types?.authentication?.code_expiration_minutes || 0}`)}`;
+		}
+		setTemplateData({
+			templateText: template,
+			templateButtons: buttons,
+		});
+		setQuickReplyButtons(buttons);
+		setFileData({
+			fileLink: '',
+			fileType: ''
+		});
+	}
 
 	const onChangeTestSendRadio = (value: string) => {
 		if (value === 'testgroup') {

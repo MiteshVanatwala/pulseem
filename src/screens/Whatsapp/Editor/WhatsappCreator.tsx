@@ -276,23 +276,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	useEffect(() => {
 		if (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) {
-			const button = {
-				id: uniqid(),
-				typeOfAction: '',
-				fields: [
-					{
-						fieldName: 'whatsapp.websiteButtonText',
-						type: 'text',
-						placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-						value: authenticationButtonText || translator('whatsapp.copyCode', { lng: category === authenticationTypes.AUTHENTICATIONEN ? 'en' : 'he' }),
-					},
-				],
-			};
-			setTemplateData({
-				...templateData,
-				templateText: `${authenticationMockTemplate[category].body} \n\n ${authenticationMockTemplate[category].subtitle.replace('X', `${codeExpirationTime}`)}`,
-				templateButtons: [button]
-			})
+			updateTemplateForAuthentication();
 			setButtonType(ActionButtons.QuickReply);
 		} else {
 			setTemplateData({
@@ -562,14 +546,14 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				setTemplateName(templateName);
 				setFileData(updatedFileData);
 				if (templates?.CategoryId === 3) {
-					setCodeExpirationTime(templates?.Data?.types?.['whatsapp/authentication']?.code_expiration_minutes)
-					setAuthenticationButtonText(templates?.Data?.types?.['whatsapp/authentication']?.actions[0].copy_code_text)
+					setCodeExpirationTime(templates?.Data?.types?.authentication?.code_expiration_minutes)
+					setAuthenticationButtonText(templates?.Data?.types?.authentication?.actions[0].copy_code_text)
 					setButtonType(buttonTypes.QUICK_REPLY);
 				} else {
 					setTemplateData(updatedTemplateData);
 					setButtonType(updatedButtonType);
 				}
-				setCategory(templates?.CategoryId === 3 ? templates?.Category : categoryName[templates?.CategoryId || 1]);
+				setCategory(templates?.CategoryId === 3 ? (templates?.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW) : categoryName[templates?.CategoryId || 1]);
 				
 				if (updatedTemplateData?.templateButtons?.length > 0) {
 					if (updatedButtonType === buttonTypes.QUICK_REPLY) {
@@ -1338,9 +1322,31 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const handleCodeExpirationChange = (event: any) => {
 		const onlyNums = event.target.value.replace(/[^0-9]/g, '');
 		setCodeExpirationTime(onlyNums);
+		updateTemplateForAuthentication();
+	}
+
+	const updateTemplateForAuthentication = () => {
+		const button = {
+			id: uniqid(),
+			typeOfAction: '',
+			fields: [
+				{
+					fieldName: 'whatsapp.websiteButtonText',
+					type: 'text',
+					placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+					value: authenticationButtonText || translator('whatsapp.copyCode', { lng: category === authenticationTypes.AUTHENTICATIONEN ? 'en' : 'he' }),
+				},
+			],
+		};
+
+		let template = `${authenticationMockTemplate[category].body}`;
+		if (codeExpirationTime && codeExpirationTime > 0) {
+			template += `\n\n ${authenticationMockTemplate[category].subtitle.replace('X', `${codeExpirationTime}`)}`;
+		}
 		setTemplateData({
 			...templateData,
-			templateText: `${authenticationMockTemplate[category].body} \n\n ${authenticationMockTemplate[category].subtitle.replace('X', `${codeExpirationTime}`)}`,
+			templateText: template,
+			templateButtons: [button]
 		})
 	}
 
@@ -1417,10 +1423,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 														onChange={handleCodeExpirationChange}
 														onBlur={(event: any) => {
 															if (event.target.value === '') setCodeExpirationTime(0);
-															setTemplateData({
-																...templateData,
-																templateText: `${authenticationMockTemplate[category].body} \n\n ${authenticationMockTemplate[category].subtitle.replace('X', `${codeExpirationTime}`)}`,
-															})
+															updateTemplateForAuthentication();
 														}}
 														inputProps={{ inputMode: 'numeric' }}
 														value={codeExpirationTime}
