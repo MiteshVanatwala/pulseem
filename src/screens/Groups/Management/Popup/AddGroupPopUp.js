@@ -99,9 +99,9 @@ const AddGroupPopUp = ({
             handleResponses(response, {
                 S_201: {
                     code: 201,
-                    message: ToastMessages.GROUP_UPDATED,
+                    message: ToastMessages.GROUP_CREATED,
                     Func: () => {
-                        new Promise(async (resolutionFunc, rejectionFunc) => {
+                        new Promise(async (resolutionFunc) => {
                             await dispatch(getGroupsBySubAccountId())
                             await resolutionFunc(getData());
                             setNewGroupData(DEFAULT_NEW_GROUP);
@@ -340,7 +340,6 @@ AddGroupPopUp.propTypes = {
     classes: PropTypes.object,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    windowSize: PropTypes.string.isRequired,
     ToastMessages: PropTypes.object.isRequired,
     setToastMessage: PropTypes.func.isRequired,
 }
