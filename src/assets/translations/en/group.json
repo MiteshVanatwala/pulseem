@@ -37,5 +37,5 @@
   },
   "maxGroupsExceeded": "Maximum of group creation exceeded for this account",
   "mergeGroup": "Merge Group",
-  "mergeGroupDesc": "Merging the groups will create a new group consisting the recipients from all the selected groups"
+  "mergeGroupDesc": "Merging the groups will create a new group <br/>consisting the recipients from all the selected groups"
 }

@@ -145,6 +145,16 @@ export const createAndGetGroupIdForManualSend = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
+export const createCombinedGroupV2 = createAsyncThunk(
+    'group/CreateCombinedGroupV2', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`group/CreateCombinedGroupV2`, data);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 
 export const groupSlice = createSlice({
     name: 'group',

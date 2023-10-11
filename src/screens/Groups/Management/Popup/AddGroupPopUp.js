@@ -10,31 +10,35 @@ import {
     Checkbox,
     FormControlLabel,
 } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import {
+    createCombinedGroupV2,
     createGroup,
     getGroupsBySubAccountId
 } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { getTestGroups } from "../../../../redux/reducers/smsSlice";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 
 const AddGroupPopUp = ({
     classes,
     isOpen = false,
     onClose,
     setLoader,
-    windowSize,
     ToastMessages,
     setToastMessage,
     addClientByQuery = false,
     createGroupCallback = () => null,
     addAnotherRecCallback = () => null,
-    getData, handleResponses = (response, actions) => null }) => {
+    getData,
+    isCombinedRequest = false,
+    selectedGroupId,
+    handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -62,6 +66,7 @@ const AddGroupPopUp = ({
     };
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
     const [saveDisabled, setSaveDisabled] = useState(false);
+    const { CoreToastMessages, windowSize } = useSelector(state => state.core);
 
     const handleAddGroup = async (data, callback) => {
         setSaveDisabled(true);
@@ -72,7 +77,24 @@ const AddGroupPopUp = ({
         }
         try {
             setLoader(true);
-            const response = await dispatch(createGroup(data));
+
+            let payload = data;
+            let response = null;
+
+            if (isCombinedRequest) {
+                payload = {
+                    SubAccountID: -1,
+                    GroupName: newGroupData.GroupName,
+                    GroupIds: selectedGroupId,
+                    IsTestGroup: newGroupData.IsTestGroup,
+                };
+
+                response = await dispatch(createCombinedGroupV2(payload));
+            }
+            else {
+                response = await dispatch(createGroup(payload));
+            }
+
             setLoader(false);
             handleResponses(response, {
                 S_201: {
@@ -83,7 +105,7 @@ const AddGroupPopUp = ({
                             await dispatch(getGroupsBySubAccountId())
                             await resolutionFunc(getData());
                             setNewGroupData(DEFAULT_NEW_GROUP);
-                            if (data.IsTestGroup)
+                            if (payload.IsTestGroup)
                                 await dispatch(getTestGroups());
                             onClose()
                         }).then((res) => {
@@ -99,6 +121,11 @@ const AddGroupPopUp = ({
                 S_401: {
                     code: 401,
                     message: ToastMessages.GROUP_INVALID_API,
+                    Func: () => null
+                },
+                S_403:{
+                    code: 403,
+                    message: CoreToastMessages?.XSS_ERROR,
                     Func: () => null
                 },
                 S_405: {
@@ -119,8 +146,8 @@ const AddGroupPopUp = ({
 
         } catch (err) {
             dispatch(sendToTeamChannel({
-                MethodName: 'init2FA',
-                ComponentName: 'Dashboard.js',
+                MethodName: 'handleAddGroup',
+                ComponentName: 'AddGroupPopUp.js',
                 Text: err
             }));
             return false;
@@ -133,7 +160,7 @@ const AddGroupPopUp = ({
             <BaseDialog
                 classes={classes}
                 open={isOpen}
-                title={t("group.createNew")}
+                title={isCombinedRequest ? t("group.mergeGroup") : t("group.createNew")}
                 icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div>}
@@ -168,7 +195,7 @@ const AddGroupPopUp = ({
                                 {t("group.cancel")}
                             </Button>
                         </Grid>
-                        {!addClientByQuery && <Grid
+                        {!addClientByQuery && !isCombinedRequest && <Grid
                             item
                             xs={windowSize === "xs" && 12}
                             sm={4}
@@ -229,6 +256,9 @@ const AddGroupPopUp = ({
                 cancelText="common.Cancel"
                 confirmText="common.Ok"
             >
+                {isCombinedRequest && <Box>
+                    <Typography>{RenderHtml(t("group.mergeGroupDesc"))}</Typography>
+                </Box>}
                 <Box
                     className={clsx(
                         classes.customDialogContentBox,
