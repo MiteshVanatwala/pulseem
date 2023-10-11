@@ -225,6 +225,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [selectedTestGroup, setSelectedTestGroup] = useState<
 		testGroupDataProps[]
 	>([]);
+	const [selectedTestGroupDummy, setSelectedTestGroupDummy] = useState<
+		testGroupDataProps[]
+	>([]);
 
 	const [callToActionFieldRows, setCallToActionFieldRows] =
 		useState<callToActionProps>([initialFieldRow]);
@@ -495,6 +498,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setTestSendOneContact('');
 		setIsTestSend(false);
 		setSelectedTestGroup([]);
+		setSelectedTestGroupDummy([]);
 	};
 
 	const resetToast = () => {
@@ -757,7 +761,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 
-	const onOkTestSending = async () => {
+	const onOkTestSending = async (selectedTestGroupDummy: testGroupDataProps[] = []) => {
 		if (validateSaveCampaign(true)) {
 			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
@@ -769,7 +773,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					await dispatch<any>(
 						saveQuickSendGroups({
 							WACampaignID: campaignIdForTestSend,
-							TestGroupsIds: selectedTestGroup?.map((group) => group?.GroupID),
+							TestGroupsIds: (selectedTestGroupDummy || selectedTestGroup)?.map((group) => group?.GroupID),
 						})
 					);
 				if (quickSendGroupsData?.Status !== apiStatus.SUCCESS) {
@@ -979,13 +983,40 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				{translator('mainReport.leaveCampaign')}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-			onSaveCampaign('save', true, true);
-		}
+		renderButtons: () =>
+      (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              onClick={() => {
+                setDialogType(null);
+								onSaveCampaign('save', true, true);
+              }}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}
+            >
+              {translator('common.Yes')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}
+            >
+              {translator('common.No')}
+            </Button>
+          </Grid>
+        </Grid>
+      ),
 	})
 
 	const getDeleteDialog = () => ({
@@ -1031,12 +1062,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		content: (
 			<TestGroupModal
 				classes={classes}
-				onClose={() => setDialogType(null)}
+				onClose={() => {
+					setDialogType(null);
+					setSelectedTestGroupDummy(selectedTestGroup);
+				}}
 				title={translator('whatsappCampaign.sendTitle')}
 				testGroupData={testGroups}
-				selectedTestGroup={selectedTestGroup}
+				selectedTestGroup={selectedTestGroupDummy}
 				setSelectedTestGroup={(updatedSelectedGroup) =>
-					setSelectedTestGroup(updatedSelectedGroup)
+					setSelectedTestGroupDummy(updatedSelectedGroup)
 				}
 				onConfirmOrYes={() => onOkTestSending()}
 			/>
@@ -1047,8 +1081,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				type: '',
 				data: ''
 			});
-			onOkTestSending();
-		}
+			setSelectedTestGroup(selectedTestGroupDummy);
+			onOkTestSending(selectedTestGroupDummy);
+		},
+		onClose: () => { setDialogType(null); setSelectedTestGroupDummy(selectedTestGroup); }
 	})
 
 	const getSummary = () => ({

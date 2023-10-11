@@ -1267,8 +1267,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                     <>
                                         <Stack
                                             direction="row"
-                                            justifyContent="center"
-                                            alignItems="center"
                                             className={clsx(classes.dFlex, classes.flexWrap)}
                                         >
                                             <Badge variant="dot" color="primary" invisible={!pulseIndication} className={clsx(classes.ml5, classes.mt1)}>

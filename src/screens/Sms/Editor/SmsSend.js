@@ -284,7 +284,7 @@ const SmsSend = ({ classes, ...props }) => {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
         setbsDot(true);
-        setFilterValues({ ...filterValues, dontSend: true });
+        setFilterValues({ ...filterValues, dontSend: true, exceptionalDays: `${campaignSettings.SendExeptional.ExceptionalDays}` });
       }
       if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
@@ -2395,7 +2395,13 @@ const SmsSend = ({ classes, ...props }) => {
         >
           <Grid item>
             <Button
-              onClick={handleConfirmC}
+              onClick={() => {
+                setDialogType(null);
+                setareaData("");
+                setContacts([]);
+                settypedData([]);
+                settotalRecords(0);
+              }}
               className={clsx(
                 classes.btn,
                 classes.btnRounded

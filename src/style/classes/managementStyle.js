@@ -1436,7 +1436,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '10px',
     position: 'initial',
     [theme.breakpoints.down('xs')]: {
-      padding: 0,
+      padding: 10,
       height: 'auto',
     },
     '& .title': {
@@ -1658,6 +1658,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     borderBottom: "1px solid #ccc",
     [theme.breakpoints.down('xs')]: {
       height: 'auto',
+      display: 'inline-table',
+      marginBottom: 0,
       '& .MuiTabs-root': {
         marginLeft: 0,
         marginTop: 10
@@ -1670,7 +1672,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: "5px 0px",
   },
   lastReportsTabPanels: {
-    paddingTop: 10,
+    paddingTop: windowSize !== "xs" ? 10 : 0,
     paddingBottom: 25,
     paddingRight: windowSize !== "xs" ? 5 : 0,
     paddingLeft: windowSize !== "xs" ? 5 : 0,
