@@ -279,19 +279,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	useEffect(() => {
 		if (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) {
-			const button = {
-				id: uniqid(),
-				typeOfAction: '',
-				fields: [
-					{
-						fieldName: 'whatsapp.websiteButtonText',
-						type: 'text',
-						placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-						value: authenticationButtonText || translator('whatsapp.copyCode', { lng: category === authenticationTypes.AUTHENTICATIONEN ? 'en' : 'he' }),
-					},
-				],
-			};
-
 			updateTemplateForAuthentication();
 			setButtonType(ActionButtons.QuickReply);
 		} else {
@@ -1206,6 +1193,19 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	}
 
 	const updateTemplateForAuthentication = () => {
+		const button = {
+			id: uniqid(),
+			typeOfAction: '',
+			fields: [
+				{
+					fieldName: 'whatsapp.websiteButtonText',
+					type: 'text',
+					placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+					value: authenticationButtonText || translator('whatsapp.copyCode', { lng: category === authenticationTypes.AUTHENTICATIONEN ? 'en' : 'he' }),
+				},
+			],
+		};
+
 		let template = `${authenticationMockTemplate[category].body}`;
 		if (codeExpirationTime && codeExpirationTime > 0) {
 			template += `\n\n ${authenticationMockTemplate[category].subtitle.replace('X', `${codeExpirationTime}`)}`;
@@ -1213,6 +1213,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		setTemplateData({
 			...templateData,
 			templateText: template,
+			templateButtons: [button]
 		})
 	}
 
