@@ -1386,12 +1386,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						isQuickReplyOpen={isQuickReplyOpen}
 						closeQuickReply={() => setIsQuickReplyOpen(false)}
 						quickReplyButtons={quickReplyButtons}
-						setQuickReplyButtons={(data: quickReplyButtonProps[]) =>
-							setQuickReplyButtons(data)
-						}
-						updateTemplateData={(data: quickReplyButtonProps[]) =>
-							updateTemplateButton(data, buttonTypes.QUICK_REPLY)
-						}
+						setQuickReplyButtons={(data: quickReplyButtonProps[]) => setQuickReplyButtons(data)}
+						updateTemplateData={(data: quickReplyButtonProps[]) => {
+							updateTemplateButton(data, buttonTypes.QUICK_REPLY);
+							if ((category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) && data.length > 0) {
+								setAuthenticationButtonText(data[0].fields[0].value);
+							}
+						}}
 						templateButtons={templateData.templateButtons}
 						isEditable={true}
 						isDeletionAllowed={category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW}

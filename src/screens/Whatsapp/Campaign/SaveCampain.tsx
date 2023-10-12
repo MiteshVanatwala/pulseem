@@ -633,6 +633,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			templateText: template,
 			templateButtons: buttons,
 		});
+		setDynamicVariable(
+			getDynamicFields(template)
+		);
 		setQuickReplyButtons(buttons);
 		setFileData({
 			fileLink: '',
