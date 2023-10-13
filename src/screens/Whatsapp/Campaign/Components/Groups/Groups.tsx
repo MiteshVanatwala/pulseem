@@ -217,7 +217,7 @@ const Groups = ({
 					<Box className={classes.filterButtonsContainer}>
 						{selectedList.length > 0 && showFilter ? (
 							<Button
-								className={clsx(classes.formControl, classes.whatsappDropDown)}
+								className={clsx(classes.formControl, classes.whatsappDropDown, classes.mt1)}
 								onClick={callbackReciFilter}
 								style={{
 									height: '36px',

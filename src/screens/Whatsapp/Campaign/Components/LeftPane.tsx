@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Grid, Tooltip } from '@material-ui/core';
+import { useRef, useState } from 'react';
+import { Button, Grid, Tooltip } from '@material-ui/core';
 import { ClassesType } from '../../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -7,12 +7,12 @@ import {
 	LeftPaneProps,
 	uploadData,
 } from '../Types/WhatsappCampaign.types';
-import AlertModal from '../../Editor/Popups/AlertModal';
 import FilterRecipientsDialog from '../Popups/FilterRecipientsDialog';
 import GroupSelector from './GroupSelector';
 import { tabs } from '../../Constant';
 import UploadXL from '../../../../components/Files/UploadXL';
 import { UploadSettings } from '../../../Groups/tempConstants';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 const LeftPane = ({
 	classes,
@@ -42,14 +42,92 @@ const LeftPane = ({
 	setShowTestGroups
 }: ClassesType & LeftPaneProps) => {
 	const { t: translator } = useTranslation();
-	const [isAlert, setIsAlert] = useState(false);
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
-	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
+	const [dialogType, setDialogType] = useState<string>('');
+	const refFilterRecipientsDialog = useRef<any>();
 
 	const onFilterSave = () => {
-		setIsFilterModal(false);
+		setDialogType('');
 		onFilter();
 	};
+
+	const getFilterDialog = () => ({
+		title: translator('whatsappCampaign.filter'),
+		showDivider: false,
+		content: (
+			<FilterRecipientsDialog
+				isFilterModal={true}
+				onFilterModalClose={() => setDialogType('')}
+				classes={classes}
+				allGroupList={allGroupList}
+				finishedCampaigns={finishedCampaigns}
+				selectedFilterCampaigns={selectedFilterCampaigns}
+				setFilterCampaigns={setFilterCampaigns}
+				selectedFilterGroups={selectedFilterGroups}
+				setFilterGroups={setFilterGroups}
+				onConfirmOrYes={onFilterSave}
+				exceptionalDaysToggle={exceptionalDaysToggle}
+				exceptionalDays={exceptionalDays}
+				setExceptionalDaysToggle={setExceptionalDaysToggle}
+				setExceptionalDays={setExceptionalDays}
+				ref={refFilterRecipientsDialog}
+			/>
+		),
+		showDefaultButtons: false,
+		renderButtons: () =>
+      (
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer)}
+        >
+          <Grid item>
+            <Button
+              onClick={() => refFilterRecipientsDialog?.current?.onOkClick() }
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}
+            >
+              {translator('common.Yes')}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => refFilterRecipientsDialog?.current?.onNoClick()}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}
+            >
+              {translator('common.No')}
+            </Button>
+          </Grid>
+        </Grid>
+      ),
+	})
+
+	const renderDialog = () => {
+		let currentDialog: any = {};
+		if (dialogType === 'filter') {
+			currentDialog = getFilterDialog();
+		}
+
+		if (dialogType) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType('')}
+					onClose={() => setDialogType('')}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
+
 	return (
 		<Grid
 			container
@@ -148,37 +226,13 @@ const LeftPane = ({
 						onNewGroupChange={onNewGroupChange}
 						onNewGroupSave={onNewGroupSave}
 						setSelected={setSelected}
-						setIsFilterModal={setIsFilterModal}
+						setIsFilterModal={() => setDialogType('filter')}
 						setAllGroupsSelected={setAllGroupsSelected}
 						setShowTestGroups={setShowTestGroups}
 					/>
 				)}
 			</Grid>
-			<FilterRecipientsDialog
-				isFilterModal={isFilterModal}
-				onFilterModalClose={() => setIsFilterModal(false)}
-				classes={classes}
-				allGroupList={allGroupList}
-				finishedCampaigns={finishedCampaigns}
-				selectedFilterCampaigns={selectedFilterCampaigns}
-				setFilterCampaigns={setFilterCampaigns}
-				selectedFilterGroups={selectedFilterGroups}
-				setFilterGroups={setFilterGroups}
-				onConfirmOrYes={onFilterSave}
-				exceptionalDaysToggle={exceptionalDaysToggle}
-				exceptionalDays={exceptionalDays}
-				setExceptionalDaysToggle={setExceptionalDaysToggle}
-				setExceptionalDays={setExceptionalDays}
-			/>
-			<AlertModal
-				classes={classes}
-				isOpen={isAlert}
-				onClose={() => setIsAlert(false)}
-				title={translator('whatsapp.alertModal.alert')}
-				subtitle={''}
-				type='alert'
-				onConfirmOrYes={() => setIsAlert(false)}
-			/>
+			{renderDialog()}
 		</Grid>
 	);
 };
