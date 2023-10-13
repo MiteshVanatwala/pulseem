@@ -1346,7 +1346,7 @@ const Groups = ({ classes }) => {
                         />
                     </Box>
                     <Box className={classes.mt3}>
-                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.emails")}</Typography>
+                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.sms/mms")}</Typography>
                         <FlexGrid
                             justifyContent="space-between"
                             gridArr={[
