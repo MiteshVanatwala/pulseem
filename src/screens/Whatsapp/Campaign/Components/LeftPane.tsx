@@ -13,6 +13,7 @@ import { tabs } from '../../Constant';
 import UploadXL from '../../../../components/Files/UploadXL';
 import { UploadSettings } from '../../../Groups/tempConstants';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import Toast from '../../../../components/Toast/Toast.component';
 
 const LeftPane = ({
 	classes,
@@ -45,11 +46,24 @@ const LeftPane = ({
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
 	const [dialogType, setDialogType] = useState<string>('');
 	const refFilterRecipientsDialog = useRef<any>();
+	const [toastMessage, setToastMessage] = useState(null);
 
 	const onFilterSave = () => {
 		setDialogType('');
 		onFilter();
 	};
+
+	const renderToast = () => {
+		if (toastMessage) {
+			setTimeout(() => {
+				setToastMessage(null);
+			}, 3000);
+			return (
+				<Toast data={toastMessage} />
+			);
+		}
+		return null;
+	}
 
 	const getFilterDialog = () => ({
 		title: translator('whatsappCampaign.filter'),
@@ -200,7 +214,7 @@ const LeftPane = ({
 						onManualUpload(groupName, res, uploadedAsFile);
 					}}
 					settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
-					setToastMessage={() => { }}
+					setToastMessage={setToastMessage}
 					placeHolder={'recipient.addRecTextareaPlaceholder'}
 					tooltipText='recipient.bulkRecUpldTooltipText'
 					onlyMapping={true}
@@ -233,6 +247,7 @@ const LeftPane = ({
 				)}
 			</Grid>
 			{renderDialog()}
+			{renderToast()}
 		</Grid>
 	);
 };
