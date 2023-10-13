@@ -485,6 +485,7 @@ const ActionCallPopOver = ({
 						<Grid item md={6}>
 							{callToActionFieldRows?.length < 2 && (
 								<Button
+									disabled={!isEditable}
 									variant='contained'
 									onClick={addMore}
 									className={clsx(classes.btn, classes.btnRounded)}
