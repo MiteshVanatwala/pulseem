@@ -8,8 +8,8 @@ const TooltipBubble = ({ tooltipText = "TooltipText", ...props }: any) => {
   return (
     <Box style={{ transform: isRTL ? "scaleX(1)" : "scaleX(-1)" }}>
       <svg
-        width="84"
-        height="40"
+        width="74"
+        height="30"
         viewBox="0 0 84 40"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

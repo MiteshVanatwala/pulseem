@@ -1577,15 +1577,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       height: 0,
     },
     '& .bubbleNew': {
-      marginTop: '-5px',
+      marginTop: 0,
       position: 'absolute',
-      right: isRTL ? '' : 0,
+      right: isRTL ? '' : -15,
       left: isRTL ? 0 : '',
       '& .bubbleText': {
         color: '#000',
         position: 'absolute',
         zIndex: 10,
-        fontSize: 18,
+        fontSize: 14,
         left: 25,
         fontWeight: 'bold'
       }
