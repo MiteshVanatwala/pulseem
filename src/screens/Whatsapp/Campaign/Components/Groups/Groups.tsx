@@ -217,7 +217,7 @@ const Groups = ({
 					<Box className={classes.filterButtonsContainer}>
 						{selectedList.length > 0 && showFilter ? (
 							<Button
-								className={clsx(classes.formControl, classes.whatsappDropDown)}
+								className={clsx(classes.formControl, classes.whatsappDropDown, classes.mt1)}
 								onClick={callbackReciFilter}
 								style={{
 									height: '36px',
@@ -245,6 +245,7 @@ const Groups = ({
 							variant='outlined'
 							className={clsx(
 								classes.formControl,
+								classes.mt1,
 								showTestGroups
 									? classes.buttonActiveRed
 									: classes.twoLineButton
@@ -253,7 +254,7 @@ const Groups = ({
 							<>{translator('sms.showTestGroups')}</>
 						</Button>
 						<FormControl
-							className={clsx(classes.whatsappDropDown)}
+							className={clsx(classes.whatsappDropDown, classes.mt1)}
 						>
 							<Select
 								variant="standard"
@@ -285,7 +286,8 @@ const Groups = ({
 							className={clsx(
 								classes.formControl,
 								classes.whatsappDropDown,
-								classes.controlField
+								classes.controlField,
+								classes.mt1
 							)}
 							onClick={() => {
 								handleSortDirection();

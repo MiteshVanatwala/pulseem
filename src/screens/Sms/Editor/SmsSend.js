@@ -994,6 +994,7 @@ const SmsSend = ({ classes, ...props }) => {
                   <Button
                     className={clsx(
                       classes.ml5,
+                      windowSize === "xs" ? classes.mt1 : '',
                       classes.btn, classes.btnRounded)}
                     onClick={() => {
                       setareaData("");

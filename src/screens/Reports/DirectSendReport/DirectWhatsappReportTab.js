@@ -309,8 +309,9 @@ const DirectWhatsappReportTab = ({
                         size='large'
                         variant='contained'
                         onClick={handleSearch}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}>
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={<SearchIcon />}
+                    >
                         {t('campaigns.btnSearchResource1.Text')}
                     </Button>
                     {windowSize !== 'xs' && <Link
@@ -332,8 +333,9 @@ const DirectWhatsappReportTab = ({
                             setPage(1);
                             clearSearch('whatsapp');
                         }}
-                        className={classes.searchButton}
-                        endIcon={<ClearIcon />}>
+                        className={clsx(classes.btn, classes.btnRounded, classes.mleft5)}
+                        endIcon={<ClearIcon />}
+                    >
                         {t('common.clear')}
                     </Button>
                 </Grid> : null}

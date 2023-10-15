@@ -269,34 +269,6 @@ const Groups = ({ classes }) => {
             }
         };
 
-        if (windowSize === "xs") {
-            return (
-                <Grid container className={'searchLine'}>
-                    <SearchField
-                        classes={classes}
-                        value={searchStr}
-                        onChange={(e) => setSearchStr(e.target.value)}
-                        onClick={() => {
-                            const searchObject = {
-                                PageIndex: 1,
-                                PageSize: rowsPerPage,
-                                SearchTerm: searchStr,
-                            };
-
-                            setSearchData(searchObject);
-                            SetPageState({
-                                "PageName": "groups",
-                                "PageNumber": 1,
-                                "SearchData": searchObject
-                            });
-                        }}
-                        onKeyPress={handleKeyPress}
-                        placeholder={t("common.GroupName")}
-                    />
-                </Grid>
-            );
-        }
-
         return (
             <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
                 <Grid item>
@@ -1374,7 +1346,7 @@ const Groups = ({ classes }) => {
                         />
                     </Box>
                     <Box className={classes.mt3}>
-                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.emails")}</Typography>
+                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.sms/mms")}</Typography>
                         <FlexGrid
                             justifyContent="space-between"
                             gridArr={[

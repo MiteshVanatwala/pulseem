@@ -1943,22 +1943,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '@media screen and (max-width: 414px)': {
       top: 120,
-      right: 42,
-      width: 260,
-      height: 205,
+      right: 42
     },
     '@media screen and (max-width: 360px)': {
       top: 105,
-      right: 38,
-      width: 230,
-      height: 190,
+      right: 38
     },
     '@media screen and (max-width: 320px)': {
       top: 90,
       right: 38,
-      left: 'auto',
-      width: 200,
-      height: 165,
+      left: 'auto'
     },
   },
   conInfo: {

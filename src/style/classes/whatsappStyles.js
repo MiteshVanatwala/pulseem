@@ -2672,7 +2672,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		height: 50,
 	},
 	whatsappDropDown: {
-		marginLeft: 5,
+		marginRight: 5,
 		alignSelf: 'flex-end',
 		border: '1px solid #ff3343',
 		color: '#ff3343',
