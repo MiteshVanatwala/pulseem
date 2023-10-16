@@ -98,6 +98,8 @@ const DynamicModal = ({
 					setNavApp('Google Maps');
 				}
 			}
+
+			if (templateCategory === 3) setActiveDynamicButton('whatsappCampaign.text');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dynamicModalVariable]);
