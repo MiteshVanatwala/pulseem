@@ -419,6 +419,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
 								},
+								{
+									fieldName: 'mainReport.keepTrack',
+									type: '',
+									placeholder: '',
+									value: 'false',
+								},
 							],
 						};
 					}
