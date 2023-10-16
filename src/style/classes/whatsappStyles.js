@@ -66,13 +66,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		alignItems: 'center',
 		justifyContent: 'space-evenly',
 		height: '100%',
+		'& button': {
+			marginRight: 5,
+		},
 		'@media screen and (max-width: 540px)': {
 			flexDirection: 'column-reverse',
 			paddingInlineEnd: '8px',
 		},
 		'@media screen and (max-width: 556px)': {
-			display: 'contents',
+			display: 'inline',
 			flexDirection: 'unset',
+			textAlign: 'center',
+			marginTop: 5,
+			'& button': {
+				marginBottom: 5,
+				marginRight: 5,
+			}
 		},
 	},
 	WhatsappTextareaWrapper: {
