@@ -325,6 +325,7 @@ export type buttonsDataProps = {
 	url: string;
 	phone: string;
 	phoneCode?: string;
+	keeptrackoflinks?: any;
 };
 export type JSONFreetextVariableProps = {
 	[key: string]: string;
