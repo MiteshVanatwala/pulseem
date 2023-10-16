@@ -284,6 +284,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateText: '',
 				templateButtons: []
 			})
+			setButtonType('');
 		}
 	}, [ category ])
 
