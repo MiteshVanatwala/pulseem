@@ -33,6 +33,7 @@ const DynamicModal = ({
 	isTrackLink,
 	setIsTrackLink,
 	savedTemplate,
+	templateCategory = 0,
 }: dynamicModalProps) => {
 	const theme = useTheme();
 	const { campaignID } = useParams();
@@ -44,7 +45,7 @@ const DynamicModal = ({
 		useState<boolean>(false);
 
 	const [activeDynamicButton, setActiveDynamicButton] = useState<string>(
-		'whatsappCampaign.pField'
+		templateCategory === 3 ? 'whatsappCampaign.text' : 'whatsappCampaign.pField'
 	);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -270,7 +271,7 @@ const DynamicModal = ({
 							container
 							className={classes.whatsappCampaignDynamicFieldContentText}>
 							<Stack direction='row' spacing={0}>
-								{dynamicButtons.map(
+								{templateCategory !== 3 && dynamicButtons.map(
 									(button: dynamicButtonProps, index: number) => (
 										<Button
 											key={index}

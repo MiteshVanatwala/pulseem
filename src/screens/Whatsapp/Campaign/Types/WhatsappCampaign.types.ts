@@ -39,6 +39,7 @@ export type dynamicModalProps = {
 	isTrackLink: boolean;
 	setIsTrackLink: (isTrackLink: boolean) => void;
 	savedTemplate: string;
+	templateCategory?: number;
 };
 
 export type campaignFielsProps = {

@@ -205,6 +205,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	});
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
+	const [templateCategory, setTemplateCategory] = useState<number>(0);
 	const [templateData, setTemplateData] = useState<templateDataProps>({
 		templateText: '',
 		templateButtons: [],
@@ -581,6 +582,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		};
 		const savedTemplateData: savedTemplateListProps | undefined =
 			templateList?.find((template) => template.TemplateId === TemplateId);
+		setTemplateCategory(savedTemplateData?.CategoryId || 0);
 		const templateData: savedTemplateDataProps | undefined =
 			savedTemplateData?.Data;
 		if (templateData) {
@@ -1382,6 +1384,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						isTrackLink={isTrackLink}
 						setIsTrackLink={setIsTrackLink}
 						savedTemplate={savedTemplate}
+						templateCategory={templateCategory}
 					/>
 
 					<ValidationAlert
