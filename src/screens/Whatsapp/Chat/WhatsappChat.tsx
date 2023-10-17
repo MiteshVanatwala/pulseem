@@ -915,7 +915,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				currentPage='whatsapp'
 				classes={classes}
 				customPadding={false}
-				containerClass={{}}
+				containerClass={clsx(classes.mb75)}
 			>
 				{isAccountSetup ? (
 					<>
