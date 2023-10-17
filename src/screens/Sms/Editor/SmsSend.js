@@ -1962,6 +1962,7 @@ const SmsSend = ({ classes, ...props }) => {
               classes.btn,
               classes.btnRounded,
               classes.backButton,
+              classes.mb5,
               isRTL && windowSize !== 'xs' && windowSize !== 'sm' ? classes.marginLeftAuto : windowSize !== 'xs' && windowSize !== 'sm' ? classes.marginRightAuto : null
             )}
             startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -1975,6 +1976,7 @@ const SmsSend = ({ classes, ...props }) => {
             className={clsx(
               classes.btn,
               classes.btnRounded,
+              classes.mb5,
             )}
             style={{ marginInlineStart: '8px' }}
             onClick={onHandleDelete}
@@ -1985,7 +1987,8 @@ const SmsSend = ({ classes, ...props }) => {
             className={clsx(
               classes.btn,
               classes.btnRounded,
-              classes.backButton
+              classes.backButton,
+              classes.mb5,
             )}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             color="primary"
@@ -1997,7 +2000,8 @@ const SmsSend = ({ classes, ...props }) => {
             className={clsx(
               classes.btn,
               classes.btnRounded,
-              classes.backButton
+              classes.backButton,
+              classes.mb5,
             )}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             color="primary"
@@ -2011,7 +2015,8 @@ const SmsSend = ({ classes, ...props }) => {
             className={clsx(
               classes.btn,
               classes.btnRounded,
-              classes.backButton
+              classes.backButton,
+              classes.mb5,
             )}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             color="primary"
