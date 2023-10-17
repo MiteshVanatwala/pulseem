@@ -2588,12 +2588,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           // alignSelf: 'center'
           // background: 'red',
           marginLeft: 5,
-          margin: 'auto'
+          margin: 'auto',
+          paddingTop: 5,
+          paddingBottom: 5,
         },
         '& .stepDesc': {
           fontSize: 20,
           margin: 'auto',
           marginInline: 5,
+          paddingTop: 5,
+          paddingBottom: 5,
           "@media screen and (max-width: 768px)": {
             fontSize: 15,
           },
