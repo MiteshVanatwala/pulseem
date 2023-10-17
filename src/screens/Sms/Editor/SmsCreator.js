@@ -216,6 +216,8 @@ const SmsCreator = ({ classes }) => {
 		}
 	};
 	const smsMessageRef = useRef(null);
+	const FROM_NUMBER_MAX_LETTERS = 11;
+	const FROM_NUMBER_MAX_NUMBERS = 13;
 
 	useEffect(() => {
 		setAlignment(isRTL ? "right" : "left");
@@ -493,11 +495,11 @@ const SmsCreator = ({ classes }) => {
 		var isNumber = /^[0-9]*$/;
 		var english = /^[A-Za-z0-9 ]*$/;
 
-		if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
-			e.target.value = text.substring(0, 10);
+		if (!text.match(isNumber) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
+			e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
 		}
-		if (text.match(isNumber) && text.length >= 13) {
-			e.target.value = text.substring(0, 13);
+		if (text.match(isNumber) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
+			e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
 		}
 		if (!text.match(english)) {
 			e.target.value = e.target.value.replace(lastChar, '');
