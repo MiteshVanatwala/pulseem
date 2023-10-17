@@ -22,18 +22,18 @@ import { logout } from "../Api/PulseemReactAPI";
 import { HiArrowRight } from "react-icons/hi";
 import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
-// export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
-export const rootDomain = '/Pulseem/';
+export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
+//export const rootDomain = '/Pulseem/';
 
 export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
   style: string = '',
   isAllowSwitchAccount: Boolean = false,
   title: string = "Settings"
-  ) => ({
-    key: "settings",
-    title: title,
-    href: `${sitePrefix}AccountSettings`,
+) => ({
+  key: "settings",
+  title: title,
+  href: `${sitePrefix}AccountSettings`,
   options: [
     { key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: `${sitePrefix}AccountSettings`, iconSrc: SettingsMenuIcon, isShow: true },
     { title: t('master.linkAccountBilling.Text'), href: `${rootDomain}/AccountBilling.aspx?fromreact=true`, iconSrc: DolarMenuIcon, isShow: true },
@@ -91,7 +91,8 @@ export const getRoutes = (
         },
         {
           title: t("master.RadMenuItemResourceDynamicGroups.Text"),
-          href: `${rootDomain}/DynamicGroups.aspx?fromreact=true`,
+          // href: `${rootDomain}/DynamicGroups.aspx?fromreact=true`,
+          href: `${sitePrefix}Groups/Dynamic`,
           isShow: true,
         },
         {
@@ -347,7 +348,7 @@ export const getRoutes = (
         { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: true },
         { title: t('master.locRemovedReason.Text'), href: `${rootDomain}/RemovedStats.aspx?fromreact=true`, isShow: true },
         { key: 'productsReport', title: t('report.ProductsReport.products'), href: `${sitePrefix}Reports/ProductsReport`, isShow: true },
-        { key: 'directSendReport', title: t('report.DirectSendReport'), href:  `${sitePrefix}Reports/DirectSendReport`, isShow: true },
+        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: true },
         { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: true },
         { title: t('master.OpenedClickedReport'), href: `${rootDomain}/EmailCampaignStatistics.aspx?fromreact=true`, isShow: true },
         { key: 'inboundMessages', title: t('master.responses'), href: `${sitePrefix}Reports/Inbound`, isShow: true },
