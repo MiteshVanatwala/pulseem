@@ -1522,7 +1522,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   bulkTitle: {
     fontWeight: 400,
-    fontSize: "12",
+    fontSize: 15,
     lineHeight: "2.1rem",
   },
   bulkContent: {
