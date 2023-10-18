@@ -387,7 +387,7 @@ const DynamicGroups = ({ classes }: any) => {
                         </Button>
                     </Grid>
                 )}
-                <Grid item xs={colSize}>
+                {/* <Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -405,7 +405,7 @@ const DynamicGroups = ({ classes }: any) => {
                     >
                         {t("recipient.externalImport")}
                     </Button>
-                </Grid>)}
+                </Grid>)} */}
                 {
                     accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
