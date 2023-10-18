@@ -26,15 +26,17 @@ import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 const AddGroupPopUp = ({
     classes,
     isOpen = false,
+    onCancel,
     onClose,
     setLoader,
     windowSize,
     ToastMessages,
     setToastMessage,
     addClientByQuery = false,
-    createGroupCallback = () => null,
-    addAnotherRecCallback = () => null,
-    getData, handleResponses = (response, actions) => null }) => {
+    createGroupCallback,
+    addAnotherRecCallback,
+    getData, 
+    handleResponses }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -138,7 +140,7 @@ const AddGroupPopUp = ({
                     {'\uE0D5'}
                 </div>}
                 onClose={onClose}
-                onCancel={onClose}
+                onCancel={onCancel ?? onClose}
                 onConfirm={() => {
                     const result = handleAddGroup(newGroupData);
                     if (result) {

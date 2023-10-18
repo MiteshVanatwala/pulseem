@@ -24,6 +24,7 @@ import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 const EditGroupPopup = ({ classes,
     isOpen = false,
     onClose,
+    onCancel,
     setLoader,
     windowSize,
     ToastMessages,
@@ -31,7 +32,7 @@ const EditGroupPopup = ({ classes,
     openARDialog,
     selectedGroup,
     getData,
-    handleResponses = (response, actions) => null
+    handleResponses
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -119,7 +120,7 @@ const EditGroupPopup = ({ classes,
                     {'\uE0D5'}
                 </div>}
                 onClose={onClose}
-                onCancel={onClose}
+                onCancel={onCancel ?? onClose}
                 renderButtons={() => (
                     <Grid
                         container

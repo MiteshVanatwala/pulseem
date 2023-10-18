@@ -3,6 +3,24 @@ import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { PulseemResponse } from '../../Models/APIResponse';
 import { IntegrationRequest, LU_Plugin } from '../../Models/Integrations/Integration';
 
+export interface ClientExportRequest {
+    GroupIds: [] | never,
+    NotifyEmail: boolean,
+    FileType: any,
+    Culture: Number,
+    FileName: string
+};
+
+export const exportGroupsClients = createAsyncThunk(
+    'client/ExportGroupsClients', async (payload: ClientExportRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`client/ExportGroupsClients`, { ...payload });
+            return response.data
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 export const get = createAsyncThunk(
     'DynamicGroups/get',
     async (integrationSource: LU_Plugin, thunkAPI) => {
@@ -28,10 +46,10 @@ export const set = createAsyncThunk(
 );
 
 export const deleteGroups = createAsyncThunk(
-    'DynamicGroups/deleteGroups',
-    async (groupIds: any, thunkAPI) => {
+    'Group/Delete',
+    async (payload: [], thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.delete(``);
+            const response = await PulseemReactInstance.put(`Group/Delete`, payload);
             return response.data as PulseemResponse;
         } catch (error) {
             return console.log(error);
