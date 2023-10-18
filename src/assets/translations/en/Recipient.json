@@ -1,6 +1,7 @@
 {
   "logPageHeaderResource1": {
-    "Text": "Groups Management"
+    "Text": "Groups Management",
+    "Dynamic": "Dynamic Groups Management"
   },
   "deleteRecipient": "Delete Recipients",
   "unsubscribe": "Unsubscribe Recipient",
