@@ -541,26 +541,6 @@ const DynamicGroups = ({ classes }: any) => {
                     }
             },
             {
-                key: 'addRecipient',
-                uIcon: AddRecipient,
-                lable: t("recipient.addRecipient"),
-                rootClass: classes.paddingIcon,
-                onClick: () => {
-                    setSelectedGroups([GroupID])
-                    setDialog(DialogType.ADD_RECIPIENT)
-                },
-            },
-            {
-                key: 'addRecipients',
-                uIcon: AddRecipients,
-                lable: t("recipient.addRecipients"),
-                rootClass: classes.paddingIcon,
-                onClick: () => {
-                    setSelectedGroups([GroupID])
-                    setDialog(DialogType.ADD_RECIPIENTS)
-                },
-            },
-            {
                 key: 'reset',
                 uIcon: ResetIcon,
                 lable: t("recipient.reset"),
