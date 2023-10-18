@@ -1776,7 +1776,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			justifyContent: 'space-between',
 			alignItems: 'center',
 			height: '60px',
-			padding: '0px 10px',
+			// padding: '0px 10px',
 			/* Fix for height bug with chat sidebar */
 			minHeight: '60px',
 			'&.left': {
@@ -1948,6 +1948,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			marginRight: '20px',
 			display: 'flex',
 			alignItems: 'center',
+			height: '100%'
 		},
 		'&.chat__action': { marginLeft: '25px', cursor: 'pointer' },
 		'&.chat__action:not(.options-btn)': { display: 'inline-block' },
