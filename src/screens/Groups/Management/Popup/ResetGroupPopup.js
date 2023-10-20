@@ -12,7 +12,7 @@ const ResetGroupPopup = ({
     windowSize,
     getData,
     selectedGroup = { GroupID: null },
-    handleResponses = (response, actions) => null
+    handleResponses = (response, actions) => {}
 }) => {
 
     const { t } = useTranslation();
