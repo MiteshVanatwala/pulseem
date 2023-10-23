@@ -3357,8 +3357,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 390
   },
   containerFullHeight: {
-    minHeight: 'calc(100vh - 120px)',
-    height: 'calc(100vh - 120px)'
+    minHeight: 'calc(100vh - 80px)',
+    height: 'calc(100vh - 80px)'
   },
   pb15: {
     paddingBottom: 15

@@ -20,7 +20,8 @@ const WizardActions = ({
     onShowGallery = null,
     onShowDocuments = null,
     helperText = null,
-    disabled = false
+    disabled = false,
+    ignorePaddingBottom = false
 }) => {
     const { t } = useTranslation();
     const { isRTL, windowSize } = useSelector(state => state.core);
@@ -28,7 +29,7 @@ const WizardActions = ({
         <Grid container style={{ ...innerStyle }}
             className={disabled ? classes.disableChildButtons : null}>
             <Grid item xs={12}>
-                <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: 40 }}>
+                <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: ignorePaddingBottom ? null : 40 }}>
                     {onBack &&
                         <Button onClick={() => { onBack?.callback() }}
                             className={clsx(
