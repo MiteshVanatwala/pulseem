@@ -13,6 +13,8 @@ import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../..
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
+import useRedirect from '../../helpers/Routes/Redirect';
+import { sitePrefix } from '../../config';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, isRTL } = useSelector(state => state.core)
@@ -22,6 +24,7 @@ const BulkStatus = ({ classes }) => {
   const [selectedPackageType, setPackageType] = useState({ type: 1, title: '' });
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const Redirect = useRedirect();
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {} } = packagesDetails || {};
 
@@ -266,7 +269,7 @@ const BulkStatus = ({ classes }) => {
             <Box className={clsx(classes.flex2, classes.textCenter)}>
             </Box>
             <Box className={clsx(classes.flex1, classes.textRight)} onClick={() => showPackageDialogType(3)}>
-              <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)}>
+              <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => Redirect({ url: `${sitePrefix}Notifications` })}>
                 {t('dashboard.freeTrial')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               </Button>
