@@ -1894,6 +1894,7 @@ const Groups = ({ classes }) => {
                 }
                 case DialogType.EDIT_GROUP: {
                     return <EditGroupPopup
+                        isDynamic={false}
                         classes={classes}
                         isOpen={dialog === DialogType.EDIT_GROUP}
                         onClose={() => { setDialog(null); setSelectedGroups([]) }}

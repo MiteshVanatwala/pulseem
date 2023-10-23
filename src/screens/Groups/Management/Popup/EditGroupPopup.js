@@ -32,7 +32,8 @@ const EditGroupPopup = ({ classes,
     openARDialog,
     selectedGroup,
     getData,
-    handleResponses
+    handleResponses,
+    isDynamic
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -46,7 +47,14 @@ const EditGroupPopup = ({ classes,
 
         const initData = async () => {
             const currentGroup = { ...groupData.Groups.find((g) => { return g.GroupID === selectedGroup }) };
-            setEditableFroupData(currentGroup);
+            if (currentGroup && currentGroup?.GroupID > 0) {
+                setEditableFroupData({
+                    GroupID: currentGroup.GroupID,
+                    GroupName: currentGroup.GroupName,
+                    IsTestGroup: currentGroup.IsTestGroup,
+                    IsDynamic: currentGroup.IsDynamicisDynamic ?? false
+                });
+            }
             setLoader(false);
         }
 
@@ -62,7 +70,7 @@ const EditGroupPopup = ({ classes,
         try {
             onClose()
             setLoader(true);
-            const response = await dispatch(editGroup(data));
+            const response = await dispatch(editGroup({ ...data, IsDynamic: isDynamic ?? false }));
             setLoader(false);
             handleResponses(response, {
                 'S_201': {

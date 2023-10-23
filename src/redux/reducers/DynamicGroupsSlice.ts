@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { PulseemResponse } from '../../Models/APIResponse';
-import { IntegrationRequest, LU_Plugin } from '../../Models/Integrations/Integration';
 
 export interface ClientExportRequest {
     GroupIds: [] | never,
@@ -21,30 +20,6 @@ export const exportGroupsClients = createAsyncThunk(
         }
     });
 
-export const get = createAsyncThunk(
-    'DynamicGroups/get',
-    async (integrationSource: LU_Plugin, thunkAPI) => {
-        try {
-            const response = await PulseemReactInstance.get(`DynamicGroups/get/${integrationSource}`);
-            return response.data as PulseemResponse;
-        } catch (error) {
-            return console.log(error);
-        }
-    }
-);
-
-export const set = createAsyncThunk(
-    'DynamicGroups/set',
-    async (integrationRequest: IntegrationRequest, thunkAPI) => {
-        try {
-            const response = await PulseemReactInstance.post(`DynamicGroups/set`, integrationRequest);
-            return response.data as PulseemResponse;
-        } catch (error) {
-            return console.log(error);
-        }
-    }
-);
-
 export const deleteGroups = createAsyncThunk(
     'Group/Delete',
     async (payload: [], thunkAPI) => {
@@ -59,9 +34,9 @@ export const deleteGroups = createAsyncThunk(
 
 export const reset = createAsyncThunk(
     'DynamicGroups/reset',
-    async (integrationSource: LU_Plugin, thunkAPI) => {
+    async (groupId: number, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.put(`DynamicGroups/reset/${integrationSource}`);
+            const response = await PulseemReactInstance.put(`DynamicGroups/reset/${groupId}`);
             return response.data as PulseemResponse;
         } catch (error) {
             return console.log(error);
@@ -71,34 +46,22 @@ export const reset = createAsyncThunk(
 
 
 const DynamicGroupsSlice = createSlice({
-    name: 'Integration',
+    name: 'DynamicGroups',
     initialState: {
-        authResponse: {
-            StatusCode: 200,
-            Message: '',
-            Data: ''
-        } as PulseemResponse,
-        integrationSettings: {
-            StatusCode: 200,
-            Message: '',
-            Data: ''
-        } as PulseemResponse
+        // groups: {
+        //     StatusCode: 200,
+        //     Message: '',
+        //     Data: ''
+        // } 
     },
     reducers: {
-        resetShopIntegration: (state) => {
-            state.authResponse = {
-                StatusCode: 200,
-                Message: '',
-                Data: ''
-            } as PulseemResponse
-        },
-        resetIntegrationSettings: (state) => {
-            state.authResponse = {
-                StatusCode: 200,
-                Message: '',
-                Data: ''
-            } as PulseemResponse
-        },
+        // resetGroups: (state) => {
+        //     state.groups = {
+        //         StatusCode: 200,
+        //         Message: '',
+        //         Data: ''
+        //     } as PulseemResponse
+        // }
 
     },
     extraReducers: (builder) => {
