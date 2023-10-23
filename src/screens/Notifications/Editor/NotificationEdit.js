@@ -831,31 +831,17 @@ const NotificationEdit = ({ classes }) => {
   }
   const renderHeader = () => {
     return (
-      <>
-        <Title
-          Element={(
-            <Box className='stepHead'>
-              <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
-                <span >1</span>
-              </Stack>
-              <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
-                <span className={'stepTitle'}>
-                  {t('notifications.createContent')}
-                </span>
-                <span className={'stepDesc'}>({t('notifications.createContentText')})</span>
-              </Stack>
-            </Box>
-          )}
-          classes={classes}
-          isIcon={false}
-          ContainerStyle={{
-            padding: 0,
-            minHeight: 42,
-            height: 'auto',
-            overflowY: 'hidden'
-          }}
-        />
-      </>
+      <Box className={clsx('stepHead', classes.notificationTitle)}>
+        <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
+          <span >1</span>
+        </Stack>
+        <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
+          <span className={'stepTitle'}>
+            {t('notifications.createContent')}
+          </span>
+          <span className={'stepDesc'}>({t('notifications.createContentText')})</span>
+        </Stack>
+      </Box>
     )
   }
   const WizardButtons = () => {

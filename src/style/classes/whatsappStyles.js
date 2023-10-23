@@ -1776,7 +1776,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			justifyContent: 'space-between',
 			alignItems: 'center',
 			height: '60px',
-			padding: '0px 10px',
+			// padding: '0px 10px',
 			/* Fix for height bug with chat sidebar */
 			minHeight: '60px',
 			'&.left': {
@@ -1917,7 +1917,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			zIndex: '20',
 		},
 		'&.chat__avatar-wrapper': {
-			width: '40px',
+			width: '50px',
 			height: '40px',
 			marginRight: isRTL ? 'unset' : '10px',
 			marginLeft: isRTL ? '10px' : 'unset',
@@ -1945,13 +1945,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__contact-desc': { color: '#00000099', fontSize: '0.75rem' },
 		'&.chat__actions': {
-			marginRight: '20px',
+			// marginRight: '20px',
 			display: 'flex',
 			alignItems: 'center',
+			height: '100%'
 		},
-		'&.chat__action': { marginLeft: '25px', cursor: 'pointer' },
+		'&.chat__action': { cursor: 'pointer' },
 		'&.chat__action:not(.options-btn)': { display: 'inline-block' },
-		'&.chat__action-icon': { color: 'rgb(145, 145, 145)' },
+		'&.chat__action-icon': { color: 'rgb(145, 145, 145)', paddingRight: 10 },
 		'&.chat__action-icon--search': { width: '30px', height: '30px' },
 		'&.chat__content': {
 			flex: 1,
