@@ -86,7 +86,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     background: '#F0F5FF',
     padding: `11px 31.69px 8px 31.69px`,
     borderTopRightRadius: 10,
-    borderTopLeftRadius: 10
+    borderTopLeftRadius: 10,
+    "@media screen and (max-width: 475px)": {
+      padding: 10,
+    }
   },
   managementTitle: {
     fontSize: windowSize === "xs" ? 20 : 29,
@@ -94,7 +97,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     whiteSpace: windowSize === "xs" ? "break-spaces" : null,
     fontWeight: 500,
     color: '#4D4D4D',
-    width: '100%'
+    width: '100%',
+    "@media screen and (max-width: 475px)": {
+      maxWidth: '60%'
+    }
   },
   tableRow: {
     marginBox: 20,

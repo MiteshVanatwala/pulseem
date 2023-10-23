@@ -1149,7 +1149,7 @@ const Groups = ({ classes }) => {
                         {renderNameCell(row)}
                         <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
                             <IconWrapper
-                                iconName="addRecipient"
+                                iconName="delete"
                                 className={classes.mxAuto}
                                 onClick={() => {
                                     setSelectedGroups([GroupID])

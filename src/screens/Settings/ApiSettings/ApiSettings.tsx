@@ -169,65 +169,70 @@ const ApiSettings = ({ classes }: any) => {
             {toastMessage && renderToast()}
             <Box className={'topSection'}>
                 <Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'block' }}>
-                    <Title Text={t("settings.apiSettings.title")} classes={classes}
+                    <Title
+                        classes={classes}
                         ContainerStyle={{ width: '100% !important', flexDirection: windowSize !== 'xs' ? 'row' : 'column', 'padding': windowSize === 'xs' ? '10px 15px 10px 15px' : '11px 31.69px 8px 31.69px' }}
-                        Element={<Box style={{ float: isRTL ? 'left' : 'right' }}>
-                            <Button
-                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
-                                className={clsx(
-                                    classes.btn,
-                                    classes.btnRounded,
-                                    classes.mr10
-                                )}
-                                onClick={() =>
-                                    handleVerification('cellphone')
-                                }
-                                startIcon={<MdMobileFriendly />}
-                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                            >
-                                <>
-                                    {t(
-                                        "settings.accountSettings.fixedComDetails.btnVerifyNumber"
+                        Element={<Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
+                            <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ width: 'auto' }}>{t('settings.apiSettings.title')}</Typography>
+                            <Box style={{ marginInlineStart: 'auto' }}>
+
+                                <Button
+                                    style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
+                                    className={clsx(
+                                        classes.btn,
+                                        classes.btnRounded,
+                                        classes.mr10
                                     )}
-                                </>
-                            </Button>
-                            <Button
-                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
-                                className={clsx(
-                                    classes.btn,
-                                    classes.btnRounded,
-                                    classes.mr10
-                                )}
-                                onClick={() =>
-                                    handleVerification('email')
-                                }
-                                startIcon={<MdOutlineMarkEmailRead />}
-                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                            >
-                                <>
-                                    {t(
-                                        "settings.accountSettings.fixedComDetails.btnVerifyEmail"
+                                    onClick={() =>
+                                        handleVerification('cellphone')
+                                    }
+                                    startIcon={<MdMobileFriendly />}
+                                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                >
+                                    <>
+                                        {t(
+                                            "settings.accountSettings.fixedComDetails.btnVerifyNumber"
+                                        )}
+                                    </>
+                                </Button>
+                                <Button
+                                    style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
+                                    className={clsx(
+                                        classes.btn,
+                                        classes.btnRounded,
+                                        classes.mr10
                                     )}
-                                </>
-                            </Button>
-                            <Button
-                                style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
-                                className={clsx(
-                                    classes.btn,
-                                    classes.btnRounded,
-                                )}
-                                onClick={() =>
-                                    window.open('/Pulseem/ExportRemovals.aspx')
-                                }
-                                startIcon={<BiExport />}
-                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                            >
-                                <>
-                                    {t(
-                                        "settings.apiSettings.exportDirectRemovals"
+                                    onClick={() =>
+                                        handleVerification('email')
+                                    }
+                                    startIcon={<MdOutlineMarkEmailRead />}
+                                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                >
+                                    <>
+                                        {t(
+                                            "settings.accountSettings.fixedComDetails.btnVerifyEmail"
+                                        )}
+                                    </>
+                                </Button>
+                                <Button
+                                    style={{ width: windowSize === 'xs' ? '100%' : '', maxWidth: windowSize === 'xs' ? '100%' : 'unset', marginTop: windowSize !== 'xs' ? 'unset' : 10 }}
+                                    className={clsx(
+                                        classes.btn,
+                                        classes.btnRounded,
                                     )}
-                                </>
-                            </Button>
+                                    onClick={() =>
+                                        window.open('/Pulseem/ExportRemovals.aspx')
+                                    }
+                                    startIcon={<BiExport />}
+                                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                >
+                                    <>
+                                        {t(
+                                            "settings.apiSettings.exportDirectRemovals"
+                                        )}
+                                    </>
+                                </Button>
+                            </Box>
                         </Box>}
                     />
                 </Box>

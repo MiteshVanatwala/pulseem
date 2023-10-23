@@ -111,7 +111,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
       color: '#fff',
-      border: 'none',
+      // border: 'none',
       '& svg': {
         color: '#fff',
       },

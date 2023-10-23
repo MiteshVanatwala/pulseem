@@ -1302,7 +1302,7 @@ const NotificationManagement = ({ classes }) => {
           classes={classes}
           Element={
             <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
-              <Typography style={{ color: '#4D4D4D', fontSize: 29 }}>{t('notifications.notificationManagement')}</Typography>
+              <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{width: 'auto'}}>{t('notifications.notificationManagement')}</Typography>
               <Button onClick={() => {
                 setCookie('scriptDialog', true);
                 setShowScriptDialog(true);

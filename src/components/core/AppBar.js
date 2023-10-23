@@ -118,7 +118,7 @@ const AppBarItem = ({
                           else Redirect({ url: option.href })
                         }}
                         classes={{ root: classes.appBarItemMenuRoot }}
-                        className={clsx(classes.appBarItemMenuItem, index !== row.length -1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}
+                        className={clsx(classes.appBarItemMenuItem, index !== row.length - 1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}
                       >
                         {option.title}
                         {
@@ -286,7 +286,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
           <IconButton
             className={classes.phoneAppBarButton}
             onClick={handleOpen}>
-            <FaBars />
+            {!open ? <FaBars /> : <FaTimes />}
           </IconButton>
         </Box>
         <Popper
