@@ -69,7 +69,7 @@ const SmsSummary = ({ classes,
               {props.pulseTrue || props.toggleRandom ? <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("mainReport.pulseSend")}</span>
                 {props.pulseTrue ? <span className={classes.smsSummaryText}>  {t("smsReport.packetSend")} - {props.pulseInput1} {props.pulsePer === "" || props.pulsePer === "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-                  {t("sms.every")} {props.pulseInput2} {props?.pulseType === 2 ? t("common.minutes") : t("common.hours")}</span> : null}
+                  {t("sms.every")} {props.pulseInput2} {props?.pulseType === 1 ? t("common.minutes") : t("common.hours")}</span> : null}
                 {props.toggleRandom ? <span className={classes.smsSummaryText}>{t("smsReport.randomSend")} - {props.random} {t("smsReport.randomRecipients")}</span> : null}
                 {props.pulseTrue ? <span className={classes.smsSummaryText}>{t("sms.estimatedDelivery")}: <span style={{ color: "#1D82B3" }}>{props.estimationDate}</span></span> : null}
               </Box>
