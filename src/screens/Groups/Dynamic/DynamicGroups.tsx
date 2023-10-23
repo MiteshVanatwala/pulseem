@@ -394,7 +394,7 @@ const DynamicGroups = ({ classes }: any) => {
         }
 
         return (
-            <Grid container wrap="nowrap" spacing={1} alignItems='center' className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.groupNameCell : ''}>
+            <Grid container wrap="nowrap" spacing={1} alignItems='center'>
                 {windowSize !== 'xs' && <Grid item sm={2} className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.flexJustifyCenter : ''}>
                     <Checkbox
                         color="primary"
@@ -1101,7 +1101,7 @@ const DynamicGroups = ({ classes }: any) => {
                         {renderNameCell(row)}
                         <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
                             <IconWrapper
-                                iconName="addRecipient"
+                                iconName="delete"
                                 className={classes.mxAuto}
                                 onClick={() => {
                                     setSelectedGroups([GroupID])
@@ -1665,11 +1665,13 @@ const DynamicGroups = ({ classes }: any) => {
     }
 
     const handleDeleteGroup = async () => {
+        setLoader(true);
+        setDialog(null);
         await dispatch(deleteGroups(selectedGroups));
         await dispatch(getGroupsBySubAccountId())
         setSelectedGroups([]);
-        setDialog(null);
         getData(null);
+        setLoader(false);
     };
 
     const handleResponses = (response: any, actions = {
