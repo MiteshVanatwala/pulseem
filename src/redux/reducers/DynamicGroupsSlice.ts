@@ -75,5 +75,5 @@ const DynamicGroupsSlice = createSlice({
     },
 })
 
-export const { resetShopIntegration } = DynamicGroupsSlice.actions
+// export const { resetShopIntegration } = DynamicGroupsSlice.actions
 export default DynamicGroupsSlice.reducer
