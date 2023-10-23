@@ -579,7 +579,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         display: "flex",
         // justifyContent: "space-between",
         alignItems: "center",
-        marginTop: "15px"
+        marginTop: "15px",
+        '& button': {
+            marginBottom: 5,
+        }
     },
     listValues:
     {

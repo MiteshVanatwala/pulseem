@@ -301,7 +301,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         }
     },
     notificationTitle: {
-
+        width: 'auto !important',
+        background: '#F0F5FF',
+        padding: `5px`
     },
     notificationText: {
         marginTop: '5px',
@@ -366,7 +368,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         minHeight: windowSize !== 'xs' ? 415 : 305,
         position: 'relative',
         maxWidth: 450,
-        width: 450
+        // width: 450
+        width: '100%'
     },
     mobileFullBG: {
         backgroundImage: `url(${mobileFullBg})!important`,

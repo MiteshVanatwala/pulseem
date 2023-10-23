@@ -28,7 +28,7 @@ export const Title = ({
       )}
       style={ContainerStyle}
     >
-      <Box className={clsx(classes.flex, classes.alignItemsCenter)}>
+      <Box className={Element ? '' : clsx(classes.flex, classes.alignItemsCenter)}>
         {isIcon && <ListIcon className={classes.mr15} />}
         {Text && (
           <Typography className={clsx(classes.managementTitle, "mgmtTitle")}>
