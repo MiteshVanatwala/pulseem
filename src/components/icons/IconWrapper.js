@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const IconWrapper = ({ iconName = "", onClick = () => false, ...props }) => {
+const IconWrapper = ({ iconName = "", onClick, ...props }) => {
   const classes = useStyles();
   const icon = Icons[iconName || "default"];
   return (

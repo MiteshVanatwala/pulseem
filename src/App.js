@@ -71,6 +71,7 @@ import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
+import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -499,8 +500,13 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path={'/react/reports/recipient'}
+        path={`${sitePrefix}reports/recipient`}
         element={<RecipientReport classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Groups/Dynamic`}
+        element={<DynamicGroups classes={classes} />}
       />
     </Routes>
   )

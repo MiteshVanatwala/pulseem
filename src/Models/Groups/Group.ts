@@ -15,20 +15,21 @@ export interface Group {
     Recipients: number;
 }
 export interface GroupData extends Group {
-    TotalRecipients: number;
-    ActiveEmails: number;
-    RemovedEmails: number;
-    RestrictedEmails: number;
-    InvalidEmails: number;
-    PendingEmails: number;
-    ActiveCell: number;
-    RemovedCell: number;
-    InvalidCell: number;
-    IsAutoResponder: boolean;
-    IsConnectedToWebForm: boolean;
-    AutomationID: number | null;
-    PendingClients: number; // Email Clients
-    PendingSmsClients: number; // Sms Clients
+    TotalRecipients: number | never;
+    ActiveEmails: number | never;
+    RemovedEmails: number | never;
+    RestrictedEmails: number | never;
+    InvalidEmails: number | never;
+    PendingEmails: number | never;
+    ActiveCell: number | never;
+    RemovedCell: number | never;
+    InvalidCell: number | never;
+    IsAutoResponder: boolean | never;
+    IsConnectedToWebForm: boolean | never;
+    AutomationID: number | null | never | undefined;
+    PendingClients: number | never; // Email Clients
+    PendingSmsClients: number | never; // Sms Clients
+    IsChecked: boolean | never;
 }
 export interface CombinedGroups {
     SubAccountID: number;

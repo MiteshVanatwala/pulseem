@@ -16,6 +16,8 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   const { username } = useSelector(state => state.user)
   let route, title;
 
+  const routes = getRoutes(t);
+
   if (subPage) {
     if (currentPage === 'settings') {
       let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username)
@@ -23,12 +25,12 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       title = (option && option.title) ?? '';
     }
     else {
-      route = getRoutes(t).filter(route => route.key === currentPage);
+      route = routes.filter(route => route.key === currentPage);
       route = route[0].options.filter(opt => opt.key === subPage);
       title = (route && route[0]?.title) ?? '';
     }
   } else {
-    route = getRoutes(t).filter(route => route.key === currentPage);
+    route = routes.filter(route => route.key === currentPage);
     title = (route && route[0] && route[0].pageTitle) || (route && route[0] && route[0].title) || '';
   }
 

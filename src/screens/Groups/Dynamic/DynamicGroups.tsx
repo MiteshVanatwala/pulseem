@@ -1,88 +1,88 @@
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useState, useEffect, memo, useRef } from 'react';
+import { useState, useEffect, memo, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
     Box, Typography, TableBody, TableRow, TableCell,
-    Grid, Button, TextField, Checkbox
+    Grid, Button, TextField, Checkbox, GridSize
 } from '@material-ui/core'
-import { PreviewIcon, AddRecipient, AddRecipients, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon } from '../../../assets/images/managment/index'
-import { TablePagination, SearchField, ManagmentIcon } from '../../../components/managment/index'
+import { PreviewIcon, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon, SearchIcon } from '../../../assets/images/managment/index'
+import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import 'moment/locale/he';
 import {
-    getGroups,
+    exportGroupsClients,
     deleteGroups,
-    getGroupsBySubAccountId
-} from "../../../redux/reducers/groupSlice";
-import { exportGroupsClients } from '../../../redux/reducers/clientSlice';
+    ClientExportRequest
+} from "../../../redux/reducers/DynamicGroupsSlice";
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import AddGroupPopUp from "./Popup/AddGroupPopUp";
-import AddRecipientPopup from "./Popup/AddRecipientPopup";
-import ConfirmDeletePopUp from "./Popup/ConfirmDeletePopUp";
+import AddGroupPopUp from '../Management/Popup/AddGroupPopUp';
+import ConfirmDeletePopUp from '../Management/Popup/ConfirmDeletePopUp';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { Loader } from '../../../components/Loader/Loader';
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlineLockClock } from "react-icons/md"
 import { RiPagesLine } from "react-icons/ri"
 import IconWrapper from "../../../components/icons/IconWrapper";
-import AddBulkRecipientPopup from "./Popup/AddBulkRecipientPopup";
-import AddRecipientResponse from "./Popup/AddRecipientResponse";
-import EditGroupPopup from "./Popup/EditGroupPopup";
-import ResetGroupPopup from "./Popup/ResetGroupPopup";
-import SimplyClubPupup from "./Popup/SimplyClubPupup";
+import EditGroupPopup from '../Management/Popup/EditGroupPopup';
+import ResetGroupPopup from '../Management/Popup/ResetGroupPopup';
 import Toast from '../../../components/Toast/Toast.component';
-import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
-import { VoidFunction } from '../../../helpers/Types/common';
-import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
-import { RenderHtml, ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
+import { SetPageState, GetPageNyName, PageProperty } from '../../../helpers/UI/SessionStorageManager';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
-import queryString from 'query-string';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { ClientStatus } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
-import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { Client } from '../../../Models/Clients/Client';
+import queryString from 'query-string';
+import {
+    getGroups,
+    getGroupsBySubAccountId
+} from "../../../redux/reducers/groupSlice";
+import { GroupData } from '../../../Models/Groups/Group';
 
-const Groups = ({ classes }) => {
-    const dispatch = useDispatch();
+const DynamicGroups = ({ classes }: any) => {
+    const dispatch: any = useDispatch();
     const { t } = useTranslation();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
-    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector(state => state.core)
-    const { accountFeatures } = useSelector(state => state.common);
-    const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
-    const { extraData } = useSelector(state => state.sms);
+    const { extraData } = useSelector((state: any) => state.sms);
+    const { accountFeatures } = useSelector((state: any) => state.common);
+    const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state: any) => state.group);
+    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector((state: any) => state.core)
     const rowsOptions = [6, 10, 20, 50];
-    const [selectedGroups, setSelectedGroups] = useState([]);
+    const [selectedGroups, setSelectedGroups] = useState<any>([]);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot) };
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) };
     const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) };
     const colorTextStyle = { red: classes.textColorRed, blue: classes.textColorBlue, green: classes.sendIconText, grey: classes.textColorGrey };
-    const [toastMessage, setToastMessage] = useState(null);
+    const [toastMessage, setToastMessage] = useState<any | never>(null);
     const [showLoader, setLoader] = useState(true);
     const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-    const [dialog, setDialog] = useState(null);
+    const [dialog, setDialog] = useState<any | never>(null);
     const [searchStr, setSearchStr] = useState("");
-    const [serachData, setSearchData] = useState({
+    const [serachData, setSearchData] = useState<any>({
         PageIndex: 1,
         PageSize: rowsPerPage,
         SearchTerm: "",
+        IsDynamic: true
     });
     const navigate = useNavigate()
     moment.locale(language);
     const { state } = useLocation();
     const from = state?.from || "/";
-    const pageProperty = useRef();
+    const pageProperty = useRef<any>();
     const qs = (window.location.search && queryString.parse(window.location.search)) || state;
     const exportColumnHeader = useRef(null);
 
@@ -105,7 +105,7 @@ const Groups = ({ classes }) => {
                 "Zip": t('common.zip'),
                 "Company": t('common.company'),
                 "ReminderDate": t('recipient.reminderDate'),
-            };
+            } as any;
             updatingObject = {
                 ...updatingObject,
                 "ExtraDate1": t('common.ExtraDate1'),
@@ -151,7 +151,7 @@ const Groups = ({ classes }) => {
         {
             label: t("common.GroupName"),
             classes: cellStyle,
-            className: classes.flex2,
+            className: classes.flex3,
             align: "center",
         },
         {
@@ -169,7 +169,7 @@ const Groups = ({ classes }) => {
         {
             label: "",
             classes: cellStyle,
-            className: clsx(classes.flex5),
+            className: clsx(classes.flex3),
             align: "center",
         },
     ];
@@ -184,9 +184,11 @@ const Groups = ({ classes }) => {
     const getSubAccountGroups = async () => {
         dispatch(getGroupsBySubAccountId());
     }
-    const getData = async (customSearch = null) => {
-        const search = { ...serachData, PageSize: rowsPerPage, ...customSearch };
+
+    const getData = async (customSearch: any | never = null) => {
+        const search: any = { ...serachData, PageSize: rowsPerPage, ...customSearch };
         setLoader(true);
+        // @ts-ignore
         await dispatch(getGroups(search));
         if (!extraData || extraData.length === 0) {
             await dispatch(getAccountExtraData());
@@ -196,6 +198,11 @@ const Groups = ({ classes }) => {
             getSubAccountGroups();
         }
     };
+
+    useEffect(() => {
+        getData();
+    }, []);
+
     const reSearch = () => {
         const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
         pageProperty.current = GetPageNyName('groups');
@@ -209,17 +216,15 @@ const Groups = ({ classes }) => {
             "PageName": "groups",
             "PageNumber": lastSearch?.PageNumber ?? 1,
             "SearchData": lastSearch,
-            "SearchTerm": lastSearch.SearchTerm
-        });
+            "SearchTerm": lastSearch.SearchTerm,
+            "IsDynamic": true
+        } as PageProperty);
 
         getData(lastSearch);
         if (lastSearch?.SearchTerm) {
             setSearchStr(lastSearch?.SearchTerm ?? "");
         }
     }
-    useEffect(() => {
-        reSearch();
-    }, [dispatch, serachData.PageIndex, rowsPerPage]);
 
     useEffect(() => {
         if (serachData.SearchTerm !== '') {
@@ -231,41 +236,25 @@ const Groups = ({ classes }) => {
         if (qs?.NewGroup === 'true') {
             setDialog(DialogType.ADD_GROUP)
         }
-
     }, [])
 
     const renderSearchSection = () => {
-        const handleKeyDown = (event) => {
+        const handleKeyDown = (event: any) => {
             if (event.keyCode === 13 || event.code === "Enter") {
                 const searchObject = {
                     PageIndex: 1,
                     PageSize: rowsPerPage,
                     SearchTerm: searchStr,
+                    IsDynamic: true
                 };
                 setSearchData(searchObject);
                 SetPageState({
                     "PageName": "groups",
                     "PageNumber": 1,
                     "SearchData": searchObject,
-                    "SearchTerm": searchStr
-                });
-            }
-        };
-        const handleKeyPress = (e) => {
-            if (e.charCode === 13 || e.code === "Enter") {
-                const searchObject = {
-                    PageIndex: 1,
-                    PageSize: rowsPerPage,
-                    SearchTerm: searchStr,
-                };
-
-                setSearchData(searchObject);
-                SetPageState({
-                    "PageName": "groups",
-                    "PageNumber": 1,
-                    "SearchData": searchObject,
-                    "SearchTerm": searchStr
-                });
+                    "SearchTerm": searchStr,
+                    "IsDynamic": true
+                } as PageProperty);
             }
         };
 
@@ -277,7 +266,7 @@ const Groups = ({ classes }) => {
                         size="small"
                         value={searchStr}
                         onKeyPress={handleKeyDown}
-                        onChange={(e) => setSearchStr(e.target.value)}
+                        onChange={(e: any) => setSearchStr(e.target.value)}
                         className={clsx(classes.textField, classes.minWidth252)}
                         placeholder={t("common.GroupName")}
                     />
@@ -289,15 +278,16 @@ const Groups = ({ classes }) => {
                                 PageIndex: 1,
                                 PageSize: rowsPerPage,
                                 SearchTerm: searchStr,
+                                IsDynamic: true
                             };
                             setSearchData(searchObject);
 
                             SetPageState({
                                 "PageName": "groups",
                                 "PageNumber": 1,
-                                "SearchData": searchObject
-                            });
-                            // getData(searchObject);
+                                "SearchData": searchObject,
+                                "IsDynamic": true
+                            } as PageProperty);
                         }}
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -314,6 +304,7 @@ const Groups = ({ classes }) => {
                                     PageIndex: 1,
                                     PageSize: rowsPerPage,
                                     SearchTerm: "",
+                                    IsDynamic: true
                                 };
                                 setSearchData(searchObject);
 
@@ -321,8 +312,9 @@ const Groups = ({ classes }) => {
                                     "PageName": "groups",
                                     "PageNumber": 1,
                                     "SearchData": searchObject,
-                                    "SearchTerm": ""
-                                });
+                                    "SearchTerm": "",
+                                    "IsDynamic": true
+                                } as PageProperty);
 
                                 setSearchStr("");
                                 getData(searchObject);
@@ -339,7 +331,7 @@ const Groups = ({ classes }) => {
     };
 
     const renderManagmentLine = () => {
-        const colSize = windowSize === "xs" ? 12 : null;
+        const colSize = windowSize === "xs" ? 12 : undefined;
         return (
             <Grid container spacing={2} className={classes.linePadding}>
                 <Grid item xs={colSize}>
@@ -347,7 +339,6 @@ const Groups = ({ classes }) => {
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         onClick={() => setDialog(DialogType.ADD_GROUP)}
-
                     >
                         {t("group.new")}
                     </Button>
@@ -365,25 +356,6 @@ const Groups = ({ classes }) => {
                         </Button>
                     </Grid>
                 )}
-                <Grid item xs={colSize}>
-                    <Button
-                        className={clsx(classes.btn, classes.btnRounded)}
-                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                        onClick={() => selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_RECIPIENT)}
-                    >
-                        {t("recipient.deleteRecipient")}
-                    </Button>
-                </Grid>
-                {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.SIMPLY_CLUB) > -1 && (<Grid item xs={colSize}>
-                    <Button
-                        className={clsx(classes.btn, classes.btnRounded)}
-                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                        onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
-
-                    >
-                        {t("recipient.externalImport")}
-                    </Button>
-                </Grid>)}
                 {
                     accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
@@ -409,7 +381,7 @@ const Groups = ({ classes }) => {
         );
     };
 
-    const renderNameCell = (row, fullwidth) => {
+    const renderNameCell = (row: GroupData) => {
         let date = null;
         const { GroupID, GroupName } = row;
         let text = "";
@@ -422,15 +394,14 @@ const Groups = ({ classes }) => {
         }
 
         return (
-            <Grid container wrap="nowrap" spacing={1} alignItems='center' className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.groupNameCell : ''}>
+            <Grid container wrap="nowrap" spacing={1} alignItems='center'>
                 {windowSize !== 'xs' && <Grid item sm={2} className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.flexJustifyCenter : ''}>
                     <Checkbox
                         color="primary"
-                        checked={selectedGroups && selectedGroups.includes(GroupID)}
-                        // indeterminate={}
+                        checked={selectedGroups && selectedGroups.indexOf(GroupID as never) > -1}
                         onClick={() => {
-                            if (selectedGroups.includes(GroupID)) {
-                                setSelectedGroups(selectedGroups.filter(item => item !== GroupID))
+                            if (selectedGroups.indexOf(GroupID as never) > -1) {
+                                setSelectedGroups(selectedGroups.filter((item: any) => item !== GroupID))
                             } else {
                                 setSelectedGroups([...selectedGroups, GroupID])
                             }
@@ -439,6 +410,7 @@ const Groups = ({ classes }) => {
 
                 </Grid>}
                 <Grid item sm={10} className='rowTitle'>
+                    {/* @ts-ignore */}
                     <CustomTooltip
                         isSimpleTooltip={false}
                         interactive={true}
@@ -451,18 +423,9 @@ const Groups = ({ classes }) => {
                         title={<Typography noWrap={false}>{GroupName}</Typography>}
                         text={GroupName}
                     >
-                        {fullwidth ? (
-                            <Typography
-                                className={clsx(classes.nameEllipsis, classes.groupName)}
-                                style={{ maxWidth: "200px" }}
-                            >
-                                {GroupName}
-                            </Typography>
-                        ) : (
-                            <Typography className={clsx(classes.nameEllipsis, classes.groupName)}>
-                                {GroupName}
-                            </Typography>
-                        )}
+                        <Typography className={clsx(classes.nameEllipsis, classes.groupName)}>
+                            {GroupName}
+                        </Typography>
                     </CustomTooltip>
                     <Typography className={clsx(classes.grayTextCell, classes.date)}>
                         {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
@@ -473,7 +436,7 @@ const Groups = ({ classes }) => {
     };
 
 
-    const renderCellIcons = (row) => {
+    const renderCellIcons = (row: GroupData) => {
         const {
             ActiveCell,
             ActiveEmails,
@@ -513,37 +476,27 @@ const Groups = ({ classes }) => {
                         (PendingSmsClients || 0)
                     ) > 0),
                 onClick:
-                    (e) => {
+                    (e: any) => {
                         navigate(CLIENT_CONSTANTS.BASEURL, {
                             state: {
                                 ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                 PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
                                 GroupIds: [GroupID],
                                 ResultTitle: GroupName,
-                                PageProperty: pageProperty.current
+                                PageProperty: pageProperty.current,
+                                IsDynamic: true
                             }
                         })
                     }
             },
             {
-                key: 'addRecipient',
-                uIcon: AddRecipient,
-                lable: t("recipient.addRecipient"),
+                key: 'search',
+                uIcon: SearchIcon,
+                lable: t('common.search'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    setSelectedGroups([GroupID])
-                    setDialog(DialogType.ADD_RECIPIENT)
-                },
-            },
-            {
-                key: 'addRecipients',
-                uIcon: AddRecipients,
-                lable: t("recipient.addRecipients"),
-                rootClass: classes.paddingIcon,
-                onClick: () => {
-                    setSelectedGroups([GroupID])
-                    setDialog(DialogType.ADD_RECIPIENTS)
-                },
+                    navigate(`/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`)
+                }
             },
             {
                 key: 'reset',
@@ -595,15 +548,16 @@ const Groups = ({ classes }) => {
         return (
             <Grid
                 container
-                direction='row'
-                justifyContent={windowSize === 'xs' ? 'flex-start' : 'center'}
-                style={{ flexWrap: 'initial' }}
+                direction={windowSize === 'sm' ? 'column' : 'row'}
+                justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-between'}
+                className={classes.paddingSides15}
             >
                 {iconsMap.map(icon => (
                     <Grid
-                        className={clsx(icon.disable && classes.disabledCursor, classes.smallActionIcons, 'rowIconContainer')}
+                        className={clsx(icon.disable && classes.disabledCursor, classes.smallActionIcons, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
                         key={icon.key}
                         item >
+                        {/* @ts-ignore */}
                         <ManagmentIcon
                             classes={classes}
                             {...icon}
@@ -615,19 +569,7 @@ const Groups = ({ classes }) => {
         )
     }
 
-    // const REDIRECT_OPTIONS = {
-    //     ShowGroup: 0,
-    //     ShowMails: 10,
-    //     ShowMailsActive: 11,
-    //     ShowMailsRemoved: 12,
-    //     ShowMailsErrored: 13,
-    //     ShowSms: 20,
-    //     ShowSmsActive: 21,
-    //     ShowSmsRemoved: 22,
-    //     ShowSmsErrored: 23
-    // };
-
-    const renderRow = (row) => {
+    const renderRow = (row: GroupData) => {
         const {
             ActiveCell,
             ActiveEmails,
@@ -643,9 +585,11 @@ const Groups = ({ classes }) => {
             PendingClients,
             PendingSmsClients,
         } = row;
-        let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
+        let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e: any) => {
             return e === true
-        }).length;
+        }).length as Number;
+
+        const colSize = 12 - parseInt(iconsCells.toString()) as GridSize;
 
         return (
             <TableRow
@@ -656,14 +600,15 @@ const Groups = ({ classes }) => {
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={clsx(classes.flex2)}>
+                    className={clsx(classes.flex3)}>
                     <Grid container direction="row">
-                        <Grid item sm={12 - iconsCells}>
-                            {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })}
+                        <Grid item sm={colSize}>
+                            {renderNameCell({ GroupID, GroupName, IsChecked: true, CreationDate, UpdateDate } as GroupData)}
                         </Grid>
                         {
                             row.IsAutoResponder === true ? (
                                 <Grid item sm={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {/* @ts-ignore */}
                                     <CustomTooltip
                                         isSimpleTooltip={true}
                                         interactive={false}
@@ -685,9 +630,10 @@ const Groups = ({ classes }) => {
                         {
                             row.IsConnectedToWebForm === true ? (
                                 <Grid item sm={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {/* @ts-ignore */}
                                     <CustomTooltip
                                         isSimpleTooltip={true}
-                                        iconStyle={{ color: '#000' }}
+                                        // iconStyle={{ color: '#000' } as never}
                                         interactive={false}
                                         classes={{
                                             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
@@ -721,7 +667,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if (((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -742,7 +688,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
                             },
@@ -759,7 +705,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((ActiveEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -780,7 +726,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
                             },
@@ -797,7 +743,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((RemovedEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -818,7 +764,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
@@ -836,7 +782,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((InvalidEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -857,7 +803,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
@@ -875,7 +821,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((PendingClients || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -896,7 +842,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
@@ -924,7 +870,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if (((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -945,7 +891,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
                             },
@@ -962,7 +908,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((ActiveCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -983,7 +929,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
                             },
@@ -1000,7 +946,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((RemovedCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1021,7 +967,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
@@ -1039,7 +985,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((InvalidCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1060,7 +1006,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
@@ -1078,7 +1024,7 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((PendingSmsClients || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1099,7 +1045,7 @@ const Groups = ({ classes }) => {
                                             }]}
 
                                         variant="body1"
-                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                        gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
@@ -1112,8 +1058,14 @@ const Groups = ({ classes }) => {
                 </TableCell>
                 <TableCell
                     classes={noBorderCellStyle}
-                    align="center"
-                    className={clsx(classes.flex5, classes.p0)}
+                    // align="center"
+                    // className={clsx(classes.flex5, classes.p0)}
+                    component="th"
+                    scope="row"
+                    className={clsx(
+                        classes.flex3,
+                        classes.tableCellRoot
+                    )}
                 >
                     {renderCellIcons(row)}
                 </TableCell>
@@ -1122,7 +1074,7 @@ const Groups = ({ classes }) => {
 
     }
 
-    const renderPhoneRow = (row) => {
+    const renderPhoneRow = (row: GroupData) => {
         const {
             ActiveCell,
             ActiveEmails,
@@ -1149,7 +1101,7 @@ const Groups = ({ classes }) => {
                         {renderNameCell(row)}
                         <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
                             <IconWrapper
-                                iconName="addRecipient"
+                                iconName="delete"
                                 className={classes.mxAuto}
                                 onClick={() => {
                                     setSelectedGroups([GroupID])
@@ -1161,7 +1113,7 @@ const Groups = ({ classes }) => {
                     <Box className={classes.mt3}>
                         <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.emails")}</Typography>
                         <FlexGrid
-                            justifyContent="space-between"
+                            justifyContent={"space-between" as never}
                             gridArr={[
                                 {
                                     component: (
@@ -1176,7 +1128,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.blue,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if (((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1211,7 +1163,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.green,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((ActiveEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1246,7 +1198,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.red,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((RemovedEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1282,7 +1234,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.red,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((InvalidEmails || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1317,7 +1269,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.grey,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((PendingSmsClients || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1348,7 +1300,7 @@ const Groups = ({ classes }) => {
                     <Box className={classes.mt3}>
                         <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.sms/mms")}</Typography>
                         <FlexGrid
-                            justifyContent="space-between"
+                            justifyContent={"space-between" as never}
                             gridArr={[
                                 {
                                     component: (
@@ -1363,7 +1315,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.blue,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if (((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1398,7 +1350,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.green,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((ActiveCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1433,7 +1385,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.red,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((RemovedCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1468,7 +1420,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.red,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((InvalidCell || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1503,7 +1455,7 @@ const Groups = ({ classes }) => {
                                                     value: colorTextStyle.grey,
                                                     href: ''
                                                 },
-                                                onClick: (e) => {
+                                                onClick: (e: any) => {
                                                     e?.preventDefault();
                                                     if ((PendingClients || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -1522,7 +1474,7 @@ const Groups = ({ classes }) => {
                                                     }
                                                 }
                                             }]
-                                        } />
+                                            } />
                                     ),
                                 },
 
@@ -1544,13 +1496,13 @@ const Groups = ({ classes }) => {
                             windowSize === "xs"
                                 ? clsx(classes.mt3, classes.tableStyle)
                                 : classes.tableStyle,
-                    }}
-                    table={{ className: classes.tableContainer }}
+                    } as never}
+                    table={{ className: classes.tableContainer } as never}
                     tableHead={{
                         tableHeadCells: TABLE_HEAD,
                         classes: rowStyle,
                         className: windowSize === "xs" ? classes.dNone : null,
-                    }}
+                    } as never}
                 >
                     <TableBody>
                         {groupData.Groups
@@ -1562,10 +1514,10 @@ const Groups = ({ classes }) => {
         return <></>;
 
     }
-    const handleRowsPerPageChange = (val) => {
+    const handleRowsPerPageChange = (val: Number) => {
         dispatch(setRowsPerPage(val))
     }
-    const handlePageChange = (val) => {
+    const handlePageChange = (val: Number) => {
         SetPageState({
             "PageName": "groups",
             "PageNumber": val,
@@ -1573,8 +1525,9 @@ const Groups = ({ classes }) => {
             "SearchData": (serachData.SearchTerm !== '') ? {
                 SearchTerm: serachData.SearchTerm,
                 PageIndex: val
-            } : null
-        });
+            } : null,
+            "IsDynamic": true
+        } as PageProperty);
         setSearchData({ ...serachData, PageIndex: val });
     }
     const renderTablePagination = () => {
@@ -1590,38 +1543,10 @@ const Groups = ({ classes }) => {
             />
         )
     }
-    const handleAddRecipientResponse = (res) => {
-        switch (res.payload.StatusCode) {
-            case 201: {
-                setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary })
-                setDialog(DialogType.MESSAGE);
-                break;
-            }
-            case 202: {
-                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
-                setDialog(DialogType.MESSAGE);
-                break;
-            }
-            case 404: {
-                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
-                setDialog(DialogType.MESSAGE);
-                break;
-            }
-            case 400: {
-                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.listEmptyOrClientInvalid") })
-                setDialog(DialogType.MESSAGE);
-                break;
-            }
-            default: {
-                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
-                setDialog(DialogType.MESSAGE);
-            }
-        }
-    }
-    const handleDownloadFile = async (response, formatType) => {
-        let orderList = await response?.Clients.map((client) => {
-            let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
-            let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
+    const handleDownloadFile = async (response: any, formatType: any) => {
+        let orderList = await response?.Clients.map((client: Client) => {
+            let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status) as any
+            let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus) as any
             client.Status = t(tempStatus.value);
             client.SmsStatus = t(tempSmsStatus.value);
             return client;
@@ -1631,10 +1556,10 @@ const Groups = ({ classes }) => {
             OrderItems: true,
             FormatDate: true,
             ConvertStatusToString: false,
-            Order: Object.keys(exportColumnHeader.current),
+            Order: Object.keys(exportColumnHeader.current as any),
             DeleteProperties: ["Revenue", "SendDate"],
             ReplaceNull: true
-        };
+        } as any;
 
         HandleExportData(orderList, exportOptions).then(async (result) => {
             ExportFile({
@@ -1645,12 +1570,12 @@ const Groups = ({ classes }) => {
             });
         });
     }
-    const handleConfirmExport = async (formatType, notifyEmail) => {
+    const handleConfirmExport = async (formatType: any, notifyEmail: boolean) => {
         setShowConfirmDialog(false);
         setLoader(true);
-        const group = subAccountAllGroups.find((g) => { return g.GroupID === selectedGroups[0] });
+        const group = subAccountAllGroups.find((g: any) => { return g.GroupID === selectedGroups[0] });
 
-        const requestObject = {
+        const requestObject: ClientExportRequest = {
             GroupIds: selectedGroups,
             NotifyEmail: notifyEmail,
             FileType: formatType,
@@ -1673,7 +1598,7 @@ const Groups = ({ classes }) => {
                             RenderHtml(t("recipient.exportGroups.inProgress")
                                 .replace("##notifyEmailPlaceHolder##", notifyEmail !== null ? t('recipient.exportGroups.inProgressNotifyOnDone')
                                     .replace("##notifyEmail##", `<b>${notifyEmail}</b>`) : t('recipient.exportGroups.downloadPageRedirect')))
-                    })
+                    } as any)
                     setDialog(DialogType.MESSAGE);
                     break;
                 }
@@ -1681,7 +1606,7 @@ const Groups = ({ classes }) => {
                     break;
                 }
                 case 405: {
-                    setResponseMessage({ title: '', message: RenderHtml(t("recipient.exportGroups.exportLimitationErrorMessage")) })
+                    setResponseMessage({ title: '', message: RenderHtml(t("recipient.exportGroups.exportLimitationErrorMessage")) } as any)
                     setDialog(DialogType.MESSAGE);
                     break;
                 }
@@ -1693,7 +1618,7 @@ const Groups = ({ classes }) => {
                     break;
                 }
             }
-        } catch (e) {
+        } catch (e: any) {
             // Log
         }
         finally {
@@ -1702,7 +1627,7 @@ const Groups = ({ classes }) => {
     }
     const renderConfirmDialog = () => {
         let csvOnly = false;
-        let exportTypeOptions = ExportFileTypes;
+        let exportTypeOptions: any = ExportFileTypes;
 
         if (selectedGroups && selectedGroups.length > 0) {
             const clientsTotalCount = [...groupData?.Groups].filter((g) => {
@@ -1729,7 +1654,7 @@ const Groups = ({ classes }) => {
                 title={t('common.ExportGroups')}
                 text={!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
                 radioTitle={csvOnly ? '' : t('common.SelectFormat')}
-                onConfirm={(e, notifyEmail) => handleConfirmExport(e, notifyEmail)}
+                onConfirm={(e: any, notifyEmail: any) => handleConfirmExport(e, notifyEmail)}
                 onCancel={() => setShowConfirmDialog(false)}
                 cookieName={'exportFormat'}
                 defaultValue={csvOnly ? 'csv' : 'xls'}
@@ -1738,7 +1663,18 @@ const Groups = ({ classes }) => {
             />
         );
     }
-    const handleResponses = (response, actions = {
+
+    const handleDeleteGroup = async () => {
+        setLoader(true);
+        setDialog(null);
+        await dispatch(deleteGroups(selectedGroups));
+        await dispatch(getGroupsBySubAccountId())
+        setSelectedGroups([]);
+        getData(null);
+        setLoader(false);
+    };
+
+    const handleResponses = (response: any, actions = {
         'S_200': {
             code: 200,
             message: '',
@@ -1857,17 +1793,12 @@ const Groups = ({ classes }) => {
             }
         }
     }
-    const handleDeleteGroup = async () => {
-        await dispatch(deleteGroups(selectedGroups));
-        await dispatch(getGroupsBySubAccountId())
-        setSelectedGroups([]);
-        setDialog(null);
-        getData(null);
-    };
+
     const showDialog = () => {
         if (dialog !== null) {
             switch (dialog) {
                 case DialogType.ADD_GROUP: {
+                    // @ts-ignore
                     return <AddGroupPopUp
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_GROUP}
@@ -1884,17 +1815,17 @@ const Groups = ({ classes }) => {
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
                         addClientByQuery={false}
-                        addAnotherRecCallback={(groupId) => {
+                        addAnotherRecCallback={(groupId: any) => {
                             setSelectedGroups([...selectedGroups, groupId]);
                             setDialog(DialogType.ADD_RECIPIENTS)
                         }}
                         getData={() => getData(null)}
-                        handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions) }}
+                        handleResponses={(response: any, actions: any) => { setDialog(null); handleResponses(response, actions) }}
                     />
                 }
                 case DialogType.EDIT_GROUP: {
                     return <EditGroupPopup
-                        isDynamic={false}
+                        isDynamic={true}
                         classes={classes}
                         isOpen={dialog === DialogType.EDIT_GROUP}
                         onClose={() => { setDialog(null); setSelectedGroups([]) }}
@@ -1906,79 +1837,8 @@ const Groups = ({ classes }) => {
                         selectedGroup={selectedGroups[0]}
                         openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
                         getData={() => getData(null)}
-                        handleResponses={(response, actions) => handleResponses(response, actions)}
+                        handleResponses={(response: any, actions: any) => handleResponses(response, actions)}
                     />
-                }
-                case DialogType.RESET_GROUP: {
-                    if (selectedGroups.length === 1) {
-                        return <ResetGroupPopup
-                            classes={classes}
-                            isOpen={dialog === DialogType.RESET_GROUP}
-                            onClose={() => { setDialog(null); setSelectedGroups([]) }}
-                            onCancel={() => { setDialog(null); setSelectedGroups([]) }}
-                            setLoader={setLoader}
-                            windowSize={windowSize}
-                            ToastMessages={ToastMessages}
-                            setToastMessage={setToastMessage}
-                            selectedGroup={{ GroupID: selectedGroups[0] }}
-                            getData={() => getData(null)}
-                            handleResponses={(response, actions) => handleResponses(response, actions)}
-                        />
-                    }
-                    return <></>
-                }
-                case DialogType.ADD_RECIPIENT: {
-                    return <AddRecipientPopup
-                        classes={classes}
-                        isOpen={dialog === DialogType.ADD_RECIPIENT}
-                        onClose={() => { setDialog(null); setSelectedGroups([]); }}
-                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
-                        setLoader={setLoader}
-                        windowSize={windowSize}
-                        ToastMessages={ToastMessages}
-                        setToastMessage={setToastMessage}
-                        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
-                        selectedGroups={selectedGroups}
-                        selectGroup={(idArr) => setSelectedGroups(idArr)}
-                        DialogType={DialogType}
-                        setDialog={setDialog}
-                        handleResponses={(response, actions) => handleResponses(response, actions)}
-                        onRecipientAdded={() => { setDialog(null); getData(null); }}
-                        onAnotherRecipientAdded={() => { setDialog(null); getData(null); setDialog(DialogType.ADD_RECIPIENT); }}
-                    />;
-                }
-                case DialogType.ADD_RECIPIENTS: {
-                    return <AddBulkRecipientPopup
-                        classes={classes}
-                        isOpen={dialog === DialogType.ADD_RECIPIENTS}
-                        onClose={() => { setDialog(null); setSelectedGroups([]); }}
-                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
-                        setLoader={setLoader}
-                        windowSize={windowSize}
-                        ToastMessages={ToastMessages}
-                        setToastMessage={setToastMessage}
-                        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
-                        selectedGroups={selectedGroups}
-                        selectGroup={(idArr) => setSelectedGroups(idArr)}
-                        onAddRecipient={(_, result) => handleAddRecipientResponse(result)}
-                    />
-                }
-                case DialogType.DELETE_RECIPIENT:
-                case DialogType.UNSUB_RECIPIENT: {
-                    return <UnsubscribeOrDeletePopup
-                        classes={classes}
-                        isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
-                        onClose={() => { setDialog(null); setSelectedGroups([]); }}
-                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
-                        setLoader={setLoader}
-                        windowSize={windowSize}
-                        ToastMessages={ToastMessages}
-                        setToastMessage={setToastMessage}
-                        selectedGroups={selectedGroups}
-                        dialogType={dialog}
-                        getData={() => getData(null)}
-                        handleResponses={(response, actions) => handleResponses(response, actions)}
-                    />;
                 }
                 case DialogType.DELETE_GROUP: {
                     return <ConfirmDeletePopUp
@@ -1990,40 +1850,21 @@ const Groups = ({ classes }) => {
                         handleDeleteGroup={() => handleDeleteGroup()}
                     />
                 }
-                case DialogType.MESSAGE: {
-                    return <AddRecipientResponse
-                        classes={classes}
-                        isOpen={dialog === DialogType.MESSAGE}
-                        onClose={() => { setDialog(null); setSelectedGroups([]); getData(null); }}
-                        onCancel={() => { setDialog(null); setSelectedGroups([]); getData(null); }}
-                        windowSize={windowSize}
-                        title={responseMessage.title}
-                        message={responseMessage.message}
-                        summary={responseMessage.summary}
-                    />
-                }
-                case DialogType.SIMPLY_CLUB: {
-                    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.SIMPLY_CLUB) > -1) {
-                        return <SimplyClubPupup
-                            classes={classes}
-                            isOpen={dialog === DialogType.SIMPLY_CLUB}
-                            onClose={() => { setDialog(null); setSelectedGroups([]) }}
-                            onCancel={() => { setDialog(null); setSelectedGroups([]) }}
-                            windowSize={windowSize}
-                            title={responseMessage.title}
-                            message={responseMessage.message}
-                            summary={responseMessage.summary}
-                            setToastMessage={setToastMessage}
-                            handleResponses={handleResponses}
-                            ToastMessages={ToastMessages}
-                            SelectedGroupIds={[...selectedGroups]}
-                            setSelectedGroupIds={() => setSelectedGroups([])}
-                            getData={() => { setDialog(null); getData(null); }}
-                        />
-                    }
+                default: {
                     return <></>
                 }
-                default: {
+                case DialogType.RESET_GROUP: {
+                    if (selectedGroups.length === 1) {
+                        return <ResetGroupPopup
+                            classes={classes}
+                            isOpen={dialog === DialogType.RESET_GROUP}
+                            onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                            windowSize={windowSize}
+                            selectedGroup={{ GroupID: selectedGroups[0] }}
+                            getData={() => getData(null)}
+                            handleResponses={(response, actions) => handleResponses(response, actions)}
+                        />
+                    }
                     return <></>
                 }
             }
@@ -2031,10 +1872,12 @@ const Groups = ({ classes }) => {
         return <></>;
     }
 
+
     return (
         <DefaultScreen
+            key="groups"
             currentPage='groups'
-            subPage='groupManagement'
+            subPage='dynamicGroups'
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
@@ -2042,11 +1885,11 @@ const Groups = ({ classes }) => {
                 {toastMessage && renderToast()}
                 <Box className={'topSection'}>
 
-                    <Title Text={t('recipient.logPageHeaderResource1.Text')} classes={classes} />
+                    <Title Text={t('recipient.logPageHeaderResource1.Dynamic')} classes={classes} />
                     {renderSearchSection()}
                 </Box>
                 {windowSize !== 'xs' ? renderManagmentLine() :
-                    <Box
+                    <Grid
                         item
                         xs={windowSize === "xs" && 12}
                         className={clsx(classes.groupsLableContainer, classes.mt20)}
@@ -2054,8 +1897,9 @@ const Groups = ({ classes }) => {
                         <Typography className={classes.groupsLable}>
                             {`${groupData ? groupData.RecordCount : 0} ${t("common.Groups")}`}
                         </Typography>
-                    </Box>
+                    </Grid>
                 }
+
                 {renderTableBody()}
                 {renderTablePagination()}
                 {showConfirmDialog && renderConfirmDialog()}
@@ -2066,4 +1910,4 @@ const Groups = ({ classes }) => {
     )
 }
 
-export default memo(Groups);
+export default memo(DynamicGroups);
