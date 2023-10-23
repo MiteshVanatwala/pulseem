@@ -26,6 +26,10 @@ export const DASHBOARD_SHORTCUT = {
       {
         title: 'appBar.groups.fileUploads',
         link: '/Pulseem/FileUploads.aspx'
+      },
+      {
+        title: 'master.fileDownload',
+        link: '/react/groups/Download'
       }
     ]
   },
