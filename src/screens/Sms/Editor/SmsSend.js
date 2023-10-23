@@ -1534,7 +1534,7 @@ const SmsSend = ({ classes, ...props }) => {
           filteredCampaigns={selectedFilterCampaigns}
           // displayCampaigns={totalCampaigns}
           open={summModal}
-          pulseType={pulseType}
+          pulseType={timeType}
         />
       </>
     );
