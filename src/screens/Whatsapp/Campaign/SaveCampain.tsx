@@ -1046,7 +1046,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
           </Grid>
           <Grid item>
             <Button
-              onClick={() => setDialogType(null)}
+              onClick={() => {
+								setDialogType(null);
+								onExitCampaign();
+							}}
               className={clsx(
                 classes.btn,
                 classes.btnRounded

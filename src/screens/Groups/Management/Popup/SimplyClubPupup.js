@@ -66,7 +66,7 @@ const SimplyClubPupup = ({
     windowSize,
     getData,
     setToastMessage,
-    handleResponses = (response, actions) => null,
+    handleResponses,
     ToastMessages,
     SelectedGroupIds = [],
     setSelectedGroupIds
