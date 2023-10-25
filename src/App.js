@@ -72,6 +72,7 @@ import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
 import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
+import EditDynamicGroups from './screens/Groups/Dynamic/EditDynamicGroups';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -503,6 +504,11 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}Groups/Dynamic`}
         element={<DynamicGroups classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Groups/EditDynamicGroup`}
+        element={<EditDynamicGroups classes={classes} />}
       />
     </Routes>
   )

@@ -88,6 +88,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   appBody: {
     maxWidth: 'calc(100vw - 6px)'
   },
+  greyBackground: {
+    background: '#F0F5FF',
+  },
   sidebar: {
     paddingRight: '0 !important',
     "&::-webkit-scrollbar": {
@@ -467,6 +470,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 15,
   },
   mt20: {
+    marginTop: 20,
+  },
+  mt25: {
     marginTop: 20,
   },
   mb20: {

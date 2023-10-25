@@ -122,7 +122,7 @@ export const DateField = ({
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
       onClick={() => setIsDatePickerOpen(true)}
-      invalidDateMessage={t("common.invalidDate")}
+      invalidDateMessage={props?.hideInvalidDateMessage ? '' : t("common.invalidDate")}
       maxDateMessage={ props.errorMessage || t("common.maximalDateRequired")}
       minDateMessage={ props.errorMessage || t("common.minimalDateRequired")}
       InputProps={{
