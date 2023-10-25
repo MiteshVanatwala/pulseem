@@ -496,12 +496,12 @@ const ActionCallPopOver = ({
 							)}
 						</Grid>
 
-						<Grid item className={classes.justifyContentEnd} md={6}>
+						<Grid item className={clsx(classes.justifyContentEnd, classes.w100)} md={6}>
 							<Button
 								onClick={() => closeCallToAction(true)}
 								variant='contained'
 								color='secondary'
-								className={clsx(classes.btn, classes.btnRounded, classes.mlr10)}
+								className={clsx(classes.btn, classes.btnRounded, classes.mlr10, classes.mt10)}
 							>
 								{translator('whatsapp.callToActionExitButton')}
 							</Button>
@@ -510,7 +510,7 @@ const ActionCallPopOver = ({
 									onClick={onButtonSubmit}
 									disabled={callToActionFieldRows?.length === 0 ? true : false}
 									variant='contained'
-									className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
+									className={clsx(classes.btn, classes.btnRounded, classes.redButton, classes.mt10)}
 								>
 									{translator('whatsapp.callToActionSaveButton')}
 								</Button>
