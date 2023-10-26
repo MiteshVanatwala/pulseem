@@ -91,6 +91,8 @@ import {
 import Toast from '../../../components/Toast/Toast.component';
 import {
 	apiStatus,
+	authenticationMockTemplate,
+	authenticationTypes,
 	buttonTextLimits,
 	buttonTypes,
 	buttons,
@@ -209,6 +211,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	});
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
+	const [templateCategory, setTemplateCategory] = useState<number>(0);
 	const [templateData, setTemplateData] = useState<templateDataProps>({
 		templateText: '',
 		templateButtons: [],
@@ -585,30 +588,68 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		};
 		const savedTemplateData: savedTemplateListProps | undefined =
 			templateList?.find((template) => template.TemplateId === TemplateId);
+		setTemplateCategory(savedTemplateData?.CategoryId || 0);
 		const templateData: savedTemplateDataProps | undefined =
 			savedTemplateData?.Data;
 		if (templateData) {
 			templatePreviewData = getTemplatePreviewData(templateData?.types);
 		}
-		setFileData(templatePreviewData?.fileData);
-		setButtonType(templatePreviewData?.buttonType);
-		setTemplateData(templatePreviewData?.templateData);
-		setDynamicVariable(
-			getDynamicFields(templatePreviewData?.templateData.templateText)
-		);
-		if (templatePreviewData?.buttonType === 'quickReply') {
-			setQuickReplyButtons(templatePreviewData?.templateData.templateButtons);
+		if (savedTemplateData?.CategoryId === 3) {
+			renderAuthenticationPreview(savedTemplateData);
 		} else {
-			setCallToActionFieldRows(
-				templatePreviewData?.templateData.templateButtons
+			setFileData(templatePreviewData?.fileData);
+			setButtonType(templatePreviewData?.buttonType);
+			setTemplateData(templatePreviewData?.templateData);
+			setDynamicVariable(
+				getDynamicFields(templatePreviewData?.templateData.templateText)
 			);
-		}
-		if (templateData?.variables) {
-			setDynamicFieldCount(
-				getDynamicFields(templatePreviewData?.templateData.templateText)?.length
-			);
+			if (templatePreviewData?.buttonType === 'quickReply') {
+				setQuickReplyButtons(templatePreviewData?.templateData.templateButtons);
+			} else {
+				setCallToActionFieldRows(
+					templatePreviewData?.templateData.templateButtons
+				);
+			}
+			if (templateData?.variables) {
+				setDynamicFieldCount(
+					getDynamicFields(templatePreviewData?.templateData.templateText)?.length
+				);
+			}
 		}
 	};
+
+	const renderAuthenticationPreview = (templateData: any) => {
+		setButtonType('quickReply');
+		const buttons = [{
+			id: uniqid(),
+			typeOfAction: '',
+			fields: [
+				{
+					fieldName: 'whatsapp.websiteButtonText',
+					type: 'text',
+					placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+					value: templateData.Data?.types?.['authentication']?.actions[0].copy_code_text,
+				},
+			],
+		}];
+		let template = `${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].body}`;
+		if (templateData.Data?.types?.authentication?.code_expiration_minutes) {
+			template += `\n\n ${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].subtitle.replace('X', `${templateData.Data?.types?.authentication?.code_expiration_minutes || 0}`)}`;
+		}
+
+		setTemplateData({
+			templateText: template,
+			templateButtons: buttons,
+		});
+		setDynamicVariable(
+			getDynamicFields(template)
+		);
+		setQuickReplyButtons(buttons);
+		setFileData({
+			fileLink: '',
+			fileType: ''
+		});
+	}
 
 	const onChangeTestSendRadio = (value: string) => {
 		if (value === 'testgroup') {
@@ -1349,6 +1390,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						isTrackLink={isTrackLink}
 						setIsTrackLink={setIsTrackLink}
 						savedTemplate={savedTemplate}
+						templateCategory={templateCategory}
 					/>
 
 					<ValidationAlert

@@ -24,6 +24,7 @@ import {
 	getTemplateName,
 	getTemplateNameById,
 } from '../../Common';
+import { authenticationTypes } from '../../Constant';
 
 const TemplateFields = ({
 	classes,
@@ -152,13 +153,16 @@ const TemplateFields = ({
 							placeholder={translator('report.ProductsReport.category')}
 							value={category}>
 							<MenuItem key={'marketing'} value={'marketing'}>
-								<>{translator('whatsapp.marketing')}</>
+								{translator('whatsapp.marketing')}
 							</MenuItem>
 							<MenuItem key={'utility'} value={'utility'}>
-								<>{translator('whatsapp.utility')}</>
+								{translator('whatsapp.utility')}
 							</MenuItem>
-							<MenuItem key={'authentication'} value={'authentication'}>
-								<>{translator('whatsapp.authentication')}</>
+							<MenuItem value={authenticationTypes.AUTHENTICATIONEN}>
+								{translator('whatsapp.authenticationEn')}
+							</MenuItem>
+							<MenuItem value={authenticationTypes.AUTHENTICATIONHEBREW}>
+								{translator('whatsapp.authenticationHebrew')}
 							</MenuItem>
 						</Select>
 					</Grid>

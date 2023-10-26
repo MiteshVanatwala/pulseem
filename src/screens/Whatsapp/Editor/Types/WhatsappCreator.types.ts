@@ -4,6 +4,7 @@ import {
 	campaignDataProps,
 	reportDataProps,
 } from '../../Campaign/Types/WhatsappCampaign.types';
+import { authenticationClass } from './JSON.types';
 
 export type WhatsappCreatorProps = {
 	classes: ClassesType[];
@@ -26,6 +27,7 @@ export type WhatsappCreatorProps = {
 		fileLink: string;
 		fileType: string;
 	};
+	category?: string;
 };
 
 export type TemplateFieldsProps = {
@@ -143,6 +145,9 @@ export type quickReplyProps = {
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
 	templateButtons: templateDataProps['templateButtons'];
 	isEditable: boolean;
+	isDeletionAllowed?: boolean;
+	canAddMoreButtons?: boolean;
+	maxButtonTextLength?: number;
 };
 
 export type quickReplyButtonsFieldProps = {
@@ -165,6 +170,11 @@ export type ApiButtonData = {
 	url?: string;
 	phoneCode?: string;
 	keepTrackOfLinks?: boolean;
+};
+
+export type quickReplyButtons = {
+	id: string;
+	title: string
 };
 
 export type templateDataProps = {
@@ -256,6 +266,8 @@ export type savedTemplateTypesProps = {
 	media: savedTemplateMediaProps;
 	text: savedTemplateTextProps;
 	card: savedTemplateCardProps;
+	'whatsapp/authentication': authenticationClass,
+	'authentication': authenticationClass
 };
 
 export type savedTemplateDataProps = {
@@ -264,6 +276,7 @@ export type savedTemplateDataProps = {
 };
 
 export type savedTemplateListProps = {
+	CategoryId: number;
 	CreatedDate: string | null;
 	Data: savedTemplateDataProps;
 	RejectionReason: string;
@@ -375,6 +388,7 @@ export type getTemplateByIdDataAPIProps = {
 	SavedApiWhatsappTemplatesId: number;
 	TemplateId: string;
 	TemplateName: string;
+	Language?: string;
 };
 
 export type getTemplateByIdPayloadAPIProps = {

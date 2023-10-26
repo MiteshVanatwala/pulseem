@@ -42,6 +42,17 @@ export type quickReplyClass = {
 	actions: quickReplyButton[];
 };
 
+export type authenticationClass = {
+	add_security_recommendation: boolean;
+	code_expiration_minutes?: number;
+	actions: authenticationCopyButtonClass[];
+};
+
+export type authenticationCopyButtonClass = {
+	type: string;
+	copy_code_text: string;
+};
+
 export type QuickReply = {
 	friendlyTemplateName: string;
 	templateName: string;
@@ -54,7 +65,8 @@ export type QuickReply = {
 };
 
 export type QuickReplyTypes = {
-	'quick-reply': quickReplyClass;
+	'quick-reply'?: quickReplyClass;
+	authentication?: authenticationClass;
 };
 
 export type JSONPropsText = {

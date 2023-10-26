@@ -33,6 +33,7 @@ import {
 	coreProps,
 	deleteTemplateAPIProps,
 	quickReplyButtonProps,
+	quickReplyButtons,
 	savedTemplateCallToActionProps,
 	savedTemplateCardProps,
 	savedTemplateDataProps,
@@ -63,6 +64,8 @@ import {
 import {
 	allTemplateInitialPagination,
 	apiStatus,
+	authenticationMockTemplate,
+	authenticationTypes,
 	categoryName,
 	resetToastData,
 	statusesByName,
@@ -505,7 +508,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			(template) => template?.Id === Number(id)
 		);
 		if (templateData) {
-			onSavedTemplateChange(templateData?.Data);
+			if (templateData.CategoryId === 3) {
+				renderAuthenticationPreview(templateData);
+			} else {
+				onSavedTemplateChange(templateData?.Data);
+			}
 			setIsPreviewTemplateOpen(true);
 		}
 	};
@@ -515,12 +522,40 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			(template) => template?.Id === Number(templateId)
 		);
 		if (templateData) {
-			onSavedTemplateChange(templateData?.Data);
+			if (templateData.CategoryId === 3) {
+				renderAuthenticationPreview(templateData);
+			} else {
+				onSavedTemplateChange(templateData?.Data);
+			}
 			setIsSubmitTemplateOpen(true);
 		} else {
 			setToastMessage(ToastMessages.ERROR);
 		}
 	};
+
+	const renderAuthenticationPreview = (templateData: any) => {
+		setButtonType('quickReply');
+		const buttonData: any = setButtonsData('quickReply', [
+			{
+				title: templateData.Data?.types?.authentication?.actions[0].copy_code_text,
+				type: '',
+				url: '',
+				phone: '',
+			}
+		]);
+		let template = `${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].body}`;
+		if (templateData.Data?.types?.authentication?.code_expiration_minutes) {
+			template += `\n\n ${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].subtitle.replace('X', `${templateData.Data?.types?.authentication?.code_expiration_minutes || 0}`)}`;
+		}
+		setTemplateData({
+			templateText: template,
+			templateButtons: buttonData,
+		});
+		setFileData({
+			fileLink: '',
+			fileType: ''
+		});
+	}
 
 	const onRowIconClick = (key: string, Id: string) => {
 		setActiveRowId(Id);

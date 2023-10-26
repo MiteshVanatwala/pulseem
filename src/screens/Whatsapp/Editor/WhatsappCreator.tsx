@@ -31,7 +31,7 @@ import {
 } from './Types/WhatsappCreator.types';
 import { ClassesType } from '../../Classes.types';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Grid } from '@material-ui/core';
+import { Box, Button, Grid, TextField, Typography } from '@material-ui/core';
 import WhatsappTemplateEditor from './Components/WhatsappTemplateEditor';
 import { actionButtonProps } from './Types/WhatsappCreator.types';
 import QuickReply from './Popups/QuickReply';
@@ -59,6 +59,8 @@ import {
 import {
 	APIStatuses,
 	apiStatus,
+	authenticationMockTemplate,
+	authenticationTypes,
 	buttonTextLimits,
 	buttonTypes,
 	categoryName,
@@ -75,6 +77,7 @@ import FileUpload from './Components/FileUpload';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Switch } from '../../../components/managment';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -93,6 +96,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			state.whatsapp.ToastMessages
 	);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
+	const [codeExpirationTime, setCodeExpirationTime] = useState<number | undefined>(0);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [savedTemplateList, setSavedTemplateList] = useState<
@@ -187,6 +191,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		useState<boolean>(false);
 	const [linkCount, setlinkCount] = useState<number>(0);
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
+	const [authenticationButtonText, setAuthenticationButtonText] = useState<string>('');
 
 	let updatedTemplateData: templateDataProps = {
 		templateText: '',
@@ -277,6 +282,20 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
 	}, [isCallToActionOpen]);
+
+	useEffect(() => {
+		if (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) {
+			updateTemplateForAuthentication();
+			setButtonType(ActionButtons.QuickReply);
+		} else {
+			setTemplateData({
+				...templateData,
+				templateText: '',
+				templateButtons: []
+			})
+			setButtonType('');
+		}
+	}, [ category ])
 
 	const onTemplateNameChange = (e: BaseSyntheticEvent) => {
 		setTemplateName(e.target.value);
@@ -542,9 +561,16 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				setSavedTemplate(templateId);
 				setTemplateName(templateName);
 				setFileData(updatedFileData);
-				setButtonType(updatedButtonType);
-				setTemplateData(updatedTemplateData);
-				setCategory(categoryName[templates?.CategoryId || 1]);
+				
+				if (templates?.CategoryId === 3) {
+					setCodeExpirationTime(templates?.Data?.types?.authentication?.code_expiration_minutes)
+					setAuthenticationButtonText(templates?.Data?.types?.authentication?.actions[0].copy_code_text)
+					setButtonType(buttonTypes.QUICK_REPLY);
+				} else {
+					setTemplateData(updatedTemplateData);
+					setButtonType(updatedButtonType);
+				}
+				setCategory(templates?.CategoryId === 3 ? (templates?.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW) : categoryName[templates?.CategoryId || 1]);
 				if (updatedTemplateData?.templateButtons?.length > 0) {
 					if (updatedButtonType === buttonTypes.QUICK_REPLY) {
 						setQuickReplyButtons(updatedTemplateData.templateButtons);
@@ -679,7 +705,17 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				language: templateLanguage,
 				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
-				types: {
+				types: (category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW)
+				? {
+					authentication: {
+						add_security_recommendation: true,
+            code_expiration_minutes: Number(codeExpirationTime),
+            actions: [{
+							type: 'COPY_CODE',
+							copy_code_text: getValueByFieldName(templateData.templateButtons[0], 'whatsapp.websiteButtonText')
+						}]
+					},
+				} : {
 					'quick-reply': {
 						body: templateData.templateText,
 						actions: getQuickReplyActions(),
@@ -805,6 +841,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			checkLanguage(templateData.templateText, isRTL) === 'Both'
 		) {
 			validationErrors.push(translator('whatsapp.alertModal.languageError'));
+			isValidated = false;
+		}
+
+		if ((category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) && (codeExpirationTime || 0) > 90) {
+			validationErrors.push(translator('whatsapp.codeExpirationMessage'));
 			isValidated = false;
 		}
 
@@ -1160,6 +1201,37 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		)
 	}
 
+	const handleCodeExpirationChange = (event: any) => {
+		const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+		setCodeExpirationTime(onlyNums);
+		updateTemplateForAuthentication();
+	}
+
+	const updateTemplateForAuthentication = () => {
+		const button = {
+			id: uniqid(),
+			typeOfAction: '',
+			fields: [
+				{
+					fieldName: 'whatsapp.websiteButtonText',
+					type: 'text',
+					placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+					value: authenticationButtonText || translator('whatsapp.copyCode', { lng: category === authenticationTypes.AUTHENTICATIONEN ? 'en' : 'he' }),
+				},
+			],
+		};
+
+		let template = `${authenticationMockTemplate[category].body}`;
+		if (codeExpirationTime && codeExpirationTime > 0) {
+			template += `\n\n ${authenticationMockTemplate[category].subtitle.replace('X', `${codeExpirationTime}`)}`;
+		}
+		setTemplateData({
+			...templateData,
+			templateText: template,
+			templateButtons: [button]
+		})
+	}
+
 	return (
 		<DefaultScreen
 			subPage={'create'}
@@ -1199,6 +1271,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								<Grid item className={classes.whatsappTextEditorWrapper}>
 									<WhatsappTemplateEditor
 										classes={classes}
+										category={category}
 										onButtonClick={(button: actionButtonProps) =>
 											onButtonClick(button)
 										}
@@ -1219,43 +1292,79 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 										fileData={fileData}
 									/>
 
-									<Grid className={classes.whatsappFileUploadWrapper} item>
-										<Grid container spacing={1}>
-											<Grid item>
-												<FileUpload
-													classes={classes}
-													buttonType={buttonType}
-													fileData={fileData}
-													setFileData={(fileData) => uploadFile(fileData)}
-													sourceFileSize={fileData?.properties && fileData?.properties?.Size}
-												/>
-											</Grid>
-											<Grid item
-												style={{
-													paddingTop: 60,
-													paddingLeft: 10
-												}}
-											>
-												<Button
-													variant='contained'
-													size='medium'
-													className={clsx(
-														classes.actionButton,
-														classes.actionButtonLightBlue,
-														classes.backButton,
-														classes.mt50
-													)}
-													color='primary'
-													onClick={() => {
-														setIsFileSelected(false);
-														setDialogType({ type: 'gallary' });
+									{
+										(category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) && (
+											<Grid item className={clsx(classes.pt15, classes.pb10, classes.dFlex)}>
+												<Typography className={clsx(classes.pt5)}>
+													{translator('whatsapp.codeExpirationTime') + ' (' + translator('common.minutes') + ')'}
+												</Typography>
+												<TextField
+													required
+													type='text'
+													placeholder={translator('whatsapp.codeExpirationTime')}
+													variant='outlined'
+													size='small'
+													onChange={handleCodeExpirationChange}
+													onBlur={(event: any) => {
+														if (event.target.value === '') setCodeExpirationTime(0);
+														updateTemplateForAuthentication();
 													}}
-												>
-													{translator('common.SelectFile')}
-												</Button>
+													inputProps={{ inputMode: 'numeric' }}
+													value={codeExpirationTime}
+													className={classes.mlr10}
+												/>
+												{
+													(codeExpirationTime || 0) > 90 && (
+														<Typography className={clsx(classes.pt5, classes.f13, classes.textRed)}>
+															{translator('whatsapp.codeExpirationMessage')}
+														</Typography>
+													)
+												}
 											</Grid>
-										</Grid>
-									</Grid>
+										)
+									}
+
+									{
+										category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && (
+											<Grid className={classes.whatsappFileUploadWrapper} item>
+												<Grid container spacing={1}>
+													<Grid item>
+														<FileUpload
+															classes={classes}
+															buttonType={buttonType}
+															fileData={fileData}
+															setFileData={(fileData) => uploadFile(fileData)}
+															sourceFileSize={fileData?.properties && fileData?.properties?.Size}
+														/>
+													</Grid>
+													<Grid item
+														style={{
+															paddingTop: 60,
+															paddingLeft: 10
+														}}
+													>
+														<Button
+															variant='contained'
+															size='medium'
+															className={clsx(
+																classes.actionButton,
+																classes.actionButtonLightBlue,
+																classes.backButton,
+																classes.mt50
+															)}
+															color='primary'
+															onClick={() => {
+																setIsFileSelected(false);
+																setDialogType({ type: 'gallary' });
+															}}
+														>
+															{translator('common.SelectFile')}
+														</Button>
+													</Grid>
+												</Grid>
+											</Grid>
+										)
+									}
 								</Grid>
 
 								<Grid item className={classes.whatsappPreviewWrapper}>
@@ -1292,14 +1401,18 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						isQuickReplyOpen={isQuickReplyOpen}
 						closeQuickReply={() => setIsQuickReplyOpen(false)}
 						quickReplyButtons={quickReplyButtons}
-						setQuickReplyButtons={(data: quickReplyButtonProps[]) =>
-							setQuickReplyButtons(data)
-						}
-						updateTemplateData={(data: quickReplyButtonProps[]) =>
-							updateTemplateButton(data, buttonTypes.QUICK_REPLY)
-						}
+						setQuickReplyButtons={(data: quickReplyButtonProps[]) => setQuickReplyButtons(data)}
+						updateTemplateData={(data: quickReplyButtonProps[]) => {
+							updateTemplateButton(data, buttonTypes.QUICK_REPLY);
+							if ((category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW) && data.length > 0) {
+								setAuthenticationButtonText(data[0].fields[0].value);
+							}
+						}}
 						templateButtons={templateData.templateButtons}
 						isEditable={true}
+						isDeletionAllowed={category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW}
+						canAddMoreButtons={category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW}
+						maxButtonTextLength={category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW ? 20 : 25}
 					/>
 					<ActionCallPopOver
 						isCallToActionOpen={isCallToActionOpen}

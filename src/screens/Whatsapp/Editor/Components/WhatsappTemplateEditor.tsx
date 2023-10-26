@@ -15,6 +15,7 @@ import { Box, Button, makeStyles, Tooltip } from '@material-ui/core';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { ClassesType } from '../../../Classes.types';
 import { checkLanguage } from '../../Common';
+import { authenticationTypes } from '../../Constant';
 
 const WhatsappTemplateEditor = ({
 	classes,
@@ -30,6 +31,7 @@ const WhatsappTemplateEditor = ({
 	linkCount,
 	templateTextLimit,
 	fileData,
+	category
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -131,6 +133,7 @@ const WhatsappTemplateEditor = ({
 		<>
 			<div className={classes.WhatsappTextareaWrapper}>
 				<textarea
+					disabled={category === authenticationTypes.AUTHENTICATIONEN || category === authenticationTypes.AUTHENTICATIONHEBREW}
 					required
 					ref={templateTextRef}
 					placeholder={translator('whatsapp.template.textareaPlaceholder')}
@@ -169,12 +172,16 @@ const WhatsappTemplateEditor = ({
 												onClick={() => OnEditorActionButtonClick(button)}>
 												{field.value}
 											</Button>
-											<DeleteOutlinedIcon
-												style={{ color: 'red', cursor: 'pointer' }}
-												onClick={() => {
-													onButtonDelete(button);
-												}}
-											/>
+											{
+												category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && (
+													<DeleteOutlinedIcon
+														style={{ color: 'red', cursor: 'pointer' }}
+														onClick={() => {
+															onButtonDelete(button);
+														}}
+													/>
+												)
+											}
 										</Box>
 									)
 							)
@@ -205,32 +212,36 @@ const WhatsappTemplateEditor = ({
 				</span>
 			</Box>
 
-			<Box className={classes.whatsappFuncDiv}>
-				<Box className={classes.whatsappBaseButtons}>
-					{actionButtons.map((button) => (
-						<Tooltip
-							disableFocusListener
-							title={<>{translator(button.tooltipTitle)}</>}
-							classes={{ tooltip: styles.customWidth }}
-							placement='top'
-							arrow
-							key={button.buttonTitle}>
-							{onButtonClick && (
-								<Button
-									className={clsx(
-										classes.whatsappInfoButtons,
-										isDisableButton(button.buttonTitle)
-											? classes.disabled
-											: null
+			{
+				category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && (
+					<Box className={classes.whatsappFuncDiv}>
+						<Box className={classes.whatsappBaseButtons}>
+							{actionButtons.map((button) => (
+								<Tooltip
+									disableFocusListener
+									title={<>{translator(button.tooltipTitle)}</>}
+									classes={{ tooltip: styles.customWidth }}
+									placement='top'
+									arrow
+									key={button.buttonTitle}>
+									{onButtonClick && (
+										<Button
+											className={clsx(
+												classes.whatsappInfoButtons,
+												isDisableButton(button.buttonTitle)
+													? classes.disabled
+													: null
+											)}
+											onClick={() => onButtonClick(button)}>
+											<>{translator(button.buttonTitle)}</>
+										</Button>
 									)}
-									onClick={() => onButtonClick(button)}>
-									<>{translator(button.buttonTitle)}</>
-								</Button>
-							)}
-						</Tooltip>
-					))}
-				</Box>
-			</Box>
+								</Tooltip>
+							))}
+						</Box>
+					</Box>
+				)
+			}
 		</>
 	);
 };
