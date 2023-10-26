@@ -19,6 +19,7 @@ export interface IsracardModel {
     ID?: string;
     SubAccountID?: number;
     api_key: string;
+    store_name: string;
     RegisterEventActive?: boolean;
     PurchaseEventActive: boolean;
     AbandonedEventActive: boolean;

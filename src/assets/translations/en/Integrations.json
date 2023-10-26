@@ -51,6 +51,8 @@
   },
   "Istores": {
     "title": "Istores",
-    "subTitle": "Insert your Istores API key"
+    "subTitle": "Insert your Istores API key",
+    "storeID": "Store ID",
+    "storeIDDesc": "Insert store ID"
   }
 }
