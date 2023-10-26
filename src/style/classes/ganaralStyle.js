@@ -812,7 +812,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: '100%'
   },
   hAuto: {
-    height: 'auto'
+    height: 'auto !important'
   },
   pRelative: {
     position: 'ralative'
