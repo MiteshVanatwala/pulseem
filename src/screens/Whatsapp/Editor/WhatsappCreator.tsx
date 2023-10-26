@@ -218,6 +218,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			placeholder: 'whatsapp.websiteURLPlaceholder',
 			value: '',
 		},
+		{
+			fieldName: 'mainReport.keepTrack',
+			type: '',
+			placeholder: '',
+			value: 'false',
+		},
 	];
 	const phoneNumberField = [
 		{
@@ -403,6 +409,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
 								},
+								{
+									fieldName: 'mainReport.keepTrack',
+									type: '',
+									placeholder: '',
+									value: `${button.keeptrackoflinks}`,
+								},
 							],
 						};
 					}
@@ -583,6 +595,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			if (button.typeOfAction === 'phonenumber') {
 				const countryCode = getValueByFieldName(button, 'whatsapp.country');
 				apiButtonData.phoneCode = '+' + countryCode?.replace(/\D/g, '');
+			} else if (button.typeOfAction === 'website') {
+				apiButtonData.keepTrackOfLinks = getValueByFieldName(button, 'mainReport.keepTrack') === 'true'
 			}
 			return apiButtonData;
 		});

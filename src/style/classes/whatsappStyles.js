@@ -195,6 +195,15 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	callToActionFields: {
 		direction: isRTL ? 'rtl' : 'ltr',
+		'& .keep-track': {
+			paddingTop: 5
+		},
+		'& .keep-track-desc': {
+			color: '#aaa'
+		},
+		'& .MuiGrid-container': {
+			paddingBottom: 20
+		}
 	},
 	quickReplyDelete: {
 		alignItems: 'center',

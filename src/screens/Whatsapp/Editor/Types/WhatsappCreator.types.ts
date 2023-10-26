@@ -164,6 +164,7 @@ export type ApiButtonData = {
 	phone?: string;
 	url?: string;
 	phoneCode?: string;
+	keepTrackOfLinks?: boolean;
 };
 
 export type templateDataProps = {
@@ -324,6 +325,7 @@ export type buttonsDataProps = {
 	url: string;
 	phone: string;
 	phoneCode?: string;
+	keeptrackoflinks?: any;
 };
 export type JSONFreetextVariableProps = {
 	[key: string]: string;

@@ -131,6 +131,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			placeholder: 'whatsapp.websiteURLPlaceholder',
 			value: '',
 		},
+		{
+			fieldName: 'mainReport.keepTrack',
+			type: '',
+			placeholder: '',
+			value: 'false',
+		},
 	];
 	const phoneNumberField = [
 		{
