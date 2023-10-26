@@ -51,6 +51,8 @@
   },
   "Istores": {
     "title": "Istores",
-    "subTitle": "הכניסו את מפתח ה-API שקיבלתם מ-Istores"
+    "subTitle": "הכניסו את מפתח ה-API שקיבלתם מ-Istores",
+    "storeID": "מספר מזהה חנות",
+    "storeIDDesc": "הכנס מספר מזהה חנות"
   }
 }
