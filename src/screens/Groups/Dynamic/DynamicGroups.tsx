@@ -7,7 +7,7 @@ import {
     Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox, GridSize
 } from '@material-ui/core'
-import { PreviewIcon, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon, SearchIcon } from '../../../assets/images/managment/index'
+import { PreviewIcon, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon, EditIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
@@ -490,9 +490,9 @@ const DynamicGroups = ({ classes }: any) => {
                     }
             },
             {
-                key: 'search',
-                uIcon: SearchIcon,
-                lable: t('common.search'),
+                key: 'edit',
+                uIcon: EditIcon,
+                lable: t('campaigns.Image2Resource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
                     navigate(`/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`)
