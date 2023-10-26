@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
 import { Loader } from "../../components/Loader/Loader";
 import { authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
-import { ShopifyModel, IntegrationGroups } from '../../Models/Integrations/Shopify/Shopify';
-import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
+import { ShopifyModel } from '../../Models/Integrations/Shopify/Shopify';
+import { LU_Plugin, IntegrationRequest, IntegrationGroups } from '../../Models/Integrations/Integration';
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
@@ -79,7 +79,7 @@ const Shopify = ({ classes }: any) => {
 
     if (settings.store_name.trim() === '' || validURL == null) errorsDump = { ...errorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
     if (settings.api_key.trim() === '') errorsDump = { ...errorsDump, api_key: t('integrations.shopify.enterAPIKey') };
-    if (settings.api_access_token.trim() === '') errorsDump = { ...errorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
+    if (settings.api_access_token.trim() === '') errorsDump = { ...errorsDump, api_access_token: t('integrations.shopify.enterAccessToken') };
     if (settings.api_version.trim() === '' || settings.api_version.indexOf('_') !== -1) errorsDump = { ...errorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
 
     await setErrors(errorsDump);
@@ -128,7 +128,7 @@ const Shopify = ({ classes }: any) => {
     } else {
       setErrors({
         ...errors,
-        group_not_selected: t(`integrations.shopify.selectGroup`),
+        group_not_selected: t(`integrations.selectGroup`),
       })
     }
   }
@@ -138,7 +138,7 @@ const Shopify = ({ classes }: any) => {
       case 201: {
         setMessages({
           ...messages,
-          group_saved: t(`integrations.shopify.formSubmitResponses.201`),
+          group_saved: t(`integrations.formSubmitResponses.201`),
         });
         setTimeout(() => {
           setMessages({
@@ -156,7 +156,7 @@ const Shopify = ({ classes }: any) => {
       case 201: {
         setMessages({
           ...messages,
-          authentication_message: t(`integrations.shopify.authResponses.201`),
+          authentication_message: t(`integrations.authResponses.201`),
         });
         setTimeout(() => {
           setMessages({
@@ -172,7 +172,7 @@ const Shopify = ({ classes }: any) => {
       case 400: {
         setErrors({
           ...errors,
-          authentication_message: t(`integrations.shopify.authResponses.400`),
+          authentication_message: t(`integrations.authResponses.400`),
         });
         break;
       }
@@ -184,16 +184,16 @@ const Shopify = ({ classes }: any) => {
       case 403: {
         setErrors({
           ...errors,
-          authentication_message: t(`integrations.shopify.authResponses.403`),
+          authentication_message: t(`integrations.authResponses.403`),
         })
         break;
       }
       case 404: {
         setErrors({
           ...errors,
-          authentication_message: t(`integrations.shopify.authResponses.404`),
+          authentication_message: t(`integrations.authResponses.404`),
         })
-        setToastMessage({ severity: 'error', color: 'error', message: "integrations.shopify.authResponses.404", showAnimtionCheck: false } as any);
+        setToastMessage({ severity: 'error', color: 'error', message: "integrations.authResponses.404", showAnimtionCheck: false } as any);
         break;
       }
     }
@@ -312,7 +312,7 @@ const Shopify = ({ classes }: any) => {
       >
         <Box className={clsx(classes.bodyTextDialog, classes.pb25)}>
           <Typography>
-            {t("integrations.shopify.resetConfirmation")}
+            {t("integrations.resetConfirmation")}
           </Typography>
         </Box>
       </BaseDialog>
@@ -356,7 +356,7 @@ const Shopify = ({ classes }: any) => {
                 <>
                   <Box className={clsx(classes.dblock, classes.pb15)}>
                     <Typography className={clsx(classes.bold)}>
-                      {t("integrations.shopify.apiKey")}
+                      {t("integrations.apiKey")}
                       <label className={clsx(classes.ml10, classes.textRed)}>*</label>
                     </Typography>
                     <Typography className={clsx(classes.mb5)}>
@@ -449,11 +449,11 @@ const Shopify = ({ classes }: any) => {
                           size='medium'
                           className={clsx(
                             classes.btn,
-                              classes.btnRounded
+                            classes.btnRounded
                           )}
                           color="primary"
                         >
-                          {t("integrations.shopify.connectStore")}
+                          {t("integrations.connectStore")}
                         </Button>
                       </Box>
                     )
@@ -474,7 +474,7 @@ const Shopify = ({ classes }: any) => {
                     )}
                     color="primary"
                   >
-                    {t("integrations.shopify.disconnectStore")}
+                    {t("integrations.disconnectStore")}
                   </Button>
 
                   <Button
@@ -570,7 +570,7 @@ const Shopify = ({ classes }: any) => {
                     color="primary"
                   />
                 }
-                label={t('integrations.shopify.purchase')}
+                label={t('integrations.purchase')}
               />
               <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
                 <Box className={clsx('group-dropdown', !settings.PurchaseEventActive ? classes.disabled : '')}>
@@ -617,7 +617,7 @@ const Shopify = ({ classes }: any) => {
                     color="primary"
                   />
                 }
-                label={t('integrations.shopify.cartAbandonment')}
+                label={t('integrations.cartAbandonment')}
               />
               <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
                 <Box className={clsx('group-dropdown', !settings.AbandonedEventActive ? classes.disabled : '')}>

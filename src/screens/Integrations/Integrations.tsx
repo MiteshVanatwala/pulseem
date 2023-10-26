@@ -11,6 +11,8 @@ import ShopifyIcon from '../../assets/images/shopify.png';
 import WooCommerceIcon from '../../assets/images/woocommerce.png';
 import CashCowIcon from '../../assets/images/cashCow.png';
 import { Title } from "../../components/managment/Title";
+import IsraCardIcon from '../../assets/images/isracard.png';
+import Istores from "./Istores";
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -63,6 +65,14 @@ const Integrations = ({ classes }: any) => {
             className={classes.iconTab}
             value='2'
           />
+
+          <Tab
+            label={t('integrations.Istores.title')}
+            icon={<img src={IsraCardIcon} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='3'
+          />
         </Tabs>
         <TabContext value={`${tabValue}`}>
           <TabPanel value='0' className={clsx(classes.pt0)}>
@@ -75,6 +85,10 @@ const Integrations = ({ classes }: any) => {
 
           <TabPanel value='2'>
             <CashCow classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='3'>
+            <Istores classes={classes} />
           </TabPanel>
         </TabContext>
       </Box>
