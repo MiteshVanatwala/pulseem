@@ -629,6 +629,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   bold: {
     fontWeight: "bold",
   },
+  semibold:{
+    fontWeight: 500,
+  },
   disabled: {
     opacity: ".65",
     pointerEvents: "none !important",
@@ -956,6 +959,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     // maxWidth: 300,
     minHeight: 34,
     color: '#000',
+    '& path': {
+      stroke: 'inherit',
+    },
     "@media screen and (max-width: 400px)": {
       // maxWidth: 200
     },

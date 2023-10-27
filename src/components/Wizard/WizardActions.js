@@ -5,7 +5,7 @@ import { BsTrash } from "react-icons/bs";
 import { BiSave } from 'react-icons/bi'
 import { useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md'
-import { AiOutlineFileText } from 'react-icons/ai'
+import { GrGallery } from 'react-icons/gr';
 
 const WizardActions = ({
     classes,
@@ -43,6 +43,9 @@ const WizardActions = ({
                     }
                     {additionalButtonsOnStart}
                     <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
+                        {
+                            helperText && <span className={clsx(classes.paddingSides5, classes.semibold)}>{helperText}</span>
+                        }
                         {onDelete &&
                             <Button
                                 className={clsx(
@@ -59,9 +62,8 @@ const WizardActions = ({
                             <Button
                                 onClick={() => onShowDocuments()}
                                 style={{ marginInline: 8, paddingInline: 10 }}
-                                className={clsx(classes.btn,
-                                    classes.btnRounded)}
-                                endIcon={<AiOutlineFileText style={{ fontSize: "24", paddingInline: 3 }} />}
+                                className={clsx(classes.btn, classes.btnRounded)}
+                                startIcon={<GrGallery />}
                             >
                                 {t("common.documentGallery")}
                             </Button>
@@ -133,9 +135,6 @@ const WizardActions = ({
                     </Box>
                 </Box>
             </Grid>
-            {helperText && <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                {helperText}
-            </Grid>}
         </Grid>
     );
 }
