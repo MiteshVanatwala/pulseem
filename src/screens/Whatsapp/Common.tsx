@@ -467,11 +467,13 @@ export const isShowTierAlert = (
 
 export const adjustTemplateVariablesForLink = (
 	templateData: savedTemplateTypesProps,
-	updatedDynamicVariable: updatedVariable[]
+	updatedDynamicVariable: updatedVariable[],
+	whatsappTempalteBody: string = ''
 ) => {
-	const {
+	let {
 		templateData: { templateText },
 	} = getTemplatePreviewData(templateData);
+	if (whatsappTempalteBody !== '') templateText = whatsappTempalteBody;
 	const DynamicFieldsIndex = getDynamicFieldIndex(templateText);
 	const adjustedDynamicVariableForLinks = DynamicFieldsIndex?.map(
 		(fieldIndex, index) => {
