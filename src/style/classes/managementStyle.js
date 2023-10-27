@@ -1255,8 +1255,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   myGroupsTitleSection: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 15,
     paddingBottom: 0
   },
   languageSelect: {
