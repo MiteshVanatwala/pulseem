@@ -479,7 +479,16 @@ const NotificationManagement = ({ classes }) => {
             data: ID
           })
         }
-      }
+      },
+      {
+        key: 'send',
+        uIcon: SendIcon,
+        lable: t('notifications.buttons.send'),
+        remove: StatusID !== 0,
+        rootClass: classes.sendIcon,
+        textClass: classes.sendIconText,
+        href: `${sitePrefix}Notification/send/${ID}`
+      },
     ]
     return (
       <Grid
@@ -498,25 +507,6 @@ const NotificationManagement = ({ classes }) => {
             />
           </Grid>
         ))}
-        {
-          StatusID === 0 && (
-            <Grid
-              className={clsx('rowIconContainer', classes.justifyCenter, classes.alignSelfCenter, classes.paddingSides5)}
-              item
-            >
-              <Button
-                className={clsx(
-                  classes.btn,
-                  classes.btnRounded,
-                )}
-                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                onClick={() => window.location.href = `${sitePrefix}Notification/send/${ID}`}
-              >
-                {t('campaigns.imgSendResource1.ToolTip')}
-              </Button>
-            </Grid>
-          )
-        }
       </Grid>
     )
   }

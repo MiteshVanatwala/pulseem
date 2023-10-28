@@ -476,9 +476,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
             data: CampaignID
           })
         }
-      }
-    ]
-    ]
+      },
+      {
+        key: 'send',
+        uIcon: SendIcon,
+        lable: t('campaigns.imgSendResource1.ToolTip'),
+        remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
+        rootClass: classes.sendIcon,
+        textClass: classes.sendIconText,
+        href: `${sitePrefix}Campaigns/SendSettings/${CampaignID}`
+      },
+    ]]
     return (
       <Grid
         container
@@ -506,26 +514,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
                   {icon.key === 'copy' && renderCopyToClipoard}
                 </Grid>
               ))}
-              {
-                !(Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false)) && (
-                  <Grid
-                    style={{ flex: 1, alignItems: 'center', }}
-                    className={clsx('rowIconContainer', classes.justifyCenter, classes.alignSelfCenter, classes.paddingSides5)}
-                    item
-                  >
-                    <Button
-                      className={clsx(
-                        classes.btn,
-                        classes.btnRounded,
-                      )}
-                      endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                      onClick={() => window.location.href = `${sitePrefix}Campaigns/SendSettings/${CampaignID}`}
-                    >
-                      {t('campaigns.imgSendResource1.ToolTip')}
-                    </Button>
-                  </Grid>
-                )
-              }
             </Grid>
           </Grid>
         ))}

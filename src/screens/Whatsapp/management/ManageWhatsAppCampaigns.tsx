@@ -23,6 +23,7 @@ import {
 	GroupsIcon,
 	PreviewIcon,
 	CalendarIcon,
+	SendIcon,
 } from '../../../assets/images/managment/index';
 import ManagmentIcon from './Component/ManagmentIcon';
 import { Title } from '../../../components/managment/Title';
@@ -83,6 +84,7 @@ import NoSetup from '../NoSetup/NoSetup';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { RestorDialogContent } from '../../../components/managment';
+import { sitePrefix } from '../../../config';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -624,6 +626,20 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				classes: classes,
 				id: row.WACampaignID.toString(),
 			},
+			{
+				key: 'send',
+				buttonKey: 'send',
+				uIcon: '',
+				icon: SendIcon,
+				lable: translator('campaigns.imgSendResource1.ToolTip'),
+				remove: Status !== 1 || AutomationID !== 0,
+				rootClass: classes.sendIcon,
+				textClass: classes.sendIconText,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.WACampaignID.toString(),
+				href: `${sitePrefix}whatsapp/campaign/edit/page2/${row.WACampaignID}`,
+			},
 		];
 		return (
 			<Grid
@@ -645,25 +661,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						/>
 					</Grid>
 				))}
-				{
-					!(Status !== 1 || AutomationID !== 0) && (
-						<Grid
-							className={clsx('rowIconContainer', classes.justifyCenter, classes.alignSelfCenter, classes.pt5, classes.paddingSides5)}
-							item
-						>
-							<Button
-								className={clsx(
-									classes.btn,
-									classes.btnRounded,
-								)}
-								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								onClick={() => window.location.href = `/react/whatsapp/campaign/edit/page2/${row.WACampaignID}`}
-							>
-								{translator('campaigns.imgSendResource1.ToolTip')}
-							</Button>
-						</Grid>
-					)
-				}
 			</Grid>
 		);
 	};
