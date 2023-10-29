@@ -907,7 +907,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (savedTemplateData && savedTemplateData?.Data?.types) {
 			reqData.Variables = adjustTemplateVariablesForLink(
 				savedTemplateData?.Data?.types,
-				formatUpdatedDynamicVariable(updatedDynamicVariable)
+				formatUpdatedDynamicVariable(updatedDynamicVariable),
+				templateCategory === 3 ? `${authenticationMockTemplate[savedTemplateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].body}` : ''
 			);
 		}
 

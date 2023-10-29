@@ -286,6 +286,7 @@ export type savedTemplateListProps = {
 	TemplateName: string;
 	FriendlyTemplateName: string;
 	IsAllowEdit: boolean;
+	Language?: string;
 };
 
 export type toastProps = {
