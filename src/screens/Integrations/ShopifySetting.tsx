@@ -71,13 +71,25 @@ const Shopify = ({ classes }: any) => {
     setIsPageLoading(false);
   }
 
+  const resetErrors = () => {
+    setErrors({
+      api_key: '',
+      api_access_token: '',
+      store_name: '',
+      authentication_message: '',
+      group_not_selected: '',
+      api_version: '',
+    })
+  }
+
   const authenticateStore = async () => {
     // Add validation then this logic
+    resetErrors();
     let errorsDump = errors;
-    const regex = /https:\/\/[^.\s]+\.myshopify\.com/;
-    const validURL = settings.store_name.trim().match(regex);
+    // const regex = /https:\/\/[^.\s]+\.myshopify\.com/;
+    // const validURL = settings.store_name.trim().match(regex);
 
-    if (settings.store_name.trim() === '' || validURL == null) errorsDump = { ...errorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
+    if (settings.store_name.trim() === '') errorsDump = { ...errorsDump, store_name: t('integrations.shopify.insertShopifyURL') };
     if (settings.api_key.trim() === '') errorsDump = { ...errorsDump, api_key: t('integrations.shopify.enterAPIKey') };
     if (settings.api_access_token.trim() === '') errorsDump = { ...errorsDump, api_access_token: t('integrations.shopify.enterAccessToken') };
     if (settings.api_version.trim() === '' || settings.api_version.indexOf('_') !== -1) errorsDump = { ...errorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
@@ -91,14 +103,7 @@ const Shopify = ({ classes }: any) => {
         api_access_token: '',
         api_version: ''
       })
-      setErrors({
-        api_key: '',
-        api_access_token: '',
-        store_name: '',
-        authentication_message: '',
-        group_not_selected: '',
-        api_version: '',
-      })
+      resetErrors();
       setShowLoader(true);
       const request = {
         IntegrationSource: LU_Plugin.Shopify,
@@ -343,7 +348,6 @@ const Shopify = ({ classes }: any) => {
                 onChange={(event) => setSettings({ ...settings, store_name: event.target.value })}
                 className={clsx(classes.dBlock, classes.shopifySettingTextBox)}
                 disabled={isAuthenticated}
-                placeholder="https://<store_id>.myshopify.com"
               />
               {!!errors.store_name && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>

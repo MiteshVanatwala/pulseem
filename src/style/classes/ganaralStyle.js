@@ -352,6 +352,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   minWidth100: {
     minWidth: 100,
   },
+  width100: {
+    width: 100,
+  },
   maxWidth400: {
     maxWidth: 400,
   },
@@ -626,6 +629,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   bold: {
     fontWeight: "bold",
   },
+  semibold:{
+    fontWeight: 500,
+  },
   disabled: {
     opacity: ".65",
     pointerEvents: "none !important",
@@ -812,7 +818,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: '100%'
   },
   hAuto: {
-    height: 'auto'
+    height: 'auto !important'
   },
   pRelative: {
     position: 'ralative'
@@ -953,6 +959,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     // maxWidth: 300,
     minHeight: 34,
     color: '#000',
+    '& path': {
+      stroke: 'inherit',
+    },
     "@media screen and (max-width: 400px)": {
       // maxWidth: 200
     },

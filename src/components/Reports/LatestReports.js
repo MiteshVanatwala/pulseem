@@ -11,6 +11,9 @@ import { actionURL } from '../../config/index';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle'
 import { NotesIcon } from '../../assets/images/dashboard/index'
 import { sitePrefix } from '../../config/index';
+import { userPhoneNumbers } from '../../redux/reducers/whatsappSlice';
+import { apiStatus } from '../../screens/Whatsapp/Constant';
+import NoSetup from '../../screens/Whatsapp/NoSetup/NoSetup';
 
 const LatestReports = ({ classes, t, isRTL }) => {
   const { windowSize } = useSelector(state => state.core);
@@ -19,6 +22,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
   const [tabValue, handleTabValue] = useState(0);
   const dateTimeFormat = 'DD/MM/YY, HH:mm';
   const dateFormat = 'D.M.YYYY';
+  const [isWhatsappAccountSetup, setIsWhatsappAccountSetup] = useState(true);
 
   const useStylesBootstrap = makeStyles((theme) => ({
     arrow: {
@@ -40,6 +44,19 @@ const LatestReports = ({ classes, t, isRTL }) => {
   }
 
   useEffect(initData, [dispatch]);
+
+  useEffect(() => {
+    (async () => {
+			const { payload: phoneNumberData } = await dispatch(userPhoneNumbers());
+			if (!(
+				phoneNumberData?.Status === apiStatus.SUCCESS &&
+				phoneNumberData?.Data &&
+				phoneNumberData?.Data?.length > 0
+			)) {
+				setIsWhatsappAccountSetup(false);
+			}
+		})();
+  }, []);
 
   const barOptions = {
     responsive: true,
@@ -270,12 +287,17 @@ const LatestReports = ({ classes, t, isRTL }) => {
           {!showGraphs && (
             <Grid>
               <Box className={classes.w100}>
-                <ButtonWithTitle
-                  classes={classes}
-                  title={NoDataObject[tabType].title}
-                  buttonText={NoDataObject[tabType].buttonText}
-                  redirect={NoDataObject[tabType].redirect}
-                />
+                {
+                  tabType === 'whatsapp' && !isWhatsappAccountSetup ? 
+                    <NoSetup classes={classes} isCompact={true} />
+                   :
+                  <ButtonWithTitle
+                    classes={classes}
+                    title={NoDataObject[tabType].title}
+                    buttonText={NoDataObject[tabType].buttonText}
+                    redirect={NoDataObject[tabType].redirect}
+                  />
+                }
               </Box>
             </Grid>
           )}

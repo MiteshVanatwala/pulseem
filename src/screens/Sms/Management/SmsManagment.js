@@ -20,7 +20,8 @@ import {
 	DuplicateIcon,
 	EditIcon,
 	GroupsIcon,
-	PreviewIcon
+	PreviewIcon,
+	SendIcon
 } from '../../../assets/images/managment/index';
 import {
 	TablePagination,
@@ -410,7 +411,16 @@ const SmsManagnentScreen = ({ classes }) => {
 						data: Id
 					})
 				}
-			}
+			},
+			{
+				key: 'send',
+				uIcon: SendIcon,
+				lable: t('campaigns.imgSendResource1.ToolTip'),
+				remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
+				rootClass: classes.sendIcon,
+				textClass: classes.sendIconText,
+				href: `${sitePrefix}sms/send/${Id}`
+			},
 		]
 		return (
 			<Grid
@@ -429,25 +439,6 @@ const SmsManagnentScreen = ({ classes }) => {
 						/>
 					</Grid>
 				))}
-				{
-					!(Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false)) && (
-						<Grid
-							className={clsx('rowIconContainer', classes.paddingSides5, classes.alignSelfCenter)}
-							item
-						>
-							<Button
-								className={clsx(
-									classes.btn,
-									classes.btnRounded,
-								)}
-								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								onClick={() => window.location.href = `${sitePrefix}sms/send/${Id}`}
-							>
-								{t('campaigns.imgSendResource1.ToolTip')}
-							</Button>
-						</Grid>
-					)
-				}
 			</Grid>
 		)
 	}

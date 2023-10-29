@@ -479,7 +479,16 @@ const NotificationManagement = ({ classes }) => {
             data: ID
           })
         }
-      }
+      },
+      {
+        key: 'send',
+        uIcon: SendIcon,
+        lable: t('notifications.buttons.send'),
+        remove: StatusID !== 0,
+        rootClass: classes.sendIcon,
+        textClass: classes.sendIconText,
+        href: `${sitePrefix}Notification/send/${ID}`
+      },
     ]
     return (
       <Grid
@@ -498,25 +507,6 @@ const NotificationManagement = ({ classes }) => {
             />
           </Grid>
         ))}
-        {
-          StatusID === 0 && (
-            <Grid
-              className={clsx('rowIconContainer', classes.justifyCenter, classes.alignSelfCenter, classes.paddingSides5)}
-              item
-            >
-              <Button
-                className={clsx(
-                  classes.btn,
-                  classes.btnRounded,
-                )}
-                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                onClick={() => window.location.href = `${sitePrefix}Notification/send/${ID}`}
-              >
-                {t('campaigns.imgSendResource1.ToolTip')}
-              </Button>
-            </Grid>
-          )
-        }
       </Grid>
     )
   }
@@ -855,15 +845,13 @@ const NotificationManagement = ({ classes }) => {
       title: null,
       renderTitle: () => (
         <Box className={classes.myGroupsTitleSection}>
-          <Typography className={classes.dialogTitle}>{t('notifications.myGroups') + " ("}</Typography>
-          {" "}
-          <Typography className={clsx(classes.dialogTitle, classes.link, classes.bold)} onClick={() => {
+          <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
+          <Typography className={clsx(classes.link, classes.bold)} onClick={() => {
             setDialogType({
               type: 'createGroup',
               data: {}
             })
-          }}> {t('notifications.howToCreateGroup')}? </Typography>
-          {" )"}
+          }}>({t('notifications.howToCreateGroup')}?)</Typography>
         </Box>
       ),
       showDivider: false,
@@ -907,7 +895,8 @@ const NotificationManagement = ({ classes }) => {
           size='small'
           onClick={handleDialogClose}
           className={clsx(
-            classes.gruopsDialogButton,
+            classes.middle,
+            classes.width100,
             classes.btn,
             classes.btnRounded
           )}>
@@ -919,7 +908,7 @@ const NotificationManagement = ({ classes }) => {
 
   const renderCreateGroup = () => {
     return {
-      title: null,
+      title: t('notifications.howToCreateGroup'),
       paperStyle: classes.maxWidth540,
       showDivider: false,
       icon: (
@@ -928,20 +917,7 @@ const NotificationManagement = ({ classes }) => {
         </div>
       ),
       content: (
-        <Box className={classes.dialogBox}>
-          <Button
-            onClick={handleShowGroups}
-            className={clsx(
-              classes.btn,
-              classes.btnRounded,
-              classes.f12,
-            )}
-            startIcon={!isRTL ? <MdArrowBackIos size={14} /> : <MdArrowForwardIos size={14} />}
-            style={{ position: 'absolute', top: 60 }}
-          >
-            {t('notifications.back')}
-          </Button>
-          <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
+        <Box className={classes.pb10}>
           <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
           <Typography variant='body'>{t('common.pulseemLink')}</Typography>
           <Typography className={classes.mt10}>{t('notifications.thenYouWillAdd')}</Typography>
@@ -953,6 +929,7 @@ const NotificationManagement = ({ classes }) => {
             variant='outlined'
             className={classes.mt10}
             value={t('notifications.sampleUrl')}
+            disabled
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -968,13 +945,14 @@ const NotificationManagement = ({ classes }) => {
         <Button
           variant='contained'
           size='small'
-          onClick={handleDialogClose}
+          onClick={handleShowGroups}
           className={clsx(
-            classes.gruopsDialogButton,
+            classes.middle,
+            classes.width100,
             classes.btn,
-            classes.btnRounded,
+            classes.btnRounded
           )}>
-          {t('common.confirm')}
+          {t('common.back')}
         </Button>
       )
     }

@@ -23,7 +23,8 @@ import {
 	DuplicateIcon,
 	EditIcon,
 	PreviewIcon,
-	SearchIcon
+	SearchIcon,
+	SendIcon
 } from '../../../assets/images/managment/index';
 import ManagmentIcon from './Component/ManagmentIcon';
 import { Title } from '../../../components/managment/Title';
@@ -609,6 +610,18 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				rootClass: classes.paddingIcon,
 				id: row.Id?.toString(),
 			},
+			{
+				key: 'send',
+				buttonKey: 'send',
+				uIcon: SendIcon,
+				lable: translator('whatsappManagement.submit'),
+				remove: row.StatusId !== templateStatusIdsByStatusName.Created,
+				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
+				classes: classes,
+				rootClass: classes.sendIcon,
+				textClass: classes.sendIconText,
+				id: row.Id.toString(),
+			},
 		];
 		return (
 			<Grid
@@ -630,26 +643,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						/>
 					</Grid>
 				))}
-
-				{
-					!(row.StatusId !== templateStatusIdsByStatusName.Created) && (
-						<Grid
-							className={clsx('rowIconContainer', classes.justifyCenter, classes.alignSelfCenter, classes.pt5, classes.paddingSides5)}
-							item
-						>
-							<Button
-								className={clsx(
-									classes.btn,
-									classes.btnRounded,
-								)}
-								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								onClick={() => onRowIconClick('send', row.Id?.toString())}
-							>
-								{translator('whatsappManagement.submit')}
-							</Button>
-						</Grid>
-					)
-				}
 			</Grid>
 		);
 	};

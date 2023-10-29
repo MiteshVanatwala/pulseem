@@ -351,8 +351,27 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: windowSize === "xs" && 15,
   },
   sendIcon: {
-    border: "1px solid #27AE60",
+    border: "1px solid #FF3343",
     borderRadius: 5,
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+    paddingTop: 5,
+    paddingBottom: 10,
+    '& .rowIcon': {
+      verticalAlign: 'middle',
+      paddingTop: 10,
+      paddingBottom: 5,
+    },
+    '& *': {
+      color: '#fff !important',
+      fill: '#fff'
+    },
+    '&:hover': {
+      background: '#fff',
+      '& *': {
+        color: '#FF3343 !important',
+        fill: '#FF3343'
+      }
+    }
   },
   sendIconText: {
     color: "#27AE60",
@@ -1255,8 +1274,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   myGroupsTitleSection: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 15,
     paddingBottom: 0
   },
   languageSelect: {
