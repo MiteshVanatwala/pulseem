@@ -903,7 +903,7 @@ const SmsSend = ({ classes, ...props }) => {
               innerHeight={325}
             />
           ) : null}
-          <div className={classes.groupsFooter}>
+          {groupClick && <div className={classes.groupsFooter}>
             <div
               style={{
                 display: "flex",
@@ -976,7 +976,7 @@ const SmsSend = ({ classes, ...props }) => {
                 </Tooltip>
               </div>
             ) : null}
-          </div>
+          </div>}
           {manualClick === true ? (
             <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
               {areaData !== "" ? (
@@ -1019,7 +1019,7 @@ const SmsSend = ({ classes, ...props }) => {
                     variant='contained'
                     key={"extraButton"}
                     className={clsx(
-                      classes.btn,
+                      // classes.btn,
                       classes.btnRounded
                     )}
                     onClick={() => {
@@ -1408,19 +1408,24 @@ const SmsSend = ({ classes, ...props }) => {
         </Grid>
         <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
         <div className={classes.pulseDiv}>
-          <span
-            className={(selectedGroups.length >= 1 && sendType !== "3") ? classes.pulse : classes.pulseDisable}
+          <Button
+            className={clsx(
+              classes.btn, classes.btnRounded,
+              (selectedGroups.length >= 1 && sendType !== "3") ? null : classes.disabled
+            )}
             onClick={() => {
               handlePulseDialog();
             }}
           >
-            <FaRegCalendarAlt style={{ fontSize: '125%' }} />
+            <FaRegCalendarAlt className={classes.pl5} />
             {t("mainReport.pulseSend")}
-          </span>
+          </Button>
           <Tooltip
             disableFocusListener
+            style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
             title={t("smsReport.pulseSendTip")}
             classes={{ tooltip: classes.customWidth }}
+            className={clsx(classes.ml5, classes.mt1)}
           >
             <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
               <BsInfoCircle />
@@ -2018,6 +2023,7 @@ const SmsSend = ({ classes, ...props }) => {
               classes.btnRounded,
               classes.backButton,
               classes.mb5,
+              classes.redButton,
             )}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             color="primary"

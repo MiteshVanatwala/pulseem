@@ -2039,10 +2039,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   currentActiveTab: {
     background: 'white',
-    color: '#FF4D2A !important',
+    color: '#ff2c44 !important',
     borderBottom: '4px solid #ff2c44 !important',
     '& svg': {
-      color: '#000',
+      color: '#ff2c44',
     }
   },
   activeTab: {

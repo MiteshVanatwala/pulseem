@@ -580,9 +580,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         // justifyContent: "space-between",
         alignItems: "center",
         marginTop: "15px",
-        '& button': {
-            marginBottom: 5,
-        }
+        // '& button': {
+        //     marginBottom: 5,
+        // }
     },
     listValues:
     {

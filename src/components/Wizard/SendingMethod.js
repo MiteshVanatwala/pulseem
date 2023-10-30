@@ -1,4 +1,4 @@
-import { FormControl, FormControlLabel, Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Radio, FormHelperText, Divider, MenuItem } from "@material-ui/core";
+import { FormControl, FormControlLabel, Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Radio, FormHelperText, Divider, MenuItem, IconButton } from "@material-ui/core";
 import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -9,7 +9,8 @@ import clsx from "clsx";
 import { Stack } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 import DynamicConfirmDialog from "../DialogTemplates/DynamicConfirmDialog";
-import { IoIosArrowDown, IoIosInformationCircle } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
+import { BsInfoCircle } from "react-icons/bs";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -155,10 +156,10 @@ const SendingMethod = ({
 
     return (
         <div className={classes.h100}>
-            <div style={{ height: '85%' }}>
+            <div>
                 <h2
                     className={classes.sectionTitle}
-                    style={{ marginTop: windowSize === "xs" ? 15 : 5 }}
+                    style={{ marginTop: windowSize === "xs" ? 15 : null }}
                 >
                     {t("notifications.whenToSend")}
                 </h2>
@@ -213,9 +214,10 @@ const SendingMethod = ({
                                         disableFocusListener
                                         classes={{ tooltip: styles.customWidth }}
                                         title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}
-                                        style={{ marginInlineStart: "5px" }}
                                     >
-                                        <div><IoIosInformationCircle size={20} /></div>
+                                        <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                                            <BsInfoCircle />
+                                        </IconButton>
                                     </Tooltip>
                                 </Stack>
                             </Stack>
@@ -303,7 +305,9 @@ const SendingMethod = ({
                                         classes={{ tooltip: styles.customWidth }}
                                         style={{ marginInlineStart: "5px" }}
                                     >
-                                        <div><IoIosInformationCircle size={20} /></div>
+                                        <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                                            <BsInfoCircle />
+                                        </IconButton>
                                     </Tooltip>
                                 </Stack>
                             </Stack>
