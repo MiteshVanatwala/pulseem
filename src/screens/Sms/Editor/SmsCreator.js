@@ -638,7 +638,7 @@ const SmsCreator = ({ classes }) => {
 
   const renderFields = () => {
     return (
-      <Grid container spacing={2} className={classes.fieldDiv}>
+      <Grid container spacing={4} className={classes.fieldDiv}>
         <Grid item xs={12} md={4} sm={12} className={clsx(classes.buttonForm, 'textBoxWrapper')}>
           <Typography className={classes.buttonHead}>
             {t("mainReport.campName")}
@@ -948,7 +948,7 @@ const SmsCreator = ({ classes }) => {
               </Grid>
             </Box>
           </Grid>
-          <Grid item xs={12} md={4} sm={12}>
+          <Grid item xs={12} md={4} sm={12} className={classes.pr15}>
             <Box className={classes.switchDiv}>
               <FormControlLabel
                 control={

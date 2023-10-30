@@ -829,7 +829,7 @@ const SmsSend = ({ classes, ...props }) => {
             className={
               clsx(classes.btnTab, 'alignCenter', { [classes.currentActiveTab]: !!manualClick })
             }
-            style={{ marginInlineEnd: "7px", cursor: "pointer" }}
+            style={{ cursor: "pointer" }}
             onClick={() => {
               setgroupClick(false);
               settoggleChecked(false)
@@ -858,6 +858,7 @@ const SmsSend = ({ classes, ...props }) => {
               : clsx(classes.areaManual)
           }>
             <textarea
+              style={{height: 395}}
               placeholder={t("sms.dragXlOrCsv")}
               spellCheck="false"
               autoComplete="off"
@@ -1326,7 +1327,7 @@ const SmsSend = ({ classes, ...props }) => {
                   maxLength="3"
                 />
 
-                <span style={{ marginInlineEnd: "8px", marginBottom: "8px", fontSize: 14 }}>
+                <span style={{ marginInline: "8px", marginBottom: "8px", fontSize: 14 }}>
                   {t("mainReport.days")}
                 </span>
 
@@ -2762,7 +2763,7 @@ const SmsSend = ({ classes, ...props }) => {
         Element={(
           <Box className='stepHead'>
             <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
-              <span >1</span>
+              <span>2</span>
             </Stack>
             <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
               <span className={'stepTitle'}>

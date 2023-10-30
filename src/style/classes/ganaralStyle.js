@@ -190,14 +190,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "center",
   },
   dialogTitle: {
-    fontSize: '1rem',
+    fontSize: '1.2rem',
     fontWeight: "500",
     color: "#fff",
-    paddingInlineEnd: isRTL ? 15 : 0,
-    paddingInlineStart: isRTL ? 0 : 15,
+    paddingInline: 15,
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    direction: isRTL ? 'rtl': 'ltr'
   },
   resetDialogTitle: {
     fontSize: "2rem",
@@ -629,7 +629,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   bold: {
     fontWeight: "bold",
   },
-  semibold:{
+  semibold: {
     fontWeight: 500,
   },
   disabled: {
@@ -969,13 +969,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
       color: '#fff',
       '& svg': {
-        color: '#fff'
+        color: '#fff',
+        fill: '#fff'
       }
     },
     border: '2px solid #F65026',
-    '& svg:not(.trash)': {
-      marginLeft: 5,
-      color: '#000'
+    '& svg': {
+      '&:hover': {
+        color: '#fff',
+        fill: '#fff'
+      }
+      // marginLeft: 5,
+      // color: '#000'
     },
     '& .MuiButton-startIcon': {
       marginTop: '-2px',
@@ -1107,7 +1112,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #ced4da",
     borderBottom: "none",
     outline: "none",
-    padding: "10px",
+    padding: "10px !important",
     borderTopLeftRadius: ".25rem",
     borderTopRightRadius: ".25rem",
     "&::placeholder": {
@@ -1998,6 +2003,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#777777",
     width: '100%',
     cursor: 'pointer',
+    borderBottom: '4px solid transparent',
     "@media screen and (max-width: 768px)": {
       fontSize: "14px",
     },
@@ -2019,12 +2025,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textTransform: "capitalize",
     minWidth: 120,
     minHeight: 40,
-    color: '#000',
-    background: '#E6E6E6',
+    color: '#777777',
+    // background: '#E6E6E6',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    border: '3px solid #fff',
-    borderBottom: 'none',
+    background: 'white',
+    borderBottom: '4px solid transparent',
     '&.alignCenter': {
       display: 'flex',
       justifyContent: 'center',
@@ -2032,14 +2038,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   currentActiveTab: {
-    background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
-    color: "#fff !important",
+    background: 'white',
+    color: '#FF4D2A !important',
+    borderBottom: '4px solid #ff2c44 !important',
     '& svg': {
-      color: '#fff',
+      color: '#000',
     }
   },
   activeTab: {
-    borderBottom: "4px solid #ff2c44",
+    borderBottom: '4px solid #ff2c44 !important',
     color: "#ff2c44 !important",
   },
   "@media screen and (max-width: 768px)": {
@@ -2602,10 +2609,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           // paddingInline: '6px',
           // alignSelf: 'center'
           // background: 'red',
-          marginLeft: 5,
+          marginInlineStart: 5,
           margin: 'auto',
           paddingTop: 5,
-          paddingBottom: 5,
+          paddingBottom: 5
         },
         '& .stepDesc': {
           fontSize: 20,
@@ -2913,6 +2920,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "4px",
     cursor: "pointer",
     color: "#ff3343",
+    '& svg': {
+      marginInlineEnd: 5
+    },
     "&:hover": {
       color: "#ffffff",
       backgroundColor: "#ff3343",
@@ -2931,6 +2941,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "not-allowed",
     border: "1px solid  #808080",
     justifyContent: "space-between",
+    '& svg': {
+      marginInlineEnd: 5
+    },
   },
   toggleDiv: {
     display: "flex",
@@ -2941,7 +2954,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "10px",
     outline: "none",
     width: "70px",
-    marginInlineEnd: "5px",
+    // marginInlineEnd: "5px",
     marginBottom: "8px",
     textAlign: "center",
     paddingRight: 0,
@@ -3132,7 +3145,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   switchDiv: {
     display: "flex",
-    marginLeft: 11,
+    marginInlineStart: 25,
     "@media screen and (max-width: 768px)": {
       width: "100%",
       marginInlineStart: "0px",
@@ -3160,7 +3173,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: 30
     },
     '& .dialogTitle': {
-      width: '85%' 
+      width: '85%'
     }
   },
   textRight: {
@@ -3601,11 +3614,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         // HTML Content
         // width: '-webkit-fill-available',
         // height: 'calc(43vh)',
-        
+
         // iFrame
         width: '100%',
         height: '100%',
-        
+
         overflow: 'auto',
         '&:before': {
           content: "",
@@ -3621,7 +3634,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .ep_screen': {
         width: 'auto',
         height: 'calc(50vh)',
-        position: 'relative',  
+        position: 'relative',
         background: '#fff',
         border: '20px solid #474e5d',
         borderRadius: 10,
