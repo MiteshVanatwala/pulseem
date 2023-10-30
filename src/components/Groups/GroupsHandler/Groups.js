@@ -359,7 +359,11 @@ const Groups = ({ classes,
                             onChange={handleSortBySelected}
                             endAdornment={null}
                             className={clsx(classes.paddingSides10)}
-                            style={{ color: 'inherit', fontSize: '0.875rem', lineHeight: '1.5rem' }}
+                            style={{
+                                color: 'inherit',
+                                fontFamily: 'Assistant',
+                                lineHeight: 1.3
+                            }}
                             MenuProps={{
                                 PaperProps: {
                                     style: {

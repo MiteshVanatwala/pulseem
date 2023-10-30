@@ -1052,7 +1052,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         fontSize: 12
     },
     filterButtonsContainer: {
-        paddingBottom: 5,
+        // paddingBottom: 5,
         '& *:not(svg):not(span)': {
             marginInlineEnd: 5
         },

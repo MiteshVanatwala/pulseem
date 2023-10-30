@@ -1079,6 +1079,34 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
     }
 
+    const renderSubHeader = () => {
+        return (
+            <Title
+                Element={(
+                    <Box className='stepHead'>
+                        <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
+                            <span>2</span>
+                        </Stack>
+                        <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
+                            <span className={'stepTitle'}>
+                                {t("mainReport.sendSetting")}
+                            </span>
+
+                        </Stack>
+                    </Box>
+                )}
+                classes={classes}
+                isIcon={false}
+                ContainerStyle={{
+                    padding: 0,
+                    minHeight: 42,
+                    height: 'auto',
+                    overflowY: 'hidden'
+                }}
+            />
+        )
+    }
+
     return (
         <DefaultScreen
             currentPage="newsletter"
@@ -1094,6 +1122,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         classes={classes} />
                 </Box>
                 <Box className={'containerBody'}>
+                    {renderSubHeader()}
                     <Grid container style={{ marginBottom: "40px" }} spacing={10}>
                         <Grid item md={7} xs={12}>
                             <Stack className={classes.infoDiv} direction="row" style={{ height: 50 }}>
