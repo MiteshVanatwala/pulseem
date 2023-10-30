@@ -17,7 +17,7 @@ import DynamicModalFields from './DynamicModalFields';
 import { fieldIDs, fieldNames } from '../../Constant';
 import { useParams } from 'react-router-dom';
 import ValidationAlert from './ValidationAlert';
-import { RemoveConsecutiveSpaces } from '../../../../helpers/Utils/TextHelper';
+import { RemoveNewLineAndConsecutiveSpaces } from '../../../../helpers/Utils/TextHelper';
 
 const DynamicModal = ({
 	classes,
@@ -216,7 +216,7 @@ const DynamicModal = ({
 
 					return {
 						...updatedVariable,
-						VariableValue: field === 'text' ? RemoveConsecutiveSpaces(value) : value,
+						VariableValue: field === 'text' ? RemoveNewLineAndConsecutiveSpaces(value) : value,
 						FieldTypeId: getfieldTypeId(field),
 						IsStatastic: field === 'link' ? isTrackLink : false,
 					};
@@ -229,7 +229,7 @@ const DynamicModal = ({
 				{
 					FieldTypeId: getfieldTypeId(field),
 					VariableIndex: dynamicModalVariable,
-					VariableValue: field === 'text' ? RemoveConsecutiveSpaces(value) : value,
+					VariableValue: field === 'text' ? RemoveNewLineAndConsecutiveSpaces(value) : value,
 					IsStatastic: field === 'link' ? isTrackLink : false,
 				},
 			]);

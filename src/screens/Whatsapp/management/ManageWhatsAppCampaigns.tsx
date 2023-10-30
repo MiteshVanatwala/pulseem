@@ -58,6 +58,8 @@ import {
 	campaignStatus,
 	campaignStatuses,
 	resetToastData,
+	authenticationMockTemplate,
+	authenticationTypes
 } from '../Constant';
 import Pagination from './Component/Pagination';
 import { KeyboardDatePicker } from '@material-ui/pickers';
@@ -476,6 +478,30 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		)?.TemplateId;
 	};
 
+	const renderAuthenticationPreview = (templateData: any) => {
+		setButtonType('quickReply');
+		const buttonData: any = setButtonsData('quickReply', [
+			{
+				title: templateData.Data?.types?.authentication?.actions[0].copy_code_text,
+				type: '',
+				url: '',
+				phone: '',
+			}
+		]);
+		let template = `${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].body}`;
+		if (templateData.Data?.types?.authentication?.code_expiration_minutes) {
+			template += `\n\n ${authenticationMockTemplate[templateData.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW].subtitle.replace('X', `${templateData.Data?.types?.authentication?.code_expiration_minutes || 0}`)}`;
+		}
+		setTemplateData({
+			templateText: template,
+			templateButtons: buttonData,
+		});
+		setFileData({
+			fileLink: '',
+			fileType: ''
+		});
+	}
+
 	const onPreview = async (campaignId: string) => {
 		const previewTemplateId = getTemplateIdFromId(campaignId);
 		if (previewTemplateId) {
@@ -490,7 +516,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				const templates = templateData.payload?.Data?.Items;
 				if (templates && templates?.length > 0) {
 					const templateData = templates[0];
-					onSavedTemplateChange(templateData?.Data);
+					if (templateData.CategoryId === 3) {
+						renderAuthenticationPreview(templateData);
+					} else {
+						onSavedTemplateChange(templateData?.Data);
+					}
 				}
 				setDialogType({type: 'preview'})
 			} else {
