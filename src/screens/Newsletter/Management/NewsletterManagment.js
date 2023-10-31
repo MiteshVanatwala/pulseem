@@ -72,12 +72,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   const renderToast = () => {
     if (toastMessage) {
-        setTimeout(() => {
-            setToastMessage(null);
-        }, 3000);
-        return (
-            <Toast data={toastMessage} />
-        );
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 3000);
+      return (
+        <Toast data={toastMessage} />
+      );
     }
     return null;
   }
@@ -623,13 +623,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
           {renderStatusCell(row.Status)}
         </TableCell>
         <TableCell
-          component="th"
-          scope="row"
-          className={clsx(
-            classes.flex6,
-            classes.tableCellRoot
-          )}
-        >
+          component='th'
+          scope='row'
+          classes={{ root: classes.tableCellRoot }}
+          className={classes.flex6}>
           {accountFeatures && renderCellIcons(row)}
         </TableCell>
       </TableRow>
@@ -770,11 +767,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
         </Grid>
       ),
       onConfirm: async () => {
-        handleClose()
-        setDialogType({
-          type: 'duplicate',
-          data: data.CampaignID
-        })
+        handleClose();
+        setDuplicateDialog({
+          id: data.CampaignID,
+          name: data?.Name
+        });
+
+        // setDialogType({
+        //   type: 'duplicate',
+        //   data: data.CampaignID
+        // })
       }
     }
   }
@@ -817,6 +819,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           {'\uE0D5'}
         </div>
       ),
+      renderButtons: () => (null),
       content: (
         <Box
           className={classes.gruopsDialogContent}>
@@ -856,103 +859,15 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
   })
 
-  const getDuplicateDialog = (campaignId, campaignName) => ({
-    title: t('campaigns.dialogDuplicateTitle'),
-    showDivider: false,
-    content: (
-      <>
-        <Typography align='center'
-          className={classes.mb5}
-        >{RenderHtml(t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `<b>"${campaignName}"</b>`))}
-        </Typography>
-        <FormControl>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.Groups)}
-                  checked={duplicateOptions.indexOf(CloneOptions.Groups) > -1}
-                />
-              }
-              label={t("common.Groups")}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.Filters)}
-                  checked={duplicateOptions.indexOf(CloneOptions.Filters) > -1}
-                />
-              }
-              label={t("campaigns.newsLetterEditor.sendSettings.filters")}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.SendDate)}
-                  checked={duplicateOptions.indexOf(CloneOptions.SendDate) > -1}
-                />
-              }
-              label={t("sms.sendingTime")}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.SmsMarketing)}
-                  checked={duplicateOptions.indexOf(CloneOptions.SmsMarketing) > -1}
-                />
-              }
-              label={t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  disabled={duplicateOptions.indexOf(CloneOptions.Groups) === -1}
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.Pulses)}
-                  checked={duplicateOptions.indexOf(CloneOptions.Pulses) > -1}
-                />
-              }
-              label={t("smsReport.pulseSending")}
-            />
-          </FormGroup>
-        </FormControl>
-      </>
-    ),
-    onConfirm: async () => {
-      clearSearch()
-      handleClose()
-      setPage(1)
-      await dispatch(duplicteCampaign({ CampaignID: campaignId, CloneOptions: duplicateOptions }))
-      getData()
-    },
-    onCancel: () => {
-      setDuplicateOptions([]);
-      handleClose();
-    },
-    onClose: () => {
-      setDuplicateOptions([]);
-      handleClose();
-    }
-  })
-
   const renderDialog = () => {
     const { data, type } = dialogType || {}
-    const campaign = newslettersData?.find((e) => { return parseInt(e.CampaignID) === parseInt(data) });
+    // const campaign = newslettersData?.find((e) => { return parseInt(e.CampaignID) === parseInt(data) });
 
     const dialogContent = {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(campaign?.CampaignID, campaign?.Name),
+      // duplicate: getDuplicateDialog(campaign?.CampaignID, campaign?.Name),
       cautionEditorChange: getCautionEditorChangeDialog(data),
     }
 
@@ -992,9 +907,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
         duplicateOptions={[]}
         handleClose={async (selectedOptions) => {
           setDuplicateDialog({});
-          if (selectedOptions !== undefined)  {
+          if (selectedOptions !== undefined) {
             clearSearch()
-            handleClose()
+            // handleClose()
             setPage(1)
             await dispatch(duplicteCampaign({ CampaignID: duplicateDialog?.id, CloneOptions: selectedOptions }))
             getData()

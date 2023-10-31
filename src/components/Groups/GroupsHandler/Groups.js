@@ -343,7 +343,7 @@ const Groups = ({ classes,
                     />
                 </FormControl>}
                 {showSortBy && <Box className={classes.filterButtonsContainer}>
-                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", fontWeight: "600", textTransform: "capitalize" }}>
+                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown, classes.mt1)} onClick={callbackReciFilter} style={{ height: "36px", fontWeight: "600", textTransform: "capitalize" }}>
                         {windowSize !== 'xs' && <BsFilter style={{ fontSize: "22px", color: "#ff3343" }} />} {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
 
                     </Button> : null}

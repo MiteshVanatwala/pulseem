@@ -9,6 +9,7 @@ import { setCookie, getCookie } from '../../helpers/Functions/cookies';
 import { getTwoFactorAuthValues } from '../../redux/reducers/commonSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { IoIosArrowDown } from 'react-icons/io';
+import { FaCloudDownloadAlt } from 'react-icons/fa';
 
 const ConfirmRadioDialog = ({
     classes,
@@ -54,7 +55,7 @@ const ConfirmRadioDialog = ({
     const dialog = {
         title: title,
         showDivider: true,
-        icon: null,
+        icon: <FaCloudDownloadAlt />,
         content: (
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.mb4)}>

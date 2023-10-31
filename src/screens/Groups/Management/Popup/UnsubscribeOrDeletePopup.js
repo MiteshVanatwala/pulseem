@@ -720,13 +720,13 @@ const UnsubscribeOrDeletePopup = ({
             open={dialogType}
             childrenStyle={showDropBox ? classes.h50v : classes.h10v}
             title={
-                <Box className={clsx(classes.flex, classes.justifyBetween)}>
+                <Box className={clsx(classes.flex, classes.justifyBetween, classes.alignItemsCenter)}>
                     <Box>
                         {DialogObject[dialogType].title}
                     </Box>
                     {showDropBox && <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
-                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} className={clsx(classes.paddingSides15, classes.pt5)} />
+                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#fff' }} className={clsx(classes.paddingSides15, classes.pt5)} />
                         </label>
                     </Box>}
                 </Box>

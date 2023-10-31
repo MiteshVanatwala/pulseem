@@ -725,9 +725,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   flex4: {
     flex: 4,
+    borderBottom: 0,
   },
   flex6: {
     flex: 6,
+    borderBottom: 0,
   },
   flex7: {
     flex: 7,

@@ -57,6 +57,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import { FaEye } from 'react-icons/fa';
+import { GrDuplicate } from 'react-icons/gr';
 
 const SmsManagnentScreen = ({ classes }) => {
 	const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -711,6 +712,11 @@ const SmsManagnentScreen = ({ classes }) => {
 		return {
 			title: t('campaigns.ShowGroupsTitle'),
 			showDivider: false,
+			icon: (
+				<div className={classes.dialogIconContent}>
+					{'\uE0D5'}
+				</div>
+			),
 			content: (
 				<Box className={classes.gruopsDialogContent}>
 					{data.map((group) => {
@@ -742,22 +748,25 @@ const SmsManagnentScreen = ({ classes }) => {
 		},
 	});
 
-	const getDuplicateDialog = (data = '') => ({
-		title: t('campaigns.dialogDuplicateTitle'),
-		showDivider: false,
-		content: (
-			<Typography style={{ fontSize: 18 }}>
-				{t('campaigns.dialogDuplicateContent')}
-			</Typography>
-		),
-		onConfirm: async () => {
-			clearSearch();
-			handleClose();
-			setPage(1);
-			await dispatch(duplicteSms(data));
-			getData();
-		},
-	});
+	// const getDuplicateDialog = (data = '') => ({
+	// 	title: t('campaigns.dialogDuplicateTitle'),
+	// 	showDivider: false,
+	// 	icon: (
+	// 		<GrDuplicate style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+	// 	),
+	// 	content: (
+	// 		<Typography style={{ fontSize: 18 }}>
+	// 			{t('campaigns.dialogDuplicateContent')}
+	// 		</Typography>
+	// 	),
+	// 	onConfirm: async () => {
+	// 		clearSearch();
+	// 		handleClose();
+	// 		setPage(1);
+	// 		await dispatch(duplicteSms(data));
+	// 		getData();
+	// 	},
+	// });
 
 	const getPreviewDialog = (data = {}) => {
 		return {
@@ -1036,7 +1045,7 @@ const SmsManagnentScreen = ({ classes }) => {
 			restore: getRestorDialog(data),
 			groups: getGroupsDialog(data),
 			delete: getDeleteDialog(data),
-			duplicate: getDuplicateDialog(data),
+			// duplicate: getDuplicateDialog(data),
 			preview: getPreviewDialog(data),
 			// verify: getVerifyDialog(data),
 			shortVerify: getShortVerifyDialog(data),

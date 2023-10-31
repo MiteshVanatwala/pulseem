@@ -71,6 +71,7 @@ export const BaseDialog = ({
   const RenderTitleDefault = () => (
     <>
       <Typography
+        style={{width: '100%'}}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -145,7 +146,10 @@ export const BaseDialog = ({
         direction="row"
         justifyContent={"space-between"}
       >
-        <Stack direction={isRTL ? "row-reverse" : "row"} className={classes.w100}>
+        <Stack direction={isRTL ? "row-reverse" : "row"}
+          alignItems={"center"}
+          style={{ alignItems: 'center' }}
+          className={classes.w100}>
           {RenderIcon()}
           <Stack alignSelf="center" className="dialogTitle">
             {renderTitle ? renderTitle() : RenderTitleDefault()}

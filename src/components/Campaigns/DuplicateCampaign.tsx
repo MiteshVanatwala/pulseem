@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { CloneOptions } from "../../Models/Campaigns/CloneOptions";
+import { GrDuplicate } from "react-icons/gr";
 
 const DuplicateCampaign = ({
   title,
@@ -35,6 +36,7 @@ const DuplicateCampaign = ({
     <BaseDialog
       title={title}
       classes={classes}
+      icon={(<GrDuplicate className={classes.whiteIcon} />)}
       open={isOpen}
       onCancel={handleClose}
       onClose={handleClose}
@@ -42,10 +44,10 @@ const DuplicateCampaign = ({
       onConfirm={() => handleClose(duplicateOptions)}
     >
       <>
-        <Typography align='center'
+        {campaignName && <Typography align='center'
           className={classes.mb5}
         >{RenderHtml(t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `<b>"${campaignName}"</b>`))}
-        </Typography>
+        </Typography>}
         <FormControl>
           <FormGroup>
             <FormControlLabel

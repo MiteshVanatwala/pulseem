@@ -197,7 +197,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflowX: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    direction: isRTL ? 'rtl': 'ltr'
+    direction: isRTL ? 'rtl' : 'ltr'
   },
   resetDialogTitle: {
     fontSize: "2rem",
@@ -254,7 +254,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#fff",
     fontSize: 25,
     '&.unicode': {
-      fontSize: 20
+      fontSize: 24
     }
     // padding: 5,
   },
@@ -3755,6 +3755,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       height: '100%',
       background: 'white',
       overflow: 'auto'
+    }
+  },
+  whiteIcon: {
+    fontSize: 20,
+    padding: 5,
+    color: '#fff',
+    fill: '#fff',
+    '& svg, & path': {
+      stroke: '#fff',
+      color: '#fff',
+      fill: '#transparent'
     }
   }
 });

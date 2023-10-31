@@ -50,35 +50,35 @@ const AddBulkRecipientPopup = ({ classes,
             childrenStyle={classes.h50v}
             maxHeight={"45vh"}
             title={
-                <Box className={
-                    clsx(classes.flex, classes.justifyBetween, isRTL ? classes.rtl : '')
-                }>
-                    <Grid container>
-                        <Grid item sm={10}>
-                            <Box className={classes.flex}>
-                                {t('recipient.bulkImportTitle')}
-                                <Tooltip
-                                    arrow
-                                    placement={'top'}
-                                    disableFocusListener
-                                    title={t('recipient.uploadLimitation')}
-                                    classes={{ tooltip: localClasses.customWidth, arrow: localClasses.arrow }}
-                                    sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
-                                >
-                                    <Typography className={classes.bodyInfo} style={{ marginInline: 10 }}>i</Typography>
-                                </Tooltip>
-                            </Box>
-                        </Grid>
-                        <Grid item sm={2}>
+                <Box
+                    style={{ width: '100%' }}
+                    className={
+                        clsx(classes.flex, classes.justifyBetween, isRTL ? classes.rtl : '')
+                    }>
+                    <Box className={classes.flex} style={{ alignItems: 'center', width: '100%' }}>
+                        <Box className={classes.flex}>
+                            {t('recipient.bulkImportTitle')}
+                            <Tooltip
+                                arrow
+                                placement={'top'}
+                                disableFocusListener
+                                title={t('recipient.uploadLimitation')}
+                                classes={{ tooltip: localClasses.customWidth, arrow: localClasses.arrow }}
+                                sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
+                            >
+                                <Typography className={classes.bodyInfo} style={{ marginInline: 10, color: '#000', backgroundColor: '#fff', minWidth: 20 }}>i</Typography>
+                            </Tooltip>
+                        </Box>
+                        <Box style={{ marginInlineStart: 'auto' }}>
                             <label
                                 htmlFor="uploadxl"
                                 style={{
-                                    cursor: 'pointer', width: 35, height: 35
+                                    cursor: 'pointer', width: 35, height: 35, alignSelf: 'center'
                                 }}>
-                                <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
+                                <AiOutlineCloudUpload style={{ fontSize: 30, color: '#fff' }} />
                             </label>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </Box>
             }
             icon={<div className={classes.dialogIconContent}>
