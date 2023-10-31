@@ -803,7 +803,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsTestGroupModal(false);
 			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
-			const saveCampaign = await onSaveCampaign('testSend', false, false);
+			const saveCampaign: any = await onSaveCampaign('testSend', false, false);
 			campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
 			if (testSendSelection !== 'onecontact') {
 				setIsLoader(true);
