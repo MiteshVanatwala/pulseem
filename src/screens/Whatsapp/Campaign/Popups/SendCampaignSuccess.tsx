@@ -98,7 +98,7 @@ const SendCampaignSuccess = ({
 								<Grid item>
 									<Button
 										onClick={() => {
-											onBackToAutomation();
+											onBackToAutomation && onBackToAutomation();
 										}}
 										variant='contained'
 										size='medium'
