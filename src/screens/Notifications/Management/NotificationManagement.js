@@ -122,7 +122,7 @@ const NotificationManagement = ({ classes }) => {
     const item = await dispatch(getNotificationById(ID));
     setLoader(false);
     setDialogType({
-      type: 'preview',
+      type: DialogTypes.PREVIEW,
       data: item.payload
     })
   }
@@ -133,7 +133,7 @@ const NotificationManagement = ({ classes }) => {
 
     }
     setDialogType({
-      type: 'groups',
+      type: DialogTypes.GROUPS,
       data: item.payload
     })
   }
@@ -142,7 +142,7 @@ const NotificationManagement = ({ classes }) => {
     const item = await dispatch(getSubAccountRegistrations());
 
     setDialogType({
-      type: 'subscribers',
+      type: DialogTypes.SUBSCRIBERS,
       data: item.payload
     })
   }
@@ -150,7 +150,7 @@ const NotificationManagement = ({ classes }) => {
   const handleShowGroupsById = async (ID) => {
     const item = await dispatch(getNotificationGroupsById(ID));
     setDialogType({
-      type: 'groupsById',
+      type: DialogTypes.GROUPS_BY_ID,
       data: item.payload
     })
   }
@@ -176,7 +176,7 @@ const NotificationManagement = ({ classes }) => {
     const res = await dispatch(getDeletedNotifications());
     if (!res.error) {
       setDialogType({
-        type: 'restore',
+        type: DialogTypes.RESTORE,
         data: res.payload
       });
     }
@@ -452,7 +452,7 @@ const NotificationManagement = ({ classes }) => {
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
-            type: "duplicate",
+            type: DialogTypes.DUPLICATE,
             data: ID
           });
         }
@@ -475,7 +475,7 @@ const NotificationManagement = ({ classes }) => {
         rootClass: classes.paddingIcon,
         onClick: async () => {
           setDialogType({
-            type: 'delete',
+            type: DialogTypes.DELETE,
             data: ID
           })
         }
@@ -848,7 +848,7 @@ const NotificationManagement = ({ classes }) => {
           <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
           <Typography className={clsx(classes.link, classes.bold)} onClick={() => {
             setDialogType({
-              type: 'createGroup',
+              type: DialogTypes.CREATE_GROUP,
               data: {}
             })
           }}>({t('notifications.howToCreateGroup')}?)</Typography>
@@ -1222,7 +1222,7 @@ const NotificationManagement = ({ classes }) => {
         dialog = renderDuplicate(data)
         break;
       }
-      case DialogTypes.GROUP_BY_ID: {
+      case DialogTypes.GROUPS_BY_ID: {
         dialog = renderGroupsById(data)
         break;
       }
@@ -1280,7 +1280,7 @@ const NotificationManagement = ({ classes }) => {
           classes={classes}
           Element={
             <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
-              <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{width: 'auto'}}>{t('notifications.notificationManagement')}</Typography>
+              <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ width: 'auto' }}>{t('notifications.notificationManagement')}</Typography>
               <Button onClick={() => {
                 setCookie('scriptDialog', true);
                 setShowScriptDialog(true);
