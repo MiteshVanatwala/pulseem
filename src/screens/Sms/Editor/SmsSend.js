@@ -154,7 +154,7 @@ const SmsSend = ({ classes, ...props }) => {
     dontSend: false,
     days: '',
     exceptionalDays: '',
-    selectedFilterCampaigns:  [],
+    selectedFilterCampaigns: [],
     selectedFilterGroups: []
   });
 
@@ -810,7 +810,7 @@ const SmsSend = ({ classes, ...props }) => {
             </IconButton>
           </Tooltip>
         </Grid>
-        <Grid item md={12} xs={12} className={classes.tabDiv}>
+        <Grid item md={12} xs={12} className={classes.tabDiv} style={{ height: 50 }}>
           <Grid item md={12} xs={12}
             className={
               clsx(classes.btnTab, 'alignCenter', { [classes.currentActiveTab]: !!groupClick })
@@ -858,7 +858,7 @@ const SmsSend = ({ classes, ...props }) => {
               : clsx(classes.areaManual)
           }>
             <textarea
-              style={{height: 395}}
+              style={{ height: 395 }}
               placeholder={t("sms.dragXlOrCsv")}
               spellCheck="false"
               autoComplete="off"
@@ -2042,7 +2042,7 @@ const SmsSend = ({ classes, ...props }) => {
       </div>
     );
   }
-  const filterRecipientsDialog = () => {    
+  const filterRecipientsDialog = () => {
     return {
       title: t('mainReport.recipientFilter'),
       showDivider: true,

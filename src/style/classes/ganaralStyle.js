@@ -1986,6 +1986,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tabDiv: {
     display: "grid",
     gridTemplateColumns: "50% 50%",
+    minHeight: 40
 
     // "@media screen and (max-width: 768px)": {
     //   width: "315px",
@@ -2024,13 +2025,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 20,
     textTransform: "capitalize",
     minWidth: 120,
-    minHeight: 40,
-    color: '#777777',
-    // background: '#E6E6E6',
+    height: 'auto',
+    color: '#ff2c44',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     background: 'white',
-    borderBottom: '4px solid transparent',
+    border: '1px solid rgba(0,0,0,.125)',
+    borderBottom: 0,
     '&.alignCenter': {
       display: 'flex',
       justifyContent: 'center',
@@ -2038,9 +2039,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   currentActiveTab: {
-    background: 'white',
-    color: '#ff2c44 !important',
     borderBottom: '4px solid #ff2c44 !important',
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+    color: '#fff !important',
     '& svg': {
       color: '#ff2c44',
     }

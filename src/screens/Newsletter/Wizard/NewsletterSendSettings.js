@@ -834,7 +834,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             justifyContent="center"
                             direction="row"
                             className={
-                                clsx(classes.tab1, mergedSegmentationDialog === i ? classes.activeTab : '')
+                                clsx(classes.tab1, classes.btnTab, mergedSegmentationDialog === i ? classes.currentActiveTab : '')
                             }
                             onClick={() => setMergedSegmentationDialog(i)}
                         >
@@ -1150,7 +1150,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                 justifyContent="center"
                                                 direction="row"
                                                 className={
-                                                    clsx(classes.tab1, activeTab === 0 ? classes.activeTab : '', classes.w50)
+                                                    clsx(classes.tab1, classes.btnTab, activeTab === 0 ? classes.currentActiveTab : '', classes.w50)
                                                 }
                                                 onClick={() => setActiveTab(0)}
                                             >
@@ -1164,7 +1164,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                 justifyContent="center"
                                                 direction="row"
                                                 className={
-                                                    clsx(classes.tab1, activeTab === 1 ? classes.activeTab : '', classes.w50)
+                                                    clsx(classes.tab1, classes.btnTab, activeTab === 1 ? classes.currentActiveTab : '', classes.w50)
                                                 }
                                                 onClick={() => setActiveTab(1)}
                                             >
