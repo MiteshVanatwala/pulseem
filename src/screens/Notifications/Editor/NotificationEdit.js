@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import {
-  Typography, Button, TextField, Grid, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener
+  Typography, Button, TextField, Grid, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener, Input
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -17,7 +17,7 @@ import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
 import './notification.styles.css';
 import Gallery from '../../../components/Gallery/Gallery.component';
-import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import { IoMdImages } from 'react-icons/io'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -29,6 +29,9 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
+import { sitePrefix } from '../../../config';
+import { Title } from '../../../components/managment/Title';
+import { Stack } from '@mui/material';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -45,63 +48,63 @@ function BootstrapTooltip(props) {
   return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
 
-const DashedInput = withStyles({
-  root: {
-    border: 'none',
-    borderRadius: 0,
-    "& .MuiOutlinedInput-multiline": {
-      padding: 0,
-      minHeight: 55,
-      paddingTop: 0,
-      '& textarea + fieldset': {
-        border: '1px dashed #64a1bd',
-        borderRadius: 0,
-        borderWidth: 1
-      },
-      '& textarea:invalid:focus + fieldset': {
-        borderStyle: 'dashed',
-        borderWidth: 1,
-        borderColor: 'red'
-      },
-      '& textarea:valid:focus + fieldset': {
-        borderStyle: 'dashed',
-        borderWidth: 1
-      },
-      '& textarea + fieldset:hover': {
-        color: 'rgba(0, 0, 0, 0.87)',
-        border: '1px dashed #000',
-      },
-      '& textarea.error': {
-        border: '1px dashed red'
-      }
-    },
-    '& input': {
-      height: 0,
-    },
-    '& input + fieldset': {
-      borderStyle: 'dashed',
-      borderColor: '#64a1bd',
-      borderRadius: 0
-    },
-    '& input:invalid:focus + fieldset': {
-      borderColor: 'red',
-      borderWidth: 1
-    },
-    '& input:valid:focus + fieldset': {
-      borderStyle: 'dashed',
-      borderWidth: 1,
-      borderColor: '#64a1bd'
-    },
-    '& input:hover + fieldset': {
-      color: 'rgba(0, 0, 0, 0.87)',
-      border: '1px dashed rgba(0, 0, 0, 0.87)',
-    },
-    '& input.error': {
-      border: '1px dashed red'
-    }
-  },
+// const DashedInput = withStyles({
+//   root: {
+//     border: 'none',
+//     borderRadius: 0,
+//     "& .MuiOutlinedInput-multiline": {
+//       padding: 0,
+//       minHeight: 55,
+//       paddingTop: 0,
+//       '& textarea + fieldset': {
+//         border: '1px dashed #64a1bd',
+//         borderRadius: 0,
+//         borderWidth: 1
+//       },
+//       '& textarea:invalid:focus + fieldset': {
+//         borderStyle: 'dashed',
+//         borderWidth: 1,
+//         borderColor: 'red'
+//       },
+//       '& textarea:valid:focus + fieldset': {
+//         borderStyle: 'dashed',
+//         borderWidth: 1
+//       },
+//       '& textarea + fieldset:hover': {
+//         color: 'rgba(0, 0, 0, 0.87)',
+//         border: '1px dashed #000',
+//       },
+//       '& textarea.error': {
+//         border: '1px dashed red'
+//       }
+//     },
+//     '& input': {
+//       height: 0,
+//     },
+//     '& input + fieldset': {
+//       borderStyle: 'dashed',
+//       borderColor: '#64a1bd',
+//       borderRadius: 0
+//     },
+//     '& input:invalid:focus + fieldset': {
+//       borderColor: 'red',
+//       borderWidth: 1
+//     },
+//     '& input:valid:focus + fieldset': {
+//       borderStyle: 'dashed',
+//       borderWidth: 1,
+//       borderColor: '#64a1bd'
+//     },
+//     '& input:hover + fieldset': {
+//       color: 'rgba(0, 0, 0, 0.87)',
+//       border: '1px dashed rgba(0, 0, 0, 0.87)',
+//     },
+//     '& input.error': {
+//       border: '1px dashed red'
+//     }
+//   },
 
-})(TextField);
+// })(TextField);
 
 const NotificationEdit = ({ classes }) => {
   const Redirect = useRedirect();
@@ -222,7 +225,7 @@ const NotificationEdit = ({ classes }) => {
       saveNotification(true, false)
     }
     else {
-      Redirect({ url: "/react/Notifications" });
+      Redirect({ url: `${sitePrefix}Notifications` });
     }
   }
   const renderConfirmCancel = () => {
@@ -257,7 +260,7 @@ const NotificationEdit = ({ classes }) => {
   }
   const redirectAfterSave = (notificationId) => {
     if (notificationId > 0) {
-      Redirect({ url: `/react/Notification/send/${notificationId}` });
+      Redirect({ url: `${sitePrefix}Notification/send/${notificationId}` });
     }
   }
   const handleNotificationName = (event) => {
@@ -448,12 +451,15 @@ const NotificationEdit = ({ classes }) => {
           alignItems="center"
           spacing={2}
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
-          <Grid item md={3} xs={12}>
-            <label>* {t('notifications.notificationName')}</label>
+          <Grid item md={3} xs={12} className='textBoxWrapper'>
+            <Typography>
+              <>
+                * {t('notifications.notificationName')}
+              </>
+            </Typography>
             <TextField
               id="notificationName"
               required
-              placeholder={t('notifications.notificationName')}
               value={(model && model.Name) || ''}
               className={classes.textField}
               margin="dense"
@@ -461,10 +467,10 @@ const NotificationEdit = ({ classes }) => {
               onChange={handleNotificationName}
             />
           </Grid>
-          <Grid item md={2} xs={12}>
+          <Grid item md={3} xs={12}>
             <BootstrapTooltip title={t("notifications.tooltip.showRedirectButton")} placement="top">
               <FormControlLabel
-                style={{ marginTop: 25, display: 'flex', justifyContent: 'center', alignContent: 'center' }}
+                style={{ marginTop: 25, }}
                 control={
                   <Switch
                     checked={ShowRedirectButton}
@@ -479,8 +485,8 @@ const NotificationEdit = ({ classes }) => {
             </BootstrapTooltip>
           </Grid>
           {ShowRedirectButton &&
-            <Grid item md={3} xs={12}>
-              <label>* {t('notifications.redirectUrl')}</label>
+            <Grid item md={3} xs={12} className='textBoxWrapper'>
+              <Typography>* {t('notifications.redirectUrl')}</Typography>
               <TextField
                 placeholder={t('notifications.redirectUrl')}
                 id="notificationRedirectUrl"
@@ -496,8 +502,8 @@ const NotificationEdit = ({ classes }) => {
             </Grid>
           }
           {ShowRedirectButton &&
-            <Grid item md={3} xs={12}>
-              <label>* {t('notifications.redirectUrlButton')}</label>
+            <Grid item md={3} xs={12} className='textBoxWrapper'>
+              <Typography>* {t('notifications.redirectUrlButton')}</Typography>
               <TextField
                 placeholder={t('notifications.redirectUrlButton')}
                 id="notificationButton"
@@ -634,7 +640,7 @@ const NotificationEdit = ({ classes }) => {
               </div>
             </div>
             <div className={classes.notificationContent} style={{ marginBottom: 15 }}>
-              <DashedInput
+              <Input
                 aria-label=""
                 required
                 placeholder={t("notifications.ph_title")}
@@ -646,7 +652,7 @@ const NotificationEdit = ({ classes }) => {
                 variant="outlined"
                 id="notificationTitle"
               />
-              <DashedInput
+              <Input
                 inputProps={{ className: classes.textarea }}
                 multiline
                 rows={2}
@@ -776,6 +782,7 @@ const NotificationEdit = ({ classes }) => {
         <BaseDialog
           classes={classes}
           open={validationErrorList}
+          onCancel={handleDialogClose}
           onClose={handleDialogClose}
           onCancel={handleDialogClose}
           onConfirm={handleDialogClose}
@@ -806,7 +813,9 @@ const NotificationEdit = ({ classes }) => {
           onClick={handleDialogClose}
           className={clsx(
             classes.confirmButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}>
           {t('common.confirm')}
         </Button>
@@ -822,30 +831,30 @@ const NotificationEdit = ({ classes }) => {
   }
   const renderHeader = () => {
     return (
-      <>
-        <Typography className={classes.managementTitle}>{t('notifications.createNewPush')}</Typography>
-        <Typography className={classes.pageSubTitle}>
-          <span className={classes.roundedCircle}>1</span>
-          <span className={classes.subTitle}>
+      <Box className={clsx('stepHead', classes.notificationTitle)}>
+        <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
+          <span >1</span>
+        </Stack>
+        <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
+          <span className={'stepTitle'}>
             {t('notifications.createContent')}
           </span>
-        </Typography>
-        <Typography style={{ fontSize: 24 }}>{t('notifications.createContentText')}</Typography>
-      </>
+          <span className={'stepDesc'}>({t('notifications.createContentText')})</span>
+        </Stack>
+      </Box>
     )
   }
   const WizardButtons = () => {
     return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")} style={{ paddingBottom: 40 }}>
-      <Box>
+      <Box className={classes.textCenter}>
         <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"}>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue,
-              classes.backButton
+              classes.btn,
+              classes.btnRounded,
+              classes.middle
             )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             color="primary"
             onClick={handleTestSend}>
             {t('notifications.testSend')}
@@ -854,52 +863,46 @@ const NotificationEdit = ({ classes }) => {
       </Box>
       <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
         <Button
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonRed
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
           onClick={() => handleCancel()}
         >
           {t('notifications.cancel')}
         </Button>
         <Button
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
-            classes.backButton
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}
-          color="primary"
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
           onClick={event => saveNotification(false, false)}>
           {t('notifications.save')}
         </Button>
         <Button
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
-            classes.backButton
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}
-          color="primary"
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
           onClick={event => saveNotification(true, false)}>
           {t('notifications.saveAndExit')}
         </Button>
         <Button
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightGreen,
-            classes.backButton
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}
-          color="primary"
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
           onClick={event => saveNotification(false, true)}>
           {t('notifications.saveAndContinue')}
@@ -936,7 +939,7 @@ const NotificationEdit = ({ classes }) => {
         dispatch(save(modelToSave)).then((response) => {
           if (location.pathname.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
-              Redirect({ url: "/react/Notifications" })
+              Redirect({ url: `${sitePrefix}Notifications` })
             }
             else {
               setToastMessage(toastMessages.SUCCESS);
@@ -945,7 +948,7 @@ const NotificationEdit = ({ classes }) => {
                   redirectAfterSave(response.payload);
                 }
                 else {
-                  Redirect({ url: `/react/Notification/edit/${response.payload}` });
+                  Redirect({ url: `${sitePrefix}Notification/edit/${response.payload}` });
                 }
                 setToastMessage(null);
               }, 1500);
@@ -963,7 +966,7 @@ const NotificationEdit = ({ classes }) => {
         });
       }
       if (isExit) {
-        Redirect({ url: "/react/Notifications" });
+        Redirect({ url: `${sitePrefix}Notifications` });
       }
     }
   }
@@ -974,15 +977,20 @@ const NotificationEdit = ({ classes }) => {
       subPage='create'
       customPadding={true}
       classes={classes}
-      containerClass={clsx(classes.editor, classes.mb50)}>
-      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
-        {renderToast()}
+      containerClass={clsx(classes.editorCont)}>
+      <div className={'head'} >
+        <Title Text={t('notifications.createNewPush')} classes={classes} />
+      </div>
+      <div className={'containerBody'}>
         {renderHeader()}
-        {notificationEdit()}
-        {renderDialog()}
-        {showGalleryModal()}
-        {renderConfirmCancel()}
-        <WizardButtons />
+        {renderToast()}
+        <div className='bodyBlock'>
+          {notificationEdit()}
+          {renderDialog()}
+          {showGalleryModal()}
+          {renderConfirmCancel()}
+          <WizardButtons />
+        </div>
       </div>
     </DefaultScreen>
   );

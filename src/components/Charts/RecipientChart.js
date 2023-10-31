@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, Box, Grid, Paper, Typography, Tooltip } from '@material-ui/core';
+import { IconButton, Box, Grid, Paper, Typography, Link, Tooltip, Divider } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Doughnut } from 'react-chartjs-2';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice';
-import { BsInfoCircleFill } from 'react-icons/bs';
+import { BsInfoCircle } from 'react-icons/bs';
 import clsx from 'clsx';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 import { CLIENT_CONSTANTS } from '../../model/Clients/Contants';
 import { useNavigate } from 'react-router';
+import { ChartIcon } from '../../assets/images/dashboard/index'
+import { sitePrefix } from '../../config';
 import { Loader } from '../Loader/Loader';
+
 
 const RecipientChart = ({ classes, }) => {
     const navigate = useNavigate()
@@ -32,7 +35,7 @@ const RecipientChart = ({ classes, }) => {
         else {
             report.Total > 0 && slidesCount++;
         }
-    })
+    });
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -56,6 +59,28 @@ const RecipientChart = ({ classes, }) => {
             centerTitle: 'dashboard.noNotifications'
         }
     ];
+
+
+    const COLOR_SCHEME = [
+        [
+            '#FF4D2A',
+            '#FFE1DB',
+            '#FFC4B8',
+            '#FF8871',
+        ],
+        [
+            '#FF3343',
+            '#FFDDE0',
+            '#FFBBC0',
+            '#FF7782',
+        ],
+        [
+            '#FF0054',
+            '#FFD4E2',
+            '#FFAAC6',
+            '#FF558D',
+        ]
+    ]
 
     let data = [];
     if (recipientsReport) {
@@ -81,27 +106,42 @@ const RecipientChart = ({ classes, }) => {
         });
     }
 
-    const renderDoughnut = (report, index) => {
+    const renderDoughnut = (report, index, colorScheme) => {
 
         const getOrCreateTooltip = (chart) => {
             let tooltipEl = chart.canvas.parentNode.querySelector('div');
 
             if (!tooltipEl) {
                 tooltipEl = document.createElement('div');
-                tooltipEl.style.background = '#fff';
+                tooltipEl.style.background = '#CCFF00';
                 tooltipEl.style.width = '70px';
                 tooltipEl.style.height = '70px';
-                tooltipEl.style.boxShadow = '0px 0px 5px -1px';
                 tooltipEl.style.borderRadius = '50px';
                 tooltipEl.style.color = 'black';
                 tooltipEl.style.opacity = 1;
                 tooltipEl.style.pointerEvents = 'none';
                 tooltipEl.style.position = 'absolute';
+                tooltipEl.style.left = '65.3px';
+                tooltipEl.style.top = '-55px';
                 tooltipEl.style.transform = 'translate(-50%, 0)';
                 tooltipEl.style.transition = 'all .1s ease';
                 tooltipEl.style.display = 'flex';
                 tooltipEl.style.alignItems = 'center';
                 tooltipEl.style.justifyContent = 'center';
+
+                let indicator = document.createElement('div');
+
+                indicator.style.width = 0;
+                indicator.style.height = 0;
+                indicator.style.position = 'absolute';
+                indicator.style.top = '61px';
+                indicator.style.right = '3px';
+                indicator.style.borderLeft = '9px solid transparent';
+                indicator.style.borderRight = '9px solid transparent';
+                indicator.style.borderTop = '18px solid #ccff00';
+                indicator.style.transform = 'rotate(325deg)';
+
+                tooltipEl.appendChild(indicator)
 
                 const table = document.createElement('table');
                 table.style.margin = '0px';
@@ -160,8 +200,8 @@ const RecipientChart = ({ classes, }) => {
             // const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
             const { offsetLeft: positionX } = chart.canvas;
             tooltipEl.style.opacity = 1;
-            tooltipEl.style.left = positionX + tooltip.caretX + 'px';
-            tooltipEl.style.top = '50px';
+            tooltipEl.style.left = tooltip._eventPosition.x - 20 + 'px';
+            tooltipEl.style.top = tooltip._eventPosition.y - 80 + 'px';
             tooltipEl.style.font = tooltip.options.bodyFont.string;
         };
 
@@ -194,24 +234,9 @@ const RecipientChart = ({ classes, }) => {
                 }
             },
             hoverOffset: 10,
-            backgroundColor: [
-                '#67B7DC',
-                '#648FD5',
-                '#6771DC',
-                '#c5caff'
-            ],
-            hoverBackgroundColor: [
-                '#67B7DC',
-                '#648FD5',
-                '#6771DC',
-                '#c5caff'
-            ],
-            hoverBorderColor: [
-                '#67B7DC',
-                '#648FD5',
-                '#6771DC',
-                '#c5caff'
-            ]
+            backgroundColor: colorScheme,
+            hoverBackgroundColor: colorScheme,
+            hoverBorderColor: colorScheme
         };
 
         let innerData = {
@@ -224,13 +249,9 @@ const RecipientChart = ({ classes, }) => {
                     report.Removed,
                     (report.ReportSection === 0) ? report.PendingEmails : (report.ReportSection === 1) ? report.PendingSms : null
                 ],
-                borderColor: [
-                    '#67B7DC',
-                    '#648FD5',
-                    '#6771DC',
-                    '#c5caff'
-                ],
-                borderWidth: 2
+                borderWidth: 5,
+                borderRadius: 10,
+                cutout: '80%'
             }],
         }
         return (
@@ -238,12 +259,19 @@ const RecipientChart = ({ classes, }) => {
                 key={`doughnut${report.ReportSection}`}
                 item xs={12} sm={12} md={4}
                 className={classes.doughnutGrid}>
-                <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
                 <Box className={classes.doughnutBox}>
-                    <Typography
-                        href="#!"
+                    <Link
+                        href="#"
                         className={classes.chartLabel}
-                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Typography>
+                        onClick={(e) => {
+                            e.preventDefault();
+                            openReports(report.ReportSection, "total");
+                        }}
+                    >
+                        <Typography className={'centerText'}>{t(titles[index].mainTitle)}</Typography>
+                        <Divider />
+                        <Typography className={'quantity'}>{report.Total.toLocaleString()}</Typography>
+                    </Link>
                     <Doughnut data={innerData} options={options} style={{ cursor: 'pointer' }} />
                 </Box>
             </Grid>
@@ -372,7 +400,7 @@ const RecipientChart = ({ classes, }) => {
                         showIndicators={false}
                         showStatus={false}
                         showThumbs={false}
-                        showArrows={false}
+                        showArrows={true}
                         selectedItem={carouselItem}>
                         {recipientsReport.map((report, index) => {
                             if ((report.ReportSection === 2 && !Notifications.FeatureExist)
@@ -380,7 +408,7 @@ const RecipientChart = ({ classes, }) => {
                                 return null;
                             }
                             if (report.Total) {
-                                return renderDoughnut(report, index)
+                                return renderDoughnut(report, index, COLOR_SCHEME[index])
                             }
                             return null;
                             // else {
@@ -393,7 +421,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`/react/groups?NewGroup=true`}
+                        redirect={`${sitePrefix}groups?NewGroup=true`}
                         buttonClass={classes.createButton} />
                 )}
 
@@ -420,7 +448,7 @@ const RecipientChart = ({ classes, }) => {
                         return null;
                     }
                     if (report.Total) {
-                        return renderDoughnut(report, index)
+                        return renderDoughnut(report, index, COLOR_SCHEME[index])
                     }
                     return null;
                 }) :
@@ -429,7 +457,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`/react/Groups?NewGroup=true`}
+                        redirect={`${sitePrefix}/Groups?NewGroup=true`}
                         buttonClass={classes.importButtonBlue} />
                 }
             </Grid>
@@ -439,9 +467,7 @@ const RecipientChart = ({ classes, }) => {
     const renderArrows = (value, length, setItem, className) => {
         let selectedItem = value;
         const handleNext = () => {
-            if (selectedItem >= slidesCount) {
-                return;
-            }
+            if (selectedItem >= slidesCount) return;
             selectedItem++;
             setItem(selectedItem);
         }
@@ -482,10 +508,12 @@ const RecipientChart = ({ classes, }) => {
     return (
         <Paper elevation={3} className={classes.dashboardTopPaper}>
             <Grid container>
-                <Grid item xs={12} className={classes.recipientTitleSection}>
-                    <Box>
+                <Grid item xs={12} className={clsx(classes.dashBoxtitleSection, classes.dashboardChartTitle)}>
+                    <Box className={classes.flex}>
+                        <ChartIcon className={clsx(classes.mleft5, classes.mr10)} />
                         <Typography
-                            className={clsx(classes.dInlineBlock, classes.dashboardTitle)}>
+                            className={clsx(classes.dInlineBlock, 'title')}
+                        >
                             {t('dashboard.yourRecipients')}
                         </Typography>
                         {totalRecipient > 0 && <Tooltip
@@ -498,8 +526,8 @@ const RecipientChart = ({ classes, }) => {
                             }}
                             enterTouchDelay={50}
                             placement={"top"}>
-                            <IconButton aria-label={t('dashboard.chartTooltip')}>
-                                <BsInfoCircleFill />
+                            <IconButton className={classes.icon_Info} aria-label={t('dashboard.chartTooltip')}>
+                                <BsInfoCircle />
                             </IconButton>
                         </Tooltip>
                         }

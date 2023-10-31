@@ -8,13 +8,16 @@ import {
 	Radio,
 	FormHelperText,
 	Divider,
+	MenuItem,
 } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { RightPaneProps, coreProps } from '../Types/WhatsappCampaign.types';
 import { DateField } from '../../../../components/managment';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const RightPane = ({
 	classes,
@@ -95,31 +98,33 @@ const RightPane = ({
 							}
 						/>
 						<Box
-							className={classes.dateBox}
+							className={clsx(classes.dateBox, classes.pbt15)}
 							style={{
 								pointerEvents: sendType === '2' ? 'auto' : 'none',
 							}}>
 							<DateField
 								minDate={moment()}
+								maximumDate={moment().add(100, 'y')}
 								classes={classes}
 								value={sendType === '2' ? sendDate : null}
 								onChange={handleDatePicker}
 								placeholder={translator('notifications.date')}
 								timePickerOpen={true}
 								dateActive={sendType === '2' ? false : true}
-								onTimeChange={undefined}
-								timeActive={undefined}
-								buttons={undefined}
+								onTimeChange={() => {}}
+								timeActive={false}
+								buttons={[]}
 							/>
 						</Box>
 						<Box
-							className={classes.dateBox}
+							className={clsx(classes.dateBox, classes.pbt15)}
 							style={{
 								marginTop: 10,
 								pointerEvents: sendType === '2' ? 'auto' : 'none',
 							}}>
 							<DateField
 								minDate={moment()}
+								maximumDate={null}
 								classes={classes}
 								value={sendType === '2' ? sendDate : null}
 								onTimeChange={handleTimePicker}
@@ -156,42 +161,51 @@ const RightPane = ({
 							style={{
 								marginTop: 10,
 								pointerEvents: sendType === '3' ? 'auto' : 'none',
-							}}>
-							<select
-								placeholder={translator('common.select')}
-								style={{
-									border: '1px solid #818181',
-									backgroundColor: 'white',
-									padding: '10px',
-									borderRadius: '4px',
-									width: 300,
-									outline: 'none',
-									marginBottom: '10px',
-								}}
-								disabled={sendType === '3' ? false : true}
-								onChange={(e) => {
-									handleSelectChange(e);
-								}}
-								value={sendType === '3' ? spectialDateFieldID : '0'}>
-								<option value='0'>{translator('common.select')}</option>
-								<option value='1'>{translator('mainReport.birthday')}</option>
-								<option value='2'>
-									{translator('mainReport.creationDay')}
-								</option>
-								{specialDatedropDown &&
-									Object.keys(specialDatedropDown).map((item, i) => {
-										if (specialDatedropDown[item]) {
-											return (
-												item.toLowerCase().indexOf('extradate') > -1 && (
-													<option value={i + 3} key={`extrakey_${i}`}>
-														{Object.values(specialDatedropDown[item])}
-													</option>
-												)
-											);
-										}
-										return <></>;
-									})}
-							</select>
+							}}
+						>
+							<FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100, classes.mb10)}>
+								<Select
+									placeholder={translator('common.select')}
+									variant="standard"
+									displayEmpty
+									disabled={sendType === '3' ? false : true}
+									value={sendType === '3' ? spectialDateFieldID : '0'}
+									onChange={(event: SelectChangeEvent) => handleSelectChange(event)}
+									IconComponent={() => {
+										return <IoIosArrowDown size={20}
+											style={{
+												position: 'absolute',
+												pointerEvents: 'none'
+											}} />
+									}}
+									className={classes.pbt5}
+									MenuProps={{
+										PaperProps: {
+											style: {
+												maxHeight: 300,
+												direction: isRTL ? 'rtl' : 'ltr'
+											},
+										},
+									}}
+								>
+									<MenuItem value='0'>{translator('common.select')}</MenuItem>
+									<MenuItem value='1'>{translator('mainReport.birthday')}</MenuItem>
+									<MenuItem value='2'>{translator('mainReport.creationDay')}</MenuItem>
+									{specialDatedropDown &&
+										Object.keys(specialDatedropDown).map((item, i) => {
+											if (specialDatedropDown[item]) {
+												return (
+													item.toLowerCase().indexOf('extradate') > -1 && (
+														<MenuItem value={i + 3} key={`extrakey_${i}`}>
+															{Object.values(specialDatedropDown[item])}
+														</MenuItem>
+													)
+												);
+											}
+										})
+									}
+								</Select>
+							</FormControl>
 						</Box>
 
 						<Box
@@ -277,7 +291,7 @@ const RightPane = ({
 							)}
 						</Box>
 						<Box
-							className={classes.dateBox}
+							className={clsx(classes.dateBox, classes.pbt15)}
 							style={{
 								marginTop: 10,
 								pointerEvents: sendType === '3' ? 'auto' : 'none',
@@ -285,6 +299,7 @@ const RightPane = ({
 							}}>
 							<DateField
 								classes={classes}
+								maximumDate={null}
 								value={sendType === '3' ? sendTime : null}
 								onTimeChange={handleRadioTime}
 								placeholder={translator('notifications.hour')}

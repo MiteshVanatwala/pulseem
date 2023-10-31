@@ -45,13 +45,13 @@ const SmsSummary = ({ classes,
       {open && <BaseDialog
         style={{ paddingBottom: 20 }}
         title={`${t("sms.smsSummaryDialogTitle")} '${campaignName}'`}
-        showDivider={true}
+        showDivider={false}
         classes={classes}
         open={open}
         onClose={() => { handleSmsSettings() }}
         onCancel={() => { handleSmsSettings() }}
         showDefaultButtons={false}
-        icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
+        icon={<FaMobileAlt />}
       >
         <Box style={{ fontSize: "22px", marginTop: "5px" }}>
           <Box className={classes.baseSum}>
@@ -214,12 +214,11 @@ const SmsSummary = ({ classes,
           className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
           <Grid item>
             <Button
-              variant='contained'
-              size='small'
               onClick={onConfirm}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton,
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
                 summaryPayload.FinalCount <= 0 ? classes.disabled : null
               )}>
               {t("sms.sendDialog")}
@@ -227,12 +226,11 @@ const SmsSummary = ({ classes,
           </Grid>
           <Grid item>
             <Button
-              variant='contained'
-              size='small'
               onClick={() => { handleSmsSettings() }}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogCancelButton
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
               )}>
               {t("sms.cancelDialog")}
             </Button>

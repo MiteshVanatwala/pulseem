@@ -18,7 +18,7 @@ export const DateField = ({
   isTimePicker = false,
   buttons,
   ampm = true,
-  maximumDate = undefined,
+  maximumDate,
   timePickerOpen = false,
   rootStyle = null,
   timeActive,
@@ -105,6 +105,11 @@ export const DateField = ({
       initialFocusedDate={moment()}
       value={value}
       onChange={onChange}
+      // InputAdornmentProps={{
+      //   style: {
+      //     maxWidth: isRTL ? 10 : 'auto'
+      //   }
+      // }}
       KeyboardButtonProps={{
         'aria-label': 'change date',
         className: classes.datePickerButton
@@ -117,7 +122,7 @@ export const DateField = ({
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
       onClick={() => setIsDatePickerOpen(true)}
-      invalidDateMessage={t("common.invalidDate")}
+      invalidDateMessage={props?.hideInvalidDateMessage ? '' : t("common.invalidDate")}
       maxDateMessage={ props.errorMessage || t("common.maximalDateRequired")}
       minDateMessage={ props.errorMessage || t("common.minimalDateRequired")}
       InputProps={{

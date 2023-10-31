@@ -81,8 +81,10 @@ const AddBulkRecipientPopup = ({ classes,
                     </Grid>
                 </Box>
             }
-            exitButton
-            showDivider={true}
+            icon={<div className={classes.dialogIconContent}>
+                {'\uE0D5'}
+            </div>}
+            showDivider={false}
             onClose={onClose}
             onCancel={onClose}
             renderButtons={() => (<></>)}

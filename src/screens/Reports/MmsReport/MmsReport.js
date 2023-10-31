@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box } from '@material-ui/core'
-import Switch from "react-switch";
-import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControlLabel } from '@material-ui/core'
 import { TablePagination, DateField, SearchField } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
@@ -24,6 +21,9 @@ import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -232,7 +232,7 @@ const MmsReport = ({ classes }) => {
             <Grid
                 container
                 spacing={2}
-                className={classes.lineTopMarging}>
+                className={clsx(classes.lineTopMarging, 'searchLine')}>
                 <Grid item>
                     <TextField
                         variant='outlined'
@@ -283,32 +283,32 @@ const MmsReport = ({ classes }) => {
                     : null}
 
                 <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Switch
-                        checked={isDemoSend}
-                        onColor="#0371ad"
-                        handleDiameter={20}
-                        uncheckedIcon={false}
-                        checkedIcon={false}
-                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                        height={15}
-                        width={40}
-                        className={clsx({ [classes.rtlSwitch]: isRTL })}
-                        onChange={() => { setIsDemoSend(!isDemoSend) }}
+                    <FormControlLabel
+                        control={
+                            <PulseemSwitch
+                                switchType='ios'
+                                classes={classes}
+                                checked={isDemoSend}
+                                onColor="#0371ad"
+                                handleDiameter={20}
+                                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                height={15}
+                                width={40}
+                                className={clsx({ [classes.rtlSwitch]: isRTL })}
+                                onChange={() => { setIsDemoSend(!isDemoSend) }}
+                            />
+                        }
+                        label={t('mainReport.locShowTestCampaigns.Text')}
                     />
-                    <Typography style={{ marginInlineStart: 8 }}>
-                        {t('mainReport.locShowTestCampaigns.Text')}
-                    </Typography>
                 </Grid>
                 <Grid item>
                     <Button
-                        size='large'
-                        variant='contained'
                         onClick={() => {
                             handleSearch(filterValues)
                         }}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}
+                        className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >
                         {t('notifications.buttons.search')}
                     </Button>
@@ -316,8 +316,6 @@ const MmsReport = ({ classes }) => {
                 {
                     filter && <Grid item>
                         <Button
-                            size='large'
-                            variant='contained'
                             onClick={() => {
                                 setFilterValues(DEFAULT_FILTER)
                                 if (filter) {
@@ -325,8 +323,8 @@ const MmsReport = ({ classes }) => {
                                     setFilter(false);
                                 }
                             }}
-                            className={classes.searchButton}
-                            endIcon={<ClearIcon />}>
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
                             {t('common.clear')}
                         </Button>
                     </Grid>
@@ -339,17 +337,14 @@ const MmsReport = ({ classes }) => {
         const dataLength = filteredResults.length;
         return (
             <Grid container spacing={2} className={classes.linePadding} >
-                {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+                {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
-                        variant='contained'
-                        size='medium'
                         className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonGreen,
+                            classes.btn, classes.btnRounded,
                             mmsReport.length > 0 ? null : classes.disabled
                         )}
                         onClick={() => setDialog('exportFormat')}
-                        startIcon={<ExportIcon />}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >
 
                         {t('campaigns.exportFile')}
@@ -422,7 +417,7 @@ const MmsReport = ({ classes }) => {
 
     const renderIntData = (value, type, data = {}, clickable = true) => {
         const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick = () => null } = data
-        const innerRef = clickable ? href : '';
+        // const innerRef = clickable ? href : '';
         return (
             <Box style={{ display: 'flex', flexDirection: 'column' }} >
                 {/* <Typography component={innerRef && value > 0 ? 'a' : 'p'} */}
@@ -620,10 +615,12 @@ const MmsReport = ({ classes }) => {
             rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
 
             return (
-                <TableBody>
-                    {rowData
-                        .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-                </TableBody>
+                <Box className='tableBodyContainer'>
+                    <TableBody>
+                        {rowData
+                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+                    </TableBody>
+                </Box>
             )
         }
         return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
@@ -638,8 +635,10 @@ const MmsReport = ({ classes }) => {
             containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="MmsReport">
-            <Title Text={t('common.MMSReports')} Classes={classes} ShowDivider={true} />
-            {renderFilter()}
+            <Box className={'topSection'}>
+                <Title Text={t('common.MMSReports')} classes={classes} />
+                {renderFilter()}
+            </Box>
             {renderManagmentLine()}
             <DataTable
                 tableContainer={{ className: classes.tableStyle }}
@@ -670,7 +669,7 @@ const MmsReport = ({ classes }) => {
                 options={ExportFileTypes}
             />
             <Loader isOpen={showLoader} showBackdrop={true} />
-        </DefaultScreen>
+        </DefaultScreen >
     )
 };
 

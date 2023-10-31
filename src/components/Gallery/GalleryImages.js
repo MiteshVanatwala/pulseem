@@ -21,7 +21,6 @@ export const GalleryImages = ({
     onReInitGallery = () => null,
     onReachToLimit = () => null,
 }) => {
-
     const imagesPerScroll = 20;
     const [images, setImages] = useState([]);
     const dispatch = useDispatch();
@@ -85,6 +84,7 @@ export const GalleryImages = ({
                 })
             }
         }
+
     }, [fileToUploads]);
 
     const changeHandler = (event) => {
@@ -134,6 +134,7 @@ export const GalleryImages = ({
             }
             setGalleryReady(true);
         }
+
     }, [scrollIndex, selectedFolder, folder]);
 
     if (galleryReady) {

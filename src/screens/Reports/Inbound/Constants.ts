@@ -13,6 +13,6 @@ export const InboundTypes = [
         name: 'master.whatsapp',
         disabled: false,
         icon: null,
-        isNewFeature: true
+        isNewFeature: false
     }
 ]

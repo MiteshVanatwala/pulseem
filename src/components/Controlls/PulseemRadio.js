@@ -11,14 +11,15 @@ import {
 const PulseemRadio = ({
     classes,
     name,
-    onChange = () => null,
+    onChange,
     value,
-    radioOptions
-    
+    radioOptions,
+    isVerical
 }) => {
     return (
         <FormControl component="fieldset" className={classes.fullWidth} key="123">
             <RadioGroup
+                style={{ flexDirection: isVerical ? 'row' : 'column', flexWrap: isVerical ? 'nowrap' : 'wrap' }}
                 aria-label={name}
                 name={name}
                 onChange={onChange}

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Tooltip, Typography, ClickAwayListener } from "@material-ui/core";
+import { Tooltip, Typography, MenuItem, FormControl } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
-import FormGroup from "@material-ui/core/FormGroup";
 import Toast from '../Toast/Toast.component';
 import Waze from "../../assets/images/waze.png";
 import { BsArrowClockwise } from "react-icons/bs";
@@ -27,11 +27,12 @@ import SearchIcon from "@material-ui/icons/Search";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
-import Switch from "react-switch";
 import clsx from "clsx";
 import { Loader } from "../Loader/Loader";
 import EmojiPicker from "../Emojis/EmojiPicker";
 import debounce from 'lodash.debounce';
+import { PulseemFeatures } from "../../model/PulseemFields/Fields";
+import { IoIosArrowDown } from "react-icons/io";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -169,7 +170,7 @@ const Editorbox = ({
 
     useEffect(() => {
         if (isPageLoaded && accountFeatures) {
-            if (accountFeatures.includes('38')) {
+            if (accountFeatures?.indexOf(PulseemFeatures.ADD_SMS_REMOVE_TEXT) > -1) {
                 setSmsModel((currentState) => {
                     if (currentState.Text === '') {
                         onAddText(`${t("sms.toUnsubscribe")}${removalNumber}`);
@@ -182,7 +183,7 @@ const Editorbox = ({
                     return currentState;
                 });
             }
-            setShowRemovalLink(!accountFeatures.includes('39'))
+            setShowRemovalLink(accountFeatures?.indexOf(PulseemFeatures.REMOVE_SMS_UNSUBSCRIBE_LINK) === -1)
         }
     }, [isPageLoaded || accountFeatures]);
 
@@ -275,7 +276,7 @@ const Editorbox = ({
             fromNumber = accountSettings.DefaultCellNumber;
         }
 
-        
+
         const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
 
         if (fromNumber === -1 || fromNumber === '' || fromNumber === null) {
@@ -284,7 +285,7 @@ const Editorbox = ({
 
         setstoredValue(fromNumber);
         setcampaignNumber(fromNumber);
-        
+
         setremovalNumber(virtualNumber.payload.RemovalKey);
         if (fromNumber !== virtualNumber.payload.Number) {
             setrestoreBool(false);
@@ -350,7 +351,7 @@ const Editorbox = ({
             }
         });
     }
-    const debouncedCallback = debounce(getcredits, 1000);
+    const debouncedCallback = debounce(getcredits, 100);
     const onAddText = (text) => {
         text = text.trim();
         let afterUpdateCharCount =
@@ -460,9 +461,9 @@ const Editorbox = ({
                         </Typography>
                         <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
                     </Box>
-                    <Box className={classes.funcDiv}>
+                    <Box className={clsx(classes.funcDiv, classes.dFlex)}>
                         <Box
-                            className={isRTL ? classes.emojiHe : classes.emoji}
+                            className={clsx(classes.paddingSides10, isRTL ? classes.emojiHe : classes.emoji)}
                         >
                             {isRTL ? (
                                 <>
@@ -515,7 +516,7 @@ const Editorbox = ({
                                 boxStyles={{ alignItems: 'center' }}
                             />
                         </Box>
-                        <Box className={classes.baseButtons}>
+                        <Box className={clsx(classes.baseButtons, classes.paddingSides10)}>
                             <Tooltip
                                 disableFocusListener
                                 title={t("mainReport.removalMsgTooltip")}
@@ -524,7 +525,7 @@ const Editorbox = ({
                                 arrow
                             >
                                 <Button
-                                    className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null)}
+                                    className={clsx(classes.btn, classes.btnRounded, classes.marginSides5, removalMessageButtonDisabled ? classes.disabled : null)}
                                     onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                                 >
                                     <Typography className={classes.editorLink}>+</Typography>
@@ -539,7 +540,7 @@ const Editorbox = ({
                                 arrow
                             >
                                 <Button
-                                    className={classes.infoButtons}
+                                    className={clsx(classes.btn, classes.btnRounded, classes.marginSides5)}
                                     onClick={removalLinkDisabled ? null : onRemovalLink}
                                 >
                                     <Typography className={classes.editorLink}>+</Typography>
@@ -557,40 +558,62 @@ const Editorbox = ({
                                     placement="top"
                                     arrow
                                 >
-                                    <select
-                                        className={clsx(classes.selectVal, classes.sidebar)}
-                                        value={selectValue}
-                                        onChange={handleSelectChange}
+                                    <FormControl
+                                        variant="standard"
+                                        className={clsx(classes.selectInputFormControl)}
                                     >
-                                        <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
-                                        {extraAccountDATA.map((item, i) => {
-                                            if (item.selected) {
-                                                return (<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</option>)
-                                            }
-                                            else {
-                                                return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</option>;
-                                            }
-
-                                        })}
-                                    </select>
+                                        <Select
+                                            variant='standard'
+                                            value={selectValue}
+                                            onChange={handleSelectChange}
+                                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                            style={{
+                                                width: 200
+                                            }}
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    style: {
+                                                        maxHeight: 200,
+                                                        direction: isRTL ? 'rtl' : 'ltr'
+                                                    },
+                                                },
+                                            }}
+                                        >
+                                            <MenuItem disabled value="Personilization">{t("mainReport.personalisationSelect")}</MenuItem>
+                                            {extraAccountDATA.map((item, i) => {
+                                                return (
+                                                    <MenuItem
+                                                        value={[Object.keys(item)[0]]}
+                                                        key={`extrakey_${i}`}
+                                                        disabled={item.selected}
+                                                    >
+                                                        {item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}
+                                                    </MenuItem>
+                                                );
+                                            })}
+                                        </Select>
+                                    </FormControl>
                                 </Tooltip>
                             </Box>
-                            <Box className={classes.addDiv} tabIndex="0" onBlur={() => { seteditmenuClick(false) }}>
-                                <Typography
-                                    className={classes.addButtons}
+                            <Box className={clsx(classes.addDiv, classes.paddingSides10)} tabIndex="0">
+                                <Button
+                                    className={clsx(classes.btn, classes.btnRounded)}
                                     onClick={() => {
                                         seteditmenuClick(!editmenuClick);
                                     }}
                                 >
                                     <AiOutlinePlusCircle className={classes.addOptionsIcon} />
                                     {t("mainReport.add")}
-                                </Typography>
+                                </Button>
                                 {editmenuClick ? (
-                                    <Box className={classes.dropDiv} style={{
-                                        top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-120px" : "-170px") : null,
-                                        right: isRTL ? 'auto' : 0,
-                                        left: isRTL ? 0 : 'auto',
-                                    }}>
+                                    <Box
+                                        className={classes.dropDiv} 
+                                        style={{
+                                            top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-120px" : "-170px") : null,
+                                            right: isRTL ? 'auto' : 0,
+                                            left: isRTL ? 0 : 'auto',
+                                        }}
+                                    >
 
                                         <Typography
                                             className={classes.dropCon}
@@ -598,6 +621,7 @@ const Editorbox = ({
                                                 setDialogType({ type: 'latestLP' });
                                                 seteditmenuClick(false);
                                             }}
+                                            onBlur={() => seteditmenuClick(false)}
                                         >
                                             {t("mainReport.landingLink")}
                                         </Typography>
@@ -608,6 +632,7 @@ const Editorbox = ({
                                                     setDialogType({ type: 'latestCampaigns' });
                                                     seteditmenuClick(false);
                                                 }}
+                                                onBlur={() => seteditmenuClick(false)}
                                             >
                                                 {t("mainReport.campLink")}
                                             </Typography>
@@ -618,6 +643,7 @@ const Editorbox = ({
                                                 setDialogType({ type: 'waze' })
                                                 seteditmenuClick(false);
                                             }}
+                                            onBlur={() => seteditmenuClick(false)}
                                         >
                                             {t("mainReport.waize")}
                                         </Typography>

@@ -11,11 +11,31 @@ export const getRecipientsReport = createAsyncThunk(
         }
     });
 
+export const getRecipientsReportData = createAsyncThunk(
+    'RecipientReport/Get',
+    async (settings, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`RecipientReport/Get`, settings);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+const initialState = {
+    recipientsReport: null,
+    recipientsReportData: null,
+    recipientsReportError: ''
+}
+
 export const recipientsReportSlice = createSlice({
     name: 'recipientReports',
-    initialState: {
-        recipientsReport: null,
-        recipientsReportError: ''
+    initialState: initialState,
+    reducers: {
+        resetRecipientReportData: (state = initialState) => {
+            state.recipientsReportData = null;
+        }
     },
     extraReducers: builder => {
         builder
@@ -25,8 +45,11 @@ export const recipientsReportSlice = createSlice({
             .addCase(getRecipientsReport.rejected, (state, action) => {
                 state.recipientsReportError = action.error.message
             })
+            .addCase(getRecipientsReportData.fulfilled, (state, { payload }) => {
+                state.recipientsReportData = payload.Data
+            })
     }
 })
 
-
+export const { resetRecipientReportData } = recipientsReportSlice.actions;
 export default recipientsReportSlice.reducer

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+// import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export interface TeamsMessage {
     MethodName: string;

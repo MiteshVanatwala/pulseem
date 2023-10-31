@@ -31,6 +31,7 @@ const TemplatePreview = ({
       onClose(templateDetails);
     }}
     onClose={onClose}
+    onCancel={onClose}
     reduceTitle
     showDefaultButtons={true}
     title={t('common.Preview')}

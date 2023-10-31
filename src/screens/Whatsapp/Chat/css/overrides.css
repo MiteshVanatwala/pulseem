@@ -18,7 +18,8 @@ button {
     cursor: pointer;
 }
 
-button, input {
+button,
+input {
     border: none;
     background-color: transparent;
 }
@@ -28,8 +29,8 @@ ul {
 }
 
 ::-webkit-scrollbar {
-    width: 6px!important;
-    height: 6px!important;
+    width: 6px !important;
+    height: 6px !important;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -38,4 +39,24 @@ ul {
 
 ::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.mobileColumn {
+    width: 100%;
+}
+
+@media screen and (max-width: 420px) {
+    .mobileColumn {
+        flex-direction: row;
+        height: 100%;
+        align-items: center;
+    }
+
+    .mobileColumn .clock-font-size {
+        font-size: 14px;
+    }
+
+    .chat__contact-wrapper {
+        max-width: 50px;
+    }
 }

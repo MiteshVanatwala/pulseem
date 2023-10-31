@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
     Box, Button, Grid, Table, TableContainer,
-    TableCell, Link, FormControl, Select, MenuItem,
+    TableCell, Link, FormControl, MenuItem,
     TableHead, TableRow, TextField, Typography, TableBody
 } from '@material-ui/core';
+import Select from '@mui/material/Select';
 import {
     TablePagination, DateField
 } from '../../../components/managment/index';
@@ -15,11 +16,12 @@ import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { WhatsappStatus } from '../../../helpers/Constants';
-import { whatsappStatusToString, whatsappStatusColor } from '../../../helpers/Functions/functions';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { ImWhatsapp } from 'react-icons/im';
+import { ConvertColorStatus, ConvertWhatsappStatusText, SourceType } from '../../../helpers/UI/TableText';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -104,9 +106,9 @@ const DirectWhatsappReportTab = ({
             text = `${text.format('DD/MM/YYYY HH:mm')}`
         }
         if (dataType === 'status') {
-            text = t(whatsappStatusToString(text));
+            text = t(ConvertWhatsappStatusText(text));
             return (
-                <Typography style={{ color: whatsappStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+                <Typography style={{ color: ConvertColorStatus(data, SourceType.WHATSAPP), fontWeight: 600 }}>{text}</Typography>
             )
         }
 
@@ -271,32 +273,25 @@ const DirectWhatsappReportTab = ({
                     />
                 </Grid>
                 <Grid item>
-                    <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+                    <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                         <Select
+                            variant="standard"
                             autoWidth
                             displayEmpty
-                            className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
                             value={Status}
-                            style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
                             onChange={(e) => handleSearchInput(e.target.value, 'Status', 'whatsapp')}
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             MenuProps={{
-                                anchorOrigin: {
-                                    vertical: "bottom",
-                                    horizontal: "left"
+                                PaperProps: {
+                                    style: {
+                                    maxHeight: 200,
+                                    direction: isRTL ? 'rtl' : 'ltr'
+                                    },
                                 },
-                                transformOrigin: {
-                                    vertical: "top",
-                                    horizontal: "left"
-                                },
-                                getContentAnchorEl: null
                             }}
                         >
-                            <MenuItem value="" className={classes.dropDownItem}>
-                                {t("common.Status")}
-                            </MenuItem>
-                            {WhatsappStatus.map(so => {
-                                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
-                            })}
+                            <MenuItem value="">{t("common.Status")}</MenuItem>
+                            {WhatsappStatus.map(so => <MenuItem key={so.id} value={so.id}>{t(so.value)}</MenuItem>)}
                         </Select>
                     </FormControl>
                 </Grid>
@@ -314,8 +309,9 @@ const DirectWhatsappReportTab = ({
                         size='large'
                         variant='contained'
                         onClick={handleSearch}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}>
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={<SearchIcon />}
+                    >
                         {t('campaigns.btnSearchResource1.Text')}
                     </Button>
                     {windowSize !== 'xs' && <Link
@@ -337,8 +333,9 @@ const DirectWhatsappReportTab = ({
                             setPage(1);
                             clearSearch('whatsapp');
                         }}
-                        className={classes.searchButton}
-                        endIcon={<ClearIcon />}>
+                        className={clsx(classes.btn, classes.btnRounded, classes.mleft5)}
+                        endIcon={<ClearIcon />}
+                    >
                         {t('common.clear')}
                     </Button>
                 </Grid> : null}

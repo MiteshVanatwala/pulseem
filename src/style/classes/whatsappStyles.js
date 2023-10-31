@@ -66,13 +66,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		alignItems: 'center',
 		justifyContent: 'space-evenly',
 		height: '100%',
+		'& button': {
+			marginRight: 5,
+		},
 		'@media screen and (max-width: 540px)': {
 			flexDirection: 'column-reverse',
 			paddingInlineEnd: '8px',
 		},
 		'@media screen and (max-width: 556px)': {
-			display: 'contents',
+			display: 'inline',
 			flexDirection: 'unset',
+			textAlign: 'center',
+			marginTop: 5,
+			'& button': {
+				marginBottom: 5,
+				marginRight: 5,
+			}
 		},
 	},
 	WhatsappTextareaWrapper: {
@@ -97,16 +106,17 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '4px 8px',
 	},
 	whatsappActionButtons: {
-		backgroundColor: '#b7b7b7',
-		color: '#1c82b2',
+		backgroundColor: '#fff',
+		color: '#ff3343',
 		borderRadius: '6px',
 		padding: '0px 14px',
 		textTransform: 'none',
 		fontWeight: '600',
 		cursor: 'pointer',
 		'&:hover': {
-			backgroundColor: '#b7b7b7',
-			color: '#1c82b2',
+			backgroundColor: '#ff3343',
+			color: '#fff',
+			cursor: 'pointer'
 		},
 	},
 	whatsappInfoButtons: {
@@ -175,9 +185,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	callToActionDialogHeaderDescription: {
-		fontSize: 12,
-		fontFamily: 'OpenSansHebrew',
-		marginTop: '-8px',
+		fontSize: 16,
+		// fontFamily: 'OpenSansHebrew',
+		// marginTop: '-8px',
 		textAlign: isRTL ? 'right' : 'left',
 	},
 	callToActionDialogHeaderTitle: {
@@ -870,8 +880,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: '#525252',
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
-		width: '508px',
-		height: '345px',
+		width: '100%',
+		height: '100%',
 	},
 
 	templateListWrapper: {},
@@ -1031,9 +1041,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	testGroupModalContentSearch: {
 		marginBottom: '10px',
-		marginTop: '24px',
 	},
 	testGroupModalGroupList: {
+		minHeight: '253px',
 		maxHeight: '253px',
 		overflowY: 'auto',
 	},
@@ -1066,7 +1076,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	alertModalAction: {
 		justifyContent: 'center',
 		'& button': {
-			color: '#fff',
 			width: '120px',
 			fontSize: '18px',
 			fontFamily: 'OpenSansHebrew',
@@ -1115,7 +1124,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	validationAlertModalLi: {
 		padding: '2px 0px 0px 0px',
-		color: '#ff0000',
+		// color: '#ff0000',
+		listStyle: 'disc !important'
 	},
 	infoAlertModalLi: {
 		padding: '2px 0px 0px 0px',
@@ -1196,9 +1206,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	WhatsappCampainRadioButton: {
-		color: '#0677fa',
+		color: '#f74f26',
 		'&.Mui-checked': {
-			color: '#0677fa',
+			color: '#f74f26',
 		},
 	},
 	WhatsappCampainSwitch: {
@@ -1209,7 +1219,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 		'& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track': {
-			backgroundColor: '#19762b',
+			backgroundColor: '#FF3343',
 			opacity: '1',
 		},
 	},
@@ -1245,12 +1255,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignDynamicFieldButtonActive: {
 		textTransform: 'capitalize',
 		fontSize: '14px',
-		backgroundColor: '#0371ad',
+		backgroundColor: '#ff3343',
 		color: '#ffffff',
 		'&:hover': {
 			textTransform: 'capitalize',
 			fontSize: '14px',
-			backgroundColor: '#0371ad',
+			backgroundColor: '#ff3343',
 			color: '#ffffff',
 		},
 	},
@@ -1296,7 +1306,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 				color: '#ffffff',
 			},
 			'& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track': {
-				backgroundColor: '#2f9d1a',
+				backgroundColor: '#FF3343',
 				opacity: '1',
 			},
 		},
@@ -1360,7 +1370,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		// direction: isRTL ? 'rtl' : 'ltr',
 	},
 	whatsappCampainHighlightText: {
-		backgroundColor: '#169bd5',
+		backgroundColor: '#ff3343',
 		color: '#ffffff',
 		padding: '0px 2px',
 		borderRadius: '4px',
@@ -1442,10 +1452,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	summaryModal: {
-		border: '2px solid #0371ad',
-		margin: '18px',
-		borderRadius: '4px',
-		padding: '14px 26px',
 		direction: isRTL ? 'rtl' : 'ltr',
 		position: 'relative',
 		width: '786px',
@@ -1469,18 +1475,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	manageTemplatesHeaderButtons: {
 		justifyContent: 'space-between',
 		'& button': {
-			background: 'blue',
-			color: 'white',
+			// 	background: 'blue',
+			// 	color: 'white',
 			margin: '4px 8px',
-			textTransform: 'none',
-			fontSize: '16px',
+			// 	textTransform: 'none',
+			// 	fontSize: '16px',
 		},
-		'& .green': {
-			background: '#27AE60',
-		},
-		'& .blue': {
-			background: '#3498DB',
-		},
+		// '& .green': {
+		// 	background: '#27AE60',
+		// },
+		// '& .blue': {
+		// 	background: '#3498DB',
+		// },
 	},
 	manageTemplatesCreate: {
 		marginTop: '10px',
@@ -1630,7 +1636,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignDynamicFieldLinkRemoval: {
 		textTransform: 'capitalize',
 		fontSize: '14px',
-		backgroundColor: '#0371ad',
+		backgroundColor: '#ff3343',
 		color: '#ffffff',
 		marginTop: '6px',
 		marginLeft: isRTL ? '0px' : '10px',
@@ -1640,7 +1646,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&:hover': {
 			textTransform: 'capitalize',
 			fontSize: '14px',
-			backgroundColor: '#0371ad',
+			backgroundColor: '#ff3343',
 			color: '#ffffff',
 		},
 	},
@@ -1704,9 +1710,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 
 	whatsappChat: {
 		// '@import url(./App.darktheme.css)': true,
-
 		//App
 		'&.app': {
+			marginTop: 20,
 			width: '100%',
 			background: '#dddbd1',
 			position: 'relative',
@@ -1724,7 +1730,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.app__mobile-message': { display: 'none' },
 		'&.app-content': {
 			width: '100%',
-			height: 'calc(100vh - 47px)',
+			height: 'calc(100vh - 100px)',
 			margin: '0 auto',
 			boxShadow:
 				'0 1px 1px 0 rgba(0, 0, 0, 0.06), 0 2px 5px 0 rgba(0, 0, 0, 0.2)',
@@ -1775,7 +1781,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			justifyContent: 'space-between',
 			alignItems: 'center',
 			height: '60px',
-			padding: '0px 10px',
+			// padding: '0px 10px',
 			/* Fix for height bug with chat sidebar */
 			minHeight: '60px',
 			'&.left': {
@@ -1909,14 +1915,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			background: '#e4dcd4',
 		},
 		'&.chat__header,\n&.chat__footer,\n&.chat__date-wrapper,\n&.chat__msg-group,\n.&chat__encryption-msg':
-			{
-				zIndex: '10',
-			},
+		{
+			zIndex: '10',
+		},
 		'&.chat__header': {
 			zIndex: '20',
 		},
 		'&.chat__avatar-wrapper': {
-			width: '40px',
+			width: '50px',
 			height: '40px',
 			marginRight: isRTL ? 'unset' : '10px',
 			marginLeft: isRTL ? '10px' : 'unset',
@@ -1944,13 +1950,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__contact-desc': { color: '#00000099', fontSize: '0.75rem' },
 		'&.chat__actions': {
-			marginRight: '20px',
+			// marginRight: '20px',
 			display: 'flex',
 			alignItems: 'center',
+			height: '100%'
 		},
-		'&.chat__action': { marginLeft: '25px', cursor: 'pointer' },
+		'&.chat__action': { cursor: 'pointer' },
 		'&.chat__action:not(.options-btn)': { display: 'inline-block' },
-		'&.chat__action-icon': { color: 'rgb(145, 145, 145)' },
+		'&.chat__action-icon': { color: 'rgb(145, 145, 145)', paddingRight: 10 },
 		'&.chat__action-icon--search': { width: '30px', height: '30px' },
 		'&.chat__content': {
 			flex: 1,
@@ -2051,58 +2058,58 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 
 		'&.chat__msg-group > *:nth-child(1):not(.chat__msg--sent)::before,\n&.chat__msg--sent + .chat__msg--rxd::before':
-			{
-				content: "''",
-				position: 'absolute',
-				width: '0',
-				height: '0',
-				top: '0',
-				left: '-8px',
-				borderTop: isRTL ? '0px' : '6px solid white',
-				borderRight: isRTL ? '0px' : '6px solid white',
-				borderBottom: isRTL ? '0px' : '6px solid transparent',
-				borderLeft: isRTL ? '0px' : '6px solid transparent',
-			},
+		{
+			content: "''",
+			position: 'absolute',
+			width: '0',
+			height: '0',
+			top: '0',
+			left: '-8px',
+			borderTop: isRTL ? '0px' : '6px solid white',
+			borderRight: isRTL ? '0px' : '6px solid white',
+			borderBottom: isRTL ? '0px' : '6px solid transparent',
+			borderLeft: isRTL ? '0px' : '6px solid transparent',
+		},
 		'&.chat__msg-group > *:nth-child(1):not(.chat__msg--rxd)::before,\n&.chat__msg--rxd + .chat__msg--sent::before':
-			{
-				right: '-8px',
-				content: "''",
-				position: 'absolute',
-				width: '0',
-				height: '0',
-				top: '0',
-				borderTop: isRTL ? '0px' : '6px solid #dbf8c6',
-				borderRight: isRTL ? '0px' : '6px solid transparent',
-				borderBottom: isRTL ? '0px' : '6px solid transparent',
-				borderLeft: isRTL ? '0px' : '6px solid #dbf8c6',
-			},
+		{
+			right: '-8px',
+			content: "''",
+			position: 'absolute',
+			width: '0',
+			height: '0',
+			top: '0',
+			borderTop: isRTL ? '0px' : '6px solid #dbf8c6',
+			borderRight: isRTL ? '0px' : '6px solid transparent',
+			borderBottom: isRTL ? '0px' : '6px solid transparent',
+			borderLeft: isRTL ? '0px' : '6px solid #dbf8c6',
+		},
 
 		'&.chat__msg-group > *:nth-child(1):not(.chat__msg--sent)::after,\n&.chat__msg--sent + .chat__msg--rxd::after':
-			{
-				content: "''",
-				position: 'absolute',
-				width: '0',
-				height: '0',
-				top: '0',
-				right: '-6px',
-				borderTop: isRTL ? '6px solid white' : '0px',
-				borderRight: isRTL ? '6px solid transparent' : '0px',
-				borderBottom: isRTL ? '6px solid transparent' : '0px',
-				borderLeft: isRTL ? '6px solid transparent' : '0px',
-			},
+		{
+			content: "''",
+			position: 'absolute',
+			width: '0',
+			height: '0',
+			top: '0',
+			right: '-6px',
+			borderTop: isRTL ? '6px solid white' : '0px',
+			borderRight: isRTL ? '6px solid transparent' : '0px',
+			borderBottom: isRTL ? '6px solid transparent' : '0px',
+			borderLeft: isRTL ? '6px solid transparent' : '0px',
+		},
 		'&.chat__msg-group > *:nth-child(1):not(.chat__msg--rxd)::after,\n&.chat__msg--rxd + .chat__msg--sent::after':
-			{
-				left: '-6px',
-				content: "''",
-				position: 'absolute',
-				width: '0',
-				height: '0',
-				top: '0',
-				borderTop: isRTL ? '6px solid #dbf8c6' : '0px',
-				borderRight: isRTL ? '6px solid transparent' : '0px',
-				borderBottom: isRTL ? '6px solid transparent' : '0px',
-				borderLeft: isRTL ? '6px solid transparent' : '0px',
-			},
+		{
+			left: '-6px',
+			content: "''",
+			position: 'absolute',
+			width: '0',
+			height: '0',
+			top: '0',
+			borderTop: isRTL ? '6px solid #dbf8c6' : '0px',
+			borderRight: isRTL ? '6px solid transparent' : '0px',
+			borderBottom: isRTL ? '6px solid transparent' : '0px',
+			borderLeft: isRTL ? '6px solid transparent' : '0px',
+		},
 
 		'&.chat__img': { width: '100%', height: '100%', objectFit: 'cover' },
 		'&.chat__msg-filler': {
@@ -2129,9 +2136,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__msg-status-icon--blue': { color: '#0da9e5' },
 		'&.chat__img-wrapper .chat__msg-footer,\n&.chat__img-wrapper .chat__msg-options-icon,\n&.chat__img-wrapper .chat__msg-status-icon':
-			{
-				color: 'white',
-			},
+		{
+			color: 'white',
+		},
 		'&.chat__msg-options': {
 			opacity: '0',
 			position: 'absolute',
@@ -2396,9 +2403,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			cursor: 'pointer',
 		},
 		'&.profile__action:not(:last-of-type),\n&.profile__about-item:not(:last-of-type),\n&.profile__group:not(:last-of-type)':
-			{
-				borderBottom: '1px solid #ebebeb',
-			},
+		{
+			borderBottom: '1px solid #ebebeb',
+		},
 		'&.profile__action-left': { flex: '1' },
 		'&.profile__action-text': { display: 'block' },
 		'&.profile__action-text--top,\n.profile__about-item': {
@@ -2541,9 +2548,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			lineHeight: '17px',
 		},
 		'&.sidebar__alert--danger .sidebar__alert-text:first-of-type, .sidebar__alert--danger .sidebar__alert-text:last-of-type':
-			{
-				color: 'white',
-			},
+		{
+			color: 'white',
+		},
 		'&.sidebar__search-wrapper': {
 			padding: '7px 10px',
 			height: '50px',
@@ -2578,11 +2585,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.sidebar-contact__content': { overflow: 'hidden', flex: '1' },
 		'&.sidebar-contact__top-content, .sidebar-contact__bottom-content, .sidebar-contact__message-wrapper':
-			{
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'space-between',
-			},
+		{
+			display: 'flex',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+		},
 		'&.sidebar-contact__name, .sidebar-contact__message': {
 			flex: 1,
 			overflow: 'hidden',
@@ -2618,13 +2625,13 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			fontWeight: '500',
 		},
 		'&.sidebar-contact__icons, .sidebar-contact:not(:focus) .sidebar-contact__icons':
-			{
-				display: 'flex',
-				justifyContent: 'center',
-				alignItems: 'center',
-				transform: isRTL ? 'translateX(-32px)' : 'translateX(24px)',
-				transition: 'transform 0.5s ease',
-			},
+		{
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+			transform: isRTL ? 'translateX(-32px)' : 'translateX(24px)',
+			transition: 'transform 0.5s ease',
+		},
 		'&.sidebar-contact:hover .sidebar-contact__icons': {
 			transform: 'translateX(0)',
 		},
@@ -2680,19 +2687,20 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		height: 50,
 	},
 	whatsappDropDown: {
-		marginLeft: 5,
+		marginRight: 5,
 		alignSelf: 'flex-end',
-		border: '1px solid #1c82b2',
+		border: '1px solid #ff3343',
+		color: '#ff3343',
 		borderRadius: '.2rem',
 		padding: '1px 4px',
 		'& .MuiSelect-selectMenu': {
-			color: '#1c82b2 !important',
+			color: '#ff3343 !important',
 			'&:focus': {
 				// backgroundColor: '#fff'
 			},
 		},
 		'& .MuiSelect-icon': {
-			color: '#1c82b2 !important',
+			color: '#ff3343 !important',
 		},
 	},
 	whatsappAreaManual: {
@@ -2937,14 +2945,15 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	buttonWhatsappAutocomplete: {
 		padding: '10px 12px 10px 4px',
+		borderBottom: 'solid 1px #ced4da',
 		'& .MuiAutocomplete-endAdornment': {
 			right: isRTL ? 'unset' : '0px',
 			left: isRTL ? '0px' : 'unset',
 		},
 		'& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
-			{
-				paddingRight: isRTL ? '0px !important' : '0px',
-			},
+		{
+			paddingRight: isRTL ? '0px !important' : '0px',
+		},
 	},
 	buttonCallToActionAutocomplete: {
 		padding: '14px 12px 12px 4px',
@@ -3012,7 +3021,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			width: '100%',
 			fontSize: '24px',
 			fontWeight: '600',
-			color: '#1c82b2',
+			color: '#ff164f',
 			'@media screen and (max-width: 768px)': {
 				fontSize: '20px',
 			},
@@ -3044,11 +3053,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappNoSetupContactButton: {
 		fontFamily: 'OpenSansHebrew',
-		backgroundColor: '#1c82b2',
+		backgroundColor: '#ff164f',
 		cursor: 'pointer',
 		margin: '7px 54px',
 		'&:hover': {
-			backgroundColor: '#1c82b2',
+			backgroundColor: '#ff164f',
 		},
 		'& span': {
 			fontFamily: 'OpenSansHebrew',
@@ -3143,7 +3152,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		width: '40px',
 		color: '#000',
 		border: '1px solid #000',
-		'& input':{
+		'& input': {
 			textAlign: 'center',
 		}
 	},
@@ -3211,5 +3220,5 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		backgroundColor: '#277BFF',
 		color: '#ffffff',
 		cursor: 'pointer',
-	},
+	}
 });

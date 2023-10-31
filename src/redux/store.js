@@ -45,6 +45,7 @@ export default configureStore({
     group: groupSlice,
     report: reportSlice,
     gallery: galleryReducer,
+    connectors: ConnectorsSlice,
     whatsapp: whatsappReducer,
     accountSettings: AccountSettingsSlice,
     connectors: ConnectorsSlice

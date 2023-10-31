@@ -527,7 +527,8 @@
       "contactUs": "בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
       "FUTURE_DATE_PASSED": "תאריך שליחת הקמפיין עבר. יש לבחור תאריך עתידי.",
       "INVALID_CAMPAIGN_ID": "מספר מזהה של הקמפיין לא תקין",
-      "ACCOUNT_RESTRICTED": "חשבון זה מוגבל לשליחה<br/>עליכם להסדיר תשלומים קודמים מול מחלקת המכירות."
+      "ACCOUNT_RESTRICTED": "חשבון זה מוגבל לשליחה<br/>עליכם להסדיר תשלומים קודמים מול מחלקת המכירות.",
+      "SMS_BULK_ENDED_PURCHASE_OPTION": "החבילה שלכם נגמרה!<br/>באפשרותכם לרכוש חבילת SMS חדשה או לבטל את השינויים<br/>של קמפיין ה-SMS שיווק משלים."
     },
     "success": "הקמפיין נשמר בהצלחה",
     "sendSettings": {
@@ -594,7 +595,7 @@
   "newsLetterMgmt": {
     "emailVerification": {
       "emailVerificationBtnText": "אימות אימייל",
-      "popupTitle": "אימות כתובת אימייל לשליחה",
+      "popupTitle": "אימות כתובת מייל לשליחה",
       "popupDesc1": "על מנת להבטיח את אבטחת חשבונך, עלינו לאמת שכתובת אימייל זאת שייכת לך",
       "popupDesc2": "זהו תהליך חד פעמי לכל כתובת אימייל המשמשת לשליחה",
       "firstSlide": {
@@ -680,5 +681,7 @@
   "weSent": "שלחנו!",
   "campaignIsOnItsWay": "הקמפיין שלך בדרך ליעד",
   "newsletterSetUp": "הגדרות קמפיין",
-  "lastSaveAt": "שמירה אחרונה ב: "
+  "lastSaveAt": "שמירה אחרונה ב: ",
+  "deleteTotalMarketing": "מחק שיווק משלים",
+  "deleteTotalMarketingDesc": "<b>האם אתם בטוחים שברצונכם למחוק את קמפיין השיווק המשלים?</b><br/>במידה ותרצו לשחזר את הקמפיין יהיה עליכם להגדיר אותו מחדש"
 }

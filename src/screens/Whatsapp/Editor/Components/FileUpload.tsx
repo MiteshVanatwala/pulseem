@@ -2,9 +2,9 @@ import { Box, Button, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { FileUploadProps, coreProps } from '../Types/WhatsappCreator.types';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
-import AlertModal from '../Popups/AlertModal';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 const FileUpload = ({
 	classes,
@@ -14,9 +14,8 @@ const FileUpload = ({
 	sourceFileSize = ''
 }: FileUploadProps) => {
 	const { t: translator } = useTranslation();
-	const [isFileUploadAlert, setIsFileUploadAlert] = useState<boolean>(false);
-	const [isFileSizeAlert, setIsFileSizeAlert] = useState<boolean>(false);
 	const [fileSize, setFileSize] = useState<string>('');
+	const [alert, setAlert] = useState<string>('');
 
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
@@ -32,7 +31,7 @@ const FileUpload = ({
 		if (buttonType === 'quickReply') {
 			e.preventDefault();
 			e.stopPropagation();
-			setIsFileUploadAlert(true);
+			setAlert(translator('whatsapp.alertModal.fileUploadAlert'));
 		}
 	};
 
@@ -52,7 +51,7 @@ const FileUpload = ({
 				setFileData(e.target.files[0]);
 				setFileSize(niceBytes(e.target.files[0].size));
 			} else {
-				setIsFileSizeAlert(true);
+				setAlert(translator('whatsapp.alertModal.fileSizeAlert'));
 			}
 		}
 	};
@@ -61,6 +60,25 @@ const FileUpload = ({
 		e.preventDefault();
 		setFileData(undefined);
 	};
+
+	const renderDialog = () => {
+    if (alert) {
+			return (
+				<BaseDialog
+					classes={classes}
+					open={!!alert}
+					onCancel={() => setAlert('')}
+					onClose={() => setAlert('')}
+					onConfirm={() => setAlert('')}
+					renderButtons={null}
+				>
+					<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        		{alert}
+      		</Typography>
+				</BaseDialog>
+			)
+		}
+  }
 
 	return (
 		<Box className={clsx(classes.buttonForm, classes.fileUpload)}>
@@ -124,26 +142,7 @@ const FileUpload = ({
 					<>{translator('whatsapp.fileDescription')}</>
 				)}
 			</Typography>
-
-			<AlertModal
-				classes={classes}
-				isOpen={isFileSizeAlert}
-				onClose={() => setIsFileSizeAlert(false)}
-				title={translator('whatsapp.alertModal.alert')}
-				subtitle={translator('whatsapp.alertModal.fileSizeAlert')}
-				type='alert'
-				onConfirmOrYes={() => setIsFileSizeAlert(false)}
-			/>
-
-			<AlertModal
-				classes={classes}
-				isOpen={isFileUploadAlert}
-				onClose={() => setIsFileUploadAlert(false)}
-				title={translator('whatsapp.alertModal.alert')}
-				subtitle={translator('whatsapp.alertModal.fileUploadAlert')}
-				type='alert'
-				onConfirmOrYes={() => setIsFileUploadAlert(false)}
-			/>
+			{renderDialog()}
 		</Box>
 	);
 };

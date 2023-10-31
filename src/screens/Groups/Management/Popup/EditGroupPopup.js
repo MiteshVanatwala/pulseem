@@ -18,13 +18,13 @@ import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { editGroup, } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
-import { Dialog } from "../../../../components/managment/Dialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 
 const EditGroupPopup = ({ classes,
     isOpen = false,
     onClose,
+    onCancel,
     setLoader,
     windowSize,
     ToastMessages,
@@ -32,7 +32,8 @@ const EditGroupPopup = ({ classes,
     openARDialog,
     selectedGroup,
     getData,
-    handleResponses = (response, actions) => null
+    handleResponses,
+    isDynamic
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -46,11 +47,19 @@ const EditGroupPopup = ({ classes,
 
         const initData = async () => {
             const currentGroup = { ...groupData.Groups.find((g) => { return g.GroupID === selectedGroup }) };
-            setEditableFroupData(currentGroup);
+            if (currentGroup && currentGroup?.GroupID > 0) {
+                setEditableFroupData({
+                    GroupID: currentGroup.GroupID,
+                    GroupName: currentGroup.GroupName,
+                    IsTestGroup: currentGroup.IsTestGroup,
+                    IsDynamic: currentGroup.IsDynamicisDynamic ?? false
+                });
+            }
             setLoader(false);
         }
 
         initData();
+
     }, [groupData.Groups])
 
     const handleEditGroup = async (data) => {
@@ -61,7 +70,7 @@ const EditGroupPopup = ({ classes,
         try {
             onClose()
             setLoader(true);
-            const response = await dispatch(editGroup(data));
+            const response = await dispatch(editGroup({ ...data, IsDynamic: isDynamic ?? false }));
             setLoader(false);
             handleResponses(response, {
                 'S_201': {
@@ -118,9 +127,8 @@ const EditGroupPopup = ({ classes,
                 icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div>}
-                showDivider={true}
                 onClose={onClose}
-                onCancel={onClose}
+                onCancel={onCancel ?? onClose}
                 renderButtons={() => (
                     <Grid
                         container
@@ -128,11 +136,11 @@ const EditGroupPopup = ({ classes,
                         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
                         <Grid item>
                             <Button
-                                variant="contained"
-                                size="small"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogCancelButton
+                                    // classes.dialogButton,
+                                    // classes.dialogCancelButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 onClick={() => onClose()}
                             >
@@ -141,11 +149,11 @@ const EditGroupPopup = ({ classes,
                         </Grid>
                         <Grid item>
                             <Button
-                                variant="contained"
-                                size="small"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton
+                                    // classes.dialogButton,
+                                    // classes.dialogConfirmButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 onClick={() => {
                                     handleEditGroup(editableFroupData);

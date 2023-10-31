@@ -8,6 +8,7 @@ import {
 	savedTemplateListProps,
 	savedTemplateTypesProps,
 } from '../../Editor/Types/WhatsappCreator.types';
+import { SelectChangeEvent } from '@mui/material';
 
 export type WhatsappChatProps = {
 	classes: ClassesType['classes'];
@@ -36,7 +37,7 @@ export type WhatsappChatUiProps = {
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	whatsappChatSession: APIWhatsappChatSessionData;
-	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	handleUserStatus: (e: SelectChangeEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
 	onChatSend: () => void;
 	allWhatsappChat: APIWhatsappChatItemsData | undefined;
@@ -64,7 +65,7 @@ export type SideBarContactListProps = {
 		e: BaseSyntheticEvent,
 		Contacts: APIWhatsappChatSidebarContactsItemsData
 	) => void;
-	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	handleUserStatus: (e: SelectChangeEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
 	fetchMoreContacts: () => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
@@ -75,7 +76,7 @@ export type SideBarContactListProps = {
 export type SideHeaderContactDropDownProps = {
 	classes: ClassesType['classes'];
 	phoneNumbersList: string[];
-	onActiveUserChange: (e: BaseSyntheticEvent) => void;
+	onActiveUserChange: (e: SelectChangeEvent) => void;
 	activePhoneNumber: string;
 };
 
@@ -121,11 +122,11 @@ export type WhatsappChatSideBarProps = {
 		Contacts: APIWhatsappChatSidebarContactsItemsData
 	) => void;
 	setActiveUser: (activeUser: string) => void;
-	onActiveUserChange: (e: BaseSyntheticEvent) => void;
+	onActiveUserChange: (e: SelectChangeEvent) => void;
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	sideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	phoneNumbersList: string[];
-	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	handleUserStatus: (e: SelectChangeEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
 	activePhoneNumber: string;
 	fetchMoreContacts: (
@@ -146,7 +147,6 @@ export type WhatsappChatSideBarProps = {
 
 export type chatModalProps = {
 	classes: ClassesType['classes'];
-	isOpen: boolean;
 	onClose: () => void;
 	savedTemplateList: savedTemplateListProps[];
 	onChoose: (

@@ -425,15 +425,18 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			currentPage='reports'
 			classes={classes}
 			customPadding={false}
-			containerClass={clsx(classes.management, classes.mb50)}>
+			containerClass={clsx(classes.management, classes.mb50)}
+		>
 			{isAccountSetup ? (
 				<>
-					<Title
-						Text={translator('whatsappReport.report')}
-						Classes={classes}
-						ContainerStyle={{}}
-						Element={null}
-					/>
+					<Box className={'topSection'}>
+						<Title
+							Text={translator('whatsappReport.report')}
+							classes={classes}
+							ContainerStyle={{}}
+							Element={null}
+						/>
+					</Box>
 
 					<div className={classes.manageWhatsappTemplates}>
 						<Grid container spacing={2} className={classes.lineTopMarging}>

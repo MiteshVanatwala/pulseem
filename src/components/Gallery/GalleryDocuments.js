@@ -84,6 +84,7 @@ export const GalleryDocuments = ({
                 })
             }
         }
+
     }, [fileToUploads]);
 
     const changeHandler = (event) => {
@@ -133,6 +134,7 @@ export const GalleryDocuments = ({
             }
             setGalleryReady(true);
         }
+
     }, [scrollIndex, selectedFolder, folder]);
 
     if (galleryReady) {

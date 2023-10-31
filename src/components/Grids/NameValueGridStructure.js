@@ -17,8 +17,8 @@ const NameValueGridStructure = ({ gridArr = [],
     variant = "subtitle2",
     align = "center",
     direction = "row",
-    reverse,
-    rootClass,
+    reverse = null,
+    rootClass = null,
     ...props
 }) => {
 
@@ -46,7 +46,7 @@ const NameValueGridStructure = ({ gridArr = [],
                                     style={{ cursor: obj.onClick ? 'pointer' : null }}
                                     onClick={obj.onClick ?? (() => null)}
                                 >
-                                    {obj?.value}
+                                    {`${obj?.value} `}
                                 </Typography>
                                 {
                                     obj.component ?

@@ -3,6 +3,7 @@ import { Typography, Grid, TextField, IconButton } from '@material-ui/core';
 import { PageArrowIcon } from '../../../../assets/images/managment';
 import { useTranslation } from 'react-i18next';
 import { paginationProps } from '../Types/Management.types';
+import { IoIosArrowDown } from 'react-icons/io';
 
 export const Pagination = ({
 	classes,
@@ -60,8 +61,9 @@ export const Pagination = ({
 					className={classes.tablePaginationSelect}
 					variant='standard'
 					SelectProps={{
-						native: true,
-					}}
+            native: true,
+            IconComponent: () => <IoIosArrowDown className='MuiSelect-icon' />
+          }}
 					value={rowsPerPage}
 					onChange={handleRowsPerPageChange}>
 					{rowsPerPageOptions.map((option: number) => (

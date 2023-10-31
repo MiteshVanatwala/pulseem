@@ -22,6 +22,7 @@ import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import Toast from '../Toast/Toast.component';
 import { GalleryImages } from './GalleryImages'
 import { GalleryDocuments } from './GalleryDocuments'
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const Gallery = ({
     classes,
@@ -202,6 +203,7 @@ const Gallery = ({
             // callbackSelectFile(encodeURI(selectedFileURL));
             callbackSelectFile(multiSelect ? selectedFileURL.join(',') : selectedFileURL);
         }
+
     }, [isConfirm])
 
     const [referenceNode, setReferenceNode] = useState();
@@ -292,13 +294,11 @@ const Gallery = ({
         return (
             <Box>
                 {!folderCreationState && <Button
-                    variant='contained'
-                    size='medium'
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightBlue,
-                        classes.backButton
+                        classes.btn,
+                        classes.btnRounded
                     )}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     color="primary"
                     onClick={handleCreateFolderRow}>
                     {t('common.createFolder')}
