@@ -79,6 +79,9 @@ const SendCampaign = ({
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const queryParams = new URLSearchParams(window.location.search)
+	const FromAutomation = queryParams.get("FromAutomation") || false
+	const NodeToEdit = queryParams.get("NodeToEdit") || false
 	const { campaignID } = useParams();
 	const { testGroups: testGroupList } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
@@ -880,9 +883,12 @@ const SendCampaign = ({
 					<SendCampaignSuccess
 						classes={classes}
 						isOpen={isSendCampaignSuccessOpen}
+						isFromAutomation={!!FromAutomation}
 						onBackToHome={() => navigate('/react')}
 						onBackToCampaigns={() =>
 							navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
+						}
+						onBackToAutomation={() => window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
 						}
 						onClose={() => setIsSendCampaignSuccessOpen(false)}
 					/>

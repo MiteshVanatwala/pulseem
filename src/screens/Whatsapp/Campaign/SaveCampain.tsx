@@ -113,6 +113,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { campaignID } = useParams();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const queryParams = new URLSearchParams(window.location.search)
+	const FromAutomation = queryParams.get("FromAutomation") || false
+	const NodeToEdit = queryParams.get("NodeToEdit") || false
+	console.log(FromAutomation)
 
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
@@ -934,9 +938,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
 				}
 				if (isNavigate) {
-					navigate(
-						`/react/whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
-					);
+					if (FromAutomation) {
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+						return false;
+					} else {
+						navigate(
+							`/react/whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
+						);
+					}
 				}
 				return data?.Data;
 			} else {
@@ -960,7 +969,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`/react/whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}`,
+					`/react/whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}`,
 					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}` } }
 				);
 			} else {
@@ -992,13 +1001,17 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 	const onExitCampaign = () => {
-		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		if (FromAutomation) {
+			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+		} else {
+			navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		}
 	};
 
 	const onExceedLimitYes = () => {
 		setExceedLimitModal(false);
 	};
-
+	
 	return (
 		<DefaultScreen
 			subPage={'create'}
