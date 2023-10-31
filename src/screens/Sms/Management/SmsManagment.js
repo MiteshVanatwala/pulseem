@@ -58,6 +58,7 @@ import { sitePrefix } from '../../../config';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import { FaEye } from 'react-icons/fa';
 import { GrDuplicate } from 'react-icons/gr';
+import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 
 const SmsManagnentScreen = ({ classes }) => {
 	const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -419,9 +420,12 @@ const SmsManagnentScreen = ({ classes }) => {
 				uIcon: SendIcon,
 				lable: t('campaigns.imgSendResource1.ToolTip'),
 				remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
-				rootClass: classes.sendIcon,
+				rootClass: clsx(classes.sendIcon, 'sendIcon'),
 				textClass: classes.sendIconText,
-				href: `${sitePrefix}sms/send/${Id}`
+				onClick: () => {
+					dispatch(getGroupsBySubAccountId());
+					Redirect({ url: `${sitePrefix}sms/send/${Id}` })
+				}
 			},
 		]
 		return (

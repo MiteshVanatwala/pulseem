@@ -663,7 +663,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				icon: SendIcon,
 				lable: translator('campaigns.imgSendResource1.ToolTip'),
 				remove: Status !== 1 || AutomationID !== 0,
-				rootClass: classes.sendIcon,
+				rootClass: clsx(classes.sendIcon, 'sendIcon'),
 				textClass: classes.sendIconText,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
 				classes: classes,

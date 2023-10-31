@@ -38,6 +38,7 @@ import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import Toast from '../../../components/Toast/Toast.component';
+import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures } = useSelector(state => state.common);
@@ -482,9 +483,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
         uIcon: SendIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
-        rootClass: classes.sendIcon,
+        rootClass: clsx(classes.sendIcon, 'sendIcon'),
         textClass: classes.sendIconText,
-        href: `${sitePrefix}Campaigns/SendSettings/${CampaignID}`
+        onClick: () => {
+          dispatch(getGroupsBySubAccountId());
+          navigate(`${sitePrefix}Campaigns/SendSettings/${CampaignID}`);
+        }
       },
     ]]
     return (

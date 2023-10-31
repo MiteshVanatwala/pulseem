@@ -618,7 +618,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				remove: row.StatusId !== templateStatusIdsByStatusName.Created,
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
-				rootClass: classes.sendIcon,
+				rootClass: clsx(classes.sendIcon, 'sendIcon'),
 				textClass: classes.sendIconText,
 				id: row.Id.toString(),
 			},

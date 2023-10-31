@@ -485,10 +485,12 @@ const NotificationManagement = ({ classes }) => {
         uIcon: SendIcon,
         lable: t('notifications.buttons.send'),
         remove: StatusID !== 0,
-        rootClass: classes.sendIcon,
+        rootClass: clsx(classes.sendIcon, 'sendIcon'),
         textClass: classes.sendIconText,
-        href: `${sitePrefix}Notification/send/${ID}`
-      },
+        onClick: () => {
+          Redirect({url: `${sitePrefix}Notification/send/${ID}`});
+        }
+      }
     ]
     return (
       <Grid

@@ -258,7 +258,7 @@ const MmsManagnentScreen = ({ classes }) => {
         uIcon: SendIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
         remove: windowSize === 'xs' || Status !== 1,
-        rootClass: classes.sendIcon,
+        rootClass: clsx(classes.sendIcon, 'sendIcon'),
         textClass: classes.sendIconText,
         href: `/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=${ID}&fromreact=true`
       },

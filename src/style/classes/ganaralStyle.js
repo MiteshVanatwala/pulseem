@@ -2043,7 +2043,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
     color: '#fff !important',
     '& svg': {
-      color: '#ff2c44',
+      color: '#fff',
     }
   },
   activeTab: {

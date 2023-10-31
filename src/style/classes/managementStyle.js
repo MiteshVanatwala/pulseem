@@ -354,8 +354,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #FF3343",
     borderRadius: 5,
     background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
-    paddingTop: 5,
+    // paddingTop: 5,
     paddingBottom: 10,
+    '& rowIconContainer div div': {
+      background: 'transparent'
+    },
     '& .rowIcon': {
       verticalAlign: 'middle',
       paddingTop: 10,
@@ -670,6 +673,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
               '& div': {
                 background: '#fff',
               }
+            },
+            '& .sendIcon': {
+              '& div': {
+                background: 'transparent !important'
+              }
             }
           }
         },
@@ -678,6 +686,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
             '& div': {
               '& div': {
                 background: '#F0F5FF',
+              }
+            },
+            '& .sendIcon': {
+              '& div': {
+                background: 'transparent !important'
               }
             }
           }

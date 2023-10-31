@@ -1,4 +1,4 @@
-import { Box, Grid, makeStyles, Typography } from "@material-ui/core";
+import { Box, Grid, IconButton, makeStyles, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { UploadSettings } from "../../tempConstants";
 import UploadXL from '../../../../components/Files/UploadXL'
@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { Tooltip } from "@material-ui/core";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { useSelector } from "react-redux";
+import { BsInfoCircle } from "react-icons/bs";
 
 const useStyles = makeStyles((theme) => ({
     contentBox: {
@@ -66,7 +67,9 @@ const AddBulkRecipientPopup = ({ classes,
                                 classes={{ tooltip: localClasses.customWidth, arrow: localClasses.arrow }}
                                 sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
                             >
-                                <Typography className={classes.bodyInfo} style={{ marginInline: 10, color: '#000', backgroundColor: '#fff', minWidth: 20 }}>i</Typography>
+                                <IconButton style={{ color: '#fff' }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                                    <BsInfoCircle style={{  color: '#fff', fontSize: 24 }}  />
+                                </IconButton>
                             </Tooltip>
                         </Box>
                         <Box style={{ marginInlineStart: 'auto' }}>
