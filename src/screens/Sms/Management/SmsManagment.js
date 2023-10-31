@@ -56,6 +56,7 @@ import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
+import { FaEye } from 'react-icons/fa';
 
 const SmsManagnentScreen = ({ classes }) => {
 	const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -763,6 +764,10 @@ const SmsManagnentScreen = ({ classes }) => {
 			childrenPadding: false,
 			contentStyle: classes.pt2rem,
 			showDivider: false,
+			title: t('common.Preview'),
+			icon: (
+				<FaEye style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+			),
 			content: (
 				<Box>
 					<Preview
@@ -1066,7 +1071,7 @@ const SmsManagnentScreen = ({ classes }) => {
 			{renderDialog()}
 			{newSmsVerification && <VerificationDialog classes={classes} isOpen={newSmsVerification} variant='sms' onClose={() => setNewSmsVerification(false)} />}
 			<DuplicateCampaign
-        isSms={true}
+				isSms={true}
 				title={t('campaigns.dialogDuplicateTitle')}
 				classes={classes}
 				isOpen={!!duplicateDialog?.id}
@@ -1078,7 +1083,7 @@ const SmsManagnentScreen = ({ classes }) => {
 					setDuplicateDialog({});
 				}}
 				campaignName={duplicateDialog?.name}
-      />
+			/>
 			<Loader isOpen={showLoader} />
 		</DefaultScreen>
 	)
