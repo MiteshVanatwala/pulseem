@@ -115,6 +115,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
+	const queryParams = new URLSearchParams(window.location.search)
+	const FromAutomation = queryParams.get("FromAutomation") || false
+	const NodeToEdit = queryParams.get("NodeToEdit") || false
+
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
@@ -807,7 +811,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (validateSaveCampaign(true)) {
 			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
-			const saveCampaign = await onSaveCampaign('testSend', false, false);
+			const saveCampaign: any = await onSaveCampaign('testSend', false, false);
 			campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
 			if (testSendSelection !== 'onecontact') {
 				setIsLoader(true);
@@ -950,9 +954,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
 				}
 				if (isNavigate) {
-					navigate(
-						`${sitePrefix}whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
-					);
+					if (FromAutomation) {
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+						return false;
+					} else {
+						navigate(
+							`${sitePrefix}whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
+						);
+					}
 				}
 				return data?.Data;
 			} else {
@@ -978,7 +987,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}`,
+					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}`,
 					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}` } }
 				);
 			} else {
@@ -1017,7 +1026,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 	const onExitCampaign = () => {
 		setDialogType(null);
-		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		if (FromAutomation) {
+			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+		} else {
+			navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		}
 	};
 
 	const getExitDialog = () => ({

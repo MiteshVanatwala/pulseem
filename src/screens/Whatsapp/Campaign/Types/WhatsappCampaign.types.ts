@@ -65,8 +65,10 @@ export type validationAlertModalProps = {
 
 export type SendCampaignSuccessModalProps = {
 	classes: ClassesType['classes'];
+	isFromAutomation?: boolean;
 	onBackToHome: () => void;
 	onBackToCampaigns: () => void;
+	onBackToAutomation?: () => void;
 };
 
 export type infoModalProps = {
