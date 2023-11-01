@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Grid, Tooltip } from '@material-ui/core';
+import { Button, Grid, IconButton, Tooltip } from '@material-ui/core';
 import { ClassesType } from '../../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -14,6 +14,7 @@ import UploadXL from '../../../../components/Files/UploadXL';
 import { UploadSettings } from '../../../Groups/tempConstants';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import Toast from '../../../../components/Toast/Toast.component';
+import { BsInfoCircle } from 'react-icons/bs';
 
 const LeftPane = ({
 	classes,
@@ -150,13 +151,16 @@ const LeftPane = ({
 			className={classes.wizardFlex}>
 			<Grid item md={12} xs={12} className={classes.infoDiv}>
 				<span className={classes.conInfo}>
-					<>{translator('mainReport.whomTosend')}</>
+					{translator('mainReport.whomTosend')}
 				</span>
 				<Tooltip
 					disableFocusListener
-					title={<>{translator('smsReport.whomtoSendTip')}</>}
-					classes={{ tooltip: classes.customWidth }}>
-					<span className={classes.bodyInfo}>i</span>
+					title={translator('smsReport.whomtoSendTip')}
+					classes={{ tooltip: classes.customWidth }}
+				>
+					<IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)}>
+						<BsInfoCircle />
+					</IconButton>
 				</Tooltip>
 			</Grid>
 			<Grid item md={12} xs={12} className={classes.tabDiv}>
@@ -195,8 +199,11 @@ const LeftPane = ({
 					<Tooltip
 						disableFocusListener
 						title={<>{translator('smsReport.manualTip')}</>}
-						classes={{ tooltip: classes.customWidth }}>
-						<span className={classes.bodyInfo}>i</span>
+						classes={{ tooltip: classes.customWidth }}
+					>
+						<IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)}>
+							<BsInfoCircle />
+						</IconButton>
 					</Tooltip>
 				</Grid>
 			</Grid>

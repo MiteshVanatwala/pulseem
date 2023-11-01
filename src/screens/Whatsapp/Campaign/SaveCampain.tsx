@@ -107,12 +107,17 @@ import NoSetup from '../NoSetup/NoSetup';
 import moment from 'moment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
+import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
 	const { campaignID } = useParams();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+
+	const queryParams = new URLSearchParams(window.location.search)
+	const FromAutomation = queryParams.get("FromAutomation") || false
+	const NodeToEdit = queryParams.get("NodeToEdit") || false
 
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
@@ -717,6 +722,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onDeleteCampaign = async () => {
+		setDialogType({type: '', data: ''})
 		if (campaignID) {
 			const deleteData = await dispatch<any>(
 				deleteCampaign(campaignID)
@@ -805,7 +811,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (validateSaveCampaign(true)) {
 			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
-			const saveCampaign = await onSaveCampaign('testSend', false, false);
+			const saveCampaign: any = await onSaveCampaign('testSend', false, false);
 			campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
 			if (testSendSelection !== 'onecontact') {
 				setIsLoader(true);
@@ -936,6 +942,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		showSuccess: boolean = true,
 		isNavigate: boolean = true
 	) => {
+		setDialogType(null);
 		if (validateSaveCampaign(true)) {
 			setIsLoader(true);
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall(
@@ -947,9 +954,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
 				}
 				if (isNavigate) {
-					navigate(
-						`${sitePrefix}whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
-					);
+					if (FromAutomation) {
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+						return false;
+					} else {
+						navigate(
+							`${sitePrefix}whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
+						);
+					}
 				}
 				return data?.Data;
 			} else {
@@ -975,7 +987,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}`,
+					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}`,
 					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}` } }
 				);
 			} else {
@@ -1013,7 +1025,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 	const onExitCampaign = () => {
-		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		setDialogType(null);
+		if (FromAutomation) {
+			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+		} else {
+			navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		}
 	};
 
 	const getExitDialog = () => ({
@@ -1024,43 +1041,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				{translator('mainReport.leaveCampaign')}
 			</Typography>
 		),
-		renderButtons: () =>
-      (
-        <Grid
-          container
-          spacing={2}
-          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
-        >
-          <Grid item>
-            <Button
-              onClick={() => {
-                setDialogType(null);
-								onSaveCampaign('save', true, true);
-              }}
-              className={clsx(
-                classes.btn,
-                classes.btnRounded
-              )}
-            >
-              {translator('common.Yes')}
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              onClick={() => {
-								setDialogType(null);
-								onExitCampaign();
-							}}
-              className={clsx(
-                classes.btn,
-                classes.btnRounded
-              )}
-            >
-              {translator('common.No')}
-            </Button>
-          </Grid>
-        </Grid>
-      ),
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onSaveCampaign('save', true, true)}
+			onCancel={() => onExitCampaign()}
+		/>
 	})
 
 	const getDeleteDialog = () => ({
@@ -1071,13 +1056,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				{translator('whatsapp.alertModal.DeleteTitle')}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-			onDeleteCampaign();
-		}
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDeleteCampaign()}
+			onCancel={() => setDialogType({type: '', data: ''})}
+		/>
 	})
 
 	const getValidationDialog = () => ({

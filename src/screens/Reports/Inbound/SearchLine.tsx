@@ -212,7 +212,7 @@ const SearchLine = ({
                         }}
                         value={searchRequest.FromNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
+                        className={clsx(classes.textField, classes.minWidth252, classes.pbt9)}
                         placeholder={t('common.FrmNumber')}
                     />
                 </Grid>
@@ -228,7 +228,7 @@ const SearchLine = ({
                         }}
                         value={searchRequest.ToNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, ToNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
+                        className={clsx(classes.textField, classes.minWidth252, classes.pbt9)}
                         placeholder={t('common.ToNumber')}
                     />
                 </Grid>
@@ -239,7 +239,7 @@ const SearchLine = ({
                         size='small'
                         value={searchRequest.TextMessage}
                         onChange={(e) => setSearchRequest({ ...searchRequest, TextMessage: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
+                        className={clsx(classes.textField, classes.minWidth252, classes.pbt9)}
                         placeholder={t('common.messageContent')}
                     />
                 </Grid>
@@ -316,7 +316,7 @@ const SearchLine = ({
                                 style={{
                                     width: 240,
                                 }}
-                                className={clsx(classes.pbt10)}
+                                className={clsx(classes.pbt9)}
                             />)
                         }}
                     />

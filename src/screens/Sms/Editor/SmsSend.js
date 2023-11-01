@@ -924,17 +924,6 @@ const SmsSend = ({ classes, ...props }) => {
                     }}
                   />
                   <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
-                  <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
-                  <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.tooltipCreateGroup")}
-                    classes={{ tooltip: classes.customWidth }}
-                    style={{ marginInlineStart: "5px" }}
-                  >
-                    <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
-                      <BsInfoCircle />
-                    </IconButton>
-                  </Tooltip>
                 </div>
               ) : null}
               {toggleChecked ? (
@@ -1327,7 +1316,7 @@ const SmsSend = ({ classes, ...props }) => {
                   maxLength="3"
                 />
 
-                <span style={{ marginInline: "8px", marginBottom: "8px", fontSize: 14 }}>
+                <span className={clsx(classes.ml5, classes.f14, classes.mb2)}>
                   {t("mainReport.days")}
                 </span>
 
@@ -1417,7 +1406,7 @@ const SmsSend = ({ classes, ...props }) => {
               handlePulseDialog();
             }}
           >
-            <FaRegCalendarAlt className={classes.pl5} />
+            <FaRegCalendarAlt className={clsx(classes.paddingSides5)} />
             {t("mainReport.pulseSend")}
           </Button>
           <Tooltip

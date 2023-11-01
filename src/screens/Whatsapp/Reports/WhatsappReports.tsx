@@ -508,9 +508,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 									size='large'
 									variant='contained'
 									onClick={onSearch}
-									className={classes.searchButton}
+									className={clsx(classes.btn, classes.btnRounded)}
 									endIcon={<SearchIcon />}>
-									<>{translator('campaigns.btnSearchResource1.Text')}</>
+									{translator('campaigns.btnSearchResource1.Text')}
 								</Button>
 							</Grid>
 							{isSearching && (
@@ -519,9 +519,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 										size='large'
 										variant='contained'
 										onClick={clearSearch}
-										className={classes.searchButton}
-										endIcon={<ClearIcon />}>
-										<>{translator('common.clear')}</>
+										className={clsx(classes.btn, classes.btnRounded)}
+										endIcon={<ClearIcon />}
+									>
+										{translator('common.clear')}
 									</Button>
 								</Grid>
 							)}

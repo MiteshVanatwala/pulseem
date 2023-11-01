@@ -428,7 +428,7 @@ const ActionCallPopOver = ({
 											sm={6}
 											md={3}
 										>
-											<Box className={classes.switchDiv}>
+											<Box className={clsx(classes.dFlex)}>
 												<FormGroup>
 													<Switch
 														disabled={!isEditable}
@@ -490,7 +490,7 @@ const ActionCallPopOver = ({
 									onClick={addMore}
 									className={clsx(classes.btn, classes.btnRounded)}
 								>
-									<AiOutlinePlusCircle className={classes.addOptionsIcon} />
+									<AiOutlinePlusCircle className={clsx(classes.mr10, classes.f18)} />
 									{translator('whatsapp.quickReply.addMore')}
 								</Button>
 							)}

@@ -397,7 +397,7 @@ const SendingMethod = ({
                                         maxLength="3"
                                     />
 
-                                    <span style={{ marginInlineEnd: "8px", marginBottom: "8px", fontSize: 14 }}>
+                                    <span className={clsx(classes.ml5, classes.f14, classes.mb2)}>
                                         {t("mainReport.days")}
                                     </span>
                                     <div style={{ display: "flex" }}>

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Tooltip } from '@material-ui/core';
+import { Button, Checkbox, IconButton, Tooltip } from '@material-ui/core';
 import { BaseSyntheticEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7,6 +7,7 @@ import {
 } from '../Types/WhatsappCampaign.types';
 import Groups from './Groups/Groups';
 import clsx from "clsx";
+import { BsInfoCircle } from 'react-icons/bs';
 
 const GroupSelector = ({
 	classes,
@@ -168,10 +169,17 @@ const GroupSelector = ({
 					<Tooltip
 						placement={'bottom'}
 						disableFocusListener
-						title={<>{translator('smsReport.finalReciTip')}</>}
+						title={translator('smsReport.finalReciTip')}
 						classes={{ tooltip: classes.customWidth }}
-						style={{ marginInlineStart: '5px' }}>
-						<span className={classes.bodyInfo}>i</span>
+						style={{ marginInlineStart: '5px' }}
+					>
+						<IconButton
+							style={{ paddingInline: 5, paddingBlock: 0, marginTop: -10 }}
+							className={clsx(classes.icon_Info, classes.f20)}
+							aria-label={translator("mainReport.toolTip1")}
+						>
+							<BsInfoCircle />
+						</IconButton>
 					</Tooltip>
 				</div>
 			</div>

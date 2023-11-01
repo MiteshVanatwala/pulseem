@@ -74,6 +74,7 @@ import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import { SelectChangeEvent } from '@mui/material';
+import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 
 const SendCampaign = ({
 	classes,
@@ -82,6 +83,9 @@ const SendCampaign = ({
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { campaignID } = useParams();
+	const queryParams = new URLSearchParams(window.location.search)
+	const FromAutomation = queryParams.get("FromAutomation") || false
+	const NodeToEdit = queryParams.get("NodeToEdit") || false
 	const { testGroups: testGroupList } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
@@ -472,6 +476,7 @@ const SendCampaign = ({
 	};
 
 	const onDeleteCampaign = async () => {
+		setDialogType({type: '', data: ''})
 		if (campaignID) {
 			const deleteData: commonAPIResponseProps = await dispatch<any>(
 				deleteCampaign(campaignID)
@@ -749,14 +754,14 @@ const SendCampaign = ({
 				{translator('whatsappManagement.LeaveCampaignCreationDesc')}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-			await onCampaignSave(true, true, true);
-			onExitCampaign();
-		}
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={async () => {
+				await onCampaignSave(true, true, true);
+				onExitCampaign();
+			}}
+			onCancel={() => setDialogType({type: '', data: ''})}
+		/>
 	})
 
 	const getDeleteDialog = () => ({
@@ -767,13 +772,11 @@ const SendCampaign = ({
 				{translator('whatsapp.alertModal.DeleteTitle')}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-			onDeleteCampaign();
-		}
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDeleteCampaign()}
+			onCancel={() => setDialogType({type: '', data: ''})}
+		/>
 	})
 
 	const getValidationDialog = () => ({
@@ -858,10 +861,12 @@ const SendCampaign = ({
 		content: (
 			<SendCampaignSuccess
 				classes={classes}
+				isFromAutomation={!!FromAutomation}
 				onBackToHome={() => navigate(`${sitePrefix}`)}
 				onBackToCampaigns={() =>
 					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
 				}
+				onBackToAutomation={() => window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`}
 			/>
 		),
 		onConfirm: async () => {

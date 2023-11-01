@@ -83,7 +83,7 @@ import NoSetup from '../NoSetup/NoSetup';
 import { getApiErrorResponseMessage } from '../Common';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { IoIosArrowDown } from 'react-icons/io';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -633,7 +633,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					<Grid
 						className={clsx(
 							icon?.disable ? classes.disabledCursor : '',
-							icon.key === 'send' ? classes.greenTextColor : ''
 						)}
 						key={icon.key}
 						item>
@@ -648,6 +647,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onSubmitTemplate = async () => {
+		setDialogType({});
 		const submitData: commonAPIResponseProps = await dispatch<any>(
 			submitTemplateDirect({ id: activeRowId })
 		);
@@ -665,6 +665,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onDeleteTemplate = async () => {
+		setDialogType({});
 		setIsLoader(true);
 		const deleteData: deleteTemplateAPIProps = await dispatch<any>(
 			deleteTemplate(activeRowId)
@@ -684,6 +685,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onDuplicaTemplate = async () => {
+		setDialogType({});
 		setIsLoader(true);
 		const duplicateData: deleteTemplateAPIProps = await dispatch<any>(
 			duplicateTemplate(activeRowId)
@@ -764,16 +766,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
         {translator('whatsappManagement.duplicateDesc')}
       </Typography>
     ),
-    onConfirm: async () => {
-			setDialogType({});
-      onDuplicaTemplate();
-    },
-    onCancel: () => {
-      setDialogType({});
-    },
-    onClose: () => {
-      setDialogType({});
-    }
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDuplicaTemplate()}
+			onCancel={() => setDialogType({})}
+		/>
   })
 
 	const getDisplayErrorDialog = () => ({
@@ -797,13 +794,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
         {translator('whatsapp.alertModal.DeleteTemplateTitle')}
       </Typography>
     ),
-    onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-      onDeleteTemplate();
-    }
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDeleteTemplate()}
+			onCancel={() => setDialogType({})}
+		/>
   })
 
 	const getPreviewDialog = () => ({
@@ -843,13 +838,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				</Box>
 			</>
     ),
-    onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-			onSubmitTemplate();
-    }
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onSubmitTemplate()}
+			onCancel={() => setDialogType({})}
+		/>
   })
 
   const renderDialog = () => {
