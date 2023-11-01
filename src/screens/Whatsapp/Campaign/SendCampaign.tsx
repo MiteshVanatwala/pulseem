@@ -74,6 +74,7 @@ import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import { SelectChangeEvent } from '@mui/material';
+import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 
 const SendCampaign = ({
 	classes,
@@ -472,6 +473,7 @@ const SendCampaign = ({
 	};
 
 	const onDeleteCampaign = async () => {
+		setDialogType({type: '', data: ''})
 		if (campaignID) {
 			const deleteData: commonAPIResponseProps = await dispatch<any>(
 				deleteCampaign(campaignID)
@@ -749,14 +751,14 @@ const SendCampaign = ({
 				{translator('whatsappManagement.LeaveCampaignCreationDesc')}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-			await onCampaignSave(true, true, true);
-			onExitCampaign();
-		}
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={async () => {
+				await onCampaignSave(true, true, true);
+				onExitCampaign();
+			}}
+			onCancel={() => setDialogType({type: '', data: ''})}
+		/>
 	})
 
 	const getDeleteDialog = () => ({
@@ -767,13 +769,11 @@ const SendCampaign = ({
 				{translator('whatsapp.alertModal.DeleteTitle')}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-			onDeleteCampaign();
-		}
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDeleteCampaign()}
+			onCancel={() => setDialogType({type: '', data: ''})}
+		/>
 	})
 
 	const getValidationDialog = () => ({

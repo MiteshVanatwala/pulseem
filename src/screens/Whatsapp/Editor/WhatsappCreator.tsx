@@ -76,6 +76,7 @@ import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Switch } from '../../../components/managment';
+import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -1096,6 +1097,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const onDeleteTemplate = async () => {
+		setDialogType(null);
 		setIsDeleteTemplateOpen(false);
 		if (templateID) {
 			const deleteData = await dispatch<any>(deleteTemplate(templateID));
@@ -1202,10 +1204,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				{translator('whatsapp.alertModal.DeleteTitle')}
 			</Typography>
 		),
-		onConfirm: async () => {
-			setDialogType(null);
-			onDeleteTemplate();
-		}
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDeleteTemplate()}
+			onCancel={() => setDialogType(null)}
+		/>
 	})
 
 	const getValidationDialog = () => ({

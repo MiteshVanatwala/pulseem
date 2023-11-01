@@ -87,6 +87,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { RestorDialogContent } from '../../../components/managment';
 import { sitePrefix } from '../../../config';
+import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -659,8 +660,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{
 				key: 'send',
 				buttonKey: 'send',
-				uIcon: '',
-				icon: SendIcon,
+				uIcon: SendIcon,
 				lable: translator('campaigns.imgSendResource1.ToolTip'),
 				remove: Status !== 1 || AutomationID !== 0,
 				rootClass: clsx(classes.sendIcon, 'sendIcon'),
@@ -680,8 +680,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				{iconsMap.map((icon) => (
 					<Grid
 						className={clsx(
-							icon?.disable ? classes.disabledCursor : '',
-							icon.key === 'send' ? classes.greenTextColor : ''
+							icon?.disable ? classes.disabledCursor : ''
 						)}
 						key={icon.key}
 						item>
@@ -696,6 +695,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onDuplicateCampaign = async () => {
+		setDialogType({});
 		setIsLoader(true);
 		const deleteData: commonAPIResponseProps = await dispatch<any>(
 			duplicateCampaign(activeRowId)
@@ -715,6 +715,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onDeleteCampaign = async () => {
+		setDialogType({});
 		setIsLoader(true);
 		const deleteData: commonAPIResponseProps = await dispatch<any>(
 			deleteCampaign(activeRowId)
@@ -856,13 +857,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
         {translator('whatsappManagement.deleteCampaignDesc')}
       </Typography>
     ),
-    onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-      onDeleteCampaign();
-    }
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDeleteCampaign()}
+			onCancel={() => setDialogType({})}
+		/>
   })
 
 	const getDuplicateDialog = () => ({
@@ -873,16 +872,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
         {translator('whatsappManagement.duplicateCampaignDesc')}
       </Typography>
     ),
-    onConfirm: async () => {
-			setDialogType({});
-      onDuplicateCampaign();
-    },
-    onCancel: () => {
-      setDialogType({});
-    },
-    onClose: () => {
-      setDialogType({});
-    }
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDuplicateCampaign()}
+			onCancel={() => setDialogType({})}
+		/>
   })
 
 	const getPreviewDialog = () => ({

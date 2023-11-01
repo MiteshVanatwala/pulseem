@@ -230,12 +230,9 @@ const RightPane = ({
 							/>
 
 							<span
-								style={{
-									marginInlineEnd: '8px',
-									marginBottom: '8px',
-									fontSize: 14,
-								}}>
-								<>{translator('mainReport.days')}</>
+								className={clsx(classes.ml5, classes.f14, classes.mb2)}
+							>
+								{translator('mainReport.days')}
 							</span>
 
 							{isRTL ? (

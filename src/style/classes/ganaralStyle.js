@@ -3395,6 +3395,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pb25: {
     paddingBottom: 25
   },
+  pbt9: {
+    paddingTop: 9,
+    paddingBottom: 9
+  },
   pbt10: {
     paddingTop: 10,
     paddingBottom: 10

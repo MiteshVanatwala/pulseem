@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Typography, Grid, Box, TextField, Button, Tooltip } from "@material-ui/core";
+import { Typography, Grid, Box, TextField, Button, Tooltip, IconButton } from "@material-ui/core";
 import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import Papa from 'papaparse';
@@ -10,7 +10,7 @@ import {
 } from "../../redux/reducers/groupSlice";
 import { makeStyles } from "@material-ui/core/styles";
 import { AiOutlineClose } from "react-icons/ai";
-import { BsChevronDown, BsChevronUp } from "react-icons/bs";
+import { BsChevronDown, BsChevronUp, BsInfoCircle } from "react-icons/bs";
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
@@ -614,7 +614,9 @@ const UploadXL = ({
                             classes={{ tooltip: styles.customWidth }}
                             sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
                         >
-                            <Typography className={classes.bodyInfo}>i</Typography>
+                            <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)}>
+                                <BsInfoCircle />
+                            </IconButton>
                         </Tooltip>
                     </Box>
                     <Box style={{ minHeight: "200px", maxWidth: "700px", overflowX: "scroll" }} key="columnAdjustment">

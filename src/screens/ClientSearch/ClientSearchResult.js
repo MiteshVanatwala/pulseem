@@ -1765,8 +1765,8 @@ const ClientSearchResult = ({ classes }) => {
         onClose={DialogObject[dialog]?.onClose || ''}
         onCancel={DialogObject[dialog]?.onClose || ''}
         onConfirm={DialogObject[dialog]?.onConfirm || null}
-        cancelText="common.Cancel"
-        confirmText="common.Ok"
+        cancelText="common.No"
+        confirmText="common.Yes"
       >
         <Box>
           <Typography variant="subtitle1">
