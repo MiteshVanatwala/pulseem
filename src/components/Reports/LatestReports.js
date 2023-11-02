@@ -116,12 +116,13 @@ const LatestReports = ({ classes, t, isRTL }) => {
   let reports = {
     newsletter: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 0) : null,
     sms: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 1) : null,
-    whatsapp: []
+    whatsapp: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 2) : null,
   }
 
-  const { newsletter = null, sms = null } = reports || {};
+  const { newsletter = null, sms = null, whatsapp = null } = reports || {};
   const smsLastUpdated = sms && sms.UpdatedDate ? moment(sms.UpdatedDate).format(dateTimeFormat) : '';
   const newsletterLastUpdated = newsletter && newsletter.UpdatedDate ? moment(newsletter.UpdatedDate).format(dateTimeFormat) : '';
+  const whatsappLastUpdated = whatsapp && whatsapp.UpdatedDate ? moment(whatsapp.UpdatedDate).format(dateTimeFormat) : '';
 
   const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -198,8 +199,8 @@ const LatestReports = ({ classes, t, isRTL }) => {
     }
     if (tabType === 'whatsapp') {
       datasets.push(
-        // { label: `${t('common.Removed')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: removed },
-        // { label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks }
+        { label: `${t('common.Removed')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: removed },
+        { label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks }
       );
     }
 
@@ -310,8 +311,10 @@ const LatestReports = ({ classes, t, isRTL }) => {
     let updatedOnText;
     if (tabValue === 0) {
       updatedOnText = `${newsletterLastUpdated ? t('common.UpdatedOn') : ''} ${newsletterLastUpdated}`;
-    } else {
+    } else if (tabValue === 1) {
       updatedOnText = `${smsLastUpdated ? t('common.UpdatedOn') : ''} ${smsLastUpdated}`;
+    } else {
+      updatedOnText = `${whatsappLastUpdated ? t('common.UpdatedOn') : ''} ${whatsappLastUpdated}`;
     }
     return (
       <Grid container>

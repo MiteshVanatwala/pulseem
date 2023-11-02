@@ -9,13 +9,14 @@ import {
     Box,
     Checkbox,
     FormControlLabel,
+    IconButton,
 } from "@material-ui/core";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
-import { BsInfoCircleFill } from "react-icons/bs";
+import { BsInfoCircle, BsInfoCircleFill } from "react-icons/bs";
 import { editGroup, } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
@@ -248,9 +249,9 @@ const EditGroupPopup = ({ classes,
                                     }
                                     text={t("group.testGroupInfo")}
                                 >
-                                    <span>
-                                        <BsInfoCircleFill />
-                                    </span>
+                                    <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)}>
+                                        <BsInfoCircle />
+                                    </IconButton>
                                 </CustomTooltip>
                             </Box>
                         </Grid>
