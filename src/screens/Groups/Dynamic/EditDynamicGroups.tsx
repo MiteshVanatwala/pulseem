@@ -16,7 +16,7 @@ import { BiSave } from 'react-icons/bi';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 
-const DynamicGroups = ({ classes }: any) => {
+const EditDynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
     const navigate = useNavigate()
     const { t } = useTranslation();
@@ -180,7 +180,7 @@ const DynamicGroups = ({ classes }: any) => {
         <DefaultScreen
             key="groups"
             currentPage='groups'
-            subPage='dynamicGroups'
+            subPage='EditDynamicGroups'
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
@@ -227,4 +227,4 @@ const DynamicGroups = ({ classes }: any) => {
     )
 }
 
-export default memo(DynamicGroups);
+export default memo(EditDynamicGroups);

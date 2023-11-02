@@ -50,6 +50,7 @@ import {
     getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
 import { GroupData } from '../../../Models/Groups/Group';
+import { sitePrefix } from '../../../config';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -495,7 +496,7 @@ const DynamicGroups = ({ classes }: any) => {
                 lable: t('campaigns.Image2Resource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    navigate(`/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`)
+                    navigate( `${sitePrefix}groups/dynamic/edit/${GroupID}`)
                 }
             },
             {
@@ -1800,6 +1801,7 @@ const DynamicGroups = ({ classes }: any) => {
                 case DialogType.ADD_GROUP: {
                     // @ts-ignore
                     return <AddGroupPopUp
+                        isDynamic={true}
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_GROUP}
                         onClose={() => {

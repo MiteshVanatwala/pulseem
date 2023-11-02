@@ -1869,6 +1869,7 @@ const Groups = ({ classes }) => {
             switch (dialog) {
                 case DialogType.ADD_GROUP: {
                     return <AddGroupPopUp
+                        isDynamic={false}
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_GROUP}
                         onClose={() => {

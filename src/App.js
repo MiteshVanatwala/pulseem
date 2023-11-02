@@ -507,7 +507,7 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path={`${sitePrefix}Groups/EditDynamicGroup`}
+        path={`${sitePrefix}groups/dynamic/edit/:id`}
         element={<EditDynamicGroups classes={classes} />}
       />
     </Routes>

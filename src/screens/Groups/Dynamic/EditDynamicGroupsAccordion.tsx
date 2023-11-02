@@ -13,6 +13,8 @@ import GroupTags from '../../../components/Groups/GroupTags';
 import moment from "moment";
 import { DateField } from '../../../components/managment';
 import { getGroups, getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
+import Groups from '../../../components/Groups/GroupsHandler/Groups';
+import { AnyAction } from '@reduxjs/toolkit';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -21,20 +23,21 @@ const DynamicGroups = ({ classes }: any) => {
         (state: { core: any }) => state.core
     );
     const { groupData, subAccountAllGroups } = useSelector((state: any) => state.group);
+    const { testGroups } = useSelector((state: any) => state.sms);
     const [showLoader, setLoader] = useState(true);
-    const [expandedIndexes, setExpandedIndexes] = useState([1,2,3,4,5,6]);
-    const [ searchRules, setSearchRules ] = useState({
-        firstName: {value: '', operator: 1},
-        lastName: {value: '', operator: 1},
-        email: {value: '', operator: 1},
-        telephone: {value: '', operator: 1},
-        cellphone: {value: '', operator: 1},
-        company: {value: '', operator: 1},
-        address: {value: '', operator: 1},
-        country: {value: '', operator: 1},
-        state: {value: '', operator: 1},
-        city: {value: '', operator: 1},
-        zipcode: {value: '', operator: 1},
+    const [expandedIndexes, setExpandedIndexes] = useState([1, 2, 3, 4, 5, 6]);
+    const [searchRules, setSearchRules] = useState({
+        firstName: { value: '', operator: 1 },
+        lastName: { value: '', operator: 1 },
+        email: { value: '', operator: 1 },
+        telephone: { value: '', operator: 1 },
+        cellphone: { value: '', operator: 1 },
+        company: { value: '', operator: 1 },
+        address: { value: '', operator: 1 },
+        country: { value: '', operator: 1 },
+        state: { value: '', operator: 1 },
+        city: { value: '', operator: 1 },
+        zipcode: { value: '', operator: 1 },
         birthdayFromStartDate: '',
         birthdayFromEndDate: '',
         birthdayWithoutYearStartDate: '',
@@ -53,6 +56,20 @@ const DynamicGroups = ({ classes }: any) => {
         numberOfClientsInGroup: 0,
     })
 
+    const [filterValues, setFilterValues] = useState({
+        toggleReci: false,
+        selectedFilterGroups: [],
+        exceptionalDays: "",
+        RecipientsBool: '',
+        selectArray: [],
+        selectedFilterCampaigns: [],
+        displayFilter: false,
+        reciFilter: false,
+    });
+    const [selectedGroups, setSelectedGroups] = useState([]);
+    const [allGroupsSelected, setAllGroupsSelected] = useState(false);
+    const [showTestGroups, setShowTestGroups] = useState(false);
+
     const getData = async () => {
         setLoader(true);
         // @ts-ignore
@@ -70,7 +87,7 @@ const DynamicGroups = ({ classes }: any) => {
     useEffect(() => {
         getData();
     }, []);
-    
+
     const getPersonalDetails = () => {
         return (
             <Accordion expanded={expandedIndexes.indexOf(1) !== -1}>
@@ -113,7 +130,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.firstName.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     firstName: {
@@ -170,7 +187,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.lastName.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     lastName: {
@@ -227,7 +244,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.email.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     email: {
@@ -284,7 +301,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.telephone.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     telephone: {
@@ -341,7 +358,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.cellphone.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     cellphone: {
@@ -398,7 +415,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.company.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     company: {
@@ -475,7 +492,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.address.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     address: {
@@ -532,7 +549,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.country.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     country: {
@@ -589,7 +606,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.state.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     state: {
@@ -646,7 +663,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.city.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     city: {
@@ -703,7 +720,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <Select
                                             variant='standard'
                                             value={searchRules.zipcode.operator}
-                                            onChange={(event: any) => 
+                                            onChange={(event: any) =>
                                                 setSearchRules({
                                                     ...searchRules,
                                                     zipcode: {
@@ -740,7 +757,7 @@ const DynamicGroups = ({ classes }: any) => {
 
     const getDateDetails = () => {
         return (
-            <Accordion  expanded={expandedIndexes.indexOf(3) !== -1}>
+            <Accordion expanded={expandedIndexes.indexOf(3) !== -1}>
                 <AccordionSummary
                     aria-controls="panel1a-content"
                     id="panel1a-header"
@@ -770,9 +787,9 @@ const DynamicGroups = ({ classes }: any) => {
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
-                                        onTimeChange={() => {}}
+                                        onTimeChange={() => { }}
                                         timeActive={false}
-                                        buttons={[]}    
+                                        buttons={[]}
                                         removePadding={true}
                                         hideInvalidDateMessage={true}
                                     />
@@ -793,9 +810,9 @@ const DynamicGroups = ({ classes }: any) => {
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
-                                        onTimeChange={() => {}}
+                                        onTimeChange={() => { }}
                                         timeActive={false}
-                                        buttons={[]}    
+                                        buttons={[]}
                                         removePadding={true}
                                         hideInvalidDateMessage={true}
                                     />
@@ -821,58 +838,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
-                                        onTimeChange={() => {}}
-                                        timeActive={false}
-                                        buttons={[]}    
-                                        removePadding={true}
-                                        hideInvalidDateMessage={true}
-                                    />
-                                </Grid>
-
-                                <Grid item xs={6} sm={6} md={6}>
-                                    <DateField
-                                        minDate={moment()}
-                                        maximumDate={moment().add(100, 'y')}
-                                        classes={classes}
-                                        value={searchRules.birthdayWithoutYearEndDate}
-                                        onChange={(value: any) => {
-                                            setSearchRules({
-                                                ...searchRules,
-                                                birthdayWithoutYearEndDate: value
-                                            })
-                                        }}
-                                        placeholder={t('common.ToDate')}
-                                        timePickerOpen={false}
-                                        dateActive={true}
-                                        onTimeChange={() => {}}
-                                        timeActive={false}
-                                        buttons={[]}    
-                                        removePadding={true}
-                                        hideInvalidDateMessage={true}
-                                    />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        
-                        <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
-                            <InputLabel className={classes.fBlack}>{t('common.reminderFrom')}:</InputLabel>
-                            <Grid container spacing={3} className={clsx(classes.pt25)}>
-                                <Grid item xs={6} sm={6} md={6}>
-                                    <DateField
-                                        minDate={moment()}
-                                        maximumDate={moment().add(100, 'y')}
-                                        classes={classes}
-                                        value={searchRules.birthdayWithoutYearStartDate}
-                                        onChange={(value: any) => {
-                                            setSearchRules({
-                                                ...searchRules,
-                                                birthdayWithoutYearStartDate: value
-                                            })
-                                        }}
-                                        placeholder={t('common.FromDate')}
-                                        timePickerOpen={true}
-                                        dateActive={true}
-                                        onTimeChange={() => {}}
+                                        onTimeChange={() => { }}
                                         timeActive={false}
                                         buttons={[]}
                                         removePadding={true}
@@ -895,9 +861,60 @@ const DynamicGroups = ({ classes }: any) => {
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
-                                        onTimeChange={() => {}}
+                                        onTimeChange={() => { }}
                                         timeActive={false}
-                                        buttons={[]}    
+                                        buttons={[]}
+                                        removePadding={true}
+                                        hideInvalidDateMessage={true}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                        <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
+                            <InputLabel className={classes.fBlack}>{t('common.reminderFrom')}:</InputLabel>
+                            <Grid container spacing={3} className={clsx(classes.pt25)}>
+                                <Grid item xs={6} sm={6} md={6}>
+                                    <DateField
+                                        minDate={moment()}
+                                        maximumDate={moment().add(100, 'y')}
+                                        classes={classes}
+                                        value={searchRules.birthdayWithoutYearStartDate}
+                                        onChange={(value: any) => {
+                                            setSearchRules({
+                                                ...searchRules,
+                                                birthdayWithoutYearStartDate: value
+                                            })
+                                        }}
+                                        placeholder={t('common.FromDate')}
+                                        timePickerOpen={true}
+                                        dateActive={true}
+                                        onTimeChange={() => { }}
+                                        timeActive={false}
+                                        buttons={[]}
+                                        removePadding={true}
+                                        hideInvalidDateMessage={true}
+                                    />
+                                </Grid>
+
+                                <Grid item xs={6} sm={6} md={6}>
+                                    <DateField
+                                        minDate={moment()}
+                                        maximumDate={moment().add(100, 'y')}
+                                        classes={classes}
+                                        value={searchRules.birthdayWithoutYearEndDate}
+                                        onChange={(value: any) => {
+                                            setSearchRules({
+                                                ...searchRules,
+                                                birthdayWithoutYearEndDate: value
+                                            })
+                                        }}
+                                        placeholder={t('common.ToDate')}
+                                        timePickerOpen={false}
+                                        dateActive={true}
+                                        onTimeChange={() => { }}
+                                        timeActive={false}
+                                        buttons={[]}
                                         removePadding={true}
                                         hideInvalidDateMessage={true}
                                     />
@@ -923,9 +940,9 @@ const DynamicGroups = ({ classes }: any) => {
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
-                                        onTimeChange={() => {}}
+                                        onTimeChange={() => { }}
                                         timeActive={false}
-                                        buttons={[]}    
+                                        buttons={[]}
                                         removePadding={true}
                                         hideInvalidDateMessage={true}
                                     />
@@ -946,9 +963,9 @@ const DynamicGroups = ({ classes }: any) => {
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
-                                        onTimeChange={() => {}}
+                                        onTimeChange={() => { }}
                                         timeActive={false}
-                                        buttons={[]}    
+                                        buttons={[]}
                                         removePadding={true}
                                         hideInvalidDateMessage={true}
                                     />
@@ -963,7 +980,7 @@ const DynamicGroups = ({ classes }: any) => {
 
     const getActivityLevelDetails = () => {
         return (
-            <Accordion  expanded={expandedIndexes.indexOf(4) !== -1}>
+            <Accordion expanded={expandedIndexes.indexOf(4) !== -1}>
                 <AccordionSummary
                     aria-controls="panel1a-content"
                     id="panel1a-header"
@@ -1002,7 +1019,7 @@ const DynamicGroups = ({ classes }: any) => {
                                 <Select
                                     variant='standard'
                                     value={searchRules.isOpenedInLastTime}
-                                    onChange={(event: any) => 
+                                    onChange={(event: any) =>
                                         setSearchRules({
                                             ...searchRules,
                                             isOpenedInLastTime: event.target.value
@@ -1028,7 +1045,7 @@ const DynamicGroups = ({ classes }: any) => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        
+
                         <Grid item xs={6} sm={3} md={3} className={classes.pt5}>
                             <FormControlLabel
                                 control={
@@ -1056,7 +1073,7 @@ const DynamicGroups = ({ classes }: any) => {
                                 <Select
                                     variant='standard'
                                     value={searchRules.isNotOpenedInLastTime}
-                                    onChange={(event: any) => 
+                                    onChange={(event: any) =>
                                         setSearchRules({
                                             ...searchRules,
                                             isNotOpenedInLastTime: event.target.value
@@ -1088,9 +1105,44 @@ const DynamicGroups = ({ classes }: any) => {
         )
     }
 
+    const callbackUpdateGroups = (groups: any | never) => {
+        setSelectedGroups(groups) as any;
+    }
+    const callbackSelectAll = () => {
+        if (!allGroupsSelected) {
+            if (showTestGroups) {
+                setSelectedGroups([...testGroups, ...subAccountAllGroups]) as any;
+            }
+            else {
+                setSelectedGroups([...subAccountAllGroups]) as any;
+            }
+        } else {
+            setSelectedGroups([]);
+        }
+        setAllGroupsSelected(!allGroupsSelected);
+    }
+
+    const callbackShowTextGroups = async (showTestGroups: boolean) => {
+        if (!showTestGroups && testGroups.length > 0) {
+            setShowTestGroups(true);
+        }
+        else {
+            setShowTestGroups(false);
+        }
+    }
+
+    const callbackSelectedGroups = (group: any) => {
+        const found = selectedGroups.map((group: any) => { return group.GroupID }).includes(group.GroupID)
+        if (found) {
+            setSelectedGroups(selectedGroups.filter((g: any) => g.GroupID !== group.GroupID))
+        } else {
+            setSelectedGroups([...selectedGroups, group]) as any
+        }
+    }
+
     const getGroupsDetails = () => {
         return (
-            <Accordion  expanded={expandedIndexes.indexOf(5) !== -1}>
+            <Accordion expanded={expandedIndexes.indexOf(5) !== -1}>
                 <AccordionSummary
                     aria-controls="panel1a-content"
                     id="panel1a-header"
@@ -1102,30 +1154,19 @@ const DynamicGroups = ({ classes }: any) => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div className={clsx(classes.fullWidth, classes.pt10)}>
-                        <GroupTags
+                        <Groups
                             classes={classes}
-                            title={'siteTracking.typeGroupName'}
-                            // @ts-ignore
-                            style={{ width: windowSize === 'xs' ? 320 : 460 }}
-                            dropdown
-                            //@ts-ignore
-                            dropDownProps={{
-                                //@ts-ignore
-                                onChange: (e: any, val: any, reason: string, details: any) => {
-                                    if (reason === "remove-option" || val.length === 0) {
-                                        setSearchRules({
-                                            ...searchRules,
-                                            groups: []
-                                        });
-                                    }
-                                    const idArr = val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
-                                    setSearchRules({
-                                        ...searchRules,
-                                        groups: idArr
-                                    });
-                                },
-                                selectedGroups: searchRules.groups
-                            }}
+                            showSortBy={false}
+                            showSelectAll={true}
+                            isNotifications={false}
+                            list={[...subAccountAllGroups] || []}
+                            selectedList={selectedGroups}
+                            callbackUpdateGroups={callbackUpdateGroups}
+                            callbackSelectedGroups={callbackSelectedGroups}
+                            callbackShowTestGroup={callbackShowTextGroups}
+                            noSelectionText={t("sms.NoFilteredGroups")}
+                            innerHeight={325}
+                            uniqueKey={'groups_3'}
                         />
                     </div>
                 </AccordionDetails>
@@ -1135,7 +1176,7 @@ const DynamicGroups = ({ classes }: any) => {
 
     const getSystemDetails = () => {
         return (
-            <Accordion  expanded={expandedIndexes.indexOf(6) !== -1}>
+            <Accordion expanded={expandedIndexes.indexOf(6) !== -1}>
                 <AccordionSummary
                     aria-controls="panel1a-content"
                     id="panel1a-header"
@@ -1149,33 +1190,33 @@ const DynamicGroups = ({ classes }: any) => {
                     <Grid container>
                         <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>
                             <InputLabel className={classes.fBlack}>{t('common.updateGroupRecipientsEvery')}:</InputLabel>
-                                <FormControl
-                                    variant="standard"
-                                    className={clsx(classes.selectInputFormControl, classes.w50)}
-                                >
-                                    <Select
-                                        variant='standard'
-                                        value={searchRules.updateGroupRecipientsEvery}
-                                        onChange={(event: any) => 
-                                            setSearchRules({
-                                                ...searchRules,
-                                                updateGroupRecipientsEvery: event.target.value
-                                            })
-                                        }
-                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                                        className={clsx(classes.w100, classes.mt20)}
-                                        MenuProps={{
-                                            PaperProps: {
-                                                style: {
-                                                    maxHeight: 300,
-                                                },
+                            <FormControl
+                                variant="standard"
+                                className={clsx(classes.selectInputFormControl, classes.w50)}
+                            >
+                                <Select
+                                    variant='standard'
+                                    value={searchRules.updateGroupRecipientsEvery}
+                                    onChange={(event: any) =>
+                                        setSearchRules({
+                                            ...searchRules,
+                                            updateGroupRecipientsEvery: event.target.value
+                                        })
+                                    }
+                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                    className={clsx(classes.w100, classes.mt20)}
+                                    MenuProps={{
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: 300,
                                             },
-                                        }}
-                                    >
-                                        <MenuItem value={0}>{t('common.daily2AM')}</MenuItem>
-                                        <MenuItem value={1}>{t('common.weekly2AM')}</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                        },
+                                    }}
+                                >
+                                    <MenuItem value={0}>{t('common.daily2AM')}</MenuItem>
+                                    <MenuItem value={1}>{t('common.weekly2AM')}</MenuItem>
+                                </Select>
+                            </FormControl>
                         </Grid>
                         <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>
                             <InputLabel className={classes.fBlack}>{t('common.UpdatedOn')}:</InputLabel>

@@ -255,7 +255,7 @@ const ApiSettings = ({ classes }: any) => {
                     <Box className={clsx(classes.p20)} >
                         <Box className={clsx(classes.flex)}>
                             <Box style={{ display: 'flex', flexDirection: windowSize !== 'xs' ? 'row' : 'column', alignItems: windowSize !== 'xs' ? 'flex-end' : '' }}>
-                                <Typography className={clsx(classes.managementTitle, classes.font20)} style={{ maxWidth: windowSize !== 'xs' ? 90 : '' }}>{t('integrations.shopify.apiKey')}:</Typography>
+                                <Typography className={clsx(classes.managementTitle, classes.font20)} style={{ maxWidth: windowSize !== 'xs' ? 90 : '' }}>{t('integrations.apiKey')}:</Typography>
                                 <Box className={clsx(classes.mr10, classes.ml10)}>
                                     <TextField
                                         type={showApiKey ? "text" : "password"}
@@ -395,7 +395,7 @@ const ApiSettings = ({ classes }: any) => {
                     reGenerateApiKey()
                 }}
                 showDefaultButtons={true}
-                title={t('integrations.shopify.apiKey')}
+                title={t('integrations.apiKey')}
             >
                 {RenderHtml(t('settings.apiSettings.reGenerateConfirm'))}
             </BaseDialog>}

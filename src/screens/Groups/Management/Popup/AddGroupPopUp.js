@@ -35,7 +35,8 @@ const AddGroupPopUp = ({
     addClientByQuery = false,
     createGroupCallback,
     addAnotherRecCallback,
-    getData, 
+    getData,
+    isDynamic = false,
     handleResponses }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -49,7 +50,7 @@ const AddGroupPopUp = ({
         GroupID: null,
         InvalidCell: 0,
         InvalidEmails: 0,
-        IsDynamic: true,
+        IsDynamic: isDynamic,
         IsTestGroup: false,
         PendingClients: 0,
         Recipients: 0,
@@ -252,6 +253,7 @@ const AddGroupPopUp = ({
                                 if (e.target.value.length <= 100) {
                                     setNewGroupData({
                                         ...newGroupData,
+                                        IsDynamic: isDynamic,
                                         GroupName: e.target.value,
                                     });
                                 }
@@ -259,6 +261,7 @@ const AddGroupPopUp = ({
                                     e.preventDefault()
                                     setNewGroupData({
                                         ...newGroupData,
+                                        IsDynamic: isDynamic,
                                         GroupName: e.target.value.substring(0, 100),
                                     });
                                     setToastMessage(ToastMessages.GROUP_NAME_MAXLENGTH)
@@ -275,7 +278,7 @@ const AddGroupPopUp = ({
                     >
                         <FormControlLabel
                             control={
-                                <Checkbox checked={newGroupData.IsTestGroup} onClick={() => { setNewGroupData({ ...newGroupData, IsTestGroup: !newGroupData.IsTestGroup }) }} name="testGroup" size="small" color="primary" />
+                                <Checkbox checked={newGroupData.IsTestGroup} onClick={() => { setNewGroupData({ ...newGroupData, IsTestGroup: !newGroupData.IsTestGroup, IsDynamic: isDynamic }) }} name="testGroup" size="small" color="primary" />
                             }
                             label={t("group.testGroup")}
                         />

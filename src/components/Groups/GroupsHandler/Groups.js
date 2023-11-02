@@ -26,19 +26,19 @@ const Groups = ({ classes,
     bsDot,
     isSms,
     selectedList,
-    innerHeight = null,
+    innerHeight,
     isNotifications,
     noSelectionText,
     showSortBy = true,
     showFilter = true,
     isCampaign = false,
     showSelectAll = true,
-    callbackSelectedGroups = () => null,
-    callbackUpdateGroups = () => null,
-    callbackSelectAll = () => null,
-    callbackReciFilter = () => null,
-    callbackShowTestGroup = () => null,
-    uniqueKey = null
+    callbackSelectedGroups,
+    callbackUpdateGroups,
+    callbackSelectAll,
+    callbackReciFilter,
+    callbackShowTestGroup,
+    uniqueKey
 }) => {
     const { windowSize, isRTL } = useSelector(state => state.core)
     const { t } = useTranslation();
