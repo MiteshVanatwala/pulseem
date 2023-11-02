@@ -2029,8 +2029,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: '#ff2c44',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    background: 'white',
-    border: '1px solid rgba(0,0,0,.125)',
+    background: '#e4e4e4',
+    marginLeft: 2,
+    marginRight: 2,
+    color: '#000',
+    // border: '1px solid rgba(0,0,0,.125)',
     borderBottom: 0,
     '&.alignCenter': {
       display: 'flex',
