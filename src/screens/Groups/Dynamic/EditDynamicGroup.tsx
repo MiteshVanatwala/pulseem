@@ -14,8 +14,9 @@ import { getGroups, getGroupsBySubAccountId } from '../../../redux/reducers/grou
 import Groups from '../../Whatsapp/Campaign/Components/Groups/Groups';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import { Loader } from '../../../components/Loader/Loader';
+import { ActivityGroup, Conditions } from '../../../Models/Groups/DynamicGroup';
 
-const DynamicGroups = ({ classes }: any) => {
+const EditDynamicGroup = ({ classes, Data }: any) => {
     const dispatch: any = useDispatch();
     const { t } = useTranslation();
     // const { isRTL, windowSize } = useSelector(
@@ -24,35 +25,7 @@ const DynamicGroups = ({ classes }: any) => {
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
     const [showLoader, setLoader] = useState(true);
-    const [searchRules, setSearchRules] = useState({
-        firstName: { value: '', operator: 1 },
-        lastName: { value: '', operator: 1 },
-        email: { value: '', operator: 1 },
-        telephone: { value: '', operator: 1 },
-        cellphone: { value: '', operator: 1 },
-        company: { value: '', operator: 1 },
-        address: { value: '', operator: 1 },
-        country: { value: '', operator: 1 },
-        state: { value: '', operator: 1 },
-        city: { value: '', operator: 1 },
-        zipcode: { value: '', operator: 1 },
-        birthdayFromStartDate: '',
-        birthdayFromEndDate: '',
-        birthdayWithoutYearStartDate: '',
-        birthdayWithoutYearEndDate: '',
-        reminderFromStartDate: '',
-        reminderFromEndDate: '',
-        createFromStartDate: '',
-        createFromEndDate: '',
-        isOpenedInLast: false,
-        isOpenedInLastTime: 0,
-        isNotOpenedInLast: false,
-        isNotOpenedInLastTime: 0,
-        groups: [],
-        updateGroupRecipientsEvery: 0,
-        lastUpdated: '',
-        numberOfClientsInGroup: 0,
-    })
+    const [dynamicGroupModel, setDynamicGroupModel] = useState(null);
     const [tabValue, setTabValue] = useState('0');
     const [selectedGroups, setSelectedGroups] = useState<any>([]);
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
@@ -60,12 +33,6 @@ const DynamicGroups = ({ classes }: any) => {
 
     const getData = async () => {
         setLoader(true);
-        // @ts-ignore
-        await dispatch(getGroups({
-            PageIndex: 1,
-            PageSize: 1000,
-            SearchTerm: '',
-        }));
         setLoader(false);
         if (subAccountAllGroups.length === 0) {
             dispatch(getGroupsBySubAccountId());
@@ -74,7 +41,23 @@ const DynamicGroups = ({ classes }: any) => {
 
     useEffect(() => {
         getData();
-    }, []);
+        if(subAccountAllGroups)
+        {
+            setDynamicGroupModel(Data);
+        }
+    }, [subAccountAllGroups]);
+
+    useEffect(() => {
+        const selectedgroupsList = [] as any;
+        Data?.dynamicData?.MyGroups.forEach((gl: number) => {
+            const exist = subAccountAllGroups?.filter(g => { return g.GroupID === gl });
+            if (exist && exist.length > 0) {
+                selectedgroupsList.push(exist[0]);
+            }
+        });
+
+        setSelectedGroups(selectedgroupsList);
+    }, [dynamicGroupModel])
 
     const getPersonalDetails = () => {
         return (
@@ -86,14 +69,15 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.firstName.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        firstName: {
-                                            ...searchRules.firstName,
-                                            value: e.target.value.trim()
-                                        }
+                                // value={searchRules.firstName.value}
+                                value={dynamicGroupModel?.dynamicData?.MyConditions[0]?.FirstName}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel?.dynamicData?.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { FirstName: event.target.value.trim() } as Conditions
+                                        ]
                                     })
                                 }}
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
@@ -106,15 +90,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.firstName.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            firstName: {
-                                                ...searchRules.firstName,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.FirstNameCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel.dynamicData,
+                                            MyConditions: [conditions[0],
+                                            { FirstNameCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
+                                    }
                                     }
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
@@ -143,16 +128,17 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.lastName.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        lastName: {
-                                            ...searchRules.lastName,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.LastName}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel.dynamicData,
+                                        MyConditions: [conditions[0],
+                                        { LastName: event.target.value.trim() } as Conditions
+                                        ]
                                     })
-                                }}
+                                }
+                                }
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
                             />
                         </Grid>
@@ -163,15 +149,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.lastName.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            lastName: {
-                                                ...searchRules.lastName,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.LastNameCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { LastNameCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
+                                    }
                                     }
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
@@ -200,16 +187,17 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.email.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        email: {
-                                            ...searchRules.email,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.Email}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { Email: event.target.value.trim() } as Conditions
+                                        ]
                                     })
-                                }}
+                                }
+                                }
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
                             />
                         </Grid>
@@ -220,15 +208,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.email.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            email: {
-                                                ...searchRules.email,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.EmailCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { EmailCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
+                                    }
                                     }
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
@@ -257,16 +246,17 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.telephone.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        telephone: {
-                                            ...searchRules.telephone,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.Telephone}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { Telephone: event.target.value.trim() } as Conditions
+                                        ]
                                     })
-                                }}
+                                }
+                                }
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
                             />
                         </Grid>
@@ -277,16 +267,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.telephone.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            telephone: {
-                                                ...searchRules.telephone,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.TelephoneCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { TelephoneCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
-                                    }
+                                    }}
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
                                     MenuProps={{
@@ -314,14 +304,14 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.cellphone.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        cellphone: {
-                                            ...searchRules.cellphone,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.Cellphone}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { Cellphone: event.target.value.trim() } as Conditions
+                                        ]
                                     })
                                 }}
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
@@ -334,16 +324,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.cellphone.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            cellphone: {
-                                                ...searchRules.cellphone,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.CellphoneCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { CellphoneCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
-                                    }
+                                    }}
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
                                     MenuProps={{
@@ -371,14 +361,14 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.company.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        company: {
-                                            ...searchRules.company,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.Company}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { Company: event.target.value.trim() } as Conditions
+                                        ]
                                     })
                                 }}
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
@@ -391,16 +381,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.company.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            company: {
-                                                ...searchRules.company,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.ComapnyCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { ComapnyCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
-                                    }
+                                    }}
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
                                     MenuProps={{
@@ -435,14 +425,14 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.address.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        address: {
-                                            ...searchRules.address,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.Address}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { Address: event.target.value.trim() } as Conditions
+                                        ]
                                     })
                                 }}
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
@@ -455,16 +445,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.address.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            address: {
-                                                ...searchRules.address,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.AddressCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { AddressCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
-                                    }
+                                    }}
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
                                     MenuProps={{
@@ -492,14 +482,14 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.country.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        country: {
-                                            ...searchRules.country,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.Country}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { Country: event.target.value.trim() } as Conditions
+                                        ]
                                     })
                                 }}
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
@@ -512,16 +502,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.country.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            country: {
-                                                ...searchRules.country,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.CountryCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { CountryCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
-                                    }
+                                    }}
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
                                     MenuProps={{
@@ -549,14 +539,14 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.state.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        state: {
-                                            ...searchRules.state,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.State}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { State: event.target.value.trim() } as Conditions
+                                        ]
                                     })
                                 }}
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
@@ -569,16 +559,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.state.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            state: {
-                                                ...searchRules.state,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.StateCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { StateCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
-                                    }
+                                    }}
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
                                     MenuProps={{
@@ -606,14 +596,14 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.city.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        city: {
-                                            ...searchRules.city,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.City}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { City: event.target.value.trim() } as Conditions
+                                        ]
                                     })
                                 }}
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
@@ -626,16 +616,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.city.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            city: {
-                                                ...searchRules.city,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.CityCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { CityCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
-                                    }
+                                    }}
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
                                     MenuProps={{
@@ -663,14 +653,14 @@ const DynamicGroups = ({ classes }: any) => {
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                value={searchRules.zipcode.value}
-                                onChange={(e) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        zipcode: {
-                                            ...searchRules.zipcode,
-                                            value: e.target.value.trim()
-                                        }
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.Zip}
+                                onChange={(event: any) => {
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { Zip: event.target.value.trim() } as Conditions
+                                        ]
                                     })
                                 }}
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
@@ -683,16 +673,16 @@ const DynamicGroups = ({ classes }: any) => {
                             >
                                 <Select
                                     variant='standard'
-                                    value={searchRules.zipcode.operator}
-                                    onChange={(event: any) =>
-                                        setSearchRules({
-                                            ...searchRules,
-                                            zipcode: {
-                                                ...searchRules.zipcode,
-                                                operator: event.target.value
-                                            }
+                                    value={dynamicGroupModel.dynamicData?.MyConditions[0]?.ZipCond}
+                                    onChange={(event: any) => {
+                                        const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                        setDynamicGroupModel({
+                                            ...dynamicGroupModel,
+                                            MyConditions: [conditions[0],
+                                            { ZipCond: event.target.value.trim() } as Conditions
+                                            ]
                                         })
-                                    }
+                                    }}
                                     IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     className={clsx(classes.w100, classes.mt20)}
                                     MenuProps={{
@@ -728,11 +718,14 @@ const DynamicGroups = ({ classes }: any) => {
                                 minDate={moment()}
                                 maximumDate={moment().add(100, 'y')}
                                 classes={classes}
-                                value={searchRules.birthdayFromStartDate}
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.BirthDateFrom}
                                 onChange={(value: any) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        birthdayFromStartDate: value
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { BirthDateFrom: value } as Conditions
+                                        ]
                                     })
                                 }}
                                 placeholder={t('common.FromDate')}
@@ -751,11 +744,14 @@ const DynamicGroups = ({ classes }: any) => {
                                 minDate={moment()}
                                 maximumDate={moment().add(100, 'y')}
                                 classes={classes}
-                                value={searchRules.birthdayFromEndDate}
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.BirthDateTo}
                                 onChange={(value: any) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        birthdayFromEndDate: value
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { BirthDateTo: value } as Conditions
+                                        ]
                                     })
                                 }}
                                 placeholder={t('common.ToDate')}
@@ -779,11 +775,14 @@ const DynamicGroups = ({ classes }: any) => {
                                 minDate={moment()}
                                 maximumDate={moment().add(100, 'y')}
                                 classes={classes}
-                                value={searchRules.birthdayWithoutYearStartDate}
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear}
                                 onChange={(value: any) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        birthdayWithoutYearStartDate: value
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { BirthDateFromWithoutYear: value } as Conditions
+                                        ]
                                     })
                                 }}
                                 placeholder={t('common.FromDate')}
@@ -802,11 +801,14 @@ const DynamicGroups = ({ classes }: any) => {
                                 minDate={moment()}
                                 maximumDate={moment().add(100, 'y')}
                                 classes={classes}
-                                value={searchRules.birthdayWithoutYearEndDate}
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.BirthDateToWithoutYear}
                                 onChange={(value: any) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        birthdayWithoutYearEndDate: value
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { BirthDateToWithoutYear: value } as Conditions
+                                        ]
                                     })
                                 }}
                                 placeholder={t('common.ToDate')}
@@ -830,11 +832,14 @@ const DynamicGroups = ({ classes }: any) => {
                                 minDate={moment()}
                                 maximumDate={moment().add(100, 'y')}
                                 classes={classes}
-                                value={searchRules.birthdayWithoutYearStartDate}
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear}
                                 onChange={(value: any) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        birthdayWithoutYearStartDate: value
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { BirthDateFromWithoutYear: value } as Conditions
+                                        ]
                                     })
                                 }}
                                 placeholder={t('common.FromDate')}
@@ -853,11 +858,14 @@ const DynamicGroups = ({ classes }: any) => {
                                 minDate={moment()}
                                 maximumDate={moment().add(100, 'y')}
                                 classes={classes}
-                                value={searchRules.birthdayWithoutYearEndDate}
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.BirthDateToWithoutYear}
                                 onChange={(value: any) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        birthdayWithoutYearEndDate: value
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { BirthDateToWithoutYear: value } as Conditions
+                                        ]
                                     })
                                 }}
                                 placeholder={t('common.ToDate')}
@@ -881,11 +889,14 @@ const DynamicGroups = ({ classes }: any) => {
                                 minDate={moment()}
                                 maximumDate={moment().add(100, 'y')}
                                 classes={classes}
-                                value={searchRules.createFromStartDate}
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.CreatedFrom}
                                 onChange={(value: any) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        createFromStartDate: value
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { CreatedFrom: value } as Conditions
+                                        ]
                                     })
                                 }}
                                 placeholder={t('common.FromDate')}
@@ -904,11 +915,14 @@ const DynamicGroups = ({ classes }: any) => {
                                 minDate={moment()}
                                 maximumDate={moment().add(100, 'y')}
                                 classes={classes}
-                                value={searchRules.createFromEndDate}
+                                value={dynamicGroupModel.dynamicData?.MyConditions[0]?.CreatedTo}
                                 onChange={(value: any) => {
-                                    setSearchRules({
-                                        ...searchRules,
-                                        createFromEndDate: value
+                                    const conditions = [...dynamicGroupModel.dynamicData.MyConditions];
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyConditions: [conditions[0],
+                                        { CreatedTo: value } as Conditions
+                                        ]
                                     })
                                 }}
                                 placeholder={t('common.ToDate')}
@@ -934,13 +948,14 @@ const DynamicGroups = ({ classes }: any) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                checked={!!searchRules.isOpenedInLast}
-                                onChange={(event) =>
-                                    setSearchRules({
-                                        ...searchRules,
-                                        isOpenedInLast: !!event.target.checked
+                                onChange={(event: any) => {
+                                    const activities = { ...dynamicGroupModel.dynamicData.MyActivities };
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyActivities: { ...activities, IsOpened: !!event.target.checked } as ActivityGroup
                                     })
-                                }
+                                }}
+                                checked={!!dynamicGroupModel.dynamicData?.MyActivities?.IsOpened}
                                 name="openedinlast"
                                 color="primary"
                             />
@@ -956,13 +971,14 @@ const DynamicGroups = ({ classes }: any) => {
                     >
                         <Select
                             variant='standard'
-                            value={searchRules.isOpenedInLastTime}
-                            onChange={(event: any) =>
-                                setSearchRules({
-                                    ...searchRules,
-                                    isOpenedInLastTime: event.target.value
+                            value={dynamicGroupModel.dynamicData?.MyActivities.IsOpenedInterval}
+                            onChange={(event: any) => {
+                                const activities = { ...dynamicGroupModel.dynamicData.MyActivities };
+                                setDynamicGroupModel({
+                                    ...dynamicGroupModel,
+                                    MyActivities: { ...activities, IsOpenedInterval: event.target.value } as ActivityGroup
                                 })
-                            }
+                            }}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt10)}
                             MenuProps={{
@@ -988,13 +1004,14 @@ const DynamicGroups = ({ classes }: any) => {
                     <FormControlLabel
                         control={
                             <Checkbox
-                                checked={!!searchRules.isNotOpenedInLast}
-                                onChange={(event) =>
-                                    setSearchRules({
-                                        ...searchRules,
-                                        isNotOpenedInLast: !!event.target.checked
+                                checked={!!dynamicGroupModel.dynamicData?.MyActivities.IsNotOpened}
+                                onChange={(event: any) => {
+                                    const activities = { ...dynamicGroupModel.dynamicData.MyActivities };
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel,
+                                        MyActivities: { ...activities, IsNotOpened: !!event.target.checked } as ActivityGroup
                                     })
-                                }
+                                }}
                                 name="notopenedinlast"
                                 color="primary"
                             />
@@ -1010,13 +1027,14 @@ const DynamicGroups = ({ classes }: any) => {
                     >
                         <Select
                             variant='standard'
-                            value={searchRules.isNotOpenedInLastTime}
-                            onChange={(event: any) =>
-                                setSearchRules({
-                                    ...searchRules,
-                                    isNotOpenedInLastTime: event.target.value
+                            value={dynamicGroupModel.dynamicData?.MyActivities.IsNotOpenedInterval}
+                            onChange={(event: any) => {
+                                const activities = { ...dynamicGroupModel.dynamicData.MyActivities };
+                                setDynamicGroupModel({
+                                    ...dynamicGroupModel,
+                                    MyActivities: { ...activities, IsNotOpenedInterval: event.target.value } as ActivityGroup
                                 })
-                            }
+                            }}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt10)}
                             MenuProps={{
@@ -1082,48 +1100,32 @@ const DynamicGroups = ({ classes }: any) => {
         }
     }
 
-    const getGroupsDetails = () => {
-        return (
-            <div className={clsx(classes.fullWidth, classes.pt25)}>
-                <Groups
-                    classes={classes}
-                    list={
-                        showTestGroups
-                            ? [...subAccountAllGroups, ...testGroups]
-                            : [...subAccountAllGroups]
-                    }
-                    showTestGroups={showTestGroups}
-                    selectedList={selectedGroups}
-                    callbackSelectedGroups={callbackUpdateGroups}
-                    callbackUpdateGroups={() => { }} //onUpdateGroups
-                    callbackSelectAll={callbackSelectAll}
-                    callbackReciFilter={() => { }} // onReciFilter
-                    callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
-                    isFilterSelected={selectedGroups}
-                    uniqueKey={'groups_1'}
-                    innerHeight={325}
-                    showSortBy={true}
-                    showFilter={false}
-                    showSelectAll={true}
-                />
-                {/* <Groups
-                    classes={classes}
-                    showSortBy={false}
-                    showSelectAll={true}
-                    isNotifications={false}
-                    list={[...subAccountAllGroups] || []}
-                    selectedList={selectedGroups}
-                    callbackUpdateGroups={callbackUpdateGroups}
-                    callbackSelectedGroups={callbackSelectedGroups}
-                    callbackShowTestGroup={callbackShowTextGroups}
-                    noSelectionText={t("sms.NoFilteredGroups")}
-                    innerHeight={325}
-                    uniqueKey={'groups_3'}
-                    showFilter={true}
-                /> */}
-            </div>
-        )
-    }
+    // const getGroupsDetails = () => {
+    //     return (
+    //         <div className={clsx(classes.fullWidth, classes.pt25)}>
+    //             <Groups
+    //                 classes={classes}
+    //                 list={
+    //                     showTestGroups
+    //                         ? [...subAccountAllGroups, ...testGroups]
+    //                         : [...subAccountAllGroups]
+    //                 }
+    //                 showTestGroups={showTestGroups}
+    //                 selectedList={selectedGroups}
+    //                 callbackSelectedGroups={callbackUpdateGroups}
+    //                 callbackUpdateGroups={() => { }} //onUpdateGroups
+    //                 callbackSelectAll={callbackSelectAll}
+    //                 callbackReciFilter={() => { }} // onReciFilter
+    //                 callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+    //                 uniqueKey={'groups_1'}
+    //                 innerHeight={325}
+    //                 showSortBy={true}
+    //                 showFilter={false}
+    //                 showSelectAll={true}
+    //             />
+    //         </div>
+    //     )
+    // }
 
     const getSystemDetails = () => {
         return (
@@ -1136,13 +1138,13 @@ const DynamicGroups = ({ classes }: any) => {
                     >
                         <Select
                             variant='standard'
-                            value={searchRules.updateGroupRecipientsEvery}
-                            onChange={(event: any) =>
-                                setSearchRules({
-                                    ...searchRules,
-                                    updateGroupRecipientsEvery: event.target.value
+                            value={dynamicGroupModel?.Group?.DynamicUpdatePolicy}
+                            onChange={(event: any) => {
+                                setDynamicGroupModel({
+                                    ...dynamicGroupModel.Group,
+                                    Groups: { DynamicUpdatePolicy: event.target.value } as any
                                 })
-                            }
+                            }}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
                             MenuProps={{
@@ -1161,13 +1163,13 @@ const DynamicGroups = ({ classes }: any) => {
                 <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>
                     <InputLabel className={classes.fBlack}>{t('common.UpdatedOn')}:</InputLabel>
                     <div className={clsx(classes.pt10)}>
-                        {searchRules.lastUpdated}
+                        {dynamicGroupModel?.Group?.DynamicLastUpdate}
                     </div>
                 </Grid>
                 <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>
                     <InputLabel className={classes.fBlack}>{t('common.numberOfClientsInGroup')}:</InputLabel>
                     <div className={clsx(classes.pt10)}>
-                        {searchRules.numberOfClientsInGroup}
+                        {dynamicGroupModel?.Group?.Recipients}
                     </div>
                 </Grid>
             </Grid>
@@ -1176,8 +1178,8 @@ const DynamicGroups = ({ classes }: any) => {
 
     return (
         <>
-            <Loader isOpen={showLoader} />
-            <Tabs
+            <Loader isOpen={showLoader || dynamicGroupModel === null} />
+            {dynamicGroupModel && <><Tabs
                 value={tabValue}
                 onChange={(e, value) => setTabValue(value)}
                 className={clsx(classes.mr15, classes.ml15)}
@@ -1226,33 +1228,56 @@ const DynamicGroups = ({ classes }: any) => {
                 />
             </Tabs>
 
-            <TabContext value={`${tabValue}`}>
-                <TabPanel value='0'>
-                    {getPersonalDetails()}
-                </TabPanel>
+                <TabContext value={`${tabValue}`}>
+                    <TabPanel value='0'>
+                        {getPersonalDetails()}
+                    </TabPanel>
 
-                <TabPanel value='1'>
-                    {getLocationDetails()}
-                </TabPanel>
+                    <TabPanel value='1'>
+                        {getLocationDetails()}
+                    </TabPanel>
 
-                <TabPanel value='2'>
-                    {getDateDetails()}
-                </TabPanel>
+                    <TabPanel value='2'>
+                        {getDateDetails()}
+                    </TabPanel>
 
-                <TabPanel value='3'>
-                    {getActivityLevelDetails()}
-                </TabPanel>
+                    <TabPanel value='3'>
+                        {getActivityLevelDetails()}
+                    </TabPanel>
 
-                <TabPanel value='4'>
-                    {getGroupsDetails()}
-                </TabPanel>
+                    <TabPanel value='4'>
+                        <div className={clsx(classes.fullWidth, classes.pt25)}>
+                            <Groups
+                                classes={classes}
+                                list={
+                                    showTestGroups
+                                        ? [...subAccountAllGroups, ...testGroups]
+                                        : [...subAccountAllGroups]
+                                }
+                                showTestGroups={showTestGroups}
+                                selectedList={selectedGroups}
+                                callbackSelectedGroups={callbackUpdateGroups}
+                                callbackUpdateGroups={() => { }} //onUpdateGroups
+                                callbackSelectAll={callbackSelectAll}
+                                callbackReciFilter={() => { }} // onReciFilter
+                                callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+                                uniqueKey={'groups_4'}
+                                innerHeight={325}
+                                showSortBy={true}
+                                showFilter={false}
+                                showSelectAll={true}
+                            />
+                        </div>
+                    </TabPanel>
 
-                <TabPanel value='5'>
-                    {getSystemDetails()}
-                </TabPanel>
-            </TabContext>
+                    <TabPanel value='5'>
+                        {getSystemDetails()}
+                    </TabPanel>
+                </TabContext>
+            </>
+            }
         </>
     )
 }
 
-export default memo(DynamicGroups);
+export default memo(EditDynamicGroup);

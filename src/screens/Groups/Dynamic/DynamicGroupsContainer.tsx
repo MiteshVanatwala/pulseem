@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect, memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
@@ -11,19 +11,22 @@ import 'moment/locale/he';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
 import { Title } from '../../../components/managment/Title';
-import EditDynamicGroupsAccordion from './EditDynamicGroupsAccordion';
+import EditDynamicGroup from './EditDynamicGroup';
 import { BiSave } from 'react-icons/bi';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
+import { getById } from '../../../redux/reducers/DynamicGroupsSlice';
 
-const EditDynamicGroups = ({ classes }: any) => {
+const DynamicGroupsContainer = ({ classes }: any) => {
     const dispatch: any = useDispatch();
+    const { id } = useParams();
     const navigate = useNavigate()
     const { t } = useTranslation();
     const [toastMessage, setToastMessage] = useState<any | never>(null);
     const [showLoader, setLoader] = useState(false);
     const [dialog, setDialog] = useState<any | never>(null);
     const { isRTL, CoreToastMessages } = useSelector((state: any) => state.core);
+    const { dynamicGroup } = useSelector((state: any) => state.dynamicGroups);
 
     const renderToast = () => {
         setTimeout(() => {
@@ -34,14 +37,20 @@ const EditDynamicGroups = ({ classes }: any) => {
         );
     }
 
-    const getData = async (customSearch: any | never = null) => {
-        // const search: any = { ...serachData, PageSize: rowsPerPage, ...customSearch };
-        // setLoader(true);
+
+    const getData = async () => {
+        if (dynamicGroup.StatusCode !== 201) {
+            await dispatch(getById(id));
+        }
     };
 
     useEffect(() => {
         getData();
     }, []);
+
+    useEffect(() => {
+        console.log(dynamicGroup.Data);
+    }, [dynamicGroup])
 
     const handleResponses = (response: any, actions = {
         'S_200': {
@@ -52,12 +61,12 @@ const EditDynamicGroups = ({ classes }: any) => {
         'S_201': {
             code: 201,
             message: '',
-            Func: () => getData(null)
+            Func: () => null
         },
         'S_202': {
             code: 202,
             message: '',
-            Func: () => getData(null)
+            Func: () => null
         },
         'S_400': {
             code: 400,
@@ -109,14 +118,14 @@ const EditDynamicGroups = ({ classes }: any) => {
                 actions?.S_201?.Func?.();
                 actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
                 setDialog(null);
-                getData(null)
+                // getData()
                 break;
             }
             case 202: {
                 actions?.S_202?.Func?.();
                 actions?.S_202?.message && setToastMessage(actions?.S_202?.message);
                 setDialog(null);
-                getData(null)
+                // getData()
                 break;
             }
             case 400: {
@@ -180,7 +189,7 @@ const EditDynamicGroups = ({ classes }: any) => {
         <DefaultScreen
             key="groups"
             currentPage='groups'
-            subPage='EditDynamicGroups'
+            subPage='DynamicGroupsContainer'
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
@@ -188,9 +197,9 @@ const EditDynamicGroups = ({ classes }: any) => {
                 {toastMessage && renderToast()}
                 <Box className={'topSection'}>
                     <Title Text={t('recipient.logPageHeaderResource1.Dynamic')} classes={classes} />
-                    
+
                     <Box className={clsx(classes.p20)}>
-                        <EditDynamicGroupsAccordion classes={classes} />
+                        <EditDynamicGroup classes={classes} Data={dynamicGroup?.Data} />
                         <Box className={clsx(classes.flex, classes.pt25)} style={{ justifyContent: 'end', marginTop: 15 }}>
                             <Button
                                 onClick={onBack}
@@ -219,7 +228,7 @@ const EditDynamicGroups = ({ classes }: any) => {
                         </Box>
                     </Box>
                 </Box>
-            
+
                 {dialog !== null && showDialog()}
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </Box>
@@ -227,4 +236,4 @@ const EditDynamicGroups = ({ classes }: any) => {
     )
 }
 
-export default memo(EditDynamicGroups);
+export default memo(DynamicGroupsContainer);
