@@ -119,7 +119,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const NodeToEdit = queryParams.get("NodeToEdit") || false
 	let isSendCampaign = queryParams.get("new") || false
 	if (isSendCampaign === 'false') isSendCampaign = false;
-	console.log(isSendCampaign)
 
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms

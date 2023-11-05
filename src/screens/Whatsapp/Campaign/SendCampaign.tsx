@@ -514,7 +514,7 @@ const SendCampaign = ({
 				onCampaignSend();
 				break;
 			case buttons.CONTINUE:
-				if (!!FromAutomation && !!isSendCampaign) {
+				if (!!FromAutomation && !isSendCampaign) {
 					const saveCampaignData = await onCampaignSave(true, true, true);
 					if (saveCampaignData === apiStatus.SUCCESS) {
 						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
@@ -822,8 +822,8 @@ const SendCampaign = ({
 							classes={classes}
 							onFormButtonClick={onFormButtonClick}
 							displayBackButton={true}
-							showSendButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : true}
-							showContinueButton={FromAutomation ? (!!FromAutomation && !!isSendCampaign) : false}
+							showSendButton={FromAutomation ? (!!FromAutomation && !!isSendCampaign) : true}
+							showContinueButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : false}
 						/>
 					</div>
 					<SummaryModal
