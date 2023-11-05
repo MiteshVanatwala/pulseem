@@ -114,9 +114,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const queryParams = new URLSearchParams(window.location.search)
-	const FromAutomation = queryParams.get("FromAutomation") || false
+	let FromAutomation = queryParams.get("FromAutomation") || false
+	if (FromAutomation === 'false') FromAutomation = false;
 	const NodeToEdit = queryParams.get("NodeToEdit") || false
-	console.log(FromAutomation)
+	let isSendCampaign = queryParams.get("new") || false
+	if (isSendCampaign === 'false') isSendCampaign = false;
+	console.log(isSendCampaign)
 
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
@@ -969,7 +972,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`/react/whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}`,
+					`/react/whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}&new=${isSendCampaign}`,
 					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}` } }
 				);
 			} else {
@@ -994,6 +997,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				setIsExitCampaignOpen(true);
 				break;
 			case buttons.SEND:
+				onSubmit();
+				break;
+			case buttons.CONTINUE:
 				onSubmit();
 				break;
 			default:
@@ -1386,6 +1392,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								onFormButtonClick={(buttonName: string) =>
 									onFormButtonClick(buttonName)
 								}
+								showSendButton={FromAutomation ? (!!FromAutomation && !!isSendCampaign) : true}
+								showContinueButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : false}
 							/>
 						</Grid>
 					</form>

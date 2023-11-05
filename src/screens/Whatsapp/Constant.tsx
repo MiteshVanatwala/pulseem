@@ -86,6 +86,7 @@ export enum buttons {
 	SAVE = 'Save',
 	EXIT = 'Exit',
 	SEND = 'Send',
+	CONTINUE = 'Continue',
 }
 
 export enum reportCellNames {
