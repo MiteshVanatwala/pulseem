@@ -1154,6 +1154,7 @@ const DynamicGroups = ({ classes }: any) => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <div className={clsx(classes.fullWidth, classes.pt10)}>
+                        {/* @ts-ignore */}
                         <Groups
                             classes={classes}
                             showSortBy={false}
@@ -1164,6 +1165,7 @@ const DynamicGroups = ({ classes }: any) => {
                             callbackUpdateGroups={callbackUpdateGroups}
                             callbackSelectedGroups={callbackSelectedGroups}
                             callbackShowTestGroup={callbackShowTextGroups}
+                            callbackSelectAll={callbackSelectAll}
                             noSelectionText={t("sms.NoFilteredGroups")}
                             innerHeight={325}
                             uniqueKey={'groups_3'}
