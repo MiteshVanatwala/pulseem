@@ -22,10 +22,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             size='small'
                             value={data.dynamicData.MyConditions[0]?.FirstName}
                             onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.FirstName = event.target.value.trim();
-                                newObj.dynamicData.MyConditions = [...condition];
+                                let newObj = JSON.parse(JSON.stringify(data));
+                                // let condition = newObj?.dynamicData?.MyConditions[0] as any;
+                                // condition.FirstName = event.target.value.trim();
+                                newObj.dynamicData.MyConditions[0].FirstName = event.target.value.trim();
 
                                 onUpdate({ ...data, newObj });
                             }}
@@ -41,10 +41,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.FirstNameCond}
                                 onChange={(event: any) => {
-                                    const newObj = { ...data };
-                                    const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                    let newObj = { ...data };
+                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
                                     condition.FirstNameCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions = [...condition];
+                                    newObj.dynamicData.MyConditions[0] = [...condition];
 
                                     onUpdate({ ...data, newObj });
                                 }}
@@ -77,10 +77,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.LastName}
                             onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                let newObj = { ...data };
+                                let condition = { ...newObj.dynamicData.MyConditions[0] };
                                 condition.LastName = event.target.value.trim();
-                                newObj.dynamicData.MyConditions = [...condition];
+                                newObj.dynamicData.MyConditions[0] = [...condition];
 
                                 onUpdate({ ...data, newObj });
                             }}
@@ -96,10 +96,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.LastNameCond}
                                 onChange={(event: any) => {
-                                    const newObj = { ...data };
-                                    const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                    let newObj = { ...data };
+                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
                                     condition.LastNameCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions = [...condition];
+                                    newObj.dynamicData.MyConditions[0] = [...condition];
 
                                     onUpdate({ ...data, newObj });
                                 }}
@@ -132,10 +132,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Email}
                             onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                let newObj = { ...data };
+                                let condition = { ...newObj.dynamicData.MyConditions[0] };
                                 condition.Email = event.target.value.trim();
-                                newObj.dynamicData.MyConditions = [...condition];
+                                newObj.dynamicData.MyConditions[0] = [...condition];
 
                                 onUpdate({ ...data, newObj });
                             }}
@@ -151,10 +151,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.EmailCond}
                                 onChange={(event: any) => {
-                                    const newObj = { ...data };
-                                    const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                    let newObj = { ...data };
+                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
                                     condition.EmailCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions = [...condition];
+                                    newObj.dynamicData.MyConditions[0] = [...condition];
 
                                     onUpdate({ ...data, newObj });
                                 }}
@@ -187,10 +187,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Telephone}
                             onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                let newObj = { ...data };
+                                let condition = { ...newObj.dynamicData.MyConditions[0] };
                                 condition.Telephone = event.target.value.trim();
-                                newObj.dynamicData.MyConditions = [...condition];
+                                newObj.dynamicData.MyConditions[0] = [...condition];
 
                                 onUpdate({ ...data, newObj });
                             }}
@@ -206,10 +206,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.TelephoneCond}
                                 onChange={(event: any) => {
-                                    const newObj = { ...data };
-                                    const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                    let newObj = { ...data };
+                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
                                     condition.TelephoneCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions = [...condition];
+                                    newObj.dynamicData.MyConditions[0] = [...condition];
 
                                     onUpdate({ ...data, newObj });
                                 }}
@@ -242,10 +242,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Cellphone}
                             onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                let newObj = { ...data };
+                                let condition = { ...newObj.dynamicData.MyConditions[0] };
                                 condition.Cellphone = event.target.value.trim();
-                                newObj.dynamicData.MyConditions = [...condition];
+                                newObj.dynamicData.MyConditions[0] = [...condition];
 
                                 onUpdate({ ...data, newObj });
                             }}
@@ -261,10 +261,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.CellphoneCond}
                                 onChange={(event: any) => {
-                                    const newObj = { ...data };
-                                    const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                    let newObj = { ...data };
+                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
                                     condition.CellphoneCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions = [...condition];
+                                    newObj.dynamicData.MyConditions[0] = [...condition];
 
                                     onUpdate({ ...data, newObj });
                                 }}
@@ -297,10 +297,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Company}
                             onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                let newObj = { ...data };
+                                let condition = { ...newObj.dynamicData.MyConditions[0] };
                                 condition.Company = event.target.value.trim();
-                                newObj.dynamicData.MyConditions = [...condition];
+                                newObj.dynamicData.MyConditions[0] = [...condition];
 
                                 onUpdate({ ...data, newObj });
                             }}
@@ -316,10 +316,10 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.ComapnyCond}
                                 onChange={(event: any) => {
-                                    const newObj = { ...data };
-                                    const condition = { ...newObj.dynamicData.MyConditions[0] };
+                                    let newObj = { ...data };
+                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
                                     condition.ComapnyCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions = [...condition];
+                                    newObj.dynamicData.MyConditions[0] = [...condition];
 
                                     onUpdate({ ...data, newObj });
                                 }}
