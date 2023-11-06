@@ -14,6 +14,8 @@ const Buttons = ({
 	classes,
 	onFormButtonClick,
 	displayBackButton,
+	showSendButton = true,
+	showContinueButton = false
 }: ButtonsProps) => {
 	const { t: translator } = useTranslation();
 
@@ -111,19 +113,41 @@ const Buttons = ({
 					<>{translator('whatsappCampaign.save')}</>
 				</Button>
 
-				<Button
-					variant='contained'
-					size='medium'
-					className={clsx(
-						classes.redButton,
-						classes.btn,
-            classes.btnRounded
-					)}
-					color='primary'
-					style={{ margin: '8px' }}
-					onClick={(e) => onFormButtonClick(buttons.SEND)}>
-					<>{translator('whatsappCampaign.send')}</>
-				</Button>
+				{
+					showSendButton && (
+						<Button
+							variant='contained'
+							size='medium'
+							className={clsx(
+								classes.redButton,
+								classes.btn,
+								classes.btnRounded
+							)}
+							color='primary'
+							style={{ margin: '8px' }}
+							onClick={(e) => onFormButtonClick(buttons.SEND)}>
+							<>{translator('whatsappCampaign.send')}</>
+						</Button>
+					)
+				}
+
+				{
+					showContinueButton && (
+						<Button
+							variant='contained'
+							size='medium'
+							className={clsx(
+								classes.actionButton,
+								classes.actionButtonLightGreen,
+								classes.backButton
+							)}
+							color='primary'
+							style={{ margin: '8px' }}
+							onClick={(e) => onFormButtonClick(buttons.CONTINUE)}>
+							<>{translator('common.continue')}</>
+						</Button>
+					)
+				}
 			</div>
 		</div>
 	);
