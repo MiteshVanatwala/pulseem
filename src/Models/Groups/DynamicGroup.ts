@@ -7,9 +7,6 @@ export interface DynamicGroupModel {
     ShowNotOpened: boolean;
     ShowClicked: boolean;
     ShowNotClicked: boolean;
-    PageIndex: number;
-    PageSize: number;
-    IsExport: boolean;
 }
 export enum CondType {
     Undefined = 0,

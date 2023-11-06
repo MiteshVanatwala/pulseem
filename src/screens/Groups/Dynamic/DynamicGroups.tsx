@@ -1886,7 +1886,6 @@ const DynamicGroups = ({ classes }: any) => {
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
                 <Box className={'topSection'}>
-
                     <Title Text={t('recipient.logPageHeaderResource1.Dynamic')} classes={classes} />
                     {renderSearchSection()}
                 </Box>

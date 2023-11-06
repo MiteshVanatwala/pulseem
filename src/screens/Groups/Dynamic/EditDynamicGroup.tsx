@@ -14,7 +14,7 @@ import { getGroups, getGroupsBySubAccountId } from '../../../redux/reducers/grou
 import Groups from '../../Whatsapp/Campaign/Components/Groups/Groups';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import { Loader } from '../../../components/Loader/Loader';
-import { ActivityGroup, Conditions } from '../../../Models/Groups/DynamicGroup';
+import { ActivityGroup, ActivtyInterval, Conditions, DynamicGroupModel } from '../../../Models/Groups/DynamicGroup';
 
 const EditDynamicGroup = ({ classes, Data }: any) => {
     const dispatch: any = useDispatch();
@@ -25,7 +25,39 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
     const [showLoader, setLoader] = useState(true);
-    const [dynamicGroupModel, setDynamicGroupModel] = useState(null);
+    const [dynamicGroupModel, setDynamicGroupModel] = useState<any>({
+        Group: {
+            CreationDate: null,
+            DynamicData: '',
+            DynamicLastUpdate: null,
+            DynamicUpdatePolicy: 0,
+            GroupID: 0,
+            GroupName: '',
+            IsDynamic: true,
+            IsTestGroup: false,
+            Recipients: 0,
+            SubAccountID: -1,
+            UpdateDate: null
+        },
+        dynamicData: {
+            MyActivities: {
+                IsNotOpened: false,
+                IsNotOpenedFromDate: null,
+                IsNotOpenedInterval: ActivtyInterval.Last2Weeks,
+                IsNotOpenedToDate: null,
+                IsOpened: false,
+                IsOpenedFromDate: null,
+                IsOpenedInterval: ActivtyInterval.Last2Weeks,
+                IsOpenedToDate: null
+            } as ActivityGroup,
+            MyConditions: [] as Conditions[],
+            MyGroups: [] as any,
+            ShowClicked: false,
+            ShowOpened: false,
+            ShowNotClicked: false,
+            ShowNotOpened: false
+        } as DynamicGroupModel
+    });
     const [tabValue, setTabValue] = useState('0');
     const [selectedGroups, setSelectedGroups] = useState<any>([]);
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
@@ -33,16 +65,15 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
 
     const getData = async () => {
         setLoader(true);
-        setLoader(false);
         if (subAccountAllGroups.length === 0) {
             dispatch(getGroupsBySubAccountId());
         }
+        setLoader(false);
     };
 
     useEffect(() => {
         getData();
-        if(subAccountAllGroups)
-        {
+        if (subAccountAllGroups) {
             setDynamicGroupModel(Data);
         }
     }, [subAccountAllGroups]);
@@ -50,7 +81,7 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
     useEffect(() => {
         const selectedgroupsList = [] as any;
         Data?.dynamicData?.MyGroups.forEach((gl: number) => {
-            const exist = subAccountAllGroups?.filter(g => { return g.GroupID === gl });
+            const exist = subAccountAllGroups?.filter((g: any) => { return g.GroupID === gl });
             if (exist && exist.length > 0) {
                 selectedgroupsList.push(exist[0]);
             }
@@ -72,13 +103,12 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
                                 // value={searchRules.firstName.value}
                                 value={dynamicGroupModel?.dynamicData?.MyConditions[0]?.FirstName}
                                 onChange={(event: any) => {
-                                    const conditions = [...dynamicGroupModel?.dynamicData?.MyConditions];
-                                    setDynamicGroupModel({
-                                        ...dynamicGroupModel,
-                                        MyConditions: [conditions[0],
-                                        { FirstName: event.target.value.trim() } as Conditions
-                                        ]
-                                    })
+                                    const newObj = { ...dynamicGroupModel };
+                                    const condition = {...newObj.dynamicData.MyConditions[0]};
+                                    condition.FirstName = event.target.value.trim();
+                                    newObj.dynamicData.MyConditions = [...condition];
+
+                                    setDynamicGroupModel({ ...dynamicGroupModel, newObj });
                                 }}
                                 className={clsx(classes.w100, classes.textField, classes.mt25)}
                             />
@@ -1141,7 +1171,7 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
                             value={dynamicGroupModel?.Group?.DynamicUpdatePolicy}
                             onChange={(event: any) => {
                                 setDynamicGroupModel({
-                                    ...dynamicGroupModel.Group,
+                                    ...dynamicGroupModel,
                                     Groups: { DynamicUpdatePolicy: event.target.value } as any
                                 })
                             }}
@@ -1178,8 +1208,8 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
 
     return (
         <>
-            <Loader isOpen={showLoader || dynamicGroupModel === null} />
-            {dynamicGroupModel && <><Tabs
+            <Loader isOpen={showLoader} />
+            {dynamicGroupModel && Data && <><Tabs
                 value={tabValue}
                 onChange={(e, value) => setTabValue(value)}
                 className={clsx(classes.mr15, classes.ml15)}
@@ -1266,6 +1296,7 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
                                 showSortBy={true}
                                 showFilter={false}
                                 showSelectAll={true}
+                                isFilterSelected={false}
                             />
                         </div>
                     </TabPanel>

@@ -39,18 +39,12 @@ const DynamicGroupsContainer = ({ classes }: any) => {
 
 
     const getData = async () => {
-        if (dynamicGroup.StatusCode !== 201) {
-            await dispatch(getById(id));
-        }
+        await dispatch(getById(id));
     };
 
     useEffect(() => {
         getData();
     }, []);
-
-    useEffect(() => {
-        console.log(dynamicGroup.Data);
-    }, [dynamicGroup])
 
     const handleResponses = (response: any, actions = {
         'S_200': {
