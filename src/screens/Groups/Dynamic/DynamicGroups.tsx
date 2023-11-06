@@ -495,7 +495,9 @@ const DynamicGroups = ({ classes }: any) => {
                 lable: t('campaigns.Image2Resource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    navigate(`/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`)
+                    // @ts-ignore
+                    window.location = `http://localhost:58123/EditDynamicGroup.aspx?groupID=${GroupID}`
+                    //navigate(`/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`)
                 }
             },
             {
