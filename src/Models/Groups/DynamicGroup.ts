@@ -23,7 +23,8 @@ export enum ActivtyInterval {
     Last3Months = 3,
     Last6Months = 4,
     LastYear = 5,
-    SpecificDates = 6
+    SpecificDates = 6,
+    AllTheTime = 7
 }
 export interface ActivityGroup {
     IsOpened: boolean | null;
