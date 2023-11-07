@@ -21,14 +21,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data.dynamicData.MyConditions[0]?.FirstName}
-                            onChange={(event: any) => {
-                                let newObj = JSON.parse(JSON.stringify(data));
-                                // let condition = newObj?.dynamicData?.MyConditions[0] as any;
-                                // condition.FirstName = event.target.value.trim();
-                                newObj.dynamicData.MyConditions[0].FirstName = event.target.value.trim();
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('FirstName', event.target.value.trim())}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -40,14 +33,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             <Select
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.FirstNameCond}
-                                onChange={(event: any) => {
-                                    let newObj = { ...data };
-                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                    condition.FirstNameCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                    onUpdate({ ...data, newObj });
-                                }}
+                                onChange={(event: any) => onUpdate('FirstNameCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
                                 MenuProps={{
@@ -76,14 +62,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.LastName}
-                            onChange={(event: any) => {
-                                let newObj = { ...data };
-                                let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.LastName = event.target.value.trim();
-                                newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('LastName', event.target.value.trim())}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -95,14 +74,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             <Select
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.LastNameCond}
-                                onChange={(event: any) => {
-                                    let newObj = { ...data };
-                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                    condition.LastNameCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                    onUpdate({ ...data, newObj });
-                                }}
+                                onChange={(event: any) => onUpdate('LastNameCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
                                 MenuProps={{
@@ -131,14 +103,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Email}
-                            onChange={(event: any) => {
-                                let newObj = { ...data };
-                                let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.Email = event.target.value.trim();
-                                newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('Email', event.target.value.trim())}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -150,14 +115,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             <Select
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.EmailCond}
-                                onChange={(event: any) => {
-                                    let newObj = { ...data };
-                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                    condition.EmailCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                    onUpdate({ ...data, newObj });
-                                }}
+                                onChange={(event: any) => onUpdate('EmailCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
                                 MenuProps={{
@@ -186,14 +144,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Telephone}
-                            onChange={(event: any) => {
-                                let newObj = { ...data };
-                                let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.Telephone = event.target.value.trim();
-                                newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('Telephone', event.target.value.trim())}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -205,14 +156,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             <Select
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.TelephoneCond}
-                                onChange={(event: any) => {
-                                    let newObj = { ...data };
-                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                    condition.TelephoneCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                    onUpdate({ ...data, newObj });
-                                }}
+                                onChange={(event: any) => onUpdate('TelephoneCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
                                 MenuProps={{
@@ -241,14 +185,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Cellphone}
-                            onChange={(event: any) => {
-                                let newObj = { ...data };
-                                let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.Cellphone = event.target.value.trim();
-                                newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('Cellphone', event.target.value.trim())}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -260,14 +197,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             <Select
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.CellphoneCond}
-                                onChange={(event: any) => {
-                                    let newObj = { ...data };
-                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                    condition.CellphoneCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                    onUpdate({ ...data, newObj });
-                                }}
+                                onChange={(event: any) => onUpdate('CellphoneCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
                                 MenuProps={{
@@ -296,14 +226,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Company}
-                            onChange={(event: any) => {
-                                let newObj = { ...data };
-                                let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.Company = event.target.value.trim();
-                                newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('Company', event.target.value.trim())}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -315,14 +238,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             <Select
                                 variant='standard'
                                 value={data?.dynamicData.MyConditions[0]?.ComapnyCond}
-                                onChange={(event: any) => {
-                                    let newObj = { ...data };
-                                    let condition = { ...newObj.dynamicData.MyConditions[0] };
-                                    condition.ComapnyCond = event.target.value.trim();
-                                    newObj.dynamicData.MyConditions[0] = [...condition];
-
-                                    onUpdate({ ...data, newObj });
-                                }}
+                                onChange={(event: any) => onUpdate('ComapnyCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
                                 MenuProps={{

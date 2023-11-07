@@ -233,17 +233,26 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
         )
     }
 
-    const onUpdatePersonalDetails = (e: any) => {
-        console.log(e)
+    const updateMyConditions = (keyName: string, value: string) => {
+        setDynamicGroupModel({ ...dynamicGroupModel, dynamicData: {
+            ...dynamicGroupModel.dynamicData,
+            MyConditions: [
+                {
+                    ...dynamicGroupModel.dynamicData.MyConditions[0],
+                    [keyName]: value
+                }
+            ]
+        }});
     }
-    const onUpdateLocationDetails = (e: any) => {
-        console.log(e)
-    }
-    const onUpdateDateDetails = (e: any) => {
-        console.log(e)
-    }
-    const onUpdateActivityDetails = (e: any) => {
-        console.log(e)
+
+    const updateMyActivities = (keyName: string, value: string) => {
+        setDynamicGroupModel({ ...dynamicGroupModel, dynamicData: {
+            ...dynamicGroupModel.dynamicData,
+            MyActivities: {
+                ...dynamicGroupModel.dynamicData.MyActivities,
+                [keyName]: value
+            }
+        }});
     }
 
     return (
@@ -300,19 +309,19 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
 
             <TabContext value={`${tabValue}`}>
                 <TabPanel value='0'>
-                    <PersonalDetails classes={classes} data={dynamicGroupModel} onUpdate={onUpdatePersonalDetails} />
+                    <PersonalDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
                 </TabPanel>
 
                 <TabPanel value='1'>
-                    <LocationDetails classes={classes} data={dynamicGroupModel} onUpdate={onUpdateLocationDetails} />
+                    <LocationDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
                 </TabPanel>
 
                 <TabPanel value='2'>
-                    <DateDetails classes={classes} data={dynamicGroupModel} onUpdate={onUpdateDateDetails} />
+                    <DateDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
                 </TabPanel>
 
                 <TabPanel value='3'>
-                    <ActivityDetails classes={classes} data={dynamicGroupModel} onUpdate={onUpdateActivityDetails} />
+                    <ActivityDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} />
                 </TabPanel>
 
                 <TabPanel value='4'>

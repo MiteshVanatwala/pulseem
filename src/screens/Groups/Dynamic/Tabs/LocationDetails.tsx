@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 const LocationDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
-    
+
     return (<Grid container className={classes.pt25}>
         <Grid item xs={8} sm={8} md={8}>
             <Grid container>
@@ -20,14 +20,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.Address}
-                        onChange={(event: any) => {
-                            const newObj = { ...data };
-                            const condition = { ...newObj.dynamicData.MyConditions[0] };
-                            condition.Address = event.target.value.trim();
-                            newObj.dynamicData.MyConditions = [...condition];
-
-                            onUpdate({ ...data, newObj });
-                        }}
+                        onChange={(event: any) => onUpdate('Address', event.target.value.trim())}
                         className={clsx(classes.w100, classes.textField, classes.mt25)}
                     />
                 </Grid>
@@ -39,14 +32,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         <Select
                             variant='standard'
                             value={data?.dynamicData.MyConditions[0]?.AddressCond}
-                            onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.AddressCond = event.target.value.trim();
-                                newObj.dynamicData.MyConditions = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('AddressCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
                             MenuProps={{
@@ -75,14 +61,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.Country}
-                        onChange={(event: any) => {
-                            const newObj = { ...data };
-                            const condition = { ...newObj.dynamicData.MyConditions[0] };
-                            condition.Country = event.target.value.trim();
-                            newObj.dynamicData.MyConditions = [...condition];
-
-                            onUpdate({ ...data, newObj });
-                        }}
+                        onChange={(event: any) => onUpdate('Country', event.target.value.trim())}
                         className={clsx(classes.w100, classes.textField, classes.mt25)}
                     />
                 </Grid>
@@ -94,14 +73,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         <Select
                             variant='standard'
                             value={data?.dynamicData.MyConditions[0]?.CountryCond}
-                            onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.CountryCond = event.target.value.trim();
-                                newObj.dynamicData.MyConditions = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('CountryCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
                             MenuProps={{
@@ -130,14 +102,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.State}
-                        onChange={(event: any) => {
-                            const newObj = { ...data };
-                            const condition = { ...newObj.dynamicData.MyConditions[0] };
-                            condition.CountryCond = event.target.value.trim();
-                            newObj.dynamicData.MyConditions = [...condition];
-
-                            onUpdate({ ...data, newObj });
-                        }}
+                        onChange={(event: any) => onUpdate('State', event.target.value.trim())}
                         className={clsx(classes.w100, classes.textField, classes.mt25)}
                     />
                 </Grid>
@@ -149,14 +114,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         <Select
                             variant='standard'
                             value={data?.dynamicData.MyConditions[0]?.StateCond}
-                            onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.CountryCond = event.target.value.trim();
-                                newObj.dynamicData.StateCond = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('StateCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
                             MenuProps={{
@@ -185,14 +143,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.City}
-                        onChange={(event: any) => {
-                            const newObj = { ...data };
-                            const condition = { ...newObj.dynamicData.MyConditions[0] };
-                            condition.City = event.target.value.trim();
-                            newObj.dynamicData.StateCond = [...condition];
-
-                            onUpdate({ ...data, newObj });
-                        }}
+                        onChange={(event: any) => onUpdate('City', event.target.value.trim())}
                         className={clsx(classes.w100, classes.textField, classes.mt25)}
                     />
                 </Grid>
@@ -204,14 +155,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         <Select
                             variant='standard'
                             value={data?.dynamicData.MyConditions[0]?.CityCond}
-                            onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.CityCond = event.target.value.trim();
-                                newObj.dynamicData.StateCond = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('CityCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
                             MenuProps={{
@@ -240,14 +184,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.Zip}
-                        onChange={(event: any) => {
-                            const newObj = { ...data };
-                            const condition = { ...newObj.dynamicData.MyConditions[0] };
-                            condition.Zip = event.target.value.trim();
-                            newObj.dynamicData.StateCond = [...condition];
-
-                            onUpdate({ ...data, newObj });
-                        }}
+                        onChange={(event: any) => onUpdate('Zip', event.target.value.trim())}
                         className={clsx(classes.w100, classes.textField, classes.mt25)}
                     />
                 </Grid>
@@ -259,14 +196,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         <Select
                             variant='standard'
                             value={data?.dynamicData.MyConditions[0]?.ZipCond}
-                            onChange={(event: any) => {
-                                const newObj = { ...data };
-                                const condition = { ...newObj.dynamicData.MyConditions[0] };
-                                condition.ZipCond = event.target.value.trim();
-                                newObj.dynamicData.StateCond = [...condition];
-
-                                onUpdate({ ...data, newObj });
-                            }}
+                            onChange={(event: any) => onUpdate('ZipCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
                             MenuProps={{
