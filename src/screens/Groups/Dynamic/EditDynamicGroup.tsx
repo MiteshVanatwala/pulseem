@@ -19,6 +19,8 @@ import DateDetails from './Tabs/DateDetails';
 import ActivityDetails from './Tabs/ActivityDetails';
 import { getById } from '../../../redux/reducers/DynamicGroupsSlice';
 import { useParams } from 'react-router-dom';
+import useRedirect from '../../../helpers/Routes/Redirect';
+import { sitePrefix } from '../../../config';
 
 const EditDynamicGroup = ({ classes, Data }: any) => {
     const dispatch: any = useDispatch();
@@ -26,6 +28,7 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
     const [showLoader, setLoader] = useState(true);
+    const Redirect = useRedirect();
     const [dynamicGroupModel, setDynamicGroupModel] = useState<any>({
         Group: {
             CreationDate: null,
@@ -137,6 +140,11 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
     const getData = async () => {
         setLoader(true);
         const groups = await dispatch(getById(id));
+
+        if (groups.payload.StatusCode === 404) {
+            Redirect({ url: `${sitePrefix}Groups/Dynamic`, openNewTab: false, preventRedirect: true });
+            return false;
+        }
         setDynamicGroupModel(groups?.payload?.Data);
 
         if (subAccountAllGroups.length === 0) {
@@ -234,25 +242,29 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
     }
 
     const updateMyConditions = (keyName: string, value: string) => {
-        setDynamicGroupModel({ ...dynamicGroupModel, dynamicData: {
-            ...dynamicGroupModel.dynamicData,
-            MyConditions: [
-                {
-                    ...dynamicGroupModel.dynamicData.MyConditions[0],
-                    [keyName]: value
-                }
-            ]
-        }});
+        setDynamicGroupModel({
+            ...dynamicGroupModel, dynamicData: {
+                ...dynamicGroupModel.dynamicData,
+                MyConditions: [
+                    {
+                        ...dynamicGroupModel.dynamicData.MyConditions[0],
+                        [keyName]: value
+                    }
+                ]
+            }
+        });
     }
 
     const updateMyActivities = (keyName: string, value: string) => {
-        setDynamicGroupModel({ ...dynamicGroupModel, dynamicData: {
-            ...dynamicGroupModel.dynamicData,
-            MyActivities: {
-                ...dynamicGroupModel.dynamicData.MyActivities,
-                [keyName]: value
+        setDynamicGroupModel({
+            ...dynamicGroupModel, dynamicData: {
+                ...dynamicGroupModel.dynamicData,
+                MyActivities: {
+                    ...dynamicGroupModel.dynamicData.MyActivities,
+                    [keyName]: value
+                }
             }
-        }});
+        });
     }
 
     return (
