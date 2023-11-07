@@ -22,8 +22,8 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, onCancel, window
             onClose={onClose}
             onCancel={onCancel ?? onClose}
             onConfirm={() => handleDeleteGroup()}
-            cancelText="common.Cancel"
-            confirmText="common.Ok"
+            cancelText="common.No"
+            confirmText="common.Yes"
         >
             <Box>
                 <Typography variant="subtitle1" className={classes.textCenter}>
