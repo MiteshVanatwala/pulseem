@@ -18,6 +18,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                         <InputLabel className={classes.fBlack}>{t('common.first_name')}:</InputLabel>
                         <TextField
+                            placeholder={t('common.first_name')}
                             variant='outlined'
                             size='small'
                             value={data.dynamicData.MyConditions[0]?.FirstName}
@@ -59,6 +60,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                         <InputLabel className={classes.fBlack}>{t('common.last_name')}:</InputLabel>
                         <TextField
+                            placeholder={t('common.last_name')}
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.LastName}
@@ -100,6 +102,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                         <InputLabel className={classes.fBlack}>{t('common.email')}:</InputLabel>
                         <TextField
+                            placeholder={t('common.email')}
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Email}
@@ -141,6 +144,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                         <InputLabel className={classes.fBlack}>{t('common.telephone')}:</InputLabel>
                         <TextField
+                            placeholder={t('common.telephone')}
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Telephone}
@@ -182,6 +186,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                         <InputLabel className={classes.fBlack}>{t('common.cellphone')}:</InputLabel>
                         <TextField
+                            placeholder={t('common.cellphone')}
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Cellphone}
@@ -223,6 +228,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                         <InputLabel className={classes.fBlack}>{t('common.company')}:</InputLabel>
                         <TextField
+                            placeholder={t('common.company')}
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Company}

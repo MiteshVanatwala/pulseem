@@ -2,10 +2,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState, memo, useEffect } from 'react';
 import clsx from 'clsx';
 import {
-    Grid, FormControl, InputLabel, MenuItem, Tabs, Tab
+    Grid, FormControl, InputLabel, MenuItem, Tabs, Tab, Box, Button
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next';
-import 'moment/locale/he';
+import moment from 'moment'
+import 'moment/locale/he'
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
@@ -18,17 +19,23 @@ import LocationDetails from './Tabs/LocationDetails';
 import DateDetails from './Tabs/DateDetails';
 import ActivityDetails from './Tabs/ActivityDetails';
 import { getById } from '../../../redux/reducers/DynamicGroupsSlice';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../../config';
+import { BiSave } from 'react-icons/bi';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import UpdateGroup from './Tabs/UpdateGroup';
 
 const EditDynamicGroup = ({ classes, Data }: any) => {
     const dispatch: any = useDispatch();
+    const navigate = useNavigate();
     const { t } = useTranslation();
+    const Redirect = useRedirect();
+    // const dateFormat = 'YYYY-MM-DD HH:mm:ss'
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
+
     const [showLoader, setLoader] = useState(true);
-    const Redirect = useRedirect();
     const [dynamicGroupModel, setDynamicGroupModel] = useState<any>({
         Group: {
             CreationDate: null,
@@ -136,6 +143,16 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
     const [showTestGroups, setShowTestGroups] = useState(false);
     const { id } = useParams();
+    const { isRTL } = useSelector((state: any) => state.core);
+
+
+    const onSave = () => {
+        console.log(dynamicGroupModel);
+    }
+
+    const onBack = () => {
+        navigate(`${sitePrefix}Groups/Dynamic`);
+    }
 
     const getData = async () => {
         setLoader(true);
@@ -159,15 +176,16 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
 
     useEffect(() => {
         const selectedgroupsList = [] as any;
-        dynamicGroupModel?.dynamicData?.MyGroups.forEach((gl: number) => {
-            const exist = subAccountAllGroups?.filter((g: any) => { return g.GroupID === gl });
-            if (exist && exist.length > 0) {
-                selectedgroupsList.push(exist[0]);
-            }
-        });
-
+        if (subAccountAllGroups?.length > 0 && dynamicGroupModel?.dynamicData?.MyGroups?.length > 0) {
+            dynamicGroupModel?.dynamicData?.MyGroups.forEach((gl: number) => {
+                const exist = subAccountAllGroups?.filter((g: any) => { return g.GroupID === gl });
+                if (exist && exist.length > 0) {
+                    selectedgroupsList.push(exist[0]);
+                }
+            });
+        }
         setSelectedGroups(selectedgroupsList);
-    }, [dynamicGroupModel])
+    }, [dynamicGroupModel, subAccountAllGroups])
 
     const callbackUpdateGroups = (groups: any | never) => {
         // setSelectedGroups(groups) as any;
@@ -192,55 +210,6 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
         setAllGroupsSelected(!allGroupsSelected);
     }
 
-    const getSystemDetails = () => {
-        return (
-            <Grid container className={classes.pt25}>
-                <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>
-                    <InputLabel className={classes.fBlack}>{t('common.updateGroupRecipientsEvery')}:</InputLabel>
-                    <FormControl
-                        variant="standard"
-                        className={clsx(classes.selectInputFormControl, classes.w50)}
-                    >
-                        <Select
-                            variant='standard'
-                            value={dynamicGroupModel?.Group?.DynamicUpdatePolicy}
-                            onChange={(event: any) => {
-                                setDynamicGroupModel({
-                                    ...dynamicGroupModel,
-                                    Groups: { DynamicUpdatePolicy: event.target.value } as any
-                                })
-                            }}
-                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                            className={clsx(classes.w100, classes.mt20)}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 300,
-                                    },
-                                },
-                            }}
-                        >
-                            <MenuItem value={0}>{t('common.daily2AM')}</MenuItem>
-                            <MenuItem value={1}>{t('common.weekly2AM')}</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>
-                    <InputLabel className={classes.fBlack}>{t('common.UpdatedOn')}:</InputLabel>
-                    <div className={clsx(classes.pt10)}>
-                        {dynamicGroupModel?.Group?.DynamicLastUpdate}
-                    </div>
-                </Grid>
-                <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>
-                    <InputLabel className={classes.fBlack}>{t('common.numberOfClientsInGroup')}:</InputLabel>
-                    <div className={clsx(classes.pt10)}>
-                        {dynamicGroupModel?.Group?.Recipients}
-                    </div>
-                </Grid>
-            </Grid>
-        )
-    }
-
     const updateMyConditions = (keyName: string, value: string) => {
         setDynamicGroupModel({
             ...dynamicGroupModel, dynamicData: {
@@ -263,6 +232,15 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
                     ...dynamicGroupModel.dynamicData.MyActivities,
                     [keyName]: value
                 }
+            }
+        });
+    }
+
+    const updateGroup = (keyName: string, value: string) => {
+        setDynamicGroupModel({
+            ...dynamicGroupModel, Group: {
+                ...dynamicGroupModel.Group,
+                [keyName]: value
             }
         });
     }
@@ -312,7 +290,7 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
                 />
 
                 <Tab
-                    label={t('common.systemDetails')}
+                    label={t('group.updateGroup')}
                     classes={{ root: classes.tabText, selected: classes.activeTab }}
                     className={classes.iconTab}
                     value='5'
@@ -363,9 +341,35 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
                 </TabPanel>
 
                 <TabPanel value='5'>
-                    {getSystemDetails()}
+                    <UpdateGroup classes={classes} data={dynamicGroupModel} onUpdate={updateGroup} />
                 </TabPanel>
             </TabContext>
+            <Box className={clsx(classes.flex, classes.pt25)} style={{ justifyContent: 'end', marginTop: 15 }}>
+                <Button
+                    onClick={onBack}
+                    className={clsx(
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.backButton
+                    )}
+                    startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    style={{ margin: '8px' }}
+                >
+                    {t('common.back')}
+                </Button>
+                <Button
+                    className={clsx(
+                        classes.btn,
+                        classes.btnRounded
+                    )}
+                    style={{ margin: '8px' }}
+                    startIcon={<BiSave />}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    onClick={onSave}
+                >
+                    {t("common.save")}
+                </Button>
+            </Box>
         </>
     )
 }

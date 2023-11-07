@@ -1,31 +1,20 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { useState, useEffect, memo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, memo } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-    Box, Button
+    Box
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next';
 import 'moment/locale/he';
-import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
 import { Title } from '../../../components/managment/Title';
 import EditDynamicGroup from './EditDynamicGroup';
-import { BiSave } from 'react-icons/bi';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { sitePrefix } from '../../../config';
 
 
 const DynamicGroupsContainer = ({ classes }: any) => {
-    const dispatch: any = useDispatch();
-    
-    const navigate = useNavigate()
     const { t } = useTranslation();
-    const [toastMessage, setToastMessage] = useState<any | never>(null);
-    const [showLoader, setLoader] = useState(false);
     const [dialog, setDialog] = useState<any | never>(null);
-    const { isRTL, CoreToastMessages } = useSelector((state: any) => state.core);
+    const [toastMessage, setToastMessage] = useState<any | never>(null);
 
     const renderToast = () => {
         setTimeout(() => {
@@ -39,15 +28,6 @@ const DynamicGroupsContainer = ({ classes }: any) => {
     const showDialog = () => {
         return <></>;
     }
-
-    const onSave = () => {
-
-    }
-
-    const onBack = () => {
-        navigate(`${sitePrefix}Groups/Dynamic`);
-    }
-
 
     return (
         <DefaultScreen
@@ -64,37 +44,11 @@ const DynamicGroupsContainer = ({ classes }: any) => {
 
                     <Box className={clsx(classes.p20)}>
                         <EditDynamicGroup classes={classes} />
-                        <Box className={clsx(classes.flex, classes.pt25)} style={{ justifyContent: 'end', marginTop: 15 }}>
-                            <Button
-                                onClick={onBack}
-                                className={clsx(
-                                    classes.btn,
-                                    classes.btnRounded,
-                                    classes.backButton
-                                )}
-                                startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                                style={{ margin: '8px' }}
-                            >
-                                {t('common.back')}
-                            </Button>
-                            <Button
-                                className={clsx(
-                                    classes.btn,
-                                    classes.btnRounded
-                                )}
-                                style={{ margin: '8px' }}
-                                startIcon={<BiSave />}
-                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                                onClick={onSave}
-                            >
-                                {t("common.save")}
-                            </Button>
-                        </Box>
+
                     </Box>
                 </Box>
 
                 {dialog !== null && showDialog()}
-                <Loader isOpen={showLoader} showBackdrop={true} />
             </Box>
         </DefaultScreen>
     )

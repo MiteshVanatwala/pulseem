@@ -35,5 +35,6 @@
     "notFound": "Invalid username password",
     "serverFoundWithNoResponse": "Server got the request"
   },
-  "maxGroupsExceeded": "Maximum of group creation exceeded for this account"
+  "maxGroupsExceeded": "Maximum of group creation exceeded for this account",
+  "updateGroup": "Update Group"
 }

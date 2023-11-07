@@ -17,6 +17,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                 <Grid item xs={10} sm={10} md={10} className={clsx(classes.p10)}>
                     <InputLabel className={classes.fBlack}>{t('common.address')}:</InputLabel>
                     <TextField
+                        placeholder={t('common.address')}
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.Address}
@@ -58,6 +59,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                 <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                     <InputLabel className={classes.fBlack}>{t('common.country')}:</InputLabel>
                     <TextField
+                        placeholder={t('common.country')}
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.Country}
@@ -99,6 +101,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                 <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                     <InputLabel className={classes.fBlack}>{t('common.state')}:</InputLabel>
                     <TextField
+                        placeholder={t('common.state')}
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.State}
@@ -140,6 +143,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                 <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                     <InputLabel className={classes.fBlack}>{t('common.city')}:</InputLabel>
                     <TextField
+                        placeholder={t('common.city')}
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.City}
@@ -181,6 +185,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                 <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                     <InputLabel className={classes.fBlack}>{t('common.zip')}:</InputLabel>
                     <TextField
+                        placeholder={t('common.zip')}
                         variant='outlined'
                         size='small'
                         value={data?.dynamicData.MyConditions[0]?.Zip}
