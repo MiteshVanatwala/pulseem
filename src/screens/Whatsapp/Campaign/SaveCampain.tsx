@@ -957,10 +957,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
 				}
 				if (isNavigate) {
-					if (FromAutomation) {
-						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
-						return false;
-					} else {
+					if (!FromAutomation) {
 						navigate(
 							`${sitePrefix}whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
 						);
