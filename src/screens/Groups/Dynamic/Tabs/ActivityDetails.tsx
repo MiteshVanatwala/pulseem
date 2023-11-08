@@ -9,6 +9,7 @@ import { ActivtyInterval } from '../../../../Models/Groups/DynamicGroup';
 import { useTranslation } from 'react-i18next';
 import { DateField } from '../../../../components/managment';
 import moment from "moment";
+import { DateFormats } from '../../../../helpers/Constants';
 
 const ActivityDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
@@ -71,7 +72,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsOpenedFromDate}
-                                        onChange={(value: any) => onUpdate('IsOpenedFromDate', value)}
+                                        onChange={(value: any) => onUpdate('IsOpenedFromDate', moment(value).format(DateFormats.DATEONLY))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
@@ -89,7 +90,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsOpenedToDate}
-                                        onChange={(value: any) => onUpdate('IsOpenedToDate', value)}
+                                        onChange={(value: any) => onUpdate('IsOpenedToDate', moment(value).format(DateFormats.DATEONLY))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
@@ -161,7 +162,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotOpenedFromDate}
-                                        onChange={(value: any) => onUpdate('IsNotOpenedFromDate', value)}
+                                        onChange={(value: any) => onUpdate('IsNotOpenedFromDate', moment(value).format(DateFormats.DATEONLY))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
@@ -179,7 +180,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotOpenedToDate}
-                                        onChange={(value: any) => onUpdate('IsNotOpenedToDate', value)}
+                                        onChange={(value: any) => onUpdate('IsNotOpenedToDate', moment(value).format(DateFormats.DATEONLY))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}

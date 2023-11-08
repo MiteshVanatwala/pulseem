@@ -7,6 +7,7 @@ import { Conditions } from '../../../../Models/Groups/DynamicGroup';
 import { useTranslation } from 'react-i18next';
 import { DateField } from '../../../../components/managment';
 import moment from "moment";
+import { DateFormats } from '../../../../helpers/Constants';
 
 const DateDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
@@ -22,7 +23,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.BirthDateFrom}
-                            onChange={(value: any) => onUpdate('BirthDateFrom', value)}
+                            onChange={(value: any) => onUpdate('BirthDateFrom', moment(value).format(DateFormats.DATEONLY))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -40,7 +41,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.BirthDateTo}
-                            onChange={(value: any) => onUpdate('BirthDateTo', value)}
+                            onChange={(value: any) => onUpdate('BirthDateTo', moment(value).format(DateFormats.DATEONLY))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
@@ -63,7 +64,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear}
-                            onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', value)}
+                            onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', moment(value).format(DateFormats.DATEONLY))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -81,7 +82,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.BirthDateToWithoutYear}
-                            onChange={(value: any) => onUpdate('BirthDateToWithoutYear', value)}
+                            onChange={(value: any) => onUpdate('BirthDateToWithoutYear', moment(value).format(DateFormats.DATEONLY))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
@@ -104,7 +105,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.ReminderFrom}
-                            onChange={(value: any) => onUpdate('ReminderFrom', value)}
+                            onChange={(value: any) => onUpdate('ReminderFrom', moment(value).format(DateFormats.DATEONLY))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -122,7 +123,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.ReminderTo}
-                            onChange={(value: any) => onUpdate('ReminderTo', value)}
+                            onChange={(value: any) => onUpdate('ReminderTo', moment(value).format(DateFormats.DATEONLY))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
@@ -145,7 +146,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.CreatedFrom}
-                            onChange={(value: any) => onUpdate('CreatedFrom', value)}
+                            onChange={(value: any) => onUpdate('CreatedFrom', moment(value).format(DateFormats.DATEONLY))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -163,7 +164,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.CreatedTo}
-                            onChange={(value: any) => onUpdate('CreatedTo', value)}
+                            onChange={(value: any) => onUpdate('CreatedTo', moment(value).format(DateFormats.DATEONLY))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
