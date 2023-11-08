@@ -67,6 +67,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                         <>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
+                                    {/* @ts-ignore */}
                                     <DateField
                                         minDate={moment()}
                                         maximumDate={moment().add(100, 'y')}
@@ -85,6 +86,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                 </Grid>
 
                                 <Grid item xs={6} sm={6} md={6}>
+                                    {/* @ts-ignore */}
                                     <DateField
                                         minDate={moment()}
                                         maximumDate={moment().add(100, 'y')}
@@ -157,6 +159,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                         <>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
+                                    {/* @ts-ignore */}
                                     <DateField
                                         minDate={moment()}
                                         maximumDate={moment().add(100, 'y')}
@@ -175,6 +178,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                 </Grid>
 
                                 <Grid item xs={6} sm={6} md={6}>
+                                    {/* @ts-ignore */}
                                     <DateField
                                         minDate={moment()}
                                         maximumDate={moment().add(100, 'y')}
