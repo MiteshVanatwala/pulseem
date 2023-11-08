@@ -73,6 +73,7 @@ import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
 import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import EditDynamicGroups from './screens/Groups/Dynamic/EditDynamicGroups';
+import CreateLandingPage from './screens/LandingPages/CreateLandingPage/CreateLandingPage';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -307,6 +308,10 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}CreateLandingPage`}
+        element={<CreateLandingPage classes={classes} />}
       />
       <Route
         path={`/LandingPageWizard`}
