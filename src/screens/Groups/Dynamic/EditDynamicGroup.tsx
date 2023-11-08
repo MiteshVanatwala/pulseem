@@ -7,7 +7,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import 'moment/locale/he'
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
-import Groups from '../../Whatsapp/Campaign/Components/Groups/Groups';
+import Groups from '../../../components/Groups/GroupsHandler/Groups';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import { Loader } from '../../../components/Loader/Loader';
 import { ActivityGroup, ActivtyInterval, CondType, Conditions, DynamicGroupModel } from '../../../Models/Groups/DynamicGroup';
@@ -15,7 +15,7 @@ import PersonalDetails from './Tabs/PersonalDetails';
 import LocationDetails from './Tabs/LocationDetails';
 import DateDetails from './Tabs/DateDetails';
 import ActivityDetails from './Tabs/ActivityDetails';
-import { getById } from '../../../redux/reducers/DynamicGroupsSlice';
+import { getById, save } from '../../../redux/reducers/DynamicGroupsSlice';
 import { useParams, useNavigate } from 'react-router-dom';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../../config';
@@ -23,6 +23,8 @@ import { BiSave } from 'react-icons/bi';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import UpdateGroup from './Tabs/UpdateGroup';
 import { Group } from '../../../Models/Groups/Group';
+import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import Toast from '../../../components/Toast/Toast.component';
 
 const EditDynamicGroup = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -31,7 +33,7 @@ const EditDynamicGroup = ({ classes }: any) => {
     const Redirect = useRedirect();
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
-
+    const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [dynamicGroupModel, setDynamicGroupModel] = useState<any>({
         Group: {
@@ -142,8 +144,46 @@ const EditDynamicGroup = ({ classes }: any) => {
     const { id } = useParams();
     const { isRTL } = useSelector((state: any) => state.core);
 
-    const onSave = () => {
-        console.log(dynamicGroupModel);
+    const renderToast = () => {
+        setTimeout(() => {
+            setToastMessage(null);
+        }, 4000);
+        return <Toast customData={toastMessage} data={null} />;
+    };
+
+    const onSave = async () => {
+        setLoader(true);
+        var requestObject = { Group: dynamicGroupModel?.Group, DynamicData: dynamicGroupModel?.dynamicData } as any;
+        const response = await dispatch(save(requestObject));
+        handleResponse(response.payload);
+    }
+
+    const handleResponse = (response: any) => {
+        switch (response.StatusCode) {
+            case 201: {
+                setLoader(false);
+                getData();
+                setToastMessage({ severity: 'success', color: 'success', message: t('group.groupUpdated').replace('{0}', dynamicGroupModel?.Group?.Recipients) , showAnimtionCheck: false } as any);
+                break;
+            }
+            case 400: { // Group does not updated due to incorrect data
+                break;
+            }
+            case 401: {
+                logout();
+                break;
+            }
+            case 402: { // Group does not updated due to broken request
+                break;
+            }
+            case 404: { // Not found
+                break;
+            }
+            case 500:
+            default: { 
+
+            }
+        }
     }
 
     const onBack = () => {
@@ -186,12 +226,12 @@ const EditDynamicGroup = ({ classes }: any) => {
     const callbackUpdateGroups = (groups: any) => {
         const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
         const groupList: Group[] = found
-                            ? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
-                            : [...selectedGroups, groups];
+            ? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
+            : [...selectedGroups, groups];
         setSelectedGroups(groupList);
 
         setDynamicGroupModel({
-            ...dynamicGroupModel, 
+            ...dynamicGroupModel,
             dynamicData: {
                 ...dynamicGroupModel.dynamicData,
                 MyGroups: groupList.map((value: Group) => value.GroupID)
@@ -202,15 +242,15 @@ const EditDynamicGroup = ({ classes }: any) => {
         let groupList: Group[] = [];
         if (!allGroupsSelected) {
             groupList = showTestGroups
-                        ? [...testGroups, ...subAccountAllGroups]
-                        : [...subAccountAllGroups];
+                ? [...testGroups, ...subAccountAllGroups]
+                : [...subAccountAllGroups];
         } else {
             groupList = [];
         }
         setSelectedGroups(groupList);
         setAllGroupsSelected(!allGroupsSelected);
         setDynamicGroupModel({
-            ...dynamicGroupModel, 
+            ...dynamicGroupModel,
             dynamicData: {
                 ...dynamicGroupModel.dynamicData,
                 MyGroups: groupList.map((value: Group) => value.GroupID)
@@ -256,6 +296,7 @@ const EditDynamicGroup = ({ classes }: any) => {
     return (
         <>
             <Loader isOpen={showLoader} />
+            {toastMessage && renderToast()}
             <Tabs
                 value={tabValue}
                 onChange={(e, value) => setTabValue(value)}
@@ -331,19 +372,25 @@ const EditDynamicGroup = ({ classes }: any) => {
                                     ? [...subAccountAllGroups, ...testGroups]
                                     : [...subAccountAllGroups]
                             }
-                            showTestGroups={showTestGroups}
+                            // test={showTestGroups}
                             selectedList={selectedGroups}
                             callbackSelectedGroups={callbackUpdateGroups}
                             callbackUpdateGroups={() => { }} //onUpdateGroups
                             callbackSelectAll={callbackSelectAll}
                             callbackReciFilter={() => { }} // onReciFilter
                             callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+                            key={"dynuacGroups"}
                             uniqueKey={'groups_4'}
                             innerHeight={325}
                             showSortBy={true}
                             showFilter={false}
                             showSelectAll={true}
-                            isFilterSelected={false}
+                            bsDot={null}
+                            isNotifications={false}
+                            isSms={true}
+                            isCampaign={false}
+                            noSelectionText={''}
+                        // isFilterSelected={false}
                         />
                     </div>
                 </TabPanel>

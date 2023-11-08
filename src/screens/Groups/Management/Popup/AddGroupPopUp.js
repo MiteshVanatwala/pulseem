@@ -170,7 +170,7 @@ const AddGroupPopUp = ({
                                 {t("group.cancel")}
                             </Button>
                         </Grid>
-                        {!addClientByQuery && <Grid
+                        {!addClientByQuery && !isDynamic && <Grid
                             item
                             xs={windowSize === "xs" && 12}
                             sm={4}

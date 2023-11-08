@@ -25,6 +25,8 @@ export const DateField = ({
   dateActive,
   toolbarDisabled = true,
   isRoundedOnMobile = false,
+  datePickerView,
+  openTo,
   ...props
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
@@ -82,6 +84,8 @@ export const DateField = ({
   ) :
 
     (<KeyboardDatePicker
+      views={datePickerView}
+      openTo={openTo}
       classes={{ root: rootStyle }}
       disableToolbar={toolbarDisabled}
       inputVariant="outlined"
@@ -123,8 +127,8 @@ export const DateField = ({
       open={isDatePickerOpen}
       onClick={() => setIsDatePickerOpen(true)}
       invalidDateMessage={props?.hideInvalidDateMessage ? '' : t("common.invalidDate")}
-      maxDateMessage={ props.errorMessage || t("common.maximalDateRequired")}
-      minDateMessage={ props.errorMessage || t("common.minimalDateRequired")}
+      maxDateMessage={props.errorMessage || t("common.maximalDateRequired")}
+      minDateMessage={props.errorMessage || t("common.minimalDateRequired")}
       InputProps={{
         readOnly: true,
         style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
