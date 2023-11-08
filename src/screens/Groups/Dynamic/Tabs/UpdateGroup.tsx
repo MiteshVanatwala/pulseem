@@ -7,10 +7,10 @@ import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
 import { useTranslation } from 'react-i18next';
 import moment from "moment";
+import { DateFormats } from '../../../../helpers/Constants';
 
 const UpdateGroup = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
-    const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 
     return (
         <Grid container className={classes.pt25}>
@@ -42,7 +42,7 @@ const UpdateGroup = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>
                 <InputLabel className={classes.fBlack}>{t('common.UpdatedOn')}:</InputLabel>
                 <div className={clsx(classes.pt10)}>
-                    <>{moment(data?.Group?.DynamicLastUpdate).format(dateFormat)}</>
+                    {moment(data?.Group?.DynamicLastUpdate).format(DateFormats.REGULAR)}
                 </div>
             </Grid>
             <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>

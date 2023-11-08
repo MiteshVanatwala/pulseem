@@ -2,13 +2,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState, memo, useEffect } from 'react';
 import clsx from 'clsx';
 import {
-    Grid, FormControl, InputLabel, MenuItem, Tabs, Tab, Box, Button
+    Tabs, Tab, Box, Button
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next';
-import moment from 'moment'
 import 'moment/locale/he'
-import { Select } from '@mui/material';
-import { IoIosArrowDown } from 'react-icons/io';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import Groups from '../../Whatsapp/Campaign/Components/Groups/Groups';
 import { TabContext, TabPanel } from '@material-ui/lab';
@@ -25,13 +22,13 @@ import { sitePrefix } from '../../../config';
 import { BiSave } from 'react-icons/bi';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import UpdateGroup from './Tabs/UpdateGroup';
+import { Group } from '../../../Models/Groups/Group';
 
-const EditDynamicGroup = ({ classes, Data }: any) => {
+const EditDynamicGroup = ({ classes }: any) => {
     const dispatch: any = useDispatch();
     const navigate = useNavigate();
     const { t } = useTranslation();
     const Redirect = useRedirect();
-    // const dateFormat = 'YYYY-MM-DD HH:mm:ss'
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
 
@@ -131,7 +128,7 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
                 ExtraDate4From: null,
                 ExtraDate4To: null
             }] as Conditions[],
-            MyGroups: [] as any,
+            MyGroups: [] as number[],
             ShowClicked: false,
             ShowOpened: false,
             ShowNotClicked: false,
@@ -144,7 +141,6 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
     const [showTestGroups, setShowTestGroups] = useState(false);
     const { id } = useParams();
     const { isRTL } = useSelector((state: any) => state.core);
-
 
     const onSave = () => {
         console.log(dynamicGroupModel);
@@ -175,10 +171,10 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
     }, []);
 
     useEffect(() => {
-        const selectedgroupsList = [] as any;
+        const selectedgroupsList = [] as Group[];
         if (subAccountAllGroups?.length > 0 && dynamicGroupModel?.dynamicData?.MyGroups?.length > 0) {
             dynamicGroupModel?.dynamicData?.MyGroups.forEach((gl: number) => {
-                const exist = subAccountAllGroups?.filter((g: any) => { return g.GroupID === gl });
+                const exist = subAccountAllGroups?.filter((g: Group) => { return g.GroupID === gl });
                 if (exist && exist.length > 0) {
                     selectedgroupsList.push(exist[0]);
                 }
@@ -187,27 +183,39 @@ const EditDynamicGroup = ({ classes, Data }: any) => {
         setSelectedGroups(selectedgroupsList);
     }, [dynamicGroupModel, subAccountAllGroups])
 
-    const callbackUpdateGroups = (groups: any | never) => {
-        // setSelectedGroups(groups) as any;
-        const found = selectedGroups.map((group: any) => { return group.GroupID; }).includes(groups.GroupID);
-        if (found) {
-            setSelectedGroups(selectedGroups.filter((g: any) => g.GroupID !== groups.GroupID));
-        } else {
-            setSelectedGroups([...selectedGroups, groups]);
-        }
+    const callbackUpdateGroups = (groups: any) => {
+        const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
+        const groupList: Group[] = found
+                            ? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
+                            : [...selectedGroups, groups];
+        setSelectedGroups(groupList);
+
+        setDynamicGroupModel({
+            ...dynamicGroupModel, 
+            dynamicData: {
+                ...dynamicGroupModel.dynamicData,
+                MyGroups: groupList.map((value: Group) => value.GroupID)
+            }
+        });
     }
     const callbackSelectAll = () => {
+        let groupList: Group[] = [];
         if (!allGroupsSelected) {
-            if (showTestGroups) {
-                setSelectedGroups([...testGroups, ...subAccountAllGroups]);
-            }
-            else {
-                setSelectedGroups([...subAccountAllGroups]);
-            }
+            groupList = showTestGroups
+                        ? [...testGroups, ...subAccountAllGroups]
+                        : [...subAccountAllGroups];
         } else {
-            setSelectedGroups([]);
+            groupList = [];
         }
+        setSelectedGroups(groupList);
         setAllGroupsSelected(!allGroupsSelected);
+        setDynamicGroupModel({
+            ...dynamicGroupModel, 
+            dynamicData: {
+                ...dynamicGroupModel.dynamicData,
+                MyGroups: groupList.map((value: Group) => value.GroupID)
+            }
+        });
     }
 
     const updateMyConditions = (keyName: string, value: string) => {
