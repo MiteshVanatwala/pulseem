@@ -743,7 +743,11 @@ const SendCampaign = ({
 	};
 
 	const onExitCampaign = () => {
-		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		if (FromAutomation) {
+			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+		} else {
+			navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		}
 	};
 
 	const onExceedLimitYes = () => {
