@@ -205,5 +205,5 @@ export const UploadSettings = {
 
 export const DateFormats = {
     REGULAR: 'YYYY-MM-DD HH:mm:ss',
-    DATEONLY: 'YYYY-MM-DD'
+    DATE_ONLY: 'YYYY-MM-DD'
 }

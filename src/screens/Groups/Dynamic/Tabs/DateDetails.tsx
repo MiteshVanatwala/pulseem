@@ -23,7 +23,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.BirthDateFrom}
-                            onChange={(value: any) => onUpdate('BirthDateFrom', moment(value).format(DateFormats.DATEONLY))}
+                            onChange={(value: any) => onUpdate('BirthDateFrom', moment(value).format(DateFormats.DATE_ONLY))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -41,7 +41,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.BirthDateTo}
-                            onChange={(value: any) => onUpdate('BirthDateTo', moment(value).format(DateFormats.DATEONLY))}
+                            onChange={(value: any) => onUpdate('BirthDateTo', moment(value).format(DateFormats.DATE_ONLY))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
@@ -64,7 +64,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear}
-                            onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', moment(value).format(DateFormats.DATEONLY))}
+                            onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', moment(value).format(DateFormats.DATE_ONLY))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -82,7 +82,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.BirthDateToWithoutYear}
-                            onChange={(value: any) => onUpdate('BirthDateToWithoutYear', moment(value).format(DateFormats.DATEONLY))}
+                            onChange={(value: any) => onUpdate('BirthDateToWithoutYear', moment(value).format(DateFormats.DATE_ONLY))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
@@ -105,7 +105,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.ReminderFrom}
-                            onChange={(value: any) => onUpdate('ReminderFrom', moment(value).format(DateFormats.DATEONLY))}
+                            onChange={(value: any) => onUpdate('ReminderFrom', moment(value).format(DateFormats.DATE_ONLY))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -123,7 +123,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.ReminderTo}
-                            onChange={(value: any) => onUpdate('ReminderTo', moment(value).format(DateFormats.DATEONLY))}
+                            onChange={(value: any) => onUpdate('ReminderTo', moment(value).format(DateFormats.DATE_ONLY))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
@@ -146,7 +146,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.CreatedFrom}
-                            onChange={(value: any) => onUpdate('CreatedFrom', moment(value).format(DateFormats.DATEONLY))}
+                            onChange={(value: any) => onUpdate('CreatedFrom', moment(value).format(DateFormats.DATE_ONLY))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -164,7 +164,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             maximumDate={moment().add(100, 'y')}
                             classes={classes}
                             value={data.dynamicData?.MyConditions[0]?.CreatedTo}
-                            onChange={(value: any) => onUpdate('CreatedTo', moment(value).format(DateFormats.DATEONLY))}
+                            onChange={(value: any) => onUpdate('CreatedTo', moment(value).format(DateFormats.DATE_ONLY))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
