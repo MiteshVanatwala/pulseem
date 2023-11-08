@@ -102,6 +102,7 @@ const RightPane = ({
 							style={{
 								pointerEvents: sendType === '2' ? 'auto' : 'none',
 							}}>
+							{/* @ts-ignore */}
 							<DateField
 								minDate={moment()}
 								maximumDate={moment().add(100, 'y')}
