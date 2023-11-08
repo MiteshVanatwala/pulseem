@@ -72,7 +72,7 @@ import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
 import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
-import EditDynamicGroups from './screens/Groups/Dynamic/EditDynamicGroups';
+import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -507,8 +507,8 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path={`${sitePrefix}Groups/EditDynamicGroup`}
-        element={<EditDynamicGroups classes={classes} />}
+        path={`${sitePrefix}groups/dynamic/edit/:id`}
+        element={<DynamicGroupsContainer classes={classes} />}
       />
     </Routes>
   )

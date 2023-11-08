@@ -32,11 +32,11 @@ export const deleteGroups = createAsyncThunk(
     }
 );
 
-export const reset = createAsyncThunk(
-    'DynamicGroups/reset',
-    async (groupId: number, thunkAPI) => {
+export const getById = createAsyncThunk(
+    'DynamicGroups/GetById',
+    async (groupId: number | any, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.put(`DynamicGroups/reset/${groupId}`);
+            const response = await PulseemReactInstance.get(`DynamicGroups/GetById/${groupId}`);
             return response.data as PulseemResponse;
         } catch (error) {
             return console.log(error);
@@ -45,35 +45,37 @@ export const reset = createAsyncThunk(
 );
 
 
+export const save = createAsyncThunk(
+    'DynamicGroups/Save',
+    async (groupData: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`DynamicGroups/Save`, groupData);
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+
+
+
 const DynamicGroupsSlice = createSlice({
-    name: 'DynamicGroups',
+    name: 'dynamicGroups',
     initialState: {
-        // groups: {
-        //     StatusCode: 200,
-        //     Message: '',
-        //     Data: ''
-        // } 
+        dynamicGroup: {
+            StatusCode: 200,
+            Message: '',
+            Data: null
+        } as PulseemResponse
     },
     reducers: {
-        // resetGroups: (state) => {
-        //     state.groups = {
-        //         StatusCode: 200,
-        //         Message: '',
-        //         Data: ''
-        //     } as PulseemResponse
-        // }
-
     },
     extraReducers: (builder) => {
-        // builder.addCase(getIntegration.fulfilled, (state, action) => {
-        //     state.integrationSettings = action.payload as PulseemResponse;
-        // })
-        // builder.addCase(setIntegration.fulfilled, (state, action) => {
-        // })
-        // builder.addCase(resetIntegration.fulfilled, (state, action) => {
-        // })
+        builder.addCase(getById.fulfilled, (state, action) => {
+            state.dynamicGroup = action.payload as PulseemResponse;
+        })
     },
 })
 
-// export const { resetShopIntegration } = DynamicGroupsSlice.actions
 export default DynamicGroupsSlice.reducer
