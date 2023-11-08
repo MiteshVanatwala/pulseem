@@ -21,7 +21,7 @@ const DynamicGroupsContainer = ({ classes }: any) => {
             setToastMessage(null);
         }, 4000);
         return (
-            <Toast data={toastMessage} />
+            <Toast data={toastMessage} customData={null} />
         );
     }
 
