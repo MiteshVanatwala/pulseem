@@ -366,7 +366,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Grid container>
-                            {Object.keys(mergedExtraFields).map((field: any, index: number) => {
+                            {Object.keys(mergedExtraFields).map((field: any) => {
                                 const fieldName = mergedExtraFields[field];
                                 return <Grid item xs={4} sm={4} md={4}>
                                     <Grid container>
@@ -387,7 +387,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                                 className={clsx(classes.selectInputFormControl, classes.w100)}
                                             >
                                                 <Select
-                                                    disabled={data?.dynamicData?.MyConditions[0][field] === ''}
+                                                    disabled={!data?.dynamicData?.MyConditions[0][field] || data?.dynamicData?.MyConditions[0][field] === ''}
                                                     variant='standard'
                                                     value={data?.dynamicData?.MyConditions[0][field + 'Cond'] ?? CondType.Undefined}
                                                     onChange={(event: any) => onUpdate(field + 'Cond', event.target.value)}
