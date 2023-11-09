@@ -59,27 +59,27 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
         }
     }, [])
 
-    const extraFieldsTemp = {
-        "ExtraField1": t('common.ExtraField1'),
-        "ExtraField2": t('common.ExtraField2'),
-        "ExtraField3": t('common.ExtraField3'),
-        "ExtraField4": t('common.ExtraField4'),
-        "ExtraField5": t('common.ExtraField5'),
-        "ExtraField6": t('common.ExtraField6'),
-        "ExtraField7": t('common.ExtraField7'),
-        "ExtraField8": t('common.ExtraField8'),
-        "ExtraField9": t('common.ExtraField9'),
-        "ExtraField10": t('common.ExtraField10'),
-        "ExtraField11": t('common.ExtraField11'),
-        "ExtraField12": t('common.ExtraField12'),
-        "ExtraField13": t('common.ExtraField13'),
-        "ExtraDate1": t('common.ExtraDate1'),
-        "ExtraDate2": t('common.ExtraDate2'),
-        "ExtraDate3": t('common.ExtraDate3'),
-        "ExtraDate4": t('common.ExtraDate4')
-    }
+    const mergedExtraFields = {
+        "ExtraField1": extraData.ExtraField1 && extraData.ExtraField1 !== '' ? extraData.ExtraField1 : t('common.ExtraField1'),
+        "ExtraField2": extraData.ExtraField2 && extraData.ExtraField2 !== '' ? extraData.ExtraField2 : t('common.ExtraField2'),
+        "ExtraField3": extraData.ExtraField3 && extraData.ExtraField3 !== '' ? extraData.ExtraField3 : t('common.ExtraField3'),
+        "ExtraField4": extraData.ExtraField4 && extraData.ExtraField4 !== '' ? extraData.ExtraField4 : t('common.ExtraField4'),
+        "ExtraField5": extraData.ExtraField5 && extraData.ExtraField5 !== '' ? extraData.ExtraField5 : t('common.ExtraField5'),
+        "ExtraField6": extraData.ExtraField6 && extraData.ExtraField6 !== '' ? extraData.ExtraField6 : t('common.ExtraField6'),
+        "ExtraField7": extraData.ExtraField7 && extraData.ExtraField7 !== '' ? extraData.ExtraField7 : t('common.ExtraField7'),
+        "ExtraField8": extraData.ExtraField8 && extraData.ExtraField8 !== '' ? extraData.ExtraField8 : t('common.ExtraField8'),
+        "ExtraField9": extraData.ExtraField9 && extraData.ExtraField9 !== '' ? extraData.ExtraField9 : t('common.ExtraField9'),
+        "ExtraField10": extraData.ExtraField10 && extraData.ExtraField10 !== '' ? extraData.ExtraField10 : t('common.ExtraField10'),
+        "ExtraField11": extraData.ExtraField11 && extraData.ExtraField11 !== '' ? extraData.ExtraField11 : t('common.ExtraField11'),
+        "ExtraField12": extraData.ExtraField12 && extraData.ExtraField12 !== '' ? extraData.ExtraField12 : t('common.ExtraField12'),
+        "ExtraField13": extraData.ExtraField13 && extraData.ExtraField13 !== '' ? extraData.ExtraField13 : t('common.ExtraField13'),
+        "ExtraDate1": extraData.ExtraDate1 && extraData.ExtraDate1 !== '' ? extraData.ExtraDate1 : t('common.ExtraDate1'),
+        "ExtraDate2": extraData.ExtraDate2 && extraData.ExtraDate2 !== '' ? extraData.ExtraDate2 : t('common.ExtraDate2'),
+        "ExtraDate3": extraData.ExtraDate3 && extraData.ExtraDate3 !== '' ? extraData.ExtraDate3 : t('common.ExtraDate3'),
+        "ExtraDate4": extraData.ExtraDate4 && extraData.ExtraDate4 !== '' ? extraData.ExtraDate4 : t('common.ExtraDate4'),
+    } as any;
 
-    const mergedExtraFields = { ...extraFieldsTemp, ...extraData };
+    // const mergedExtraFields = { ...extraFieldsTemp, ...extraData };
 
     return (
         <Grid container className={clsx(classes.pt25)}>
@@ -371,11 +371,11 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                         <Grid container>
                             {Object.keys(mergedExtraFields).map((field: any) => {
                                 const fieldName = mergedExtraFields[field];
-                                return <Grid item xs={4} sm={4} md={4}>
+                                return <Grid item xs={4} sm={4} md={4} key={fieldName ?? field}>
                                     <Grid container>
                                         {field.toLowerCase().indexOf('date') > -1 ? (
                                             <><Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                                                <InputLabel className={classes.fBlack}>{fieldName}:</InputLabel>
+                                                <InputLabel className={classes.fBlack}>{fieldName ?? field}:</InputLabel>
                                             </Grid>
                                                 {/* @ts-ignore */}
                                                 <DateField
@@ -396,9 +396,9 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                                     data.dynamicData?.MyConditions[0][field] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(field, null)}>{t("recipient.reset")}</Button>
                                                 }
                                             </>) : (<><Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                                                <InputLabel className={classes.fBlack}>{fieldName}:</InputLabel>
+                                                <InputLabel className={classes.fBlack}>{fieldName ?? field}:</InputLabel>
                                                 <TextField
-                                                    placeholder={fieldName}
+                                                    placeholder={fieldName ?? field}
                                                     variant='outlined'
                                                     size='small'
                                                     value={data?.dynamicData?.MyConditions[0][field]}
