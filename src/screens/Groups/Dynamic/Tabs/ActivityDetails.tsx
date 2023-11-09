@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import {
-    Grid, FormControl, MenuItem, Checkbox, FormControlLabel
+    Grid, FormControl, MenuItem, Checkbox, FormControlLabel, Button
 } from '@material-ui/core'
 import 'moment/locale/he';
 import { Select } from '@mui/material';
@@ -69,6 +69,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                 <Grid item xs={6} sm={6} md={6}>
                                     {/* @ts-ignore */}
                                     <DateField
+                                        toolbarDisabled={false}
                                         minDate={moment()}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
@@ -83,11 +84,15 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         removePadding={true}
                                         hideInvalidDateMessage={true}
                                     />
+                                    {
+                                        data.dynamicData?.MyActivities?.IsOpenedFromDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsOpenedFromDate', null)}>{t("recipient.reset")}</Button>
+                                    }
                                 </Grid>
 
                                 <Grid item xs={6} sm={6} md={6}>
                                     {/* @ts-ignore */}
                                     <DateField
+                                        toolbarDisabled={false}
                                         minDate={moment()}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
@@ -102,6 +107,9 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         removePadding={true}
                                         hideInvalidDateMessage={true}
                                     />
+                                    {
+                                        data.dynamicData?.MyActivities?.IsOpenedToDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsOpenedToDate', null)}>{t("recipient.reset")}</Button>
+                                    }
                                 </Grid>
                             </Grid>
                         </>
@@ -161,6 +169,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                 <Grid item xs={6} sm={6} md={6}>
                                     {/* @ts-ignore */}
                                     <DateField
+                                        toolbarDisabled={false}
                                         minDate={moment()}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
@@ -175,11 +184,15 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         removePadding={true}
                                         hideInvalidDateMessage={true}
                                     />
+                                    {
+                                        data.dynamicData?.MyActivities?.IsNotOpenedFromDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsNotOpenedFromDate', null)}>{t("recipient.reset")}</Button>
+                                    }
                                 </Grid>
 
                                 <Grid item xs={6} sm={6} md={6}>
                                     {/* @ts-ignore */}
                                     <DateField
+                                        toolbarDisabled={false}
                                         minDate={moment()}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
@@ -194,6 +207,9 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         removePadding={true}
                                         hideInvalidDateMessage={true}
                                     />
+                                    {
+                                        data.dynamicData?.MyActivities?.IsNotOpenedToDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsNotOpenedToDate', null)}>{t("recipient.reset")}</Button>
+                                    }
                                 </Grid>
                             </Grid>
                         </>
