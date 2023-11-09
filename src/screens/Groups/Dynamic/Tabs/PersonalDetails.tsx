@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import {
-    Grid, TextField, FormControl, InputLabel, MenuItem, Box, Accordion, AccordionSummary, Typography, makeStyles, AccordionDetails
+    Grid, TextField, FormControl, InputLabel, MenuItem, Box, Accordion, AccordionSummary, Typography, makeStyles, AccordionDetails, Button
 } from '@material-ui/core'
 import 'moment/locale/he';
 import { Select } from '@mui/material';
@@ -11,6 +11,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAccountExtraData } from '../../../../redux/reducers/smsSlice';
 import { useEffect, useState } from 'react';
 import { GrFormAdd, GrFormSubtract } from 'react-icons/gr';
+import { DateField } from '../../../../components/managment';
+import moment from 'moment';
+import { DateFormats } from '../../../../helpers/Constants';
 
 const useStyles = makeStyles({
     accordionIcons: {
@@ -370,46 +373,69 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                 const fieldName = mergedExtraFields[field];
                                 return <Grid item xs={4} sm={4} md={4}>
                                     <Grid container>
-                                        <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                                            <InputLabel className={classes.fBlack}>{fieldName}:</InputLabel>
-                                            <TextField
-                                                placeholder={fieldName}
-                                                variant='outlined'
-                                                size='small'
-                                                value={data?.dynamicData?.MyConditions[0][field]}
-                                                onChange={(event: any) => onUpdate(field, event.target.value.trim())}
-                                                className={clsx(classes.w100, classes.textField, classes.mt25)}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
-                                            <FormControl
-                                                variant="standard"
-                                                className={clsx(classes.selectInputFormControl, classes.w100)}
-                                            >
-                                                <Select
-                                                    disabled={!data?.dynamicData?.MyConditions[0][field] || data?.dynamicData?.MyConditions[0][field] === ''}
-                                                    variant='standard'
-                                                    value={data?.dynamicData?.MyConditions[0][field + 'Cond'] ?? CondType.Undefined}
-                                                    onChange={(event: any) => onUpdate(field + 'Cond', event.target.value)}
-                                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                                                    className={clsx(classes.w100, classes.mt20)}
-                                                    MenuProps={{
-                                                        PaperProps: {
-                                                            style: {
-                                                                maxHeight: 300,
-                                                            },
-                                                        },
-                                                    }}
-                                                >
-                                                    <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
-                                                    <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
-                                                    <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
-                                                    <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
-                                                    <MenuItem value={CondType.StartsWith}>{t('common.startsWith')}</MenuItem>
-                                                    <MenuItem value={CondType.NoValue}>{t('common.noValue')}</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
+                                        {field.toLowerCase().indexOf('date') > -1 ? (
+                                            <><Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
+                                                <InputLabel className={classes.fBlack}>{fieldName}:</InputLabel>
+                                            </Grid>
+                                                {/* @ts-ignore */}
+                                                <DateField
+                                                    toolbarDisabled={false}
+                                                    classes={classes}
+                                                    value={data.dynamicData?.MyConditions[0][field]}
+                                                    onChange={(value: any) => onUpdate(field, moment(value).format(DateFormats.DATE_ONLY))}
+                                                    placeholder={t('common.ToDate')}
+                                                    timePickerOpen={false}
+                                                    dateActive={true}
+                                                    onTimeChange={() => { }}
+                                                    timeActive={false}
+                                                    buttons={[]}
+                                                    removePadding={true}
+                                                    hideInvalidDateMessage={true}
+                                                />
+                                                {
+                                                    data.dynamicData?.MyConditions[0][field] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(field, null)}>{t("recipient.reset")}</Button>
+                                                }
+                                            </>) : (<><Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
+                                                <InputLabel className={classes.fBlack}>{fieldName}:</InputLabel>
+                                                <TextField
+                                                    placeholder={fieldName}
+                                                    variant='outlined'
+                                                    size='small'
+                                                    value={data?.dynamicData?.MyConditions[0][field]}
+                                                    onChange={(event: any) => onUpdate(field, event.target.value.trim())}
+                                                    className={clsx(classes.w100, classes.textField, classes.mt25)}
+                                                />
+                                            </Grid>
+                                                <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                                                    <FormControl
+                                                        variant="standard"
+                                                        className={clsx(classes.selectInputFormControl, classes.w100)}
+                                                    >
+                                                        <Select
+                                                            disabled={!data?.dynamicData?.MyConditions[0][field] || data?.dynamicData?.MyConditions[0][field] === ''}
+                                                            variant='standard'
+                                                            value={data?.dynamicData?.MyConditions[0][field + 'Cond'] ?? CondType.Undefined}
+                                                            onChange={(event: any) => onUpdate(field + 'Cond', event.target.value)}
+                                                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                                            className={clsx(classes.w100, classes.mt20)}
+                                                            MenuProps={{
+                                                                PaperProps: {
+                                                                    style: {
+                                                                        maxHeight: 300,
+                                                                    },
+                                                                },
+                                                            }}
+                                                        >
+                                                            <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
+                                                            <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
+                                                            <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
+                                                            <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
+                                                            <MenuItem value={CondType.StartsWith}>{t('common.startsWith')}</MenuItem>
+                                                            <MenuItem value={CondType.NoValue}>{t('common.noValue')}</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                </Grid></>
+                                        )}
                                     </Grid>
                                 </Grid>
                             })}
@@ -418,7 +444,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                     </AccordionDetails>
                 </Accordion>
             </Box>
-        </Grid>
+        </Grid >
     )
 }
 
