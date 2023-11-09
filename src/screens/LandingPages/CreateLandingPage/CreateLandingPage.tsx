@@ -3,12 +3,14 @@ import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
-import { Box } from '@material-ui/core';
+import { Box, Button, Grid } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import { ClassesType } from '../../Classes.types';
 import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import WizardActions from '../../../components/Wizard/WizardActions';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -19,6 +21,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const [dialogType, setDialogType] = useState<{
 		type: string;
 	} | null>(null);
+	const [confirmExit, setConfirmExit] = useState<boolean>(false);
 	
 	const renderDialog = () => {
 		const { type } = dialogType || {}
@@ -52,37 +55,86 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
     )
   }
 
+	const renderButtons = () => {
+		const wizardButtons = [];
+
+		wizardButtons.push(
+			<Button
+				onClick={() => {}}
+				className={clsx(
+						classes.btn,
+						classes.btnRounded,
+						classes.backButton
+				)}
+				style={{ margin: '8px' }}
+				endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+			>
+				{translator('common.saveAndContinue')}
+			</Button>
+		);
+
+		wizardButtons.push(
+			<Button
+				onClick={() => {}}
+				className={clsx(
+						classes.btn,
+						classes.btnRounded,
+						classes.backButton
+				)}
+				style={{ margin: '8px' }}
+				endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+			>
+				{translator('master.continueToNewEditor')}
+			</Button>
+		);
+		return wizardButtons.map((b) => b);
+	}
+
+	const renderTemplateButtons = () => {
+		return (
+			<Button 
+				onClick={() => {}}
+				className={clsx(classes.btn, classes.btnRounded )}
+				style={{ margin: '8px' }}
+			>
+				{translator('common.templates')}
+			</Button>
+		);
+	}
+
 	return (
 		<DefaultScreen
-			subPage={'create'}
-			currentPage='whatsapp'
+			currentPage="newsletter"
+			subPage={"newsletterInfo"}
 			classes={classes}
-			containerClass={classes.editorCont}
+			customPadding={true}
+			containerClass={clsx(classes.mb50, classes.editorCont)}
 		>
-			<Box className={"head"}>
-				{/* {renderToast()} */}
-				<Box className={'topSection'}>
-					<Title
-						Text={translator('landingPages.createLandingPage')}
-						classes={classes}
-					/>
-				</Box>
+			<Box className="head">
+				<Title Text={translator("landingPages.createLandingPage")} classes={classes} />
+			</Box>
+			<Box className={"containerBody"}>
+					<Grid container spacing={3} className={clsx(classes.p15)}>
+						1
+					</Grid>
 
-				<Box className={'containerBody'}>
-					<div className={clsx(classes.mb8)}>
-						<div className={clsx(classes.f18, classes.bold, classes.borderBottom1, classes.pb10)}>
-							{translator('landingPages.formProperties')}
-							({translator('common.Required')})
-						</div>
-					</div>
-
-					<div className={clsx(classes.mb8)}>
-						<div className={clsx(classes.f18, classes.bold, classes.borderBottom1, classes.pb10)}>{translator('landingPages.formProperties')}</div>
-					</div>
-				</Box>
+					<Box className={classes.flex}>
+							<WizardActions
+									classes={classes}
+									// @ts-ignore
+									onBack={{
+											callback: () => { setConfirmExit(true) }
+									}}
+									// onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
+									// @ts-ignore
+									additionalButtons={renderButtons()}
+									// @ts-ignore
+									additionalButtonsOnStart={renderTemplateButtons()}
+							/>
+					</Box>
+				<Loader isOpen={isLoader} />
 			</Box>
 			{renderDialog()}
-			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
 };
