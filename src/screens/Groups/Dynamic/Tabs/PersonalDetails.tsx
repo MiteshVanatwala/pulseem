@@ -82,7 +82,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
         <Grid container className={clsx(classes.pt25)}>
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
-                    <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
+                    <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10, classes.pb25)}>
                         <InputLabel className={classes.fBlack}>{t('common.first_name')}:</InputLabel>
                         <TextField
                             placeholder={t('common.first_name')}
