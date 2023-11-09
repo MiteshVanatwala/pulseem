@@ -24,7 +24,7 @@ export enum ActivtyInterval {
     Last6Months = 4,
     LastYear = 5,
     SpecificDates = 6,
-    AllTheTime = 7
+    Ever = 7
 }
 export interface ActivityGroup {
     IsOpened: boolean | null;
@@ -43,20 +43,20 @@ export interface Conditions {
     LastNameCond: CondType;
     Email: string;
     EmailCond: CondType;
-    Address: string;
-    AddressCond: CondType;
+    // Address: string;
+    // AddressCond: CondType;
     City: string;
     CityCond: CondType;
     Country: string;
     CountryCond: CondType;
-    State: string;
-    StateCond: CondType;
-    Zip: string;
-    ZipCond: CondType;
-    Telephone: string;
-    TelephoneCond: CondType;
-    Cellphone: string;
-    CellphoneCond: CondType;
+    // State: string;
+    // StateCond: CondType;
+    // Zip: string;
+    // ZipCond: CondType;
+    // Telephone: string;
+    // TelephoneCond: CondType;
+    // Cellphone: string;
+    // CellphoneCond: CondType;
     Company: string;
     ComapnyCond: CondType;
     BirthDateFrom: Date | string | null;

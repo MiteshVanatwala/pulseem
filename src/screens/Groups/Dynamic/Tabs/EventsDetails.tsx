@@ -8,7 +8,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { CondType } from '../../../../Models/Groups/DynamicGroup';
 import { useTranslation } from 'react-i18next';
 
-const LocationDetails = ({ classes, data, onUpdate }: any) => {
+const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
 
     return (<Grid container className={classes.pt25}>
@@ -31,8 +31,9 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         className={clsx(classes.selectInputFormControl, classes.w100)}
                     >
                         <Select
+                            disabled={data?.dynamicData.MyConditions[0]?.Address === ''}
                             variant='standard'
-                            value={data?.dynamicData.MyConditions[0]?.AddressCond}
+                            value={data?.dynamicData.MyConditions[0]?.AddressCond ?? CondType.Undefined}
                             onChange={(event: any) => onUpdate('AddressCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
@@ -44,6 +45,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                                 },
                             }}
                         >
+                            <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                             <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                             <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                             <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -73,8 +75,9 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         className={clsx(classes.selectInputFormControl, classes.w100)}
                     >
                         <Select
+                            disabled={data?.dynamicData.MyConditions[0]?.Country === ''}
                             variant='standard'
-                            value={data?.dynamicData.MyConditions[0]?.CountryCond}
+                            value={data?.dynamicData.MyConditions[0]?.CountryCond ?? CondType.Undefined}
                             onChange={(event: any) => onUpdate('CountryCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
@@ -86,6 +89,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                                 },
                             }}
                         >
+                            <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                             <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                             <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                             <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -115,8 +119,9 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         className={clsx(classes.selectInputFormControl, classes.w100)}
                     >
                         <Select
+                            disabled={data?.dynamicData.MyConditions[0]?.State === ''}
                             variant='standard'
-                            value={data?.dynamicData.MyConditions[0]?.StateCond}
+                            value={data?.dynamicData.MyConditions[0]?.StateCond ?? CondType.Undefined}
                             onChange={(event: any) => onUpdate('StateCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
@@ -128,6 +133,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                                 },
                             }}
                         >
+                            <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                             <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                             <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                             <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -157,8 +163,9 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         className={clsx(classes.selectInputFormControl, classes.w100)}
                     >
                         <Select
+                            disabled={data?.dynamicData.MyConditions[0]?.City === ''}
                             variant='standard'
-                            value={data?.dynamicData.MyConditions[0]?.CityCond}
+                            value={data?.dynamicData.MyConditions[0]?.CityCond ?? CondType.Undefined}
                             onChange={(event: any) => onUpdate('CityCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
@@ -170,6 +177,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                                 },
                             }}
                         >
+                            <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                             <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                             <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                             <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -199,8 +207,9 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                         className={clsx(classes.selectInputFormControl, classes.w100)}
                     >
                         <Select
+                            disabled={data?.dynamicData.MyConditions[0]?.Zip === ''}
                             variant='standard'
-                            value={data?.dynamicData.MyConditions[0]?.ZipCond}
+                            value={data?.dynamicData.MyConditions[0]?.ZipCond ?? CondType.Undefined}
                             onChange={(event: any) => onUpdate('ZipCond', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt20)}
@@ -212,6 +221,7 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
                                 },
                             }}
                         >
+                            <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                             <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                             <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                             <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -226,4 +236,4 @@ const LocationDetails = ({ classes, data, onUpdate }: any) => {
     )
 }
 
-export default LocationDetails;
+export default EventsDetails;
