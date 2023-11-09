@@ -158,15 +158,17 @@ const EditDynamicGroup = ({ classes }: any) => {
         handleResponse(response.payload);
     }
 
+    const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
+
     const handleResponse = (response: any) => {
         switch (response.StatusCode) {
             case 201: {
-                setLoader(false);
                 getData();
-                setToastMessage({ severity: 'success', color: 'success', message: t('group.groupUpdated').replace('{0}', dynamicGroupModel?.Group?.Recipients) , showAnimtionCheck: false } as any);
+                setToastMessage({ severity: 'success', color: 'success', message: t('group.saveDynamicGroupResponse.201').replace('{0}', dynamicGroupModel?.Group?.Recipients) , showAnimtionCheck: false } as any);
                 break;
             }
             case 400: { // Group does not updated due to incorrect data
+                showErrorToast(t('group.saveDynamicGroupResponse.400'));
                 break;
             }
             case 401: {
@@ -174,14 +176,17 @@ const EditDynamicGroup = ({ classes }: any) => {
                 break;
             }
             case 402: { // Group does not updated due to broken request
+                showErrorToast(t('group.saveDynamicGroupResponse.402'));
                 break;
             }
             case 404: { // Not found
+                showErrorToast(t('group.saveDynamicGroupResponse.404'));
                 break;
             }
             case 500:
             default: { 
-
+                showErrorToast(t('common.Error'));
+                break;
             }
         }
     }
@@ -193,12 +198,24 @@ const EditDynamicGroup = ({ classes }: any) => {
     const getData = async () => {
         setLoader(true);
         const groups = await dispatch(getById(id));
-
         if (groups.payload.StatusCode === 404) {
             Redirect({ url: `${sitePrefix}Groups/Dynamic`, openNewTab: false, preventRedirect: true });
             return false;
         }
-        setDynamicGroupModel(groups?.payload?.Data);
+        const {
+            Group,
+            dynamicData: {
+                MyActivities, MyConditions, MyGroups
+            }
+        } = groups?.payload?.Data;
+        setDynamicGroupModel({
+            Group: Group,
+            dynamicData: {
+                MyActivities: MyActivities,
+                MyConditions: MyConditions?.length > 0 ? MyConditions : dynamicGroupModel.dynamicData.MyConditions,
+                MyGroups: MyGroups
+            }
+        });
 
         if (subAccountAllGroups.length === 0) {
             dispatch(getGroupsBySubAccountId());

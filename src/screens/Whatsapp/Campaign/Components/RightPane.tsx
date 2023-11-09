@@ -123,6 +123,7 @@ const RightPane = ({
 								marginTop: 10,
 								pointerEvents: sendType === '2' ? 'auto' : 'none',
 							}}>
+							{/* @ts-ignore */}
 							<DateField
 								minDate={moment()}
 								maximumDate={null}
@@ -295,6 +296,7 @@ const RightPane = ({
 								pointerEvents: sendType === '3' ? 'auto' : 'none',
 								marginBottom: '1rem',
 							}}>
+							{/* @ts-ignore */}
 							<DateField
 								classes={classes}
 								maximumDate={null}

@@ -37,5 +37,10 @@
   },
   "maxGroupsExceeded": "חשבון זה הגיע למקסימום קבוצות שניתן ליצור",
   "updateGroup": "עדכון קבוצה",
-  "groupUpdated": "הנתונים נשמרו בהצלחה! (מספר הנמענים בקבוצה:: {0})"
+  "saveDynamicGroupResponse": {
+    "201": "הנתונים נשמרו בהצלחה! (מספר הנמענים בקבוצה:: {0})",
+    "400": "Group does not updated due to incorrect data",
+    "402": "Group does not updated due to broken request",
+    "404": "Group Not found"
+  }
 }

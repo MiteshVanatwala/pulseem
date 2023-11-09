@@ -37,5 +37,10 @@
   },
   "maxGroupsExceeded": "Maximum of group creation exceeded for this account",
   "updateGroup": "Update Group",
-  "groupUpdated": "Dynamic Group settings successfuly saved! Number of recipients in the group:: {0}"
+  "saveDynamicGroupResponse": {
+    "201": "Dynamic Group settings successfully saved! Number of recipients in the group:: {0}",
+    "400": "Group does not updated due to incorrect data",
+    "402": "Group does not updated due to broken request",
+    "404": "Not found"
+  }
 }
