@@ -163,7 +163,7 @@ const EditDynamicGroup = ({ classes }: any) => {
     const handleResponse = (response: any) => {
         switch (response.StatusCode) {
             case 201: {
-                getData();
+                getData(true);
                 break;
             }
             case 400: { // Group does not updated due to incorrect data
@@ -278,13 +278,16 @@ const EditDynamicGroup = ({ classes }: any) => {
     }
 
     const updateMyConditions = (keyName: string, value: string) => {
+        const resetCondition = ['FirstName', 'LastName', 'Email', 'Country', 'City', 'Company'];
+        const reset = value === '' && resetCondition.indexOf(keyName) != -1 ? true : false;
         setDynamicGroupModel({
             ...dynamicGroupModel, dynamicData: {
                 ...dynamicGroupModel.dynamicData,
                 MyConditions: [
                     {
                         ...dynamicGroupModel.dynamicData.MyConditions[0],
-                        [keyName]: value
+                        [keyName]: value,
+                        ... reset && { [`${keyName}Cond`]: CondType.Undefined }
                     }
                 ]
             }
