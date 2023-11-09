@@ -42,7 +42,7 @@ const UpdateGroup = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>
                 <InputLabel className={classes.fBlack}>{t('common.UpdatedOn')}:</InputLabel>
                 <div className={clsx(classes.pt10)}>
-                    {moment(data?.Group?.DynamicLastUpdate).format(DateFormats.REGULAR)}
+                    {data?.Group?.DynamicLastUpdate && moment(data?.Group?.DynamicLastUpdate).format(DateFormats.REGULAR)}
                 </div>
             </Grid>
             <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10)}>

@@ -32,8 +32,9 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.selectInputFormControl, classes.w100)}
                         >
                             <Select
+                                disabled={data.dynamicData.MyConditions[0]?.FirstName === ''}
                                 variant='standard'
-                                value={data?.dynamicData.MyConditions[0]?.FirstNameCond}
+                                value={data?.dynamicData.MyConditions[0]?.FirstNameCond ?? CondType.Undefined}
                                 onChange={(event: any) => onUpdate('FirstNameCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
@@ -45,6 +46,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                     },
                                 }}
                             >
+                                <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                                 <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                                 <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                                 <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -74,8 +76,9 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.selectInputFormControl, classes.w100)}
                         >
                             <Select
+                                disabled={data.dynamicData.MyConditions[0]?.LastName === ''}
                                 variant='standard'
-                                value={data?.dynamicData.MyConditions[0]?.LastNameCond}
+                                value={data?.dynamicData.MyConditions[0]?.LastNameCond ?? CondType.Undefined}
                                 onChange={(event: any) => onUpdate('LastNameCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
@@ -87,6 +90,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                     },
                                 }}
                             >
+                                <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                                 <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                                 <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                                 <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -116,8 +120,9 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.selectInputFormControl, classes.w100)}
                         >
                             <Select
+                                disabled={data.dynamicData.MyConditions[0]?.Email === ''}
                                 variant='standard'
-                                value={data?.dynamicData.MyConditions[0]?.EmailCond}
+                                value={data?.dynamicData.MyConditions[0]?.EmailCond ?? CondType.Undefined}
                                 onChange={(event: any) => onUpdate('EmailCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
@@ -129,6 +134,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                     },
                                 }}
                             >
+                                <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                                 <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                                 <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                                 <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -140,6 +146,94 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                 </Grid>
             </Grid>
             <Grid item xs={4} sm={4} md={4}>
+                <Grid container>
+                    <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
+                        <InputLabel className={classes.fBlack}>{t('common.country')}:</InputLabel>
+                        <TextField
+                            placeholder={t('common.country')}
+                            variant='outlined'
+                            size='small'
+                            value={data?.dynamicData.MyConditions[0]?.Country}
+                            onChange={(event: any) => onUpdate('Country', event.target.value.trim())}
+                            className={clsx(classes.w100, classes.textField, classes.mt25)}
+                        />
+                    </Grid>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                        <FormControl
+                            variant="standard"
+                            className={clsx(classes.selectInputFormControl, classes.w100)}
+                        >
+                            <Select
+                                disabled={data?.dynamicData.MyConditions[0]?.Country === ''}
+                                variant='standard'
+                                value={data?.dynamicData.MyConditions[0]?.CountryCond ?? CondType.Undefined}
+                                onChange={(event: any) => onUpdate('CountryCond', event.target.value)}
+                                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                className={clsx(classes.w100, classes.mt20)}
+                                MenuProps={{
+                                    PaperProps: {
+                                        style: {
+                                            maxHeight: 300,
+                                        },
+                                    },
+                                }}
+                            >
+                                <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
+                                <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
+                                <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
+                                <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
+                                <MenuItem value={CondType.StartsWith}>{t('common.startsWith')}</MenuItem>
+                                <MenuItem value={CondType.NoValue}>{t('common.noValue')}</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item xs={4} sm={4} md={4}>
+                <Grid container>
+                    <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
+                        <InputLabel className={classes.fBlack}>{t('common.city')}:</InputLabel>
+                        <TextField
+                            placeholder={t('common.city')}
+                            variant='outlined'
+                            size='small'
+                            value={data?.dynamicData.MyConditions[0]?.City}
+                            onChange={(event: any) => onUpdate('City', event.target.value.trim())}
+                            className={clsx(classes.w100, classes.textField, classes.mt25)}
+                        />
+                    </Grid>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                        <FormControl
+                            variant="standard"
+                            className={clsx(classes.selectInputFormControl, classes.w100)}
+                        >
+                            <Select
+                                disabled={data?.dynamicData.MyConditions[0]?.City === ''}
+                                variant='standard'
+                                value={data?.dynamicData.MyConditions[0]?.CityCond ?? CondType.Undefined}
+                                onChange={(event: any) => onUpdate('CityCond', event.target.value)}
+                                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                className={clsx(classes.w100, classes.mt20)}
+                                MenuProps={{
+                                    PaperProps: {
+                                        style: {
+                                            maxHeight: 300,
+                                        },
+                                    },
+                                }}
+                            >
+                                <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
+                                <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
+                                <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
+                                <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
+                                <MenuItem value={CondType.StartsWith}>{t('common.startsWith')}</MenuItem>
+                                <MenuItem value={CondType.NoValue}>{t('common.noValue')}</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                </Grid>
+            </Grid>
+            {/* <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                         <InputLabel className={classes.fBlack}>{t('common.telephone')}:</InputLabel>
@@ -158,8 +252,9 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.selectInputFormControl, classes.w100)}
                         >
                             <Select
+                                disabled={data.dynamicData.MyConditions[0]?.Telephone === ''}
                                 variant='standard'
-                                value={data?.dynamicData.MyConditions[0]?.TelephoneCond}
+                                value={data?.dynamicData.MyConditions[0]?.TelephoneCond ?? CondType.Undefined}
                                 onChange={(event: any) => onUpdate('TelephoneCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
@@ -171,6 +266,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                     },
                                 }}
                             >
+                                <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                                 <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                                 <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                                 <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -200,8 +296,9 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.selectInputFormControl, classes.w100)}
                         >
                             <Select
+                                disabled={data.dynamicData.MyConditions[0]?.Cellphone === ''}
                                 variant='standard'
-                                value={data?.dynamicData.MyConditions[0]?.CellphoneCond}
+                                value={data?.dynamicData.MyConditions[0]?.CellphoneCond ?? CondType.Undefined}
                                 onChange={(event: any) => onUpdate('CellphoneCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
@@ -213,6 +310,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                     },
                                 }}
                             >
+                                <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                                 <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                                 <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                                 <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>
@@ -222,7 +320,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                         </FormControl>
                     </Grid>
                 </Grid>
-            </Grid>
+            </Grid> */}
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
@@ -242,8 +340,9 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.selectInputFormControl, classes.w100)}
                         >
                             <Select
+                                disabled={data.dynamicData.MyConditions[0]?.Company === ''}
                                 variant='standard'
-                                value={data?.dynamicData.MyConditions[0]?.ComapnyCond}
+                                value={data?.dynamicData.MyConditions[0]?.ComapnyCond ?? CondType.Undefined}
                                 onChange={(event: any) => onUpdate('ComapnyCond', event.target.value)}
                                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                 className={clsx(classes.w100, classes.mt20)}
@@ -255,6 +354,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                     },
                                 }}
                             >
+                                <MenuItem value={CondType.Undefined}>{t('common.select')}</MenuItem>
                                 <MenuItem value={CondType.Equal}>{t('common.equal')}</MenuItem>
                                 <MenuItem value={CondType.Like}>{t('common.like')}</MenuItem>
                                 <MenuItem value={CondType.NotEqual}>{t('common.notEqual')}</MenuItem>

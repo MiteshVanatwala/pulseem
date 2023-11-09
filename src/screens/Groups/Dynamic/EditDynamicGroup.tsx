@@ -12,7 +12,7 @@ import { TabContext, TabPanel } from '@material-ui/lab';
 import { Loader } from '../../../components/Loader/Loader';
 import { ActivityGroup, ActivtyInterval, CondType, Conditions, DynamicGroupModel } from '../../../Models/Groups/DynamicGroup';
 import PersonalDetails from './Tabs/PersonalDetails';
-import LocationDetails from './Tabs/LocationDetails';
+// import EventsDetails from './Tabs/EventsDetails';
 import DateDetails from './Tabs/DateDetails';
 import ActivityDetails from './Tabs/ActivityDetails';
 import { getById, save } from '../../../redux/reducers/DynamicGroupsSlice';
@@ -62,27 +62,27 @@ const EditDynamicGroup = ({ classes }: any) => {
             } as ActivityGroup,
             MyConditions: [{
                 FirstName: '',
-                FirstNameCond: CondType.Equal,
+                FirstNameCond: CondType.Undefined,
                 LastName: '',
-                LastNameCond: CondType.Equal,
+                LastNameCond: CondType.Undefined,
                 Email: '',
-                EmailCond: CondType.Equal,
-                Address: '',
-                AddressCond: CondType.Equal,
+                EmailCond: CondType.Undefined,
+                // Address: '',
+                // AddressCond: CondType.Undefined,
                 City: '',
-                CityCond: CondType.Equal,
+                CityCond: CondType.Undefined,
                 Country: '',
-                CountryCond: CondType.Equal,
-                State: '',
-                StateCond: CondType.Equal,
-                Zip: '',
-                ZipCond: CondType.Equal,
-                Telephone: '',
-                TelephoneCond: CondType.Equal,
-                Cellphone: '',
-                CellphoneCond: CondType.Equal,
+                CountryCond: CondType.Undefined,
+                // State: '',
+                // StateCond: CondType.Undefined,
+                // Zip: '',
+                // ZipCond: CondType.Undefined,
+                // Telephone: '',
+                // TelephoneCond: CondType.Undefined,
+                // Cellphone: '',
+                // CellphoneCond: CondType.Undefined,
                 Company: '',
-                ComapnyCond: CondType.Equal,
+                ComapnyCond: CondType.Undefined,
                 BirthDateFrom: null,
                 BirthDateTo: null,
                 BirthDateFromWithoutYear: null,
@@ -92,35 +92,35 @@ const EditDynamicGroup = ({ classes }: any) => {
                 CreatedFrom: null,
                 CreatedTo: null,
                 ExtraField1: '',
-                ExtraField1Cond: CondType.Equal,
-                Status: 0,
-                StatusCond: CondType.Equal,
-                SmsStatus: 1,
-                SmsStatusCond: CondType.Equal,
+                ExtraField1Cond: CondType.Undefined,
+                Status: 1, // Active
+                StatusCond: CondType.Undefined,
+                SmsStatus: 0, // Active
+                SmsStatusCond: CondType.Undefined,
                 ExtraField2: '',
-                ExtraField2Cond: CondType.Equal,
+                ExtraField2Cond: CondType.Undefined,
                 ExtraField3: '',
-                ExtraField3Cond: CondType.Equal,
+                ExtraField3Cond: CondType.Undefined,
                 ExtraField4: '',
-                ExtraField4Cond: CondType.Equal,
+                ExtraField4Cond: CondType.Undefined,
                 ExtraField5: '',
-                ExtraField5Cond: CondType.Equal,
+                ExtraField5Cond: CondType.Undefined,
                 ExtraField6: '',
-                ExtraField6Cond: CondType.Equal,
+                ExtraField6Cond: CondType.Undefined,
                 ExtraField7: '',
-                ExtraField7Cond: CondType.Equal,
+                ExtraField7Cond: CondType.Undefined,
                 ExtraField8: '',
-                ExtraField8Cond: CondType.Equal,
+                ExtraField8Cond: CondType.Undefined,
                 ExtraField9: '',
-                ExtraField9Cond: CondType.Equal,
+                ExtraField9Cond: CondType.Undefined,
                 ExtraField10: '',
-                ExtraField10Cond: CondType.Equal,
+                ExtraField10Cond: CondType.Undefined,
                 ExtraField11: '',
-                ExtraField11Cond: CondType.Equal,
+                ExtraField11Cond: CondType.Undefined,
                 ExtraField12: '',
-                ExtraField12Cond: CondType.Equal,
+                ExtraField12Cond: CondType.Undefined,
                 ExtraField13: '',
-                ExtraField13Cond: CondType.Equal,
+                ExtraField13Cond: CondType.Undefined,
                 ExtraDate1From: null,
                 ExtraDate1To: null,
                 ExtraDate2From: null,
@@ -164,7 +164,6 @@ const EditDynamicGroup = ({ classes }: any) => {
         switch (response.StatusCode) {
             case 201: {
                 getData();
-                setToastMessage({ severity: 'success', color: 'success', message: t('group.saveDynamicGroupResponse.201').replace('{0}', dynamicGroupModel?.Group?.Recipients) , showAnimtionCheck: false } as any);
                 break;
             }
             case 400: { // Group does not updated due to incorrect data
@@ -184,7 +183,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 break;
             }
             case 500:
-            default: { 
+            default: {
                 showErrorToast(t('common.Error'));
                 break;
             }
@@ -195,7 +194,7 @@ const EditDynamicGroup = ({ classes }: any) => {
         navigate(`${sitePrefix}Groups/Dynamic`);
     }
 
-    const getData = async () => {
+    const getData = async (isAfterSave?: boolean | never) => {
         setLoader(true);
         const groups = await dispatch(getById(id));
         if (groups.payload.StatusCode === 404) {
@@ -219,6 +218,9 @@ const EditDynamicGroup = ({ classes }: any) => {
 
         if (subAccountAllGroups.length === 0) {
             dispatch(getGroupsBySubAccountId());
+        }
+        if (isAfterSave) {
+            setToastMessage({ severity: 'success', color: 'success', message: t('group.saveDynamicGroupResponse.201').replace('{0}', Group?.Recipients), showAnimtionCheck: false } as any);
         }
         setLoader(false);
     };
@@ -326,28 +328,24 @@ const EditDynamicGroup = ({ classes }: any) => {
                     className={classes.iconTab}
                     value='0'
                 />
-
                 <Tab
-                    label={t('common.Location')}
+                    label={t('recipient.dates')}
                     classes={{ root: classes.tabText, selected: classes.activeTab }}
                     className={classes.iconTab}
                     value='1'
                 />
-
-                <Tab
-                    label={t('common.Dates')}
-                    classes={{ root: classes.tabText, selected: classes.activeTab }}
-                    className={classes.iconTab}
-                    value='2'
-                />
-
                 <Tab
                     label={t('common.ActivityLevel')}
                     classes={{ root: classes.tabText, selected: classes.activeTab }}
                     className={classes.iconTab}
-                    value='3'
+                    value='2'
                 />
-
+                {/* <Tab
+                    label={t('common.events')}
+                    classes={{ root: classes.tabText, selected: classes.activeTab }}
+                    className={classes.iconTab}
+                    value='3'
+                /> */}
                 <Tab
                     label={t('common.Groups')}
                     classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -369,16 +367,14 @@ const EditDynamicGroup = ({ classes }: any) => {
                 </TabPanel>
 
                 <TabPanel value='1'>
-                    <LocationDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
-                </TabPanel>
-
-                <TabPanel value='2'>
                     <DateDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
                 </TabPanel>
-
-                <TabPanel value='3'>
+                <TabPanel value='2'>
                     <ActivityDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} />
                 </TabPanel>
+                {/* <TabPanel value='3'>
+                    <EventsDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
+                </TabPanel> */}
 
                 <TabPanel value='4'>
                     <div className={clsx(classes.fullWidth, classes.pt25)}>

@@ -56,7 +56,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                         <MenuItem value={ActivtyInterval.Last6Months}>{t('common.last6Months')}</MenuItem>
                         <MenuItem value={ActivtyInterval.LastYear}>{t('common.lastYear')}</MenuItem>
                         <MenuItem value={ActivtyInterval.SpecificDates}>{t('common.specificDates')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.AllTheTime}>{t('common.allTheTimes')}</MenuItem>
+                        {/* <MenuItem value={ActivtyInterval.Ever}>{t('common.allTheTimes')}</MenuItem> */}
                     </Select>
                 </FormControl>
             </Grid>
@@ -149,7 +149,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                         <MenuItem value={ActivtyInterval.Last6Months}>{t('common.last6Months')}</MenuItem>
                         <MenuItem value={ActivtyInterval.LastYear}>{t('common.lastYear')}</MenuItem>
                         <MenuItem value={ActivtyInterval.SpecificDates}>{t('common.specificDates')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.AllTheTime}>{t('common.allTheTimes')}</MenuItem>
+                        {/* <MenuItem value={ActivtyInterval.Ever}>{t('common.allTheTimes')}</MenuItem> */}
                     </Select>
                 </FormControl>
             </Grid>
