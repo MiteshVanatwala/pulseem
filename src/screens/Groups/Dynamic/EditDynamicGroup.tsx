@@ -91,12 +91,12 @@ const EditDynamicGroup = ({ classes }: any) => {
                 ReminderTo: null,
                 CreatedFrom: null,
                 CreatedTo: null,
-                ExtraField1: '',
-                ExtraField1Cond: CondType.Undefined,
                 Status: 1, // Active
                 StatusCond: CondType.Undefined,
                 SmsStatus: 0, // Active
                 SmsStatusCond: CondType.Undefined,
+                ExtraField1: '',
+                ExtraField1Cond: CondType.Undefined,
                 ExtraField2: '',
                 ExtraField2Cond: CondType.Undefined,
                 ExtraField3: '',
