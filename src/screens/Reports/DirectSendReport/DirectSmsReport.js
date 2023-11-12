@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer,
   TableCell, Link, FormControl, MenuItem,
-  TableHead, TableRow, TextField, Typography, TableBody, FormControlLabel, InputAdornment
+  TableHead, TableRow, TextField, Typography, TableBody, FormControlLabel
 } from '@material-ui/core';
 import Select from '@mui/material/Select';
 import {
@@ -358,10 +358,10 @@ const DirectSMSReportTab = ({
               height={15}
               width={40}
               className={clsx({ [classes.rtlSwitch]: isRTL })}
-              onChange={(e) => handleShowContent(e)}
+              onChange={(e) => handleShowContent(e.target.value === 'on')}
             />
           }
-          label={t('mainReport.locShowTestCampaigns.Text')}
+          label={t('report.ShowContent')}
         />
       </Box>
     );

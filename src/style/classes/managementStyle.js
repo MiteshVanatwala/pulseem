@@ -215,7 +215,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "bold",
     borderBottom: "unset",
     fontSize: 16,
-    paddingBottom: 0,
+    // paddingBottom: 0,
   },
   tableRowCollapse: {
     "&.directEmailRowCollapse": {
@@ -1995,7 +1995,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     justifyContent: "center",
     "& td": {
-      paddingTop: 0,
+      // paddingTop: 0,
       paddingRight: 0,
       paddingLeft: 0,
     },
@@ -2222,9 +2222,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tablePadington: {
     '& .MuiSelect-select.MuiSelect-select': {
-      paddingRight: '0px !important',
-      paddingLeft: '0px !important',
-      paddingInlineEnd: '0px !important',
+      paddingRight: !isRTL ? 25 : 0,
+      paddingLeft: 0,
+      // paddingInlineEnd: isRTL ? 0 : 15,
       width: 50,
       textAlign: 'center'
     }

@@ -60,6 +60,7 @@ const RenderRow = ({
     return (
       <TableRow
         key={`expand_${row.ID}`}
+        classes={rowStyle}
         className={clsx(classes.tableRowCollapse, 'directEmailRowCollapse')}>
         <TableCell className={clsx(classes.noPadding, classes.dFlex, classes.fullWidth)}>
           <Collapse in={open} timeout="auto" unmountOnExit className={classes.fullWidth}>
@@ -79,7 +80,7 @@ const RenderRow = ({
                       <Box className={clsx(classes.txtCenter, classes.directPreview)} onClick={() => {
                         window.open(`${actionURL}DirectEmailPreview.aspx?id=${row.SendID}`, '_blank')
                       }}>
-                        <IconButton>
+                        <IconButton style={{paddingTop: 5}}>
                           <VisibilityIcon className={classes.black} />
                         </IconButton>
                         <Typography display='block' align='center' className={classes.mtNeg15}>{t('common.Preview')}</Typography>
