@@ -777,7 +777,7 @@ const SmsManagnentScreen = ({ classes }) => {
 			childrenPadding: false,
 			contentStyle: classes.pt2rem,
 			showDivider: false,
-			title: t('common.Preview'),
+			title: `${t('notifications.preview')} - ${t('common.campaignID')}: ${data.SMSCampaignID}`,
 			icon: (
 				<FaEye style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
 			),

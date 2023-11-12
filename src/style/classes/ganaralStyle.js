@@ -1928,6 +1928,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   dropCon: {
+    cursor: 'pointer',
     marginBottom: "8px",
     border: "1px solid #ff3343",
     boxShadow: "0 3px 5px 1px #e0dada",
@@ -2598,6 +2599,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       paddingTop: 20,
       backgroundColor: '#fff',
       border: "2px solid #F0F5FF",
+      paddingBottom: 20,
 
       '& .stepHead': {
         fontSize: 20,
