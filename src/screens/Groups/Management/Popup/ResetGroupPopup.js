@@ -73,6 +73,8 @@ const ResetGroupPopup = ({
                 {t("group.resetTitle")}
             </span>}
             showDivider
+            cancelText="common.No"
+            confirmText="common.Yes"
         >
             <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null, classes.textCenter)} >
                 {t("group.resetConfirm")}

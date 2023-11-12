@@ -84,8 +84,11 @@ const SendCampaign = ({
 	const navigate = useNavigate();
 	const { campaignID } = useParams();
 	const queryParams = new URLSearchParams(window.location.search)
-	const FromAutomation = queryParams.get("FromAutomation") || false
+	let FromAutomation = queryParams.get("FromAutomation") || false
+	if (FromAutomation === 'false') FromAutomation = false;
 	const NodeToEdit = queryParams.get("NodeToEdit") || false
+	let isSendCampaign = queryParams.get("new") || false
+	if (isSendCampaign === 'false') isSendCampaign = false;
 	const { testGroups: testGroupList } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
@@ -497,7 +500,7 @@ const SendCampaign = ({
 		}
 	};
 
-	const onFormButtonClick = (buttonName: string) => {
+	const onFormButtonClick = async (buttonName: string) => {
 		switch (buttonName) {
 			case buttons.DELETE:
 				setDialogType({
@@ -515,7 +518,14 @@ const SendCampaign = ({
 			case buttons.SEND:
 				onCampaignSend();
 				break;
-
+			case buttons.CONTINUE:
+				if (!!FromAutomation && !!isSendCampaign) {
+					const saveCampaignData = await onCampaignSave(true, true, true);
+					if (saveCampaignData === apiStatus.SUCCESS) {
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+					}
+				}
+				break;
 			default:
 				break;
 		}
@@ -979,6 +989,8 @@ const SendCampaign = ({
 							classes={classes}
 							onFormButtonClick={onFormButtonClick}
 							displayBackButton={true}
+							showSendButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : true}
+							showContinueButton={FromAutomation ? (!!FromAutomation && !!isSendCampaign) : false}
 						/>
 					</Box>
 					{renderToast()}

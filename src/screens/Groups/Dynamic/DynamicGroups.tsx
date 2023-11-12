@@ -51,6 +51,7 @@ import {
 } from "../../../redux/reducers/groupSlice";
 import { GroupData } from '../../../Models/Groups/Group';
 import { sitePrefix } from '../../../config';
+import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -69,7 +70,7 @@ const DynamicGroups = ({ classes }: any) => {
     const colorTextStyle = { red: classes.textColorRed, blue: classes.textColorBlue, green: classes.sendIconText, grey: classes.textColorGrey };
     const [toastMessage, setToastMessage] = useState<any | never>(null);
     const [showLoader, setLoader] = useState(true);
-    const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
+    const [responseMessage, setResponseMessage] = useState({ title: "", message: "", summary: null });
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [dialog, setDialog] = useState<any | never>(null);
     const [searchStr, setSearchStr] = useState("");
@@ -496,7 +497,7 @@ const DynamicGroups = ({ classes }: any) => {
                 lable: t('campaigns.Image2Resource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    navigate( `${sitePrefix}groups/dynamic/edit/${GroupID}`)
+                    navigate(`${sitePrefix}groups/dynamic/edit/${GroupID}`)
                 }
             },
             {
@@ -1868,6 +1869,16 @@ const DynamicGroups = ({ classes }: any) => {
                         />
                     }
                     return <></>
+                }
+                case DialogType.MESSAGE: {
+                    return <AddRecipientResponse
+                        classes={classes}
+                        isOpen={dialog === DialogType.MESSAGE}
+                        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
+                        title={responseMessage.title}
+                        message={responseMessage.message}
+                        summary={responseMessage?.summary}
+                    />
                 }
             }
         }
