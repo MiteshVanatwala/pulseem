@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Typography, Grid, TextField, IconButton } from '@material-ui/core'
+import { createRef, useState } from 'react';
+import { Typography, Grid, TextField, IconButton, Select } from '@material-ui/core'
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { IoIosArrowDown } from 'react-icons/io';
@@ -22,6 +22,8 @@ export const TablePagination = ({
   const pages = Math.ceil(rows / rowsPerPage)
   const [innerPage, setPage] = useState('');
   const [isTyping, setTyping] = useState(false);
+  const [rppIsOpen, setRppIsOpen] = useState(false);
+  const rppSelectRef = createRef();
 
   const handleKeyPress = event => {
     var isNumber = /^[0-9]*$/;
@@ -55,17 +57,37 @@ export const TablePagination = ({
 
   const renderRowNumbers = () => {
     return rowsPerPageOptions.length > 0 ? (
-      <Grid item className={classes.tablePadingtonGridItem}>
+      <Grid item className={clsx(classes.tablePadingtonGridItem, classes.tablePadington)}>
         <Typography>
           {t('common.rowNumber')}
         </Typography>
-        <TextField
+        <Select
+          open={rppIsOpen}
+          native
+          className={classes.tablePaginationSelect}
+          variant='standard'
+          ref={rppSelectRef}
+          IconComponent={() => <IoIosArrowDown className='MuiSelect-icon' onClick={() => { setRppIsOpen(!rppIsOpen) }} />}
+          value={rowsPerPage}
+          onFocus={() => setRppIsOpen(!rppIsOpen)}
+          onChange={handleRowsPerPageChange}>
+          {rowsPerPageOptions.map(option => (
+            <option
+              key={option.toString()}
+              value={option}>
+              {option}
+            </option>
+          ))}
+        </Select>
+        {/* <TextField
           select
+
           className={classes.tablePaginationSelect}
           variant='standard'
           SelectProps={{
+            itemRef: rppSelectRef,
             native: true,
-            IconComponent: () => <IoIosArrowDown className='MuiSelect-icon' />
+            IconComponent: () => <IoIosArrowDown className='MuiSelect-icon' onClick={() => { rppSelectRef.current?.focus() }} />
           }}
           value={rowsPerPage}
           onChange={handleRowsPerPageChange}>
@@ -76,8 +98,8 @@ export const TablePagination = ({
               {option}
             </option>
           ))}
-        </TextField>
-      </Grid>
+        </TextField> */}
+      </Grid >
     ) : (<></>)
   }
 

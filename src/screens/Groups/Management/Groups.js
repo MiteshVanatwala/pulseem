@@ -601,13 +601,13 @@ const Groups = ({ classes }) => {
             >
                 {iconsMap.map(icon => (
                     <Grid
-                        className={clsx(icon.disable && classes.disabledCursor, classes.smallActionIcons, 'rowIconContainer')}
+                        className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
                         key={icon.key}
                         item >
                         <ManagmentIcon
                             classes={classes}
                             {...icon}
-                            uIcon={<icon.uIcon width={16} height={18} className={'rowIcon'} />}
+                            uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                         />
                     </Grid>
                 ))}
@@ -1522,7 +1522,7 @@ const Groups = ({ classes }) => {
                                                     }
                                                 }
                                             }]
-                                        } />
+                                            } />
                                     ),
                                 },
 

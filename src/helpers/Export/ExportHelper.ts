@@ -69,9 +69,9 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 reject(error);
             }
         }
-        if (options.ReplaceNull === true && options.PropertyToReplace && options.PropertyDefaultReplaceValue) {
+        if (options.ReplaceNull === true) {
             try {
-                finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue) as unknown as ExportData;
+                finalExportData = await ReplaceNull(finalExportData, options?.PropertyToReplace, options?.PropertyDefaultReplaceValue) as unknown as ExportData;
             } catch (error) {
                 // Log({
                 //     MethodName: 'ReplaceNull',

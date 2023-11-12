@@ -433,6 +433,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         key: 'copy',
         uIcon: CopyIcon,
         lable: t('campaigns.CloneResource1.HeaderText'),
+        noWrap: true,
         rootClass: classes.paddingIcon,
         text: shareUrl || '',
         type: 'copy',

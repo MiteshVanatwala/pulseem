@@ -19,6 +19,7 @@ export const ManagmentIcon = ({
   href = '',
   type = '',
   text = '',
+  noWrap = false,
   disableHover = false,
   onClick = () => { }
 }) => {
@@ -66,10 +67,12 @@ export const ManagmentIcon = ({
                 classes.managmentIcon, {
                 [classes.managmentIconDisable]: disable
               })} />}
-          <Typography className={clsx(
-            classes.managmentIconText,
-            textClass, disable && classes.colorGray
-          )}>
+          <Typography
+            style={{ whiteSpace: noWrap ? 'nowrap' : null }}
+            className={clsx(
+              classes.managmentIconText,
+              textClass, disable && classes.colorGray
+            )}>
             {lable}
           </Typography>
         </Box>

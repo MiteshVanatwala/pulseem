@@ -2219,5 +2219,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       marginTop: 5,
       marginLeft: 38
     },
+  },
+  tablePadington: {
+    '& .MuiSelect-select.MuiSelect-select': {
+      paddingRight: '0px !important',
+      paddingLeft: '0px !important',
+      paddingInlineEnd: '0px !important',
+      width: 50,
+      textAlign: 'center'
+    }
   }
 });
