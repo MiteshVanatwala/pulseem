@@ -924,7 +924,7 @@ const SmsCreator = ({ classes }) => {
               {editmenuClick ? (
                 <Box className={classes.dropDiv} style={{ top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-150px" : "-200px") : null }}>
                   <Button
-                    className={classes.dropCon}
+                    className={clsx(classes.dropCon, classes.redButtonLink)}
                     onClick={() => {
                       setDialogType({ type: 'latestLP' });
                       seteditmenuClick(false);
@@ -934,7 +934,7 @@ const SmsCreator = ({ classes }) => {
                   </Button>
                   {previousCampaignData.length === 0 ? null : (
                     <Button
-                      className={classes.dropCon}
+                      className={clsx(classes.dropCon, classes.redButtonLink)}
                       onClick={() => {
                         setDialogType({ type: 'latestCampaigns' });
                         seteditmenuClick(false);
@@ -944,7 +944,7 @@ const SmsCreator = ({ classes }) => {
                     </Button>
                   )}
                   <Button
-                    className={classes.dropCon}
+                    className={clsx(classes.dropCon, classes.redButtonLink)}
                     onClick={() => {
                       setDialogType({ type: 'waze' })
                       seteditmenuClick(false);
