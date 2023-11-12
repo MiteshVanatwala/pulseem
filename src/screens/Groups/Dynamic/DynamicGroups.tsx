@@ -1596,6 +1596,7 @@ const DynamicGroups = ({ classes }: any) => {
                 case 202: { // Run in background
                     setResponseMessage({
                         title: '',
+                        summary: null,
                         message:
                             RenderHtml(t("recipient.exportGroups.inProgress")
                                 .replace("##notifyEmailPlaceHolder##", notifyEmail !== null ? t('recipient.exportGroups.inProgressNotifyOnDone')
@@ -1608,14 +1609,14 @@ const DynamicGroups = ({ classes }: any) => {
                     break;
                 }
                 case 405: {
-                    setResponseMessage({ title: '', message: RenderHtml(t("recipient.exportGroups.exportLimitationErrorMessage")) } as any)
+                    setResponseMessage({ title: '', message: RenderHtml(t("recipient.exportGroups.exportLimitationErrorMessage")), summary: null } as any)
                     setDialog(DialogType.MESSAGE);
                     break;
                 }
 
                 default:
                 case 500: {
-                    setResponseMessage({ title: '', message: t("common.somethingWentWrong") })
+                    setResponseMessage({ title: '', message: t("common.somethingWentWrong"), summary: null })
                     setDialog(DialogType.MESSAGE);
                     break;
                 }
