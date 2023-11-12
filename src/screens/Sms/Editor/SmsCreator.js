@@ -13,7 +13,6 @@ import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
-import { BsArrowClockwise } from "react-icons/bs";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { useLocation, useParams } from "react-router";
@@ -132,7 +131,6 @@ const SmsCreator = ({ classes }) => {
     extraData
   } = useSelector((state) => state.sms);
   const { accountSettings, accountFeatures } = useSelector((state) => state.common)
-  const location = useLocation();
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -1502,7 +1500,7 @@ const SmsCreator = ({ classes }) => {
                       style={{ marginInlineEnd: "8px" }}
                       className={classes.grDoc}
                     >
-                      <AiOutlineFile />
+                      <CgWebsite />
                     </span>
                     <span className={classes.ellipsisText}>{item.CampaignName}</span>
                   </div>
@@ -1567,7 +1565,7 @@ const SmsCreator = ({ classes }) => {
                       style={{ marginInlineEnd: "8px" }}
                       className={classes.grDoc}
                     >
-                      <AiOutlineFile color="#1771AD" />
+                      <MdOutlineCampaign />
                     </span>
                     <span className={classes.ellipsisText}>{item.Name}</span>
                   </div>

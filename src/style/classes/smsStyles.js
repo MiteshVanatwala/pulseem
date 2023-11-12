@@ -144,12 +144,12 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     blueDoc:
     {
-        border: "1px solid #3DA6F7",
+        border: "1px solid #FF3343",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: "#3DA6F7",
+        color: "#FF3343",
         minWidth: 30,
         minHeight: 30
     },

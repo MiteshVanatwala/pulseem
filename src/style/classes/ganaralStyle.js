@@ -1592,7 +1592,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: 14,
     },
     "@media screen and (max-width: 414px)": {
-      top: 90,
+      top: 73,
       fontSize: 14,
     },
     "@media screen and (max-width: 375px)": {
@@ -1730,7 +1730,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   wrapChat: {
     position: "absolute",
     top: "115px",
-    width: 220,
+    width: 'calc(100% - 110px)',
     height: 240,
     left: "auto",
     right: 45,
@@ -1739,27 +1739,30 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "12px",
     overflowY: "auto",
     padding: 10,
-    "@media screen and (max-width: 1430px)": {
-      right: 50,
-    },
-    "@media screen and (max-width: 1366px)": {
-      width: 270,
-    },
+    // "@media screen and (max-width: 1530px)": {
+    //   width: 308
+    // },
+    // "@media screen and (max-width: 1430px)": {
+    //   right: 50,
+    // },
+    // "@media screen and (max-width: 1366px)": {
+    //   width: 270,
+    // },
     "@media screen and (max-width: 1260px)": {
       top: 125,
-      right: 50,
+      // right: 50,
     },
     "@media screen and (max-width: 768px)": {
-      right: 45,
-      width: 250,
+      // right: 45,
+      // width: 250,
       height: 230,
     },
 
     "@media screen and (max-width: 414px)": {
-      top: 120,
-      right: 42,
-      width: 'min-content',
-      height: 'auto',
+      top: 100,
+      right: 30,
+      width: 'calc(100% - 82px)',
+      height: 160,
     },
     "@media screen and (max-width: 360px)": {
       top: 105,
