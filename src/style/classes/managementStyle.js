@@ -2214,7 +2214,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   implementButtonFlex: {
     maxHeight: '45',
     marginTop: 'auto',
-    marginBottom: 15,
     marginInlineStart: 'auto',
     lineHeight: windowSize === 'xs' ? 1 : null,
     "@media screen and (max-width: 540px)": {

@@ -29,7 +29,10 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             dateActive={true}
                             onTimeChange={() => { }}
                             timeActive={false}
-                            buttons={[]}
+                            buttons={{
+                                ok: t("common.confirm"),
+                                cancel: t("common.cancel"),
+                            } as any}
                             removePadding={true}
                             hideInvalidDateMessage={true}
                         />

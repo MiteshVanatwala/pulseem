@@ -254,7 +254,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		>
 			{toastMessage && renderToast()}
 			<Box className={clsx(classes.settingsContainer)}>
-				<Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'block' }}>
+				<Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'flex' }}>
 					<Title Text={t("settings.accountSettings.title")} classes={classes}
 						ContainerStyle={{ width: '100% !important' }}
 						Element={<Box style={{ float: isRTL ? 'left' : 'right' }}>

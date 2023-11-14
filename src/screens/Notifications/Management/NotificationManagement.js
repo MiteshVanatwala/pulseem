@@ -1284,7 +1284,7 @@ const NotificationManagement = ({ classes }) => {
       <Box className={'topSection'}>
         <Title
           classes={classes}
-          Element={
+          Text={
             <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
               <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ width: 'auto' }}>{t('notifications.notificationManagement')}</Typography>
               <Button onClick={() => {

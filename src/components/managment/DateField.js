@@ -84,6 +84,9 @@ export const DateField = ({
   ) :
 
     (<KeyboardDatePicker
+      DialogProps={{
+        style: { direction: isRTL ? 'rtl' : 'ltr' }
+      }}
       views={datePickerView}
       openTo={openTo}
       classes={{ root: rootStyle }}
@@ -95,7 +98,7 @@ export const DateField = ({
         { [classes.textFieldPlaceholder]: !value }
       )}
       inputProps={{
-        className: classes.datePickerInput,
+        className: classes.datePickerInput
       }}
       popoverprops={{
         dir: direction[isRTL]
@@ -118,8 +121,8 @@ export const DateField = ({
         'aria-label': 'change date',
         className: classes.datePickerButton
       }}
-      cancellabel={buttons && buttons?.cancel}
-      oklabel={buttons && buttons?.ok}
+      cancelLabel={buttons && buttons?.cancel}
+      okLabel={buttons && buttons?.ok}
       id="datePicker"
       maxDate={maximumDate}
       disabled={dateActive}

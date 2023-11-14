@@ -471,6 +471,23 @@ const NewslettersReport = ({ classes }) => {
             {t('common.clear')}
           </Button>
         </Grid>}
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid
+          item
+          style={{
+            display: 'flex', flexDirection: 'row', alignItems: 'center', marginInlineStart: 'auto', marginInlineEnd: 45
+          }}>
+          <Button
+            className={clsx(
+              classes.btn,
+              classes.btnRounded,
+              newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
+            )}
+            onClick={() => setDialog('exportFormat')}
+            disabled={isSearching && !searchResults?.length}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+            {t('campaigns.exportFile')}
+          </Button>
+        </Grid>}
       </Grid>
     )
   }
@@ -491,19 +508,6 @@ const NewslettersReport = ({ classes }) => {
             {t('mainReport.compareCampaigns')}
           </Button>
         </Grid>} */}
-        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
-          <Button
-            className={clsx(
-              classes.btn,
-              classes.btnRounded,
-              newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
-            )}
-            onClick={() => setDialog('exportFormat')}
-            disabled={isSearching && !searchResults?.length}
-            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
-            {t('campaigns.exportFile')}
-          </Button>
-        </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${dataLength} ${t('mms.campaigns')}`}

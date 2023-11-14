@@ -347,7 +347,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   maxHeight87: {
     maxHeight: "auto",
     "@media screen and (min-width: 600px)": {
-      maxHeight: 87,
+      maxHeight: 100,
     },
   },
   w20: {
