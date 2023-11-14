@@ -90,7 +90,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
             borderRadius: 10,
         },
         // height: shortcutPaperHeight[windowSize],
-        height: '95%',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -115,7 +115,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         textAlign: 'center'
     },
     shortcutButton: {
-        height: 92,
+        height: 90,
         width: '85%',
         background: '#fff',
         borderRadius: '20px',
@@ -123,7 +123,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         fontSize: '18px',
         position: 'relative',
         textTransform: 'capitalize',
-        padding: '6px 30px',
+        // padding: '6px 30px',
         color: '#FF0054',
         border: '3px solid #FF0076',
         boxShadow: 'none',
@@ -170,9 +170,9 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         color: '#FF0076',
         border: '1px dashed #FF0076',
         fontFamily: 'pulseemicons',
-        height: '92px',
+        height: 90,
         fontSize: '30px',
-        marginBottom: 35,
+        marginBottom: 25,
         width: '85%',
         '&:hover': {
             background: 'none'

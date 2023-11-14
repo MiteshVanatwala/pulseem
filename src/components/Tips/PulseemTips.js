@@ -61,7 +61,7 @@ const PulseemTips = ({ classes, t, isRTL }) => {
   return (
     <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.tipMargin, classes.carouselTips)}>
       <Box className={clsx(classes.tipsTitle, classes.dashBoxtitleSection)}>
-        <HornIcon className={clsx(classes.mleft5, classes.mr10)} style={{ verticalAlign: 'middle' }} />
+        <HornIcon className={clsx(classes.marginInlineEnd15, classes.marginInlineStart5)} style={{ verticalAlign: 'middle' }} />
         <Typography
           className={clsx(classes.dInline, classes.pe10, 'title')}
         >

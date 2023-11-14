@@ -488,7 +488,7 @@ const NotificationManagement = ({ classes }) => {
         rootClass: clsx(classes.sendIcon, 'sendIcon'),
         textClass: classes.sendIconText,
         onClick: () => {
-          Redirect({url: `${sitePrefix}Notification/send/${ID}`});
+          Redirect({ url: `${sitePrefix}Notification/send/${ID}` });
         }
       }
     ]
@@ -987,16 +987,20 @@ const NotificationManagement = ({ classes }) => {
         </Box>
       ),
       renderButtons: () => (
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleDialogClose}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.Ok')}
-        </Button>
+        <Box className={clsx(classes.flex, classes.flexCenter)}>
+          <Button
+            variant='contained'
+            size='small'
+            onClick={handleDialogClose}
+            style={{ justifyContent: 'flex-center' }}
+            className={clsx(
+              classes.btn,
+              classes.btnRounded,
+            )}
+          >
+            {t('common.Ok')}
+          </Button>
+        </Box>
       )
     }
   }

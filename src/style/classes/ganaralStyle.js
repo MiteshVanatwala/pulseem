@@ -86,7 +86,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   appBody: {
-    maxWidth: 'calc(100vw - 6px)'
+    maxWidth: 'calc(100vw - 6px)',
+    '& input::placeholder': {
+      color: 'rgba(0,0,0,.65)',
+      opacity: 1/* Firefox */
+    },
+    '& input::ms-input-placeholder': {
+      color: 'rgba(0,0,0,.65)',
+    }
   },
   greyBackground: {
     background: '#F0F5FF',
@@ -2602,10 +2609,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     //   borderTopLeftRadius: 10,
     //   borderTopRightRadius: 10,
     // },
-    '& .mgmtTitle': {
-      fontSize: 22,
-      width: '100%'
-    },
+    // '& .mgmtTitle': {
+    //   fontSize: 22,
+    //   width: '100%'
+    // },
     '& .containerBody': {
       paddingInline: 20,
       paddingTop: 20,
@@ -3789,5 +3796,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#fff',
       fill: '#transparent'
     }
+  },
+  marginInlineStart5: {
+    marginInlineStart: 5
+  },
+  marginInlineEnd5: {
+    marginInlineEnd: 5
+  },
+  marginInlineStart10: {
+    marginInlineStart: 10
+  },
+  marginInlineEnd10: {
+    marginInlineEnd: 10
+  },
+  marginInlineStart15: {
+    marginInlineStart: 15
+  },
+  marginInlineEnd15: {
+    marginInlineEnd: 15
   }
 });

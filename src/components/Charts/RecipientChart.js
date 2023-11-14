@@ -510,7 +510,7 @@ const RecipientChart = ({ classes, }) => {
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.dashBoxtitleSection, classes.dashboardChartTitle)}>
                     <Box className={classes.flex}>
-                        <ChartIcon className={clsx(classes.mleft5, classes.mr10)} />
+                        <ChartIcon className={clsx(classes.marginInlineEnd15, classes.marginInlineStart5)} />
                         <Typography
                             className={clsx(classes.dInlineBlock, 'title')}
                         >

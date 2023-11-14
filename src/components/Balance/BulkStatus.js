@@ -160,7 +160,7 @@ const BulkStatus = ({ classes }) => {
           <Grid item xs={12} className={clsx(classes.posRelative, classes.dashBoxtitleSection)}>
             <Box className={classes.spaceBetween}>
               <Box className={clsx(classes.alignItemsCenter, classes.flexJustifyCenter)}>
-                <CardIcon className={clsx(classes.mleft5, classes.mr10)} />
+                <CardIcon className={clsx(classes.marginInlineEnd15, classes.marginInlineStart5)} />
                 <Typography
                   className={clsx(classes.dInlineBlock, 'title')}
                 >

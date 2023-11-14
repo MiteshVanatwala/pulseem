@@ -30,6 +30,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
     },
     tooltip: {
       backgroundColor: theme.palette.common.black,
+      fontSize: '0.77rem !important'
     },
   }));
 
@@ -105,7 +106,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
           callback: function (value, index, values) {
             return `${value}%`;
           },
-          font: { size: 14 },
+          font: { size: 18 },
           color: 'black',
           drawTicks: true,
         },
@@ -326,7 +327,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
           className={clsx(classes.lastReportTitleSection, classes.dashBoxtitleSection)}>
           <Box className={clsx(classes.spaceBetween, classes.w100, classes.flexWrap)}>
             <Box className={classes.mt2}>
-              <NotesIcon className={clsx(classes.mleft5, classes.mr10)} style={{ verticalAlign: 'middle' }} />
+              <NotesIcon className={clsx(classes.marginInlineEnd15, classes.marginInlineStart5)} style={{ verticalAlign: 'middle' }} />
               <Typography
                 className={clsx(classes.dInline, classes.pe10, 'title')}
               >

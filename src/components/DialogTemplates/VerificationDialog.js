@@ -948,7 +948,7 @@ const VerificationDialog = ({
                         <Divider style={{ marginTop: 15 }} />
                     </Box>
                     <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
-                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}  classes={classes.pb15}>
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} classes={classes.pb15}>
                             <Typography className={clsx(classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                             <Button
                                 className={clsx(
@@ -973,7 +973,7 @@ const VerificationDialog = ({
                                                         setShowConfirmDelete(true);
                                                         setDeleteValue(obj.AuthValue);
                                                     }}
-                                                    className={clsx(classes.btn, classes.btnRounded)}
+                                                    className={clsx(classes.f14)}
                                                     style={{
                                                         textTransform: 'capitalize',
                                                         paddingTop: 0,

@@ -84,7 +84,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   mgmtTitleContainer: {
     width: 'auto !important',
     background: '#F0F5FF',
-    padding: `11px 31.69px 8px 31.69px`,
+    padding: 15,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
     "@media screen and (max-width: 475px)": {
@@ -92,11 +92,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   managementTitle: {
-    fontSize: windowSize === "xs" ? 20 : 29,
+    fontSize: 20,
     fontFamily: "Assistant",
     whiteSpace: windowSize === "xs" ? "break-spaces" : null,
-    fontWeight: 500,
-    color: '#4D4D4D',
+    fontWeight: 600,
+    // color: '#4D4D4D',
+    color: '#000',
     width: '100%',
     "@media screen and (max-width: 475px)": {
       maxWidth: '60%'
@@ -1478,7 +1479,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       height: 'auto',
     },
     '& .title': {
-      fontSize: 18,
+      fontSize: 20,
+      fontWeight: 600,
       color: '#000'
     }
 
@@ -1560,7 +1562,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   bulkTitle: {
     fontWeight: 400,
-    fontSize: 15,
+    fontSize: '1.1rem',
     lineHeight: "2.1rem",
   },
   bulkContent: {
