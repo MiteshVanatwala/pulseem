@@ -846,14 +846,14 @@ const NotificationManagement = ({ classes }) => {
     return {
       title: null,
       renderTitle: () => (
-        <Box className={classes.myGroupsTitleSection}>
+        <Box className={classes.myGroupsTitleSection} style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', direction: isRTL ? 'rtl' : 'ltr' }}>
           <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
           <Typography className={clsx(classes.link, classes.bold)} onClick={() => {
             setDialogType({
               type: DialogTypes.CREATE_GROUP,
               data: {}
             })
-          }}>({t('notifications.howToCreateGroup')}?)</Typography>
+          }}>({t('notifications.howToCreateGroup')})</Typography>
         </Box>
       ),
       showDivider: false,
