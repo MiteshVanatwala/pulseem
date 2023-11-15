@@ -2035,7 +2035,7 @@ const ClientSearchResult = ({ classes }) => {
       <Box className={'topSection'}>
         <Title
           classes={classes}
-          Element={renderHeader()}
+          Text={renderHeader()}
         />
         {renderSearchLine()}
       </Box>
