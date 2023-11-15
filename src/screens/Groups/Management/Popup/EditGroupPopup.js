@@ -53,7 +53,9 @@ const EditGroupPopup = ({ classes,
                     GroupID: currentGroup.GroupID,
                     GroupName: currentGroup.GroupName,
                     IsTestGroup: currentGroup.IsTestGroup,
-                    IsDynamic: currentGroup.IsDynamicisDynamic ?? false
+                    IsDynamic: currentGroup.IsDynamicisDynamic ?? false,
+                    UpdateDate: currentGroup.UpdateDate,
+                    CreationDate: currentGroup.CreationDate
                 });
             }
             setLoader(false);
