@@ -1120,6 +1120,25 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "16px",
     },
   },
+  textarea: {
+    resize: "none",
+    height: "200px",
+    boxSizing: "border-box",
+    fontSize: "16px",
+    fontFamily: "Sans-serif",
+    overflow: "hidden",
+    marginTop: 5,
+    overflowY: "auto",
+    width: "100%",
+    border: "1px solid #ced4da",
+    outline: "none",
+    padding: "10px !important",
+    borderRadius: ".25rem",
+    "&::placeholder": {
+      color: "rgb(170, 170, 170)",
+      fontSize: "16px",
+    },
+  },
   smallInfoDiv: {
     display: "flex",
     width: "100%",
@@ -2484,9 +2503,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBlock: 20,
   },
   MuiChipRoot: {
-    backgroundColor: "#1c82b2 !important",
+    backgroundColor: "#FF3343 !important",
+    marginRight: 5,
     "& span": {
       color: "#fff",
+      fontWeight: 500,
     },
     "& .MuiChip-deleteIcon": {
       color: "#fff",
