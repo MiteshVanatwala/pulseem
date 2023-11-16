@@ -122,7 +122,7 @@ const WhatsappTemplateEditor = ({
 			return true;
 		} else if (
 			buttonTitle?.includes('removalText') &&
-			templateText?.includes('Reply “remove” to unsubscribe')
+			(templateText?.includes('Reply “remove” to unsubscribe') || templateText?.includes('להסרה השב “הסר”'))
 		) {
 			return true;
 		}
