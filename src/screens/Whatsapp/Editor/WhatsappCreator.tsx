@@ -642,11 +642,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getSubtitle = () => {
-		if (templateData.templateText?.includes('Reply “remove” to unsubscribe')) {
-			return 'Reply “remove” to unsubscribe';
+		if (templateData.templateText?.indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'en' })) > -1) {
+			return translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'en' });
 		}
-		if (templateData.templateText?.includes('להסרה השב “הסר”')) {
-			return 'להסרה השב “הסר”';
+		if (templateData.templateText?.indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' })) > -1) {
+			return translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' });
 		}
 		return '';
 	};
