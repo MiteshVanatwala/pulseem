@@ -642,10 +642,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getSubtitle = () => {
-		if (templateData.templateText?.indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'en' })) > -1) {
+		if (templateData.templateText?.toLowerCase().indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'en' }).toLowerCase()) > -1) {
 			return translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'en' });
 		}
-		if (templateData.templateText?.indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' })) > -1) {
+		if (templateData.templateText?.toLowerCase().indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' }).toLowerCase()) > -1) {
 			return translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' });
 		}
 		return '';
