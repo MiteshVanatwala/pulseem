@@ -116,5 +116,6 @@
 		"no": "לא"
 	},
 	"codeExpirationTime": "זמן תפוגת קוד",
-	"codeExpirationMessage": "זמן תפוגת קוד יכול לנוע בין 0 ל-90 דקות"
+	"codeExpirationMessage": "זמן תפוגת קוד יכול לנוע בין 0 ל-90 דקות",
+	"replyRemoveToUnsubscribe": "להסרה השב “הסר”"
 }
