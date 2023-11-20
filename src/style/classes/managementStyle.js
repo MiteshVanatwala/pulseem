@@ -1370,7 +1370,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: shortcutFontSize.page[windowSize],
     lineHeight: 1,
     color: '#FF0054',
-    textDecoration: 'none'
+    textDecoration: 'none',
+    paddingInlineEnd:30,
+    paddingInlineStart: 16
   },
   categoryLabel: {
     fontSize: shortcutFontSize.category[windowSize],
