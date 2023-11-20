@@ -864,6 +864,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								isSms={true}
 								isCampaign={false}
 								noSelectionText={''}
+								//@ts-ignore
+								innerHeight={325}
 								// isFilterSelected={false}
 							/>
 							<Box className='textBoxWrapper'>
