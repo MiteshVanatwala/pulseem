@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Chip, FormControl, Grid, MenuItem, TextField, Typography } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { Box, Button, Checkbox, Chip, FormControl, FormControlLabel, Grid, IconButton, MenuItem, TextField, Tooltip, Typography } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import { ClassesType } from '../../Classes.types';
 import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
@@ -23,8 +23,19 @@ import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { RandomID } from '../../../helpers/Functions/functions';
 import { validateEmailAddress } from '../../../helpers/Utils/common';
+import { isValidHttpUrl } from '../../../helpers/Utils/TextHelper';
+import Groups from '../../../components/Groups/GroupsHandler/Groups';
+import { Group } from '../../../Models/Groups/Group';
+import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
+import { BsInfoCircle } from 'react-icons/bs';
+import { saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
+import { sitePrefix } from '../../../config';
+import { useNavigate } from 'react-router-dom';
+import Templates from '../../HtmlCampaign/modals/Templates';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
+	const dispatch: any = useDispatch();
+	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -34,18 +45,19 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		type: string;
 	} | null>(null);
 	const [confirmExit, setConfirmExit] = useState<boolean>(false);
+	const { subAccountAllGroups } = useSelector((state: any) => state.group);
+	const { testGroups } = useSelector((state: any) => state.sms);
 	const [errors, setErrors] = useState({
 		formName: '',
 		formLanguage: '',
 		shortURL: '',
-		answerType: '',
 		pageTitle: '',
 		answerMessage: '',
 		paymentURL: '',
 		paymentAPIUsername: '',
 		paymentTerminalNumber: '',
-		offlineDate: '',
 		offlineURL: '',
+		group: '',
 		pageDescription: '',
 		googleAnalytics: '',
 		googleConvertion: '',
@@ -66,6 +78,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
 	const [isGalleryConfirmed, setIsFileSelected] = useState(false);
 	const [emailId, setEmailId] = useState('');
+	const [showTestGroups, setShowTestGroups] = useState(false);
+	const [selectedGroups, setSelectedGroups] = useState<any>([]);
+	const [allGroupsSelected, setAllGroupsSelected] = useState(false);
 	const [formValues, setFormValues] = useState<any>({
 		formName: '',
 		formLanguage: isRTL ? 0 : 1,
@@ -93,7 +108,21 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		reportLeadsToEmails: [],
 		updateExistingRecipients: 0,
 		limitSubscribers: '',
+		duplicateMailConfirmation: true
 	})
+
+	const getData = async () => {
+		setIsLoader(true);
+
+		if (subAccountAllGroups.length === 0) {
+			dispatch(getGroupsBySubAccountId());
+		}
+		setIsLoader(false);
+  };
+
+	useEffect(() => {
+		getData();
+	}, []);
 
 	const getSendWebhookDialog = (data = '') => ({
     title: translator('landingPages.sendWebhook'),
@@ -253,6 +282,60 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			)
 		};
 	}
+
+	const renderConfirmExitDialog = () => {
+		return {
+			showDivider: false,
+			title: translator("common.SaveExit"),
+			content: (
+				<Box>
+					<Typography variant="subtitle1">
+						{translator("landingPages.confirmExit")}
+					</Typography>
+				</Box>
+			),
+  		confirmText: "common.Yes",
+			cancelText: "common.No",
+			onConfirm: async () => {
+				const response = await save();
+				navigate(`${sitePrefix}EditRegistrationPage`);
+			},
+			onClose: () => {
+				setDialogType(null);
+				navigate(`${sitePrefix}EditRegistrationPage`);
+			},
+		};
+	}
+
+	const renderTemplateDialog = () => {
+		return {
+			showDivider: false,
+			title: translator("common.SelectTemplate"),
+			showDefaultButtons: false,
+			content: (
+				// <Templates
+				// 	isCreateCampaign={true}
+				// 	classes={classes}
+				// 	onClose={async (template: any) => {
+				// 			// setDialogType(null);
+				// 			// if (template !== undefined) {
+				// 			// 		const response = await dispatch(getTemplateById(template.ID));
+				// 			// 		if (response.payload.StatusCode === 201) {
+				// 			// 				setTemplate(response?.payload?.Data);
+				// 			// 		}
+				// 			// }
+				// 	}}
+				// 	isOpen={true}
+				// />
+				<>
+				</>
+			),
+			onConfirm: async () => {
+				const response = await save();
+				navigate(`${sitePrefix}EditRegistrationPage`);
+			},
+		};
+	}
 	
 	const renderDialog = () => {
 		const { type } = dialogType || {}
@@ -263,6 +346,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			currentDialog = renderGalleryDialog();
 		} else if (type === 'addEmailId') {
 			currentDialog = renderAddEmailIdDialog();
+		} else if (type === 'confirmExit') {
+			currentDialog = renderConfirmExitDialog();
+		} else if (type === 'template') {
+			currentDialog = renderTemplateDialog();
 		}
 
 		if (type) {
@@ -280,12 +367,54 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		}
 	}
 
+	const save = async () => {
+		const errorDump = {
+			...errors,
+			formName: !formValues.formName.trim() ? translator('landingPages.formNameRequired') : '',
+			shortURL: !formValues.shortURL.trim() ? translator('landingPages.shortURLRequired') : '',
+			answerMessage: [
+					LandingPagesAnswerType.POPUP_MESSAGE,
+					LandingPagesAnswerType.REDIRECT_URL,
+					LandingPagesAnswerType.DOWNLOAD_FILE
+				].indexOf(formValues.answerType) > -1 && !formValues.answerMessage.trim() ? translator('landingPages.answerMessageRequired') : '',
+			paymentURL: [
+					LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+				].indexOf(formValues.answerType) > -1 && !formValues.paymentURL.trim() ? translator('landingPages.URLRequired') : '',
+			paymentAPIUsername: [
+					LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+				].indexOf(formValues.answerType) > -1 && !formValues.paymentAPIUsername.trim() ? translator('landingPages.APIUsernameRequired') : '',
+			paymentTerminalNumber: [
+					LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+				].indexOf(formValues.answerType) > -1 && !formValues.paymentTerminalNumber.trim() ? translator('landingPages.terminalNumberRequired') : '',
+			offlineURL:	formValues.offlineDate && !isValidHttpUrl(formValues.offlineURL) ? translator('landingPages.invalidRedirectURLWhenOffline') : '',
+			group: selectedGroups.length === 0 ? translator('landingPages.selectAtleastOneGroup') : ''
+		};
+		setErrors(errorDump);
+
+		if (!errorDump.formName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
+			//@ts-ignore
+			const response = await dispatch(saveLandingPage(formValues));
+			console.log(response);
+			return true;
+		}
+	}
+
+	const saveAndContinueToOldEditor = async () => {
+		const response = await save();
+		console.log(response);
+	}
+
+	const saveAndContinueToNewEditor = async () => {
+		const response = await save();
+		console.log(response);
+	}
+
 	const renderButtons = () => {
 		const wizardButtons = [];
 
 		wizardButtons.push(
 			<Button
-				onClick={() => {}}
+				onClick={saveAndContinueToOldEditor}
 				className={clsx(
 						classes.btn,
 						classes.btnRounded,
@@ -300,7 +429,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 		wizardButtons.push(
 			<Button
-				onClick={() => {}}
+				onClick={saveAndContinueToNewEditor}
 				className={clsx(
 						classes.btn,
 						classes.btnRounded,
@@ -318,13 +447,32 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const renderTemplateButtons = () => {
 		return (
 			<Button 
-				onClick={() => {}}
+				onClick={() => setDialogType({type: 'template'})}
 				className={clsx(classes.btn, classes.btnRounded )}
 				style={{ margin: '8px' }}
 			>
 				{translator('common.templates')}
 			</Button>
 		);
+	}
+
+	const callbackUpdateGroups = (groups: any) => {
+		const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
+		const groupList: Group[] = found
+				? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
+				: [...selectedGroups, groups];
+		setSelectedGroups(groupList);
+	}
+
+	const callbackSelectAll = () => {
+		let groupList: Group[] = [];
+		if (!allGroupsSelected) {
+			groupList = showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups];
+		} else {
+			groupList = [];
+		}
+		setSelectedGroups(groupList);
+		setAllGroupsSelected(!allGroupsSelected);
 	}
 
 	return (
@@ -354,7 +502,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								variant="outlined"
 								name="Name"
 								value={formValues.formName}
-								className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.formName })}
+								className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.formName })}
 								autoComplete="off"
 								onChange={(e: any) => setFormValues({ ...formValues, formName: e.target.value })}
 								error={!!errors.formName}
@@ -408,6 +556,20 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						<Box>
 							<Typography title={translator("landingPages.shortURL")} className={classes.alignDir}>
 								{translator("landingPages.shortURL")}
+								<Tooltip
+									disableFocusListener
+									title={translator('landingPages.shortURLTooltip')}
+									classes={{
+										tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+										arrow: classes.fBlack
+									}}
+									enterTouchDelay={50}
+									placement={"top"}
+								>
+									<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+										<BsInfoCircle />
+									</IconButton>
+								</Tooltip>
 							</Typography>
 							<TextField
 								id="shortURL"
@@ -415,7 +577,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								variant="outlined"
 								name="Name"
 								value={formValues.shortURL}
-								className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.shortURL })}
+								className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.shortURL })}
 								autoComplete="off"
 								onChange={(e: any) => setFormValues({ ...formValues, shortURL: e.target.value })}
 								error={!!errors.shortURL}
@@ -424,6 +586,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							<Box className='textBoxWrapper'>
 								<Typography className={clsx(classes.f16)}>
 									https://testpul.site/{formValues.shortURL}
+								</Typography>
+								<Typography className={clsx(classes.errorText, classes.f14)}>
+									{errors.shortURL ?? errors.shortURL}
 								</Typography>
 							</Box>
 						</Box>
@@ -442,7 +607,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									className={classes.pbt5}
 									onChange={(event, val) => {
 											setFormValues({ ...formValues, answerType: event.target.value });
-											setErrors({ ...errors, answerType: '' });
 											if (event.target.value === LandingPagesAnswerType.SEND_WEBHOOK) setDialogType({type: 'sendWebhook'})
 									}}
 									IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
@@ -462,11 +626,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									<MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem>
 								</Select>
 							</FormControl>
-							<Box className='textBoxWrapper'>
-								<Typography className={clsx(errors.formLanguage ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-									{errors.formLanguage ?? errors.formLanguage}
-								</Typography>
-							</Box>
 						</Box>
 					</Grid>
 
@@ -474,24 +633,27 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						[LandingPagesAnswerType.POPUP_MESSAGE,
 							LandingPagesAnswerType.REDIRECT_URL,
 							LandingPagesAnswerType.DOWNLOAD_FILE
-						].includes(formValues.answerType) && (
+						].indexOf(formValues.answerType) > -1 && (
 							<Grid item md={4}>
 								<Box>
 									<Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
 										{translator("landingPages.answerMessage")}
 									</Typography>
 									<TextField
-										id="shortURL"
 										label=""
 										variant="outlined"
-										name="Name"
-										value={formValues.shortURL}
-										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.shortURL })}
+										value={formValues.answerMessage}
+										className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.answerMessage })}
 										autoComplete="off"
-										onChange={(e: any) => setFormValues({ ...formValues, shortURL: e.target.value })}
-										error={!!errors.shortURL}
-										title={formValues.shortURL}
+										onChange={(e: any) => setFormValues({ ...formValues, answerMessage: e.target.value })}
+										error={!!errors.answerMessage}
+										title={formValues.answerMessage}
 									/>
+									<Box className='textBoxWrapper'>
+										<Typography className={clsx(errors.answerMessage ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+											{errors.answerMessage ?? errors.answerMessage}
+										</Typography>
+									</Box>
 								</Box>
 							</Grid>
 						)
@@ -506,17 +668,20 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 											{translator("landingPages.URL")}
 										</Typography>
 										<TextField
-											id="shortURL"
 											label=""
 											variant="outlined"
-											name="Name"
 											value={formValues.paymentURL}
-											className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.paymentURL })}
+											className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.paymentURL })}
 											autoComplete="off"
 											onChange={(e: any) => setFormValues({ ...formValues, paymentURL: e.target.value })}
 											error={!!errors.paymentURL}
 											title={formValues.paymentURL}
 										/>
+										<Box className='textBoxWrapper'>
+											<Typography className={clsx(errors.paymentURL ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+												{errors.paymentURL ?? errors.paymentURL}
+											</Typography>
+										</Box>
 									</Box>
 								</Grid>
 
@@ -526,17 +691,20 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 											{translator("landingPages.APIUsername")}
 										</Typography>
 										<TextField
-											id="APIUsername"
 											label=""
 											variant="outlined"
-											name="APIUsername"
 											value={formValues.paymentAPIUsername}
-											className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.paymentAPIUsername })}
+											className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.paymentAPIUsername })}
 											autoComplete="off"
 											onChange={(e: any) => setFormValues({ ...formValues, paymentAPIUsername: e.target.value })}
 											error={!!errors.paymentAPIUsername}
 											title={formValues.paymentAPIUsername}
 										/>
+										<Box className='textBoxWrapper'>
+											<Typography className={clsx(errors.paymentAPIUsername ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+												{errors.paymentAPIUsername ?? errors.paymentAPIUsername}
+											</Typography>
+										</Box>
 									</Box>
 								</Grid>
 
@@ -546,17 +714,20 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 											{translator("landingPages.terminalNumber")}
 										</Typography>
 										<TextField
-											id="terminalNumber"
 											label=""
 											variant="outlined"
-											name="terminalNumber"
 											value={formValues.paymentTerminalNumber}
-											className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.paymentTerminalNumber })}
+											className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.paymentTerminalNumber })}
 											autoComplete="off"
 											onChange={(e: any) => setFormValues({ ...formValues, paymentTerminalNumber: e.target.value })}
 											error={!!errors.paymentTerminalNumber}
 											title={formValues.paymentTerminalNumber}
 										/>
+										<Box className='textBoxWrapper'>
+											<Typography className={clsx(errors.paymentTerminalNumber ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+												{errors.paymentTerminalNumber ?? errors.paymentTerminalNumber}
+											</Typography>
+										</Box>
 									</Box>
 								</Grid>
 							</>
@@ -564,15 +735,31 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					}
 				</Grid>
 
-				<Grid container spacing={3} className={clsx(classes.p15)}>
+				<Grid container spacing={3} className={clsx(classes.p15, classes.pt2rem)}>
 					<Grid item md={12}>
-						<Typography className={clsx(classes.f22, classes.bold, classes.pb5)}>{translator("landingPages.formOfflineProperties")}</Typography>
+						<Typography className={clsx(classes.f22, classes.bold, classes.pb5)}>
+							{translator("landingPages.formOfflineProperties")}
+							<Tooltip
+								disableFocusListener
+								title={translator('landingPages.formOfflineDateTooltip')}
+								classes={{
+									tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+									arrow: classes.fBlack
+								}}
+								enterTouchDelay={50}
+								placement={"top"}
+							>
+								<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+									<BsInfoCircle />
+								</IconButton>
+							</Tooltip>
+						</Typography>
 					</Grid>
 
 					<Grid item md={2}>
 						<Box>
-							<Typography title={translator("landingPages.terminalNumber")} className={classes.alignDir}>
-								{translator("landingPages.terminalNumber")}
+							<Typography title={translator("landingPages.formOfflineDate")} className={classes.alignDir}>
+								{translator("landingPages.formOfflineDate")}
 							</Typography>
 							<DateField
 								minDate={moment()}
@@ -580,10 +767,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								classes={classes}
 								value={formValues.offlineDate}
 								onChange={(value: any) => {
-										setFormValues({
-												...formValues,
-												offlineDate: value
-										})
+									setFormValues({
+										...formValues,
+										offlineDate: value
+									})
 								}}
 								placeholder={translator('common.FromDate')}
 								timePickerOpen={false}
@@ -593,7 +780,28 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								buttons={[]}    
 								removePadding={true}
 								hideInvalidDateMessage={true}
-						/>
+							/>
+							{
+								formValues.offlineDate && (
+									<Button
+										className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)}
+										onClick={() => {
+											setFormValues({
+												...formValues,
+												offlineDate: null,
+												offlineURL: '',
+											});
+
+											setErrors({
+												...errors,
+												offlineURL: '',
+											})
+										}}
+									>
+										{translator("recipient.reset")}
+									</Button>
+								)
+							}
 						</Box>
 					</Grid>
 
@@ -608,20 +816,64 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								variant="outlined"
 								name="redirectURLWhenOffline"
 								value={formValues.offlineURL}
-								className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.offlineURL })}
+								className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.offlineURL })}
 								autoComplete="off"
 								onChange={(e: any) => setFormValues({ ...formValues, offlineURL: e.target.value })}
 								error={!!errors.offlineURL}
 								title={formValues.offlineURL}
 							/>
+							<Box className='textBoxWrapper'>
+								<Typography className={clsx(errors.offlineURL ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+									{errors.offlineURL ?? errors.offlineURL}
+								</Typography>
+							</Box>
 						</Box>
 					</Grid>
 				</Grid>
 
-				<Grid container spacing={3} className={clsx(classes.p15)}>
+				<Grid container spacing={3} className={clsx(classes.p15, classes.pt2rem)}>
 					<Grid item md={12}>
 						<Typography className={clsx(classes.f22, classes.bold, classes.pb5)}>{translator("landingPages.subscriberSettings")}</Typography>
 					</Grid>
+
+					<Grid item md={12}>
+						<Box>
+							<Typography title={translator("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold)}>
+								{translator("landingPages.addSubscribersToGroups")}
+							</Typography>
+							<Groups
+								classes={classes}
+								list={
+									showTestGroups ? [...subAccountAllGroups, ...testGroups] : [...subAccountAllGroups]
+								}
+								showTestGroups={showTestGroups}
+								// test={showTestGroups}
+								selectedList={selectedGroups}
+								//@ts-ignore
+								callbackSelectedGroups={callbackUpdateGroups}
+								//@ts-ignore
+								callbackSelectAll={callbackSelectAll}
+								//@ts-ignore
+								callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+								showSortBy={true}
+								showFilter={false}
+								showSelectAll={true}
+								isFilterSelected={false}
+								bsDot={null}
+								isNotifications={false}
+								isSms={true}
+								isCampaign={false}
+								noSelectionText={''}
+								// isFilterSelected={false}
+							/>
+							<Box className='textBoxWrapper'>
+								<Typography className={clsx(errors.group ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+									{errors.group ?? errors.group}
+								</Typography>
+							</Box>
+						</Box>
+					</Grid>
+
 					<Grid item md={4}>
 						<Box>
 							<Typography title={translator("landingPages.reportLeadsToEmails")} className={classes.alignDir}>
@@ -695,14 +947,32 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								value={formValues.limitNumberOfSubscribers}
 								className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 								autoComplete="off"
-								onChange={(e: any) => setFormValues({ ...formValues, limitNumberOfSubscribers: e.target.value })}
+								onChange={(e: any) => setFormValues({ ...formValues, limitNumberOfSubscribers: e.target.value < 0 ? 0 : e.target.value })}
 								title={formValues.limitNumberOfSubscribers}
+								type='number'
 							/>
 						</Box>
 					</Grid>
+
+					<Grid item md={12}>
+						<FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => setFormValues({
+										...formValues,
+										duplicateMailConfirmation: !formValues.duplicateMailConfirmation
+									})}
+                  checked={formValues.duplicateMailConfirmation}
+                />
+              }
+              label={translator("landingPages.duplicateEmailConfirmation")}
+            />
+					</Grid>
 				</Grid>
 
-				<Grid container spacing={3} className={clsx(classes.p15)}>
+				<Grid container spacing={3} className={clsx(classes.p15, classes.pt2rem)}>
 					<Grid item md={12}>
 						<Typography className={clsx(classes.f22, classes.bold, classes.pb5)}>{translator("landingPages.SEOSettings")}</Typography>
 					</Grid>
@@ -851,7 +1121,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					</Grid>
 				</Grid>
 
-				<Grid container spacing={3} className={clsx(classes.p15)}>
+				<Grid container spacing={3} className={clsx(classes.p15, classes.pt2rem)}>
 					<Grid item md={12}>
 						<Typography className={clsx(classes.f22, classes.bold, classes.pb5)}>{translator("landingPages.developmentSettings")}</Typography>
 					</Grid>
@@ -873,9 +1143,25 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					</Grid>
 				</Grid>
 				
-				<Grid container spacing={3} className={clsx(classes.p15)}>
+				<Grid container spacing={3} className={clsx(classes.p15, classes.pt2rem)}>
 					<Grid item md={12}>
-						<Typography className={clsx(classes.f22, classes.bold, classes.pb5)}>{translator("landingPages.linkPreviewSettings")}</Typography>
+						<Typography className={clsx(classes.f22, classes.bold, classes.pb5)}>
+							{translator("landingPages.linkPreviewSettings")}
+							<Tooltip
+								disableFocusListener
+								title={translator('landingPages.linkPreviewTooltip')}
+								classes={{
+									tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+									arrow: classes.fBlack
+								}}
+								enterTouchDelay={50}
+								placement={"top"}
+							>
+								<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+									<BsInfoCircle />
+								</IconButton>
+							</Tooltip>
+						</Typography>
 					</Grid>
 
 					<Grid item md={4}>
@@ -966,9 +1252,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						classes={classes}
 						// @ts-ignore
 						onBack={{
-							callback: () => { setConfirmExit(true) }
+							callback: () => setDialogType({type: 'confirmExit'})
 						}}
-						// onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
 						// @ts-ignore
 						additionalButtons={renderButtons()}
 						// @ts-ignore
