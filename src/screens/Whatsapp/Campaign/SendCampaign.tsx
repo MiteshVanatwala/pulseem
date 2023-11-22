@@ -743,6 +743,7 @@ const SendCampaign = ({
 	};
 
 	const onExitCampaign = () => {
+		setIsExitCampaignOpen(false);
 		if (FromAutomation) {
 			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
 		} else {
@@ -871,13 +872,19 @@ const SendCampaign = ({
 					<AlertModal
 						classes={classes}
 						isOpen={isExitCampaignOpen}
-						onClose={() => setIsExitCampaignOpen(false)}
+						onClose={onExitCampaign}
 						title={translator('whatsappManagement.LeaveCampaignCreation')}
 						subtitle={translator(
 							'whatsappManagement.LeaveCampaignCreationDesc'
 						)}
 						type='delete'
-						onConfirmOrYes={() => onExitCampaign()}
+						onConfirmOrYes={async () => {
+							setIsExitCampaignOpen(false);
+							const saveCampaignData = await onCampaignSave(false, true, true);
+							if (saveCampaignData === apiStatus.SUCCESS) {
+								onExitCampaign();
+							}
+						}}
 					/>
 					<AlertModal
 						classes={classes}

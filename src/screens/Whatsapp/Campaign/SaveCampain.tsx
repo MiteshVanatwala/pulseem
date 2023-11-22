@@ -944,6 +944,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						navigate(
 							`/react/whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
 						);
+					} else {
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
 					}
 				}
 				return data?.Data;
@@ -1003,6 +1005,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 	const onExitCampaign = () => {
+		setIsExitCampaignOpen(false);
 		if (FromAutomation) {
 			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
 		} else {
@@ -1469,11 +1472,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					<AlertModal
 						classes={classes}
 						isOpen={isExitCampaignOpen}
-						onClose={() => setIsExitCampaignOpen(false)}
+						onClose={onExitCampaign}
 						title={translator('mainReport.handleExitTitle')}
 						subtitle={translator('mainReport.leaveCampaign')}
 						type='delete'
-						onConfirmOrYes={() => onExitCampaign()}
+						onConfirmOrYes={() => {
+							setIsExitCampaignOpen(false);
+							onSaveCampaign('save', true, true);
+						}}
 					/>
 					<AlertModal
 						classes={classes}
