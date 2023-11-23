@@ -544,7 +544,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		const highlightVariables = (
 			<>
 				{updatedVariables?.map((variable, index) => (
-					<strong
+					variable === '\n'
+					? <br />
+					: <strong
 						key={index}
 						className={clsx(
 							classes.whatsappCampainHighlightText,
