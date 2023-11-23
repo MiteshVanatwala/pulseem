@@ -88,6 +88,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { RestorDialogContent } from '../../../components/managment';
 import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -568,6 +569,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				onGroups(campaignId);
 				break;
 			case 'automation':
+				pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${campaignId}&fromreact=true`);
 				break;
 			case 'delete':
 				setDialogType({
@@ -641,7 +643,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				remove: windowSize === 'xs',
 				lable: translator('campaigns.automation'),
 				rootClass: classes.paddingIcon,
-				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				onClick: (key: string, id: string) => onRowIconClick(key, `${AutomationID}`),
 				classes: classes,
 				id: row.WACampaignID.toString(),
 			},
