@@ -101,7 +101,10 @@ const defaultAccountExtraData = [
 
 const SmsCreator = ({ classes }) => {
 	const { t } = useTranslation();
-	const { id, FromAutomation, NodeToEdit } = useParams();
+	const { id } = useParams();
+	const queryParams = new URLSearchParams(window.location.search)
+	const FromAutomation = queryParams.get("FromAutomation") || false
+	const NodeToEdit = queryParams.get("NodeToEdit") || false
 	document.title = t("sms.pageTitle");
 	const styles = useStyles();
 	const btnStyle = useStyleNew();
@@ -1341,7 +1344,7 @@ const SmsCreator = ({ classes }) => {
 				}
 				else if (saveResponse.payload.Status === 2) {
 					setDialogType(null);
-					Redirect({ url: "/react/SMSCampaigns" });
+					Redirect({ url: !!FromAutomation ? getAutomationReturnUrl(id) : "/react/SMSCampaigns" });
 
 				}
 				else {
@@ -1355,7 +1358,7 @@ const SmsCreator = ({ classes }) => {
 			}
 		}
 		else if (saveBeforeExit === false) {
-			Redirect({ url: "/react/SMSCampaigns" });
+			Redirect({ url: !!FromAutomation ? getAutomationReturnUrl(id) : "/react/SMSCampaigns" });
 			setDialogType(null);
 		}
 	};

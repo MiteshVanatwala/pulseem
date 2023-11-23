@@ -8,9 +8,11 @@ import Gif from '../../../../assets/images/managment/check-circle.gif';
 const SendCampaignSuccess = ({
 	classes,
 	isOpen,
+	isFromAutomation = false,
 	onClose,
 	onBackToHome,
 	onBackToCampaigns,
+	onBackToAutomation,
 }: SendCampaignSuccessModalProps) => {
 	const { t: translator } = useTranslation();
 	return (
@@ -51,40 +53,68 @@ const SendCampaignSuccess = ({
 						container
 						spacing={4}
 						className={clsx(classes.dialogButtonsContainer, classes.mt3)}>
-						<Grid item>
-							<Button
-								onClick={() => {
-									onBackToHome();
-								}}
-								variant='contained'
-								size='medium'
-								className={clsx(
-									classes.actionButton,
-									classes.actionButtonLightBlue,
-									classes.backButton
-								)}
-								style={{ margin: '8px' }}
-								color='primary'>
-								<>{translator('common.backToHome')}</>
-							</Button>
-						</Grid>
-						<Grid item>
-							<Button
-								onClick={() => {
-									onBackToCampaigns();
-								}}
-								variant='contained'
-								size='medium'
-								className={clsx(
-									classes.actionButton,
-									classes.actionButtonLightBlue,
-									classes.backButton
-								)}
-								style={{ margin: '8px' }}
-								color='primary'>
-								<>{translator('common.backToCampaigns')}</>
-							</Button>
-						</Grid>
+						{
+							!isFromAutomation && (
+								<>
+									<Grid item>
+										<Button
+											onClick={() => {
+												onBackToHome();
+											}}
+											variant='contained'
+											size='medium'
+											className={clsx(
+												classes.actionButton,
+												classes.actionButtonLightBlue,
+												classes.backButton
+											)}
+											style={{ margin: '8px' }}
+											color='primary'>
+											<>{translator('common.backToHome')}</>
+										</Button>
+									</Grid>
+									<Grid item>
+										<Button
+											onClick={() => {
+												onBackToCampaigns();
+											}}
+											variant='contained'
+											size='medium'
+											className={clsx(
+												classes.actionButton,
+												classes.actionButtonLightBlue,
+												classes.backButton
+											)}
+											style={{ margin: '8px' }}
+											color='primary'>
+											<>{translator('common.backToCampaigns')}</>
+										</Button>
+									</Grid>
+								</>
+							)
+						}
+						{
+							isFromAutomation && (
+								<Grid item>
+									<Button
+										onClick={() => {
+											onBackToAutomation && onBackToAutomation();
+										}}
+										variant='contained'
+										size='medium'
+										className={clsx(
+											classes.actionButton,
+											classes.actionButtonLightBlue,
+											classes.backButton
+										)}
+										style={{ margin: '8px' }}
+										color='primary'
+									>
+										{translator('common.backToAutomation')}
+									</Button>
+								</Grid>
+							)
+						}
 					</Grid>
 				</div>
 			</Dialog>
