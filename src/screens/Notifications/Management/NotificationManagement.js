@@ -119,7 +119,7 @@ const NotificationManagement = ({ classes }) => {
   const handlePreview = async (ID) => {
     const item = await dispatch(getNotificationById(ID));
     setDialogType({
-      type: 'preview',
+      type: DialogTypes.PREVIEW,
       data: item.payload
     })
   }
@@ -130,7 +130,7 @@ const NotificationManagement = ({ classes }) => {
 
     }
     setDialogType({
-      type: 'groups',
+      type: DialogTypes.GROUPS,
       data: item.payload
     })
   }
@@ -139,7 +139,7 @@ const NotificationManagement = ({ classes }) => {
     const item = await dispatch(getSubAccountRegistrations());
 
     setDialogType({
-      type: 'subscribers',
+      type: DialogTypes.SUBSCRIBERS,
       data: item.payload
     })
   }
@@ -147,7 +147,7 @@ const NotificationManagement = ({ classes }) => {
   const handleShowGroupsById = async (ID) => {
     const item = await dispatch(getNotificationGroupsById(ID));
     setDialogType({
-      type: 'groupsById',
+      type: DialogTypes.GROUPS_BY_ID,
       data: item.payload
     })
   }
@@ -173,7 +173,7 @@ const NotificationManagement = ({ classes }) => {
     const res = await dispatch(getDeletedNotifications());
     if (!res.error) {
       setDialogType({
-        type: 'restore',
+        type: DialogTypes.RESTORE,
         data: res.payload
       });
     }
@@ -476,7 +476,7 @@ const NotificationManagement = ({ classes }) => {
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
-            type: "duplicate",
+            type: DialogTypes.DUPLICATE,
             data: ID
           });
         }
@@ -499,7 +499,7 @@ const NotificationManagement = ({ classes }) => {
         rootClass: classes.paddingIcon,
         onClick: async () => {
           setDialogType({
-            type: 'delete',
+            type: DialogTypes.DELETE,
             data: ID
           })
         }
@@ -860,7 +860,7 @@ const NotificationManagement = ({ classes }) => {
             underline="always"
             onClick={() => {
               setDialogType({
-                type: 'createGroup',
+                type: DialogTypes.CREATE_GROUP,
                 data: {}
               })
             }}>
@@ -1234,7 +1234,7 @@ const NotificationManagement = ({ classes }) => {
         dialog = renderDuplicate(data)
         break;
       }
-      case DialogTypes.GROUP_BY_ID: {
+      case DialogTypes.GROUPS_BY_ID: {
         dialog = renderGroupsById(data)
         break;
       }

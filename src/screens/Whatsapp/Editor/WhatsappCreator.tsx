@@ -469,6 +469,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
 		const cardData: savedTemplateCardProps = templateData?.types['card'];
 		updatedTemplateData.templateText = cardData?.title;
+		if (cardData?.subtitle) updatedTemplateData.templateText += '\n' + cardData?.subtitle;
 		if (cardData?.actions?.length > 0) {
 			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
 				updatedButtonType = buttonTypes.CALL_TO_ACTION;
@@ -641,11 +642,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getSubtitle = () => {
-		if (templateData.templateText?.includes('Reply “remove” to unsubscribe')) {
-			return 'Reply “remove” to unsubscribe';
+		if (templateData.templateText?.toLowerCase().indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'en' }).toLowerCase()) > -1) {
+			return translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'en' });
 		}
-		if (templateData.templateText?.includes('להסרה השב “הסר')) {
-			return 'להסרה השב “הסר';
+		if (templateData.templateText?.toLowerCase().indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' }).toLowerCase()) > -1) {
+			return translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' });
 		}
 		return '';
 	};
@@ -746,9 +747,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				types: {
 					card: {
 						title: templateData.templateText
-							?.replace(/Reply “remove” to unsubscribe/g, '')
-							.replace(/להסרה השב “הסר”/g, '')
-							?.replace(/\n+$/, ''),
+						?.replace(/Reply “remove” to unsubscribe/g, '')
+						.replace(/\nלהסרה השב “הסר”/g, '')
+						?.replace(/\n+$/, ''),
 						subtitle: getSubtitle()?.length > 0 ? getSubtitle() : null,
 						media: [fileData?.fileLink],
 						actions:
