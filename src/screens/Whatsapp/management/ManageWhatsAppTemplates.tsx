@@ -449,6 +449,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
 		const cardData: savedTemplateCardProps = templateData?.types['card'];
 		updatedTemplateData.templateText = cardData?.title;
+		if (cardData?.subtitle) updatedTemplateData.templateText += '\n' + cardData?.subtitle;
 		if (cardData?.actions?.length > 0) {
 			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
 				updatedButtonType = 'callToAction';
