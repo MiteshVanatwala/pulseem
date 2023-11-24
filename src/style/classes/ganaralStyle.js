@@ -3775,5 +3775,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#fff',
       fill: '#transparent'
     }
+  },
+  verticalAlignTop: {
+    verticalAlign: 'top'
   }
 });
