@@ -747,12 +747,12 @@ const RecipientReport = ({ classes }: any) => {
         <div className={classes.pt10}>{recipientsReportData?.ClientEmail}</div>
       </Grid>
       <Grid item md='auto' className={classes.flexGrow1}>
-        <div className={clsx(classes.bold)}>{t('common.cellphone')}</div>
-        <div className={classes.pt10}>{recipientsReportData?.ClientCellphone}</div>
+        <div className={clsx(classes.bold)}>{t('common.emailStatus')}</div>
+        <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.EMAIL, recipientsReportData?.ClientStatus))}</div>
       </Grid>
       <Grid item md='auto' className={classes.flexGrow1}>
-        <div className={clsx(classes.bold)}>{t('common.Status')}</div>
-        <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.EMAIL, recipientsReportData?.ClientStatus))}</div>
+        <div className={clsx(classes.bold)}>{t('common.cellphone')}</div>
+        <div className={classes.pt10}>{recipientsReportData?.ClientCellphone}</div>
       </Grid>
       <Grid item md='auto' className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.smsStatus')}</div>
