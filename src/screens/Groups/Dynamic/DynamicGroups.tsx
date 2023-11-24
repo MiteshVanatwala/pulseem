@@ -203,6 +203,10 @@ const DynamicGroups = ({ classes }: any) => {
         getData();
     }, []);
 
+    useEffect(() => {
+        getData();
+    }, [serachData])
+
     const reSearch = () => {
         const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
         pageProperty.current = GetPageNyName('groups');
