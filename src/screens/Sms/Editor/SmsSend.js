@@ -74,7 +74,6 @@ const SmsSend = ({ classes, ...props }) => {
   const [pulseBool, setpulseBool] = useState(false);
   const [TimeBool, setTimeBool] = useState(false);
   const [dropIndex, setdropIndex] = useState(-1);
-  const [snackbarRecipients, setsnackbarRecipients] = useState(false);
   const [bsDot, setbsDot] = useState(false);
   const [model, setModel] = useState({ ID: 0 });
   const [togglePulse, settogglePulse] = useState(false);
@@ -193,6 +192,7 @@ const SmsSend = ({ classes, ...props }) => {
       }
       case 8: {
         setDialogType({ type: "englishLetterDialog" });
+        break;
       }
       default: {
         break;
@@ -206,6 +206,30 @@ const SmsSend = ({ classes, ...props }) => {
     if (dataSaved.fromNumber !== null && dataSaved.fromNumber !== '') {
       await dispatch(IsOTPPassed(dataSaved.fromNumber));
     }
+  }
+
+  const getSelectedCampaigns = () => {
+    const selectedCampaigns = [];
+    const seCampaigns = campaignSettings.SendExeptional.Campaigns;
+    for (var h = 0; h < seCampaigns.length; h++) {
+      const idx = h;
+      const c = finishedCampaigns.filter((c) => { return c.SMSCampaignID === seCampaigns[idx] });
+      selectedCampaigns.push(c[0]);
+    }
+
+    return selectedCampaigns;
+  }
+
+  const getSelectedGroups = () => {
+    const relationGroups = [];
+    const seGroups = campaignSettings.SendExeptional.Groups;
+    for (var j = 0; j < seGroups.length; j++) {
+      const idx = j;
+      const g = subAccountAllGroups.filter((c) => { return c.GroupID === seGroups[idx] });
+      relationGroups.push(g[0]);
+    }
+
+    return relationGroups;
   }
 
   useEffect(() => {
@@ -235,22 +259,12 @@ const SmsSend = ({ classes, ...props }) => {
       }
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Groups.length !== 0) {
         setbsDot(true);
-        const selectedGroups = [];
-        const seGroups = campaignSettings.SendExeptional.Groups;
-        for (var j = 0; j < seGroups.length; j++) {
-          const idx = j;
-          selectedGroups.push(subAccountAllGroups.filter((c) => { return c.GroupID === seGroups[idx] })[0]);
-        }
-        setFilterGroups(selectedGroups);
+        const relationGroups = getSelectedGroups();
+        setFilterGroups(relationGroups);
       }
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Campaigns.length !== 0) {
         setbsDot(true);
-        const selectedCampaigns = [];
-        const seCampaigns = campaignSettings.SendExeptional.Campaigns;
-        for (var h = 0; h < seCampaigns.length; h++) {
-          const idx = h;
-          selectedCampaigns.push(finishedCampaigns.filter((c) => { return c.SMSCampaignID === seCampaigns[idx] })[0]);
-        }
+        const selectedCampaigns = getSelectedCampaigns();
         setFilterCampaigns(selectedCampaigns);
       }
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1 && campaignSettings.SendExeptional.ExceptionalDays !== '') {
@@ -1011,7 +1025,6 @@ const SmsSend = ({ classes, ...props }) => {
       if (formIsvalid) {
         if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) {
           setbsDot(true);
-          setsnackbarRecipients(true);
         }
         else {
           setbsDot(false);
@@ -1020,7 +1033,6 @@ const SmsSend = ({ classes, ...props }) => {
     }
     else {
       if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) {
-        setsnackbarRecipients(true);
         setbsDot(true);
       }
       else {
@@ -1972,8 +1984,12 @@ const SmsSend = ({ classes, ...props }) => {
   //#region Filter modal
   const handleCancelFilter = () => {
     setDialogType(null);
-    setFilterGroups(campaignSettings?.SendExeptional?.Groups ?? []);
-    setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns ?? []);
+
+    const groups = getSelectedGroups();
+    const campaigns = getSelectedCampaigns();
+
+    setFilterGroups(groups ?? []);
+    setFilterCampaigns(campaigns ?? []);
     setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : exceptionalDays);
     setFilterValues({
       dontSend: toggleReci,
@@ -2755,21 +2771,6 @@ const SmsSend = ({ classes, ...props }) => {
       >
         <Alert severity="warning" className={classes.snackBarSevere}>
           {t("sms.FillDay")}
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        open={snackbarRecipients}
-        autoHideDuration={2000}
-        onClose={() => { setsnackbarRecipients(false); }}
-        style={{ zIndex: "9999", marginTop: "30px", fontWeight: 900, fontSize: 16 }}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        <Alert severity="success" className={classes.snackBarSuccess}>
-          {t("sms.filtersSave")}
         </Alert>
       </Snackbar>
       {otpOpen && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
