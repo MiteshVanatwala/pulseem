@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Title } from '../../../components/managment/Title';
-import { getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
+import { downloadReport, getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
 import { GroupsIcon } from '../../../assets/images/managment';
 import { ConvertClientStatus, ConvertNewsletterStatusText, SourceType } from '../../../helpers/UI/TableText';
@@ -30,6 +30,7 @@ import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
 import { EmailPreview } from '../../../components/EmailPreview';
 import { actionURL } from '../../../config';
 import { IsValidEmail, IsValidPhone } from '../../../helpers/Utils/Validations';
+import { FaFileExcel } from 'react-icons/fa';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -118,6 +119,16 @@ const RecipientReport = ({ classes }: any) => {
       setShowLoader(false);
     }
     setErrors(formErrors);
+  }
+
+  const downloadRecipientReport = async () => {
+    setShowLoader(true);
+    //@ts-ignore
+    await dispatch(downloadReport({
+      ...filterRequest,
+      IsExport: true
+    }));
+    setShowLoader(false);
   }
 
 
@@ -807,7 +818,15 @@ const RecipientReport = ({ classes }: any) => {
           {t('common.recipientGroups')}
         </div>
       </Grid>
-      <Grid item md='auto' className={clsx(classes.flexGrow1, classes.pt20)}></Grid>
+      <Grid item md='auto' className={clsx(classes.flexGrow1, classes.pt20)}>
+        {/* Download Button */}
+        {/* <Button
+          onClick={downloadRecipientReport}
+          className={clsx(classes.btn, classes.btnRounded, classes.searchButton, classes.floatRight, classes.mt1)}
+          endIcon={<FaFileExcel className={clsx(classes.f25)} />}>
+          {t('master.download')}
+        </Button> */}
+      </Grid>
     </Grid>
   }
 
