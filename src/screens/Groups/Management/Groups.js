@@ -1880,6 +1880,7 @@ const Groups = ({ classes }) => {
                             setSelectedGroups([])
                         }}
                         setLoader={setLoader}
+                        showLoader={showLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
