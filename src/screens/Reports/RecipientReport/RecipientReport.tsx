@@ -12,7 +12,7 @@ import { ConvertClientStatus, ConvertNewsletterStatusText, SourceType } from '..
 import { PreviewIcon } from '../../../assets/images/managment';
 import { FormatDate } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { RandomID, pulseemNewTab } from '../../../helpers/Functions/functions';
+import { RandomID } from '../../../helpers/Functions/functions';
 import { Preview } from '../../../components/Notifications/Preview/Preview.js';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import SummaryLine from './SummaryLine';
@@ -29,6 +29,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
 import { EmailPreview } from '../../../components/EmailPreview';
 import { actionURL } from '../../../config';
+import { IsValidEmail, IsValidPhone } from '../../../helpers/Utils/Validations';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -38,6 +39,7 @@ const RecipientReport = ({ classes }: any) => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [openGroupModal, toggleGroupModal] = useState(false);
   const [showLoader, setShowLoader] = useState<boolean>(false);
+  const [isRecipientSearched, setIsRecipientSearched] = useState<boolean>(false);
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const headCellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
@@ -96,11 +98,26 @@ const RecipientReport = ({ classes }: any) => {
     ArchiveAccess: false
   });
 
+  const [errors, setErrors] = useState<any>({
+    Email: '',
+    Cellphone: '',
+  });
+
   const getReportData = async () => {
-    setShowLoader(true);
-    //@ts-ignore
-    await dispatch(getRecipientsReportData(filterRequest));
-    setShowLoader(false);
+    const formErrors = {
+      Email: filterRequest.Email && (IsValidEmail(filterRequest.Email) ? '' : t('recipient.errors.email')),
+      Cellphone: filterRequest.Cellphone && (IsValidPhone(filterRequest.Cellphone) ? '' : t('recipient.errors.cellPhone'))
+    };
+    
+    if ((filterRequest.Email && !formErrors.Email) || (filterRequest.Cellphone && !formErrors.Cellphone)) {
+      setIsSearching(true);
+      setShowLoader(true);
+      setIsRecipientSearched(true);
+      //@ts-ignore
+      await dispatch(getRecipientsReportData(filterRequest));
+      setShowLoader(false);
+    }
+    setErrors(formErrors);
   }
 
 
@@ -114,6 +131,10 @@ const RecipientReport = ({ classes }: any) => {
       Email: '',
       Cellphone: '',
       ArchiveAccess: false
+    })
+    setErrors({
+      Email: '',
+      Cellphone: '',
     })
   }
 
@@ -656,13 +677,20 @@ const RecipientReport = ({ classes }: any) => {
           onChange={(e) => setFilterRequest({ ...filterRequest, Email: e.target.value })}
           onKeyDown={(e) => {
             if (e?.keyCode === 13) {
-              setIsSearching(true);
               getReportData()
             }
           }}
           className={clsx(classes.textField, classes.minWidth252)}
+          error={!!errors.Email}
           placeholder={t('common.Mail')}
         />
+        {
+          errors.Email && (
+            <Typography className={clsx(classes.pt5, classes.f13, classes.textRed)}>
+              {errors.Email}
+            </Typography>
+          )
+        }
       </Grid>
 
       <Grid item md={2}>
@@ -679,19 +707,25 @@ const RecipientReport = ({ classes }: any) => {
           onChange={(e) => setFilterRequest({ ...filterRequest, Cellphone: e.target.value })}
           onKeyDown={(e) => {
             if (e?.keyCode === 13) {
-              setIsSearching(true);
               getReportData();
             }
           }}
           className={clsx(classes.textField, classes.minWidth252)}
+          error={!!errors.Cellphone}
           placeholder={t('common.Cellphone')}
         />
+        {
+          errors.Cellphone && (
+            <Typography className={clsx(classes.pt5, classes.f13, classes.textRed)}>
+              {errors.Cellphone}
+            </Typography>
+          )
+        }
       </Grid>
 
       <Grid item>
         <Button
           onClick={() => {
-            setIsSearching(true);
             getReportData()
           }}
           className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
@@ -945,6 +979,15 @@ const RecipientReport = ({ classes }: any) => {
           </Grid>
         </Box>
       </>}
+      {
+        isRecipientSearched && recipientsReportData?.ClientID === 0 && (
+          <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue, classes.tableStyle)}>
+            <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+              <Grid item md={6} className={classes.flexGrow1}>{t('common.NoDataTryFilter')}</Grid>
+            </Grid>
+          </Box>
+        )
+      }
 
       {groupModal()}
       {renderDialog()}
