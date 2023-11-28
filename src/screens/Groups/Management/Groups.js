@@ -1879,7 +1879,6 @@ const Groups = ({ classes }) => {
                             setDialog(null);
                             setSelectedGroups([])
                         }}
-                        setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
