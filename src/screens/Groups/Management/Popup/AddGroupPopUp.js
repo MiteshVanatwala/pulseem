@@ -22,14 +22,13 @@ import {
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { getTestGroups } from "../../../../redux/reducers/smsSlice";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { Loader } from "../../../../components/Loader/Loader";
 
 const AddGroupPopUp = ({
     classes,
     isOpen = false,
     onCancel,
     onClose,
-    setLoader,
-    showLoader = false,
     windowSize,
     ToastMessages,
     setToastMessage,
@@ -66,6 +65,7 @@ const AddGroupPopUp = ({
     };
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
     const [saveDisabled, setSaveDisabled] = useState(false);
+    const [showLoader, setLoader] = useState(false);
 
     const handleAddGroup = async (data, callback) => {
         setSaveDisabled(true);
@@ -149,7 +149,6 @@ const AddGroupPopUp = ({
                         setNewGroupData(DEFAULT_NEW_GROUP);
                     }
                 }}
-                className={clsx(showLoader ? classes.dNone : '')}
                 renderButtons={() => (
                     <Grid container spacing={2} className={classes.linePadding} justifyContent='center'>
                         <Grid
@@ -307,6 +306,7 @@ const AddGroupPopUp = ({
                         </CustomTooltip>
                     </Box>
                 </Box>
+                <Loader isOpen={showLoader} showBackdrop={true} />
             </BaseDialog>
         </>
     );
