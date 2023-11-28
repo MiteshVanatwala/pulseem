@@ -1663,6 +1663,17 @@ const ClientSearchResult = ({ props, classes }) => {
       LastSendDate,
       snt_OpeningDate
     } = row;
+    
+    const switchStatus = (isEmail) => {
+      if (Email && isEmail && Email !== '') {
+        return t(ConvertClientStatus(Status, SourceType.EMAIL))
+      }
+      else if (Cellphone && !isEmail && Cellphone !== '') {
+        return t(ConvertClientStatus(SmsStatus, SourceType.SMS))
+      }
+      return t("emailStatus.noStatus")
+    }
+
     return (
       <TableRow key={ClientID} component="div" classes={rowStyle}>
         <TableCell
@@ -1691,7 +1702,7 @@ const ClientSearchResult = ({ props, classes }) => {
                 <Typography >{Email}</Typography>
               </Box>
               <Box className={clsx(classes.flex4)}>
-                <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+                <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(true)}</Typography>
               </Box>
             </Box>
           </Box>
@@ -1702,7 +1713,7 @@ const ClientSearchResult = ({ props, classes }) => {
                 <Typography >{Cellphone}</Typography>
               </Box>
               <Box className={clsx(classes.flex4)}>
-                <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+                <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(false)}</Typography>
               </Box>
             </Box>
           </Box>

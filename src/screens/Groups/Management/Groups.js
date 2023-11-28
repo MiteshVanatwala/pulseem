@@ -1469,12 +1469,12 @@ const Groups = ({ classes }) => {
                                 {
 
                                     component: (
-                                        <NameValueGridStructure
+                                        accountFeatures.includes("6") && PendingClients > 0 &&  <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Pending"),
-                                                value: PendingSmsClients?.toLocaleString() || 0,
+                                                value: PendingClients?.toLocaleString() || 0,
                                                 classes: {
                                                     name: colorTextStyle.grey,
                                                     value: colorTextStyle.grey,
@@ -1491,7 +1491,7 @@ const Groups = ({ classes }) => {
                                                         }
                                                     )}`
                                                 },
-                                                onClick: (PendingSmsClients || 0) > 0 ? (e) => {
+                                                onClick: (PendingClients || 0) > 0 ? (e) => {
                                                     e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
@@ -1700,12 +1700,12 @@ const Groups = ({ classes }) => {
                                 {
 
                                     component: (
-                                        accountFeatures.includes("6") && <NameValueGridStructure
+                                        accountFeatures.includes("6") && PendingSmsClients > 0 && <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Pending"),
-                                                value: PendingClients?.toLocaleString() || 0,
+                                                value: PendingSmsClients?.toLocaleString() || 0,
                                                 classes: {
                                                     name: colorTextStyle.grey,
                                                     value: colorTextStyle.grey,
@@ -1722,7 +1722,7 @@ const Groups = ({ classes }) => {
                                                         }
                                                     )}`
                                                 },
-                                                onClick: (PendingClients || 0) > 0 ? (e) => {
+                                                onClick: (PendingSmsClients || 0) > 0 ? (e) => {
                                                     e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
