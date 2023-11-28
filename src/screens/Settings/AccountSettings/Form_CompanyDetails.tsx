@@ -132,11 +132,11 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    const newSettings = { ...Settings, TwoFactorAuthEnabled: accountSettings?.AccountFeatures?.indexOf(45) === -1 } as AccountSettings;
+    const newSettings = { ...Settings, TwoFactorAuthEnabled: accountFeatures?.indexOf(45) === -1 } as AccountSettings;
     setCompanyDetails(newSettings);
     if (Settings)
       handleQueryString2FA();
-  }, [accountSettings, Settings]);
+  }, [accountFeatures, Settings]);
 
   useEffect(() => {
     if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {
