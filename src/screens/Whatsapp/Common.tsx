@@ -26,6 +26,7 @@ import { buttonTypes, fileTypes } from './Constant';
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
 //This regex will test dynamic field having one digits in side (i.e. {{1}});
 const dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
+const dynamicFieldNewLine = new RegExp('^\n$');
 
 export const getDynamicFields = (text: string) => {
 	let indices = [];
@@ -35,6 +36,9 @@ export const getDynamicFields = (text: string) => {
 		}
 		if (dynamicFieldL6.test(text?.slice(i, i + 6))) {
 			indices.push(text?.slice(i, i + 6));
+		}
+		if (dynamicFieldNewLine.test(text?.slice(i, i + 1))) {
+			indices.push(text?.slice(i, i + 1));
 		}
 	}
 	return indices;

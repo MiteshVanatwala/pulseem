@@ -116,5 +116,6 @@
 		"no": "No"
 	},
 	"codeExpirationTime": "Code Expiration Time",
-	"codeExpirationMessage": "Code Expiration time can range from 0 to 90 minutes"
+	"codeExpirationMessage": "Code Expiration time can range from 0 to 90 minutes",
+	"replyRemoveToUnsubscribe": "Reply “remove” to unsubscribe"
 }

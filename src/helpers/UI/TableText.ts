@@ -175,7 +175,7 @@ export const ConvertNewsletterStatusText = (value: string) => {
                 return "common.Sent";
             }
             case "5": {
-                return "common.Canceled";
+                return "common.cancelled";
             }
             case "6": {
                 return "common.Optin";

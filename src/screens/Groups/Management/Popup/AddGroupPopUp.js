@@ -29,6 +29,7 @@ const AddGroupPopUp = ({
     onCancel,
     onClose,
     setLoader,
+    showLoader = false,
     windowSize,
     ToastMessages,
     setToastMessage,
@@ -148,6 +149,7 @@ const AddGroupPopUp = ({
                         setNewGroupData(DEFAULT_NEW_GROUP);
                     }
                 }}
+                className={clsx(showLoader ? classes.dNone : '')}
                 renderButtons={() => (
                     <Grid container spacing={2} className={classes.linePadding} justifyContent='center'>
                         <Grid

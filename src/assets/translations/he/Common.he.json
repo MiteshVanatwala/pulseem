@@ -18,6 +18,7 @@
   "Immediate": "מיידית",
   "NoOpened": "לא נפתחו",
   "Opened": "נפתחו",
+  "UnOpened": "לא נפתחו",
   "OverallSendInfo": "הפצת הודעת SMS ללקוחות בקרטריון הנבחר שקבלו קמפיין דיוור אלקטרוני להשלמת שיווק כולל",
   "Partners": "תכנית שותפים",
   "PulseemKosher": "מערכת שומרת שבת חגים יהודיים",
@@ -659,5 +660,13 @@
   "numberOfClientsInGroup": "מספר נמענים בקבוצה",
   "daily2AM": "יומי (2 בלילה)",
   "weekly2AM": "שבועי (שני 2 בלילה)",
-  "allTheTimes": "כל הזמן"
+  "allTheTimes": "כל הזמן",
+  "newsletterCampaignName": "שם הקמפיין",
+  "newsletterCampaignDates": "תאריך הקמפיין",
+  "newsletterCampaignStatus": "סטטוס הקמפיין",
+  "newsletterCampaignOpened": "פתיחות לקמפיין",
+  "smsCampaignName": "שם קמפיין SMS",
+  "smsCampaignDates": "תאריך קמפיין SMS",
+  "smsCampaignStatus": "סטטוס קמפיין SMS",
+  "smsCampaignClicked": "הקלקות לקמפיין SMS"
 }

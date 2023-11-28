@@ -113,16 +113,19 @@ const WhatsappTemplateEditor = ({
 	];
 
 	const isDisableButton = (buttonTitle: string) => {
-		if (buttonTitle?.includes('callToAction') && buttonType === 'quickReply') {
+		if (buttonTitle?.indexOf('callToAction') > -1 && buttonType === 'quickReply') {
 			return true;
 		} else if (
-			buttonTitle?.includes('quickReplay') &&
+			buttonTitle?.indexOf('quickReplay') > -1 &&
 			(buttonType === 'callToAction' || fileData?.fileLink?.length > 0)
 		) {
 			return true;
 		} else if (
-			buttonTitle?.includes('removalText') &&
-			templateText?.includes('Reply “remove” to unsubscribe')
+			buttonTitle?.indexOf('removalText') > -1 &&
+			(
+				templateText?.toLowerCase().indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'en' }).toLowerCase()) > -1
+				|| templateText?.toLowerCase().indexOf(translator('whatsapp.replyRemoveToUnsubscribe', { lng: 'he' }).toLowerCase()) > -1
+			)
 		) {
 			return true;
 		}

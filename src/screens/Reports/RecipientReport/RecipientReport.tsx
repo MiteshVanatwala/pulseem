@@ -5,14 +5,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Title } from '../../../components/managment/Title';
-import { getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
+import { downloadRecipientsReportData, getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
 import { GroupsIcon } from '../../../assets/images/managment';
 import { ConvertClientStatus, ConvertNewsletterStatusText, SourceType } from '../../../helpers/UI/TableText';
 import { PreviewIcon } from '../../../assets/images/managment';
 import { FormatDate } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { RandomID, pulseemNewTab } from '../../../helpers/Functions/functions';
+import { RandomID } from '../../../helpers/Functions/functions';
 import { Preview } from '../../../components/Notifications/Preview/Preview.js';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import SummaryLine from './SummaryLine';
@@ -29,6 +29,11 @@ import Toast from '../../../components/Toast/Toast.component';
 import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
 import { EmailPreview } from '../../../components/EmailPreview';
 import { actionURL } from '../../../config';
+import { IsValidEmail, IsValidPhone } from '../../../helpers/Utils/Validations';
+import { FaFileExcel } from 'react-icons/fa';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -38,6 +43,7 @@ const RecipientReport = ({ classes }: any) => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [openGroupModal, toggleGroupModal] = useState(false);
   const [showLoader, setShowLoader] = useState<boolean>(false);
+  const [isRecipientSearched, setIsRecipientSearched] = useState<boolean>(false);
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const headCellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
@@ -96,11 +102,84 @@ const RecipientReport = ({ classes }: any) => {
     ArchiveAccess: false
   });
 
+  const [errors, setErrors] = useState<any>({
+    Email: '',
+    Cellphone: '',
+  });
+
   const getReportData = async () => {
+    const formErrors = {
+      Email: filterRequest.Email && (IsValidEmail(filterRequest.Email) ? '' : t('recipient.errors.email')),
+      Cellphone: filterRequest.Cellphone && (IsValidPhone(filterRequest.Cellphone) ? '' : t('recipient.errors.cellPhone'))
+    };
+    
+    if ((filterRequest.Email && !formErrors.Email) || (filterRequest.Cellphone && !formErrors.Cellphone)) {
+      setIsSearching(true);
+      setShowLoader(true);
+      setIsRecipientSearched(true);
+      //@ts-ignore
+      await dispatch(getRecipientsReportData(filterRequest));
+      setShowLoader(false);
+    }
+    setErrors(formErrors);
+  }
+
+  const downloadRecipientReport = async (format: string) => {
+    setDialogType(null);
     setShowLoader(true);
     //@ts-ignore
-    await dispatch(getRecipientsReportData(filterRequest));
-    setShowLoader(false);
+    const reportData = await dispatch(downloadRecipientsReportData({
+      ...filterRequest,
+      IsExport: true
+    })) as any;
+
+    const { 
+      Campaigns = [],
+      SmsCampaigns = []
+    } = reportData?.payload?.Data;
+    
+    const CampaignsLength = Campaigns.length;
+    const SmsCampaignsLength = SmsCampaigns.length;
+    const exportData = [];
+
+    if (CampaignsLength || SmsCampaignsLength) {
+      for (let ind=0, len=Math.max(CampaignsLength, SmsCampaignsLength); ind<len; ind++) {
+        exportData.push({
+          [`${t('common.newsletterCampaignName')}`]: ind < CampaignsLength ? `${Campaigns[ind]['Name']}` : '',
+          [`${t('common.newsletterCampaignDates')}`]: ind < CampaignsLength ? FormatDate(Campaigns[ind]['SendDate']) : '',
+          [`${t('common.newsletterCampaignStatus')}`]: ind < CampaignsLength ? t(ConvertNewsletterStatusText(Campaigns[ind]['Status'])) : '',
+          [`${t('common.newsletterCampaignOpened')}`]: ind < CampaignsLength ? t(`common.${Campaigns[ind]['OpeningCount'] > 0 ? 'Yes' : 'No'}`) : '',
+          "": "",
+          [`${t('common.smsCampaignName')}`]: ind < SmsCampaignsLength ? `${SmsCampaigns[ind]['Name']}` : '',
+          [`${t('common.smsCampaignDates')}`]: ind < SmsCampaignsLength ? FormatDate(SmsCampaigns[ind]['SendDate']) : '',
+          [`${t('common.smsCampaignStatus')}`]: ind < SmsCampaignsLength ? renderSMSStatus(SmsCampaigns[ind]['SmsStatus']) : '',
+          [`${t('common.smsCampaignClicked')}`]: ind < SmsCampaignsLength ? t(`common.${SmsCampaigns[ind]['ClicksCount'] > 0 ? 'Yes' : 'No'}`) : ''
+        })
+      }
+  
+      try {
+        await ExportFile({
+          data: exportData,
+          fileName: 'CampaignReport',
+          exportType: format,
+          fields: []
+        });
+      } catch (error) {
+        setToastMessage({
+          ...ToastMessages.ERROR,
+          message: t('common.fileDownloadError'),
+        })
+      }
+      finally {
+        setShowLoader(false);
+      }
+    } else {
+      setShowLoader(false);
+      setToastMessage({
+        ...ToastMessages.ERROR,
+        message: t('common.NoData'),
+      })
+    }
   }
 
 
@@ -114,6 +193,10 @@ const RecipientReport = ({ classes }: any) => {
       Email: '',
       Cellphone: '',
       ArchiveAccess: false
+    })
+    setErrors({
+      Email: '',
+      Cellphone: '',
     })
   }
 
@@ -343,6 +426,20 @@ const RecipientReport = ({ classes }: any) => {
         {t(statuses[status])}
       </Typography>
     )
+  }
+
+  const renderSMSStatus = (status: number) => {
+    const statuses = {
+      1: 'common.Created',
+      2: 'common.Sending',
+      3: 'campaigns.Stopped',
+      4: 'common.Sent',
+      5: 'campaigns.Canceled',
+      6: 'campaigns.Optin',
+      7: 'campaigns.Approve'
+    } as any;
+
+    return t(statuses[status]);
   }
 
 
@@ -656,13 +753,20 @@ const RecipientReport = ({ classes }: any) => {
           onChange={(e) => setFilterRequest({ ...filterRequest, Email: e.target.value })}
           onKeyDown={(e) => {
             if (e?.keyCode === 13) {
-              setIsSearching(true);
               getReportData()
             }
           }}
           className={clsx(classes.textField, classes.minWidth252)}
+          error={!!errors.Email}
           placeholder={t('common.Mail')}
         />
+        {
+          errors.Email && (
+            <Typography className={clsx(classes.pt5, classes.f13, classes.textRed)}>
+              {errors.Email}
+            </Typography>
+          )
+        }
       </Grid>
 
       <Grid item md={2}>
@@ -679,19 +783,25 @@ const RecipientReport = ({ classes }: any) => {
           onChange={(e) => setFilterRequest({ ...filterRequest, Cellphone: e.target.value })}
           onKeyDown={(e) => {
             if (e?.keyCode === 13) {
-              setIsSearching(true);
               getReportData();
             }
           }}
           className={clsx(classes.textField, classes.minWidth252)}
+          error={!!errors.Cellphone}
           placeholder={t('common.Cellphone')}
         />
+        {
+          errors.Cellphone && (
+            <Typography className={clsx(classes.pt5, classes.f13, classes.textRed)}>
+              {errors.Cellphone}
+            </Typography>
+          )
+        }
       </Grid>
 
       <Grid item>
         <Button
           onClick={() => {
-            setIsSearching(true);
             getReportData()
           }}
           className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
@@ -747,12 +857,12 @@ const RecipientReport = ({ classes }: any) => {
         <div className={classes.pt10}>{recipientsReportData?.ClientEmail}</div>
       </Grid>
       <Grid item md='auto' className={classes.flexGrow1}>
-        <div className={clsx(classes.bold)}>{t('common.cellphone')}</div>
-        <div className={classes.pt10}>{recipientsReportData?.ClientCellphone}</div>
+        <div className={clsx(classes.bold)}>{t('common.emailStatus')}</div>
+        <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.EMAIL, recipientsReportData?.ClientStatus))}</div>
       </Grid>
       <Grid item md='auto' className={classes.flexGrow1}>
-        <div className={clsx(classes.bold)}>{t('common.Status')}</div>
-        <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.EMAIL, recipientsReportData?.ClientStatus))}</div>
+        <div className={clsx(classes.bold)}>{t('common.cellphone')}</div>
+        <div className={classes.pt10}>{recipientsReportData?.ClientCellphone}</div>
       </Grid>
       <Grid item md='auto' className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.smsStatus')}</div>
@@ -762,7 +872,7 @@ const RecipientReport = ({ classes }: any) => {
         <div className={clsx(classes.bold)}>{t('common.createdDate')}</div>
         <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(dateTimeFormat)}</div>
       </Grid>
-      <Grid item md='auto' className={clsx(classes.flexGrow1, classes.pt15)}>
+      <Grid item md={'auto'} className={clsx(classes.flexGrow1, classes.pt15)}>
         {/* @ts-ignore */}
         <img src={GroupsIcon} style={{ height: 20 }} alt="" />
         <div
@@ -773,7 +883,14 @@ const RecipientReport = ({ classes }: any) => {
           {t('common.recipientGroups')}
         </div>
       </Grid>
-      <Grid item md='auto' className={clsx(classes.flexGrow1, classes.pt20)}></Grid>
+      <Grid item md={1} className={clsx(classes.flexGrow1, classes.pt20)}>
+        <Button
+          onClick={() => setDialogType({ type: 'exportFormat', data: ''})}
+          className={clsx(classes.btn, classes.btnRounded, classes.searchButton, classes.floatRight, classes.mt1)}
+          endIcon={<FaFileExcel className={clsx(classes.f25)} />}>
+          {t('master.download')}
+        </Button>
+      </Grid>
     </Grid>
   }
 
@@ -858,6 +975,7 @@ const RecipientReport = ({ classes }: any) => {
         whatsapp: getWhatsappPreviewDialog(),
         newsletterpreview: getNewsletterPreviewDialog(data),
 			}
+      if (dialogContent[type] === undefined) return <></>;
 			const currentDialog: any = (type && dialogContent[type]) || {};
 			return (
 				dialogType && <BaseDialog
@@ -945,7 +1063,27 @@ const RecipientReport = ({ classes }: any) => {
           </Grid>
         </Box>
       </>}
+      {
+        isRecipientSearched && recipientsReportData?.ClientID === 0 && (
+          <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue, classes.tableStyle)}>
+            <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+              <Grid item md={6} className={classes.flexGrow1}>{t('common.NoDataTryFilter')}</Grid>
+            </Grid>
+          </Box>
+        )
+      }
 
+      <ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialogType?.type === 'exportFormat'}
+        title={t('campaigns.exportFile')}
+        radioTitle={t('common.SelectFormat')}
+        onConfirm={(format: string) => downloadRecipientReport(format)}
+        onCancel={() => setDialogType(null)}
+        cookieName={'exportFormat'}
+        defaultValue="xls"
+        options={ExportFileTypes}
+      />
       {groupModal()}
       {renderDialog()}
       {renderToast()}

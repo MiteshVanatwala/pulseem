@@ -19,6 +19,7 @@
   "Immediate": "Immediate",
   "NoOpened": "Not Opened",
   "Opened": "Opened",
+  "UnOpened": "Unopened",
   "OverallSendInfo": "Send SMS to recipients in selected criteria that received email campaign for complete overall marketing.",
   "Partners": "Partners Program",
   "PulseemKosher": "System keeps the Sabbath and Jewish holidays",
@@ -667,5 +668,13 @@
   "numberOfClientsInGroup": "Number Of Clients In Group",
   "daily2AM": "Daily (2 AM)",
   "weekly2AM": "Weekly (Monday 2 AM)",
-  "allTheTimes": "All The Times"
+  "allTheTimes": "All The Times",
+  "newsletterCampaignName": "Newsletter Campaign Name",
+  "newsletterCampaignDates": "Newsletter Campaign Date",
+  "newsletterCampaignStatus": "Newsletter Campaign Status",
+  "newsletterCampaignOpened": "Newsletter Campaign Opened",
+  "smsCampaignName": "SMS Campaign Name",
+  "smsCampaignDates": "SMS Campaign Date",
+  "smsCampaignStatus": "SMS Campaign Status",
+  "smsCampaignClicked": "SMS Campaign Clicked"
 }
