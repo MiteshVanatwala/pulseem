@@ -3814,5 +3814,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   marginInlineEnd15: {
     marginInlineEnd: 15
+  },
+  verticalAlignTop: {
+    verticalAlign: 'top'
   }
 });

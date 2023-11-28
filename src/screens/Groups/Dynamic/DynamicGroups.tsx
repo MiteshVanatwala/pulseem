@@ -205,6 +205,10 @@ const DynamicGroups = ({ classes }: any) => {
         getData();
     }, []);
 
+    useEffect(() => {
+        getData();
+    }, [serachData])
+
     const reSearch = () => {
         const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
         pageProperty.current = GetPageNyName('groups');
@@ -1507,8 +1511,18 @@ const DynamicGroups = ({ classes }: any) => {
                     } as never}
                 >
                     <TableBody>
-                        {groupData.Groups
-                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+                        {
+                            groupData.Groups.length
+                            ? groupData.Groups
+                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)
+                            : (
+                                <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
+                                    <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+                                        {t('common.NoDataTryFilter')}
+                                    </Grid>
+                                </Box>
+                            )
+                        }
                     </TableBody>
                 </DataTable>
             )
@@ -1814,7 +1828,6 @@ const DynamicGroups = ({ classes }: any) => {
                             setDialog(null);
                             setSelectedGroups([])
                         }}
-                        setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}

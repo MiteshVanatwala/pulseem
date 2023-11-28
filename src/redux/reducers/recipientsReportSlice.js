@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { ExportFile } from '../../helpers/Export/ExportFile';
 
 export const getRecipientsReport = createAsyncThunk(
     'dashboard/GetRecipientsReport', async (_, thunkAPI) => {
@@ -13,6 +14,18 @@ export const getRecipientsReport = createAsyncThunk(
 
 export const getRecipientsReportData = createAsyncThunk(
     'RecipientReport/Get',
+    async (settings, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`RecipientReport/Get`, settings);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+export const downloadRecipientsReportData = createAsyncThunk(
+    'DownloadRecipientReport/Get',
     async (settings, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.post(`RecipientReport/Get`, settings);

@@ -39,7 +39,7 @@ const SummaryLine = ({ classes, Stats, CampaignType }: SummaryObj) => {
                         <Box className={classes.pt10}>{Stats?.Opened}</Box>
                     </Grid>
                     <Grid item md={2} className={classes.flexGrow1}>
-                        <Box className={clsx(classes.bold)}>{t('common.NoOpened')}</Box>
+                        <Box className={clsx(classes.bold)}>{t('common.UnOpened')}</Box>
                         <Box className={classes.pt10}>{Stats?.UnOpened}</Box>
                     </Grid>
                 </>}

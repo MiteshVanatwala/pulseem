@@ -24,6 +24,12 @@ const Buttons = ({
 	);
 	const { campaignID } = useParams();
 	const navigate = useNavigate();
+	const queryParams = new URLSearchParams(window.location.search)
+	let FromAutomation = queryParams.get("FromAutomation") || false
+	if (FromAutomation === 'false') FromAutomation = false;
+	const NodeToEdit = queryParams.get("NodeToEdit") || false
+	let isSendCampaign = queryParams.get("new") || false
+	if (isSendCampaign === 'false') isSendCampaign = false;
 
 	const handlePreviousPage = () => {
 		// if (locationState?.from === 'edit/page1' && campaignID) {
@@ -33,7 +39,12 @@ const Buttons = ({
 		// } else {
 		// 	navigate(-1);
 		// }
-		navigate(`/react/whatsapp/campaign/edit/page1/${campaignID}`, {
+		let isAutomation = '';
+		if (!!FromAutomation) {
+			isAutomation = `?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&new=${isSendCampaign}`;
+		}
+
+		navigate(`/react/whatsapp/campaign/edit/page1/${campaignID}${isAutomation}`, {
 			state: { from: `edit/page1/${campaignID}` },
 		});
 	};
