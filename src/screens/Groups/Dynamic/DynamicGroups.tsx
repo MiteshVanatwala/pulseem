@@ -1824,8 +1824,6 @@ const DynamicGroups = ({ classes }: any) => {
                             setDialog(null);
                             setSelectedGroups([])
                         }}
-                        setLoader={setLoader}
-                        showLoader={showLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}

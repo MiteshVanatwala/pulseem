@@ -1880,7 +1880,6 @@ const ClientSearchResult = ({ classes }) => {
             isOpen={dialog === DialogType.ADD_GROUP}
             onClose={() => setDialog(null)}
             setLoader={setLoader}
-            showLoader={showLoader}
             windowSize={windowSize}
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
