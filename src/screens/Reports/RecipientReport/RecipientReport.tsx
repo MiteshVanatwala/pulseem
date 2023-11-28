@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Title } from '../../../components/managment/Title';
-import { downloadReport, getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
+import { downloadRecipientsReportData, getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
 import { GroupsIcon } from '../../../assets/images/managment';
 import { ConvertClientStatus, ConvertNewsletterStatusText, SourceType } from '../../../helpers/UI/TableText';
@@ -31,6 +31,9 @@ import { EmailPreview } from '../../../components/EmailPreview';
 import { actionURL } from '../../../config';
 import { IsValidEmail, IsValidPhone } from '../../../helpers/Utils/Validations';
 import { FaFileExcel } from 'react-icons/fa';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -121,14 +124,62 @@ const RecipientReport = ({ classes }: any) => {
     setErrors(formErrors);
   }
 
-  const downloadRecipientReport = async () => {
+  const downloadRecipientReport = async (format: string) => {
+    setDialogType(null);
     setShowLoader(true);
     //@ts-ignore
-    await dispatch(downloadReport({
+    const reportData = await dispatch(downloadRecipientsReportData({
       ...filterRequest,
       IsExport: true
-    }));
-    setShowLoader(false);
+    })) as any;
+
+    const { 
+      Campaigns = [],
+      SmsCampaigns = []
+    } = reportData?.payload?.Data;
+    
+    const CampaignsLength = Campaigns.length;
+    const SmsCampaignsLength = SmsCampaigns.length;
+    const exportData = [];
+
+    if (CampaignsLength || SmsCampaignsLength) {
+      for (let ind=0, len=Math.max(CampaignsLength, SmsCampaignsLength); ind<len; ind++) {
+        exportData.push({
+          [`${t('common.newsletterCampaignName')}`]: ind < CampaignsLength ? `${Campaigns[ind]['Name']}` : '',
+          [`${t('common.newsletterCampaignDates')}`]: ind < CampaignsLength ? FormatDate(Campaigns[ind]['SendDate']) : '',
+          [`${t('common.newsletterCampaignStatus')}`]: ind < CampaignsLength ? t(ConvertNewsletterStatusText(Campaigns[ind]['Status'])) : '',
+          [`${t('common.newsletterCampaignOpened')}`]: ind < CampaignsLength ? t(`common.${Campaigns[ind]['OpeningCount'] > 0 ? 'Yes' : 'No'}`) : '',
+          "": "",
+          [`${t('common.smsCampaignName')}`]: ind < SmsCampaignsLength ? `${SmsCampaigns[ind]['Name']}` : '',
+          [`${t('common.smsCampaignDates')}`]: ind < SmsCampaignsLength ? FormatDate(SmsCampaigns[ind]['SendDate']) : '',
+          [`${t('common.smsCampaignStatus')}`]: ind < SmsCampaignsLength ? renderSMSStatus(SmsCampaigns[ind]['SmsStatus']) : '',
+          [`${t('common.smsCampaignClicked')}`]: ind < SmsCampaignsLength ? t(`common.${SmsCampaigns[ind]['ClicksCount'] > 0 ? 'Yes' : 'No'}`) : ''
+        })
+      }
+  
+      try {
+        await ExportFile({
+          data: exportData,
+          fileName: 'CampaignReport',
+          exportType: format,
+          fields: []
+        });
+      } catch (error) {
+        setToastMessage({
+          ...ToastMessages.ERROR,
+          message: t('common.fileDownloadError'),
+        })
+      }
+      finally {
+        setShowLoader(false);
+      }
+    } else {
+      setShowLoader(false);
+      setToastMessage({
+        ...ToastMessages.ERROR,
+        message: t('common.NoData'),
+      })
+    }
   }
 
 
@@ -375,6 +426,20 @@ const RecipientReport = ({ classes }: any) => {
         {t(statuses[status])}
       </Typography>
     )
+  }
+
+  const renderSMSStatus = (status: number) => {
+    const statuses = {
+      1: 'common.Created',
+      2: 'common.Sending',
+      3: 'campaigns.Stopped',
+      4: 'common.Sent',
+      5: 'campaigns.Canceled',
+      6: 'campaigns.Optin',
+      7: 'campaigns.Approve'
+    } as any;
+
+    return t(statuses[status]);
   }
 
 
@@ -807,7 +872,7 @@ const RecipientReport = ({ classes }: any) => {
         <div className={clsx(classes.bold)}>{t('common.createdDate')}</div>
         <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(dateTimeFormat)}</div>
       </Grid>
-      <Grid item md='auto' className={clsx(classes.flexGrow1, classes.pt15)}>
+      <Grid item md={'auto'} className={clsx(classes.flexGrow1, classes.pt15)}>
         {/* @ts-ignore */}
         <img src={GroupsIcon} style={{ height: 20 }} alt="" />
         <div
@@ -818,14 +883,13 @@ const RecipientReport = ({ classes }: any) => {
           {t('common.recipientGroups')}
         </div>
       </Grid>
-      <Grid item md='auto' className={clsx(classes.flexGrow1, classes.pt20)}>
-        {/* Download Button */}
-        {/* <Button
-          onClick={downloadRecipientReport}
+      <Grid item md={1} className={clsx(classes.flexGrow1, classes.pt20)}>
+        <Button
+          onClick={() => setDialogType({ type: 'exportFormat', data: ''})}
           className={clsx(classes.btn, classes.btnRounded, classes.searchButton, classes.floatRight, classes.mt1)}
           endIcon={<FaFileExcel className={clsx(classes.f25)} />}>
           {t('master.download')}
-        </Button> */}
+        </Button>
       </Grid>
     </Grid>
   }
@@ -911,6 +975,7 @@ const RecipientReport = ({ classes }: any) => {
         whatsapp: getWhatsappPreviewDialog(),
         newsletterpreview: getNewsletterPreviewDialog(data),
 			}
+      if (dialogContent[type] === undefined) return <></>;
 			const currentDialog: any = (type && dialogContent[type]) || {};
 			return (
 				dialogType && <BaseDialog
@@ -1008,6 +1073,17 @@ const RecipientReport = ({ classes }: any) => {
         )
       }
 
+      <ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialogType?.type === 'exportFormat'}
+        title={t('campaigns.exportFile')}
+        radioTitle={t('common.SelectFormat')}
+        onConfirm={(format: string) => downloadRecipientReport(format)}
+        onCancel={() => setDialogType(null)}
+        cookieName={'exportFormat'}
+        defaultValue="xls"
+        options={ExportFileTypes}
+      />
       {groupModal()}
       {renderDialog()}
       {renderToast()}

@@ -24,21 +24,17 @@ export const getRecipientsReportData = createAsyncThunk(
     }
 );
 
-export const downloadReport = createAsyncThunk(
-    'RecipientReport/Get',
+export const downloadRecipientsReportData = createAsyncThunk(
+    'DownloadRecipientReport/Get',
     async (settings, thunkAPI) => {
-      try {
-        const response = await PulseemReactInstance.post(`RecipientReport/Get`, settings);
-        const exportOptions = {
-          data: JSON.parse(response.data),
-          fileName: 'recipientReport',
-          exportType: 'xls'
+        try {
+            const response = await PulseemReactInstance.post(`RecipientReport/Get`, settings);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
         }
-        ExportFile(exportOptions);
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-})
+    }
+);
 
 const initialState = {
     recipientsReport: null,

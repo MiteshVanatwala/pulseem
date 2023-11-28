@@ -667,5 +667,13 @@
   "updateGroupRecipientsEvery": "Update Group Recipients Every",
   "numberOfClientsInGroup": "Number Of Clients In Group",
   "daily2AM": "Daily (2 AM)",
-  "weekly2AM": "Weekly (Monday 2 AM)"
+  "weekly2AM": "Weekly (Monday 2 AM)",
+  "newsletterCampaignName": "Newsletter Campaign Name",
+  "newsletterCampaignDates": "Newsletter Campaign Date",
+  "newsletterCampaignStatus": "Newsletter Campaign Status",
+  "newsletterCampaignOpened": "Newsletter Campaign Opened",
+  "smsCampaignName": "SMS Campaign Name",
+  "smsCampaignDates": "SMS Campaign Date",
+  "smsCampaignStatus": "SMS Campaign Status",
+  "smsCampaignClicked": "SMS Campaign Clicked"
 }
