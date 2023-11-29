@@ -697,7 +697,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			}
 			isValidated = false;
 		}
-		if (getDynamicFields(templateData?.templateText)?.length !==
+		
+		if (getDynamicFields(templateData?.templateText)?.filter((v) => v !== '\n')?.length !==
 				updatedDynamicVariable?.length
 		) {
 			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
