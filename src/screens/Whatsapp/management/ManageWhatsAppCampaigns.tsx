@@ -585,14 +585,14 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const renderCellIcons = (row: campaignDataProps) => {
-		const { Status, AutomationID, Groups } = row;
+		const { Status, AutomationID, Groups, AutomationTriggerInActive } = row;
 		const iconsMap: ManagmentIconProps[] = [
 			{
 				key: 'send',
 				buttonKey: 'send',
 				icon: SendGreenIcon,
 				lable: translator('campaigns.imgSendResource1.ToolTip'),
-				remove: Status !== 1 || AutomationID !== 0,
+				remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
 				rootClass: classes.sendIcon,
 				textClass: classes.sendIconText,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
