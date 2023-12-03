@@ -541,7 +541,7 @@ const SmsCreator = ({ classes }) => {
 			if (id) {
 				const smsQuickSendData = {
 					...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-						SubAccountID: accountSettings.SubAccountId, AccountID: accountSettings.AccountID, SmsCampaignID: id, Credits: messageCount,
+						SmsCampaignID: id, Credits: messageCount,
 						TotalRecipients: 1
 					}
 				}
@@ -554,7 +554,7 @@ const SmsCreator = ({ classes }) => {
 				if (smsCampaignId !== "") {
 					const smsQuickSendData = {
 						...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-							SubAccountID: accountSettings.SubAccountId, AccountID: accountSettings.AccountID, SmsCampaignID: smsCampaignId, Credits: messageCount,
+							SmsCampaignID: smsCampaignId, Credits: messageCount,
 							TotalRecipients: 1
 						}
 					}
@@ -567,7 +567,7 @@ const SmsCreator = ({ classes }) => {
 				else {
 					const smsQuickSendData = {
 						...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-							SubAccountID: accountSettings.SubAccountId, AccountID: accountSettings.AccountID, SmsCampaignID: -1, Credits: messageCount,
+							SmsCampaignID: -1, Credits: messageCount,
 							TotalRecipients: 1
 						}
 					}
@@ -1194,7 +1194,7 @@ const SmsCreator = ({ classes }) => {
 
 	const onSave = async (isSave, returnToAutomation = false) => {
 		linkCalculation();
-		const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: accountSettings.AccountID, SubAccountID: accountSettings.SubAccountId, SmsCampaignID: smsCampaignId }
+		const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, SmsCampaignID: smsCampaignId }
 		setLoader(true);
 		let r = await dispatch(smsSave(payloadToPush));
 		const campaignId = r.payload.Message;
