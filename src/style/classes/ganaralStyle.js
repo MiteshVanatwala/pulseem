@@ -2026,7 +2026,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textTransform: "capitalize",
     minWidth: 120,
     height: 'auto',
-    color: '#ff2c44',
+    // color: '#ff2c44',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     background: '#e4e4e4',
@@ -2200,9 +2200,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb25: {
     marginBottom: 25,
-  },
-  mt25: {
-    marginTop: 25,
   },
   fullSize: {
     height: "100%",

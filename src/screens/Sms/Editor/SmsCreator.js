@@ -41,7 +41,7 @@ import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
-import { BsTrash, BsInfoCircle } from "react-icons/bs";
+import { BsTrash } from "react-icons/bs";
 import { Loader } from '../../../components/Loader/Loader';
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
@@ -131,7 +131,7 @@ const SmsCreator = ({ classes }) => {
     extraData
   } = useSelector((state) => state.sms);
   const { accountSettings, accountFeatures } = useSelector((state) => state.common)
-  const location = useLocation();
+//   const location = useLocation();
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -1151,7 +1151,7 @@ const SmsCreator = ({ classes }) => {
 		if (validationCheck()) {
 			if (isSiteTracking === true) {
 				const smsMessagValue = smsMessageRef.current.value;
-				if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') == -1) {
+				if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') === -1) {
 					let text = smsModel.Text;
 					const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
 					const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');

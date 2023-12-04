@@ -1629,7 +1629,7 @@ const DynamicGroups = ({ classes }: any) => {
 
                 default:
                 case 500: {
-                    setResponseMessage({ title: '', message: t("common.somethingWentWrong") })
+                    setResponseMessage({ title: '', message: t("common.somethingWentWrong") } as any)
                     setDialog(DialogType.MESSAGE);
                     break;
                 }
