@@ -88,10 +88,21 @@ export const saveLandingPage = createAsyncThunk(
     }
   });
 
+export const getLPBeeToken = createAsyncThunk(
+  '/CampaignEditor/GetBeeLPToken/',
+  async (_, thunkAPI) => {
+    try {
+        const response = await PulseemReactInstance.get(`/CampaignEditor/GetBeeLPToken`);
+        return JSON.parse(response.data)
+    } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+    }
+});
 
 export const landingPagesSlice = createSlice({
   name: 'newsletter',
   initialState: {
+    LPBeeToken: null,
     landingPagesData: [],
     landingPagesDeletedData: [],
     landingPagesDataError: ''
@@ -104,6 +115,9 @@ export const landingPagesSlice = createSlice({
     })
     builder.addCase(getLandingPagesData.rejected, (state, action) => {
       state.landingPagesDataError = action.error.message
+    })
+    builder.addCase(getLPBeeToken.fulfilled, (state, { payload }) => {
+      state.LPBeeToken = payload;
     })
     builder.addCase(downloadReport.fulfilled, () => console.log('api downloadReport success'))
     builder.addCase(duplicteLandingPage.fulfilled, () => console.log('api duplicteLandingPage success'))

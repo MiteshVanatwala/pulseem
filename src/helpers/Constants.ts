@@ -220,3 +220,8 @@ export const PlaceHolders = {
     FACEBOOK_PIXEL: "<!--Facebook Pixel Code--><script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','//connect.facebook.net/en_US/fbevents.js');// Insert Your Facebook Pixel ID below. fbq('init','FB_PIXEL_ID');fbq('track','PageView');</script><!-- Insert Your Facebook Pixel ID below. --><noscript><img height=&quot;1&quot; width=&quot;1&quot; style=&quot;display:none&quot; src=&quot;https://www.facebook.com/tr?id=FB_PIXEL_ID&amp;ev=PageView&amp;noscript=1&quot; /></noscript><!-- End Facebook Pixel Code -->",
     CSS_STYLE: "div { font-family: tahoma; color:#ddd !important; font-style: italic; }"
 }
+
+export const BEE_EDITOR_TYPES = {
+    CAMPAIGN: 'Campaign',
+    LANDING_PAGE: 'LandingPage'
+}

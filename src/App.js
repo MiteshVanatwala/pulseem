@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
+import BeeEditorPage from './screens/BeeEditorPage/BeeEditorPage';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
@@ -163,6 +164,10 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`${sitePrefix}Campaigns/editor/:id`}
         element={<CampaignEditorBee classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}BeeEditor/:type/:id`}
+        element={<BeeEditorPage classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Campaigns/SendSettings/:id`}
