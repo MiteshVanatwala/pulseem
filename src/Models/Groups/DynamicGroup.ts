@@ -1,6 +1,6 @@
 
 export interface DynamicGroupModel {
-    MyActivities: ActivityGroup;
+    MyActivities: MyActivities;
     MyConditions: Conditions[];
     MyGroups: number[];
     ShowOpened: boolean;
@@ -26,7 +26,7 @@ export enum ActivtyInterval {
     SpecificDates = 6,
     Ever = 7
 }
-export interface ActivityGroup {
+export interface MyActivities {
     IsOpened: boolean | null;
     IsOpenedInterval: ActivtyInterval;
     IsOpenedFromDate: Date | string | null;

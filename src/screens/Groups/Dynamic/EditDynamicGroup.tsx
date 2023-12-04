@@ -10,7 +10,7 @@ import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import Groups from '../../../components/Groups/GroupsHandler/Groups';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import { Loader } from '../../../components/Loader/Loader';
-import { ActivityGroup, ActivtyInterval, CondType, Conditions, DynamicGroupModel } from '../../../Models/Groups/DynamicGroup';
+import { MyActivities, ActivtyInterval, CondType, Conditions, DynamicGroupModel } from '../../../Models/Groups/DynamicGroup';
 import PersonalDetails from './Tabs/PersonalDetails';
 // import EventsDetails from './Tabs/EventsDetails';
 import DateDetails from './Tabs/DateDetails';
@@ -59,7 +59,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 IsOpenedFromDate: null,
                 IsOpenedInterval: ActivtyInterval.Last2Weeks,
                 IsOpenedToDate: null
-            } as ActivityGroup,
+            } as MyActivities,
             MyConditions: [{
                 FirstName: '',
                 FirstNameCond: CondType.Undefined,
