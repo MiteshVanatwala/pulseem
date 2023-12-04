@@ -16,7 +16,7 @@ export enum CondType {
     StartsWith = 4,
     NoValue = 5
 }
-export enum ActivtyInterval {
+export enum ActivtyTimeInterval {
     LastWeek = 0,
     Last2Weeks = 1,
     LastMonth = 2,
@@ -28,11 +28,11 @@ export enum ActivtyInterval {
 }
 export interface MyActivities {
     IsOpened: boolean | null;
-    IsOpenedInterval: ActivtyInterval;
+    IsOpenedInterval: ActivtyTimeInterval;
     IsOpenedFromDate: Date | string | null;
     IsOpenedToDate: Date | string | null;
     IsNotOpened: boolean | null;
-    IsNotOpenedInterval: ActivtyInterval;
+    IsNotOpenedInterval: ActivtyTimeInterval;
     IsNotOpenedFromDate: Date | string | null;
     IsNotOpenedToDate: Date | string | null;
 }

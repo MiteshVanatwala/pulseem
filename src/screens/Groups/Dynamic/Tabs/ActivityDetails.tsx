@@ -5,7 +5,7 @@ import {
 import 'moment/locale/he';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
-import { ActivtyInterval } from '../../../../Models/Groups/DynamicGroup';
+import { ActivtyTimeInterval } from '../../../../Models/Groups/DynamicGroup';
 import { useTranslation } from 'react-i18next';
 import { DateField } from '../../../../components/managment';
 import moment from "moment";
@@ -49,21 +49,21 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                             },
                         }}
                     >
-                        <MenuItem value={ActivtyInterval.LastWeek}>{t('common.lastWeek')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.Last2Weeks}>{t('common.last2Weeks')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.LastMonth}>{t('common.lastMonth')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.Last3Months}>{t('common.last3Months')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.Last6Months}>{t('common.last6Months')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.LastYear}>{t('common.lastYear')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.SpecificDates}>{t('common.specificDates')}</MenuItem>
-                        {/* <MenuItem value={ActivtyInterval.Ever}>{t('common.allTheTimes')}</MenuItem> */}
+                        <MenuItem value={ActivtyTimeInterval.LastWeek}>{t('common.lastWeek')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.Last2Weeks}>{t('common.last2Weeks')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.LastMonth}>{t('common.lastMonth')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.Last3Months}>{t('common.last3Months')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.Last6Months}>{t('common.last6Months')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.LastYear}>{t('common.lastYear')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.SpecificDates}>{t('common.specificDates')}</MenuItem>
+                        {/* <MenuItem value={ActivtyTimeInterval.Ever}>{t('common.allTheTimes')}</MenuItem> */}
                     </Select>
                 </FormControl>
             </Grid>
 
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
-                    data.dynamicData?.MyActivities.IsOpenedInterval === ActivtyInterval.SpecificDates && (
+                    data.dynamicData?.MyActivities.IsOpenedInterval === ActivtyTimeInterval.SpecificDates && (
                         <>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
@@ -150,20 +150,20 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                             },
                         }}
                     >
-                        <MenuItem value={ActivtyInterval.LastWeek}>{t('common.lastWeek')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.Last2Weeks}>{t('common.last2Weeks')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.LastMonth}>{t('common.lastMonth')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.Last3Months}>{t('common.last3Months')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.Last6Months}>{t('common.last6Months')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.LastYear}>{t('common.lastYear')}</MenuItem>
-                        <MenuItem value={ActivtyInterval.SpecificDates}>{t('common.specificDates')}</MenuItem>
-                        {/* <MenuItem value={ActivtyInterval.Ever}>{t('common.allTheTimes')}</MenuItem> */}
+                        <MenuItem value={ActivtyTimeInterval.LastWeek}>{t('common.lastWeek')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.Last2Weeks}>{t('common.last2Weeks')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.LastMonth}>{t('common.lastMonth')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.Last3Months}>{t('common.last3Months')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.Last6Months}>{t('common.last6Months')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.LastYear}>{t('common.lastYear')}</MenuItem>
+                        <MenuItem value={ActivtyTimeInterval.SpecificDates}>{t('common.specificDates')}</MenuItem>
+                        {/* <MenuItem value={ActivtyTimeInterval.Ever}>{t('common.allTheTimes')}</MenuItem> */}
                     </Select>
                 </FormControl>
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
-                    data.dynamicData?.MyActivities.IsNotOpenedInterval === ActivtyInterval.SpecificDates && (
+                    data.dynamicData?.MyActivities.IsNotOpenedInterval === ActivtyTimeInterval.SpecificDates && (
                         <>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
