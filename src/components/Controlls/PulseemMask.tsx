@@ -8,8 +8,6 @@ interface TextMaskCustomProps {
 const PulseemMask = (props: TextMaskCustomProps) => {
     const { inputRef, value, ...other } = props;
 
-    console.log(JSON.stringify(props));
-
     return (
         <MaskedInput
             {...other}
