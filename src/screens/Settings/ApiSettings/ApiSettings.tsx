@@ -276,7 +276,7 @@ const ApiSettings = ({ classes }: any) => {
                                     <TextField
                                         type={"text"}
                                         id="outlined-basic"
-                                        name="ConfirmPassword"
+                                        name="apiKeyContainer"
                                         label=""
                                         variant="outlined"
                                         value={apiKey}
@@ -290,9 +290,10 @@ const ApiSettings = ({ classes }: any) => {
                                             inputComponent: (e: any) => {
                                                 return (<Box className={localClasses.customMask} style={{ minWidth: windowSize !== 'xs' ? 650 : 'unset', }}>
                                                     <InputMask
-                                                        name="apiVersion"
+                                                        style={{ border: 'none' }}
+                                                        name="apiKey"
                                                         className={clsx(classes.InputMaskTextField, classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-                                                        mask="***********************"
+                                                        mask={apiKey ? apiKey : "***********************"}
                                                         maskPlaceholder=""
                                                         placeholder="***********************"
                                                         value={apiKey}
