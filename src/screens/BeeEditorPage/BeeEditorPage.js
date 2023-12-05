@@ -1,31 +1,19 @@
 import clsx from 'clsx';
-import { debounce } from 'lodash';
+import { debounce, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  getCampaignById,
-  saveCampaign,
-  getUserblocks,
-  saveUserBlock,
-  deleteUserBlock,
-  saveTemplateToAccount,
-  getTemplateById,
-  getPublicTemplates,
-  getAllTemplatesBySubaccountId
-} from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { useTranslation } from "react-i18next";
 import ResponseModal from './modals/ResponseModal'
 import NoCreditsModal from './modals/NoCreditsModal'
 import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
-import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
-import { getLPBeeToken } from '../../redux/reducers/landingPagesSlice';
+import { deleteLPUserBlock, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveLandingPage } from '../../redux/reducers/landingPagesSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import { IoMdImages } from 'react-icons/io';
@@ -39,13 +27,13 @@ import { EditRow } from './components/ContentDialogs'
 // Generic modal component with event hooks
 import useModals from './hooks/useModals'
 import useMockAPI from './hooks/useMockAPI';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import Templates from './modals/Templates';
 import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
 import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
-import { sitePrefix } from '../../config';
+import { loginURL, sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
@@ -53,14 +41,15 @@ import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 const BeeEditor = ({ classes }) => {
   //#region State
   const { t } = useTranslation();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const params = useParams();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
   const moduleId = params?.id;
   const moduleType = params?.type;
   
-  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, publicTemplates } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures } = useSelector(state => state.common)
@@ -146,22 +135,26 @@ const BeeEditor = ({ classes }) => {
   //#endregion
   useEffect(() => {
     if (editorRef && editorRef.current) {
-      initBeeEditor();
+      initLPBeeEditor();
     }
 
   }, [isRTL]);
   // Get data by campaign id
   useEffect(() => {
+    if (!includes(BEE_EDITOR_TYPES, moduleType)) {
+      navigateToLandingPageManagement();
+    }
+
     if (params?.id > 0) {
-      if (localStorage.getItem('reloadBeeEditor') == '1') {
-        localStorage.removeItem('reloadBeeEditor');
+      if (localStorage.getItem('reloadLPBeeEditor') == '1') {
+        localStorage.removeItem('reloadLPBeeEditor');
         window.location.reload(true);
       } else getData();
     }
 
     if (moduleType === BEE_EDITOR_TYPES.CAMPAIGN) {
-      if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-      dispatch(getAllTemplatesBySubaccountId());
+      if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
+      dispatch(getAllLPTemplatesBySubaccountId());
     }
   }, []);
 
@@ -175,7 +168,6 @@ const BeeEditor = ({ classes }) => {
     else {
       initOptions();
     }
-
   }, [language, userBlocks]);
 
   //#region Check session token -> tokenAlive
@@ -201,6 +193,11 @@ const BeeEditor = ({ classes }) => {
     setAlertLogout(true);
   });
 
+  const navigateToLandingPageManagement = () => {
+    navigate(`${sitePrefix}EditRegistrationPage`);
+    return false;
+  }
+
   const onLogoutAlert = () => {
     setIsResponseModal(false);
     setLoader(false);
@@ -217,13 +214,13 @@ const BeeEditor = ({ classes }) => {
           classes.btnRounded,
           classes.middle
         )}
-        onClick={() => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' }}
+        onClick={() => { window.location.href = loginURL }}
       >
         {t('common.confirm')}
       </Button>
       ),
-      onCancel: () => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' },
-      onClose: () => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' }
+      onCancel: () => { window.location.href = loginURL },
+      onClose: () => { window.location.href = loginURL }
     });
     setDialog(DialogType.GENERIC);
   }
@@ -231,8 +228,7 @@ const BeeEditor = ({ classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    if (moduleType === BEE_EDITOR_TYPES.CAMPAIGN) {
-    } else if (moduleType === BEE_EDITOR_TYPES.LANDING_PAGE) {
+    if (moduleType === BEE_EDITOR_TYPES.LANDING_PAGE) {
       const initBeeToken = () => {
         dispatch(getLPBeeToken());
       }
@@ -271,53 +267,46 @@ const BeeEditor = ({ classes }) => {
       config.rowsConfiguration.externalContentURLs = tempRows;
     }
   }
-  const initBeeEditor = (templateId = null) => {
+  const initLPBeeEditor = (templateId = null) => {
       initSpecialLinks().then(async (specialLinksFiles) => {
-        console.log(specialLinksFiles)
         const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
         let forceTemplate = null;
         let defaultContent = DefaultContent(isRtlLang);
-        if (templateId !== null) {
-          console.log('294')
-          const templateResponse = await dispatch(getTemplateById(templateId));
+        // if (templateId !== null) {
+        //   const templateResponse = await dispatch(getLPTemplateById(templateId));
   
-          if (templateResponse?.payload?.StatusCode === 201) {
-            const responseData = templateResponse?.payload?.Data;
-            setNewTemplate(responseData)
-            forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
-          } else {
-            setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
-          }
-        }
-        console.log('305')
-        config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
-        config.mergeTags = mergeData;
-        config.specialLinks = specialLinksFiles;
-        config.titleDefaultStyles = defaultContent.titleDefaultStyles;
-        config.contentDefaults = defaultContent.contentDefaults;
-        if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
-          config.workspace.type = 'mixed';
-        }
+        //   if (templateResponse?.payload?.StatusCode === 201) {
+        //     const responseData = templateResponse?.payload?.Data;
+        //     setNewTemplate(responseData)
+        //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+        //   } else {
+        //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+        //   }
+        // }
+        // config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
+        // config.mergeTags = mergeData;
+        // config.specialLinks = specialLinksFiles;
+        // config.titleDefaultStyles = defaultContent.titleDefaultStyles;
+        // config.contentDefaults = defaultContent.contentDefaults;
+        // if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
+        //   config.workspace.type = 'mixed';
+        // }
   
-        initTags();
-  
+        // initTags();
         switch (LPBeeToken?.StatusCode) {
           case 201: {
-            console.log('319')
             const beeObject = JSON.parse(LPBeeToken.Message);
             if (LPBeeToken.Message === "null" || LPBeeToken.Message === null) {
               setDialog(DialogType.MISSING_API_KEY);
             }
             else {
-              console.log('325')
               const beeTest = new BeePlugin(beeObject);
               let template = null;
-  
               if (forceTemplate !== null) {
                 template = forceTemplate;
               }
               else {
-              template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
+                template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
               }
   
               beeTest.start(config, template).then((instance) => {
@@ -333,18 +322,15 @@ const BeeEditor = ({ classes }) => {
             break;
           }
           case 401: {
-            console.log('401')
             setDialog(DialogType.MISSING_API_KEY);
             break;
           }
           case 404: {
-            console.log('404')
             setDialog(DialogType.CAMPAIGN_NOT_FOUND);
             break;
           }
           case 500:
           default: {
-            console.log('500')
             setDialog(DialogType.ERROR_OCCURED);
             break;
           }
@@ -352,16 +338,10 @@ const BeeEditor = ({ classes }) => {
         setLoader(false);
       })
   }
-  useEffect(() => {
-    if (beeToken) {
-      initBeeEditor();
-    }
-
-  }, [beeToken]);
 
   useEffect(() => {
     if (LPBeeToken) {
-      initBeeEditor();
+      initLPBeeEditor();
     }
 
   }, [LPBeeToken]);
@@ -389,7 +369,7 @@ const BeeEditor = ({ classes }) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
-      const response = await dispatch(saveCampaign({
+      const response = await dispatch(saveLandingPage({
         Name: campaign.Name,
         campaignId: args.campaignId,
         JsonData: finalJson,
@@ -398,7 +378,7 @@ const BeeEditor = ({ classes }) => {
 
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
-          localStorage.setItem('reloadBeeEditor', 1);
+          localStorage.setItem('reloadLPBeeEditor', 1);
           window.location = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
           return false;
         }
@@ -412,7 +392,7 @@ const BeeEditor = ({ classes }) => {
       }
 
       if (saveRef.current?.saveTemplate) {
-        const templateResponse = await dispatch(saveTemplateToAccount({
+        const templateResponse = await dispatch(saveLPTemplateToAccount({
           Name: saveRef.current?.templateName,
           JsonData: finalJson,
           HTML: finalHtml,
@@ -421,7 +401,7 @@ const BeeEditor = ({ classes }) => {
         if (!templateResponse.payload.Data) {
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
         }
-        dispatch(getAllTemplatesBySubaccountId());
+        dispatch(getAllLPTemplatesBySubaccountId());
       }
     } catch (e) {
       console.error(e);
@@ -440,33 +420,34 @@ const BeeEditor = ({ classes }) => {
     }, 2000);
   }
 
-  const onAutoSaveCampaign = debounce(() => {
+  const onAutoSavePage = debounce(() => {
     setSilentSave(true)
     saveDesign(false, null, false);
   }, 5000);
 
   const onDesignChange = async () => {
-    onAutoSaveCampaign();
+    onAutoSavePage();
   }
 
-  const deleteNewsletter = async () => {
+  const deleteLandingPage = async () => {
     setDialog(null);
-    await dispatch(deleteCampaign(moduleId));
-    window.location = `${sitePrefix}Campaigns`;
+    await dispatch(deleteLandingPage(moduleId));
+    navigateToLandingPageManagement();
   }
+
   const onDelete = () => {
     setIsResponseModal(false);
     setGenericModalData({
-      title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
-      message: t("mainReport.confirmSure"),
-      onConfirm: () => deleteNewsletter(),
+      title: t('landingPages.DeleteTitle'),
+      message: t("landingPages.DeleteBody"),
+      onConfirm: () => deleteLandingPage(),
       onCancel: () => setDialog(null),
       onClose: () => setDialog(null)
     });
     setDialog(DialogType.GENERIC);
   }
   
-  const handleExitCampaign = (saveBeforeExit = true) => {
+  const handleExitLandingPage = (saveBeforeExit = true) => {
     setDialog(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
@@ -481,26 +462,17 @@ const BeeEditor = ({ classes }) => {
 
   const onExit = () => {
     setGenericModalData({
-      title: t('mainReport.handleExitTitle'),
-      message: t("mainReport.leaveCampaign"),
-      onClose: () => handleExitCampaign(false),
-      onConfirm: () => handleExitCampaign(true),
+      title: t('landingPages.handleExitTitle'),
+      message: t("landingPages.confirmExit"),
+      onClose: () => handleExitLandingPage(false),
+      onConfirm: () => handleExitLandingPage(true),
       onCancel: () => setDialog(null)
     });
     setDialog(DialogType.GENERIC);
   }
   
   const onBack = () => {
-    if (moduleType === BEE_EDITOR_TYPES.CAMPAIGN) {
-      saveDesign(
-        true,
-        isFromAutomation
-          ? `${sitePrefix}Campaigns/Create/${moduleId}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`
-          : `${sitePrefix}Campaigns/Create/${moduleId}`
-      );
-    } else if (moduleType === BEE_EDITOR_TYPES.LANDING_PAGE) {
-      saveDesign(true, `${sitePrefix}EditRegistrationPage`);
-    }
+    saveDesign(true, `${sitePrefix}EditRegistrationPage`);
   }
 
   const renderToast = () => {
@@ -528,23 +500,23 @@ const BeeEditor = ({ classes }) => {
       Tags: block?.metadata?.tags?.split(','),
       uuid: block?.metadata?.uuid
     };
-    dispatch(saveUserBlock(blockRequest)).then(async () => {
+    dispatch(saveLPUserBlock(blockRequest)).then(async () => {
       setLoader(false);
-      dispatch(getUserblocks());
+      dispatch(getLPUserblocks());
       await setRow(json);
     });
   }
 
   const onEditBlock = (blockRequest) => {
     setLoader(true);
-    dispatch(saveUserBlock(blockRequest)).then(async () => {
+    dispatch(saveLPUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       await setRow(JSON.stringify(blockRequest?.Json));
     });
   }
 
   const handleDeleteBlock = (e, row_id) => {
-    dispatch(deleteUserBlock(row_id)).then((result) => {
+    dispatch(deleteLPUserBlock(row_id)).then((result) => {
       console.log(result);
     })
   }
@@ -558,7 +530,7 @@ const BeeEditor = ({ classes }) => {
       EditRow: EditRow,
       openModal: openModal,
       Save: onSave,
-      AutoSave: onAutoSaveCampaign,
+      AutoSave: onAutoSavePage,
       DesignChange: onDesignChange,
       SetDialog: setDialog,
       Id: moduleId,
@@ -861,7 +833,7 @@ const BeeEditor = ({ classes }) => {
         onClose={(resp) => {
           if (resp) {
             setOverwriteTemplateDialog(false);
-            initBeeEditor(newTemplate.ID);
+            initLPBeeEditor(newTemplate.ID);
           }
           setOverwriteTemplateDialog(false);
         }}

@@ -88,6 +88,17 @@ export const saveLandingPage = createAsyncThunk(
     }
   });
 
+export const saveLPTemplateToAccount = createAsyncThunk(
+  '/landingpages/SaveAsTemplate', async (data, thunkAPI) => {
+      try {
+          // const response = await PulseemReactInstance.post(`landingpages/SaveAsTemplate`, data);
+          // return response.data;
+          return {};
+      } catch (error) {
+          return thunkAPI.rejectWithValue({ error: error.message });
+      }
+  })
+
 export const getLPBeeToken = createAsyncThunk(
   '/CampaignEditor/GetBeeLPToken/',
   async (_, thunkAPI) => {
@@ -99,19 +110,97 @@ export const getLPBeeToken = createAsyncThunk(
     }
 });
 
+export const getLPPublicTemplates = createAsyncThunk(
+  '/landingpages/GetPublicTemplates', async (isRTL, thunkAPI) => {
+    try {
+        // const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
+        // return response.data
+        return {};
+    } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+    }
+})
+
+export const getAllLPTemplatesBySubaccountId = createAsyncThunk(
+  '/landingpages/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
+    try {
+        // const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
+        // return response.data
+        return {};
+    } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+    }
+})
+
+export const getLPTemplateById = createAsyncThunk(
+  '/landingpages/GetTemplateById/', async (id, thunkAPI) => {
+    try {
+        // const response = await PulseemReactInstance.get(`/CampaignEditor/GetTemplateById/${id}`);
+        // return response.data
+        return {};
+    } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+    }
+})
+
+export const saveLPUserBlock = createAsyncThunk(
+  '/landingpages/SaveUserBlock/', async (block, thunkAPI) => {
+    try {
+        // const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, block);
+        // return JSON.parse(response.data)
+        return {};
+    } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+    }
+});
+
+export const getLPUserblocks = createAsyncThunk(
+  '/landingpages/GetUserblocks/', async (thunkAPI) => {
+      try {
+          // const response = await PulseemReactInstance.get(`/CampaignEditor/GetUserblocks`);
+          // return response.data
+          return {};
+      } catch (error) {
+          return thunkAPI.rejectWithValue({ error: error.message });
+      }
+});
+
+export const deleteLPUserBlock = createAsyncThunk(
+  '/landingpages/DeleteUserBlock/', async (id, thunkAPI) => {
+    try {
+        // const response = await PulseemReactInstance.delete(`/CampaignEditor/DeleteUserBlock/${id}`);
+        // return JSON.parse(response.data)
+        return {};
+    } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+    }
+});
+
 export const landingPagesSlice = createSlice({
   name: 'newsletter',
   initialState: {
     LPBeeToken: null,
     landingPagesData: [],
     landingPagesDeletedData: [],
-    landingPagesDataError: ''
+    landingPagesDataError: '',
+    landingPageUserBlocks: null
   },
   reducers: {},
   extraReducers: builder => {
     builder.addCase(getLandingPagesData.fulfilled, (state, { payload }) => {
       state.landingPagesData = payload.filter(row => !row.IsDeleted)
       state.landingPagesDeletedData = payload.filter(row => row.IsDeleted)
+    })
+    builder.addCase(getLPUserblocks.fulfilled, (state, { payload }) => {
+      const blocks = payload?.map((b) => {
+          return {
+              uuid: b.uuid,
+              category: b.Category,
+              data: JSON.parse(b.Data),
+              tags: b?.TagsAsString?.split(',')
+          }
+      });
+      state.landingPageUserBlocks = blocks
     })
     builder.addCase(getLandingPagesData.rejected, (state, action) => {
       state.landingPagesDataError = action.error.message

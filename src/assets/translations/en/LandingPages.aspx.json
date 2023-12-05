@@ -392,5 +392,6 @@
   "addEmailAddress": "Add Email Address",
   "duplicateEmailConfirmation": "Send Double Option",
   "linkPreviewTooltip": "Choose how the preview of your landing page link will look like",
-  "confirmExit": "Would you like to save the landing page before exit?"
+  "confirmExit": "Would you like to save the landing page before exit?",
+  "handleExitTitle": "Leave Landing Page"
 }
