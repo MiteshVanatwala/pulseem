@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Divider, Button, Typography, TextField, makeStyles, Link } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
@@ -27,6 +27,7 @@ import { HiOutlineRefresh } from 'react-icons/hi';
 import { BiExport } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import PulseemRadio from '../../../components/Controlls/PulseemRadio';
+import PulseemMask from '../../../components/Controlls/PulseemMask';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -36,7 +37,20 @@ const useStyles = makeStyles({
         '& .MuiButton-startIcon': {
             marginRight: 'unset !important',
             marginLeft: 'unset !important'
+        },
+        '& input': {
+            outline: 'none',
+            width: '100%',
+            padding: '0 !important',
+            fontSize: 16,
+            color: 'rgba(0,0,0,.6)'
         }
+    },
+    customMask: {
+        width: '100%',
+        outline: '0',
+        alignSelf: 'end',
+        paddingBottom: 5
     }
 });
 
@@ -72,11 +86,10 @@ const ApiSettings = ({ classes }: any) => {
         if (showApiKey && apiKey === '') {
             requestApiKey();
         }
+        else {
+            setApiKey('');
+        }
     }, [showApiKey])
-
-    useEffect(() => {
-        requestApiKey();
-    }, [])
 
     const requestApiKey = async () => {
         const response = await dispatch(getApiKey()) as any;
@@ -261,27 +274,25 @@ const ApiSettings = ({ classes }: any) => {
                                 <Typography className={clsx(classes.managementTitle, classes.font20)} style={{ maxWidth: windowSize !== 'xs' ? 90 : '' }}>{t('integrations.apiKey')}:</Typography>
                                 <Box className={clsx(classes.mr10, classes.ml10)}>
                                     <TextField
-                                        type={showApiKey ? "text" : "password"}
+                                        type={"text"}
                                         id="outlined-basic"
                                         name="ConfirmPassword"
                                         label=""
                                         variant="outlined"
                                         value={apiKey}
-                                        style={{ minWidth: windowSize !== 'xs' ? 650 : 'unset', width: '100%' }}
                                         className={clsx(
                                             classes.textField,
                                             localClasses.customIcon
                                         )}
-                                        inputProps={{
-                                            style: {
-                                                paddingInline: 15
-                                            },
-                                            autocomplete: "new-password"
-                                        }}
                                         disabled
-
+                                        inputMode='text'
                                         InputProps={{
-
+                                            inputComponent: (e: any) => {
+                                                return (<Box className={localClasses.customMask} style={{ minWidth: windowSize !== 'xs' ? 650 : 'unset', }}>
+                                                    <PulseemMask inputRef={e?.inputRef} value={apiKey} />
+                                                </Box>)
+                                            }
+                                            ,
                                             endAdornment: (
                                                 <>
                                                     <CustomTooltip
