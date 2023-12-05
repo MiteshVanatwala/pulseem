@@ -392,10 +392,10 @@ const DynamicGroups = ({ classes }: any) => {
         const { GroupID, GroupName } = row;
         let text = "";
         if (!row.UpdateDate) {
-            date = moment(row.CreationDate, dateFormat);
+            date = moment(row?.CreationDate, dateFormat);
             text = t("common.CreatedOn");
         } else {
-            date = moment(row.UpdateDate, dateFormat);
+            date = moment(row?.UpdateDate, dateFormat);
             text = t("common.UpdatedOn");
         }
 
