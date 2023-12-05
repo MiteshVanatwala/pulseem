@@ -194,8 +194,7 @@ const ApiSettings = ({ classes }: any) => {
                                     className={clsx(
                                         classes.btn,
                                         classes.btnRounded,
-                                        classes.mr10,
-                                        classes.verticalAlignTop
+                                        classes.mr10
                                     )}
                                     onClick={() =>
                                         handleVerification('cellphone')
@@ -214,8 +213,7 @@ const ApiSettings = ({ classes }: any) => {
                                     className={clsx(
                                         classes.btn,
                                         classes.btnRounded,
-                                        classes.mr10,
-                                        classes.verticalAlignTop
+                                        classes.mr10
                                     )}
                                     onClick={() =>
                                         handleVerification('email')
@@ -234,7 +232,6 @@ const ApiSettings = ({ classes }: any) => {
                                     className={clsx(
                                         classes.btn,
                                         classes.btnRounded,
-                                        classes.verticalAlignTop
                                     )}
                                     onClick={() =>
                                         window.open('/Pulseem/ExportRemovals.aspx')
