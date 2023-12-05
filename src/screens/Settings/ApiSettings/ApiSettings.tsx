@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Divider, Button, Typography, TextField, makeStyles, Link } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
@@ -27,7 +27,7 @@ import { HiOutlineRefresh } from 'react-icons/hi';
 import { BiExport } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import PulseemRadio from '../../../components/Controlls/PulseemRadio';
-import PulseemMask from '../../../components/Controlls/PulseemMask';
+import InputMask from 'react-input-mask';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -289,7 +289,15 @@ const ApiSettings = ({ classes }: any) => {
                                         InputProps={{
                                             inputComponent: (e: any) => {
                                                 return (<Box className={localClasses.customMask} style={{ minWidth: windowSize !== 'xs' ? 650 : 'unset', }}>
-                                                    <PulseemMask inputRef={e?.inputRef} value={apiKey} />
+                                                    <InputMask
+                                                        name="apiVersion"
+                                                        className={clsx(classes.InputMaskTextField, classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                                                        mask="***********************"
+                                                        maskPlaceholder=""
+                                                        placeholder="***********************"
+                                                        value={apiKey}
+                                                        disabled
+                                                    />
                                                 </Box>)
                                             }
                                             ,
