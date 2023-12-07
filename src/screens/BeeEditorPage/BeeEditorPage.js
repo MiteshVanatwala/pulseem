@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button } from '@material-ui/core'
+import { Box, Button, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,10 +10,9 @@ import { useTranslation } from "react-i18next";
 import ResponseModal from './modals/ResponseModal'
 import NoCreditsModal from './modals/NoCreditsModal'
 import Toast from '../../components/Toast/Toast.component';
-import GenericModal from './modals/GenericModal';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
-import { deleteLPUserBlock, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveLandingPage } from '../../redux/reducers/landingPagesSlice';
+import { deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveLandingPage } from '../../redux/reducers/landingPagesSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import { IoMdImages } from 'react-icons/io';
@@ -30,13 +29,13 @@ import useMockAPI from './hooks/useMockAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import Templates from './modals/Templates';
-import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
-import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 import { loginURL, sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { FaExclamationCircle } from 'react-icons/fa';
 
 const BeeEditor = ({ classes }) => {
   //#region State
@@ -49,11 +48,11 @@ const BeeEditor = ({ classes }) => {
   const moduleId = params?.id;
   const moduleType = params?.type;
   
-  const { campaign, userBlocks, ToastMessages, publicTemplates } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures } = useSelector(state => state.common)
-  const { LPBeeToken } = useSelector(state => state.landingPages)
+  const { LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.landingPages)
 
   const [showLoader, setLoader] = useState(true);
   const [dataReady, setDataReady] = useState(false);
@@ -64,10 +63,6 @@ const BeeEditor = ({ classes }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [isResponseModal, setIsResponseModal] = useState(false);
   const [alertLogout, setAlertLogout] = useState(false);
-  const [genericModalData, setGenericModalData] = useState({
-    title: "",
-    message: ""
-  })
   const { modals, openModal } = useModals()
   const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI();
   const [showGallery, setShowGallery] = useState(false);
@@ -79,8 +74,15 @@ const BeeEditor = ({ classes }) => {
   const [lastSaveText, setLastSaveText] = useState(null);
   const [silentSave, setSilentSave] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
-  const [newTemplate, setNewTemplate] = useState('');
+  // const [newTemplate, setNewTemplate] = useState('');
+  const [saveTemplateDetails, setSaveTemplateDetails] = useState({
+    templateName: '',
+    categoryName: '',
+  });
+  const [errors, setErrors] = useState({
+    templateName: '',
+    categoryName: '',
+  });
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -152,10 +154,8 @@ const BeeEditor = ({ classes }) => {
       } else getData();
     }
 
-    if (moduleType === BEE_EDITOR_TYPES.CAMPAIGN) {
-      if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
-      dispatch(getAllLPTemplatesBySubaccountId());
-    }
+    if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
+		if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
   }, []);
 
   useEffect(() => {
@@ -201,39 +201,16 @@ const BeeEditor = ({ classes }) => {
   const onLogoutAlert = () => {
     setIsResponseModal(false);
     setLoader(false);
-    setGenericModalData({
-      title: t('common.systemNotice'),
-      message: t("common.autoLogoutMessage"),
-      showDefaultButtons: false,
-      renderButtons: () =>
-      (<Button
-        size='small'
-        variant='contained'
-        className={clsx(
-          classes.btn,
-          classes.btnRounded,
-          classes.middle
-        )}
-        onClick={() => { window.location.href = loginURL }}
-      >
-        {t('common.confirm')}
-      </Button>
-      ),
-      onCancel: () => { window.location.href = loginURL },
-      onClose: () => { window.location.href = loginURL }
-    });
-    setDialog(DialogType.GENERIC);
+    setDialogType({ type: DialogType.LOGOUT })
   }
   //#endregion 
 
   const getData = async () => {
     setLoader(true);
-    if (moduleType === BEE_EDITOR_TYPES.LANDING_PAGE) {
-      const initBeeToken = () => {
-        dispatch(getLPBeeToken());
-      }
-      initBeeToken();
+    const initBeeToken = () => {
+      dispatch(getLPBeeToken());
     }
+    initBeeToken();
     setDataReady(true);
   }
   //#region Init Bee Token & Configuration
@@ -410,6 +387,7 @@ const BeeEditor = ({ classes }) => {
       setLoader(false);
     }
   }
+
   const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
     saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
     await editorRef.current.save();
@@ -429,22 +407,16 @@ const BeeEditor = ({ classes }) => {
     onAutoSavePage();
   }
 
-  const deleteLandingPage = async () => {
+  const deleteCurrentLandingPage = async () => {
     setDialog(null);
     await dispatch(deleteLandingPage(moduleId));
     navigateToLandingPageManagement();
   }
 
   const onDelete = () => {
-    setIsResponseModal(false);
-    setGenericModalData({
-      title: t('landingPages.DeleteTitle'),
-      message: t("landingPages.DeleteBody"),
-      onConfirm: () => deleteLandingPage(),
-      onCancel: () => setDialog(null),
-      onClose: () => setDialog(null)
-    });
-    setDialog(DialogType.GENERIC);
+    setDialogType({
+      type: DialogType.DELETE
+    })
   }
   
   const handleExitLandingPage = (saveBeforeExit = true) => {
@@ -460,20 +432,9 @@ const BeeEditor = ({ classes }) => {
     }
   }
 
-  const onExit = () => {
-    setGenericModalData({
-      title: t('landingPages.handleExitTitle'),
-      message: t("landingPages.confirmExit"),
-      onClose: () => handleExitLandingPage(false),
-      onConfirm: () => handleExitLandingPage(true),
-      onCancel: () => setDialog(null)
-    });
-    setDialog(DialogType.GENERIC);
-  }
+  const onExit = () => setDialogType({ type: DialogType.EXIT })
   
-  const onBack = () => {
-    saveDesign(true, `${sitePrefix}EditRegistrationPage`);
-  }
+  const onBack = () => saveDesign(true, `${sitePrefix}EditRegistrationPage`);
 
   const renderToast = () => {
     if (toastMessage) {
@@ -546,8 +507,13 @@ const BeeEditor = ({ classes }) => {
   const config = getConfig();
 
 
-  const saveTemplate = async (name, category) => {
-    saveRef.current = { templateName: name, templateCategory: category, saveTemplate: true, showAnimation: true };
+  const saveTemplate = async () => {
+    saveRef.current = {
+      templateName: saveTemplateDetails.templateName,
+      templateCategory: saveTemplateDetails.categoryName,
+      saveTemplate: true,
+      showAnimation: true
+    };
     await editorRef.current.save();
   }
 
@@ -629,7 +595,10 @@ const BeeEditor = ({ classes }) => {
       <Button onClick={() => {
         setLoader(true);
         setTimeout(() => {
-          setDialog(DialogType.Templates);
+          // setDialog(DialogType.Templates);
+          setDialogType({
+            type: DialogType.Templates
+          });
         }, 1000);
 
         setTimeout(() => {
@@ -647,7 +616,7 @@ const BeeEditor = ({ classes }) => {
       >
         {t('common.templates')}
       </Button>
-      <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
+      <Button onClick={() => setDialogType({ type: DialogType.SAVE_TEMPLATE })}
         variant='contained'
         size='medium'
         className={clsx(
@@ -737,15 +706,234 @@ const BeeEditor = ({ classes }) => {
     }
   }
 
+  const renderTemplateDialog = () => {
+		return {
+			showDivider: false,
+			title: t("common.SelectTemplate"),
+			showDefaultButtons: false,
+			content: (
+				<Templates
+					isCreateLandingPage={true}
+					classes={classes}
+					onClose={async (template) => {
+            if (template !== undefined) {
+              //@ts-ignore
+							if (template !== undefined) {
+                setDialogType({ type: DialogType.RENDER_TEMPLATE_CONFIRMATION, data: template });
+              }
+						} else {
+              setDialogType(null);
+            }
+					}}
+				/>
+			),
+			onConfirm: async () => {
+			},
+		};
+	}
+
+  const renderSaveTemplateDialog = () => {
+		return {
+			showDivider: false,
+			title: t("common.saveTemplate"),
+			showDefaultButtons: true,
+      cancelText: 'common.cancel',
+      confirmText: 'common.save',
+      icon: false,
+			content: (
+				<>
+          <Box className={clsx(classes.mt15, classes.mb15)}>
+            <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.templateName')}</Typography>
+            <TextField
+              variant='outlined'
+              size='small'
+              value={saveTemplateDetails.templateName}
+              onChange={(event) => setSaveTemplateDetails({
+                ...saveTemplateDetails,
+                templateName: event?.target?.value
+              })}
+              className={clsx(classes.textField, classes.minWidth252)}
+              placeholder={t('common.templateName')}
+            />
+            <Box className='textBoxWrapper'>
+              <Typography className={clsx(errors.templateName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                {errors.templateName ?? errors.templateName}
+              </Typography>
+            </Box>
+          </Box>
+          <Box className={clsx(classes.mt15, classes.mb15)}>
+            <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.CategoryName')}</Typography>
+            <TextField
+              variant='outlined'
+              size='small'
+              value={saveTemplateDetails.categoryName}
+              onChange={(event) => setSaveTemplateDetails({
+                ...saveTemplateDetails,
+                categoryName: event?.target?.value
+              })}
+              className={clsx(classes.textField, classes.minWidth252)}
+              placeholder={t('common.CategoryName')}
+            />
+          </Box>
+        </>
+			),
+			onConfirm: async () => {
+        console.log('Saving...');
+        if (!saveTemplateDetails.templateName.trim()) setErrors({ ...errors, templateName: t('common.templateNameIsRequired') });
+        else {
+          setErrors({ ...errors, templateName: '' });
+          saveTemplate();
+        }
+			},
+      onClose: () => {
+        setErrors({ ...errors, templateName: '' });
+        setDialogType(null);
+      },
+      onCancel: () => {
+        setErrors({ ...errors, templateName: '' });
+        setDialogType(null);
+      },
+		};
+	}
+
+  const logoutDialog = () => {
+		return {
+			showDivider: false,
+			title: t("common.systemNotice"),
+			showDefaultButtons: false,
+			content: (
+        <Typography>
+          {RenderHtml(t('common.autoLogoutMessage'))}
+        </Typography>
+			),
+			renderButtons: () => (
+        <Button
+          size='small'
+          variant='contained'
+          className={clsx(
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
+          )}
+          onClick={() => window.location.href = loginURL}
+        >
+          {t('common.confirm')}
+        </Button>
+      ),
+      onClose: () => window.location.href = loginURL,
+      onCancel: () => window.location.href = loginURL,
+		};
+	}
+
+  const exitDialog = () => {
+		return {
+			showDivider: false,
+			title: t('landingPages.handleExitTitle'),
+			showDefaultButtons: false,
+			content: (
+        <Typography>
+          {RenderHtml(t("landingPages.confirmExit"))}
+        </Typography>
+			),
+			renderButtons: () => (
+        <Button
+          size='small'
+          variant='contained'
+          className={clsx(
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
+          )}
+          onClick={() => handleExitLandingPage(true)}
+        >
+          {t('common.confirm')}
+        </Button>
+      ),
+      onClose: () => handleExitLandingPage(false)
+		};
+	}
+
+  const deleteDialog = () => {
+		return {
+			showDivider: false,
+			title: t('landingPages.DeleteTitle'),
+      confirmText: t('common.Yes'),
+      cancelText: t('common.No'),
+			content: (
+        <Typography>
+          {RenderHtml(t("landingPages.DeleteBody"))}
+        </Typography>
+			),
+      onConfirm: () => deleteCurrentLandingPage(),
+      onClose: () => navigateToLandingPageManagement(),
+		};
+	}
+
+  const renderTemplateConfirmationDialog = (newTemplate) => {
+		return {
+			showDivider: false,
+			title: t('common.doYouWantToProceed'),
+      confirmText: t('common.Yes'),
+      cancelText: t('common.No'),
+			content: (
+        <Typography>
+          {RenderHtml(t("common.overwriteTemplate"))}
+        </Typography>
+			),
+      onConfirm: () => {
+        setDialogType(null);
+        initLPBeeEditor(newTemplate.ID);
+      }
+		};
+	}
+
+  const renderNoCreditLeftDialog = () => {
+		return {
+			showDivider: false,
+			title: t('common.ErrorTitle'),
+      showDefaultButtons: false,
+      content: (
+        <Box style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+        </Box>
+			),
+      renderButtons: () => (
+        <Button
+          size='small'
+          variant='contained'
+          className={clsx(
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
+          )}
+          onClick={() => setDialogType(null)}
+        >
+          {t("common.Ok")}
+        </Button>
+      ),
+		};
+	}
+  
   const renderDialog = () => {
-    const { type } = dialogType || {}
+    const { type, data } = dialogType || {}
 
-    const dialogContent = {
-        // manualUpload: manualUploadDialog(),
-        // caution: cautionDialog()
-    }
-
-    const currentDialog = dialogContent[type] || {}
+    let currentDialog = {};
+		if (type === DialogType.Templates) {
+			currentDialog = renderTemplateDialog();
+		} else if (type === DialogType.SAVE_TEMPLATE) {
+      currentDialog = renderSaveTemplateDialog();
+    } else if (type === DialogType.LOGOUT) {
+      currentDialog = logoutDialog();
+    } else if (type === DialogType.EXIT) {
+      currentDialog = exitDialog();
+    } else if (type === DialogType.DELETE) {
+      currentDialog = deleteDialog();
+    } else if (type === DialogType.RENDER_TEMPLATE_CONFIRMATION) {
+      currentDialog = renderTemplateConfirmationDialog(data);
+    } else if (type === DialogType.NO_CREDITS_LEFT) {
+      currentDialog = renderNoCreditLeftDialog(data);
+    } 
 
     if (type) {
       return (
@@ -774,29 +962,6 @@ const BeeEditor = ({ classes }) => {
       {renderToast()}
       {showGalleryModal()}
       {showDocumentsModal()}
-      {
-        dialog === DialogType.Templates && <Templates
-          classes={classes}
-          onClose={(template) => {
-            setDialog(null);
-            if (template !== undefined) {
-              setOverwriteTemplateDialog(true);
-              setNewTemplate(template);
-            }
-          }}
-          isOpen={dialog === DialogType.Templates}
-        />
-      }
-      <NoCreditsModal
-        classes={classes}
-        onClose={() => setDialog(null)}
-        isOpen={dialog === DialogType.NO_CREDITS_LEFT}
-      />
-      <GenericModal
-        classes={classes}
-        modalData={genericModalData}
-        isOpen={dialog === DialogType.GENERIC}
-      />
       <ResponseModal
         classes={classes}
         isOpen={dialog && isResponseModal}
@@ -827,25 +992,6 @@ const BeeEditor = ({ classes }) => {
         additionalButtons={renderButtons()}
         additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
-      />
-      <OverwriteTemplatePopUp
-        classes={classes}
-        onClose={(resp) => {
-          if (resp) {
-            setOverwriteTemplateDialog(false);
-            initLPBeeEditor(newTemplate.ID);
-          }
-          setOverwriteTemplateDialog(false);
-        }}
-        isOpen={overwriteTemplateDialog}
-      />
-      <SaveTemplate
-        classes={classes}
-        onClose={(resp) => {
-          setDialog(null);
-          if (resp !== undefined) saveTemplate(resp.name, resp.category);
-        }}
-        isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />

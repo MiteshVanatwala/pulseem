@@ -3,18 +3,17 @@ import clsx from "clsx";
 import { Box, Tab, Grid, Tabs, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
-import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import TemplatePreview from './TemplatePreview'
 import { Loader } from '../../../components/Loader/Loader';
 import { convertHyphensToword } from '../../../helpers/Utils/common';
 import { useSelector } from 'react-redux';
+import { TemplateModel } from '../../../Models/LandingPage/Templates';
 
 const Templates = ({
   classes,
   onClose = () => null,
-  isOpen = false,
-  isCreateCampaign = false
-}: any) => {
+  isCreateLandingPage = false
+}: TemplateModel) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState(0);
   const [templateList, setTemplateList] = useState([]);
@@ -25,10 +24,10 @@ const Templates = ({
   const refCategory = useRef<HTMLDivElement>(null);
   const [openPreview, setOpenPreview] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState({});
-  const [showLoader, setLoader] = useState(true);
+  const [showLoader, setLoader] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState(0);
   const { publicTemplates, templatesBySubAccount, publicTemplateCategories, templatesBySubAccountCategories } = useSelector(
-    (state: { campaignEditor: any }) => state.campaignEditor
+    (state: { landingPages: any }) => state.landingPages
   );
 
   const handleChange = (event: any, newValue: any) => {
@@ -67,14 +66,14 @@ const Templates = ({
   }, [maxTemplatesToShow, selectedCategory]);
 
   useEffect(() => {
-    if (!publicTemplates.length) setLoader(true);
+    // if (!publicTemplates.length) setLoader(true);
     setTimeout(() => {
       resizeWindow();
     }, 1000);
   }, []);
 
   const resizeWindow = () => {
-    const height = (document.querySelector('.bee-templates') as HTMLElement)?.offsetHeight - 120;
+    const height = window.innerHeight * 0.5;
     if (refScriptCode.current !== null) {
       refScriptCode.current.style['maxHeight'] = `${height}px`;
       refScriptCode.current.style['height'] = `${height}px`;
@@ -132,7 +131,7 @@ const Templates = ({
             <Typography
               className={clsx(classes.dBlock, classes.f14)}
             >
-              {t(`common.${isCreateCampaign ? 'selectTemplate' : 'loadTemplate'}`)}
+              {t(`common.${isCreateLandingPage ? 'selectTemplate' : 'loadTemplate'}`)}
             </Typography>
           </Button>
         </div>
@@ -140,20 +139,7 @@ const Templates = ({
     )
   }
 
-  return <BaseDialog
-    classes={classes}
-    customContainerStyle={classes.beeTemplate}
-    contentStyle={classes.beeTemplate}
-    open={isOpen}
-    showDivider={false}
-    onClose={onClose}
-    onCancel={onClose}
-    onConfirm={onClose}
-    reduceTitle
-    showDefaultButtons={false}
-    exitButton={true}
-    maxHeight='70vh'
-    className='bee-templates'>
+  return <div className='bee-templates'>
     <Box className={clsx(classes.templateModal)}>
       <Grid container style={{ width: '100%' }}>
         <Grid item xs={12} sm={4} md={2} ref={refCategory} className='category-container'>
@@ -210,20 +196,16 @@ const Templates = ({
               {
                 selectedCategory === '' && tabValue === 0 && maxTemplatesToShow < publicTemplates.length && (
                   <Grid item md={12}>
-                    <Box className={clsx(classes.textCenter, classes.pt15)}>
+                    <Box className={clsx(classes.textCenter, classes.pb15)}>
                       <Button
                         className={clsx(
-                          classes.actionButton,
-                          classes.actionButtonLightBlue,
+                          classes.btn,
+                          classes.btnRounded,
                           classes.paddingSides25
                         )}
                         onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
                       >
-                        <Typography
-                          className={clsx(classes.dBlock, classes.f18)}
-                        >
-                          {t('common.loadMore')}
-                        </Typography>
+                        {t('common.loadMore')}
                       </Button>
                     </Box>
                   </Grid>
@@ -244,7 +226,7 @@ const Templates = ({
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </Box>
-  </BaseDialog>
+  </div>
 }
 
 export default Templates;

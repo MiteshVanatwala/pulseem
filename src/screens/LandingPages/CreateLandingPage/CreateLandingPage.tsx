@@ -28,11 +28,12 @@ import Groups from '../../../components/Groups/GroupsHandler/Groups';
 import { Group } from '../../../Models/Groups/Group';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { BsInfoCircle } from 'react-icons/bs';
-import { saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
+import { getAllLPTemplatesBySubaccountId, getLPPublicTemplates, getLPTemplateById, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
 import { sitePrefix } from '../../../config';
 import { useNavigate } from 'react-router-dom';
 // import Templates from '../../HtmlCampaign/modals/Templates';
 import { GrFormAdd, GrFormSubtract } from 'react-icons/gr';
+import Templates from '../../BeeEditorPage/modals/Templates';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const dispatch: any = useDispatch();
@@ -112,6 +113,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		duplicateMailConfirmation: true
 	})
 	const [expandedIndexes, setExpandedIndexes] = useState([1,2,3,4]);
+	const [template, setTemplate] = useState('');
+	const { publicTemplates, templatesBySubAccount } = useSelector(
+    (state: { landingPages: any }) => state.landingPages
+  );
 
 	const getData = async () => {
 		setIsLoader(true);
@@ -119,6 +124,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		if (subAccountAllGroups.length === 0) {
 			dispatch(getGroupsBySubAccountId());
 		}
+
+		//@ts-ignore
+		if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
+		if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
 		setIsLoader(false);
   };
 
@@ -315,22 +324,20 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			title: translator("common.SelectTemplate"),
 			showDefaultButtons: false,
 			content: (
-				// <Templates
-				// 	isCreateCampaign={true}
-				// 	classes={classes}
-				// 	onClose={async (template: any) => {
-				// 			// setDialogType(null);
-				// 			// if (template !== undefined) {
-				// 			// 		const response = await dispatch(getTemplateById(template.ID));
-				// 			// 		if (response.payload.StatusCode === 201) {
-				// 			// 				setTemplate(response?.payload?.Data);
-				// 			// 		}
-				// 			// }
-				// 	}}
-				// 	isOpen={true}
-				// />
-				<>
-				</>
+				<Templates
+					isCreateLandingPage={true}
+					classes={classes}
+					onClose={async (template: any) => {
+						setDialogType(null);
+						if (template !== undefined) {
+							//@ts-ignore
+							const response = await dispatch(getLPTemplateById(template.ID));
+							if (response.payload.StatusCode === 201) {
+									setTemplate(response?.payload?.Data);
+							}
+						}
+					}}
+				/>
 			),
 			onConfirm: async () => {
 				const response = await save();

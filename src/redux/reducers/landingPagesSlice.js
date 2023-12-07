@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { apiURL } from '../../config/index';
 import { ExportFile } from '../../helpers/Export/ExportFile';
+import { getUniqueValuesOfKey } from '../../helpers/Utils/common';
+import { publicTemplates } from "../../assets/data/LandingPageTemplates.json"
 
 export const getLandingPagesData = createAsyncThunk(
   'landingpages/getLandingPages', async (_, thunkAPI) => {
@@ -113,11 +115,11 @@ export const getLPBeeToken = createAsyncThunk(
 export const getLPPublicTemplates = createAsyncThunk(
   '/landingpages/GetPublicTemplates', async (isRTL, thunkAPI) => {
     try {
-        // const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
-        // return response.data
-        return {};
+      // const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
+      // return response.data
+      return { Data: publicTemplates };
     } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
 })
 
@@ -126,7 +128,7 @@ export const getAllLPTemplatesBySubaccountId = createAsyncThunk(
     try {
         // const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
         // return response.data
-        return {};
+        return { Data: publicTemplates };
     } catch (error) {
         return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -137,7 +139,9 @@ export const getLPTemplateById = createAsyncThunk(
     try {
         // const response = await PulseemReactInstance.get(`/CampaignEditor/GetTemplateById/${id}`);
         // return response.data
-        return {};
+        return {
+          Data: ''
+        };
     } catch (error) {
         return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -183,7 +187,11 @@ export const landingPagesSlice = createSlice({
     landingPagesData: [],
     landingPagesDeletedData: [],
     landingPagesDataError: '',
-    landingPageUserBlocks: null
+    landingPageUserBlocks: null,
+    publicTemplates: [],
+    publicTemplateCategories: [],
+    templatesBySubAccount: [],
+    templatesBySubAccountCategories: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -212,6 +220,14 @@ export const landingPagesSlice = createSlice({
     builder.addCase(duplicteLandingPage.fulfilled, () => console.log('api duplicteLandingPage success'))
     builder.addCase(deleteLandingPage.fulfilled, () => console.log('api deleteLandingPage success'))
     builder.addCase(restoreLandingPages.fulfilled, () => console.log('api restoreLandingPages success'))
+    builder.addCase(getLPPublicTemplates.fulfilled, (state, action) => {
+      state.publicTemplates = action.payload.Data || []
+      state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
+    })
+    builder.addCase(getAllLPTemplatesBySubaccountId.fulfilled, (state, action) => {
+        state.templatesBySubAccount = action.payload.Data || [];
+        state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
+    })
 
     builder.addCase(downloadReport.rejected, (_, action) => console.log('Error - api downloadReport: ' + action.error))
     builder.addCase(duplicteLandingPage.rejected, (_, action) => console.log('Error - api duplicteLandingPage: ' + action.error))

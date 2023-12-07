@@ -265,7 +265,7 @@ export const getRoutes = (
       options: [
         {
           title: t("master.RadMenuItemLandingPage.Text"),
-          href: `${rootDomain}/LandingPageWizard.aspx?fromreact=true`,
+          href: `${sitePrefix}CreateLandingPage`,
           isShow: true,
         },
         {

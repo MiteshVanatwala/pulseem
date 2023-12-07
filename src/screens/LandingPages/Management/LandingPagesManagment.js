@@ -29,6 +29,7 @@ import { Title } from '../../../components/managment/Title';
 import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { sitePrefix } from '../../../config';
 
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
@@ -159,9 +160,11 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            href='/Pulseem/LandingPageWizard.aspx?fromreact=true'
+            // href='/Pulseem/LandingPageWizard.aspx?fromreact=true'
             className={clsx(classes.btn, classes.btnRounded)}
-            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            onClick={() => navigate(`${sitePrefix}CreateLandingPage`)}
+          >
             {t('landingPages.CreateNewResource.Text')}
           </Button>
         </Grid>}

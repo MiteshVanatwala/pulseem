@@ -1243,7 +1243,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minHeight: '200px',
     maxHeight: '200px',
     overflow: 'hidden',
-    transition: 'all 0.5s ease',
+    transition: 'all 0.1s ease',
     '& label': {
       zoom: '25%',
       pointerEvents: 'none'
