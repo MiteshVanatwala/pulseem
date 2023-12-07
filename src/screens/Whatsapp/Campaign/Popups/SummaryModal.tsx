@@ -527,7 +527,8 @@ const SummaryModal = ({
 											<span>
 												<a
 													target={'_blank'}
-													href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+													// href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+													href='https://business.facebook.com/wa/manage/'
 													rel='noreferrer'>
 													<>{translator('whatsappCampaign.limit')}</>
 												</a>

@@ -1051,7 +1051,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								<span>
 									{' '} - {' '}<>{translator('whatsappCampaign.checkLimit')}</>{' '}
 									<a
-										href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+										href='https://business.facebook.com/wa/manage/'
+										// href='https://business.facebook.com/settings/whatsapp-business-accounts/'
 										target='_blank'
 										rel='noreferrer'>
 										<>{translator('whatsappCampaign.here')}</>

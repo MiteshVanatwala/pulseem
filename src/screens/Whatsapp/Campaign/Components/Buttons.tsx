@@ -131,7 +131,7 @@ const Buttons = ({
 							color='primary'
 							style={{ margin: '8px' }}
 							onClick={(e) => onFormButtonClick(buttons.SEND)}>
-							<>{translator('whatsappCampaign.send')}</>
+							<>{translator('whatsappCampaign.summary')}</>
 						</Button>
 					)
 				}

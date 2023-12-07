@@ -532,7 +532,7 @@ const SendCampaign = ({
 	};
 
 	const renderToast = () => {
-		if (toastMessage) {
+		if (toastMessage && toastMessage.message !== '') {
 			setTimeout(() => {
 				resetToast();
 			}, 4000);
@@ -764,7 +764,7 @@ const SendCampaign = ({
 			containerClass={null}>
 			{isAccountSetup ? (
 				<div>
-					<div>
+					<div className={classes.mb50}>
 						<Title
 							title={translator('whatsappCampaign.whatsappCampaign')}
 							classes={classes}
