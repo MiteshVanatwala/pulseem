@@ -85,6 +85,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -572,7 +573,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				onGroups(campaignId);
 				break;
 			case 'automation':
-				// setIsDuplicateCampaignOpen(true);
+				pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${campaignId}&fromreact=true`);
 				break;
 			case 'delete':
 				setIsDeleteCampaignOpen(true);
@@ -584,14 +585,14 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const renderCellIcons = (row: campaignDataProps) => {
-		const { Status, AutomationID, Groups } = row;
+		const { Status, AutomationID, Groups, AutomationTriggerInActive } = row;
 		const iconsMap: ManagmentIconProps[] = [
 			{
 				key: 'send',
 				buttonKey: 'send',
 				icon: SendGreenIcon,
 				lable: translator('campaigns.imgSendResource1.ToolTip'),
-				remove: Status !== 1 || AutomationID !== 0,
+				remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
 				rootClass: classes.sendIcon,
 				textClass: classes.sendIconText,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
@@ -652,7 +653,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				remove: windowSize === 'xs',
 				lable: translator('campaigns.automation'),
 				rootClass: classes.paddingIcon,
-				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				onClick: (key: string, id: string) => onRowIconClick(key, `${AutomationID}`),
 				classes: classes,
 				id: row.WACampaignID.toString(),
 			},

@@ -113,6 +113,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { campaignID } = useParams();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const queryParams = new URLSearchParams(window.location.search)
+	let FromAutomation = queryParams.get("FromAutomation") || false
+	if (FromAutomation === 'false') FromAutomation = false;
+	const NodeToEdit = queryParams.get("NodeToEdit") || false
+	let isSendCampaign = queryParams.get("new") || false
+	if (isSendCampaign === 'false') isSendCampaign = false;
 
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
@@ -544,7 +550,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		const highlightVariables = (
 			<>
 				{updatedVariables?.map((variable, index) => (
-					<strong
+					variable === '\n'
+					? <br />
+					: <strong
 						key={index}
 						className={clsx(
 							classes.whatsappCampainHighlightText,
@@ -689,7 +697,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			}
 			isValidated = false;
 		}
-		if (getDynamicFields(templateData?.templateText)?.length !==
+		
+		if (getDynamicFields(templateData?.templateText)?.filter((v) => v !== '\n')?.length !==
 				updatedDynamicVariable?.length
 		) {
 			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
@@ -799,7 +808,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsTestGroupModal(false);
 			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
-			const saveCampaign = await onSaveCampaign('testSend', false, false);
+			const saveCampaign: any = await onSaveCampaign('testSend', false, false);
 			campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
 			if (testSendSelection !== 'onecontact') {
 				setIsLoader(true);
@@ -934,9 +943,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
 				}
 				if (isNavigate) {
-					navigate(
-						`/react/whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
-					);
+					if (!FromAutomation) {
+						navigate(
+							`/react/whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
+						);
+					} else {
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+					}
 				}
 				return data?.Data;
 			} else {
@@ -960,7 +973,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`/react/whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}`,
+					`/react/whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}&new=${isSendCampaign}`,
 					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}` } }
 				);
 			} else {
@@ -987,18 +1000,26 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			case buttons.SEND:
 				onSubmit();
 				break;
+			case buttons.CONTINUE:
+				onSubmit();
+				break;
 			default:
 				break;
 		}
 	};
 	const onExitCampaign = () => {
-		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		setIsExitCampaignOpen(false);
+		if (FromAutomation) {
+			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+		} else {
+			navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		}
 	};
 
 	const onExceedLimitYes = () => {
 		setExceedLimitModal(false);
 	};
-
+	
 	return (
 		<DefaultScreen
 			subPage={'create'}
@@ -1373,6 +1394,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								onFormButtonClick={(buttonName: string) =>
 									onFormButtonClick(buttonName)
 								}
+								showSendButton={FromAutomation ? (!!FromAutomation && !!isSendCampaign) : true}
+								showContinueButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : false}
 							/>
 						</Grid>
 					</form>
@@ -1452,11 +1475,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					<AlertModal
 						classes={classes}
 						isOpen={isExitCampaignOpen}
-						onClose={() => setIsExitCampaignOpen(false)}
+						onClose={onExitCampaign}
 						title={translator('mainReport.handleExitTitle')}
 						subtitle={translator('mainReport.leaveCampaign')}
 						type='delete'
-						onConfirmOrYes={() => onExitCampaign()}
+						onConfirmOrYes={() => {
+							setIsExitCampaignOpen(false);
+							onSaveCampaign('save', true, true);
+						}}
 					/>
 					<AlertModal
 						classes={classes}
