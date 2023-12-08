@@ -161,16 +161,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
         },
         //#region Methods
         onSave: async (jsonFile: any, htmlFile: any, ampHtml: any) => {
-            if (moduleType === BEE_EDITOR_TYPES.CAMPAIGN) {
-                await Save({
-                    campaignId: Id,
-                    JsonData: jsonFile,
-                    HtmlData: ampHtml ?? htmlFile
-                });
-            }
+            await Save({
+                campaignId: Id,
+                JsonData: jsonFile,
+                HtmlData: ampHtml ?? htmlFile
+            });
         },
         onSend: () => {
-            SetDialog(DialogType.TEST_SEND);
+            // SetDialog(DialogType.TEST_SEND);
         },
         onWarning: (alertMessage: any) => {
             // console.log('onWarning ', alertMessage)
@@ -332,19 +330,14 @@ export const DefaultContent = (IsRTL: Boolean) => {
 };
 
 export const DialogType = {
-    TEST_SEND: "testSend",
     DELETE: "delete",
-    SUCCESS_SENT: "campaigns.successSent",
-    MISSING_API_KEY: "campaigns.missingApi",
-    CAMPAIGN_NOT_FOUND: "campaigns.campaignNotFound",
-    CANNOT_CREATE_GROUP: "campaigns.cannotCreateGroup",
-    ERROR_OCCURED: "campaigns.errorOccured",
-    NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
+    MISSING_API_KEY: "landingPages.missingApi",
+    CAMPAIGN_NOT_FOUND: "landingPages.landingPageNotFound",
+    ERROR_OCCURED: "landingPages.errorOccured",
     GENERIC: "generic",
     NO_CREDITS_LEFT: "sms.noCredits",
     Templates: "templates",
-    SET_USER_BLOCK: "campaigns.saveBlock",
-    SAVE_TEMPLATE: "campaigns.saveTemplate",
+    SAVE_TEMPLATE: "saveTemplate",
     LOGOUT: "logout",
     EXIT: "exit",
     RENDER_TEMPLATE_CONFIRMATION: "RenderTemplateConfirmation"

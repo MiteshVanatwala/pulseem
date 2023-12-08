@@ -393,5 +393,9 @@
   "duplicateEmailConfirmation": "Send Double Option",
   "linkPreviewTooltip": "Choose how the preview of your landing page link will look like",
   "confirmExit": "Would you like to save the landing page before exit?",
-  "handleExitTitle": "Leave Landing Page"
+  "handleExitTitle": "Leave Landing Page",
+  "lastSaveAt": "Last save at: ",
+  "missingApi": "Missing api key",
+  "landingPageNotFound": "Landing Page not found",
+  "errorOccured": "Error Occured"
 }

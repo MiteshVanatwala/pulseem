@@ -543,10 +543,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-
     let sortData = isSearching ? searchResults : landingPagesData;
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+    if (!sortData.length) {
+      return (
+        <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }} >
+          <Typography>{t('common.NoDataTryFilter')}</Typography>
+        </Box>
+      )
+    }
     return (
       <Box className='tableBodyContainer'>
         <TableBody>

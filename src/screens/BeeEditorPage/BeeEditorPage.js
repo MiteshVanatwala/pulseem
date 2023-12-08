@@ -8,7 +8,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../components/Loader/Loader';
 import { useTranslation } from "react-i18next";
 import ResponseModal from './modals/ResponseModal'
-import NoCreditsModal from './modals/NoCreditsModal'
 import Toast from '../../components/Toast/Toast.component';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
@@ -35,7 +34,6 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { FaExclamationCircle } from 'react-icons/fa';
 
 const BeeEditor = ({ classes }) => {
   //#region State
@@ -274,7 +272,10 @@ const BeeEditor = ({ classes }) => {
           case 201: {
             const beeObject = JSON.parse(LPBeeToken.Message);
             if (LPBeeToken.Message === "null" || LPBeeToken.Message === null) {
-              setDialog(DialogType.MISSING_API_KEY);
+              setDialogType({
+                type: DialogType.GENERIC,
+                data: t(DialogType.MISSING_API_KEY)
+              });
             }
             else {
               const beeTest = new BeePlugin(beeObject);
@@ -299,16 +300,25 @@ const BeeEditor = ({ classes }) => {
             break;
           }
           case 401: {
-            setDialog(DialogType.MISSING_API_KEY);
+            setDialogType({
+              type: DialogType.GENERIC,
+              data: t(DialogType.MISSING_API_KEY)
+            });
             break;
           }
           case 404: {
-            setDialog(DialogType.CAMPAIGN_NOT_FOUND);
+            setDialogType({
+              type: DialogType.GENERIC,
+              data: t(DialogType.CAMPAIGN_NOT_FOUND)
+            });
             break;
           }
           case 500:
           default: {
-            setDialog(DialogType.ERROR_OCCURED);
+            setDialogType({
+              type: DialogType.GENERIC,
+              data: t(DialogType.ERROR_OCCURED)
+            });
             break;
           }
         }
@@ -345,9 +355,8 @@ const BeeEditor = ({ classes }) => {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
-
       const response = await dispatch(saveLandingPage({
-        Name: campaign.Name,
+        Name: '',
         campaignId: args.campaignId,
         JsonData: finalJson,
         HTML: finalHtml
@@ -393,7 +402,7 @@ const BeeEditor = ({ classes }) => {
     await editorRef.current.save();
     setTimeout(() => {
       const now = moment();
-      setLastSaveText(`${t('campaigns.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
+      setLastSaveText(`${t('landingPages.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
   }
@@ -408,7 +417,6 @@ const BeeEditor = ({ classes }) => {
   }
 
   const deleteCurrentLandingPage = async () => {
-    setDialog(null);
     await dispatch(deleteLandingPage(moduleId));
     navigateToLandingPageManagement();
   }
@@ -420,9 +428,9 @@ const BeeEditor = ({ classes }) => {
   }
   
   const handleExitLandingPage = (saveBeforeExit = true) => {
-    setDialog(null);
+    setDialogType(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
-    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
+    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}EditRegistrationPage`;
 
     if (saveBeforeExit) {
       saveDesign(true, redirectLink, false);
@@ -449,7 +457,6 @@ const BeeEditor = ({ classes }) => {
   }
   //#endregion Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const handleCloseReponse = () => {
-    setDialog(null);
     setIsResponseModal(false);
   }
 
@@ -595,7 +602,6 @@ const BeeEditor = ({ classes }) => {
       <Button onClick={() => {
         setLoader(true);
         setTimeout(() => {
-          // setDialog(DialogType.Templates);
           setDialogType({
             type: DialogType.Templates
           });
@@ -778,7 +784,6 @@ const BeeEditor = ({ classes }) => {
         </>
 			),
 			onConfirm: async () => {
-        console.log('Saving...');
         if (!saveTemplateDetails.templateName.trim()) setErrors({ ...errors, templateName: t('common.templateNameIsRequired') });
         else {
           setErrors({ ...errors, templateName: '' });
@@ -829,26 +834,14 @@ const BeeEditor = ({ classes }) => {
 		return {
 			showDivider: false,
 			title: t('landingPages.handleExitTitle'),
-			showDefaultButtons: false,
+      cancelText: 'common.No',
+      confirmText: 'common.Yes',
 			content: (
         <Typography>
           {RenderHtml(t("landingPages.confirmExit"))}
         </Typography>
 			),
-			renderButtons: () => (
-        <Button
-          size='small'
-          variant='contained'
-          className={clsx(
-            classes.btn,
-            classes.btnRounded,
-            classes.middle
-          )}
-          onClick={() => handleExitLandingPage(true)}
-        >
-          {t('common.confirm')}
-        </Button>
-      ),
+      onConfirm: () => handleExitLandingPage(true),
       onClose: () => handleExitLandingPage(false)
 		};
 	}
@@ -914,6 +907,15 @@ const BeeEditor = ({ classes }) => {
       ),
 		};
 	}
+
+  const renderGenericDialog = (message) => {
+		return {
+			showDivider: false,
+			title: t('common.Notice'),
+      showDefaultButtons: false,
+      content: <Typography>{RenderHtml(message)}</Typography>
+		};
+	}
   
   const renderDialog = () => {
     const { type, data } = dialogType || {}
@@ -933,7 +935,9 @@ const BeeEditor = ({ classes }) => {
       currentDialog = renderTemplateConfirmationDialog(data);
     } else if (type === DialogType.NO_CREDITS_LEFT) {
       currentDialog = renderNoCreditLeftDialog(data);
-    } 
+    } else if (type === DialogType.GENERIC) {
+      currentDialog = renderGenericDialog(data);
+    }
 
     if (type) {
       return (

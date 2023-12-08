@@ -393,5 +393,9 @@
   "duplicateEmailConfirmation": "שלח אישור דיוור כפול",
   "linkPreviewTooltip": "Choose how the preview of your landing page link will look like",
   "confirmExit": "Would you like to save the landing page before exit?",
-  "handleExitTitle": "Leave Landing Page"
+  "handleExitTitle": "Leave Landing Page",
+  "lastSaveAt": "שמירה אחרונה ב: ",
+  "missingApi": "מפתח API לא נכון או לא תקין",
+  "landingPageNotFound": "Landing Page not found",
+  "ErrorOccured": "אירעה שגיאה"
 }
