@@ -14,7 +14,8 @@ const Buttons = ({
 	onFormButtonClick,
 	displayBackButton,
 	showSendButton = true,
-	showContinueButton = false
+	showContinueButton = false,
+	isSummary = false
 }: ButtonsProps) => {
 	const { t: translator } = useTranslation();
 
@@ -119,7 +120,7 @@ const Buttons = ({
 				</Button>
 
 				{
-					showSendButton && (
+					(showSendButton || isSummary) && (
 						<Button
 							variant='contained'
 							size='medium'
@@ -131,7 +132,7 @@ const Buttons = ({
 							color='primary'
 							style={{ margin: '8px' }}
 							onClick={(e) => onFormButtonClick(buttons.SEND)}>
-							<>{translator('whatsappCampaign.send')}</>
+							<>{translator(isSummary ? 'whatsappCampaign.summary' : 'whatsappCampaign.send')}</>
 						</Button>
 					)
 				}

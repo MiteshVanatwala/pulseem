@@ -108,6 +108,7 @@ export type ButtonsProps = {
 	displayDeleteButton?: boolean;
 	showSendButton?: boolean;
 	showContinueButton?: boolean;
+	isSummary?: boolean;
 };
 
 export type campaignPage1ButtonsProps = {

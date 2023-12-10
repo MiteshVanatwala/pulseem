@@ -157,7 +157,7 @@ const FilterRecipientsDialog = ({
 					<div
 						id='responsive-dialog-title'
 						className={classes.filterModalTitle}>
-						<>{translator('whatsappCampaign.filter')}</>
+						<>{translator('campaigns.newsLetterEditor.sendSettings.filters')}</>
 					</div>
 					<Box className={classes.filterModalClose}>
 						<Close fontSize={'small'} onClick={onFilterModalClose} />
@@ -193,7 +193,7 @@ const FilterRecipientsDialog = ({
 											marginTop: 2,
 										}}
 										className={classes.font13}>
-										<>{translator('smsReport.filterInputText')}</>
+										<>{translator('whatsappCampaign.filterInputText')}</>
 									</span>
 									<div
 										style={{
