@@ -829,6 +829,7 @@ const SendCampaign = ({
 							displayBackButton={true}
 							showSendButton={FromAutomation ? (!!FromAutomation && !!isSendCampaign) : true}
 							showContinueButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : false}
+							isSummary={!FromAutomation}
 						/>
 					</div>
 					<SummaryModal
