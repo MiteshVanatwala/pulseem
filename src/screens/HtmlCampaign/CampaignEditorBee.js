@@ -414,7 +414,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     await editorRef.current.save();
     setTimeout(() => {
       const now = moment();
-      setLastSaveText(`${t('campaigns.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
+      setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
   }

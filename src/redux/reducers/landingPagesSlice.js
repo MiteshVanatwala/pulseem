@@ -185,13 +185,18 @@ export const landingPagesSlice = createSlice({
   initialState: {
     LPBeeToken: null,
     landingPagesData: [],
+    landingPage: null,
     landingPagesDeletedData: [],
     landingPagesDataError: '',
     landingPageUserBlocks: null,
     publicTemplates: [],
     publicTemplateCategories: [],
     templatesBySubAccount: [],
-    templatesBySubAccountCategories: []
+    templatesBySubAccountCategories: [],
+    ToastMessages: {
+      LANDING_PAGE_SAVED: { severity: 'success', color: 'success', message: 'landingPages.landingPageSaved', showAnimtionCheck: true },
+      TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
+  },
   },
   reducers: {},
   extraReducers: builder => {

@@ -34,8 +34,13 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { StateType } from '../../Models/StateTypes';
+import { commonProps } from '../../model/Common/commonProps.types';
+import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplate, LandingPageUserBlocks, SaveLandingPageArguments } from '../../Models/LandingPage/LandingPage';
+import { SMSStoreProps } from '../../model/Sms/Sms.types';
+import { FileGallery } from '../../Models/Files/FileGallery';
 
-const BeeEditor = ({ classes }) => {
+const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   //#region State
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -43,18 +48,20 @@ const BeeEditor = ({ classes }) => {
   const params = useParams();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
-  const moduleId = params?.id;
+  const moduleId = params?.id || 0;
   const moduleType = params?.type;
   
-  const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
-  const { extraData, previousLandingData } = useSelector(state => state.sms);
-  const { language, isRTL } = useSelector(state => state.core)
-  const { tokenAlive, accountSettings, accountFeatures } = useSelector(state => state.common)
-  const { LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.landingPages)
+  const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
+  const { language, isRTL } = useSelector((state: StateType) => state.core);
+  const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
+  const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
 
   const [showLoader, setLoader] = useState(true);
   const [dataReady, setDataReady] = useState(false);
-  const [dialogType, setDialogType] = useState({ type: null });
+  const [dialogType, setDialogType] = useState<{
+		type: string;
+    data?: any;
+	} | null>(null);
   const [mergeData, setPulseemMergeData] = useState({});
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
@@ -69,7 +76,7 @@ const BeeEditor = ({ classes }) => {
   const isFromAutomation = queryParams.get("FromAutomation");
   const NodeToEdit = queryParams.get("NodeToEdit");
   const fromLink = queryParams.get("fromLink");
-  const [lastSaveText, setLastSaveText] = useState(null);
+  const [lastSaveText, setLastSaveText] = useState<string | null>(null);
   const [silentSave, setSilentSave] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   // const [newTemplate, setNewTemplate] = useState('');
@@ -94,12 +101,13 @@ const BeeEditor = ({ classes }) => {
     return new Promise((resolve, reject) => {
       try {
         initLandingPages(previousLandingData, t).then((items) => {
+          //@ts-ignore
           dispatch(getFileGallery(PulseemFolderType.DOCUMENT)).then((response) => {
             const gallery = response.payload;
             const specialLinksFiles = items;
             const folderExtName = t('common.files');
 
-            gallery?.Files?.forEach((file) => {
+            gallery?.Files?.forEach((file: FileGallery) => {
               let folderName = file.FolderName === 'main' ? t('common.main') : file.FolderName;
               if (file.FolderName.indexOf('\\') > -1) {
                 folderName = file.FolderName.split('\\')[1]
@@ -139,34 +147,36 @@ const BeeEditor = ({ classes }) => {
     }
 
   }, [isRTL]);
-  // Get data by campaign id
+  
   useEffect(() => {
     if (!includes(BEE_EDITOR_TYPES, moduleType)) {
       navigateToLandingPageManagement();
     }
 
-    if (params?.id > 0) {
+    if (Number(moduleId) > 0) {
       if (localStorage.getItem('reloadLPBeeEditor') == '1') {
         localStorage.removeItem('reloadLPBeeEditor');
-        window.location.reload(true);
+        window.location.reload();
       } else getData();
     }
 
+    //@ts-ignore
     if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
 		if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
   }, []);
 
+  //@ts-ignore
   useEffect(() => {
-    if (userBlocks) {
-      return new Promise((resolve) => {
-        userBlocks.forEach(x => setRow(x.data));
+    if (landingPageUserBlocks) {
+      return new Promise((resolve: any) => {
+        landingPageUserBlocks.forEach((block: LandingPageUserBlocks) => setRow(block.data));
         resolve();
       });
     }
     else {
       initOptions();
     }
-  }, [language, userBlocks]);
+  }, [language, landingPageUserBlocks]);
 
   //#region Check session token -> tokenAlive
   useEffect(() => {
@@ -176,6 +186,7 @@ const BeeEditor = ({ classes }) => {
       }
     }, 300000);
     try {
+      //@ts-ignore
       document.removeEventListener('setAlert', null);
     }
     catch (e) {
@@ -213,12 +224,14 @@ const BeeEditor = ({ classes }) => {
   }
   //#region Init Bee Token & Configuration
   const initTags = () => {
-    let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
-    var tags = [].concat.apply([], tempTags);
+    //@ts-ignore
+    let tempTags = [...new Set(landingPageUserBlocks?.map(item => item.tags))];
+    var tags: string[] = [].concat.apply([], tempTags);
     if (tags && tags?.length > 0) {
+      //@ts-ignore
       config.rowsConfiguration.externalContentURLs = [];
-      let tempRows = [];
-      tags?.forEach((tag, idx) => {
+      let tempRows: LandingPageRow[] = [];
+      tags?.forEach((tag: string) => {
         if (tag && tag !== undefined && tag !== null) {
           const tagObj = {
             name: tag.trim(),
@@ -233,18 +246,19 @@ const BeeEditor = ({ classes }) => {
           tempRows.push(tagObj);
         }
       });
-      tempRows = tempRows.filter((value, index) => {
+      tempRows = tempRows.filter((value: LandingPageRow, index: number) => {
         const _value = JSON.stringify(value);
-        return index === tempRows.findIndex(obj => {
+        return index === tempRows.findIndex((obj: LandingPageRow) => {
           return JSON.stringify(obj) === _value;
         });
       });
+      //@ts-ignore
       config.rowsConfiguration.externalContentURLs = tempRows;
     }
   }
-  const initLPBeeEditor = (templateId = null) => {
+  const initLPBeeEditor = (templateId: number | null = null) => {
       initSpecialLinks().then(async (specialLinksFiles) => {
-        const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
+        const isRtlLang = landingPage?.LanguageCode === 0 || landingPage?.LanguageCode === 8 ? true : false;
         let forceTemplate = null;
         let defaultContent = DefaultContent(isRtlLang);
         // if (templateId !== null) {
@@ -284,12 +298,15 @@ const BeeEditor = ({ classes }) => {
                 template = forceTemplate;
               }
               else {
-                template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
+                template = landingPage?.JsonData ? JSON.parse(landingPage?.JsonData) : defaultContent.defaultTemplate;
               }
   
+              //@ts-ignore
               beeTest.start(config, template).then((instance) => {
+                //@ts-ignore
                 editorRef.current = instance;
-                if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
+                //@ts-ignore
+                if ((!landingPage || !landingPage.HtmlData) && (!params?.id || params?.id === 0)) {
                   saveDesign(false, null, false);
                 }
                 setTimeout(() => {
@@ -335,12 +352,15 @@ const BeeEditor = ({ classes }) => {
 
   const initOptions = async () => {
     initTags();
+    //@ts-ignore
     if (!accountSettings || accountSettings.SubAccountSettings) {
       await dispatch(getCommonFeatures());
     }
     if (editorRef.current) {
       const c = getConfig();
+      //@ts-ignore
       editorRef.current.loadConfig(c);
+      //@ts-ignore
       editorRef.current.load();
     }
   }
@@ -348,14 +368,17 @@ const BeeEditor = ({ classes }) => {
 
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
-  const onSave = async (args) => {
+  const onSave = async (args: SaveLandingPageArguments) => {
+    //@ts-ignore
     const reInit = saveRef.current?.reInitEditor;
 
     try {
+      //@ts-ignore
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
-      const response = await dispatch(saveLandingPage({
+      //@ts-ignore
+      const response: any = await dispatch(saveLandingPage({
         Name: '',
         campaignId: args.campaignId,
         JsonData: finalJson,
@@ -363,12 +386,16 @@ const BeeEditor = ({ classes }) => {
       }));
 
       if (response.payload === true) {
+        //@ts-ignore
         if (saveRef.current?.redirectAfterSave) {
-          localStorage.setItem('reloadLPBeeEditor', 1);
+          localStorage.setItem('reloadLPBeeEditor', '1');
+          //@ts-ignore
           window.location = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
           return false;
         }
+        //@ts-ignore
         else if (saveRef.current?.showAnimation) {
+          //@ts-ignore
           setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
         }
 
@@ -377,14 +404,20 @@ const BeeEditor = ({ classes }) => {
         }
       }
 
+      //@ts-ignore
       if (saveRef.current?.saveTemplate) {
+        //@ts-ignore
         const templateResponse = await dispatch(saveLPTemplateToAccount({
+          //@ts-ignore
           Name: saveRef.current?.templateName,
           JsonData: finalJson,
           HTML: finalHtml,
+          //@ts-ignore
           Category: saveRef.current?.templateCategory
         }));
+        //@ts-ignore
         if (!templateResponse.payload.Data) {
+          //@ts-ignore
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
         }
         dispatch(getAllLPTemplatesBySubaccountId());
@@ -397,12 +430,14 @@ const BeeEditor = ({ classes }) => {
     }
   }
 
-  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
+  const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true) => {
+    //@ts-ignore
     saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
+    //@ts-ignore
     await editorRef.current.save();
     setTimeout(() => {
       const now = moment();
-      setLastSaveText(`${t('landingPages.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
+      setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
   }
@@ -417,6 +452,7 @@ const BeeEditor = ({ classes }) => {
   }
 
   const deleteCurrentLandingPage = async () => {
+    //@ts-ignore
     await dispatch(deleteLandingPage(moduleId));
     navigateToLandingPageManagement();
   }
@@ -460,7 +496,7 @@ const BeeEditor = ({ classes }) => {
     setIsResponseModal(false);
   }
 
-  const onSaveUserBlock = (json, block) => {
+  const onSaveUserBlock = (json: any, block: any) => {
     setLoader(true);
     const blockRequest = {
       Data: JSON.stringify(json),
@@ -468,6 +504,7 @@ const BeeEditor = ({ classes }) => {
       Tags: block?.metadata?.tags?.split(','),
       uuid: block?.metadata?.uuid
     };
+    //@ts-ignore
     dispatch(saveLPUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       dispatch(getLPUserblocks());
@@ -475,15 +512,17 @@ const BeeEditor = ({ classes }) => {
     });
   }
 
-  const onEditBlock = (blockRequest) => {
+  const onEditBlock = (blockRequest: any) => {
     setLoader(true);
+    //@ts-ignore
     dispatch(saveLPUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       await setRow(JSON.stringify(blockRequest?.Json));
     });
   }
 
-  const handleDeleteBlock = (e, row_id) => {
+  const handleDeleteBlock = (e: any, row_id: string) => {
+    //@ts-ignore
     dispatch(deleteLPUserBlock(row_id)).then((result) => {
       console.log(result);
     })
@@ -491,6 +530,7 @@ const BeeEditor = ({ classes }) => {
 
   const getConfig = () => {
     return BeeConfig({
+      //@ts-ignore
       moduleType,
       classes,
       onSaveUserBlock,
@@ -501,6 +541,7 @@ const BeeEditor = ({ classes }) => {
       AutoSave: onAutoSavePage,
       DesignChange: onDesignChange,
       SetDialog: setDialog,
+      //@ts-ignore
       Id: moduleId,
       PulseemEditBlock: onEditBlock,
       DeleteBlock: handleDeleteBlock,
@@ -515,17 +556,21 @@ const BeeEditor = ({ classes }) => {
 
 
   const saveTemplate = async () => {
+    //@ts-ignore
     saveRef.current = {
       templateName: saveTemplateDetails.templateName,
       templateCategory: saveTemplateDetails.categoryName,
       saveTemplate: true,
       showAnimation: true
     };
+    //@ts-ignore
     await editorRef.current.save();
   }
 
   const onBeforeReinit = async () => {
+    //@ts-ignore
     saveRef.current = { showAnimation: false, reInitEditor: true };
+    //@ts-ignore
     await editorRef.current.save();
   }
 
@@ -540,6 +585,7 @@ const BeeEditor = ({ classes }) => {
         content: (
           <Gallery
             classes={classes}
+            //@ts-ignore
             style={{ minWidth: 400 }}
             multiSelect={false}
             forceReload={true}
@@ -552,6 +598,7 @@ const BeeEditor = ({ classes }) => {
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
+          //@ts-ignore
           showDivider={false}
           classes={classes}
           open={showGallery}
@@ -572,6 +619,7 @@ const BeeEditor = ({ classes }) => {
         content: (
           <Gallery
             classes={classes}
+            //@ts-ignore
             style={{ minWidth: 400 }}
             multiSelect={false}
             forceReload={true}
@@ -584,6 +632,7 @@ const BeeEditor = ({ classes }) => {
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
+          //@ts-ignore
           showDivider={false}
           classes={classes}
           open={showDocs}
@@ -653,6 +702,7 @@ const BeeEditor = ({ classes }) => {
           color="primary"
         >{t("common.save")}
         </Button>
+        {/* @ts-ignore */}
         {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={saveDesign}
           variant='contained'
           size='medium'
@@ -721,7 +771,7 @@ const BeeEditor = ({ classes }) => {
 				<Templates
 					isCreateLandingPage={true}
 					classes={classes}
-					onClose={async (template) => {
+					onClose={async (template: LandingPageTemplate) => {
             if (template !== undefined) {
               //@ts-ignore
 							if (template !== undefined) {
@@ -862,7 +912,7 @@ const BeeEditor = ({ classes }) => {
 		};
 	}
 
-  const renderTemplateConfirmationDialog = (newTemplate) => {
+  const renderTemplateConfirmationDialog = (newTemplate: LandingPageTemplate) => {
 		return {
 			showDivider: false,
 			title: t('common.doYouWantToProceed'),
@@ -908,7 +958,7 @@ const BeeEditor = ({ classes }) => {
 		};
 	}
 
-  const renderGenericDialog = (message) => {
+  const renderGenericDialog = (message: string) => {
 		return {
 			showDivider: false,
 			title: t('common.Notice'),
@@ -934,6 +984,7 @@ const BeeEditor = ({ classes }) => {
     } else if (type === DialogType.RENDER_TEMPLATE_CONFIRMATION) {
       currentDialog = renderTemplateConfirmationDialog(data);
     } else if (type === DialogType.NO_CREDITS_LEFT) {
+      //@ts-ignore
       currentDialog = renderNoCreditLeftDialog(data);
     } else if (type === DialogType.GENERIC) {
       currentDialog = renderGenericDialog(data);
@@ -943,11 +994,13 @@ const BeeEditor = ({ classes }) => {
       return (
         dialogType && <BaseDialog
           classes={classes}
+          //@ts-ignore
           open={dialogType}
           childrenStyle={classes.mb25}
           onClose={() => setDialogType(null)}
           onCancel={() => setDialogType(null)}
           {...currentDialog}>
+          {/* @ts-ignore */}
           {currentDialog.content}
         </BaseDialog>
       )
@@ -968,8 +1021,10 @@ const BeeEditor = ({ classes }) => {
       {showDocumentsModal()}
       <ResponseModal
         classes={classes}
+        //@ts-ignore
         isOpen={dialog && isResponseModal}
         onClose={handleCloseReponse}
+        //@ts-ignore
         onConfirm={handleCloseReponse}
         summaryData={summaryData}
         message={dialog}
@@ -983,18 +1038,25 @@ const BeeEditor = ({ classes }) => {
         ignorePaddingBottom={true}
         innerStyle={{ paddingInline: 15}}
         classes={classes}
+        //@ts-ignore
         onExit={!isFromAutomation && onExit}
+        //@ts-ignore
         onBack={
           fromLink?.toLowerCase() !== 'autoresponder' && {
             callback: () => { onBack() },
             text: t(getBackButtonText())
           }
         }
+        //@ts-ignore
         onDelete={fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
         // onShowGallery={() => { setShowGallery(true) }}
+        //@ts-ignore
         onShowDocuments={() => { setShowDocuments(true) }}
+        //@ts-ignore
         additionalButtons={renderButtons()}
+        //@ts-ignore
         additionalButtonsOnStart={renderTemplateButtons()}
+        //@ts-ignore
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       {renderDialog()}
@@ -1003,4 +1065,4 @@ const BeeEditor = ({ classes }) => {
   )
 }
 
-export default BeeEditor;
+export default BeeEditorPage;

@@ -331,9 +331,9 @@ export const DefaultContent = (IsRTL: Boolean) => {
 
 export const DialogType = {
     DELETE: "delete",
-    MISSING_API_KEY: "landingPages.missingApi",
+    MISSING_API_KEY: "common.missingApi",
     CAMPAIGN_NOT_FOUND: "landingPages.landingPageNotFound",
-    ERROR_OCCURED: "landingPages.errorOccured",
+    ERROR_OCCURED: "common.ErrorOccured",
     GENERIC: "generic",
     NO_CREDITS_LEFT: "sms.noCredits",
     Templates: "templates",
