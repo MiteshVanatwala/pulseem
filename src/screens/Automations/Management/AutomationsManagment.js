@@ -31,7 +31,7 @@ import { Title } from '../../../components/managment/Title';
 
 const AutomationsManagnentScreen = ({ classes }) => {
   const Redirect = useNavigate();
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -279,7 +279,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         icon: EditIcon,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true` : '',
+        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : '',
         rootClass: classes.paddingIcon,
         onClick: () => {
           if (IsActive) {
