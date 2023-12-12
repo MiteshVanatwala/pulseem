@@ -214,7 +214,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/CreateAutomations.aspx?fromreact=true'
+            href={`/Pulseem/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -271,7 +271,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}`)
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
         }
       },
       {

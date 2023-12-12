@@ -948,7 +948,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							`/react/whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
 						);
 					} else {
-						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 					}
 				}
 				return data?.Data;
@@ -1010,7 +1010,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onExitCampaign = () => {
 		setIsExitCampaignOpen(false);
 		if (FromAutomation) {
-			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 		} else {
 			navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 		}

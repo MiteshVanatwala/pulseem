@@ -521,7 +521,7 @@ const NewsLetterInfo = ({ classes }) => {
                 }
                 else if (isExit === true) {
                     if (isFromAutomation) {
-                        window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+                        window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
                         return false;
                     }
                     navigate(`/react/Campaigns`);
@@ -875,7 +875,7 @@ const NewsLetterInfo = ({ classes }) => {
         }
         else {
             if (isFromAutomation) {
-                window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+                window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
                 return false;
             }
             navigate('/react/Campaigns');
