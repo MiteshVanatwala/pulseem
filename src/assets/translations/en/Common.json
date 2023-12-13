@@ -670,5 +670,7 @@
   "enabled": "Enabled",
   "disabled": "Disabled",
   "lastSaveAt": "Last save at: ",
-  "missingApi": "Missing api key"
+  "missingApi": "Missing api key",
+  "publish": "Publish",
+  "finish": "Finish"
 }

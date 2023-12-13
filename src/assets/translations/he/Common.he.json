@@ -662,5 +662,7 @@
   "enabled": "Enabled",
   "disabled": "Disabled",
   "lastSaveAt": "שמירה אחרונה ב: ",
-  "missingApi": "מפתח API לא נכון או לא תקין"
+  "missingApi": "מפתח API לא נכון או לא תקין",
+  "publish": "Publish",
+  "finish": "Finish"
 }

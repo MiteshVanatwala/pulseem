@@ -30,7 +30,7 @@ import moment from 'moment';
 import Templates from './modals/Templates';
 /* END Bee */
 import { loginURL, sitePrefix } from '../../config';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdOutlinePublic } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
@@ -682,34 +682,58 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
-      wizardButtons.push(<>
-        <Button
-          onClick={() =>
-            saveDesign(false, null, true)}
-          className={clsx(
-            classes.btn,
-            classes.btnRounded,
-            classes.backButton
-          )}
-          style={{ margin: '8px' }}
-          startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
-          color="primary"
-        >{t("common.save")}
-        </Button>
-        {/* @ts-ignore */}
-        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={saveDesign}
-          variant='contained'
-          size='medium'
-          className={clsx(
-            classes.btn,
-            classes.btnRounded,
-            classes.backButton
-          )}
-          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-          style={{ marginInlineStart: '8px' }}
-          color="primary"
-        >{t('common.continue')}</Button>
-        }
+      wizardButtons.push(
+        <>
+          <Button
+            onClick={() => saveDesign(false, null, true)}
+            className={clsx(
+              classes.btn,
+              classes.btnRounded,
+              classes.backButton
+            )}
+            style={{ margin: '8px' }}
+            startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
+            color="primary"
+          >
+            {t("common.save")}
+          </Button>
+          {
+            fromLink?.toLowerCase() !== 'autoresponder' && (
+              <>
+                {/* @ts-ignore */}
+                <Button onClick={saveDesign}
+                  variant='contained'
+                  size='medium'
+                  className={clsx(
+                    classes.btn,
+                    classes.btnRounded,
+                    classes.backButton
+                  )}
+                  startIcon={<MdOutlinePublic />}
+                  style={{ marginInlineStart: '8px' }}
+                  color="primary"
+                >
+                  {t('common.publish')}
+                </Button>
+
+                {/* @ts-ignore */}
+                <Button onClick={saveDesign}
+                  variant='contained'
+                  size='medium'
+                  className={clsx(
+                    classes.btn,
+                    classes.btnRounded,
+                    classes.backButton
+                  )}
+                  startIcon={<MdCheck />}
+                  style={{ marginInlineStart: '8px' }}
+                  color="primary"
+                >
+                  {t('common.finish')}
+                </Button>
+              </>
+            )
+          }
       </>)
     }
     else {
