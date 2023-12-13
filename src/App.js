@@ -319,6 +319,10 @@ const renderRoutes = (classes, redirect) => {
         element={<CreateLandingPage classes={classes} />}
       />
       <Route
+        path={`${sitePrefix}CreateLandingPage/:id`}
+        element={<CreateLandingPage classes={classes} />}
+      />
+      <Route
         path={`/LandingPageWizard`}
         component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
       />

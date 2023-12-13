@@ -20,7 +20,7 @@ import PulseemTags from '../../../components/Tags/PulseemTags';
 import { FileGallery } from '../../../Models/Files/FileGallery';
 import { BiPlus, BiUpload } from 'react-icons/bi';
 import Gallery from '../../../components/Gallery/Gallery.component';
-import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
+import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { RandomID } from '../../../helpers/Functions/functions';
 import { validateEmailAddress } from '../../../helpers/Utils/common';
 import { isValidHttpUrl } from '../../../helpers/Utils/TextHelper';
@@ -30,12 +30,14 @@ import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { BsInfoCircle } from 'react-icons/bs';
 import { getAllLPTemplatesBySubaccountId, getLPPublicTemplates, getLPTemplateById, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
 import { sitePrefix } from '../../../config';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // import Templates from '../../HtmlCampaign/modals/Templates';
 import { GrFormAdd, GrFormSubtract } from 'react-icons/gr';
 import Templates from '../../BeeEditorPage/modals/Templates';
+import { getCookie } from '../../../helpers/Functions/cookies';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
+	const { id } = useParams();
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
@@ -48,6 +50,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	} | null>(null);
 	const [confirmExit, setConfirmExit] = useState<boolean>(false);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
+	const { verifiedEmails, accountSettings, accountFeatures } = useSelector((state: any) => state.common);
 	const { testGroups } = useSelector((state: any) => state.sms);
 	const [errors, setErrors] = useState({
 		formName: '',
@@ -110,7 +113,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		reportLeadsToEmails: [],
 		updateExistingRecipients: 0,
 		limitSubscribers: '',
-		duplicateMailConfirmation: true
+		duplicateMailConfirmation: true,
+		IsNewEditor: true
 	})
 	const [expandedIndexes, setExpandedIndexes] = useState([1,2,3,4]);
 	const [template, setTemplate] = useState('');
@@ -421,37 +425,72 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	const renderButtons = () => {
 		const wizardButtons = [];
-
-		wizardButtons.push(
-			<Button
-				onClick={saveAndContinueToOldEditor}
-				className={clsx(
-						classes.btn,
-						classes.btnRounded,
-						classes.backButton
-				)}
-				style={{ margin: '8px' }}
-				endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-			>
-				{translator('common.saveAndContinue')}
-			</Button>
-		);
-
-		wizardButtons.push(
-			<Button
-				onClick={saveAndContinueToNewEditor}
-				className={clsx(
-						classes.btn,
-						classes.btnRounded,
-						classes.backButton
-				)}
-				style={{ margin: '8px' }}
-				endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-				key='newEditor'
-			>
-				{translator('master.continueToNewEditor')}
-			</Button>
-		);
+		const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
+		const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
+		if (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
+			wizardButtons.push(
+				<>
+						<Button
+							onClick={saveAndContinueToOldEditor}
+							className={clsx(
+								classes.btn,
+								classes.btnRounded,
+								classes.backButton
+							)}
+							style={{ margin: '8px' }}
+							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						>
+							{translator("common.save")}
+						</Button>
+						<Button
+							onClick={saveAndContinueToOldEditor}
+							className={clsx(
+									classes.btn,
+									classes.btnRounded,
+									classes.backButton
+							)}
+							style={{ margin: '8px' }}
+							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						>
+							{translator('common.continue')}
+						</Button>
+				</>
+			);
+		}
+		else {
+			if (id !== null && formValues?.IsNewEditor === true) {
+				wizardButtons.push(
+					<Button
+						onClick={saveAndContinueToNewEditor}
+						className={clsx(
+								classes.btn,
+								classes.btnRounded,
+								classes.backButton
+						)}
+						style={{ margin: '8px' }}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						key='newEditor'
+					>
+						{translator('master.continueToNewEditor')}
+					</Button>
+				);
+			} else {
+				wizardButtons.push(
+					<Button
+						onClick={saveAndContinueToOldEditor}
+						className={clsx(
+								classes.btn,
+								classes.btnRounded,
+								classes.backButton
+						)}
+						style={{ margin: '8px' }}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
+						{translator('common.saveAndContinue')}
+					</Button>
+				);
+			}
+		}
 		return wizardButtons.map((b) => b);
 	}
 
@@ -1350,7 +1389,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	return (
 		<DefaultScreen
-			currentPage="newsletter"
+			currentPage="landingPages"
 			subPage={"newsletterInfo"}
 			classes={classes}
 			customPadding={true}

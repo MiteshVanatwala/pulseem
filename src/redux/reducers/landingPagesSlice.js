@@ -205,15 +205,16 @@ export const landingPagesSlice = createSlice({
       state.landingPagesDeletedData = payload.filter(row => row.IsDeleted)
     })
     builder.addCase(getLPUserblocks.fulfilled, (state, { payload }) => {
-      const blocks = payload?.map((b) => {
-          return {
-              uuid: b.uuid,
-              category: b.Category,
-              data: JSON.parse(b.Data),
-              tags: b?.TagsAsString?.split(',')
-          }
-      });
-      state.landingPageUserBlocks = blocks
+      // const blocks = payload?.map((b) => {
+      //     return {
+      //         uuid: b.uuid,
+      //         category: b.Category,
+      //         data: JSON.parse(b.Data),
+      //         tags: b?.TagsAsString?.split(',')
+      //     }
+      // });
+      // state.landingPageUserBlocks = blocks
+      state.landingPageUserBlocks = []
     })
     builder.addCase(getLandingPagesData.rejected, (state, action) => {
       state.landingPagesDataError = action.error.message

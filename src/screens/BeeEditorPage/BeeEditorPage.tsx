@@ -39,6 +39,7 @@ import { commonProps } from '../../model/Common/commonProps.types';
 import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplate, LandingPageUserBlocks, SaveLandingPageArguments } from '../../Models/LandingPage/LandingPage';
 import { SMSStoreProps } from '../../model/Sms/Sms.types';
 import { FileGallery } from '../../Models/Files/FileGallery';
+import { DemoModal } from '../HtmlCampaign/components/DemoModal';
 
 const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -284,7 +285,6 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
         // initTags();
         switch (LPBeeToken?.StatusCode) {
           case 201: {
-            const beeObject = JSON.parse(LPBeeToken.Message);
             if (LPBeeToken.Message === "null" || LPBeeToken.Message === null) {
               setDialogType({
                 type: DialogType.GENERIC,
@@ -292,14 +292,8 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
               });
             }
             else {
-              const beeTest = new BeePlugin(beeObject);
-              let template = null;
-              if (forceTemplate !== null) {
-                template = forceTemplate;
-              }
-              else {
-                template = landingPage?.JsonData ? JSON.parse(landingPage?.JsonData) : defaultContent.defaultTemplate;
-              }
+              const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
+              const template = forceTemplate !== null ? forceTemplate : landingPage?.JsonData ? JSON.parse(landingPage?.JsonData) : defaultContent.defaultTemplate;
   
               //@ts-ignore
               beeTest.start(config, template).then((instance) => {
@@ -478,7 +472,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
 
   const onExit = () => setDialogType({ type: DialogType.EXIT })
   
-  const onBack = () => saveDesign(true, `${sitePrefix}EditRegistrationPage`);
+  const onBack = () => saveDesign(true, `${sitePrefix}CreateLandingPage/${moduleId}`);
 
   const renderToast = () => {
     if (toastMessage) {
@@ -540,7 +534,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
       Save: onSave,
       AutoSave: onAutoSavePage,
       DesignChange: onDesignChange,
-      SetDialog: setDialog,
+      SetDialog: setDialogType,
       //@ts-ignore
       Id: moduleId,
       PulseemEditBlock: onEditBlock,
@@ -966,6 +960,25 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
       content: <Typography>{RenderHtml(message)}</Typography>
 		};
 	}
+
+  const renderEditRowDialog = (message: string) => {
+		return {
+			showDivider: false,
+			title: t('common.Notice'),
+      showDefaultButtons: false,
+      content: (
+        <EditRow
+          classes={classes}
+          onClose={(resp: any) => {
+            console.log(resp);
+            setDialogType(null);
+          }}
+          save={() => {}}
+          args={{}}
+        />
+      )
+		};
+	}
   
   const renderDialog = () => {
     const { type, data } = dialogType || {}
@@ -1032,6 +1045,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
       <Box className={classes.containerFullHeight}>
         <div id="page-bee-plugin-container" className={classes.containerFullHeight}></div>
       </Box>
+      <DemoModal modals={modals} />
       <WizardActions
         disabled={buttonDisabled}
         campaignId={moduleId}

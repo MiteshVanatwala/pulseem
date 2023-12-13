@@ -67,6 +67,67 @@ export const BeeConfig = (Options: ConfigOptions) => {
         workspace: {
             type: 'default', // 'mixed'|'amp_only'|'html_only'
         },
+        defaultForm: {
+            structure: {
+                title: 'Form title',
+                description: "A BEE test form",
+                fields: {
+                    firstName: { type: 'text', label: 'First Name', canBeRemovedFromLayout: true },
+                    lastName: { type: 'text', label: 'Last Name', canBeRemovedFromLayout: true },
+                    email: { type: 'email', label: 'Email', canBeRemovedFromLayout: true },
+                    telephone: { type: 'tel', label: 'Telephone', canBeRemovedFromLayout: true },
+                    cellphone: { type: 'tel', label: 'Cellphone', canBeRemovedFromLayout: true, attributes: { pattern: "[0-9]{3}-[0-9]{3}-[0-9]{4}" } },
+                    address: { type: 'text', label: 'Address', canBeRemovedFromLayout: true },
+                    city: { type: 'text', label: 'City', canBeRemovedFromLayout: true },
+                    company: { type: 'text', label: 'Company', canBeRemovedFromLayout: true },
+                    birthDate: { type: 'text', label: 'Birth Date', canBeRemovedFromLayout: true },
+                    zip: { type: 'text', label: 'Zip', canBeRemovedFromLayout: true },
+                    country: { type: 'text', label: 'Country', canBeRemovedFromLayout: true },
+                    gender: {
+                        type: "select",
+                        label: "Gender",
+                        options: [{
+                                type: "option",
+                                label: "Male",
+                                value: "M"
+                            },
+                            {
+                                type: "option",
+                                label: "Female",
+                                value: "F"
+                            },
+                            {
+                                type: "option",
+                                label: "Not telling",
+                                value: "-"
+                            }
+                        ]
+                    },
+                    confirmation: { type: 'checkbox', label: 'Confirmation', canBeRemovedFromLayout: false },
+                    submit: { type: 'submit', label: '', canBeRemovedFromLayout: false, attributes: { value: 'Submit', name: "submit_button" }},
+                },
+                layout: [
+                    ['firstName', 'lastName'],
+                    ['email'],
+                    ['telephone', 'cellphone'],
+                    ['address', 'zip'],
+                    ['city', 'country'],
+                    ['company'],
+                    ['birthDate'],
+                    ['confirmation'],
+                    ['submit'],
+                ],
+                attributes: {
+                    "accept-charset": "UTF-8",
+                    action: "http://example.com/read-form-script",
+                    autocomplete: "on",
+                    enctype: "multipart/form-data",
+                    method: "post",
+                    novalidate: false,
+                    target: "_self"
+                },
+            }
+        },
         defaultModulesOrder: [
             'Heading',
             'Text',
@@ -91,11 +152,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
             }
         },
         onSaveRow: async (jsonFile: any) => {
-            if (jsonFile) {
-                const json = JSON.parse(jsonFile)
-                //const rowName = json.metadata.name;
-                onSaveUserBlock(jsonFile, json);
-            }
+            if (jsonFile) onSaveUserBlock(jsonFile, JSON.parse(jsonFile));
         },
         contentDialog: {
             saveRow: {
@@ -157,6 +214,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
 
                 }
 
+            },
+            manageForm: {
+                label: 'Edit form',
+                handler: async (resolve: any, reject: any, args: any) => { 
+                //   const structure = await onHandleManageForm(args)
+                //   structure ? resolve(structure) : reject()
+                    reject()
+                } 
             },
         },
         //#region Methods
@@ -340,5 +405,6 @@ export const DialogType = {
     SAVE_TEMPLATE: "saveTemplate",
     LOGOUT: "logout",
     EXIT: "exit",
-    RENDER_TEMPLATE_CONFIRMATION: "RenderTemplateConfirmation"
+    RENDER_TEMPLATE_CONFIRMATION: "RenderTemplateConfirmation",
+    EDIT_ROW: "EditRow"
 };
