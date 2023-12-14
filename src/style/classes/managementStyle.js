@@ -1464,7 +1464,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     margin: 10,
   },
   dashBoxtitleSection: {
-    marginBottom: "1.2rem",
+    marginBottom: "0px",
     borderBottom: "none !important",
     background: '#F0F5FF',
     height: 50,
@@ -1698,6 +1698,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       height: 'auto',
       display: 'inline-table',
       marginBottom: 0,
+      paddingBottom: 0,
       '& .MuiTabs-root': {
         marginLeft: 0,
         marginTop: 10

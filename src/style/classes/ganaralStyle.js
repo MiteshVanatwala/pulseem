@@ -2014,7 +2014,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .MuiTabs-flexContainer': {
         height: '100%',
         background: '#fff',
-        borderRadius: 10
+        borderRadius: 10,
+        borderBottomRightRadius: 0,
       },
     },
     '& .MuiTabs-scroller': {
@@ -2024,7 +2025,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   btnTab: {
     fontSize: 20,
     textTransform: "capitalize",
-    minWidth: 120,
+    minWidth: 100,
     height: 'auto',
     // color: '#ff2c44',
     borderTopLeftRadius: 10,

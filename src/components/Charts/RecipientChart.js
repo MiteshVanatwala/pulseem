@@ -392,17 +392,24 @@ const RecipientChart = ({ classes, }) => {
             return a + b["Total"];
         }, 0);
 
+        const recipientsReportChart = recipientsReport.reduce((prevVal, newVal) => {
+            if (newVal.Total > 0) {
+                if ((!Notifications.FeatureExist && newVal.ReportSection === 2) || (!Sms.FeatureExist && newVal.ReportSection === 1)) return prevVal        
+                else prevVal.push(newVal);
+            }
+            return prevVal
+        }, []);
         return (
             <Grid container dir={'ltr'} className={classes.carouselChart}>
-                {recipientsReport && totalRecipientsReport > 0 ? renderArrows(carouselItem, recipientsReport.map((rr) => rr.Total)?.length, setCarouselItem, classes.carouselArrows) : null}
-                {recipientsReport && totalRecipientsReport > 0 ? (
+                {recipientsReportChart && totalRecipientsReport > 0 ? renderArrows(carouselItem, recipientsReportChart.map((rr) => rr.Total)?.length, setCarouselItem, classes.carouselArrows) : null}
+                {recipientsReportChart && totalRecipientsReport > 0 ? (
                     <Carousel
                         showIndicators={false}
                         showStatus={false}
                         showThumbs={false}
                         showArrows={true}
                         selectedItem={carouselItem}>
-                        {recipientsReport.map((report, index) => {
+                        {recipientsReportChart.map((report, index) => {
                             if ((report.ReportSection === 2 && !Notifications.FeatureExist)
                                 || (report.ReportSection === 1 && !Sms.FeatureExist)) {
                                 return null;
@@ -411,9 +418,6 @@ const RecipientChart = ({ classes, }) => {
                                 return renderDoughnut(report, index, COLOR_SCHEME[index])
                             }
                             return null;
-                            // else {
-                            //     return renderCircleAdd(titles[index])
-                            // }
                         })}
                     </Carousel>) : (
                     <ButtonWithTitle
