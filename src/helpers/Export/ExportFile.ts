@@ -27,8 +27,9 @@ const ExportFile = (options: Options) => {
 			exportFromJSON({
 				data: options.data,
 				fileName: options.fileName,
-				exportType: options.exportType,
+				exportType: 'csv',
 				fields: options.fields,
+				extension: options.exportType,
 				withBOM: true,
 			});
 
