@@ -24,14 +24,22 @@ const ExportFile = (options: Options) => {
 				reject('No data has been found.');
 			}
 
-			exportFromJSON({
-				data: options.data,
-				fileName: options.fileName,
-				exportType: 'csv',
-				fields: options.fields,
-				extension: options.exportType,
-				withBOM: true,
-			});
+			if (options.exportType === 'csv') {
+				exportFromJSON({
+					data: options.data,
+					fileName: options.fileName,
+					exportType: options.exportType,
+					fields: options.fields,
+					withBOM: true,
+				});
+			} else {
+				exportAsXLSX(
+					options.data,
+					options.fields,
+					`${options.fileName}.xls`,
+					`${options.fileName}`,
+				);
+			}
 
 			resolve('Success');
 		} catch (e) {
