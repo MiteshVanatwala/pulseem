@@ -520,7 +520,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             '& .searchLine': {
                 paddingInlineStart: 31,
                 '& .MuiGrid-item': {
-                    marginRight: 27.42
+                    marginRight: 27.42,
+                    "@media screen and (max-width: 414px)": {
+                        marginRight: 10
+                    }
                 }
             },
             "@media screen and (max-width: 765px)": {

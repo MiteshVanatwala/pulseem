@@ -231,7 +231,6 @@ const Groups = ({ classes }) => {
         if (qs?.NewGroup === 'true') {
             setDialog(DialogType.ADD_GROUP)
         }
-
     }, [])
 
     const renderSearchSection = () => {
@@ -422,7 +421,7 @@ const Groups = ({ classes }) => {
         }
 
         return (
-            <Grid container wrap="nowrap" spacing={1} alignItems='center' className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.groupNameCell : ''}>
+            <Grid container wrap="nowrap" spacing={1} alignItems='center' className={['sm', 'md'].indexOf(windowSize) > -1 ? classes.groupNameCell : ''}>
                 {windowSize !== 'xs' && <Grid item sm={2} className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.flexJustifyCenter : ''}>
                     <Checkbox
                         color="primary"
@@ -1858,11 +1857,14 @@ const Groups = ({ classes }) => {
         }
     }
     const handleDeleteGroup = async () => {
-        await dispatch(deleteGroups(selectedGroups));
-        await dispatch(getGroupsBySubAccountId())
-        setSelectedGroups([]);
         setDialog(null);
+        setLoader(true);
+        await dispatch(deleteGroups(selectedGroups));
+        setToastMessage(ToastMessages.GROUP_DELETED);
+        await dispatch(getGroupsBySubAccountId());
+        setSelectedGroups([]);
         getData(null);
+        setLoader(false);
     };
     const showDialog = () => {
         if (dialog !== null) {

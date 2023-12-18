@@ -99,7 +99,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: '#4D4D4D',
     width: '100%',
     "@media screen and (max-width: 475px)": {
-      maxWidth: '60%'
+      maxWidth: '100%'
     }
   },
   tableRow: {
@@ -896,6 +896,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tablePadingtonGridContainer: {
     paddingBlock: 10,
+    '& input': {
+      background: '#fff',
+      height: 30,
+      borderRadius: 5
+    }
   },
   selectHideDefaultCaretIcon: {
     '& .arrow': {
@@ -1580,7 +1585,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       minHeight: 330,
     },
     [theme.breakpoints.down("md")]: {
-      paddingBottom: 40,
+      paddingBottom: 0,
     },
     [theme.breakpoints.down("xs")]: {
       margin: "10px 10px 0px 10px",

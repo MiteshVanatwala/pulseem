@@ -1172,8 +1172,8 @@ const ClientSearchResult = ({ classes }) => {
       <>
         <Box className={clsx(classes.flex, classes.spaceBetween, classes.flexWrap)} >
           <Typography
-            style={{ width: 'auto' }}
-            className={clsx(classes.managementTitle, "mgmtTitle")}
+            style={{ width: windowSize !== "xs" ? 'auto' : '' }}
+            className={clsx(classes.managementTitle, "mgmtTitle", windowSize === "xs" ? classes.w70 : '')}
           >
             {t("client.logPageHeaderResource1.Text")} {searchData?.ResultTitle ? " - " : ""} {searchData?.ResultTitle}
           </Typography>
@@ -1212,28 +1212,6 @@ const ClientSearchResult = ({ classes }) => {
   }
   // DONE
   const renderSearchLine = () => {
-    if (windowSize === "xs") {
-      return (
-        <SearchField
-          classes={classes}
-          value={searchStr}
-          onChange={(e) => setSearchStr(e.target.value)}
-          onClick={() => {
-            handleSearch({
-              ...searchData,
-              IsAdvanced: false,
-              IsSearchByFilter: false,
-              PageIndex: 1,
-              PageSize: rowsPerPage,
-              SearchTerm: searchStr
-            });
-            setPage(1);
-          }}
-          onKeyPress={handleKeyPress}
-          placeholder={t("appbar.search")}
-        />
-      );
-    }
     return (
       <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
@@ -1378,32 +1356,36 @@ const ClientSearchResult = ({ classes }) => {
     date = moment(CreationDate, dateFormat);
     return (
       <>
-        <CustomTooltip
-          isSimpleTooltip={false}
-          interactive={true}
-          classes={{
-            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-            arrow: classes.fBlack,
-          }}
-          arrow={true}
-          style={{ fontSize: 18, fontWeight: "bold", direction: isRTL ? 'rtl' : 'ltr' }}
-          placement={"top"}
-          title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
-          text={`${FirstName} ${LastName}`}
-        >
-          {fullwidth ? (
-            <Typography
-              className={clsx(classes.nameEllipsis, classes.fullWidth)}
-              style={{ maxWidth: "100%", minHeight: 28 }}
+        {
+          (FirstName || LastName) && (
+            <CustomTooltip
+              isSimpleTooltip={false}
+              interactive={true}
+              classes={{
+                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                arrow: classes.fBlack,
+              }}
+              arrow={true}
+              style={{ fontSize: 18, fontWeight: "bold", direction: isRTL ? 'rtl' : 'ltr' }}
+              placement={"top"}
+              title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
+              text={`${FirstName} ${LastName}`}
             >
-              {FirstName} {LastName}
-            </Typography>
-          ) : (
-            <Typography className={classes.nameEllipsis} style={{ minHeight: 28 }}>
-              {FirstName} {LastName}
-            </Typography>
-          )}
-        </CustomTooltip>
+              {fullwidth ? (
+                <Typography
+                  className={clsx(classes.nameEllipsis, classes.fullWidth)}
+                  style={{ maxWidth: "100%", minHeight: 28 }}
+                >
+                  {FirstName} {LastName}
+                </Typography>
+              ) : (
+                <Typography className={classes.nameEllipsis} style={{ minHeight: 28 }}>
+                  {FirstName} {LastName}
+                </Typography>
+              )}
+            </CustomTooltip>
+          )
+        }
         <Typography className={classes.grayTextCell}>
           {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
         </Typography>

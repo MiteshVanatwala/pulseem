@@ -811,6 +811,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w50: {
     width: '50%'
   },
+  w70: {
+    width: '70%'
+  },
   w100: {
     width: '100%'
   },
@@ -963,7 +966,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       stroke: 'inherit',
     },
     "@media screen and (max-width: 400px)": {
-      // maxWidth: 200
+      '& .MuiButton-startIcon': {
+        width: 'initial'
+      }
     },
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
@@ -987,6 +992,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: 30,
       '& svg': {
         fontSize: 20
+      },
+      "@media screen and (max-width: 475px)": {
+        width: 'auto',
+        marginRight: 0
       }
     },
     '& .MuiButton-endIcon': {
