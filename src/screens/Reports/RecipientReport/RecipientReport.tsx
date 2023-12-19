@@ -208,23 +208,23 @@ const RecipientReport = ({ classes }: any) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={headCellStyle} className={clsx(classes.flex3, classes.noPonSmallScreen, classes.f16)} align='center'>
+          <TableCell classes={headCellStyle} className={clsx(classes.flex3, classes.noPonSmallScreen)} align='center'>
             {t('campaigns.camapignName')}
           </TableCell>
 
-          <TableCell classes={headCellStyle} className={clsx(classes.flex2, classes.noPonSmallScreen, classes.f16)} align='center'>
+          <TableCell classes={headCellStyle} className={clsx(classes.flex2, classes.noPonSmallScreen)} align='center'>
             {t('common.Dates')}
           </TableCell>
 
-          <TableCell classes={headCellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>
+          <TableCell classes={headCellStyle} className={clsx(classes.flex2)} align='center'>
             {t('common.Status')}
           </TableCell>
 
-          <TableCell classes={headCellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>
+          <TableCell classes={headCellStyle} className={clsx(classes.flex1)} align='center'>
             {t('common.Opened')}
           </TableCell>
 
-          <TableCell classes={headCellStyle} className={clsx(classes.flex1, classes.f16)} align='center' />
+          <TableCell classes={headCellStyle} className={clsx(classes.flex1)} align='center' />
         </TableRow>
       </TableHead>
     )
@@ -301,13 +301,13 @@ const RecipientReport = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex3}>
+          className={clsx(classes.flex3, classes.f15)}>
           {row.Name}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex2}>
+          className={clsx(classes.flex2, classes.f15)}>
           {FormatDate(row.SendDate)}
         </TableCell>
         <TableCell
@@ -317,6 +317,7 @@ const RecipientReport = ({ classes }: any) => {
           <Typography className={clsx(
             classes.middleText,
             classes.recipientsStatus,
+            classes.f15,
             {
               [classes.recipientsStatusCreated]: row?.Status === 1,
               [classes.recipientsStatusSent]: row?.Status === 4,
@@ -330,12 +331,12 @@ const RecipientReport = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex1}>
+          className={clsx(classes.flex1, classes.f15)}>
           {t(`common.${row.OpeningCount > 0 ? 'Yes' : 'No'}`)}
         </TableCell>
         <TableCell
           classes={cellStyle}
-          className={classes.flex1}>
+          className={clsx(classes.flex1, classes.f15)}>
           <ManagmentIcon
             onClick={async () => {
               // pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${row.CampaignID}&fromreact=true`)
@@ -601,26 +602,26 @@ const RecipientReport = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex3}>
+          className={clsx(classes.flex3, classes.f15)}>
           {row.Name}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex2}>
+          className={clsx(classes.flex2, classes.f15)}>
           {FormatDate(row.SendDate)}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex2}>
+          className={clsx(classes.flex2, classes.f15)}>
           {renderStatusCell(row.SmsStatus)}
           {/* {t(`${ConvertSmsStatusText(`${row.SmsStatus}`)}`)} */}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex1}>
+          className={clsx(classes.flex1, classes.f15)}>
           {t(`common.${row?.ClicksCount > 0 ? 'Yes' : 'No'}`)}
         </TableCell>
         <TableCell
