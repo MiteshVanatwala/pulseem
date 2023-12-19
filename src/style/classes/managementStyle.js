@@ -187,8 +187,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       padding: "0px 5px",
     },
     "@media screen and (max-width: 1110px)": {
-      padding: "0px 5px",
-    },
+      padding: "0px 10px",
+    }
   },
   tableRowRoot: {
     display: "flex",
@@ -1746,6 +1746,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   lastReportPadding: {
     [theme.breakpoints.down("md")]: {
       marginTop: 0,
+    },
+    [theme.breakpoints.down("xs")]: {
+      marginTop: 20,
     },
     borderTop: 'none'
   },

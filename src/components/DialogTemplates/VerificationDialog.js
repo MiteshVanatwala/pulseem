@@ -365,7 +365,7 @@ const VerificationDialog = ({
                         <Divider />
                     </Box>
                     <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
-                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} classes={classes.pb15}>
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.pb15}>
                             <Typography className={clsx(classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                             <Button
                                 style={{ height: 35 }}
@@ -434,7 +434,7 @@ const VerificationDialog = ({
                                     !!verificationError?.email && setVerificationError({ email: '' })
                                     setSelectedVerificationContact(e.target.value?.trim())
                                 }}
-                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter, classes.p10)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
                                 error={!!verificationError?.Number}
                                 style={{ direction: 'ltr' }}
@@ -479,7 +479,7 @@ const VerificationDialog = ({
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                className={clsx(classes.textField, classes.maxWidth400)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
                                     if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
@@ -864,7 +864,7 @@ const VerificationDialog = ({
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                className={clsx(classes.textField, classes.maxWidth400)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
                                     if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
@@ -1017,7 +1017,7 @@ const VerificationDialog = ({
                                     setSelectedVerificationContact(e.target.value?.trim())
                                 }}
                                 style={{ direction: 'ltr' }}
-                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter, classes.p10)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
                                 error={!!verificationError?.Number}
                             />
@@ -1072,7 +1072,7 @@ const VerificationDialog = ({
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                className={clsx(classes.textField, classes.maxWidth400)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
                                     if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
@@ -1175,7 +1175,7 @@ const VerificationDialog = ({
             {verificationStep < 1 && (<Button
                 name="btnConfirm"
                 variant='contained'
-                size='small'
+                size='medium'
                 onClick={() => {
                     handleClose()
                 }}
@@ -1189,7 +1189,7 @@ const VerificationDialog = ({
             {(verificationStep > 0 && verificationStep < 3) && <Button
                 name="btnConfirm"
                 variant='contained'
-                size='small'
+                size='medium'
                 onClick={PrevSlide}
                 className={clsx(classes.btn, classes.btnRounded)}>
                 {t('notifications.back')}

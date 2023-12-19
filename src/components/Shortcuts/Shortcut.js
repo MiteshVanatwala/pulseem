@@ -339,7 +339,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           <Typography className={'title'}>{t('dashboard.myShortcuts')}</Typography>
         </Box>
         <Paper className={classes.shortcutPaper} ref={shortcutRef}>
-          <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
+          <Typography align='center' className={clsx(classes.shortcutSubtitle)}>{t('dashboard.addQuickButtons')}</Typography>
           {shortcuts && shortcuts.map((item, index) => {
             return renderShortcutButton(item, index)
           })}

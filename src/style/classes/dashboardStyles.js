@@ -49,7 +49,8 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     shortcutTitle: {
         maxHeight: 30,
         borderTopLeftRadius: 20,
-        borderTopRightRadius: 20
+        borderTopRightRadius: 20,
+        marginBottom: 10,
     },
     shortcutSubtitle: {
         fontSize: windowSize === 'xs' ? 16 : 18,
