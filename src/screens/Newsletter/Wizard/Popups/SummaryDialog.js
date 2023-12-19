@@ -246,7 +246,7 @@ const SummaryDialog = ({ classes,
                             <Box style={{ width: '100%' }}>
                                 <FormControl
                                     variant="standard"
-                                    className={clsx(classes.selectInputFormControl, classes.w100, classes.mb10)}
+                                    className={clsx(classes.selectInputFormControl, classes.width90P, classes.mb10)}
                                 >
                                     <Select
                                         variant="standard"
@@ -363,36 +363,6 @@ const SummaryDialog = ({ classes,
                     </ul>}
                     {subRecipientsDetails ? renderFilterDetails() : null}
                 </Box>
-                <Grid
-                    container
-                    spacing={4}
-                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
-                    <Grid item>
-                        <Button
-                            variant='contained'
-                            size='small'
-                            disabled={disableSend}
-                            onClick={() => {
-                                handleSendCampaign()
-                            }}
-                            className={clsx(
-                                classes.btn, classes.btnRounded,
-                                FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
-                            )}>
-                            {t("sms.sendDialog")}
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            variant='contained'
-                            size='small'
-                            onClick={() => { setDialogType(null) }}
-                            className={clsx(classes.btn, classes.btnRounded)}
-                        >
-                            {t("sms.cancelDialog")}
-                        </Button>
-                    </Grid>
-                </Grid>
                 {verPopupOpen && <VerificationDialog
                     classes={classes}
                     isOpen={verPopupOpen}
@@ -411,6 +381,38 @@ const SummaryDialog = ({ classes,
                     }}
                 />}
             </>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                // spacing={4}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                <Grid item className={classes.paddingSides10}>
+                    <Button
+                        variant='contained'
+                        size='small'
+                        disabled={disableSend}
+                        onClick={() => {
+                            handleSendCampaign()
+                        }}
+                        className={clsx(
+                            classes.btn, classes.btnRounded,
+                            FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
+                        )}>
+                        {t("sms.sendDialog")}
+                    </Button>
+                </Grid>
+                <Grid item className={classes.paddingSides10}>
+                    <Button
+                        variant='contained'
+                        size='small'
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t("sms.cancelDialog")}
+                    </Button>
+                </Grid>
+            </Grid>
         ),
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,
         confirmText: t("common.send"),

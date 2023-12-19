@@ -93,10 +93,10 @@ const Groups = ({ classes,
             return (<ListItem id={group[groupIdKey]} key={group[groupIdKey]} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
                 onMouseEnter={() => setIsHover(group[groupIdKey])}
                 onMouseLeave={() => setIsHover(null)}
-                className={groupHover === group[groupIdKey] ? classes.hoverListItem : null}
+                className={clsx(groupHover === group[groupIdKey] ? classes.hoverListItem : null, 'group-container')}
             >
 
-                <ListItemAvatar>
+                <ListItemAvatar className={classes.itemAvatar}>
                     <Avatar
                         className={clsx(classes.listIcon, isExist ? classes.redBg : classes.transparentBg, isExist ? classes.white : classes.blue, isExist ? classes.borderRed : classes.borderPrimary)}>
                         {isExist ?
@@ -109,7 +109,7 @@ const Groups = ({ classes,
                 <ListItemText className={'groupText'} title={group.GroupName}
                     primary={group.GroupName}
                 />
-                <ListItemSecondaryAction className={'groupText'}>
+                <ListItemSecondaryAction className={clsx('groupText', classes.itemAvatar)}>
                     {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] !== 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
@@ -179,7 +179,7 @@ const Groups = ({ classes,
     const renderSelectAll = () => {
         const allSelected = groupList?.length === selectedList?.length;
 
-        return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }}>
+        return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }} className={'group-container'}>
             <ListItemAvatar>
                 <Avatar
                     className={clsx(classes.listIcon, allSelected ? classes.redBg : classes.transparentBg, allSelected ? classes.white : classes.blue, allSelected ? classes.borderRed : classes.borderPrimary)}>

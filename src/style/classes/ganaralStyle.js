@@ -1991,6 +1991,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: "22px",
     color: "#555",
     marginInlineEnd: "5px",
+    [theme.breakpoints.down("xs")]: {
+      fontSize: 18,
+      paddingTop: 5,
+      paddingBottom: 10
+    },
   },
   tabDiv: {
     display: "grid",
@@ -2016,6 +2021,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottom: '4px solid transparent',
     "@media screen and (max-width: 768px)": {
       fontSize: "14px",
+    },
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '15px !important'
     },
   },
   tablistRoot: {
@@ -2605,7 +2613,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       paddingTop: 20,
       backgroundColor: '#fff',
       border: "2px solid #F0F5FF",
-
+      [theme.breakpoints.down("xs")]: {
+        paddingTop: 10,
+        paddingInline: 10,
+      },
+      
       '& .stepHead': {
         fontSize: 20,
         display: 'flex',
@@ -2637,7 +2649,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       },
       '& .bodyBlock': {
-        paddingInline: 10
+        paddingInline: 10,
+        [theme.breakpoints.down('xs')]: {
+          paddingInline: 0
+        },
       },
       '& .selectWrapper': {
         height: 'auto',
