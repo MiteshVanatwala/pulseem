@@ -69,7 +69,7 @@ export const AdvancedSettings = ({
                             </option>
                         ))}
                     </Select>
-                    {!campaingnValues?.IsResponsive && <FormHelperText className={classes.f16}>{RenderHtml(t('campaigns.newsLetterEditor.helpTexts.cellularSupportCaution'))}</FormHelperText>}
+                    {!campaingnValues?.IsResponsive && <FormHelperText className={clsx(classes.f16, classes.red)}>{RenderHtml(t('campaigns.newsLetterEditor.helpTexts.cellularSupportCaution'))}</FormHelperText>}
                 </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
