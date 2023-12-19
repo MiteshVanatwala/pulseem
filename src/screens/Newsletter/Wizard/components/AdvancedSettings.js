@@ -6,7 +6,8 @@ import {
     TextField,
     Typography,
     FormControl,
-    OutlinedInput
+    OutlinedInput,
+    FormHelperText
 } from '@material-ui/core'
 import clsx from "clsx";
 import { FaGoogle } from 'react-icons/fa';
@@ -16,6 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { LangugeCode, MobileSupport, PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
 import PulseemTags from '../../../../components/Tags/PulseemTags'
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 
 export const AdvancedSettings = ({
     classes,
@@ -67,6 +69,7 @@ export const AdvancedSettings = ({
                             </option>
                         ))}
                     </Select>
+                    {!campaingnValues?.IsResponsive && <FormHelperText className={classes.f16}>{RenderHtml(t('campaigns.newsLetterEditor.helpTexts.cellularSupportCaution'))}</FormHelperText>}
                 </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>

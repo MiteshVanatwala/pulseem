@@ -510,7 +510,8 @@
       "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
       "upload": "The file will appear as an attached file in your mail",
-      "newAddress": "new Email"
+      "newAddress": "new Email",
+      "cellularSupportCaution": "<b>Attention:</b> Adaptive is not supported by all devices & apps"
     },
     "errors": {
       "campaignWasNotSent": "The campaign was not sent!",
