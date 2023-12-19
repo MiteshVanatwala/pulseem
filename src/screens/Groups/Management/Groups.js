@@ -1213,7 +1213,7 @@ const Groups = ({ classes }) => {
                                     <IconWrapper iconName="automation" className={!AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
                                         onClick={() => {
                                             if (AutomationID)
-                                                window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
+                                                window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`, '_blank');
                                         }}
                                     />
                                 ),

@@ -27,6 +27,7 @@ import {
 	phoneNumberAPIProps,
 	GetTestGroups,
 	ApiSendCampaignData,
+	coreProps,
 } from './Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import RightPane from './Components/RightPane';
@@ -87,6 +88,7 @@ const SendCampaign = ({
 	if (isSendCampaign === 'false') isSendCampaign = false;
 
 	const { campaignID } = useParams();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { testGroups: testGroupList } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
@@ -517,7 +519,7 @@ const SendCampaign = ({
 				if (!!FromAutomation && !isSendCampaign) {
 					const saveCampaignData = await onCampaignSave(true, true, true);
 					if (saveCampaignData === apiStatus.SUCCESS) {
-						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 					}
 				}
 				break;
@@ -745,7 +747,7 @@ const SendCampaign = ({
 	const onExitCampaign = () => {
 		setIsExitCampaignOpen(false);
 		if (FromAutomation) {
-			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 		} else {
 			navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 		}
@@ -914,7 +916,7 @@ const SendCampaign = ({
 						onBackToCampaigns={() =>
 							navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
 						}
-						onBackToAutomation={() => window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+						onBackToAutomation={() => window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 						}
 						onClose={() => setIsSendCampaignSuccessOpen(false)}
 					/>

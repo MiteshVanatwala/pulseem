@@ -64,7 +64,7 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 
 const SmsManagnentScreen = ({ classes }) => {
-	const { language, windowSize, rowsPerPage } = useSelector(
+	const { language, windowSize, rowsPerPage, isRTL } = useSelector(
 		(state) => state.core
 	); // smsOldVersion, isRTL
 	const { smsData, smsDeletedData } = useSelector((state) => state.sms);
@@ -437,7 +437,7 @@ const SmsManagnentScreen = ({ classes }) => {
 				remove: windowSize === 'xs',
 				onClick: () => {
 					pulseemNewTab(
-						`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`
+						`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 					);
 				},
 				rootClass: classes.paddingIcon,

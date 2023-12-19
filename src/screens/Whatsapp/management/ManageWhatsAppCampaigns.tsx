@@ -91,7 +91,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { windowSize, rowsPerPage } = useSelector(
+	const { windowSize, rowsPerPage, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const ToastMessages = useSelector(
@@ -573,7 +573,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				onGroups(campaignId);
 				break;
 			case 'automation':
-				pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${campaignId}&fromreact=true`);
+				pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`);
 				break;
 			case 'delete':
 				setIsDeleteCampaignOpen(true);

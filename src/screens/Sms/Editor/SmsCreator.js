@@ -404,7 +404,7 @@ const SmsCreator = ({ classes }) => {
 	}, [reInitFromNumber])
 
 	const getAutomationReturnUrl = (campaignId) => {
-		return `/pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}`;
+		return `/pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
 	}
 	const getSavedData = async () => {
 		if (id) {
