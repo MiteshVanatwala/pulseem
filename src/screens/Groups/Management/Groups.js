@@ -191,9 +191,7 @@ const Groups = ({ classes }) => {
             await dispatch(getAccountExtraData());
         }
         setLoader(false);
-        if (subAccountAllGroups.length === 0) {
-            getSubAccountGroups();
-        }
+        getSubAccountGroups();
     };
     const reSearch = () => {
         const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
