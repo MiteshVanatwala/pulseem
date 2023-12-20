@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
 import { getTwoFactorAuthValues } from '../../redux/reducers/commonSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import CustomTooltip from '../Tooltip/CustomTooltip';
 
 const ConfirmRadioDialog = ({
     classes,
@@ -81,6 +82,15 @@ const ConfirmRadioDialog = ({
                                                 </span>
                                             }
                                         />
+                                        {option?.tooltip && option?.tooltip !== '' && <CustomTooltip
+                                            isSimpleTooltip={true}
+                                            classes={classes}
+                                            interactive={true}
+                                            arrow={true}
+                                            style={{ position: 'absolute', fontSize: 16 }}
+                                            placement={isRTL ? 'left' : 'right'}
+                                            text={<Typography noWrap={false} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>{t(option?.tooltip)}</Typography>}
+                                        />}
                                         {option?.helperText && <FormHelperText className={classes.helpText}>
                                             {option?.helperText}
                                         </FormHelperText>
