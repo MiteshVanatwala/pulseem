@@ -33,6 +33,7 @@ import clsx from 'clsx';
 import Toast from '../../../../components/Toast/Toast.component';
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { FBBusiness } from '../../../../helpers/Constants';
 
 const SummaryModal = ({
 	classes,
@@ -574,7 +575,8 @@ const SummaryModal = ({
 											<span>
 												<a
 													target={'_blank'}
-													href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+													// href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+													href={FBBusiness}
 													rel='noreferrer'>
 													<>{translator('whatsappCampaign.limit')}</>
 												</a>

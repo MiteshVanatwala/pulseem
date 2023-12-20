@@ -217,7 +217,7 @@ const FilterRecipientsDialog = forwardRef(({
 									marginTop: 2,
 								}}
 								className={classes.font13}>
-								<>{translator('smsReport.filterInputText')}</>
+								{translator('whatsappCampaign.filterInputText')}
 							</span>
 							<div
 								style={{

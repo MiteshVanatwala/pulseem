@@ -67,7 +67,7 @@ const LeftPane = ({
 	}
 
 	const getFilterDialog = () => ({
-		title: translator('whatsappCampaign.filter'),
+		title: translator('campaigns.newsLetterEditor.sendSettings.filters'),
 		showDivider: false,
 		content: (
 			<FilterRecipientsDialog

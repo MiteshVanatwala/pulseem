@@ -536,7 +536,7 @@ const SendCampaign = ({
 	};
 
 	const renderToast = () => {
-		if (toastMessage) {
+		if (toastMessage && toastMessage.message !== '') {
 			setTimeout(() => {
 				resetToast();
 			}, 4000);
@@ -930,7 +930,7 @@ const SendCampaign = ({
 		>
 			{isAccountSetup ? (
 				<Box className={"head"}>
-					<Box className={'topSection'}>
+					<Box className={clsx('topSection', classes.mb50)}>
 						<Title
 							Text={translator('whatsappCampaign.header')}
 							classes={classes}
@@ -995,6 +995,7 @@ const SendCampaign = ({
 							displayBackButton={true}
 							showSendButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : true}
 							showContinueButton={FromAutomation ? (!!FromAutomation && !!isSendCampaign) : false}
+							isSummary={!FromAutomation}
 						/>
 					</Box>
 					{renderToast()}
