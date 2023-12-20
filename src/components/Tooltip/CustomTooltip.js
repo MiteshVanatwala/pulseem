@@ -36,7 +36,7 @@ const CustomTooltip = ({ children, classes, text, title, placement = 'top', arro
     <BootstrapTooltip
       style={{ color: '#000', ...style }}
       title={text}
-      placement={"top"}>
+      placement={placement}>
       <IconButton aria-label={text}>
         {icon ? icon : <BsInfoCircleFill />}
       </IconButton>

@@ -630,5 +630,10 @@
   "templateNameIsRequired": "אנא בחרו שם לתבנית",
   "loadMore": "טען עוד",
   "noCampaignToRestore": "אין קמפיינים לשחזור",
-  "doNotShow": "אל תציג שוב"
+  "doNotShow": "אל תציג שוב",
+  "tooltips": {
+    "uploadFiles": {
+      "fileDoesNotSupportedForImport": "קבצי XLS לא נתמכים בייבוא נמענים למערכת. במידה וקיים הצורך לייבא נמענים מקובץ זה בהמשך, יש לייצא קובץ מסוג XLSX"
+    }
+  }
 }

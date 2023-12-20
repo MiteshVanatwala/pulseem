@@ -36,7 +36,7 @@ const ExportFile = (options: Options) => {
 				exportAsXLSX(
 					options.data,
 					options.fields,
-					`${options.fileName}.xls`,
+					`${options.fileName}.${options.exportType}`,
 					`${options.fileName}`,
 				);
 			}
