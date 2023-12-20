@@ -41,6 +41,9 @@
     .create-new-group {
         padding-top: 15px;
     }
+    .MuiListItem-secondaryAction {
+        padding-right: 30% !important;
+    }
 }
 /* .MuiListItemSecondaryAction-root {
     left: auto;

@@ -18,7 +18,7 @@ const GroupsSelectAll = ({
 	const { t: translator } = useTranslation();
 	return (
 		<ListItem
-			className={classes.groupListRow}
+			className={clsx(classes.groupListRow, 'group-container')}
 			key='liSelectAll'
 			onClick={() => onSelectAllGroup()}
 			style={{ cursor: 'pointer' }}>
