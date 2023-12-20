@@ -275,6 +275,8 @@ const NewslettersReport = ({ classes }) => {
       listToExport = searchResults || newslettersReports;
     }
 
+    const fields = { ...exportColumnHeader };
+
     const exportOptions = {
       OrderItems: true,
       FormatDate: true,
@@ -284,13 +286,16 @@ const NewslettersReport = ({ classes }) => {
       DeleteProperties: ["Status"]
     };
 
+
     try {
       const result = await HandleExportData(listToExport, exportOptions);
+      delete fields["Status"];
+
       ExportFile({
         data: result,
         fileName: 'emailReport',
         exportType: formatType,
-        fields: exportColumnHeader
+        fields: fields
       });
 
       setToFileArray([]);
@@ -1041,7 +1046,7 @@ const NewslettersReport = ({ classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <Loader isOpen={showLoader} showBackdrop={true} />
