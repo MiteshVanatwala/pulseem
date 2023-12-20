@@ -274,6 +274,8 @@ const SmsReport = ({ classes }) => {
     setLoader(true);
     let orderList = [...smsReport];
 
+    const fields = { ...exportColumnHeader };
+
     const exportOptions = {
       OrderItems: true,
       FormatDate: true,
@@ -282,17 +284,19 @@ const SmsReport = ({ classes }) => {
       Statuses: smsReportStatus,
       ConvertStatusToString: true,
       PropertyToReplace: 'IsResponse',
-      Order: Object.keys(exportColumnHeader),
+      Order: Object.keys(fields),
       DeleteProperties: ["Status"]
     };
 
     try {
       const result = await HandleExportData(orderList, exportOptions);
+      delete fields["Status"];
+      
       ExportFile({
         data: result,
         fileName: 'smsReport',
         exportType: formatType,
-        fields: exportColumnHeader
+        fields: fields
       });
     } catch (error) {
       console.log(error);
@@ -857,7 +861,7 @@ const SmsReport = ({ classes }) => {
             }
           />
         </>
-        
+
       ),
       onClose: () => { setDialogType(null) },
       onConfirm: async () => {
@@ -865,9 +869,9 @@ const SmsReport = ({ classes }) => {
         if (showNoticeDialog) {
           setCookie('SMSReportNotice', showNoticeDialog);
         }
+      }
     }
   }
-}
 
   const renderDialog = () => {
     const { type } = dialogType || {}
@@ -890,7 +894,7 @@ const SmsReport = ({ classes }) => {
         </BaseDialog>
       )
     }
-}
+  }
 
   return (
     <DefaultScreen

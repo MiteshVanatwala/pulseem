@@ -1469,7 +1469,7 @@ const Groups = ({ classes }) => {
                                 {
 
                                     component: (
-                                        accountFeatures.includes("6") && PendingClients > 0 &&  <NameValueGridStructure
+                                        accountFeatures.includes("6") && PendingClients > 0 && <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
@@ -1843,20 +1843,25 @@ const Groups = ({ classes }) => {
             return client;
         }, []);
 
+
+        const fields = { ...exportColumnHeader.current };
+
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
             ConvertStatusToString: false,
-            Order: Object.keys(exportColumnHeader.current),
-            DeleteProperties: ["Revenue", "SendDate"],
+            Order: Object.keys(fields),
+            // DeleteProperties: ["Revenue", "SendDate"],
             ReplaceNull: true
         };
 
         HandleExportData(orderList, exportOptions).then(async (result) => {
+            delete fields["Revenue"];
+            delete fields["SendDate"];
             ExportFile({
                 data: result,
                 exportType: formatType,
-                fields: exportColumnHeader.current,
+                fields: fields,
                 fileName: 'PulseemClientsExport'
             });
         });
