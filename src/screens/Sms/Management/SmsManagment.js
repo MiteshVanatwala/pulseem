@@ -178,23 +178,8 @@ const SmsManagnentScreen = ({ classes }) => {
 			setCampaineNameSearch(event.target.value);
 		};
 
-		if (windowSize === 'xs') {
-			return (
-				<Grid container className={'searchLine'}>
-					<SearchField
-						classes={classes}
-						value={campaineNameSearch}
-						onChange={handleCampainNameChange}
-						onClick={handleSearch}
-						onKeyPress={handleKeyPress}
-						placeholder={t('common.CampaignName')}
-					/>
-				</Grid>
-			)
-		}
-
 		return (
-			<Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+			<Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
 				<Grid item>
 					<TextField
 						variant='outlined'
@@ -254,7 +239,7 @@ const SmsManagnentScreen = ({ classes }) => {
 
 	const renderManagmentLine = () => {
 		return (
-			<Grid container spacing={2} className={classes.linePadding} >
+			<Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
 				<Grid item xs={windowSize === 'xs' && 12}>
 					<Button
 						onClick={() => {

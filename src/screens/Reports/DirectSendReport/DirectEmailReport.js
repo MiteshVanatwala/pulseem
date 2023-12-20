@@ -462,7 +462,7 @@ const DirectEmailReportTab = ({
   const renderSearchLine = () => {
     const { email = false } = isSearching || {};
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
         <Grid item>
           <Button
@@ -703,7 +703,7 @@ const DirectEmailReportTab = ({
 
   return (
     <>
-      <Box className={'topSection'}>
+      <Box className={clsx('topSection', classes.mt10)}>
         <Title Text={title} classes={classes} />
         {renderSearchLine()}
       </Box>

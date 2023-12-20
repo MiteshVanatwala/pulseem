@@ -870,7 +870,7 @@ const SmsCreator = ({ classes }) => {
 
               <Grid container className={clsx(classes.p5)} onBlur={() => { seteditmenuClick(false) }}>
                 <Grid
-                  item xs={12} md={12} sm={12} className={clsx(classes.justifyContentEnd)} style={{paddingTop: '5px'}}
+                  item xs={12} md={12} sm={12} className={clsx(windowSize === "xs" ? classes.messageButtons : classes.justifyContentEnd)} style={{paddingTop: '5px'}}
                 >
                   <Tooltip
                     disableFocusListener

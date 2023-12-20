@@ -337,6 +337,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   minHeight50: {
     minHeight: 50,
   },
+  height50: {
+    height: 50,
+  },
   maxHeight87: {
     maxHeight: "auto",
     "@media screen and (min-width: 600px)": {
@@ -470,7 +473,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 10,
   },
   mb15: {
-    marginBottom: 15,
+    marginBottom: '15px !important',
   },
   mt20: {
     marginTop: 20,
@@ -519,7 +522,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineStart: 15,
   },
   mt10: {
-    marginTop: 10,
+    marginTop: '10px !important',
   },
   mt15: {
     marginTop: 15,
@@ -1082,7 +1085,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     border: "1px solid #bbb",
     outline: "none",
-    padding: "8px",
+    // padding: "8px",
     "&::placeholder": {
       fontSize: "16px",
     },
@@ -1269,6 +1272,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer",
     border: "solid 1px #ff3343",
     textTransform: "none",
+    [theme.breakpoints.down("xs")]: {
+      width: 'auto !important',
+      margin: '5px !important',
+      fontSize: '14px !important',
+      padding: '5px 10px !important',
+    },
     "&$disabled": {
       cursor: "not-allowed !important",
     },
@@ -2008,6 +2017,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     // "@media screen and (device-width: 411px)": {
     //   width: "355px",
     // },
+  },
+  directSendTab: {
+    padding: "10px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "19px",
+    color: "#777777",
+    width: 120,
+    cursor: 'pointer',
+    borderBottom: '4px solid transparent',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    "@media screen and (max-width: 768px)": {
+      fontSize: "14px",
+    },
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '15px !important',
+      width: 80,
+      height: 30,
+    },
   },
   tab1: {
     padding: "10px",
@@ -3800,5 +3830,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   verticalAlignTop: {
     verticalAlign: 'top'
+  },
+  messageButtons: {
+    display: 'contents'
   }
 });

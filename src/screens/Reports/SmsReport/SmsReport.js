@@ -329,27 +329,11 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderSearchSection = () => {
-    if (windowSize === 'xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={smsQuery.SerachTxt}
-          onChange={(e) => {
-            setSmsQuery({
-              ...smsQuery,
-              SerachTxt: e.target.value
-            })
-          }}
-          onClick={() => handleSearch()}
-          placeholder={t('common.CampaignName')}
-        />
-      )
-    }
     return (
       <Grid
         container
         spacing={2}
-        className={clsx(classes.lineTopMarging, 'searchLine')}>
+        className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -458,7 +442,7 @@ const SmsReport = ({ classes }) => {
   const renderManagmentLine = () => {
     const dataLength = smsReport.length;
     return (
-      <Grid container spacing={2} className={classes.linePadding} >
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             className={clsx(

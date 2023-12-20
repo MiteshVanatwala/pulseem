@@ -183,7 +183,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
 
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -832,6 +832,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </Typography>
     ),
     onConfirm: async () => {
+      setLoader(true);
       clearSearch()
       handleClose()
       const response = await dispatch(deleteCampaign(data))
@@ -839,6 +840,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         setToastMessage(ToastMessages.CAMPAIGN_DELETED_SUCCESS);
         getData();
       }
+      setLoader(false);
     }
   })
 

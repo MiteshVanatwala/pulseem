@@ -269,7 +269,7 @@ const Groups = ({ classes }) => {
         };
 
         return (
-            <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+            <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
                 <Grid item>
                     <TextField
                         variant="outlined"

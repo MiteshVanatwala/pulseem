@@ -104,6 +104,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         paddingLeft: isRTL ? "" : 30,
         maxWidth: 300,
         width: '100%',
+        [theme.breakpoints.down('xs')]: {
+            width: 'max-content',
+        }
     },
     inputLabel: {
         fontSize: 20,
@@ -900,9 +903,8 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             flexDirection: 'column-reverse',
         }
     },
-    mobileGrid:
-    {
-        padding: "0px !important",
+    mobileGrid: {
+        padding: "0px 10px !important",
         margin: "0px !important"
     },
     report: {

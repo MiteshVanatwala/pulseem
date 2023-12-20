@@ -831,7 +831,7 @@ const NotificationEdit = ({ classes }) => {
   }
   const renderHeader = () => {
     return (
-      <Box className={clsx('stepHead', classes.notificationTitle)}>
+      <Box className={clsx('stepHead', classes.notificationTitle, classes.noPadding)}>
         <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
           <span >1</span>
         </Stack>

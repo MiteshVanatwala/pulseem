@@ -188,6 +188,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
     "@media screen and (max-width: 1110px)": {
       padding: "0px 10px",
+    },
+    "@media screen and (max-width: 475px)": {
+      padding: 10,
     }
   },
   tableRowRoot: {
@@ -998,6 +1001,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& .MuiFormControlLabel-label": {
       fontWeight: "bold",
     },
+    [theme.breakpoints.down('xs')]: {
+      paddingBottom: 10,
+    },
   },
   groupsTable: {
     border: "1px solid #ccc",
@@ -1044,6 +1050,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: 15,
     overflowY: "auto",
     marginBlock: 10,
+    [theme.breakpoints.down('xs')]: {
+      width: 'initial',
+    },
   },
   grayTextCell: {
     WebkitLineClamp: 1,
@@ -1735,13 +1744,18 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: 30,
     background: 'aliceblue',
     padding: 0,
-    maxWidth: 1400,
-    marginInline: 25,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     '& .MuiTabs-root': {
-      height: '100%'
-    }
+      height: 48
+    },
+    [theme.breakpoints.down("xs")]: {
+      padding: 10,
+      '& .MuiTabs-root': {
+        marginBottom: 5,
+        width: '100%',
+      },
+    },
   },
   lastReportPadding: {
     [theme.breakpoints.down("md")]: {
