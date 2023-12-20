@@ -621,7 +621,7 @@ const ArchiveManagementScreen = ({ classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialogType(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <Loader isOpen={showLoader} />

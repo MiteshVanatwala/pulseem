@@ -457,7 +457,7 @@ const ProductsReport = ({ classes }) => {
                 onConfirm={(e) => handleDownloadCsv(e)}
                 onCancel={() => setDialogType(null)}
                 cookieName={'exportFormat'}
-                defaultValue="xls"
+                defaultValue="xlsx"
                 options={ExportFileTypes}
             />
 

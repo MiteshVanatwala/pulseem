@@ -1948,7 +1948,7 @@ const Groups = ({ classes }) => {
                 onConfirm={(e, notifyEmail) => handleConfirmExport(e, notifyEmail)}
                 onCancel={() => setShowConfirmDialog(false)}
                 cookieName={'exportFormat'}
-                defaultValue={csvOnly ? 'csv' : 'xls'}
+                defaultValue={csvOnly ? 'csv' : 'xlsx'}
                 showEmailToNotify={csvOnly}
                 options={csvOnly ? null : exportTypeOptions}
             />

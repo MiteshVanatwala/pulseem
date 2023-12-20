@@ -911,7 +911,7 @@ const SmsReport = ({ classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialogType(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />

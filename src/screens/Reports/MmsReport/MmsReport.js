@@ -666,7 +666,7 @@ const MmsReport = ({ classes }) => {
                 onConfirm={(e) => handleDownloadCsv(e)}
                 onCancel={() => setDialog(null)}
                 cookieName={'exportFormat'}
-                defaultValue="xls"
+                defaultValue="xlsx"
                 options={ExportFileTypes}
             />
             <Loader isOpen={showLoader} showBackdrop={true} />

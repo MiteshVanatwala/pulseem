@@ -292,6 +292,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
           searchData.sms.ShowContent = showContent;
           response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
 
+
+          const fields = {...excelHeaders.SMS};
           const exportOption = {
             OrderItems: true,
             FormatDate: true,
@@ -303,6 +305,10 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             Order: Object.keys(excelHeaders.SMS)
           };
 
+          if (!showContent) {
+            delete fields["MESSAGE"];
+          }
+
           try {
             const result = await HandleExportData(response.payload, exportOption);
 
@@ -311,7 +317,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
               data: result,
               fileName: fileName,
               exportType: formatType,
-              fields: excelHeaders.SMS
+              fields: fields
             });
           } catch (e) {
             console.log(e);
@@ -545,7 +551,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         onConfirm={(e) => handleExportFile(e)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <Loader isOpen={showLoader} showBackdrop={true} />

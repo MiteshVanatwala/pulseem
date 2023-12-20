@@ -2042,7 +2042,7 @@ const ClientSearchResult = ({ props, classes }) => {
         onConfirm={(e, notifyEmail) => handleDownloadCsv(e, notifyEmail)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue={TotalCount > 100000 ? "csv" : "xls"}
+        defaultValue={TotalCount > 100000 ? "csv" : "xlsx"}
         showEmailToNotify={TotalCount > 100000}
         options={TotalCount > 100000 ? null : ExportFileTypes}
       />
