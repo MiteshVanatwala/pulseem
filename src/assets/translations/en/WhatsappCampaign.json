@@ -75,5 +75,6 @@
 	"setupMessage2": "please contact our sales team:",
 	"groupNameRequired": "Group name - Required field",
 	"validLink": "Please enter valid link",
-	"atTime": "at"
+	"atTime": "at",
+	"filterInputText": "Don't send to recipients that got Whatsapp Campaign in last previous days"
 }

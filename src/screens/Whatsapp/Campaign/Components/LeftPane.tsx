@@ -67,7 +67,7 @@ const LeftPane = ({
 	}
 
 	const getFilterDialog = () => ({
-		title: translator('whatsappCampaign.filter'),
+		title: translator('campaigns.newsLetterEditor.sendSettings.filters'),
 		showDivider: false,
 		content: (
 			<FilterRecipientsDialog
@@ -149,7 +149,7 @@ const LeftPane = ({
 			direction='row'
 			justifyContent='flex-start'
 			className={classes.wizardFlex}>
-			<Grid item md={12} xs={12} className={classes.infoDiv}>
+			<Grid item md={12} xs={12} className={clsx(classes.mb20, classes.pt10)}>
 				<span className={classes.conInfo}>
 					{translator('mainReport.whomTosend')}
 				</span>
@@ -168,34 +168,22 @@ const LeftPane = ({
 					item
 					md={12}
 					xs={12}
-					className={
-						activeTab === tabs.GROUP
-							? clsx(classes.tab1, classes.activeTab)
-							: clsx(classes.tab1)
-					}>
-					<span
-						onClick={() => setActiveTab(tabs.GROUP)}
-						style={{ cursor: 'pointer' }}>
-						<>{translator('mainReport.groups')}</>
-					</span>
+					className={clsx(classes.tab1, classes.btnTab, activeTab === tabs.GROUP ? classes.currentActiveTab : '')}
+					onClick={() => setActiveTab(tabs.GROUP)}
+				>
+					<span style={{ cursor: 'pointer' }}>{translator('mainReport.groups')}</span>
 				</Grid>
 				<Grid
 					item
 					md={12}
 					xs={12}
-					className={
-						activeTab === tabs.MANUAL
-							? clsx(classes.tab1, classes.activeTab)
-							: clsx(classes.tab1)
-					}>
-					<span
-						style={{ marginInlineEnd: '7px', cursor: 'pointer' }}
-						onClick={() => {
-							setActiveTab(tabs.MANUAL);
-							setIsCreateNewGroup(false);
-						}}>
-						<>{translator('mainReport.manual')}</>
-					</span>
+					className={clsx(classes.tab1, classes.btnTab, activeTab === tabs.MANUAL ? classes.currentActiveTab : '')}
+					onClick={() => {
+						setActiveTab(tabs.MANUAL);
+						setIsCreateNewGroup(false);
+					}}
+				>
+					<span style={{ marginInlineEnd: '7px', cursor: 'pointer' }} className={classes.elipsis}>{translator('mainReport.manual')}</span>
 					<Tooltip
 						disableFocusListener
 						title={<>{translator('smsReport.manualTip')}</>}

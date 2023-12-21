@@ -108,6 +108,7 @@ import moment from 'moment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
+import { FBBusiness } from '../../../helpers/Constants';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -1310,7 +1311,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					{translator('whatsappCampaign.note2')}{' '}
 					<>{translator('whatsappCampaign.checkLimit')}</>{' '}
 					<a
-						href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+						// href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+						href={FBBusiness}
 						target='_blank'
 						rel='noreferrer'
 					>

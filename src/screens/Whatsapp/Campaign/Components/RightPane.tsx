@@ -48,9 +48,8 @@ const RightPane = ({
 		<div>
 			<Grid item md={10} xs={12}>
 				<h2
-					className={classes.sectionTitle}
-					style={{ marginTop: windowSize === 'xs' ? 15 : '' }}>
-					<>{translator('notifications.whenToSend')}</>
+					className={clsx(classes.sectionTitle, windowSize === 'xs' ? classes.mb15 : '')}>
+					{translator('notifications.whenToSend')}
 				</h2>
 				<FormControl component='fieldset'>
 					<RadioGroup
@@ -214,7 +213,7 @@ const RightPane = ({
 							className={classes.dateBox}
 							style={{
 								marginTop: 10,
-								display: 'flex',
+								display: windowSize === 'xs' ? 'block' : 'flex',
 								alignItems: 'center',
 								width: '370px',
 								pointerEvents: sendType === '3' ? 'auto' : 'none',

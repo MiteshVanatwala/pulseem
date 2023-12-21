@@ -40,7 +40,7 @@ import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
-import { BsTrash, BsInfoCircle } from "react-icons/bs";
+import { BsTrash } from "react-icons/bs";
 import { Loader } from '../../../components/Loader/Loader';
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
@@ -869,7 +869,7 @@ const SmsCreator = ({ classes }) => {
 
               <Grid container className={clsx(classes.p5)} >
                 <Grid
-                  item xs={12} md={12} sm={12} className={clsx(classes.justifyContentEnd)} style={{ paddingTop: '5px' }}
+                  item xs={12} md={12} sm={12} className={clsx(windowSize === "xs" ? classes.messageButtons : classes.justifyContentEnd)} style={{paddingTop: '5px'}}
                 >
                   <Tooltip
                     disableFocusListener
@@ -1146,35 +1146,35 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
-  const validationCheckpoint = async (callbackFunc) => {
-    if (validationCheck()) {
-      if (isSiteTracking === true) {
-        const smsMessagValue = smsMessageRef.current.value;
-        if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') == -1) {
-          let text = smsModel.Text;
-          const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
-          const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
-          let originUrl = originalLink[0];
-          let newUrl = originUrl.trim();
-          newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
-          text = smsModel.Text.replace(originUrl, newUrl);
-          setSmsModel((currentState) => {
-            currentState.Text = text;
-            return currentState;
-          });
-        }
-        if (!isLinksStatistics) {
-          setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
-        }
-        else {
-          callbackFunc();
-        }
-      }
-      else {
-        callbackFunc();
-      }
-    }
-  }
+	const validationCheckpoint = async (callbackFunc) => {
+		if (validationCheck()) {
+			if (isSiteTracking === true) {
+				const smsMessagValue = smsMessageRef.current.value;
+				if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') === -1) {
+					let text = smsModel.Text;
+					const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
+					const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
+					let originUrl = originalLink[0];
+					let newUrl = originUrl.trim();
+					newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
+					text = smsModel.Text.replace(originUrl, newUrl);
+					setSmsModel((currentState) => {
+						currentState.Text = text;
+						return currentState;
+					});
+				}
+				if (!isLinksStatistics) {
+					setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
+				}
+				else {
+					callbackFunc();
+				}
+			}
+			else {
+				callbackFunc();
+			}
+		}
+	}
 
   const onSave = async (isSave, returnToAutomation = false) => {
     linkCalculation();

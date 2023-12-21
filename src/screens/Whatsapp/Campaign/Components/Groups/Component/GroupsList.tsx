@@ -37,7 +37,7 @@ const GroupsList = ({
 				<ListItem
 					key={group['GroupID']}
 					onClick={() => onSelectGroup(group)}
-					className={classes.groupListRow}
+					className={clsx(classes.groupListRow, 'group-container')}
 					style={{ cursor: 'pointer' }}>
 					<ListItemAvatar>
 						<Avatar

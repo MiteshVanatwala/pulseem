@@ -51,7 +51,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         marginTop: 45,
         fontWeight: '500',
         color: '#555',
-        fontSize: '22px'
+        fontSize: '22px',
+        [theme.breakpoints.down('xs')]: {
+            fontSize: 18,
+            marginBottom: 0,
+        },
     },
     mobilePreviewSummary: {
         width: mobileWidth[windowSize],
@@ -98,7 +102,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     dateBox: {
         paddingRight: isRTL ? 30 : "",
         paddingLeft: isRTL ? "" : 30,
-        maxWidth: 300
+        maxWidth: 300,
+        width: '100%',
+        [theme.breakpoints.down('xs')]: {
+            width: 'max-content',
+        }
     },
     inputLabel: {
         fontSize: 20,
@@ -520,7 +528,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             '& .searchLine': {
                 paddingInlineStart: 31,
                 '& .MuiGrid-item': {
-                    marginRight: 27.42
+                    marginRight: 27.42,
+                    "@media screen and (max-width: 414px)": {
+                        marginRight: 10
+                    }
                 }
             },
             "@media screen and (max-width: 765px)": {
@@ -577,12 +588,16 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     manualChild:
     {
         display: "flex",
-        // justifyContent: "space-between",
         alignItems: "center",
         marginTop: "15px",
-        // '& button': {
-        //     marginBottom: 5,
-        // }
+        [theme.breakpoints.down('xs')]: {
+            display: "block",
+            paddingBottom: 10,
+            textAlign: 'center',
+            '& button': {
+                marginBottom: 10,
+            }
+        },
     },
     listValues:
     {
@@ -888,9 +903,8 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             flexDirection: 'column-reverse',
         }
     },
-    mobileGrid:
-    {
-        padding: "0px !important",
+    mobileGrid: {
+        padding: "0px 10px !important",
         margin: "0px !important"
     },
     report: {
@@ -993,8 +1007,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         marginTop: 12,
         display: "flex",
         justifyContent: "space-between",
-        flexDirection: flexDirection[windowSize]
-
+        flexDirection: flexDirection[windowSize],
+        [theme.breakpoints.down('xs')]: {
+            paddingBottom: 20
+        },
     },
     createGroupContainer:
     {
@@ -1052,6 +1068,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         fontSize: 12
     },
     filterButtonsContainer: {
+        [theme.breakpoints.down('xs')]: {
+            paddingBottom: 10
+        },
         // paddingBottom: 5,
         '& *:not(svg):not(span)': {
             marginInlineEnd: 5

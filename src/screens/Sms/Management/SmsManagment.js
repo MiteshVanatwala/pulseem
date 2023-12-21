@@ -74,7 +74,7 @@ const SmsManagnentScreen = ({ classes }) => {
 	const rowsOptions = [6, 10, 20, 50]
 	const [page, setPage] = useState(1)
 	const [isSearching, setSearching] = useState(false)
-	const [searchResults, setSearchResults] = useState(null)
+	const [searchResults, setSearchResults] = useState([])
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
 	const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
 	const [dialogType, setDialogType] = useState(null)
@@ -101,7 +101,7 @@ const SmsManagnentScreen = ({ classes }) => {
 		setCampaineNameSearch('');
 		handleFromDate(null);
 		handleToDate(null);
-		setSearchResults(null);
+		setSearchResults([]);
 		setSearching(false);
 	};
 
@@ -178,23 +178,8 @@ const SmsManagnentScreen = ({ classes }) => {
 			setCampaineNameSearch(event.target.value);
 		};
 
-		if (windowSize === 'xs') {
-			return (
-				<Grid container className={'searchLine'}>
-					<SearchField
-						classes={classes}
-						value={campaineNameSearch}
-						onChange={handleCampainNameChange}
-						onClick={handleSearch}
-						onKeyPress={handleKeyPress}
-						placeholder={t('common.CampaignName')}
-					/>
-				</Grid>
-			)
-		}
-
 		return (
-			<Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+			<Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
 				<Grid item>
 					<TextField
 						variant='outlined'
@@ -254,7 +239,7 @@ const SmsManagnentScreen = ({ classes }) => {
 
 	const renderManagmentLine = () => {
 		return (
-			<Grid container spacing={2} className={classes.linePadding} >
+			<Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
 				<Grid item xs={windowSize === 'xs' && 12}>
 					<Button
 						onClick={() => {

@@ -372,7 +372,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         Name: campaign.Name,
         campaignId: args.campaignId,
         JsonData: finalJson,
-        HTML: finalHtml
+        HTML: finalHtml,
+        IsAutoResponder: fromLink?.toLowerCase() === 'autoresponder'
       }));
 
       if (response.payload === true) {

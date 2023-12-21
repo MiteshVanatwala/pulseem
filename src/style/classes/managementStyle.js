@@ -100,7 +100,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: '#000',
     width: '100%',
     "@media screen and (max-width: 475px)": {
-      maxWidth: '60%'
+      maxWidth: '100%'
     }
   },
   tableRow: {
@@ -188,8 +188,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       padding: "0px 5px",
     },
     "@media screen and (max-width: 1110px)": {
-      padding: "0px 5px",
+      padding: "0px 10px",
     },
+    "@media screen and (max-width: 475px)": {
+      padding: 10,
+    }
   },
   tableRowRoot: {
     display: "flex",
@@ -897,6 +900,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tablePadingtonGridContainer: {
     paddingBlock: 10,
+    '& input': {
+      background: '#fff',
+      height: 30,
+      borderRadius: 5
+    }
   },
   selectHideDefaultCaretIcon: {
     '& .arrow': {
@@ -994,6 +1002,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& .MuiFormControlLabel-label": {
       fontWeight: "bold",
     },
+    [theme.breakpoints.down('xs')]: {
+      paddingBottom: 10,
+    },
   },
   groupsTable: {
     border: "1px solid #ccc",
@@ -1040,6 +1051,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: 15,
     overflowY: "auto",
     marginBlock: 10,
+    [theme.breakpoints.down('xs')]: {
+      width: 'initial',
+    },
   },
   grayTextCell: {
     WebkitLineClamp: 1,
@@ -1467,7 +1481,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     margin: 10,
   },
   dashBoxtitleSection: {
-    marginBottom: "1.2rem",
+    marginBottom: "0px",
     borderBottom: "none !important",
     background: '#F0F5FF',
     height: 50,
@@ -1584,7 +1598,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       minHeight: 330,
     },
     [theme.breakpoints.down("md")]: {
-      paddingBottom: 40,
+      paddingBottom: 0,
     },
     [theme.breakpoints.down("xs")]: {
       margin: "10px 10px 0px 10px",
@@ -1702,6 +1716,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       height: 'auto',
       display: 'inline-table',
       marginBottom: 0,
+      paddingBottom: 0,
       '& .MuiTabs-root': {
         marginLeft: 0,
         marginTop: 10
@@ -1733,17 +1748,25 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: 30,
     background: 'aliceblue',
     padding: 0,
-    maxWidth: 1400,
-    marginInline: 25,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     '& .MuiTabs-root': {
-      height: '100%'
-    }
+      height: 48
+    },
+    [theme.breakpoints.down("xs")]: {
+      padding: 10,
+      '& .MuiTabs-root': {
+        marginBottom: 5,
+        width: '100%',
+      },
+    },
   },
   lastReportPadding: {
     [theme.breakpoints.down("md")]: {
       marginTop: 0,
+    },
+    [theme.breakpoints.down("xs")]: {
+      marginTop: 20,
     },
     borderTop: 'none'
   },

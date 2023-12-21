@@ -145,20 +145,8 @@ const ArchiveManagementScreen = ({ classes }) => {
       setCampaineNameSearch(event.target.value)
     }
 
-    if (windowSize === 'xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          onKeyPress={handleKeyPress}
-          placeholder={t('common.CampaignName')}
-        />
-      )
-    }
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -281,7 +269,7 @@ const ArchiveManagementScreen = ({ classes }) => {
 
   const renderManagmentLine = () => {
     return (
-      <Grid container spacing={2} className={classes.linePadding}>
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
         {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
@@ -515,8 +503,11 @@ const ArchiveManagementScreen = ({ classes }) => {
     return (
       <Box className='tableBodyContainer'>
         <TableBody>
-          {sortData
-            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+          {!sortData || sortData.length === 0 ?
+            <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+              <Typography>{t("common.NoDataTryFilter")}</Typography>
+            </Box> :
+            sortData.map((obj, idx) => windowSize === "xs" ? renderPhoneRow(obj) : renderRow(obj))}
         </TableBody>
       </Box>
     )

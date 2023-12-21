@@ -104,24 +104,8 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       setLandingPageNameSearch(event.target.value)
     }
 
-    const placeholder = t('landingPages.GridBoundColumnResource2.HeaderText')
-
-    if (windowSize === 'xs') {
-      return (
-        <Grid container className={'searchLine'}>
-          <SearchField
-            classes={classes}
-            value={landingPageNameSearch}
-            onChange={handleCampainNameChange}
-            onClick={handleSearch}
-            onKeyPress={handleKeyPress}
-            placeholder={placeholder}
-          />
-        </Grid>
-      )
-    }
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -130,7 +114,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
             onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={placeholder}
+            placeholder={t('landingPages.GridBoundColumnResource2.HeaderText')}
           />
         </Grid>
 
@@ -156,7 +140,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
   const renderManagmentLine = () => {
     return (
-      <Grid container spacing={2} className={classes.linePadding} >
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         {windowSize !== 'xs' && <Grid item>
           <Button
             href='/Pulseem/LandingPageWizard.aspx?fromreact=true'
@@ -633,10 +617,12 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       </Typography>
     ),
     onConfirm: async () => {
+      setLoader(true);
       handleClose()
       clearSearch()
       await dispatch(deleteLandingPage(data))
       getData()
+      setLoader(false);
     }
   })
 

@@ -156,12 +156,15 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const handleDuplicate = async (ID) => {
+    setDialogType(null);
+    setLoader(true);
     const res = await dispatch(duplicateNotification(ID));
     clearSearch();
     if (!res.error) {
       dispatch(getNotificationData());
     }
     handleDialogClose();
+    setLoader(false);
   }
 
   const handleDeleteNotification = async (ID) => {
@@ -274,23 +277,8 @@ const NotificationManagement = ({ classes }) => {
       setNotificationNameSearch(event.target.value)
     }
 
-    if (windowSize === 'xs') {
-      return (
-        <Grid container className={'searchLine'}>
-          <SearchField
-            classes={classes}
-            value={notificationNameSearch}
-            onKeyPress={handleSearch}
-            onChange={handleNotificationNameChange}
-            onClick={handleSearch}
-            placeholder={t('common.CampaignName')}
-          />
-        </Grid>
-      )
-    }
-
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -351,7 +339,7 @@ const NotificationManagement = ({ classes }) => {
   const renderManagmentLine = () => {
     const dataLength = isSearching ? searchResults.length : notificationData.length;
     return (
-      <Grid container spacing={2} className={classes.linePadding} >
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         {<Grid item>
           <Button
             component="a"
@@ -1183,30 +1171,39 @@ const NotificationManagement = ({ classes }) => {
         </Box>
       ),
       renderButtons: () => (
-        <>
-          <FormControl className={classes.ps25}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={scriptDialog}
-                  className={classes.checkbox}
-                  onChange={() => handleDontShowAgain(!scriptDialog)}
-                />
-              }
-              label={t('notifications.implementDialog.dontShowThisMessage')} />
-          </FormControl>
-          <Button
-            variant='contained'
-            size='small'
-            onClick={() => setShowScriptDialog(false)}
-            className={clsx(
-              classes.gruopsDialogButton,
-              classes.btn,
-              classes.btnRounded
-            )}>
-            {t('common.Ok')}
-          </Button>
-        </>
+        <Grid
+          container
+          spacing={2}
+          className={clsx(classes.dialogButtonsContainer)}
+        >
+          <Grid item md={12} sm={12} lg={12} xs={12}>
+            <FormControl className={classes.ps25}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={scriptDialog}
+                    className={classes.checkbox}
+                    onChange={() => handleDontShowAgain(!scriptDialog)}
+                  />
+                }
+                label={t('notifications.implementDialog.dontShowThisMessage')} />
+            </FormControl>
+          </Grid>
+
+          <Grid item md={12} className={classes.textCenter}>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setShowScriptDialog(false)}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}
+            >
+              {t('common.Ok')}
+            </Button>
+          </Grid>
+        </Grid>
       )
     }
   }
@@ -1283,17 +1280,18 @@ const NotificationManagement = ({ classes }) => {
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>
         <Title
+          style={{ width: windowSize !== "xs" ? 'auto' : '' }}
           classes={classes}
-          Text={
-            <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
+          Element={
+            <Box className={clsx(windowSize !== 'xs' ? classes.dFlex : '', classes.flexWrap)}>
               <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ width: 'auto' }}>{t('notifications.notificationManagement')}</Typography>
               <Button onClick={() => {
+                setForceShowImplementation(true);
                 setCookie('scriptDialog', true);
                 setShowScriptDialog(true);
-              }
-              }
+              }}
                 className={clsx(
-                  classes.implementButtonFlex,
+                  windowSize !== "xs" ? classes.implementButtonFlex : classes.mt10,
                   classes.btn, classes.btnRounded,
                 )}
                 style={{ alignSelf: 'flex-end' }}

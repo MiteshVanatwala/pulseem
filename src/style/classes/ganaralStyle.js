@@ -344,6 +344,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   minHeight50: {
     minHeight: 50,
   },
+  height50: {
+    height: 50,
+  },
   maxHeight87: {
     maxHeight: "auto",
     "@media screen and (min-width: 600px)": {
@@ -477,7 +480,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 10,
   },
   mb15: {
-    marginBottom: 15,
+    marginBottom: '15px !important',
   },
   mt20: {
     marginTop: 20,
@@ -526,7 +529,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineStart: 15,
   },
   mt10: {
-    marginTop: 10,
+    marginTop: '10px !important',
   },
   mt15: {
     marginTop: 15,
@@ -818,6 +821,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w50: {
     width: '50%'
   },
+  w70: {
+    width: '70%'
+  },
   w100: {
     width: '100%'
   },
@@ -970,7 +976,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       stroke: 'inherit',
     },
     "@media screen and (max-width: 400px)": {
-      // maxWidth: 200
+      '& .MuiButton-startIcon': {
+        width: 'initial'
+      }
     },
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
@@ -994,6 +1002,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: 30,
       '& svg': {
         fontSize: 20
+      },
+      "@media screen and (max-width: 475px)": {
+        width: 'auto',
+        marginRight: 0
       }
     },
     '& .MuiButton-endIcon': {
@@ -1089,7 +1101,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     border: "1px solid #bbb",
     outline: "none",
-    padding: "8px",
+    // padding: "8px",
     "&::placeholder": {
       fontSize: "16px",
     },
@@ -1276,6 +1288,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer",
     border: "solid 1px #ff3343",
     textTransform: "none",
+    [theme.breakpoints.down("xs")]: {
+      width: 'auto !important',
+      margin: '5px !important',
+      fontSize: '14px !important',
+      padding: '5px 10px !important',
+    },
     "&$disabled": {
       cursor: "not-allowed !important",
     },
@@ -2002,6 +2020,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: "22px",
     color: "#555",
     marginInlineEnd: "5px",
+    [theme.breakpoints.down("xs")]: {
+      fontSize: 18,
+      paddingTop: 5,
+      paddingBottom: 10
+    },
   },
   tabDiv: {
     display: "grid",
@@ -2014,6 +2037,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     // "@media screen and (device-width: 411px)": {
     //   width: "355px",
     // },
+  },
+  directSendTab: {
+    padding: "10px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "19px",
+    color: "#777777",
+    width: 120,
+    cursor: 'pointer',
+    borderBottom: '4px solid transparent',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    "@media screen and (max-width: 768px)": {
+      fontSize: "14px",
+    },
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '15px !important',
+      width: 80,
+      height: 30,
+    },
   },
   tab1: {
     padding: "10px",
@@ -2028,13 +2072,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px)": {
       fontSize: "14px",
     },
+    [theme.breakpoints.down('xs')]: {
+      fontSize: '15px !important'
+    },
   },
   tablistRoot: {
     '& .MuiTabs-fixed': {
       '& .MuiTabs-flexContainer': {
         height: '100%',
         background: '#fff',
-        borderRadius: 10
+        borderRadius: 10,
+        borderBottomRightRadius: 0,
       },
     },
     '& .MuiTabs-scroller': {
@@ -2044,9 +2092,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   btnTab: {
     fontSize: 20,
     textTransform: "capitalize",
-    minWidth: 120,
+    minWidth: 100,
     height: 'auto',
-    color: '#ff2c44',
+    // color: '#ff2c44',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     background: '#e4e4e4',
@@ -2220,9 +2268,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb25: {
     marginBottom: 25,
-  },
-  mt25: {
-    marginTop: 25,
   },
   fullSize: {
     height: "100%",
@@ -2618,8 +2663,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       paddingTop: 20,
       backgroundColor: '#fff',
       border: "2px solid #F0F5FF",
-      paddingBottom: 20,
-
+      [theme.breakpoints.down("xs")]: {
+        paddingTop: 10,
+        paddingInline: 10,
+      },
+      
       '& .stepHead': {
         fontSize: 20,
         display: 'flex',
@@ -2651,7 +2699,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       },
       '& .bodyBlock': {
-        paddingInline: 10
+        paddingInline: 10,
+        [theme.breakpoints.down('xs')]: {
+          paddingInline: 0
+        },
       },
       '& .selectWrapper': {
         height: 'auto',
@@ -3817,5 +3868,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   verticalAlignTop: {
     verticalAlign: 'top'
+  },
+  messageButtons: {
+    display: 'contents'
   }
 });

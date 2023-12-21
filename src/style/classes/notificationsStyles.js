@@ -303,7 +303,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     notificationTitle: {
         width: 'auto !important',
         background: '#F0F5FF',
-        padding: `5px`
+        padding: `5px`,
+        fontFamily: 'Assistant'
     },
     notificationText: {
         marginTop: '5px',

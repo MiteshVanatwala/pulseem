@@ -378,26 +378,11 @@ const NewslettersReport = ({ classes }) => {
     }
   }
   const renderSearchSection = () => {
-
-
-    if (windowSize === 'xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={notificationNameSearch}
-          onKeyPress={handleSearchKeyPress}
-          onChange={handleNotificationNameChange}
-          onClick={handleSearch}
-          placeholder={t('common.CampaignName')}
-        />
-      )
-    }
-
     return (
       <Grid
         container
         spacing={2}
-        className={clsx(classes.lineTopMarging, 'searchLine')}>
+        className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant="standard"
@@ -495,7 +480,7 @@ const NewslettersReport = ({ classes }) => {
   const renderManagmentLine = () => {
     const dataLength = isSearching ? (searchResults?.length ?? 0) : (newslettersReports?.length ?? 0);
     return (
-      <Grid container spacing={2} className={classes.linePadding}>
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
         {/* {windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'

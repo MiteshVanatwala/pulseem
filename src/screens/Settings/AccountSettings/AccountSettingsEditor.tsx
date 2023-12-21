@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Divider, Button } from '@material-ui/core';
+import { Box, Divider, Button, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
@@ -254,46 +254,53 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		>
 			{toastMessage && renderToast()}
 			<Box className={clsx(classes.settingsContainer)}>
-				<Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'flex' }}>
-					<Title Text={t("settings.accountSettings.title")} classes={classes}
-						ContainerStyle={{ width: '100% !important' }}
-						Element={<Box style={{ float: isRTL ? 'left' : 'right' }}>
-							<Button
-								className={clsx(
-									classes.btn,
-									classes.btnRounded,
-									classes.mr10
-								)}
-								onClick={() =>
-									handleVerification('cellphone')
-								}
-								startIcon={<MdMobileFriendly />}
-								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-							>
-								<>
-									{t(
-										"settings.accountSettings.fixedComDetails.btnVerifyNumber"
-									)}
-								</>
-							</Button>
-							<Button
-								className={clsx(
-									classes.btn,
-									classes.btnRounded,
-								)}
-								onClick={() =>
-									handleVerification('email')
-								}
-								startIcon={<MdOutlineMarkEmailRead />}
-								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-							>
-								<>
-									{t(
-										"settings.accountSettings.fixedComDetails.btnVerifyEmail"
-									)}
-								</>
-							</Button>
-						</Box>}
+				<Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'block' }}>
+					<Title
+						classes={classes}
+						ContainerStyle={{ width: '100%' }}
+						Element={
+							<Box className={clsx(classes.flex, classes.spaceBetween, classes.flexWrap)}>
+								<Typography
+									style={{ width: 'auto' }}
+									className={clsx(classes.managementTitle, "mgmtTitle")}
+								>
+									{t("settings.accountSettings.title")}
+								</Typography>
+								<div>
+									<Button
+										className={clsx(
+											classes.btn,
+											classes.btnRounded,
+											classes.mr10
+										)}
+										onClick={() =>
+											handleVerification('cellphone')
+										}
+										startIcon={<MdMobileFriendly />}
+										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+									>
+										{t("settings.accountSettings.fixedComDetails.btnVerifyNumber")}
+									</Button>
+									<Button
+										className={clsx(
+											classes.btn,
+											classes.btnRounded,
+										)}
+										onClick={() =>
+											handleVerification('email')
+										}
+										startIcon={<MdOutlineMarkEmailRead />}
+										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+									>
+										<>
+											{t(
+												"settings.accountSettings.fixedComDetails.btnVerifyEmail"
+											)}
+										</>
+									</Button>
+								</div>
+						</Box>
+					}
 					/>
 				</Box>
 				<Divider />

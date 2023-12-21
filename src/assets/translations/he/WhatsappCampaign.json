@@ -47,7 +47,7 @@
 	"sendTitle": "בחר קבוצה לשליחת מבחן",
 	"sendValidation": "שדות חובה חסרים",
 	"sendButton": "שלח",
-	"checkLimit": "בדקו את המגבלה שלכם",
+	"checkLimit": "בידקו את המגבלה שלכם",
 	"removalLinkTooltip": "הוספת קישור להסרה",
 	"here": "כאן",
 	"whatsappCampaign": "צור קמפיין WhatsApp חדש",
@@ -75,5 +75,6 @@
 	"setupMessage2": "אנא צרו קשר עם מחלקת המכירות שלנו",
 	"groupNameRequired": "שם הקבוצה - שדה חובה",
 	"validLink": "קישור אינו תקין",
-	"atTime": "בשעה"
+	"atTime": "בשעה",
+	"filterInputText": "לא לשלוח ללקוחות שקיבלו Whatsapp במספר הימים האחרונים"
 }

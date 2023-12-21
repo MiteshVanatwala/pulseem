@@ -618,7 +618,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const NewGroupForm = () => newGroupDetails.toggleChecked ? (
-        <Stack direction="row">
+        <Stack direction="row" className={'create-new-group'}>
             <input
                 type="text"
                 className={classes.groupInput}
@@ -1135,7 +1135,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             title={t("smsReport.whomtoSendTip")}
                                             classes={{ tooltip: styles.customWidth }}
                                         >
-                                            <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                                            <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info)} aria-label={t("mainReport.toolTip1")}>
                                                 <BsInfoCircle />
                                             </IconButton>
                                         </Tooltip>
@@ -1168,7 +1168,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                 }
                                                 onClick={() => setActiveTab(1)}
                                             >
-                                                <span style={{ marginInlineEnd: 15 }}>
+                                                <span style={{ marginInlineEnd: 15 }} className={classes.elipsis}>
                                                     {t("mainReport.manual")}
                                                 </span>
                                                 <Tooltip
@@ -1265,7 +1265,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                         }}
                                                         direction="row"
                                                     >
-                                                        <span>{t("mainReport.totalReci")}: {totalClientsToSend.toLocaleString()}</span>
+                                                        <span className={classes.createGroupSpan}>{t("mainReport.totalReci")}: {totalClientsToSend.toLocaleString()}</span>
                                                         <Tooltip
                                                             placement={'bottom'}
                                                             // disableFocusListener
@@ -1345,7 +1345,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                     </Badge>
 
                                                     <Badge variant="dot" color="primary" invisible={!smsMarketingIndication} className={clsx(classes.ml5, classes.mt1)}>
-                                                        <Button
+                                                        {/* <Button
                                                             className={clsx(classes.btn, classes.btnRounded)}
                                                             disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                             onClick={() => {
@@ -1353,7 +1353,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                             }}
                                                         >
                                                             {t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
-                                                        </Button>
+                                                        </Button> */}
                                                     </Badge>
                                                 </Stack>
                                             </>

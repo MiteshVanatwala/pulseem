@@ -9,12 +9,13 @@ import {
     Box,
     Checkbox,
     FormControlLabel,
+    IconButton,
 } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
-import { BsInfoCircleFill } from "react-icons/bs";
+import { BsInfoCircle } from "react-icons/bs";
 import {
     createGroup,
     getGroupsBySubAccountId
@@ -300,9 +301,9 @@ const AddGroupPopUp = ({
                             }
                             text={t("group.testGroupInfo")}
                         >
-                            <span>
-                                <BsInfoCircleFill />
-                            </span>
+                            <IconButton className={classes.icon_Info} aria-label={t('group.testGroupInfo')}>
+                                <BsInfoCircle />
+                            </IconButton>
                         </CustomTooltip>
                     </Box>
                 </Box>

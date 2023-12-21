@@ -381,9 +381,9 @@ const SendingMethod = ({
                                     className={classes.dateBox}
                                     style={{
                                         marginTop: 10,
-                                        display: "flex",
+                                        display:  windowSize === "xs" ? "inline-block" : "flex",
                                         alignItems: "center",
-                                        width: "370px",
+                                        width: "100%",
                                         pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
                                     }}
                                 >

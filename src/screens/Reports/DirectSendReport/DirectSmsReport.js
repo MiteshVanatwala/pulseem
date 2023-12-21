@@ -302,7 +302,7 @@ const DirectSMSReportTab = ({
   const renderSearchLine = () => {
     const { sms = false } = isSearching || {};
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
         <Grid item>
           <Button
@@ -650,7 +650,7 @@ const DirectSMSReportTab = ({
 
   return (
     <>
-      <Box className={'topSection'}>
+      <Box className={clsx('topSection', classes.mt10)}>
         <Title Text={title} classes={classes} />
         {renderSearchLine()}
       </Box>

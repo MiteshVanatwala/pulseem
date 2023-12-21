@@ -22,9 +22,11 @@ import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { ImWhatsapp } from 'react-icons/im';
 import { ConvertColorStatus, ConvertWhatsappStatusText, SourceType } from '../../../helpers/UI/TableText';
 import { IoIosArrowDown } from 'react-icons/io';
+import { Title } from '../../../components/managment/Title';
 
 const DirectWhatsappReportTab = ({
     classes,
+    title,
     dispatch,
     windowSize,
     isRTL,
@@ -302,7 +304,7 @@ const DirectWhatsappReportTab = ({
     const renderSearchLine = () => {
         const { whatsapp = false } = isSearching || {};
         return (
-            <Grid container spacing={2} className={classes.lineTopMarging}>
+            <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
                 {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
                 <Grid item>
                     <Button
@@ -592,7 +594,7 @@ const DirectWhatsappReportTab = ({
                         </Typography>
                     </Grid>
                 </Grid>
-                <TableContainer className={clsx(classes.borderAround, classes.mt10)}>
+                <TableContainer className={clsx(classes.mt10)}>
                     <Table className={clsx(classes.tableContainer, classes.noborder)}>
                         {windowSize !== 'xs' && renderTableHead()}
                         {renderTableBody()}
@@ -621,7 +623,10 @@ const DirectWhatsappReportTab = ({
     return <>
         {directWhatsappReport?.StatusCode === 201 ? (
             <>
-                {renderSearchLine()}
+                <Box className={clsx('topSection', classes.mt10)}>
+                    <Title Text={title} classes={classes} />
+                    {renderSearchLine()}
+                </Box>
                 {renderTable()}
                 {renderTablePagination()}
                 <Loader isOpen={showLoader} />

@@ -408,9 +408,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
               className={clsx(classes.tab, classes.tablistRoot)}
               classes={{ indicator: classes.hideIndicator }}
             >
-              <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
-              <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
-              <Tab label={<span style={{ marginInlineEnd: 5 }}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100) }} value={2} />
+              <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} className={clsx(classes.directSendTab, tabValue === 0 ? classes.currentActiveTab : '')} />
+              <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} className={clsx(classes.directSendTab, tabValue === 1 ? classes.currentActiveTab : '')} />
+              <Tab label={<span style={{ marginInlineEnd: 5 }}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100) }} value={2} className={clsx(classes.directSendTab, tabValue === 2 ? classes.currentActiveTab : '')} />
             </Tabs>
             <Grid item>
               {!isArchive && tabValue !== 2 && <Button
@@ -494,6 +494,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             </TabPanel>
             <TabPanel value={2} index={2} className={classes.p0}>
               <DirectWhatsappReportTab
+                title={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
                 classes={classes}
                 dispatch={dispatch}
                 windowSize={windowSize}

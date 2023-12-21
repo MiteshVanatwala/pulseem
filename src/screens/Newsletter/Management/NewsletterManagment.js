@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, FormControlLabel, Checkbox, FormControl, FormGroup
+  Grid, Button, TextField, Box, FormControlLabel, Checkbox
 } from '@material-ui/core'
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon,
   GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, PopMassage, SearchField, RestorDialogContent
+  TablePagination, ManagmentIcon, DateField, PopMassage, RestorDialogContent
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
@@ -33,7 +33,6 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
@@ -183,23 +182,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
       setCampaineNameSearch(event.target.value)
     }
 
-    if (windowSize === 'xs') {
-      return (
-        <Grid container className={'searchLine'}>
-          <SearchField
-            classes={classes}
-            value={campaineNameSearch}
-            onChange={handleCampainNameChange}
-            onKeyPress={(e) => { handleSearch(); handleKeyPress(e) }}
-            onClick={handleSearch}
-            // onKeyPress={}
-            placeholder={t('common.CampaignName')}
-          />
-        </Grid>
-      )
-    }
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -259,7 +243,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   const renderManagmentLine = () => {
     return (
-      <Grid container spacing={2} className={classes.linePadding} >
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         {windowSize !== 'xs' && <Grid item>
           <Button
             component="a"
@@ -644,7 +628,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         key={row.CampaignID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.tabelCellPadding) }}>
+        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }}>
           <Box className={classes.justifyBetween}>
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
@@ -777,11 +761,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
           id: data.CampaignID,
           name: data?.Name
         });
-
-        // setDialogType({
-        //   type: 'duplicate',
-        //   data: data.CampaignID
-        // })
       }
     }
   }
@@ -854,6 +833,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </Typography>
     ),
     onConfirm: async () => {
+      setLoader(true);
       clearSearch()
       handleClose()
       const response = await dispatch(deleteCampaign(data))
@@ -861,6 +841,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         setToastMessage(ToastMessages.CAMPAIGN_DELETED_SUCCESS);
         getData();
       }
+      setLoader(false);
     }
   })
 
