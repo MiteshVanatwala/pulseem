@@ -96,7 +96,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -140,7 +140,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -184,7 +184,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -228,7 +228,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -272,7 +272,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -316,7 +316,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -406,7 +406,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                                     className={clsx(classes.w100, classes.textField, classes.mt25)}
                                                 />
                                             </Grid>
-                                                <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                                                <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
                                                     <FormControl
                                                         variant="standard"
                                                         className={clsx(classes.selectInputFormControl, classes.w100)}
