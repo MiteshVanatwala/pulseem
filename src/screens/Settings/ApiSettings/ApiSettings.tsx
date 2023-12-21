@@ -303,6 +303,7 @@ const ApiSettings = ({ classes }: any) => {
                                                 <>
                                                     <CustomTooltip
                                                         text={null}
+                                                        // @ts-ignore
                                                         titleStyle={{ fontSize: 14 }}
                                                         arrow
                                                         isSimpleTooltip={false}
@@ -328,6 +329,7 @@ const ApiSettings = ({ classes }: any) => {
                                                     />
                                                     <CustomTooltip
                                                         text={null}
+                                                        // @ts-ignore
                                                         titleStyle={{ fontSize: 14 }}
                                                         arrow
                                                         isSimpleTooltip={false}
@@ -349,6 +351,7 @@ const ApiSettings = ({ classes }: any) => {
                                                     />
                                                     <CustomTooltip
                                                         text={null}
+                                                        // @ts-ignore
                                                         titleStyle={{ fontSize: 14 }}
                                                         arrow
                                                         isSimpleTooltip={false}
