@@ -291,7 +291,7 @@ export const getRoutes = (
       options: [
         {
           title: t("master.RadMenuItemCreateAutomationResource.Text"),
-          href: `${rootDomain}/CreateAutomations.aspx?fromreact=true`,
+          href: `${rootDomain}/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
           isShow: true,
         },
         {

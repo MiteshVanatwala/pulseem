@@ -759,7 +759,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         >{t("common.save")}
         </Button>
         <Button onClick={() => {
-          saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`, false);
+          saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`, false);
         }}
           className={clsx(
             classes.btn,

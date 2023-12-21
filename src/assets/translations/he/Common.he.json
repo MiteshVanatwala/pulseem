@@ -668,5 +668,10 @@
   "smsCampaignName": "שם קמפיין SMS",
   "smsCampaignDates": "תאריך קמפיין SMS",
   "smsCampaignStatus": "סטטוס קמפיין SMS",
-  "smsCampaignClicked": "הקלקות לקמפיין SMS"
+  "smsCampaignClicked": "הקלקות לקמפיין SMS",
+  "tooltips": {
+    "uploadFiles": {
+      "fileDoesNotSupportedForImport": "קבצי XLS לא נתמכים בייבוא נמענים למערכת. במידה וקיים הצורך לייבא נמענים מקובץ זה בהמשך, יש לייצא קובץ מסוג XLSX"
+    }
+  }
 }

@@ -395,7 +395,7 @@ const WhatsappInbound = ({ classes }: any) => {
             onConfirm={(e: any) => handleDownloadCsv(e)}
             onCancel={() => setDialog(null)}
             cookieName={"exportFormat"}
-            defaultValue="xls"
+            defaultValue="xlsx"
             options={ExportFileTypes}
           />
           <Loader isOpen={showLoader} showBackdrop={true} />

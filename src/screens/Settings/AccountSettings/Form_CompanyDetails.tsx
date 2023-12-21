@@ -138,7 +138,7 @@ const FORM_COMPANY_DETAILS = ({
     setCompanyDetails(newSettings);
     if (Settings)
       handleQueryString2FA();
-  }, [accountSettings, Settings]);
+  }, [accountFeatures, Settings]);
 
   useEffect(() => {
     if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {

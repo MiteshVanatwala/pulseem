@@ -192,9 +192,7 @@ const Groups = ({ classes }) => {
             await dispatch(getAccountExtraData());
         }
         setLoader(false);
-        if (subAccountAllGroups.length === 0) {
-            getSubAccountGroups();
-        }
+        getSubAccountGroups();
     };
     const reSearch = () => {
         const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
@@ -714,7 +712,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("campaigns.recipients"),
-                                                value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0),
+                                                value: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)).toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -752,7 +750,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Active"),
-                                                value: ActiveEmails,
+                                                value: ActiveEmails.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -790,7 +788,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Removed"),
-                                                value: RemovedEmails,
+                                                value: RemovedEmails.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -829,7 +827,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Bounced"),
-                                                value: InvalidEmails,
+                                                value: InvalidEmails.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -868,7 +866,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Pending"),
-                                                value: PendingClients || 0,
+                                                value: PendingClients.toLocaleString() || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -917,7 +915,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("campaigns.recipients"),
-                                                value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0),
+                                                value: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)).toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -955,7 +953,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Active"),
-                                                value: ActiveCell,
+                                                value: ActiveCell.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -993,7 +991,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Removed"),
-                                                value: RemovedCell,
+                                                value: RemovedCell.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -1032,7 +1030,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Bounced"),
-                                                value: InvalidCell,
+                                                value: InvalidCell.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -1071,7 +1069,7 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Pending"),
-                                                value: PendingSmsClients || 0,
+                                                value: PendingSmsClients.toLocaleString() || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -1169,7 +1167,7 @@ const Groups = ({ classes }) => {
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("campaigns.recipients"),
-                                                value: TotalRecipients,
+                                                value: TotalRecipients?.toLocaleString(),
                                                 classes: {
                                                     name: colorTextStyle.blue,
                                                     value: colorTextStyle.blue,
@@ -1204,7 +1202,7 @@ const Groups = ({ classes }) => {
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Active"),
-                                                value: ActiveEmails,
+                                                value: ActiveEmails?.toLocaleString(),
                                                 classes: {
                                                     name: colorTextStyle.green,
                                                     value: colorTextStyle.green,
@@ -1239,7 +1237,7 @@ const Groups = ({ classes }) => {
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Removed"),
-                                                value: RemovedEmails,
+                                                value: RemovedEmails?.toLocaleString(),
                                                 classes: {
                                                     name: colorTextStyle.red,
                                                     value: colorTextStyle.red,
@@ -1275,7 +1273,7 @@ const Groups = ({ classes }) => {
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Bounced"),
-                                                value: InvalidEmails,
+                                                value: InvalidEmails?.toLocaleString(),
                                                 classes: {
                                                     name: colorTextStyle.red,
                                                     value: colorTextStyle.red,
@@ -1305,12 +1303,12 @@ const Groups = ({ classes }) => {
                                 {
 
                                     component: (
-                                        <NameValueGridStructure
+                                        accountFeatures.includes("6") && PendingClients > 0 && <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Pending"),
-                                                value: PendingSmsClients || 0,
+                                                value: PendingClients?.toLocaleString() || 0,
                                                 classes: {
                                                     name: colorTextStyle.grey,
                                                     value: colorTextStyle.grey,
@@ -1345,7 +1343,7 @@ const Groups = ({ classes }) => {
                         />
                     </Box>
                     <Box className={classes.mt3}>
-                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.sms/mms")}</Typography>
+                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("appBar.sms.title")}</Typography>
                         <FlexGrid
                             justifyContent="space-between"
                             gridArr={[
@@ -1356,7 +1354,7 @@ const Groups = ({ classes }) => {
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("campaigns.recipients"),
-                                                value: TotalRecipients,
+                                                value: TotalRecipients?.toLocaleString(),
                                                 classes: {
                                                     name: colorTextStyle.blue,
                                                     value: colorTextStyle.blue,
@@ -1391,7 +1389,7 @@ const Groups = ({ classes }) => {
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Active"),
-                                                value: ActiveCell,
+                                                value: ActiveCell?.toLocaleString(),
                                                 classes: {
                                                     name: colorTextStyle.green,
                                                     value: colorTextStyle.green,
@@ -1426,7 +1424,7 @@ const Groups = ({ classes }) => {
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Removed"),
-                                                value: RemovedCell,
+                                                value: RemovedCell?.toLocaleString(),
                                                 classes: {
                                                     name: colorTextStyle.red,
                                                     value: colorTextStyle.red,
@@ -1461,7 +1459,7 @@ const Groups = ({ classes }) => {
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Bounced"),
-                                                value: InvalidCell,
+                                                value: InvalidCell?.toLocaleString(),
                                                 classes: {
                                                     name: colorTextStyle.red,
                                                     value: colorTextStyle.red,
@@ -1491,12 +1489,12 @@ const Groups = ({ classes }) => {
                                 {
 
                                     component: (
-                                        accountFeatures?.indexOf(PulseemFeatures.OPTIN) > -1 && <NameValueGridStructure
+                                        accountFeatures?.indexOf(PulseemFeatures.OPTIN) > -1 && PendingSmsClients > 0 && <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
                                                 name: t("recipient.Pending"),
-                                                value: PendingClients || 0,
+                                                value: PendingSmsClients?.toLocaleString() || 0,
                                                 classes: {
                                                     name: colorTextStyle.grey,
                                                     value: colorTextStyle.grey,
@@ -1626,20 +1624,25 @@ const Groups = ({ classes }) => {
             return client;
         }, []);
 
+
+        const fields = { ...exportColumnHeader.current };
+
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
             ConvertStatusToString: false,
-            Order: Object.keys(exportColumnHeader.current),
-            DeleteProperties: ["Revenue", "SendDate"],
+            Order: Object.keys(fields),
+            // DeleteProperties: ["Revenue", "SendDate"],
             ReplaceNull: true
         };
 
         HandleExportData(orderList, exportOptions).then(async (result) => {
+            delete fields["Revenue"];
+            delete fields["SendDate"];
             ExportFile({
                 data: result,
                 exportType: formatType,
-                fields: exportColumnHeader.current,
+                fields: fields,
                 fileName: 'PulseemClientsExport'
             });
         });
@@ -1731,7 +1734,7 @@ const Groups = ({ classes }) => {
                 onConfirm={(e, notifyEmail) => handleConfirmExport(e, notifyEmail)}
                 onCancel={() => setShowConfirmDialog(false)}
                 cookieName={'exportFormat'}
-                defaultValue={csvOnly ? 'csv' : 'xls'}
+                defaultValue={csvOnly ? 'csv' : 'xlsx'}
                 showEmailToNotify={csvOnly}
                 options={csvOnly ? null : exportTypeOptions}
             />

@@ -66,7 +66,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 //     Text: 'OrderItems'
                 // })
                 console.error('OrderItems');
-                reject(error);
+                // reject(error);
             }
         }
         if (options.ReplaceNull === true) {
@@ -78,7 +78,8 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 //     ComponentName: 'ExportHelper.ts',
                 //     Text: 'ReplaceNull'
                 // })
-                reject(error);
+                console.error('ReplaceNull');
+                // reject(error);
             }
         }
         if ((options.ConvertStatusDescription === true || options.ConvertStatusToString === true) && options.Statuses !== null) {
@@ -90,7 +91,8 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 //     ComponentName: 'ExportHelper.ts',
                 //     Text: 'SwitchStatus'
                 // })
-                reject(error);
+                console.error('ConvertStatusDescription');
+                // reject(error);
             }
         }
         if (options.BooleanToNumber === true) {
@@ -102,7 +104,8 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 //     ComponentName: 'ExportHelper.ts',
                 //     Text: 'BooleanToNumber'
                 // })
-                reject(error);
+                console.error('BooleanToNumber');
+                // reject(error);
             }
         }
         if (options.DeleteProperties?.length > 0) {

@@ -26,6 +26,7 @@ import {
 	phoneNumberAPIProps,
 	GetTestGroups,
 	ApiSendCampaignData,
+	coreProps,
 } from './Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
@@ -82,13 +83,15 @@ const SendCampaign = ({
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { campaignID } = useParams();
 	const queryParams = new URLSearchParams(window.location.search)
 	let FromAutomation = queryParams.get("FromAutomation") || false
 	if (FromAutomation === 'false') FromAutomation = false;
 	const NodeToEdit = queryParams.get("NodeToEdit") || false
 	let isSendCampaign = queryParams.get("new") || false
 	if (isSendCampaign === 'false') isSendCampaign = false;
+
+	const { campaignID } = useParams();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { testGroups: testGroupList } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
@@ -96,7 +99,7 @@ const SendCampaign = ({
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	
+
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [selectedGroups, setSelectedGroups] = useState<testGroupDataProps[]>(
 		[]
@@ -479,7 +482,7 @@ const SendCampaign = ({
 	};
 
 	const onDeleteCampaign = async () => {
-		setDialogType({type: '', data: ''})
+		setDialogType({ type: '', data: '' })
 		if (campaignID) {
 			const deleteData: commonAPIResponseProps = await dispatch<any>(
 				deleteCampaign(campaignID)
@@ -519,13 +522,14 @@ const SendCampaign = ({
 				onCampaignSend();
 				break;
 			case buttons.CONTINUE:
-				if (!!FromAutomation && !!isSendCampaign) {
+				if (!!FromAutomation && !isSendCampaign) {
 					const saveCampaignData = await onCampaignSave(true, true, true);
 					if (saveCampaignData === apiStatus.SUCCESS) {
-						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 					}
 				}
 				break;
+
 			default:
 				break;
 		}
@@ -754,7 +758,7 @@ const SendCampaign = ({
 
 	const onExitCampaign = () => {
 		if (FromAutomation) {
-			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 		} else {
 			navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 		}
@@ -774,7 +778,7 @@ const SendCampaign = ({
 				await onCampaignSave(true, true, true);
 				onExitCampaign();
 			}}
-			onCancel={() => setDialogType({type: '', data: ''})}
+			onCancel={() => setDialogType({ type: '', data: '' })}
 		/>
 	})
 
@@ -789,7 +793,7 @@ const SendCampaign = ({
 		renderButtons: () => <ConfirmationButtons
 			classes={classes}
 			onConfirm={() => onDeleteCampaign()}
-			onCancel={() => setDialogType({type: '', data: ''})}
+			onCancel={() => setDialogType({ type: '', data: '' })}
 		/>
 	})
 

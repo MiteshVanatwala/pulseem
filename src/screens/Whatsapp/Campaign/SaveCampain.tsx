@@ -115,7 +115,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { campaignID } = useParams();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-
 	const queryParams = new URLSearchParams(window.location.search)
 	let FromAutomation = queryParams.get("FromAutomation") || false
 	if (FromAutomation === 'false') FromAutomation = false;
@@ -564,18 +563,18 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			<>
 				{updatedVariables?.map((variable, index) => (
 					variable === '\n'
-					? <br />
-					: <strong
-						key={index}
-						className={clsx(
-							classes.whatsappCampainHighlightText,
-							`${isUpdatedVaraiable(variable) && 'updated'}`
-						)}
-						onClick={() => openDynamcFieldModal(variable)}>
-						{isUpdatedVaraiable(variable)
-							? getUpdatedVariableValue(variable)
-							: variable}
-					</strong>
+						? <br />
+						: <strong
+							key={index}
+							className={clsx(
+								classes.whatsappCampainHighlightText,
+								`${isUpdatedVaraiable(variable) && 'updated'}`
+							)}
+							onClick={() => openDynamcFieldModal(variable)}>
+							{isUpdatedVaraiable(variable)
+								? getUpdatedVariableValue(variable)
+								: variable}
+						</strong>
 				))}
 			</>
 		);
@@ -728,7 +727,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onDeleteCampaign = async () => {
-		setDialogType({type: '', data: ''})
+		setDialogType({ type: '', data: '' })
 		if (campaignID) {
 			const deleteData = await dispatch<any>(
 				deleteCampaign(campaignID)
@@ -964,6 +963,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						navigate(
 							`${sitePrefix}whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
 						);
+					} else {
+						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 					}
 				}
 				return data?.Data;
@@ -990,7 +991,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}`,
+					`${sitePrefix}whatsapp/campaign/edit/page2/${data?.Data?.WACampaignId}?FromAutomation=${FromAutomation}&NodeToEdit=${NodeToEdit}&new=${isSendCampaign}`,
 					{ state: { from: `edit/page1/${data?.Data?.WACampaignId}&new=${isSendCampaign}` } }
 				);
 			} else {
@@ -1033,7 +1034,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onExitCampaign = () => {
 		setDialogType(null);
 		if (FromAutomation) {
-			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 		} else {
 			navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 		}
@@ -1065,7 +1066,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		renderButtons: () => <ConfirmationButtons
 			classes={classes}
 			onConfirm={() => onDeleteCampaign()}
-			onCancel={() => setDialogType({type: '', data: ''})}
+			onCancel={() => setDialogType({ type: '', data: '' })}
 		/>
 	})
 
@@ -1531,71 +1532,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													</Box>
 												</Box>
 
-												{isTestSend && (
-													<Box
-														className={clsx(classes.radio, classes.testSendRadio)}>
-														<RadioGroup
-															aria-labelledby='demo-controlled-radio-buttons-group'
-															defaultValue='onecontact'
-															name='radio-buttons-group'
-															onChange={(e: BaseSyntheticEvent) =>
-																onChangeTestSendRadio(e.target.value)
-															}>
-															<FormControlLabel
-																value='onecontact'
-																control={
-																	<Radio
-																		className={classes.WhatsappCampainRadioButton}
-																	/>
-																}
-																label={
-																	<Typography style={{ fontSize: 16 }}>
-																		<>{translator('whatsappCampaign.oneContact')}</>
-																	</Typography>
-																}
-															/>
-															<Stack direction='row' spacing={0.5} height={40}>
-																<TextField
-																	required
-																	size='small'
-																	id='templateName'
-																	placeholder={translator(
-																		'whatsappCampaign.oneContactPlaceholder'
-																	)}
-																	className={clsx(
-																		classes.buttonField,
-																		classes.success
-																	)}
-																	disabled={testSendSelection !== 'onecontact'}
-																	onChange={(e: BaseSyntheticEvent) =>
-																		setTestSendOneContact(
-																			e.target.value
-																				?.replace(/\D/g, '')
-																				?.substr(0, 18)
-																		)
-																	}
-																	value={testSendOneContact}
-																/>
-																<Button
-																	disabled={
-																		testSendSelection !== 'onecontact' ||
-																		testSendOneContact?.length === 0
-																	}
-																	variant='outlined'
-																	color='primary'
-																	className={clsx(classes.btn, classes.btnRounded)}
-																	onClick={() => onOkTestSending()}>
-																	<>{translator('whatsappCampaign.sendButton')}</>
-																</Button>
-															</Stack>
-															<br />
-															<Stack
-																direction='row'
-																alignItems={'center'}
-																spacing={0.5}
-																height={40}>
+												{
+													isTestSend && (
+														<Box
+															className={clsx(classes.radio, classes.testSendRadio)}>
+															<RadioGroup
+																aria-labelledby='demo-controlled-radio-buttons-group'
+																defaultValue='onecontact'
+																name='radio-buttons-group'
+																onChange={(e: BaseSyntheticEvent) =>
+																	onChangeTestSendRadio(e.target.value)
+																}>
 																<FormControlLabel
-																	value='testgroup'
+																	value='onecontact'
 																	control={
 																		<Radio
 																			className={classes.WhatsappCampainRadioButton}
@@ -1603,70 +1552,124 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 																	}
 																	label={
 																		<Typography style={{ fontSize: 16 }}>
-																			<>
-																				{translator('whatsappCampaign.testGroups')}
-																			</>
+																			<>{translator('whatsappCampaign.oneContact')}</>
 																		</Typography>
 																	}
 																/>
-																<span className={classes.testSendNewTag}>
-																	<>{translator('mainReport.newFeature')}</>
-																</span>
-															</Stack>
-															{testSendSelection === 'testgroup' && (
-																<Stack>
-																	<div className={classes.rightForm}>
-																		<div
-																			className={classes.contactGroupDiv}
-																		>
-																			{selectedTestGroup.length <= 0 && (
-																				<div
-																					onClick={() => setDialogType({type: 'testGroup'})}
-																				>
-																					{' '}
-																					<>
-																						{translator('mainReport.ChooseLinks')}
-																					</>
-																				</div>
-																			)}
-																			{selectedTestGroup.length > 0 ? (
-																				<div className={classes.mappedGroup}>
-																					{selectedTestGroup.map((item, index) => {
-																						return (
-																							<div
-																								key={index}
-																								className={
-																									classes.selectedGroupsDiv
-																								}>
-																								<span className={classes.nameGroup}>
-																									{item.GroupName}
-																								</span>
-																								<RiCloseFill
-																									className={classes.groupCloseicn}
-																									onClick={(event: any) => {
-																										event?.preventDefault();
-																										onRemoveGroupSelection(
-																											event,
-																											item.GroupID
-																										);
-																									}}
-																								/>
-																							</div>
-																						);
-																					})}
-																				</div>
-																			) : null}
-																		</div>
-																	</div>
+																<Stack direction='row' spacing={0.5} height={40}>
+																	<TextField
+																		required
+																		size='small'
+																		id='templateName'
+																		placeholder={translator(
+																			'whatsappCampaign.oneContactPlaceholder'
+																		)}
+																		className={clsx(
+																			classes.buttonField,
+																			classes.success
+																		)}
+																		disabled={testSendSelection !== 'onecontact'}
+																		onChange={(e: BaseSyntheticEvent) =>
+																			setTestSendOneContact(
+																				e.target.value
+																					?.replace(/\D/g, '')
+																					?.substr(0, 18)
+																			)
+																		}
+																		value={testSendOneContact}
+																	/>
+																	<Button
+																		disabled={
+																			testSendSelection !== 'onecontact' ||
+																			testSendOneContact?.length === 0
+																		}
+																		variant='outlined'
+																		color='primary'
+																		className={clsx(classes.btn, classes.btnRounded)}
+																		onClick={() => onOkTestSending()}>
+																		<>{translator('whatsappCampaign.sendButton')}</>
+																	</Button>
 																</Stack>
-															)}
-														</RadioGroup>
-													</Box>
-												)}
-											</Grid>
-										</Grid>
-									</Grid>
-								</Grid>
+																<br />
+																<Stack
+																	direction='row'
+																	alignItems={'center'}
+																	spacing={0.5}
+																	height={40}>
+																	<FormControlLabel
+																		value='testgroup'
+																		control={
+																			<Radio
+																				className={classes.WhatsappCampainRadioButton}
+																			/>
+																		}
+																		label={
+																			<Typography style={{ fontSize: 16 }}>
+																				<>
+																					{translator('whatsappCampaign.testGroups')}
+																				</>
+																			</Typography>
+																		}
+																	/>
+																	<span className={classes.testSendNewTag}>
+																		<>{translator('mainReport.newFeature')}</>
+																	</span>
+																</Stack>
+																{testSendSelection === 'testgroup' && (
+																	<Stack>
+																		<div className={classes.rightForm}>
+																			<div
+																				className={classes.contactGroupDiv}
+																			>
+																				{selectedTestGroup.length <= 0 && (
+																					<div
+																						onClick={() => setDialogType({ type: 'testGroup' })}
+																					>
+																						{' '}
+																						<>
+																							{translator('mainReport.ChooseLinks')}
+																						</>
+																					</div>
+																				)}
+																				{selectedTestGroup.length > 0 ? (
+																					<div className={classes.mappedGroup}>
+																						{selectedTestGroup.map((item, index) => {
+																							return (
+																								<div
+																									key={index}
+																									className={
+																										classes.selectedGroupsDiv
+																									}>
+																									<span className={classes.nameGroup}>
+																										{item.GroupName}
+																									</span>
+																									<RiCloseFill
+																										className={classes.groupCloseicn}
+																										onClick={(event: any) => {
+																											event?.preventDefault();
+																											onRemoveGroupSelection(
+																												event,
+																												item.GroupID
+																											);
+																										}}
+																									/>
+																								</div>
+																							);
+																						})}
+																					</div>
+																				) : null}
+																			</div>
+																		</div>
+																	</Stack>
+																)}
+															</RadioGroup>
+														</Box>
+													)
+												}
+											</Grid >
+										</Grid >
+									</Grid >
+								</Grid >
 								<Grid container>
 									<Buttons
 										displayBackButton={false}
@@ -1678,16 +1681,16 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 										showContinueButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : false}
 									/>
 								</Grid>
-							</form>
-						</Box>
-					</Box>
+							</form >
+						</Box >
+					</Box >
 				</>
 			) : (
 				!isLoader && <NoSetup classes={classes} />
 			)}
 			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
-		</DefaultScreen>
+		</DefaultScreen >
 	);
 };
 

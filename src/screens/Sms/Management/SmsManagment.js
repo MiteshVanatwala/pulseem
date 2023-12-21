@@ -382,7 +382,9 @@ const SmsManagnentScreen = ({ classes }) => {
 				lable: t('campaigns.automation'),
 				remove: windowSize === 'xs',
 				onClick: () => {
-					pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`)
+					pulseemNewTab(
+						`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+					);
 				},
 				rootClass: classes.paddingIcon,
 			},

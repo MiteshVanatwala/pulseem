@@ -105,17 +105,17 @@ const defaultAccountExtraData = [
 
 
 const SmsCreator = ({ classes }) => {
-  const { t } = useTranslation();
-  const { id } = useParams();
-  const queryParams = new URLSearchParams(window.location.search)
-  const FromAutomation = queryParams.get("FromAutomation") || false
-  const NodeToEdit = queryParams.get("NodeToEdit") || false
-  document.title = t("sms.pageTitle");
-  const styles = useStyles();
-  const btnStyle = useStyleNew();
-  const inputProps = {
-    maxLength: "13"
-  }
+	const { t } = useTranslation();
+	const { id } = useParams();
+	const queryParams = new URLSearchParams(window.location.search)
+	const FromAutomation = queryParams.get("FromAutomation") || false
+	const NodeToEdit = queryParams.get("NodeToEdit") || false
+	document.title = t("sms.pageTitle");
+	const styles = useStyles();
+	const btnStyle = useStyleNew();
+	const inputProps = {
+		maxLength: "13"
+	}
 
   const Redirect = useRedirect();
   const dispatch = useDispatch();
@@ -406,25 +406,25 @@ const SmsCreator = ({ classes }) => {
     }
   }, [reInitFromNumber])
 
-  const getAutomationReturnUrl = (campaignId) => {
-    return `/pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}`;
-  }
-  const getSavedData = async () => {
-    if (id) {
-      let response = await dispatch(getSmsByID(id))
-      if (response && !response.error) {
-        setcampaignNumber(response.payload.FromNumber);
-        setmessageCount(response.payload.CreditsPerSms);
-        setSmsModel(response.payload);
-        setIsLinksStatistics(response.payload.IsLinksStatistics);
-        setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
-        return response.payload;
-      }
-      else {
-        logout();
-      }
-    }
-  }
+	const getAutomationReturnUrl = (campaignId) => {
+		return `/pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+	}
+	const getSavedData = async () => {
+		if (id) {
+			let response = await dispatch(getSmsByID(id))
+			if (response && !response.error) {
+				setcampaignNumber(response.payload.FromNumber);
+				setmessageCount(response.payload.CreditsPerSms);
+				setSmsModel(response.payload);
+				setIsLinksStatistics(response.payload.IsLinksStatistics);
+				setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
+				return response.payload;
+			}
+			else {
+				logout();
+			}
+		}
+	}
 
   const toggleChecked = () => {
     setChecked((prev) => !prev);
@@ -526,85 +526,85 @@ const SmsCreator = ({ classes }) => {
       isValid = false;
     }
 
-    if (smsModel.Text === "") {
-      isValid = false
-    }
-    let english = /^[ A-Za-z0-9]*$/;
-    if (campaignNumber === "" || !english.test(campaignNumber)) {
-      setcampaignNumberValidated(true);
-      isValid = false;
-    }
-    if (!isValid) {
-      setDialogType({ type: "valiateError" })
-    }
-    return isValid;
-  };
-  const handleSend = async () => {
-    if (phone !== "") {
-      if (id) {
-        const smsQuickSendData = {
-          ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-            SubAccountID: accountSettings.SubAccountId, AccountID: accountSettings.AccountID, SmsCampaignID: id, Credits: messageCount,
-            TotalRecipients: 1
-          }
-        }
-        setLoader(true);
-        let r = await dispatch(smsQuick(smsQuickSendData));
-        setLoader(false);
-        handleSendResult(r.payload.Result)
-      }
-      else {
-        if (smsCampaignId !== "") {
-          const smsQuickSendData = {
-            ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-              SubAccountID: accountSettings.SubAccountId, AccountID: accountSettings.AccountID, SmsCampaignID: smsCampaignId, Credits: messageCount,
-              TotalRecipients: 1
-            }
-          }
-          setLoader(true);
-          let r = await dispatch(smsQuick(smsQuickSendData));
-          setCampaignId(r.payload.SmsCampaignId)
-          setLoader(false);
-          handleSendResult(r.payload.Result)
-        }
-        else {
-          const smsQuickSendData = {
-            ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-              SubAccountID: accountSettings.SubAccountId, AccountID: accountSettings.AccountID, SmsCampaignID: -1, Credits: messageCount,
-              TotalRecipients: 1
-            }
-          }
-          setLoader(true);
-          let r = await dispatch(smsQuick(smsQuickSendData));
-          setCampaignId(r.payload.SmsCampaignId)
-          setLoader(false);
-          handleSendResult(r.payload.Result)
-        }
-      }
-    } else {
-      setToastMessage(ToastMessages.INVALID_NUMBER);
-    }
-  };
-  const onLeave = (e) => {
-    if (!modalOpen && campaignNumber !== storedValue) {
-      setDialogType({ type: 'alert' });
-    }
-  }
-  const handleRestore = async () => {
-    setrestoreBool(true);
-    setcampaignNumber(StaticNumber);
-    setLoader(true);
-    //let r = await dispatch(getCommonFeatures());
-    setLoader(false);
-    // setcampaignNumber(r.payload.DefaultCellNumber)
-    setLoader(true);
-    let response = await dispatch(getSMSVirtualNumber(accountSettings.DefaultCellNumber));
-    setLoader(false);
-    setcampaignNumber(response.payload.Number);
-    setStaticNumber(response.payload.Number);
-    setremovalNumber(response.payload.RemovalKey);
-    setremovalMessageButtonDisabled(false);
-  }
+		if (smsModel.Text === "") {
+			isValid = false
+		}
+		let english = /^[ A-Za-z0-9]*$/;
+		if (campaignNumber === "" || !english.test(campaignNumber)) {
+			setcampaignNumberValidated(true);
+			isValid = false;
+		}
+		if (!isValid) {
+			setDialogType({ type: "valiateError" })
+		}
+		return isValid;
+	};
+	const handleSend = async () => {
+		if (phone !== "") {
+			if (id) {
+				const smsQuickSendData = {
+					...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+						SmsCampaignID: id, Credits: messageCount,
+						TotalRecipients: 1
+					}
+				}
+				setLoader(true);
+				let r = await dispatch(smsQuick(smsQuickSendData));
+				setLoader(false);
+				handleSendResult(r.payload.Result)
+			}
+			else {
+				if (smsCampaignId !== "") {
+					const smsQuickSendData = {
+						...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+							SmsCampaignID: smsCampaignId, Credits: messageCount,
+							TotalRecipients: 1
+						}
+					}
+					setLoader(true);
+					let r = await dispatch(smsQuick(smsQuickSendData));
+					setCampaignId(r.payload.SmsCampaignId)
+					setLoader(false);
+					handleSendResult(r.payload.Result)
+				}
+				else {
+					const smsQuickSendData = {
+						...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+							SmsCampaignID: -1, Credits: messageCount,
+							TotalRecipients: 1
+						}
+					}
+					setLoader(true);
+					let r = await dispatch(smsQuick(smsQuickSendData));
+					setCampaignId(r.payload.SmsCampaignId)
+					setLoader(false);
+					handleSendResult(r.payload.Result)
+				}
+			}
+		} else {
+			setToastMessage(ToastMessages.INVALID_NUMBER);
+		}
+	};
+	const onLeave = (e) => {
+		if (!modalOpen && campaignNumber !== storedValue) {
+			setDialogType({ type: 'alert' });
+		}
+	}
+	const handleRestore = async () => {
+		setrestoreBool(true);
+		setcampaignNumber(StaticNumber);
+		setLoader(true);
+		//let r = await dispatch(getCommonFeatures());
+		setLoader(false);
+		// setcampaignNumber(r.payload.DefaultCellNumber)
+		setLoader(true);
+		let response = await dispatch(getSMSVirtualNumber(accountSettings.DefaultCellNumber));
+		setLoader(false);
+		setcampaignNumber(response.payload.Number);
+		setStaticNumber(response.payload.Number);
+		setremovalNumber(response.payload.RemovalKey);
+		setremovalMessageButtonDisabled(false);
+	}
 
   const onAddText = (text) => {
     text = text.trim();

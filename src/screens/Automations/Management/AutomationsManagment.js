@@ -211,7 +211,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            href='/Pulseem/CreateAutomations.aspx?fromreact=true'
+            href={`/Pulseem/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
             className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('automations.createResource.Text')}
@@ -262,7 +262,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}`)
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
         }
       },
       {
@@ -270,7 +270,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         uIcon: EditIcon,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true` : '',
+        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : '',
         rootClass: classes.paddingIcon,
         onClick: () => {
           if (IsActive) {

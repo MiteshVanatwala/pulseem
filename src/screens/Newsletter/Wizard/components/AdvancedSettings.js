@@ -5,7 +5,8 @@ import {
     TextField,
     Typography,
     FormControl,
-    MenuItem
+    MenuItem,
+    FormHelperText
 } from '@material-ui/core'
 import Select from '@mui/material/Select';
 import clsx from "clsx";
@@ -17,6 +18,7 @@ import { LangugeCode, MobileSupport, PulseemFeatures } from "../../../../model/P
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
 import PulseemTags from '../../../../components/Tags/PulseemTags'
 import { IoIosArrowDown } from 'react-icons/io';
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 
 export const AdvancedSettings = ({
     classes,
@@ -72,6 +74,7 @@ export const AdvancedSettings = ({
                             </MenuItem>
                         ))}
                     </Select>
+                    {!campaingnValues?.IsResponsive && <FormHelperText className={clsx(classes.f16, classes.red)}>{RenderHtml(t('campaigns.newsLetterEditor.helpTexts.cellularSupportCaution'))}</FormHelperText>}
                 </FormControl>
             </Grid>
             <Grid item xs={12} sm={6} className='textBoxWrapper'>

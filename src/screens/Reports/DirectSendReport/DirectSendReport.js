@@ -281,6 +281,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
           searchData.sms.ShowContent = showContent;
           response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
 
+
+          const fields = { ...excelHeaders.SMS };
+
           const exportOption = {
             OrderItems: true,
             FormatDate: true,
@@ -289,18 +292,24 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             Statuses: SmsStatus,
             ReplaceClientStatus: true,
             DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
-            Order: Object.keys(excelHeaders.SMS)
+            Order: Object.keys(fields)
           };
 
           try {
             const result = await HandleExportData(response.payload, exportOption);
 
+            if (!showContent) {
+              delete fields["MESSAGE"];
+            }
+
             fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
+
+
             ExportFile({
               data: result,
               fileName: fileName,
               exportType: formatType,
-              fields: excelHeaders.SMS
+              fields: fields
             });
           } catch (e) {
             console.log(e);
@@ -313,6 +322,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       case 1: // Email
         {
           response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
+
+          const fields = { ...excelHeaders.EMAIL };
+
           const exportOptions = {
             OrderItems: true,
             FormatDate: true,
@@ -324,18 +336,23 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
             ReplaceNull: true,
             DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
-            Order: Object.keys(excelHeaders.EMAIL)
+            Order: Object.keys(fields)
           };
 
           try {
             const result = await HandleExportData(response.payload, exportOptions);
+
+            delete fields["Status"];
+            if (isArchive) {
+              delete fields["CreatedDate"];
+            }
 
             fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
             ExportFile({
               data: result,
               fileName: fileName,
               exportType: formatType,
-              fields: excelHeaders.EMAIL
+              fields: fields
             });
           } catch (e) {
             console.log(e);
@@ -537,7 +554,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         onConfirm={(e) => handleExportFile(e)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <Loader isOpen={showLoader} showBackdrop={true} />

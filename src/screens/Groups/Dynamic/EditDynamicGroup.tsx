@@ -46,7 +46,6 @@ const EditDynamicGroup = ({ classes }: any) => {
             IsDynamic: true,
             IsTestGroup: false,
             Recipients: 0,
-            SubAccountID: -1,
             UpdateDate: null
         },
         dynamicData: {

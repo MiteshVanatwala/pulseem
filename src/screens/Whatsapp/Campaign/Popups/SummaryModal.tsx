@@ -477,6 +477,7 @@ const SummaryModal = ({
 													interactive={true}
 													placement={'top'}
 													title={getTierInfoTooltip()}
+													// @ts-ignore
 													titleStyle={{
 														width: '100%',
 														display: 'inline-block',

@@ -271,6 +271,8 @@ const SmsReport = ({ classes }) => {
     if (hasRevenue)
       exportColumnHeader["Revenue"] = t("common.revenue");
 
+    const fields = { ...exportColumnHeader };
+
     const exportOptions = {
       OrderItems: true,
       FormatDate: true,
@@ -280,18 +282,19 @@ const SmsReport = ({ classes }) => {
       PropertyToReplace: 'IsResponse',
       PropertyDefaultReplaceValue: t('common.No'),
       Statuses: smsReportStatus,
-      Order: Object.keys(exportColumnHeader),
+      Order: Object.keys(fields),
       DeleteProperties: ["Status"]
     };
 
     try {
       const result = await HandleExportData([...smsReport], exportOptions);
+      delete fields["Status"];
 
       ExportFile({
         data: result,
         fileName: 'smsReport',
         exportType: formatType,
-        fields: exportColumnHeader
+        fields: fields
       });
     } catch (e) {
       console.log(e);
@@ -867,7 +870,7 @@ const SmsReport = ({ classes }) => {
             }
           />
         </>
-        
+
       ),
       onClose: () => { setDialogType(null) },
       onConfirm: async () => {
@@ -875,9 +878,9 @@ const SmsReport = ({ classes }) => {
         if (showNoticeDialog) {
           setCookie('SMSReportNotice', showNoticeDialog);
         }
+      }
     }
   }
-}
   const renderDialog = () => {
     const { type } = dialogType || {}
     const dialogContent = {
@@ -897,7 +900,7 @@ const SmsReport = ({ classes }) => {
         </BaseDialog>
       )
     }
-}
+  }
 
   return (
     <DefaultScreen
@@ -920,7 +923,7 @@ const SmsReport = ({ classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialogType(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />

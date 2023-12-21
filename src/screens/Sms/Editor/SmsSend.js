@@ -156,6 +156,7 @@ const SmsSend = ({ classes, ...props }) => {
     selectedFilterCampaigns: [],
     selectedFilterGroups: []
   });
+  const [headers, setheaders] = useState(initialheadstate);
 
   //#endregion
   useEffect(() => {
@@ -226,6 +227,12 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
 
+  const isOtpPassed = async () => {
+    if (dataSaved.fromNumber !== null && dataSaved.fromNumber !== '') {
+      await dispatch(IsOTPPassed(dataSaved.fromNumber));
+    }
+  }
+
   const getSelectedCampaigns = () => {
     const selectedCampaigns = [];
     const seCampaigns = campaignSettings.SendExeptional.Campaigns;
@@ -234,6 +241,7 @@ const SmsSend = ({ classes, ...props }) => {
       const c = finishedCampaigns.filter((c) => { return c.SMSCampaignID === seCampaigns[idx] });
       selectedCampaigns.push(c[0]);
     }
+
     return selectedCampaigns;
   }
 
@@ -245,15 +253,8 @@ const SmsSend = ({ classes, ...props }) => {
       const g = subAccountAllGroups.filter((c) => { return c.GroupID === seGroups[idx] });
       relationGroups.push(g[0]);
     }
+
     return relationGroups;
-  }
-
-  const [headers, setheaders] = useState(initialheadstate);
-
-  const isOtpPassed = async () => {
-    if (dataSaved.fromNumber !== null && dataSaved.fromNumber !== '') {
-      await dispatch(IsOTPPassed(dataSaved.fromNumber));
-    }
   }
 
   useEffect(() => {
@@ -1073,6 +1074,7 @@ const SmsSend = ({ classes, ...props }) => {
     }
     else {
       if (filterDialogValues.selectedFilterGroups.length !== 0 || filterDialogValues.exceptionalDays !== "" || filterDialogValues.selectedFilterCampaigns.length !== 0) {
+      // if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) { // TODO: Validate condition
         setbsDot(true);
       }
       else {
@@ -2885,7 +2887,6 @@ const SmsSend = ({ classes, ...props }) => {
           {t("sms.FillDay")}
         </Alert>
       </Snackbar>
-
       {otpOpen && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
       {dialogType?.type === 'quickMnualUpload' && <QuickManualUploadDialog
         classes={classes}
