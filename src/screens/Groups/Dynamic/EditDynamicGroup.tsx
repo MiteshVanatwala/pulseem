@@ -10,7 +10,7 @@ import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import Groups from '../../../components/Groups/GroupsHandler/Groups';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import { Loader } from '../../../components/Loader/Loader';
-import { MyActivities, ActivtyTimeInterval, CondType, Conditions, DynamicGroupModel } from '../../../Models/Groups/DynamicGroup';
+import { ActivityGroup, ActivtyTimeInterval, CondType, Conditions, DynamicGroupModel } from '../../../Models/Groups/DynamicGroup';
 import PersonalDetails from './Tabs/PersonalDetails';
 // import EventsDetails from './Tabs/EventsDetails';
 import DateDetails from './Tabs/DateDetails';
@@ -50,15 +50,15 @@ const EditDynamicGroup = ({ classes }: any) => {
         },
         dynamicData: {
             MyActivities: {
-                IsNotOpened: false,
+                IsNotOpened: null,
                 IsNotOpenedFromDate: null,
                 IsNotOpenedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsNotOpenedToDate: null,
-                IsOpened: false,
+                IsOpened: null,
                 IsOpenedFromDate: null,
                 IsOpenedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsOpenedToDate: null
-            } as MyActivities,
+            } as ActivityGroup,
             MyConditions: [{
                 FirstName: '',
                 FirstNameCond: CondType.Undefined,
@@ -66,20 +66,10 @@ const EditDynamicGroup = ({ classes }: any) => {
                 LastNameCond: CondType.Undefined,
                 Email: '',
                 EmailCond: CondType.Undefined,
-                // Address: '',
-                // AddressCond: CondType.Undefined,
                 City: '',
                 CityCond: CondType.Undefined,
                 Country: '',
                 CountryCond: CondType.Undefined,
-                // State: '',
-                // StateCond: CondType.Undefined,
-                // Zip: '',
-                // ZipCond: CondType.Undefined,
-                // Telephone: '',
-                // TelephoneCond: CondType.Undefined,
-                // Cellphone: '',
-                // CellphoneCond: CondType.Undefined,
                 Company: '',
                 ComapnyCond: CondType.Undefined,
                 BirthDateFrom: null,
@@ -278,7 +268,7 @@ const EditDynamicGroup = ({ classes }: any) => {
 
     const updateMyConditions = (keyName: string, value: string) => {
         const resetCondition = ['FirstName', 'LastName', 'Email', 'Country', 'City', 'Company'];
-        const reset = value === '' && resetCondition.indexOf(keyName) != -1 ? true : false;
+        const reset = value === '' && resetCondition.indexOf(keyName) !== -1 ? true : false;
         setDynamicGroupModel({
             ...dynamicGroupModel, dynamicData: {
                 ...dynamicGroupModel.dynamicData,
@@ -286,7 +276,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                     {
                         ...dynamicGroupModel.dynamicData.MyConditions[0],
                         [keyName]: value,
-                        ... reset && { [`${keyName}Cond`]: CondType.Undefined }
+                        ...reset && { [`${keyName}Cond`]: CondType.Undefined }
                     }
                 ]
             }

@@ -70,7 +70,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                     {/* @ts-ignore */}
                                     <DateField
                                         toolbarDisabled={false}
-                                        minDate={moment()}
+                                        minDate={null}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsOpenedFromDate}
@@ -93,7 +93,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                     {/* @ts-ignore */}
                                     <DateField
                                         toolbarDisabled={false}
-                                        minDate={moment()}
+                                        minDate={null}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsOpenedToDate}
