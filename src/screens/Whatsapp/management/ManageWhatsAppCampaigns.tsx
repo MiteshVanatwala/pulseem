@@ -608,7 +608,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
 				classes: classes,
 				id: row.WACampaignID.toString(),
-				href: `/react/whatsapp/campaign/edit/page1/${row.WACampaignID}`,
+				href: `${sitePrefix}whatsapp/campaign/edit/page1/${row.WACampaignID}`,
 			},
 			{
 				key: 'duplicate',

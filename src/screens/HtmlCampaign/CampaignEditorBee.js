@@ -43,7 +43,7 @@ import { EditRow } from './components/ContentDialogs'
 import useModals from './hooks/useModals'
 import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import Templates from './modals/Templates.tsx';
 import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
@@ -57,6 +57,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#region State
   const { t } = useTranslation();
   const dispatch = useDispatch()
+  const navigate = useNavigate();
   const params = useParams();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
@@ -379,7 +380,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
           localStorage.setItem('reloadBeeEditor', 1);
-          window.location = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
+          navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`);
           return false;
         }
         else if (saveRef.current?.showAnimation) {
@@ -454,7 +455,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       saveDesign(true, redirectLink, false);
     }
     else {
-      window.location.href = redirectLink;
+      if (isAutoResponder) window.location.href = redirectLink;
+      else navigate(redirectLink);
     }
   }
   const onExit = () => {

@@ -346,8 +346,8 @@ const SmsManagnentScreen = ({ classes }) => {
 				uIcon: EditIcon,
 				disable: Status !== 1 || AutomationID !== 0,
 				lable: t('campaigns.Image2Resource1.ToolTip'),
-				href: `${sitePrefix}sms/edit/${Id}`,
-				rootClass: classes.paddingIcon
+				rootClass: classes.paddingIcon,
+				onClick: () => Redirect({ url: `${sitePrefix}sms/edit/${Id}` })
 			},
 			{
 				key: 'duplicate',

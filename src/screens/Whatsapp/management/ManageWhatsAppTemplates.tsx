@@ -84,6 +84,7 @@ import { getApiErrorResponseMessage } from '../Common';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { IoIosArrowDown } from 'react-icons/io';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
+import { sitePrefix } from '../../../config';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -588,7 +589,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				href: `/react/whatsapp/template/edit/${row?.Id?.toString()}`,
+				href: `${sitePrefix}whatsapp/template/edit/${row?.Id?.toString()}`,
 				id: row.Id.toString(),
 			},
 			{

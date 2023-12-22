@@ -429,9 +429,8 @@ const NotificationManagement = ({ classes }) => {
         uIcon: EditIcon,
         disable: StatusID !== 0,
         lable: t('notifications.buttons.edit'),
-        // remove: windowSize === 'xs',
-        href: `${sitePrefix}notification/Edit/${ID}`,
-        rootClass: classes.paddingIcon
+        rootClass: classes.paddingIcon,
+        onClick: () => Redirect({ url: `${sitePrefix}notification/Edit/${ID}` })
       },
       {
         key: 'duplicate',
