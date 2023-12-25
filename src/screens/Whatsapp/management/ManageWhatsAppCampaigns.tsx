@@ -61,7 +61,6 @@ import {
 	authenticationMockTemplate,
 	authenticationTypes
 } from '../Constant';
-import Pagination from './Component/Pagination';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { AllCampaignReq, ManagmentIconProps } from './Types/Management.types';
@@ -85,7 +84,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { RestorDialogContent } from '../../../components/managment';
+import { RestorDialogContent, TablePagination } from '../../../components/managment';
 import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { pulseemNewTab } from '../../../helpers/Functions/functions';
@@ -1273,7 +1272,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						>
 							{renderTable()}
 						</Grid>
-						<Pagination
+						<TablePagination
 							classes={classes}
 							rows={totalRecord}
 							rowsPerPage={paginationSetting?.pageSize}
