@@ -277,7 +277,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
       routes[7],
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
-      { title: t('report.DirectSendReport'), key: 'directSendReport', href: '/react/Reports/DirectSendReport', isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount === true }      //routes[1]
+      { title: t('report.DirectSendReport'), key: 'directSendReport', href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount === true }      //routes[1]
     ]
     return (
       <>

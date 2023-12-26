@@ -247,7 +247,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
         {windowSize !== 'xs' && <Grid item>
           <Button
             component="a"
-            href={`${sitePrefix}Campaigns/Create`}
             onClick={() => {
               navigate(`${sitePrefix}Campaigns/Create`);
             }}

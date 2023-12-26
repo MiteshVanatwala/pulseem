@@ -3871,5 +3871,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   messageButtons: {
     display: 'contents'
-  }
+  },
+  underline: {
+		textDecoration: 'underline',
+		cursor: 'pointer',
+	}
 });

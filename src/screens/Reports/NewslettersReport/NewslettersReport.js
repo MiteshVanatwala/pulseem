@@ -180,7 +180,7 @@ const NewslettersReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `${sitePrefix}ClientSearchResult/${id}`,
+      href: '',
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS,
