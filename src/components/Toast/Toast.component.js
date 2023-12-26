@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Toast = ({ data }) => {
+const Toast = ({ data, customData = null }) => {
     const { t } = useTranslation();
     const { language } = useSelector(state => state.core)
     const classes = useStyles();
@@ -37,38 +37,46 @@ const Toast = ({ data }) => {
 
     return (
         <div className={clsx(classes.root, "alert")}>
-            <Alert severity={data.severity} color={data.color} className={classes.center} style={{ fontWeight: 900, fontSize: 16 }}>
-                {RenderHtml(t(data.message))}
-            </Alert>
-            {data.showAnimtionCheck && <div className={"notification-pop"}>
-                <svg
-                    version="1.1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 130.2 130.2"
-                >
-                    <circle
-                        className={"path circle"}
-                        fill="none"
-                        stroke="#73AF55"
-                        strokeWidth="10"
-                        strokeMiterlimit="10"
-                        cx="65.1"
-                        cy="65.1"
-                        r="58.1"
-                    />
-                    <polyline
-                        className={"path check"}
-                        fill="none"
-                        stroke="#73AF55"
-                        strokeWidth="10"
-                        strokeLinecap="round"
-                        strokeMiterlimit="10"
-                        points="100.2,40.2 51.5,88.8 29.8,67.5 "
-                    />
-                </svg>
-            </div>}
+            {customData ? (
+                <Alert severity={customData.severity} color={customData.color} className={classes.center} style={{ fontWeight: 900, fontSize: 16 }}>
+                    {RenderHtml(customData.message)}
+                </Alert>
+            ) : (<>
+                <Alert severity={data.severity} color={data.color} className={classes.center} style={{ fontWeight: 900, fontSize: 16 }}>
+                    {RenderHtml(t(data.message))}
+                </Alert>
+                {
+                    data.showAnimtionCheck && <div className={"notification-pop"}>
+                        <svg
+                            version="1.1"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 130.2 130.2"
+                        >
+                            <circle
+                                className={"path circle"}
+                                fill="none"
+                                stroke="#73AF55"
+                                strokeWidth="10"
+                                strokeMiterlimit="10"
+                                cx="65.1"
+                                cy="65.1"
+                                r="58.1"
+                            />
+                            <polyline
+                                className={"path check"}
+                                fill="none"
+                                stroke="#73AF55"
+                                strokeWidth="10"
+                                strokeLinecap="round"
+                                strokeMiterlimit="10"
+                                points="100.2,40.2 51.5,88.8 29.8,67.5 "
+                            />
+                        </svg>
+                    </div>
+                }
+            </>)}
         </div>
-    );
+    )
 }
 
 export default Toast;

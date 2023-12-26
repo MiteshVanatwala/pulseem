@@ -1,21 +1,22 @@
 import { EventsOptions } from '../../helpers/Constants'
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
-import TabList from '@material-ui/lab/TabList';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Tab, Button, Box, Link, Divider } from '@material-ui/core'
+import { Grid, Tab, Button, Box, Link, Divider, Tabs } from '@material-ui/core'
 import EventToGroups from './EventToGroups'
 import { useDispatch, useSelector } from 'react-redux'
 import { addMetaData } from '../../redux/reducers/siteTrackingSlice'
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
+import clsx from 'clsx';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const EventTabs = ({ classes,
     setDialog,
     purchaseToggleDisabled = false,
     showButtons = () => null,
-    onPurchaseChanged = () => null }) => {
+    onPurchaseChanged = () => null 
+}) => {
     const { t } = useTranslation();
     const [tabValue, setTabValue] = useState('PAGE_VIEW');
     const { event, purchaseEnabled } = useSelector((state) => state.siteTracking);
@@ -61,9 +62,8 @@ const EventTabs = ({ classes,
                 }
                 return <></>
             })}
-            <Box style={{ display: 'flex', flexDirection: 'row' }}>
-                <Button onClick={() => { onAddEvent() }} style={{ justifyContent: 'flex-start' }}>
-                    <AiOutlinePlusCircle className={classes.addOptionsIcon} />
+            <Box style={{ display: 'flex', flexDirection: 'row' }} className={classes.mt2}>
+                <Button onClick={() => { onAddEvent() }} style={{ justifyContent: 'flex-start' }} className={clsx(classes.btn, classes.btnRounded)} endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
                     {t("siteTracking.addEvent")}
                 </Button>
             </Box>
@@ -99,19 +99,21 @@ const EventTabs = ({ classes,
             alignItems='center'
             className={classes.borderBottom1}
             item xs={12}>
-            <TabList
+            <Tabs
+                value={tabValue}
                 onChange={handleEventTab}
-                indicatorColor="primary"
+                className={clsx(classes.tab, classes.tablistRoot)}
+                classes={{ indicator: classes.hideIndicator }}
             >
                 {EventsOptions.map((eo, idx) => {
                     return <Tab
                         key={idx}
                         label={t(eo.value)}
-                        classes={{ root: classes.minWidth100 }}
+                        classes={{ root: classes.btnTab, selected: classes.currentActiveTab }}
                         value={eo.key}
                     />
                 })}
-            </TabList>
+            </Tabs>
         </Grid>
         <TabPanel key={0} value={'PAGE_VIEW'} index={0} className={classes.p0}>
             {renderPageView()}

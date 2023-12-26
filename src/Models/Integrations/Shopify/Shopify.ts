@@ -1,4 +1,4 @@
-import { LU_Plugin } from "../Integration";
+import { LU_Plugin, IntegrationGroups } from "../Integration";
 
 export interface ShopifyModel {
     ID?: number;
@@ -16,12 +16,6 @@ export interface ShopifyModel {
     CreateDate?: Date | string;
     UpdateDate?: Date | string;
     IntegrationSource?: LU_Plugin
-}
-
-export interface IntegrationGroups {
-    RegisterGroups?: number[];
-    PurchaseGroups?: number[];
-    AbandonedGroups?: number[];
 }
 export interface ShopifyCustomerResponse {
     errors?: string;

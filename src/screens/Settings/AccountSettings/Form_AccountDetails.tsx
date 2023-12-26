@@ -1,40 +1,41 @@
-import React, { useState, useEffect, BaseSyntheticEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	Box,
 	Button,
+	FormControl,
 	FormControlLabel,
 	Grid,
+	InputAdornment,
 	MenuItem,
-	OutlinedInput,
 	Radio,
 	RadioGroup,
-	Select,
 	TextField,
 	Typography,
 } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
 import { AccDtlPropTypes } from '../../../Models/Settings/AccountDetails';
-import useCore from '../../../helpers/hooks/Core';
 import { IsNumberField } from '../../../helpers/Utils/Validations';
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { tierSetting } from '../../Whatsapp/Constant';
+import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const FORM_ACCOUNT_DETAILS = ({
+	classes,
 	setToastMessage,
 	ToastMessages,
 	Settings,
 	OnUpdate,
 	selectedTier,
-	onTierChange,
+	onTierChange = () => {},
 }: AccDtlPropTypes) => {
 	const { t } = useTranslation();
-	const { classes } = useCore();
 	const { isRTL } = useSelector((state: any) => state.core);
-	const dispatch = useDispatch();
 
 	const [accountDetails, setAccountDetails] = useState<AccountSettings | null>({
 		DefaultFromMail: '',
@@ -77,11 +78,12 @@ const FORM_ACCOUNT_DETAILS = ({
 			className={'settingsWrapper'}>
 			<Title
 				Text={t('settings.accountSettings.actDetails.title')}
-				Classes={classes}
-				ContainerStyle={undefined}
+				classes={classes}
+				ContainerStyle={{ width: 'auto' }}
 				Element={null}
 			/>
 			<Box className={'formContainer'}>
+				<Illustration_app_Settings className={"svg_app_settings"} />
 				<Grid container className={'form'}>
 					<Grid item xs={12} sm={6} md={4} className={'textBoxWrapper'}>
 						<Typography>
@@ -192,60 +194,57 @@ const FORM_ACCOUNT_DETAILS = ({
 							</a>
 						</Grid>
 						<Grid item xs={12} sm={6} md={8} className={'textBoxWrapper'}>
-							<Select
-								native
-								MenuProps={{
-									PaperProps: {
-										style: {
-											maxHeight: 40,
+							<FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+								<Select
+									variant="standard"
+									// disabled
+									autoWidth
+									value={selectedTier}
+									name='TwoFactorAuthOptionID'
+									onChange={(e: SelectChangeEvent) =>
+										onTierChange(e.target.value)
+									}
+									IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+									MenuProps={{
+										PaperProps: {
+											style: {
+												maxHeight: 300,
+												direction: isRTL ? 'rtl' : 'ltr'
+											},
 										},
-									},
-								}}
-								input={<OutlinedInput />}
-								inputProps={{
-									'aria-label': 'Without label',
-									style: {
-										padding: 10,
-										maxWidth: 210,
-										paddingInlineStart: 15,
-										paddingRight: isRTL ? '10px' : '22px',
-										paddingLeft: isRTL ? '22px' : '10px',
-									},
-								}}
-								autoWidth
-								value={selectedTier}
-								name='TwoFactorAuthOptionID'
-								onChange={(e: BaseSyntheticEvent) =>
-									onTierChange(e.target.value)
-								}>
-								{tierSetting?.map((tier, index) => {
-									return (
-										<option
-											key={index}
-											value={tier.value}
-											className={classes.dropDownItem}>
-											{t(tier.name)}
-										</option>
-									);
-								})}
-							</Select>
+									}}
+								>
+									{tierSetting?.map((tier, index) => {
+										return (
+											<MenuItem
+												key={index}
+												value={tier.value}
+											>
+												{t(tier.name)}
+											</MenuItem>
+										);
+									})}
+								</Select>
+							</FormControl>
 						</Grid>
-
-						<Grid item xs={12} className={classes.justifyContentEnd}>
-							<Button
-								variant='contained'
-								size='medium'
-								onClick={handleSave}
-								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-								className={clsx(
-									classes.mt5,
-									classes.actionButton,
-									classes.actionButtonLightGreen
-								)}>
-								{/* @ts-ignore */}
-								{t('settings.accountSettings.actDetails.btnUpdate')}
-							</Button>
-						</Grid>
+					</Grid>
+				</Grid>
+				<Grid container className={'form'} style={{ maxWidth: '100%' }}>
+					<Grid item xs={12} className={classes.justifyContentEnd}>
+						<Button
+							variant='contained'
+							size='medium'
+							onClick={handleSave}
+							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+							className={clsx(
+								classes.mt5,
+								classes.btn,
+								classes.btnRounded,
+								"saveFixedDetails"
+							)}>
+							{/* @ts-ignore */}
+							{t('settings.accountSettings.actDetails.btnUpdate')}
+						</Button>
 					</Grid>
 				</Grid>
 			</Box>

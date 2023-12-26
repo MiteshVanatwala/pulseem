@@ -17,8 +17,8 @@ const NameValueGridStructure = ({ gridArr = [],
     variant = "subtitle2",
     align = "center",
     direction = "row",
-    reverse,
-    rootClass,
+    reverse = null,
+    rootClass = null,
     ...props
 }) => {
 

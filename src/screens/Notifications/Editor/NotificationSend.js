@@ -14,9 +14,11 @@ import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGrou
 import { getNotificationById, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../../redux/reducers/notificationSlice';
 import Groups from '../../../components/Groups/GroupsHandler/Groups';
 import { DateField } from '../../../components/managment/index';
-import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sitePrefix } from '../../../config';
+import { Title } from '../../../components/managment/Title';
 
 const NotificationSend = ({ classes }) => {
     const { id } = useParams();
@@ -91,6 +93,7 @@ const NotificationSend = ({ classes }) => {
             initSettings();
         }
     }, [dispatch, id, notificationGroups]);
+
     useEffect(() => {
         const getNotificationSettings = async () => {
             const list = await dispatch(getSettings(id));
@@ -129,18 +132,29 @@ const NotificationSend = ({ classes }) => {
             })
         }
     }, [dispatch, groupList, id])
+
     const renderHeader = () => {
         return (
             <>
-                <Typography className={classes.managementTitle}>{t('notifications.createNewPush')}</Typography>
-                <Typography className={classes.pageSubTitle}>
-                    <span className={classes.roundedCircle}>
-                        {2}
-                    </span>
-                    <span className={classes.subTitle}>
-                        {t('notifications.sendSettings')}
-                    </span>
-                </Typography>
+                <Title
+                    Element={(
+                        <Box className='stepHead'>
+                            <span className={'stepNum'}>
+                                2
+                            </span>
+                            <span className={'stepTitle'}>
+                                {t('notifications.sendSettings')}
+                            </span>
+                        </Box>
+                    )}
+                    classes={classes}
+                    isIcon={false}
+                    ContainerStyle={{
+                        padding: 0,
+                        height: 42,
+                        overflowY: 'hidden'
+                    }}
+                />
             </>
         )
     }
@@ -153,6 +167,7 @@ const NotificationSend = ({ classes }) => {
                 <BaseDialog
                     classes={classes}
                     open={validationErrorList}
+                    onCancel={handleDialogClose}
                     onClose={handleDialogClose}
                     onCancel={handleDialogClose}
                     onConfirm={handleDialogClose}
@@ -202,7 +217,7 @@ const NotificationSend = ({ classes }) => {
             saveSettings(true)
         }
         else {
-            Redirect({ url: "/react/Notifications" });
+            Redirect({ url: `${sitePrefix}Notifications` });
         }
     }
     const saveSettings = async (isExit, isSummary = false) => {
@@ -224,7 +239,7 @@ const NotificationSend = ({ classes }) => {
                 }
                 else {
                     if (isSummary === false)
-                        Redirect({ url: "/react/Notifications" });
+                        Redirect({ url: `${sitePrefix}Notifications` });
                     else
                         getSummary();
                 }
@@ -288,67 +303,60 @@ const NotificationSend = ({ classes }) => {
     const WizardButtons = () => {
         return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")} style={{ paddingBottom: 40 }}>
             <Button
-                variant='contained'
-                size='medium'
                 className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightBlue,
-                    classes.backButton
+                    classes.btn,
+                    classes.btnRounded,
+                    classes.middle
                 )}
-                onClick={() => Redirect({ url: `/react/Notification/edit/${model.ID}` })}
+                startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                onClick={() => Redirect({ url: `${sitePrefix}Notification/edit/${model.ID}` })}
             >
                 {t('notifications.back')}
             </Button>
 
             <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
                 <Button
-                    variant='contained'
-                    size='medium'
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonRed
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.middle
                     )}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     style={{ margin: '8px' }}
                     onClick={() => handleCancel()}
                 >
                     {t('notifications.cancel')}
                 </Button>
                 <Button
-                    variant='contained'
-                    size='medium'
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightBlue,
-                        classes.backButton
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.middle
                     )}
-                    color="primary"
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     style={{ margin: '8px' }}
                     onClick={() => saveSettings(false)}>
                     {t('notifications.save')}
                 </Button>
                 <Button
-                    variant='contained'
-                    size='medium'
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightBlue,
-                        classes.backButton
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.middle
                     )}
-                    color="primary"
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     style={{ margin: '8px' }}
                     onClick={() => saveSettings(true)}>
                     {t('notifications.saveAndExit')}
                 </Button>
                 <Button
-                    variant='contained'
-                    size='medium'
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightGreen,
-                        classes.backButton,
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.middle,
                         selectedGroups.length === 0 ? classes.disabled : ''
                     )}
-                    color="primary"
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     style={{ margin: '8px' }}
                     onClick={() => saveSettings(false, true)}>
                     {t('notifications.summary')}
@@ -408,6 +416,7 @@ const NotificationSend = ({ classes }) => {
                     customContainerStyle={classes.summaryContainer}
                     classes={classes}
                     open={summary}
+                    onCancel={() => setSummary(null)}
                     onClose={() => setSummary(null)}
                     onCancel={() => setSummary(null)}
                     {...dialog}>
@@ -422,17 +431,16 @@ const NotificationSend = ({ classes }) => {
         }
         const whenToSend = summary.sendDate ? `${summary.sendDate}` : t("notifications.immediateSend")
         return {
-            showDivider: true,
             icon: (
                 <MdNotificationsActive style={{ fontSize: 30 }} />
             ),
-            title: <span style={{ color: '#161616' }}>{`${t("notifications.summaryModalTitle")} "${model.Name}"`}</span>,
+            title: `${t("notifications.summaryModalTitle")} ${model.Name}`,
             content: (
                 <Grid container direction={'row'} className={clsx(classes.root, classes.dialogBox)} spacing={4}>
                     <Grid item md={6} xs={12}>
-                        <h3 className={clsx(classes.blue, classes.summaryTitle)}>{t("notifications.when")}</h3>
+                        <h3 className={clsx(classes.colrPrimary, classes.summaryTitle)}>{t("notifications.when")}</h3>
                         <b>{whenToSend}</b>
-                        <h3 className={clsx(classes.blue, classes.summaryTitle)}>{t("notifications.for")}</h3>
+                        <h3 className={clsx(classes.colrPrimary, classes.summaryTitle)}>{t("notifications.for")}</h3>
                         {t("notifications.totalRecipientForSending")} <b>{totalRecipients}</b>
                         <Grid item xs={12} style={{ paddingTop: 15 }}>
                             <Link onClick={() => handleShowDetails()} style={{ cursor: 'pointer', fontWeight: '500', textDecoration: 'underline', color: '#6c757d' }}>
@@ -441,7 +449,7 @@ const NotificationSend = ({ classes }) => {
                         </Grid>
                     </Grid>
                     {windowSize !== 'xs' && <Grid item md={6}>
-                        <h3 className={classes.blue} style={{ fontWeight: '500', fontSize: 20, marginTop: 10 }}>{t("notifications.preview")}</h3>
+                        <h3 className={classes.colrPrimary} style={{ fontWeight: '500', fontSize: 20, marginTop: 10 }}>{t("notifications.preview")}</h3>
                         <Preview classes={classes}
                             model={model}
                             ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText !== ''}
@@ -485,14 +493,14 @@ const NotificationSend = ({ classes }) => {
                 >
                     <Grid item>
                         <Button
-                            variant='contained'
-                            size='small'
                             onClick={(e) => { setIsSending(true); insertNotificationForSend(e); }}
                             className={clsx(
-                                classes.dialogButton,
-                                classes.dialogConfirmButton,
+                                classes.btn,
+                                classes.btnRounded,
                                 isSending ? classes.disabled : null
-                            )}>
+                            )}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                        >
                             {t('common.Send1')}
                         </Button>
                     </Grid>
@@ -502,9 +510,11 @@ const NotificationSend = ({ classes }) => {
                             size='small'
                             onClick={() => { setSummary(null) }}
                             className={clsx(
-                                classes.dialogButton,
-                                classes.dialogCancelButton
-                            )}>
+                                classes.btn,
+                                classes.btnRounded
+                            )}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                        >
                             {t('common.Cancel')}
                         </Button>
                     </Grid>
@@ -653,7 +663,7 @@ const NotificationSend = ({ classes }) => {
                     <Button
                         variant='contained'
                         size='small'
-                        onClick={() => { Redirect({ url: "/react/Notifications" }) }}
+                        onClick={() => { Redirect({ url: `${sitePrefix}Notifications` }) }}
                         className={clsx(
                             classes.confirmButton,
                             classes.dialogConfirmButton,
@@ -668,8 +678,8 @@ const NotificationSend = ({ classes }) => {
                     showDivider={false}
                     classes={classes}
                     open={true}
-                    onClose={() => { Redirect({ url: "/react/Notifications" }) }}
-                    onCancel={() => { Redirect({ url: "/react/Notifications" }) }}
+                    onClose={() => { Redirect({ url: `${sitePrefix}Notifications` }) }}
+                    onCancel={() => { Redirect({ url: `${sitePrefix}Notifications` }) }}
                     {...dialog}>
                     {dialog.content}
                 </BaseDialog>
@@ -684,16 +694,21 @@ const NotificationSend = ({ classes }) => {
             subPage='create'
             customPadding={true}
             classes={classes}
-            containerClass={classes.editor}>
-            <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
+            containerClass={classes.editorCont}>
+            <div className={'head'} >
+                <Title Text={t('notifications.createNewPush')} classes={classes} />
+            </div>
+            <div className={'containerBody'}>
                 {renderToast()}
                 {renderHeader()}
-                {notificationSendSettings()}
-                {renderDialog()}
-                {renderSummary()}
-                {renderSentDialog()}
-                {renderConfirmCancel()}
-                <WizardButtons />
+                <div className='bodyBlock'>
+                    {notificationSendSettings()}
+                    {renderDialog()}
+                    {renderSummary()}
+                    {renderSentDialog()}
+                    {renderConfirmCancel()}
+                    <WizardButtons />
+                </div>
             </div>
         </DefaultScreen>
     );

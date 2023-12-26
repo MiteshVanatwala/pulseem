@@ -43,7 +43,7 @@ const DynamicModalFields = ({
 	isTrackLink,
 }: DynamicModalFieldsProps) => {
 	const { t: translator } = useTranslation();
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize } = useSelector((state: { core: coreProps }) => state.core);
 	const SubAccountSettings = useSelector(
 		(state: {
 			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
@@ -102,7 +102,7 @@ const DynamicModalFields = ({
 					required
 					value={personalField}
 					displayEmpty
-					variant='outlined'
+					variant='standard'
 					className={classes.whatsappCampaignDynamicFieldPersonalField}
 					renderValue={
 						personalField !== ''
@@ -194,8 +194,17 @@ const DynamicModalFields = ({
 						variant='outlined'
 						color='primary'
 						size='small'
-						className={classes.whatsappCampaignDynamicFieldLinkRemoval}
-						onClick={() => onAddRemovalLinkClick()}>
+						className={clsx(
+							// classes.whatsappCampaignDynamicFieldLinkRemoval,
+							classes.btn,
+							classes.btnRounded
+						)}
+						onClick={() => onAddRemovalLinkClick()}
+						style={{
+							marginLeft: windowSize == 'xs' ? 0 : 10,
+							marginTop: windowSize == 'xs' ? 10 : 5
+						}}
+					>
 						<>{translator('whatsappCampaign.removalLinkTooltip')}</>
 					</Button>
 				</div>

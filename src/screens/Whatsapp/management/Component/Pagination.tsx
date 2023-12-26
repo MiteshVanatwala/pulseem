@@ -3,6 +3,8 @@ import { Typography, Grid, TextField, IconButton } from '@material-ui/core';
 import { PageArrowIcon } from '../../../../assets/images/managment';
 import { useTranslation } from 'react-i18next';
 import { paginationProps } from '../Types/Management.types';
+import { IoIosArrowDown } from 'react-icons/io';
+import clsx from 'clsx';
 
 export const Pagination = ({
 	classes,
@@ -18,6 +20,7 @@ export const Pagination = ({
 	const pages: number = Math.ceil(rows / rowsPerPage);
 	const [innerPage, setPage] = useState<number>(1);
 	const [isTyping, setTyping] = useState<boolean>(false);
+	const [isRowPerPageOpen, setIsRowPerPageOpen] = useState<boolean>(false);
 
 	const handleKeyPress = (event: KeyboardEvent) => {
 		let isNumber = /^[0-9]*$/;
@@ -51,7 +54,7 @@ export const Pagination = ({
 
 	const renderRowNumbers = () => {
 		return (
-			<Grid item className={classes.tablePadingtonGridItem}>
+			<Grid item className={clsx(classes.tablePadingtonGridItem, classes.tablePadington)}>
 				<Typography>
 					<>{translator('common.rowNumber')}</>
 				</Typography>
@@ -60,7 +63,9 @@ export const Pagination = ({
 					className={classes.tablePaginationSelect}
 					variant='standard'
 					SelectProps={{
+						open: isRowPerPageOpen,
 						native: true,
+						IconComponent: () => <IoIosArrowDown className='MuiSelect-icon' onClick={() => { console.log(1); setIsRowPerPageOpen(!isRowPerPageOpen) }} />
 					}}
 					value={rowsPerPage}
 					onChange={handleRowsPerPageChange}>

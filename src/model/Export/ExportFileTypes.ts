@@ -1,9 +1,17 @@
 // Used for dropdown / Radio Button
 export const ExportFileTypes = [{
-    value: 'xls',
-    label: 'XLS'
+    value: 'csv',
+    label: 'CSV',
+    tooltip: ''
 },
 {
-    value: 'csv',
-    label: 'CSV'
-}]
+    value: 'xlsx',
+    label: 'XLSX',
+    tooltip: ''
+}
+    // {
+    //     value: 'xls',
+    //     label: 'XLS',
+    //     tooltip: 'common.tooltips.uploadFiles.fileDoesNotSupportedForImport'
+    // }
+]

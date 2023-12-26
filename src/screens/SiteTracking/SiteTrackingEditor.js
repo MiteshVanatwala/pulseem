@@ -3,13 +3,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
-import Title from '../../components/Wizard/Title'
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel, setPurchase } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel } from '../../model/SiteTracking/SiteTrackingModel';
-import { MdErrorOutline } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdErrorOutline } from 'react-icons/md';
 import Toast from '../../components/Toast/Toast.component';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
@@ -18,11 +17,12 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';
 import { IsValidURL } from '../../helpers/Utils/Validations';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
-import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
+import { Title } from '../../components/managment/Title';
+import { InputAdornment } from '@mui/material';
 
 const SiteTrackingEditor = ({ classes }) => {
     const { isRTL, windowSize } = useSelector(state => state.core);
@@ -39,15 +39,6 @@ const SiteTrackingEditor = ({ classes }) => {
     const [isValidDomain, setIsValidDomain] = useState(null);
     const [showActions, setShowActions] = useState(true);
     const [purchaseToggleDisabled, setPurchaseToggleDisabled] = useState(false);
-
-    const theme = createTheme({
-        palette: {
-            text: {
-                disabled: '#000'
-            }
-        },
-    });
-
 
     useEffect(() => {
         const getData = async () => {
@@ -260,9 +251,9 @@ const SiteTrackingEditor = ({ classes }) => {
             setDialogType(null);
         }
         return {
-            showDivider: true,
+            showDivider: false,
             icon: (
-                <MdErrorOutline style={{ fontSize: 30 }} />
+                <MdErrorOutline />
             ),
             title: title,
             content: (
@@ -274,26 +265,24 @@ const SiteTrackingEditor = ({ classes }) => {
                 <Box className={classes.spaceEvenly}>
                     {
                         showCancel && <Button
-                            variant='contained'
-                            size='small'
                             onClick={handleClose}
                             className={clsx(
-                                classes.dialogButton,
-                                classes.dialogCancelButton
+                                classes.btn,
+                                classes.btnRounded,
+                                classes.middle
                             )}>
                             {t('common.Cancel')}
                         </Button>
                     }
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => { !isErrorDialog && showDelete === true ? handleDeleteEvent() : handleClose() }}
                         className={clsx(
-                            classes.dialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded,
+                            classes.middle
                         )}
                         style={{ margin: !showCancel ? '0 auto' : null }}>
-                        {t('common.confirm')}
+                        {t('common.Ok')}
                     </Button>
                 </Box>
             )
@@ -302,9 +291,9 @@ const SiteTrackingEditor = ({ classes }) => {
 
     const validationErrorDialog = () => {
         return {
-            showDivider: true,
+            showDivider: false,
             icon: (
-                <MdErrorOutline style={{ fontSize: 30 }} />
+                <MdErrorOutline />
             ),
             title: t("notifications.validationError"),
             content: (
@@ -316,12 +305,11 @@ const SiteTrackingEditor = ({ classes }) => {
             ),
             renderButtons: () => (
                 <Button
-                    variant='contained'
-                    size='small'
                     onClick={() => { setDialogType(null); setValidationError([]); }}
                     className={clsx(
-                        classes.dialogButton,
-                        classes.dialogConfirmButton
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.middle
                     )}
                     style={{ margin: '0 auto' }}>
                     {t('common.confirm')}
@@ -358,11 +346,9 @@ const SiteTrackingEditor = ({ classes }) => {
     const scriptErrorImplementationDialog = () => {
         return {
             title: t("siteTracking.title"),
-            showDivider: true,
+            showDivider: false,
             icon: (
-                <AiOutlineExclamationCircle
-                    style={{ fontSize: 30, color: "#fff" }}
-                />
+                <AiOutlineExclamationCircle />
             ),
             content: (
                 <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
@@ -380,13 +366,12 @@ const SiteTrackingEditor = ({ classes }) => {
                     className={classes.dialogButtonsContainer}>
                     <Grid item>
                         <Button
-                            variant='contained'
-                            size='large'
                             style={{ height: 40 }}
                             onClick={() => { setDialogType(null) }}
                             className={clsx(
-                                classes.dialogButton,
-                                classes.dialogConfirmButton
+                                classes.btn,
+                                classes.btnRounded,
+                                classes.middle
                             )}>
                             {t('common.confirm')}
                         </Button>
@@ -401,7 +386,7 @@ const SiteTrackingEditor = ({ classes }) => {
             title: null,
             showDivider: false,
             icon: (
-                <div className={classes.dialogIconContent}>
+                <div className={clsx(classes.dialogIconContent, 'unicode')}>
                     {'\u005E'}
                 </div>
             ),
@@ -519,12 +504,11 @@ const SiteTrackingEditor = ({ classes }) => {
                             label={t('notifications.implementDialog.dontShowThisMessage')} />
                     </FormControl>
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => handleImplementScript(true)}
                         className={clsx(
-                            classes.gruopsDialogButton,
-                            classes.dialogConfirmButton,
+                            classes.btn,
+                            classes.btnRounded,
+                            classes.middle
                         )}>
                         {t('common.Ok')}
                     </Button>
@@ -545,51 +529,22 @@ const SiteTrackingEditor = ({ classes }) => {
     }
     //#endregion Dialogs
 
-    const PageHeader = () => {
-        return <>
-            <Grid container>
-                <Grid item xs={7}>
-                    <Title title={t("siteTracking.title")}
-                        classes={classes}
-                        subTitle={t("siteTracking.setUp")}
-                        topZero={false}
-                        ShowDivider={true} />
-                </Grid>
-                <Grid item xs={5} style={{ alignItems: 'center', display: 'flex', marginTop: -10 }}>
-                    <Button
-                        onClick={() => setDialogType({ type: 'scriptImplementation' })}
-                        variant='contained'
-                        style={{ lineHeight: windowSize === 'xs' ? 1 : null, marginInlineStart: 'auto' }}
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonDarkBlue)}
-                    >{t("siteTracking.scriptImplementation")}</Button>
-                </Grid>
-            </Grid>
-        </>
-    }
     const PageFooter = () => {
         return <Grid container spacing={2}>
             <Grid item xs={12} className={classes.baseButtonsContainer} style={{ marginBottom: 70 }}>
                 <Button
-                    variant='contained'
-                    size='medium'
-                    className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonRed
-                    )}
-                    style={{ margin: '8px', padding: '9px 15px' }}
+                    className={clsx(classes.btn, classes.btnRounded)}
+                    style={{ margin: '8px' }}
                     onClick={() => { setDialogType({ type: 'deleteEvent' }) }}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
                     {t("common.Delete")}
                 </Button>
                 <Button
-                    variant='contained'
-                    className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightGreen)}
+                    className={clsx(classes.btn, classes.btnRounded)}
                     onClick={() => onSave()}
-                    style={{ height: '100%', minWidth: 100, margin: '8px', padding: '9px 0' }}
+                    style={{ height: '100%', minWidth: 100, margin: '8px' }}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >{t('common.Save')}</Button>
             </Grid>
         </Grid>
@@ -616,73 +571,85 @@ const SiteTrackingEditor = ({ classes }) => {
         subPage='SiteTracking'
         classes={classes}
         customPadding={true}>
-        <Box className={classes.editorContainer}>
-            {PageHeader()}
-            {renderToast()}
-            {renderDialog()}
-            <Box style={{ marginBottom: 'auto' }}>
-                <form className={classes.root} noValidate autoComplete="off">
-                    <Grid container alignItems="center">
-                        <Grid item lg={12} xs={12}>
-                            <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.siteToTrack")}</Typography>
-                            <Typography className={clsx(classes.mt10, classes.buttonHead)}>
-                                {t("siteTracking.yourDomain")}
+        <Box className={classes.editorCont}>
+            <Box className='head'>
+                <Title
+                    Element={
+                        <Box className={clsx(classes.flex, classes.spaceBetween, classes.flexWrap)}>
+                            <Typography
+                                style={{ width: 'auto' }}
+                                className={clsx(classes.managementTitle, "mgmtTitle")}
+                            >
+                                {t("siteTracking.title")}
                             </Typography>
-                        </Grid>
-                        <Grid item sm={6} xs={12} className={clsx(classes.flex)} style={{ height: 55, direction: 'ltr' }}>
-                            <FormControl variant="outlined"
+                            <Button
+                                onClick={() => setDialogType({ type: 'scriptImplementation' })}
+                                style={{ lineHeight: windowSize === 'xs' ? 1 : null, marginInlineStart: 'auto' }}
                                 className={clsx(
-                                    classes.formControl,
-                                    isRTL ? classes.endElementNoRadius : classes.startElementNoRadius)
-                                }
-                                style={{ minWidth: 100 }}>
-                                <ThemeProvider theme={theme}>
-                                    <TextField
-                                        InputProps={{
-                                            style: {
-                                                borderTopRightRadius: 0,
-                                                borderBottomRightRadius: 0
-                                            }
-                                        }}
-                                        variant="outlined"
-                                        value="https://"
-                                        disabled
-                                    ></TextField>
-                                </ThemeProvider>
-                            </FormControl>
-                            <TextField
-                                placeholder={t('siteTracking.addDomain')}
-                                // inputProps={{
-                                //     shrink: false
-                                // }}
-                                className={clsx(classes.textField,
-                                    classes.fullWidth,
-                                    isRTL ? classes.startElementNoRadius : classes.endElementNoRadius,
-                                    classes.domainAddress,
-                                    isValidDomain === false ? classes.error : isValidDomain !== null ? classes.valid : null)}
-                                required
-                                fullWidth
-                                onPaste={handleDomainAddress}
-                                variant="outlined"
-                                onChange={handleOnDomainChange}
-                                value={event?.domain}
-                                style={{ marginTop: isValidDomain === false || isValidDomain === true ? 2 : 0 }}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.eventToTrack")}</Typography>
-                            <EventTabs
-                                classes={classes}
-                                setDialog={setDialogType}
-                                showButtons={setShowActions}
-                                domain={event?.domain}
-                                onPurchaseChanged={handlePurchase}
-                                purchaseToggleDisabled={purchaseToggleDisabled} />
-                        </Grid>
-                    </Grid>
-                </form>
+                                    classes.btn,
+                                    classes.btnRounded)}
+                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                            >{t("siteTracking.scriptImplementation")}</Button>
+                        </Box>
+                    }
+                    classes={classes}
+                    isIcon={true}
+                    ContainerStyle={{
+                        width: '100%'
+                    }}
+                />
             </Box>
-            {showActions && PageFooter()}
+            <Box className={'containerBody'}>
+                {renderToast()}
+                <Box className='bodyBlock'>
+                    {renderDialog()}
+                    <Box style={{ marginBottom: 'auto' }}>
+                        <form className={classes.root} noValidate autoComplete="off">
+                            <Grid container alignItems="center">
+                                <Grid item lg={12} xs={12}>
+                                    <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.siteToTrack")}</Typography>
+                                    <Typography className={clsx(classes.mt10, classes.buttonHead)}>
+                                        {t("siteTracking.yourDomain")}
+                                    </Typography>
+                                </Grid>
+                                <Grid item sm={6} xs={12} className={'textBoxWrapper'} style={{ height: 55, direction: 'ltr' }}>
+                                    <TextField
+                                        placeholder={t('siteTracking.addDomain')}
+                                        className={clsx(classes.textField,
+                                            classes.fullWidth,
+                                            isRTL ? classes.startElementNoRadius : classes.endElementNoRadius,
+                                            classes.domainAddress,
+                                            isValidDomain === false ? classes.error : isValidDomain !== null ? classes.valid : null)}
+                                        required
+                                        fullWidth
+                                        onPaste={handleDomainAddress}
+                                        variant="outlined"
+                                        onChange={handleOnDomainChange}
+                                        value={event?.domain}
+                                        style={{ marginTop: isValidDomain === false || isValidDomain === true ? 2 : 0 }}
+                                        InputProps={{
+                                            style: { padding: 0 },
+                                            startAdornment: <InputAdornment position="start" ><span style={{ color: '#000' }}>https://</span></InputAdornment>,
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography className={clsx(classes.marginBlock20, classes.font20)}>{t("siteTracking.eventToTrack")}</Typography>
+                                    <EventTabs
+                                        classes={classes}
+                                        setDialog={setDialogType}
+                                        showButtons={setShowActions}
+                                        domain={event?.domain}
+                                        onPurchaseChanged={handlePurchase}
+                                        purchaseToggleDisabled={purchaseToggleDisabled} />
+                                </Grid>
+                            </Grid>
+                        </form>
+                    </Box>
+                    {showActions && PageFooter()}
+                </Box>
+            </Box>
+
         </Box>
         <Loader isOpen={showLoader} />
     </DefaultScreen>

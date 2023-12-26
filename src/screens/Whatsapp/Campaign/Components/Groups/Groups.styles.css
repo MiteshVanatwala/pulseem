@@ -25,6 +25,26 @@
     padding-inline-end: 12px;
 }
 
+@media screen and (max-width: 475px) {
+    .groupText {
+        font-size: 15px !important;
+    }
+    .groupText span {
+        font-size: 16px !important;
+    }
+    .group-container {
+        padding-left: 10px !important;
+    }
+    .group-container .MuiListItemAvatar-root {
+        min-width: 40px;
+    }
+    .create-new-group {
+        padding-top: 15px;
+    }
+    .MuiListItem-secondaryAction {
+        padding-right: 30% !important;
+    }
+}
 /* .MuiListItemSecondaryAction-root {
     left: auto;
     right: 16px;

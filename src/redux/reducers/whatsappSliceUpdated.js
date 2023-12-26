@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
-
 export const getDirectReport = createAsyncThunk(
   'Whatsapp/GetDirectReport', async (data, thunkAPI) => {
     try {

@@ -5,12 +5,15 @@ import { useTranslation } from 'react-i18next';
 import GroupTags from '../../components/Groups/GroupTags'
 import { EventConditions } from '../../helpers/Constants'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
-import { FormControl, Typography, TextField, Box, Select, MenuItem, Button } from '@material-ui/core'
+import { Typography, TextField, Box, Button, MenuItem } from '@material-ui/core';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import { updateMetaData, deleteMetaData } from '../../redux/reducers/siteTrackingSlice';
 import { GroupDialog } from '../../components/Groups/GroupDialog';
-import { DeleteIcon } from '../../assets/images/managment/index';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { IoIosArrowDown } from 'react-icons/io';
+import { BsTrash } from 'react-icons/bs';
 
 const EventToGroups = ({
     classes,
@@ -95,91 +98,115 @@ const EventToGroups = ({
         dispatch(deleteMetaData(currentEvent.id));
     }
 
-    return <Box id={currentEvent.id} className={classes.marginBlock20}
+    return <Box id={currentEvent.id} className={clsx(classes.dFlex, classes.flexWrap, classes.marginBlock20)}
         style={{
-            display: 'flex',
             flexDirection: windowSize === 'xs' ? 'column' : 'row',
             maxWidth: 1150
         }}>
         {showGroups()}
-        <Box className={classes.eventPageContainer}>
+        <Box className={classes.flex1}>
+
             <Box>
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.pageUrl")}
                 </Typography>
-                <FormControl variant="outlined"
-                    className={clsx(
-                        classes.formControl,
-                        classes.startElementNoRadius)
-                    }
-                    style={{ minWidth: 100 }}>
-                    <Select
-                        id="demo-simple-select-outlined"
-                        name={currentEvent && currentEvent.operatorKey}
-                        value={currentEvent && currentEvent.operatorKey}
-                        onChange={e => updateOperationData(e, "operatorKey", e.target.value)}
-                        style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left', maxHeight: 57 }}
-                    >
-                        {EventConditions.map((condition) => {
-                            return <MenuItem
-                                key={condition.key}
-                                value={condition.key}
-                                name={condition.key}
-                                style={{ direction: isRTL ? 'rtl' : 'ltr' }}
-                            >{
-                                    condition.tooltip ? <CustomTooltip
-                                        isSimpleTooltip={false}
-                                        classes={classes}
-                                        interactive={false}
-                                        arrow={true}
-                                        style={{ fontSize: 16, fontWeight: 400 }}
-                                        placement={'top'}
-                                        nameEllipsis={false}
-                                        title={<Typography style={{ maxHeight: 50 }} noWrap={false}>{t(condition.tooltip)}</Typography>}
-                                        text={t(condition.value)}
-                                    /> :
-                                        t(condition.value)
-                                }
-                            </MenuItem>
-                        })}
-                    </Select>
-                </FormControl>
             </Box>
-            <Box style={{ width: '100%' }}>
-                <TextField
-                    placeholder={t("siteTracking.placeHolderAddPageUrl")}
-                    className={clsx(classes.mt24, classes.textField, classes.fullWidth, classes.endElementNoRadius, pageUrlIsValid === false ? classes.error : pageUrlIsValid !== null ? classes.valid : null)}
-                    required
-                    fullWidth
-                    variant="outlined"
-                    id={`input${currentEvent.id}`}
-                    onChange={e => updateOperationData(e, "operatorValue", e.target.value)}
-                    value={currentEvent && currentEvent.operatorValue}
-                    style={{ minWidth: 220, width: '100%', marginTop: 40 }}
-                />
+            <Box
+                className={clsx(classes.eventPageContainer, classes.flexWrap)}
+                style={{ width: '100%' }}
+            >
+                <Box className={clsx('selectWrapper', { [classes.w100]: windowSize === 'xs' })}>
+                    <FormControl
+                        variant="standard"
+                        className={clsx(classes.selectInputFormControl)}
+                        style={{ minWidth: 100, marginTop: 12, width: windowSize === 'xs' ? '100%' : 'auto' }}
+                    >
+                        <Select
+                            name={currentEvent && currentEvent.operatorKey}
+                            value={currentEvent && currentEvent.operatorKey}
+                            onChange={e => updateOperationData(e, "operatorKey", e.target.value)}
+                            style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left', maxHeight: 57 }}
+                            className={clsx('bottomAlignedSelect', classes.p10)}
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                            PaperProps={{
+                                style: {
+                                    transform: 'translateX(10px) translateY(50px)',
+                                }
+                            }}
+                            MenuProps={{
+                                anchorOrigin: {
+                                    vertical: "bottom",
+                                    horizontal: "left"
+                                },
+                                transformOrigin: {
+                                    vertical: "top",
+                                    horizontal: "left"
+                                },
+                                getContentAnchorEl: null
+                            }}
+                        >
+                            {EventConditions.map((condition) => {
+                                return <MenuItem
+                                    key={condition.key}
+                                    value={condition.key}
+                                    name={condition.key}
+                                    style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                                >{
+                                        condition.tooltip ? <CustomTooltip
+                                            isSimpleTooltip={false}
+                                            classes={classes}
+                                            interactive={false}
+                                            arrow={true}
+                                            style={{ fontSize: 16, fontWeight: 400 }}
+                                            placement={'top'}
+                                            nameEllipsis={false}
+                                            title={<Typography style={{ maxHeight: 50 }} noWrap={false}>{t(condition.tooltip)}</Typography>}
+                                            text={t(condition.value)}
+                                        /> :
+                                            t(condition.value)
+                                    }
+                                </MenuItem>
+                            })}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box style={{ width: '100%' }} className={clsx('textBoxWrapper', classes.dFlex, classes.flex1, classes.paddingSides15)}>
+                    <TextField
+                        placeholder={t("siteTracking.placeHolderAddPageUrl")}
+                        className={clsx(classes.mt24, classes.textField, classes.fullWidth, classes.endElementNoRadius, pageUrlIsValid === false ? classes.error : pageUrlIsValid !== null ? classes.valid : null)}
+                        required
+                        fullWidth
+                        variant="outlined"
+                        id={`input${currentEvent.id}`}
+                        onChange={e => updateOperationData(e, "operatorValue", e.target.value)}
+                        value={currentEvent && currentEvent.operatorValue}
+                        style={{ minWidth: windowSize === 'xs' ? 220 : '100%', width: '100%' }}
+                    />
+                </Box>
             </Box>
         </Box>
-        <Box className={classes.arrowContainer}>
+        <Box className={(classes.arrowContainer)}>
             {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
         </Box>
-        <Box className={classes.eventGroupsContainer}>
+
+        <Box className={clsx(classes.eventGroupsContainer, classes.flex1, { [classes.mt2]: windowSize === 'sm' || windowSize === 'xs' })}>
             <Box style={{ width: eventsCount > 1 ? 'calc(100% - 64px)' : '100%' }}>
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.addToGroups")}
                 </Typography>
                 <GroupTags
                     groupSelected={groupSelected}
-                    // groupSelected={currentEvent.groupIds}
                     onRemoveGroup={handleRemoveGroup}
                     classes={classes}
                     title={'siteTracking.typeGroupName'}
                     onShowModal={handleShowGroup}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', paddingTop: '24px' }}
+                    containerStyle={{ paddingBlock: 2 }}
                 />
             </Box>
             {eventsCount > 1 && <Box className={classes.deleteButtonContainer}>
-                <Button onClick={() => { onDelete() }}>
-                    <img src={DeleteIcon} alt="" style={{ width: 30, height: 30, cursor: 'pointer' }} />
+                <Button onClick={() => { onDelete() }} className={clsx(classes.btn, classes.btnRounded)}>
+                    <BsTrash style={{ width: 20, height: 20, marginInlineStart: 0 }} />
                 </Button>
             </Box>
             }

@@ -9,12 +9,13 @@ import {
     Box,
     Checkbox,
     FormControlLabel,
+    IconButton,
 } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
-import { BsInfoCircleFill } from "react-icons/bs";
+import { BsInfoCircle } from "react-icons/bs";
 import {
     createGroup,
     getGroupsBySubAccountId
@@ -22,19 +23,22 @@ import {
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { getTestGroups } from "../../../../redux/reducers/smsSlice";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { Loader } from "../../../../components/Loader/Loader";
 
 const AddGroupPopUp = ({
     classes,
     isOpen = false,
+    onCancel,
     onClose,
-    setLoader,
     windowSize,
     ToastMessages,
     setToastMessage,
     addClientByQuery = false,
-    createGroupCallback = () => null,
-    addAnotherRecCallback = () => null,
-    getData, handleResponses = (response, actions) => null }) => {
+    createGroupCallback,
+    addAnotherRecCallback,
+    getData,
+    isDynamic = false,
+    handleResponses }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -47,7 +51,7 @@ const AddGroupPopUp = ({
         GroupID: null,
         InvalidCell: 0,
         InvalidEmails: 0,
-        IsDynamic: true,
+        IsDynamic: isDynamic,
         IsTestGroup: false,
         PendingClients: 0,
         Recipients: 0,
@@ -62,6 +66,7 @@ const AddGroupPopUp = ({
     };
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
     const [saveDisabled, setSaveDisabled] = useState(false);
+    const [showLoader, setLoader] = useState(false);
 
     const handleAddGroup = async (data, callback) => {
         setSaveDisabled(true);
@@ -77,15 +82,14 @@ const AddGroupPopUp = ({
             handleResponses(response, {
                 S_201: {
                     code: 201,
-                    message: ToastMessages.GROUP_UPDATED,
+                    message: ToastMessages.GROUP_CREATED,
                     Func: () => {
                         new Promise(async (resolutionFunc, rejectionFunc) => {
-                            await dispatch(getGroupsBySubAccountId())
                             await resolutionFunc(getData());
                             setNewGroupData(DEFAULT_NEW_GROUP);
+                            onClose()
                             if (data.IsTestGroup)
                                 await dispatch(getTestGroups());
-                            onClose()
                         }).then((res) => {
                             callback?.(response.payload.Message)
                         })
@@ -137,9 +141,8 @@ const AddGroupPopUp = ({
                 icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div>}
-                showDivider={true}
                 onClose={onClose}
-                onCancel={onClose}
+                onCancel={onCancel ?? onClose}
                 onConfirm={() => {
                     const result = handleAddGroup(newGroupData);
                     if (result) {
@@ -158,8 +161,8 @@ const AddGroupPopUp = ({
                                 variant="contained"
                                 size="medium"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogCancelButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.fullWidth,
                                     classes.whiteSpaceNoWrap
                                 )}
@@ -168,7 +171,7 @@ const AddGroupPopUp = ({
                                 {t("group.cancel")}
                             </Button>
                         </Grid>
-                        {!addClientByQuery && <Grid
+                        {!addClientByQuery && !isDynamic && <Grid
                             item
                             xs={windowSize === "xs" && 12}
                             sm={4}
@@ -179,8 +182,8 @@ const AddGroupPopUp = ({
                                 size="medium"
                                 className={clsx(
                                     classes.fullWidth,
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.actionButtonLightGreen,
                                     classes.whiteSpaceNoWrap,
                                     !newGroupData.GroupName || saveDisabled ? classes.disabled : '',
@@ -202,8 +205,8 @@ const AddGroupPopUp = ({
                                 variant="contained"
                                 size="medium"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.fullWidth,
                                     classes.whiteSpaceNoWrap,
                                     classes.textUppercase,
@@ -251,6 +254,7 @@ const AddGroupPopUp = ({
                                 if (e.target.value.length <= 100) {
                                     setNewGroupData({
                                         ...newGroupData,
+                                        IsDynamic: isDynamic,
                                         GroupName: e.target.value,
                                     });
                                 }
@@ -258,6 +262,7 @@ const AddGroupPopUp = ({
                                     e.preventDefault()
                                     setNewGroupData({
                                         ...newGroupData,
+                                        IsDynamic: isDynamic,
                                         GroupName: e.target.value.substring(0, 100),
                                     });
                                     setToastMessage(ToastMessages.GROUP_NAME_MAXLENGTH)
@@ -274,7 +279,7 @@ const AddGroupPopUp = ({
                     >
                         <FormControlLabel
                             control={
-                                <Checkbox checked={newGroupData.IsTestGroup} onClick={() => { setNewGroupData({ ...newGroupData, IsTestGroup: !newGroupData.IsTestGroup }) }} name="testGroup" size="small" color="primary" />
+                                <Checkbox checked={newGroupData.IsTestGroup} onClick={() => { setNewGroupData({ ...newGroupData, IsTestGroup: !newGroupData.IsTestGroup, IsDynamic: isDynamic }) }} name="testGroup" size="small" color="primary" />
                             }
                             label={t("group.testGroup")}
                         />
@@ -295,12 +300,13 @@ const AddGroupPopUp = ({
                             }
                             text={t("group.testGroupInfo")}
                         >
-                            <span>
-                                <BsInfoCircleFill />
-                            </span>
+                            <IconButton className={classes.icon_Info} aria-label={t('group.testGroupInfo')}>
+                                <BsInfoCircle />
+                            </IconButton>
                         </CustomTooltip>
                     </Box>
                 </Box>
+                <Loader isOpen={showLoader} showBackdrop={true} />
             </BaseDialog>
         </>
     );

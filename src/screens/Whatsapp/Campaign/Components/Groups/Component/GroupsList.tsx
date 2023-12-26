@@ -37,20 +37,15 @@ const GroupsList = ({
 				<ListItem
 					key={group['GroupID']}
 					onClick={() => onSelectGroup(group)}
-					className={classes.groupListRow}
+					className={clsx(classes.groupListRow, 'group-container')}
 					style={{ cursor: 'pointer' }}>
 					<ListItemAvatar>
 						<Avatar
-							className={clsx(
-								classes.listIcon,
-								classes.transparentBg,
-								isExist ? classes.green : classes.blue,
-								isExist ? classes.borderGreen : classes.borderBlue
-							)}>
+							className={clsx(classes.listIcon, isExist ? classes.redBg : classes.transparentBg, isExist ? classes.white : classes.blue, isExist ? classes.borderRed : classes.borderPrimary)}>
 							{isExist ? (
-								<FaCheck className={clsx(classes.green)} />
+								<FaCheck className={clsx(classes.white)} />
 							) : (
-								<HiUserGroup className={clsx(classes.blue)} />
+								<HiUserGroup className={clsx(classes.colrPrimary)} />
 							)}
 						</Avatar>
 					</ListItemAvatar>

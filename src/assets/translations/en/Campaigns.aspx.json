@@ -505,12 +505,13 @@
     "helpTexts": {
       "Name": "Used to identify the campaign in the system. Recipients will not see this name",
       "FromName": "This field is mandatory",
-      "FromEmail": "Only verified emails are allowed,",
+      "FromEmail": "Only verified emails are allowed",
       "clickToVerify": "Click here to verify",
       "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
       "upload": "The file will appear as an attached file in your mail",
-      "newAddress": "new Email"
+      "newAddress": "new Email",
+      "cellularSupportCaution": "<b>Attention:</b> Adaptive is not supported by all devices & apps"
     },
     "errors": {
       "campaignWasNotSent": "The campaign was not sent!",
@@ -536,9 +537,10 @@
       "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
       "FUTURE_DATE_PASSED": "The campaign sending date is passed, Please select future sending date.",
       "INVALID_CAMPAIGN_ID": "Invalid Campaign ID",
-      "ACCOUNT_RESTRICTED":"This account is restricted<br/>Please contact our sales team to arrange your payments"
+      "ACCOUNT_RESTRICTED":"This account is restricted<br/>Please contact our sales team to arrange your payments",
+      "SMS_BULK_ENDED_PURCHASE_OPTION": "Your bulk has ended!<br/>You can buy a new SMS package or discard SMS Total Marketing campaign."
     },
-    "success": "Success",
+    "success": "Campaign successfully saved",
     "sendSettings": {
       "optimalSending": "Optimal Sending",
       "optimalSendingFrom": "Optimal send will start in",
@@ -619,7 +621,7 @@
         "error1": "Invalid Email",
         "error2": "Email is required",
         "anyProblem": "Did you encounter a problem?",
-        "contactUs": "Contact us at <a href='tel:03-524-0290'>03-524-0290</a> or at <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+        "contactUs": "Contact us at <a href='tel:03-524-0290' style='color:#FF3343'>03-524-0290</a> or at <a href='mailto:support@pulseem.com' style='color:#FF3343'>support@pulseem.com</a>",
         "placeholder": "Enter email"
       },
       "thirdSlide": {
@@ -688,5 +690,7 @@
   "weSent": "We sent!",
   "campaignIsOnItsWay": "Your campaign is on its way",
   "newsletterSetUp": "Newsletter Set-Up",
-  "lastSaveAt": "Last save at: "
+  "lastSaveAt": "Last save at: ",
+  "deleteTotalMarketing": "Delete Total Marketing",
+  "deleteTotalMarketingDesc": "<b>Are you sure you want to delete the SMS Marketing campaign?</b><br/>In case you will want to restore the SMS campaign, you will have to set it again"
 }

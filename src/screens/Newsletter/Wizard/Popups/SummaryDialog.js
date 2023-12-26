@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { Link, MenuItem, Select, Typography } from "@material-ui/core";
+import { FormControl, Link, MenuItem } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { Box, Grid, Button } from "@material-ui/core";
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
@@ -14,6 +15,8 @@ import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
+import { Loader } from "../../../../components/Loader/Loader";
+import { IoIosArrowDown } from "react-icons/io";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -33,7 +36,7 @@ const SummaryDialog = ({ classes,
     const [subDetailsActive, setsubDetailsActive] = useState(false);
     const [subRecipientsDetails, setsubRecipients] = useState(false);
     const [fromEmail, setFromEmail] = useState(null);
-    const { isRTL } = useSelector(state => state.core);
+    const { isRTL, windowSize } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails, isSweepingApproval } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
@@ -42,6 +45,7 @@ const SummaryDialog = ({ classes,
     const [fromEmailVerified, setFromEmailVerified] = useState(true);
     const [verifyStep, setVerifyStep] = useState(0);
     const [verifyValue, setVerifyValue] = useState('');
+    const [showLoader, setShowLoader] = useState(false);
 
     const {
         FinalClients,
@@ -72,12 +76,15 @@ const SummaryDialog = ({ classes,
     const { t } = useTranslation();
 
     const handleSendCampaign = async () => {
+        setShowLoader(true);
         setDisableSend(true);
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
         handleSendResponse({
             ...sendResponse.payload,
             fromEmail: fromEmail
         });
+        setDisableSend(false);
+        setShowLoader(false);
     }
 
     useEffect(() => {
@@ -232,38 +239,51 @@ const SummaryDialog = ({ classes,
             <>
                 <Box style={{ fontSize: "22px", marginTop: "5px" }}>
                     <Box className={classes.baseSum} style={{ display: 'flex', width: '100%' }}>
-                        <Box className={classes.sumLeft} style={{ width: '50%' }}>
+                        <Box className={classes.sumLeft} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
                             <Box>
                                 <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("sms.smsSummaryCampaignFrom")}:</span>
                             </Box>
                             <Box style={{ width: '100%' }}>
-                                <Select
-                                    style={{ width: '100%' }}
-                                    className={classes.mt1}
-                                    autoWidth={false}
-                                    native
-                                    value={fromEmail}
-                                    displayEmpty
-                                    onChange={handleFromEmailChanged}
-                                    inputProps={{
-                                        'aria-label': 'Without label',
-                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
-                                        style: { width: '100%' }
-                                    }}
-                                    variant='outlined'
+                                <FormControl
+                                    variant="standard"
+                                    className={clsx(classes.selectInputFormControl, classes.width90P, classes.mb10)}
                                 >
-                                    {[{
-                                        Number: newsletterSendSummary?.FromEmail
-                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true })
-                                    ].map((obj) => (
-                                        <option
-                                            key={obj.Number}
-                                            value={obj.Number}
-                                        >
-                                            {obj.Number}
-                                        </option>
-                                    ))}
-                                </Select>
+                                    <Select
+                                        variant="standard"
+                                        style={{ width: '100%' }}
+                                        className={classes.pbt5}
+                                        autoWidth={false}
+                                        value={fromEmail}
+                                        displayEmpty
+                                        onChange={handleFromEmailChanged}
+                                        inputProps={{
+                                            'aria-label': 'Without label',
+                                            className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
+                                            style: { width: '100%' }
+                                        }}
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 300,
+                                                    direction: isRTL ? 'rtl' : 'ltr'
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        {[{
+                                            Number: newsletterSendSummary?.FromEmail
+                                        }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.FromEmail })
+                                        ].map((obj, index) => (
+                                            <MenuItem
+                                                key={`ve_${index}`}
+                                                value={obj.Number}
+                                            >
+                                                {obj.Number}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             </Box>
                             <Box className={classes.sumChild}>
                                 <Link className={clsx(classes.link)}
@@ -301,15 +321,13 @@ const SummaryDialog = ({ classes,
                                 <span className={classes.bodySum}>
                                     {`${t("sms.smsSummaryDialogTotalRecipients")}: ${FinalClients?.toLocaleString()}`}
                                 </span>
-                                {
-                                    !IsQuickSend && <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
-                                        {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
-                                    </Link>
-                                }
+                                <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
+                                    {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
+                                </Link>
                             </Box>
                         </Box>
-                        {PreviewURL && <Box className={classes.sumRight} style={{ width: '50%' }}>
-                            <Stack direction='column' alignItems='center' spacing={2}>
+                        {PreviewURL && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
+                            <Stack direction='column' alignItems='center' spacing={2} className={classes.paddingInline25}>
                                 <Stack className={classes.previewIframe}>
                                     {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
                                 </Stack>
@@ -332,7 +350,7 @@ const SummaryDialog = ({ classes,
                         </Box>
                     }
                 </Box>
-                {!IsQuickSend && <Box>
+                <Box>
                     {detailsHide ? null : <ul className={classes.sumList}>
                         <li
                             onClick={() => { setsubRecipients(!subRecipientsDetails) }}
@@ -345,40 +363,6 @@ const SummaryDialog = ({ classes,
                     </ul>}
                     {subRecipientsDetails ? renderFilterDetails() : null}
                 </Box>
-                }
-                <Grid
-                    container
-                    spacing={4}
-                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
-                    <Grid item>
-                        <Button
-                            variant='contained'
-                            size='small'
-                            disabled={disableSend}
-                            onClick={() => {
-                                handleSendCampaign()
-                            }}
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogConfirmButton,
-                                FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
-                            )}>
-                            {t("sms.sendDialog")}
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            variant='contained'
-                            size='small'
-                            onClick={() => { setDialogType(null) }}
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogCancelButton
-                            )}>
-                            {t("sms.cancelDialog")}
-                        </Button>
-                    </Grid>
-                </Grid>
                 {verPopupOpen && <VerificationDialog
                     classes={classes}
                     isOpen={verPopupOpen}
@@ -398,6 +382,38 @@ const SummaryDialog = ({ classes,
                 />}
             </>
         ),
+        renderButtons: () => (
+            <Grid
+                container
+                // spacing={4}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                <Grid item className={classes.paddingSides10}>
+                    <Button
+                        variant='contained'
+                        size='small'
+                        disabled={disableSend}
+                        onClick={() => {
+                            handleSendCampaign()
+                        }}
+                        className={clsx(
+                            classes.btn, classes.btnRounded,
+                            FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
+                        )}>
+                        {t("sms.sendDialog")}
+                    </Button>
+                </Grid>
+                <Grid item className={classes.paddingSides10}>
+                    <Button
+                        variant='contained'
+                        size='small'
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                    >
+                        {t("sms.cancelDialog")}
+                    </Button>
+                </Grid>
+            </Grid>
+        ),
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,
         confirmText: t("common.send"),
         cancelText: '',
@@ -412,6 +428,7 @@ const SummaryDialog = ({ classes,
         onCancel={() => { setDialogType(null) }}
         {...currentDialog}>
         {currentDialog.content}
+        <Loader isOpen={showLoader} />
     </BaseDialog>
 
 }

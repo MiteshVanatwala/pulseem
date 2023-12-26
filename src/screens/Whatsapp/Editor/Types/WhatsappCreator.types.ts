@@ -77,7 +77,6 @@ export type callToActionRowProps = {
 export type callToActionProps = callToActionRowProps[];
 
 export type actionProps = {
-	isCallToActionOpen: boolean;
 	closeCallToAction: (isReset: boolean) => void;
 	classes: ClassesType['classes'];
 	callToActionFieldRows: callToActionProps;
@@ -141,7 +140,6 @@ export type actionButtonProps = {
 
 export type quickReplyProps = {
 	classes: ClassesType['classes'];
-	isQuickReplyOpen: boolean;
 	closeQuickReply: () => void;
 	quickReplyButtons: quickReplyButtonProps[];
 	setQuickReplyButtons: (data: quickReplyButtonProps[]) => void;
@@ -269,8 +267,8 @@ export type savedTemplateTypesProps = {
 	media: savedTemplateMediaProps;
 	text: savedTemplateTextProps;
 	card: savedTemplateCardProps;
-	'whatsapp/authentication': authenticationClass,
-	'authentication': authenticationClass
+	'whatsapp/authentication': authenticationClass;
+	authentication: authenticationClass;
 };
 
 export type savedTemplateDataProps = {

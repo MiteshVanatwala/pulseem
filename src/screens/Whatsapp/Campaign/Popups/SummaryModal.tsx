@@ -1,15 +1,13 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, TextField } from '@material-ui/core';
-import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
+import { Box, Grid, Button } from '@material-ui/core';
 import {
 	CampaignDetailByIdData,
 	CampaignDetailById,
 	SummaryModalProps,
 	coreProps,
 } from '../Types/WhatsappCampaign.types';
-import { useTheme } from '@mui/material/styles';
-import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
 import { useParams } from 'react-router-dom';
 import { Loader } from '../../../../components/Loader/Loader';
 import {
@@ -33,13 +31,12 @@ import moment from 'moment';
 import { getTemplatePreviewData, isShowTierAlert } from '../../Common';
 import clsx from 'clsx';
 import Toast from '../../../../components/Toast/Toast.component';
-import ValidationAlert from './ValidationAlert';
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
-import AlertModal from '../../Editor/Popups/AlertModal';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { FBBusiness } from '../../../../helpers/Constants';
 
 const SummaryModal = ({
 	classes,
-	isOpen,
 	onSummaryModalClose,
 	onConfirmOrYes,
 	selectedGroups,
@@ -57,19 +54,19 @@ const SummaryModal = ({
 	setRandomlyCount,
 	resetRandomCount,
 }: SummaryModalProps) => {
-	const theme = useTheme();
 	const dispatch = useDispatch();
 	const { campaignID } = useParams();
-	const fullScreen = useMediaQuery(theme.breakpoints.down('lg'));
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isGroup, setIsGroup] = useState<boolean>(false);
 	const [isRecipientFilter, setIsRecipientFilter] = useState<boolean>(false);
 	const [detailsHide, setdetailsHide] = useState<boolean>(true);
-	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
-	const [tierAlert, setTierAlert] = useState<boolean>(false);
 	const [validationErrors, setValidationErrors] = useState<string[]>([]);
 	const [isIn24HrWindow, setIsIn24HrWindow] = useState<boolean>(false);
 	const { t: translator } = useTranslation();
+	const [dialogType, setDialogType] = useState<any>({
+		type: '',
+		data: ''
+	});
 	const ToastMessages = useSelector(
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
@@ -98,7 +95,7 @@ const SummaryModal = ({
 
 	useEffect(() => {
 		(async () => {
-			if (campaignID && isOpen === true) {
+			if (campaignID) {
 				setIsLoader(true);
 				const { payload: campaignData }: CampaignDetailById =
 					await dispatch<any>(getCampaignDetailById(campaignID));
@@ -131,7 +128,19 @@ const SummaryModal = ({
 			}
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isOpen, campaignID]);
+	}, [campaignID]);
+
+	useEffect(() => {
+		if (sendType === '2' && sendDate) {
+			const timeDiff = moment(sendDate).diff(moment(), 'seconds');
+			if (timeDiff <= 86400) {
+				setIsIn24HrWindow(true);
+			} else {
+				setIsIn24HrWindow(false);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sendDate]);
 
 	useEffect(() => {
 		if (sendType === '2' && sendDate) {
@@ -252,7 +261,9 @@ const SummaryModal = ({
 		}
 		if (!isValidated) {
 			setValidationErrors([...validationErrors]);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			});
 		}
 		return isValidated;
 	};
@@ -261,22 +272,22 @@ const SummaryModal = ({
 		setRandomlyCount(value);
 	};
 
-	const onConfirmOrYesClick = async () => {
-		setIsLoader(true);
+	const onConfirmOrYesClick = () => {
 		if (validateSummary()) {
 			if (campaignSummary?.WhatsappTierID === 4) {
-				await onConfirmOrYes();
-				await resetRandomCount();
+				onConfirmOrYes();
+				resetRandomCount();
 			} else {
 				if (sendType === '1' || (sendType === '2' && isIn24HrWindow)) {
-					await onConfirmOrYes();
-					await resetRandomCount();
+					onConfirmOrYes();
+					resetRandomCount();
 				} else {
-					setTierAlert(true);
+					setDialogType({
+						type: 'exceedDailyLimit'
+					});
 				}
 			}
 		}
-		setIsLoader(false);
 	};
 
 	const getTierInfoTooltip = () => {
@@ -308,29 +319,73 @@ const SummaryModal = ({
 		return 0;
 	};
 
+	const getValidationDialog = () => ({
+    title: translator('whatsappCampaign.sendValidation'),
+    showDivider: false,
+    content: (
+			<ul className={clsx(classes.noMargin, classes.mb20)}>
+				{validationErrors?.map((requiredField: string, index: number) => (
+					<li key={index} className={classes.validationAlertModalLi}>
+						{requiredField}
+					</li>
+				))}
+			</ul>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+    }
+  })
+
+	const getExceedDailyLimit = () => ({
+    title: translator('settings.accountSettings.actDetails.fields.doYouWantToProceed'),
+    showDivider: false,
+    content: (
+      <Box className={classes.tierAlertModalWrapper}>
+				<Box>{translator('settings.accountSettings.actDetails.fields.stopSending')}</Box>
+				<br />
+				<Box>{translator('settings.accountSettings.actDetails.fields.yourResponsibility')}</Box>
+			</Box>
+    ),
+    onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+			onTierAlertConfirm();
+    }
+  })
+
+	const renderDialog = () => {
+    const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'validation') {
+    	currentDialog = getValidationDialog();
+		} else if (type === 'exceedDailyLimit') {
+    	currentDialog = getExceedDailyLimit();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
+
 	return (
-		<Dialog
-			fullScreen={fullScreen}
-			open={isOpen}
-			onClose={onSummaryModalClose}
-			aria-labelledby='responsive-dialog-title'
-			maxWidth={'md'}>
+		<>
 			{renderToast()}
 			<div className={classes.summaryModal}>
-				<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-					<>{translator('whatsappCampaign.summary')}</>
-				</div>
-				<Box className={classes.alertModalClose}>
-					<Close fontSize={'small'} onClick={onSummaryModalClose} />
-				</Box>
-				<Box className={classes.alertModalInfoWrapper}>
-					<Box className={classes.alertModalInfo}>
-						<SupervisedUserCircleOutlined
-							fontSize={'small'}
-							onClick={onSummaryModalClose}
-						/>
-					</Box>
-				</Box>
 				<div className={classes.summaryModalContent}>
 					<div className={classes.testGroupModalContentWrapper}>
 						<Grid container style={{ justifyContent: 'space-between' }}>
@@ -422,19 +477,13 @@ const SummaryModal = ({
 													interactive={true}
 													placement={'top'}
 													title={getTierInfoTooltip()}
+													// @ts-ignore
 													titleStyle={{
 														width: '100%',
 														display: 'inline-block',
 													}}
 													text={<span className={classes.bodyInfo}>i</span>}
 													icon={undefined}>
-													{/* <>
-													{tierSetting?.map((tier, index: number) => (
-														<span>{`Tier ${index} - ${translator(
-															tier.name
-														)}`}</span>
-													))}
-												</> */}
 												</CustomTooltip>
 											</>
 										</div>
@@ -528,7 +577,7 @@ const SummaryModal = ({
 												<a
 													target={'_blank'}
 													// href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-													href='https://business.facebook.com/wa/manage/'
+													href={FBBusiness}
 													rel='noreferrer'>
 													<>{translator('whatsappCampaign.limit')}</>
 												</a>
@@ -710,7 +759,7 @@ const SummaryModal = ({
 					className={classes.alertModalAction}
 					style={{ marginTop: '16px' }}>
 					<Button
-						className='ok-button'
+						className={clsx(classes.btn, classes.btnRounded)}
 						variant='contained'
 						color='primary'
 						autoFocus
@@ -719,7 +768,7 @@ const SummaryModal = ({
 						<>{translator('whatsapp.alertModal.okButtonText')}</>
 					</Button>
 					<Button
-						className='cancel-button'
+						className={clsx(classes.btn, classes.btnRounded)}
 						color='primary'
 						variant='contained'
 						onClick={onSummaryModalClose}>
@@ -728,38 +777,8 @@ const SummaryModal = ({
 				</Grid>
 			</div>
 			<Loader isOpen={isLoader} showBackdrop={true} />
-			<ValidationAlert
-				classes={classes}
-				isOpen={isValidationAlert}
-				onClose={() => setIsValidationAlert(false)}
-				title={translator('whatsappCampaign.sendValidation')}
-				requiredFields={validationErrors}
-			/>
-			<AlertModal
-				classes={classes}
-				isOpen={tierAlert}
-				onClose={() => setTierAlert(false)}
-				title={translator(
-					'settings.accountSettings.actDetails.fields.doYouWantToProceed'
-				)}
-				subtitle={''}
-				type='delete'
-				onConfirmOrYes={() => onTierAlertConfirm()}>
-				<Box className={classes.tierAlertModalWrapper}>
-					<Box>
-						{translator(
-							'settings.accountSettings.actDetails.fields.stopSending'
-						)}
-					</Box>
-					<br />
-					<Box>
-						{translator(
-							'settings.accountSettings.actDetails.fields.yourResponsibility'
-						)}
-					</Box>
-				</Box>
-			</AlertModal>
-		</Dialog>
+			{renderDialog()}
+		</>
 	);
 };
 

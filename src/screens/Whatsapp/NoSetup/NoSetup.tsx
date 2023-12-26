@@ -2,11 +2,12 @@ import { Box, Button, Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { NoSetupProps } from './Types/NoSetup.types';
 import { Call, MailOutlineOutlined } from '@material-ui/icons';
+import clsx from 'clsx';
 
-const NoSetup = ({ classes }: NoSetupProps) => {
+const NoSetup = ({ classes, isCompact = false }: NoSetupProps) => {
 	const { t: translator } = useTranslation();
 	return (
-		<Grid container className={classes.whatsappNoSetupPage}>
+		<Grid container className={clsx(classes.whatsappNoSetupPage, isCompact ? classes.hAuto : '')}>
 			<Box>
 				<Box className={classes.whatsappNoSetupMessageWrapper}>
 					<div>{translator('whatsappCampaign.setupMessage1')}</div>

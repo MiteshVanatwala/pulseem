@@ -12,23 +12,16 @@ import {
 	Grid,
 	Button,
 	TextField,
-	Box,
-	List,
-	ListItem,
-	ListItemAvatar,
-	Avatar,
-	ListItemText,
-	ListItemSecondaryAction,
+	Box
 } from '@material-ui/core';
 import {
 	AutomationIcon,
 	DeleteIcon,
 	DuplicateIcon,
 	EditIcon,
-	SendGreenIcon,
-	SearchIcon,
 	GroupsIcon,
 	PreviewIcon,
+	SendIcon
 } from '../../../assets/images/managment/index';
 import {
 	TablePagination,
@@ -49,7 +42,6 @@ import {
 } from '../../../redux/reducers/smsSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
@@ -57,38 +49,36 @@ import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
+import { FaEye } from 'react-icons/fa';
+import { GrDuplicate } from 'react-icons/gr';
+import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 
 const SmsManagnentScreen = ({ classes }) => {
-	const { language, windowSize, rowsPerPage } = useSelector(
-		(state) => state.core
-	); // smsOldVersion, isRTL
-	const { smsData, smsDeletedData } = useSelector((state) => state.sms);
-	const { username } = useSelector((state) => state.user);
-	const { t } = useTranslation();
+	const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
+	const { smsData, smsDeletedData } = useSelector(state => state.sms)
+	const { t } = useTranslation()
 	const [fromDate, handleFromDate] = useState(null);
 	const [toDate, handleToDate] = useState(null);
 	const [number, handleNumber] = useState('');
 	const [numberError, handleNumberError] = useState(false);
 	const [verificationCode, handleVerificationCodeInput] = useState('');
 	const [verificationCodeError, handleVerificationCodeError] = useState(false);
-	const [campaineNameSearch, setCampaineNameSearch] = useState('');
-	const rowsOptions = [6, 10, 20, 50];
-	const [page, setPage] = useState(1);
-	const [isSearching, setSearching] = useState(false);
-	const [searchResults, setSearchResults] = useState([]);
-	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
-	const cellStyle = {
-		head: classes.tableCellHead,
-		body: classes.tableCellBody,
-		root: classes.tableCellRoot,
-	};
-	const [dialogType, setDialogType] = useState(null);
-	const [restoreArray, setRestoreArray] = useState([]);
+	const [campaineNameSearch, setCampaineNameSearch] = useState('')
+	const rowsOptions = [6, 10, 20, 50]
+	const [page, setPage] = useState(1)
+	const [isSearching, setSearching] = useState(false)
+	const [searchResults, setSearchResults] = useState([])
+	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
+	const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
+	const [dialogType, setDialogType] = useState(null)
+	const [restoreArray, setRestoreArray] = useState([])
 	const [showLoader, setLoader] = useState(true);
 	const [newSmsVerification, setNewSmsVerification] = useState(false);
 	const [duplicateDialog, setDuplicateDialog] = useState({});
@@ -188,21 +178,8 @@ const SmsManagnentScreen = ({ classes }) => {
 			setCampaineNameSearch(event.target.value);
 		};
 
-		if (windowSize === 'xs') {
-			return (
-				<SearchField
-					classes={classes}
-					value={campaineNameSearch}
-					onChange={handleCampainNameChange}
-					onClick={handleSearch}
-					onKeyPress={handleKeyPress}
-					placeholder={t('common.CampaignName')}
-				/>
-			);
-		}
-
 		return (
-			<Grid container spacing={2} className={classes.lineTopMarging}>
+			<Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
 				<Grid item>
 					<TextField
 						variant='outlined'
@@ -242,93 +219,73 @@ const SmsManagnentScreen = ({ classes }) => {
 
 				<Grid item>
 					<Button
-						size='large'
-						variant='contained'
 						onClick={handleSearch}
-						className={classes.searchButton}
-						endIcon={<SearchIcon />}>
+						className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
 						{t('campaigns.btnSearchResource1.Text')}
 					</Button>
 				</Grid>
-				{isSearching && (
-					<Grid item>
-						<Button
-							size='large'
-							variant='contained'
-							onClick={clearSearch}
-							className={classes.searchButton}
-							endIcon={<ClearIcon />}>
-							{t('common.clear')}
-						</Button>
-					</Grid>
-				)}
+				{isSearching && <Grid item>
+					<Button
+						onClick={clearSearch}
+						className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+						{t('common.clear')}
+					</Button>
+				</Grid>}
 			</Grid>
-		);
-	};
+		)
+	}
 
 	const renderManagmentLine = () => {
 		return (
-			<Grid container spacing={2} className={classes.linePadding}>
+			<Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
 				<Grid item xs={windowSize === 'xs' && 12}>
 					<Button
-						variant='contained'
-						size='medium'
 						onClick={() => {
-							Redirect({ url: '/react/sms/create' });
+							Redirect({ url: `${sitePrefix}sms/create` })
 						}}
 						className={clsx(
-							classes.actionButton,
-							classes.actionButtonLightGreen
-						)}>
+							classes.btn, classes.btnRounded
+						)}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
 						{t('sms.create')}
 					</Button>
 				</Grid>
-				{windowSize !== 'xs' && (
-					<Grid item>
-						<Button
-							variant='contained'
-							size='medium'
-							className={clsx(
-								classes.actionButton,
-								classes.actionButtonLightBlue
-							)}
-							onClick={() =>
-								setDialogType({
-									type: 'restore',
-									data: smsDeletedData,
-								})
-							}>
-							{t('campaigns.restoreDeleted')}
-						</Button>
-					</Grid>
-				)}
-				{windowSize !== 'xs' && (
-					<Grid item>
-						<Button
-							variant='contained'
-							size='medium'
-							className={clsx(
-								classes.actionButton,
-								classes.actionButtonDarkBlue
-							)}
-							onClick={() => setNewSmsVerification(true)}>
-							{t('sms.verificationDialogTitle')}
-						</Button>
-					</Grid>
-				)}
-				<Grid
-					item
-					xs={windowSize === 'xs' && 12}
-					className={classes.groupsLableContainer}>
+				{windowSize !== 'xs' && <Grid item>
+					<Button
+						className={clsx(
+							classes.btn, classes.btnRounded
+						)}
+						onClick={() => setDialogType({
+							type: 'restore',
+							data: smsDeletedData
+						})}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
+						{t('campaigns.restoreDeleted')}
+					</Button>
+				</Grid>}
+				{windowSize !== 'xs' && <Grid item>
+					<Button
+						className={clsx(
+							classes.btn, classes.btnRounded
+						)}
+						onClick={() => setNewSmsVerification(true)}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
+						{t('sms.verificationDialogTitle')}
+					</Button>
+				</Grid>}
+				<Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
 					<Typography className={classes.groupsLable}>
-						{`${isSearching ? searchResults.length : smsData.length} ${t(
-							'mms.campaigns'
-						)}`}
+						{`${isSearching ? searchResults.length : smsData.length} ${t('mms.campaigns')}`}
 					</Typography>
 				</Grid>
 			</Grid>
-		);
-	};
+		)
+	}
 
 	const renderTableHead = () => {
 		return (
@@ -371,19 +328,8 @@ const SmsManagnentScreen = ({ classes }) => {
 
 		const iconsMap = [
 			{
-				key: 'send',
-				icon: SendGreenIcon,
-				lable: t('campaigns.imgSendResource1.ToolTip'),
-				remove:
-					Status !== 1 ||
-					(AutomationID !== 0 && AutomationTriggerInActive === false),
-				rootClass: classes.sendIcon,
-				textClass: classes.sendIconText,
-				href: `/react/sms/send/${Id}`,
-			},
-			{
 				key: 'preview',
-				icon: PreviewIcon,
+				uIcon: PreviewIcon,
 				lable: t('campaigns.Image1Resource1.ToolTip'),
 				remove: windowSize === 'xs',
 				rootClass: classes.paddingIcon,
@@ -391,21 +337,21 @@ const SmsManagnentScreen = ({ classes }) => {
 					const sms = await dispatch(getSmsByID(Id));
 					setDialogType({
 						type: 'preview',
-						data: sms.payload,
-					});
-				},
+						data: sms.payload
+					})
+				}
 			},
 			{
 				key: 'edit',
-				icon: EditIcon,
+				uIcon: EditIcon,
 				disable: Status !== 1 || AutomationID !== 0,
 				lable: t('campaigns.Image2Resource1.ToolTip'),
-				href: `/react/sms/edit/${Id}`,
 				rootClass: classes.paddingIcon,
+				onClick: () => Redirect({ url: `${sitePrefix}sms/edit/${Id}` })
 			},
 			{
 				key: 'duplicate',
-				icon: DuplicateIcon,
+				uIcon: DuplicateIcon,
 				lable: t('campaigns.lnkEditResource1.ToolTip'),
 				rootClass: classes.paddingIcon,
 				onClick: () => {
@@ -417,7 +363,7 @@ const SmsManagnentScreen = ({ classes }) => {
 			},
 			{
 				key: 'groups',
-				icon: GroupsIcon,
+				uIcon: GroupsIcon,
 				disable: Groups && Groups.length === 0,
 				lable: t('campaigns.lnkPreviewResource1.ToolTip'),
 				remove: windowSize === 'xs',
@@ -425,26 +371,26 @@ const SmsManagnentScreen = ({ classes }) => {
 				onClick: () => {
 					setDialogType({
 						type: 'groups',
-						data: row.Groups,
-					});
-				},
+						data: row.Groups
+					})
+				}
 			},
 			{
 				key: 'automation',
-				icon: AutomationIcon,
+				uIcon: AutomationIcon,
 				disable: AutomationID === 0,
 				lable: t('campaigns.automation'),
 				remove: windowSize === 'xs',
 				onClick: () => {
 					pulseemNewTab(
-						`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`
+						`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 					);
 				},
 				rootClass: classes.paddingIcon,
 			},
 			{
 				key: 'delete',
-				icon: DeleteIcon,
+				uIcon: DeleteIcon,
 				lable: t('campaigns.DeleteResource1.HeaderText'),
 				showPhone: true,
 				disable: AutomationID !== 0,
@@ -452,27 +398,43 @@ const SmsManagnentScreen = ({ classes }) => {
 				onClick: () => {
 					setDialogType({
 						type: 'delete',
-						data: Id,
-					});
-				},
+						data: Id
+					})
+				}
 			},
-		];
+			{
+				key: 'send',
+				uIcon: SendIcon,
+				lable: t('campaigns.imgSendResource1.ToolTip'),
+				remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
+				rootClass: clsx(classes.sendIcon, 'sendIcon'),
+				textClass: classes.sendIconText,
+				onClick: () => {
+					dispatch(getGroupsBySubAccountId());
+					Redirect({ url: `${sitePrefix}sms/send/${Id}` })
+				}
+			},
+		]
 		return (
 			<Grid
 				container
 				direction='row'
 				justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
-				{iconsMap.map((icon) => (
+				{iconsMap.map(icon => (
 					<Grid
-						className={icon.disable && classes.disabledCursor}
+						className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
 						key={icon.key}
-						item>
-						<ManagmentIcon classes={classes} {...icon} />
+						item >
+						<ManagmentIcon
+							classes={classes}
+							{...icon}
+							uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
+						/>
 					</Grid>
 				))}
 			</Grid>
-		);
-	};
+		)
+	}
 
 	const renderStatusCell = (status) => {
 		const statuses = {
@@ -482,22 +444,27 @@ const SmsManagnentScreen = ({ classes }) => {
 			4: 'common.Sent',
 			5: 'campaigns.Canceled',
 			6: 'campaigns.Optin',
-			7: 'campaigns.Approve',
-		};
+			7: 'campaigns.Approve'
+		}
 		return (
 			<>
-				<Typography
-					className={clsx(classes.middleText, classes.recipientsStatus, {
+				<Typography className={clsx(
+					classes.middleText,
+					classes.recipientsStatus,
+					{
 						[classes.recipientsStatusCreated]: status === 1,
 						[classes.recipientsStatusSent]: status === 4,
 						[classes.recipientsStatusSending]: status === 2,
-						[classes.recipientsStatusCanceled]: status === 5,
-					})}>
+						[classes.recipientsStatusCanceled]: status === 5
+					}
+				)}
+					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+				>
 					{t(statuses[status])}
 				</Typography>
 			</>
-		);
-	};
+		)
+	}
 
 	const renderRecipientsCell = (recipients) => {
 		return (
@@ -736,7 +703,11 @@ const SmsManagnentScreen = ({ classes }) => {
 		return {
 			title: t('campaigns.ShowGroupsTitle'),
 			showDivider: false,
-			icon: <div className={classes.dialogIconContent}>{'\uE0D5'}</div>,
+			icon: (
+				<div className={classes.dialogIconContent}>
+					{'\uE0D5'}
+				</div>
+			),
 			content: (
 				<Box className={classes.gruopsDialogContent}>
 					{data.map((group) => {
@@ -748,26 +719,13 @@ const SmsManagnentScreen = ({ classes }) => {
 						);
 					})}
 				</Box>
-			),
-			renderButtons: () => (
-				<Button
-					variant='contained'
-					size='small'
-					onClick={handleClose}
-					className={clsx(
-						classes.gruopsDialogButton,
-						classes.dialogConfirmButton
-					)}>
-					{t('common.Ok')}
-				</Button>
-			),
+			)
 		};
 	};
 
 	const getDeleteDialog = (data = '') => ({
 		title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
 		showDivider: false,
-		icon: <Box className={classes.dialogAlertIcon}>!</Box>,
 		content: (
 			<Typography style={{ fontSize: 18 }}>
 				{t('campaigns.GridButtonColumnResource2.ConfirmText')}
@@ -781,30 +739,35 @@ const SmsManagnentScreen = ({ classes }) => {
 		},
 	});
 
-	const getDuplicateDialog = (data = '') => ({
-		title: t('campaigns.dialogDuplicateTitle'),
-		showDivider: false,
-		icon: <Box className={classes.dialogAlertIcon}>!</Box>,
-		content: (
-			<Typography style={{ fontSize: 18 }}>
-				{t('campaigns.dialogDuplicateContent')}
-			</Typography>
-		),
-		onConfirm: async () => {
-			clearSearch();
-			handleClose();
-			setPage(1);
-			await dispatch(duplicteSms(data));
-			getData();
-		},
-	});
+	// const getDuplicateDialog = (data = '') => ({
+	// 	title: t('campaigns.dialogDuplicateTitle'),
+	// 	showDivider: false,
+	// 	icon: (
+	// 		<GrDuplicate style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+	// 	),
+	// 	content: (
+	// 		<Typography style={{ fontSize: 18 }}>
+	// 			{t('campaigns.dialogDuplicateContent')}
+	// 		</Typography>
+	// 	),
+	// 	onConfirm: async () => {
+	// 		clearSearch();
+	// 		handleClose();
+	// 		setPage(1);
+	// 		await dispatch(duplicteSms(data));
+	// 		getData();
+	// 	},
+	// });
 
 	const getPreviewDialog = (data = {}) => {
 		return {
 			childrenPadding: false,
 			contentStyle: classes.pt2rem,
 			showDivider: false,
-			icon: <div className={classes.dialogIconContent}>{'\uE0F8'}</div>,
+			title: `${t('notifications.preview')} - ${t('common.campaignID')}: ${data.SMSCampaignID}`,
+			icon: (
+				<FaEye style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+			),
 			content: (
 				<Box>
 					<Preview
@@ -820,119 +783,109 @@ const SmsManagnentScreen = ({ classes }) => {
 					/>
 				</Box>
 			),
-			renderButtons: () => (
-				<Button
-					variant='contained'
-					size='small'
-					onClick={handleClose}
-					className={clsx(classes.confirmButton, classes.dialogConfirmButton)}>
-					{t('common.confirm')}
-				</Button>
-			),
+			showDefaultButtons: false
 		};
 	};
 
-	const getVerifyDialog = (data = []) => {
-		if (!data || !Array.isArray(data)) return null;
-		return {
-			title: t('sms.verificationDialogTitle'),
-			showDivider: false,
-			icon: <div className={classes.dialogIconContent}>{'\uE11B'}</div>,
-			content: (
-				<Box>
-					<Typography style={{ fontSize: 15 }} align={'justify'}>
-						{t('sms.verificationBody')}
-						<b>{t('sms.oneTimeProcess')}</b>
-						{t('sms.foreachSubmission')}
-					</Typography>
-					<br />
-					<Typography style={{ fontSize: 15, textDecoration: 'underline' }}>
-						{t('sms.verificationNote')}
-					</Typography>
-					<hr />
-					<Box
-						style={{
-							display: 'flex',
-							justifyContent: 'space-between',
-							marginBottom: 10,
-						}}>
-						<Typography style={{ fontSize: 15 }}>
-							{t('sms.numbersAccount')}
-						</Typography>
-						<Button
-							variant='contained'
-							size='small'
-							color='primary'
-							onClick={() => handleShortVerify()}>
-							{t('sms.verifyAnotherNumber')}
-						</Button>
-					</Box>
-					<List
-						style={{
-							padding: 0,
-							overflow: 'auto',
-							height: 'calc(100vh - 500px)',
-						}}>
-						{data.map((item) => {
-							return (
-								<ListItem
-									style={{ padding: 0 }}
-									key={`verificationNumber${item.ID}`}>
-									<ListItemAvatar style={{ minWidth: 25 }}>
-										<Avatar
-											className={
-												item.IsOptIn ? classes.checkIcon : classes.redIcon
-											}>
-											<div className={clsx(classes.avatarIcon)}>
-												{item.IsOptIn ? '\uE134' : '\uE0A7'}
-											</div>
-										</Avatar>
-									</ListItemAvatar>
-									<ListItemText
-										style={{ margin: 0 }}
-										primary={
-											<Grid container>
-												<Grid item>
-													<Typography variant='body2'>{item.Number}</Typography>
-												</Grid>
-												{!item.IsOptIn && (
-													<Grid item>
-														<Typography
-															className={classes.verifyLink}
-															onClick={() => handleShortVerify(item.Number)}>
-															{t('sms.verifyNumber')}
-														</Typography>
-													</Grid>
-												)}
-											</Grid>
-										}
-									/>
-									<ListItemSecondaryAction></ListItemSecondaryAction>
-								</ListItem>
-							);
-						})}
-					</List>
-				</Box>
-			),
-			renderButtons: () => (
-				<Button
-					variant='contained'
-					size='small'
-					style={{ maxWidth: 100 }}
-					onClick={handleClose}
-					className={clsx(
-						classes.gruopsDialogButton,
-						classes.dialogConfirmButton
-					)}>
-					{t('common.Ok')}
-				</Button>
-			),
-		};
-	};
+	// const getVerifyDialog = (data = []) => {
+	// 	if (!data || !Array.isArray(data)) return null;
+	// 	return {
+	// 		title: t('sms.verificationDialogTitle'),
+	// 		showDivider: false,
+	// 		content: (
+	// 			<Box>
+	// 				<Typography style={{ fontSize: 15 }} align={'justify'}>
+	// 					{t('sms.verificationBody')}
+	// 					<b>{t('sms.oneTimeProcess')}</b>
+	// 					{t('sms.foreachSubmission')}
+	// 				</Typography>
+	// 				<br />
+	// 				<Typography style={{ fontSize: 15, textDecoration: 'underline' }}>
+	// 					{t('sms.verificationNote')}
+	// 				</Typography>
+	// 				<hr />
+	// 				<Box
+	// 					style={{
+	// 						display: 'flex',
+	// 						justifyContent: 'space-between',
+	// 						marginBottom: 10,
+	// 					}}>
+	// 					<Typography style={{ fontSize: 15 }}>
+	// 						{t('sms.numbersAccount')}
+	// 					</Typography>
+	// 					<Button
+	// 						variant='contained'
+	// 						size='small'
+	// 						color='primary'
+	// 						onClick={() => handleShortVerify()}>
+	// 						{t('sms.verifyAnotherNumber')}
+	// 					</Button>
+	// 				</Box>
+	// 				<List
+	// 					style={{
+	// 						padding: 0,
+	// 						overflow: 'auto',
+	// 						height: 'calc(100vh - 500px)',
+	// 					}}>
+	// 					{data.map((item) => {
+	// 						return (
+	// 							<ListItem
+	// 								style={{ padding: 0 }}
+	// 								key={`verificationNumber${item.ID}`}>
+	// 								<ListItemAvatar style={{ minWidth: 25 }}>
+	// 									<Avatar
+	// 										className={
+	// 											item.IsOptIn ? classes.checkIcon : classes.redIcon
+	// 										}>
+	// 										<div className={clsx(classes.avatarIcon)}>
+	// 											{item.IsOptIn ? '\uE134' : '\uE0A7'}
+	// 										</div>
+	// 									</Avatar>
+	// 								</ListItemAvatar>
+	// 								<ListItemText
+	// 									style={{ margin: 0 }}
+	// 									primary={
+	// 										<Grid container>
+	// 											<Grid item>
+	// 												<Typography variant='body2'>{item.Number}</Typography>
+	// 											</Grid>
+	// 											{!item.IsOptIn && (
+	// 												<Grid item>
+	// 													<Typography
+	// 														className={classes.verifyLink}
+	// 														onClick={() => handleShortVerify(item.Number)}>
+	// 														{t('sms.verifyNumber')}
+	// 													</Typography>
+	// 												</Grid>
+	// 											)}
+	// 										</Grid>
+	// 									}
+	// 								/>
+	// 								<ListItemSecondaryAction></ListItemSecondaryAction>
+	// 							</ListItem>
+	// 						);
+	// 					})}
+	// 				</List>
+	// 			</Box>
+	// 		),
+	// 		renderButtons: () => (
+	// 			<Button
+	// 				variant='contained'
+	// 				size='small'
+	// 				style={{ maxWidth: 100 }}
+	// 				onClick={handleClose}
+	// 				className={clsx(
+	// 					classes.gruopsDialogButton,
+	// 					classes.dialogConfirmButton
+	// 				)}>
+	// 				{t('common.Ok')}
+	// 			</Button>
+	// 		),
+	// 	};
+	// };
 
 	const getShortVerifyDialog = (data = '') => ({
 		showDivider: false,
-		icon: <div className={classes.dialogIconContent}>{'\uE11B'}</div>,
 		content: (
 			<Box style={{ textAlign: 'center' }}>
 				<Typography align='center' style={{ fontWeight: 'bold', fontSize: 25 }}>
@@ -963,7 +916,7 @@ const SmsManagnentScreen = ({ classes }) => {
 					size={!data ? 'large' : 'medium'}
 					variant='contained'
 					onClick={handleSendVerificationCode}
-					className={clsx(classes.verifyButton, !data && classes.f20)}>
+					className={clsx(classes.btn, classes.btnRounded)}>
 					{t('sms.verificationButtonText')}
 				</Button>
 				<Typography className={clsx(classes.contactUs, classes.newLine)}>
@@ -1083,9 +1036,9 @@ const SmsManagnentScreen = ({ classes }) => {
 			restore: getRestorDialog(data),
 			groups: getGroupsDialog(data),
 			delete: getDeleteDialog(data),
-			duplicate: getDuplicateDialog(data),
+			// duplicate: getDuplicateDialog(data),
 			preview: getPreviewDialog(data),
-			verify: getVerifyDialog(data),
+			// verify: getVerifyDialog(data),
 			shortVerify: getShortVerifyDialog(data),
 			verificationSent: getVerificationSentDialog(data),
 			verificationSuccess: getVerificationSuccessDialog(data),
@@ -1108,15 +1061,17 @@ const SmsManagnentScreen = ({ classes }) => {
 			currentPage='sms'
 			classes={classes}
 			containerClass={clsx(classes.management, classes.mb50)}>
-			<Title Text={t('sms.PageResource1.Title')} Classes={classes} ShowDivider={true} />
-			{renderSearchLine()}
+			<Box className={'topSection'}>
+				<Title Text={t('sms.PageResource1.Title')} classes={classes} />
+				{renderSearchLine()}
+			</Box>
 			{renderManagmentLine()}
 			{renderTable()}
 			{renderTablePagination()}
 			{renderDialog()}
 			{newSmsVerification && <VerificationDialog classes={classes} isOpen={newSmsVerification} variant='sms' onClose={() => setNewSmsVerification(false)} />}
 			<DuplicateCampaign
-        isSms={true}
+				isSms={true}
 				title={t('campaigns.dialogDuplicateTitle')}
 				classes={classes}
 				isOpen={!!duplicateDialog?.id}
@@ -1128,7 +1083,7 @@ const SmsManagnentScreen = ({ classes }) => {
 					setDuplicateDialog({});
 				}}
 				campaignName={duplicateDialog?.name}
-      />
+			/>
 			<Loader isOpen={showLoader} />
 		</DefaultScreen>
 	)

@@ -2,12 +2,10 @@ import clsx from 'clsx'
 import { useTranslation } from "react-i18next";
 import { Grid, Button, Box } from '@material-ui/core'
 import { BsTrash } from "react-icons/bs";
-import { RiSendPlaneFill } from 'react-icons/ri'
 import { BiSave } from 'react-icons/bi'
 import { useSelector } from 'react-redux';
-import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md'
-import { RiImageAddLine } from 'react-icons/ri'
-import { AiOutlineFileAdd } from 'react-icons/ai'
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md'
+import { GrGallery } from 'react-icons/gr';
 
 const WizardActions = ({
     classes,
@@ -22,78 +20,75 @@ const WizardActions = ({
     onShowGallery = null,
     onShowDocuments = null,
     helperText = null,
-    disabled = false
+    disabled = false,
+    ignorePaddingBottom = false
 }) => {
     const { t } = useTranslation();
-    const { isRTL } = useSelector(state => state.core);
+    const { isRTL, windowSize } = useSelector(state => state.core);
     return (
-        <Grid container style={{ ...innerStyle, paddingBottom: 40 }}
+        <Grid container style={{ ...innerStyle }}
             className={disabled ? classes.disableChildButtons : null}>
             <Grid item xs={12}>
-                <Box className={clsx(classes.wizardButtonContainer)}>
+                <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: ignorePaddingBottom ? null : 40 }}>
                     {onBack &&
                         <Button onClick={() => { onBack?.callback() }}
-                            variant='contained'
-                            size='medium'
                             className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonLightBlue,
+                                classes.btn,
+                                classes.btnRounded,
                                 classes.backButton
                             )}
-                            startIcon={!isRTL ? <MdOutlineKeyboardArrowLeft /> : <MdOutlineKeyboardArrowRight />}
+                            startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             style={{ margin: '8px' }}
-                            color="primary"
                         >{onBack?.text ?? t('notifications.back')}</Button>
                     }
                     {additionalButtonsOnStart}
                     <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
+                        {
+                            helperText && <span className={clsx(classes.paddingSides5, classes.semibold)}>{helperText}</span>
+                        }
                         {onDelete &&
                             <Button
-                                variant='contained'
-                                size='medium'
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonRed
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
-                                style={{ margin: '8px', padding: '9px 0' }}
+                                style={{ margin: '8px' }}
                                 onClick={() => { onDelete() }}
                             >
-                                <BsTrash style={{ fontSize: "25" }} />
+                                <BsTrash className={'trash'} style={{ fontSize: "20", marginLeft: '0 !important', marginRight: '0 !important' }} />
                             </Button>
                         }
                         {onShowDocuments &&
                             <Button
-                                variant='contained'
-                                size='medium'
                                 onClick={() => onShowDocuments()}
                                 style={{ marginInline: 8, paddingInline: 10 }}
-                                className={clsx(classes.actionButton,
-                                    classes.actionButtonOutlinedBlue)}>
-                                <AiOutlineFileAdd style={{ fontSize: "28", paddingInline: 5 }} />
+                                className={clsx(classes.btn, classes.btnRounded)}
+                                startIcon={<GrGallery />}
+                            >
                                 {t("common.documentGallery")}
                             </Button>
                         }
                         {onShowGallery &&
                             <Button
-                                variant='contained'
-                                size='medium'
                                 onClick={() => onShowGallery()}
                                 style={{ marginInline: 8, paddingInline: 10 }}
-                                className={clsx(classes.actionButton,
-                                    classes.actionButtonOutlinedBlue)}>
-                                <RiImageAddLine style={{ fontSize: "20", paddingInline: 5 }} />
+                                className={clsx(classes.btn,
+                                    classes.btnRounded)}
+                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                            >
+                                {/* <RiImageAddLine style={{ fontSize: "20", paddingInline: 5 }} /> */}
                                 {t("common.imageGallery")}
                             </Button>
                         }
                         {onTestSend &&
                             <Button
-                                variant='contained'
-                                size='medium'
                                 onClick={() => onTestSend()}
                                 style={{ marginInline: 8, paddingInline: 10 }}
-                                className={clsx(classes.actionButton,
-                                    classes.actionButtonOutlinedBlue)}>
-                                <RiSendPlaneFill style={{ fontSize: "25" }} />
+                                className={clsx(classes.btn,
+                                    classes.btnRounded)}
+                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                            >
+                                {/* <RiSendPlaneFill style={{ fontSize: "25" }} /> */}
                                 {t("campaigns.sendTest")}
                             </Button>
                         }
@@ -101,15 +96,13 @@ const WizardActions = ({
                             <Button
                                 onClick={() =>
                                     onExit()}
-                                variant='contained'
-                                size='medium'
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightBlue,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.backButton
                                 )}
                                 style={{ margin: '8px' }}
-                                color="primary"
+                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             >{t("common.exit")}
                             </Button>
                         }
@@ -117,39 +110,31 @@ const WizardActions = ({
                             <Button
                                 onClick={() =>
                                     onSave()}
-                                variant='contained'
-                                size='medium'
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightBlue,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.backButton
                                 )}
                                 style={{ margin: '8px' }}
                                 startIcon={<BiSave />}
-                                color="primary"
+                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             >{t("common.save")}
                             </Button>
                         }
                         {onSave &&
                             <Button onClick={() => onSave(true)}
-                                variant='contained'
-                                size='medium'
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightGreen,
-                                    classes.backButton
+                                    classes.btn,
+                                    classes.backButton,
                                 )}
                                 style={{ marginInlineStart: '8px' }}
-                                color="primary"
+                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             >{t('common.continue')}</Button>
                         }
                         {additionalButtons}
                     </Box>
                 </Box>
             </Grid>
-            {helperText && <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                {helperText}
-            </Grid>}
         </Grid>
     );
 }

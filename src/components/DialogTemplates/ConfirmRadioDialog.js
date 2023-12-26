@@ -1,19 +1,23 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, Select, OutlinedInput } from '@material-ui/core';
+import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, MenuItem } from '@material-ui/core';
+import Select from '@mui/material/Select';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { useState, useEffect } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
 import { getTwoFactorAuthValues } from '../../redux/reducers/commonSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { IoIosArrowDown } from 'react-icons/io';
+import { FaCloudDownloadAlt } from 'react-icons/fa';
+import CustomTooltip from '../Tooltip/CustomTooltip';
 
 const ConfirmRadioDialog = ({
     classes,
     text = '',
     title = '',
     radioTitle = '',
-    options = null,
+    options,
     isOpen = false,
     onCancel,
     onConfirm,
@@ -52,7 +56,7 @@ const ConfirmRadioDialog = ({
     const dialog = {
         title: title,
         showDivider: true,
-        icon: null,
+        icon: <FaCloudDownloadAlt />,
         content: (
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.mb4)}>
@@ -81,6 +85,15 @@ const ConfirmRadioDialog = ({
                                                 </span>
                                             }
                                         />
+                                        {option?.tooltip && option?.tooltip !== '' && <CustomTooltip
+                                            isSimpleTooltip={true}
+                                            classes={classes}
+                                            interactive={true}
+                                            arrow={true}
+                                            style={{ position: 'absolute', fontSize: 16 }}
+                                            placement={isRTL ? 'left' : 'right'}
+                                            text={<Typography noWrap={false} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>{t(option?.tooltip)}</Typography>}
+                                        />}
                                         {option?.helperText && <FormHelperText className={classes.helpText}>
                                             {option?.helperText}
                                         </FormHelperText>
@@ -92,78 +105,69 @@ const ConfirmRadioDialog = ({
                         </RadioGroup>
                     </FormControl>)
                     }
-                    {showEmailToNotify && <>
+                    {showEmailToNotify &&
                         <Box style={{ display: 'flex' }}>
                             <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                                 <Typography>{RenderHtml(t("recipient.exportGroups.notifyEmail"))}</Typography>
-                                <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                <FormControl variant="standard" className={clsx(classes.selectInputFormControl, classes.w100)} style={{ alignSelf: 'flex-end' }}>
                                     <Select
-                                        native
+                                        variant="standard"
+                                        name="FromEmail"
                                         displayEmpty
                                         value={notifyEmail ?? -1}
-                                        onChange={(event, val) => {
-                                            setNotifyEmail(event.target.value);
-                                        }}
-                                        label={RenderHtml(t("recipient.exportGroups.notifyEmail"))}
-                                        name="FromEmail"
-                                        input={
-                                            <OutlinedInput />
-                                        }
+                                        onChange={event => setNotifyEmail(event.target.value)}
+                                        className={classes.pbt5}
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                         MenuProps={{
                                             PaperProps: {
                                                 style: {
-                                                    width: '100%',
+                                                    maxHeight: 200,
+                                                    direction: isRTL ? 'rtl' : 'ltr'
                                                 },
                                             },
                                         }}
-                                        inputProps={{ 'aria-label': 'Without label' }}
                                     >
-                                        <option disabled value="-1" key="-1">{t("common.select")}</option>
+                                        <MenuItem disabled value="-1">{t("common.select")}</MenuItem>
                                         {twoFactorAuthEmails.map((item, index) => {
                                             if (!item.IsDeleted) {
-                                                return <option
+                                                return <MenuItem
                                                     key={`exd_${index}`}
-                                                    value={item.AuthValue}
+                                                    value={`${item.AuthValue}`}
                                                 >
                                                     {t(item.AuthValue)}
-                                                </option>
+                                                </MenuItem>
                                             }
-                                        }
-                                        )}
+                                        })}
                                     </Select>
                                 </FormControl>
                             </Box>
                         </Box>
-                    </>}
+                    }
                 </Grid>
             </Grid>
         ),
         renderButtons: () => (
             <Grid
                 container
-                spacing={4}
+                spacing={2}
                 className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
             >
                 <Grid item>
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => { onConfirm(value, notifyEmail) }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.confirm')}
                     </Button>
                 </Grid>
                 <Grid item>
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => { onCancel() }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogCancelButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.cancel')}
                     </Button>

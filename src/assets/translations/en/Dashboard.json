@@ -39,5 +39,7 @@
     "tooltipPurchaseNewFeature": "Purchase directly from the dashboard by clicking on the SMS or Newsletter options below. Have questions? Call support at 03-5240290",
     "2faTitle": "Hey",
     "2faDescription": "Would you like to add 2-factor authentication to your account?<br /><br />2-factor authentication will send a one-time password to your email <br/>when you log in and increase the security of your account with Pulseem.<br /><br />You can always add or remove this feature later in the Account Details section of your account",
+    "purchaseNewsletter": "Purchase newsletter packages",
+    "purchaseSms": "Purchase sms packages",
     "changePassword": "<b>Please notice!</b><br/>The password of this user was not changed in the last Six months<br/>In case you will not change the password in the next ##days## <b>days</b>, your account will be locked until you change it through password reset email"
   }

@@ -18,7 +18,7 @@ const GroupsSelectAll = ({
 	const { t: translator } = useTranslation();
 	return (
 		<ListItem
-			className={classes.groupListRow}
+			className={clsx(classes.groupListRow, 'group-container')}
 			key='liSelectAll'
 			onClick={() => onSelectAllGroup()}
 			style={{ cursor: 'pointer' }}>
@@ -27,13 +27,13 @@ const GroupsSelectAll = ({
 					className={clsx(
 						classes.listIcon,
 						classes.transparentBg,
-						allSelected ? classes.green : classes.blue,
-						allSelected ? classes.borderGreen : classes.borderBlue
+						allSelected ? classes.redBg : classes.transparentBg,
+						allSelected ? classes.borderRed : classes.borderPrimary
 					)}>
 					{allSelected ? (
-						<FaCheck className={clsx(classes.green)} />
+						<FaCheck className={clsx(classes.white)} />
 					) : (
-						<HiUserGroup className={clsx(classes.blue)} />
+						<HiUserGroup className={clsx(classes.colrPrimary)} />
 					)}
 				</Avatar>
 			</ListItemAvatar>

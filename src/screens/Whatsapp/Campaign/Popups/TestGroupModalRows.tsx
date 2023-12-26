@@ -29,15 +29,16 @@ const TestGroupModalRows = ({
 								onSelectGroup(group.GroupID);
 							}}>
 							<span
-								className={
+								className={clsx(
 									isSelectdGroup(group.GroupID)
 										? classes.greenDoc
-										: classes.blueDoc
-								}>
+										: classes.redDoc,
+									isSelectdGroup(group.GroupID) ? classes.redBg : ''
+								)}>
 								{isSelectdGroup(group.GroupID) ? (
-									<FaCheck className={clsx(classes.green)} />
+									<FaCheck className={clsx(classes.white)} />
 								) : (
-									<HiOutlineUserGroup />
+									<HiOutlineUserGroup className={clsx(classes.colrPrimary)} />
 								)}
 							</span>
 							<div className={classes.testGroupModalGroupDiv}>

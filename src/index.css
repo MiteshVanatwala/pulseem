@@ -13,6 +13,10 @@ code {
     monospace;
 }
 
+.MuiAutocomplete-option[aria-selected="true"] {
+  background-color: rgb(210 25 25 / 8%) !important;
+}
+
 @font-face {
   font-family: 'OpenSansHebrew';
   src: local('OpenSansHebrew'),

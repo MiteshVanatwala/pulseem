@@ -1,3 +1,4 @@
+import { sitePrefix } from "../../config"
 const CLIENT_CONSTANTS = {
 	BASEURL: '/react/ClientSearchResult',
 	PAGE_TYPES: {

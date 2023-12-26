@@ -1,8 +1,6 @@
 import { Typography } from '@material-ui/core'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { AiOutlineCloudUpload } from 'react-icons/ai';
-import { Dialog } from "../../../../components/managment/Dialog";
 import { resetGroups } from '../../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
@@ -14,7 +12,7 @@ const ResetGroupPopup = ({
     windowSize,
     getData,
     selectedGroup = { GroupID: null },
-    handleResponses = (response, actions) => null
+    handleResponses = (response, actions) => {}
 }) => {
 
     const { t } = useTranslation();
@@ -75,6 +73,8 @@ const ResetGroupPopup = ({
                 {t("group.resetTitle")}
             </span>}
             showDivider
+            cancelText="common.No"
+            confirmText="common.Yes"
         >
             <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null, classes.textCenter)} >
                 {t("group.resetConfirm")}
