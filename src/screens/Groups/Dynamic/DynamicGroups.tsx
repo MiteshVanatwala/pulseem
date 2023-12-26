@@ -501,7 +501,8 @@ const DynamicGroups = ({ classes }: any) => {
                 lable: t('campaigns.Image2Resource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    navigate(`${sitePrefix}groups/dynamic/edit/${GroupID}`)
+                    navigate(`/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`)
+                    // navigate(`${sitePrefix}groups/dynamic/edit/${GroupID}`)
                 }
             },
             {
