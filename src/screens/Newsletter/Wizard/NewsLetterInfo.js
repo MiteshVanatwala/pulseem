@@ -28,9 +28,9 @@ import { sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
-import { DialogType } from '../../HtmlCampaign/helper/Config';
-import Templates from '../../HtmlCampaign/modals/Templates';
-import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
+// import { DialogType } from '../../HtmlCampaign/helper/Config';
+// import Templates from '../../HtmlCampaign/modals/Templates';
+// import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -152,7 +152,7 @@ const NewsLetterInfo = ({ classes }) => {
     const NodeToEdit = queryParams.get("NodeToEdit")
 
     const { isRTL, CoreToastMessages } = useSelector((state) => state.core);
-    const { publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
+    // const { publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -248,20 +248,20 @@ const NewsLetterInfo = ({ classes }) => {
         });
     }
 
-    useEffect(() => {
-        const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
-        if (htmlTemplate && htmlTemplate !== '') {
-            setNewEditorDisabled(true);
-            setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
-            sessionStorage.removeItem("Newlsetter_Html_Template");
-        }
-        if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-        if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
-    }, []);
+    // useEffect(() => {
+    //     const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
+    //     if (htmlTemplate && htmlTemplate !== '') {
+    //         setNewEditorDisabled(true);
+    //         setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
+    //         sessionStorage.removeItem("Newlsetter_Html_Template");
+    //     }
+    //     if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    //     if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
+    // }, []);
 
-    useEffect(() => {
-        dispatch(getPublicTemplates(isRTL));
-    }, [isRTL])
+    // useEffect(() => {
+    //     dispatch(getPublicTemplates(isRTL));
+    // }, [isRTL])
 
     const setDefaultEmailAndName = () => {
         if (accountSettings) {
@@ -391,24 +391,24 @@ const NewsLetterInfo = ({ classes }) => {
         await dispatch(saveCampaignInfo(campaingnValues))
     }
 
-    const renderTemplateButtons = () => !parseInt(id) && <Button onClick={() => {
-        setLoader(true);
-        setTimeout(() => {
-            setDialogType(DialogType.Templates);
-        }, 1000);
+    // const renderTemplateButtons = () => !parseInt(id) && <Button onClick={() => {
+    //     setLoader(true);
+    //     setTimeout(() => {
+    //         setDialogType(DialogType.Templates);
+    //     }, 1000);
 
-        setTimeout(() => {
-            setLoader(false);
-        }, 2000);
-    }}
-        className={clsx(
-            classes.btn,
-            classes.btnRounded
-        )}
-        style={{ margin: '8px' }}
-    >
-        {t('common.templates')}
-    </Button>
+    //     setTimeout(() => {
+    //         setLoader(false);
+    //     }, 2000);
+    // }}
+    //     className={clsx(
+    //         classes.btn,
+    //         classes.btnRounded
+    //     )}
+    //     style={{ margin: '8px' }}
+    // >
+    //     {t('common.templates')}
+    // </Button>
 
     useEffect(() => {
         if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
@@ -495,14 +495,14 @@ const NewsLetterInfo = ({ classes }) => {
 
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
-                if (template?.Html && template?.JsonData) {
-                    await dispatch(saveCampaign({
-                        Name: campaingnValues.Name,
-                        campaignId: saveInfo.CampaignID,
-                        JsonData: template?.JsonData,
-                        HTML: template?.Html
-                    }));
-                }
+                // if (template?.Html && template?.JsonData) {
+                //     await dispatch(saveCampaign({
+                //         Name: campaingnValues.Name,
+                //         campaignId: saveInfo.CampaignID,
+                //         JsonData: template?.JsonData,
+                //         HTML: template?.Html
+                //     }));
+                // }
 
 
                 if (isContiue) {
@@ -1133,7 +1133,7 @@ const NewsLetterInfo = ({ classes }) => {
                         }}
                         onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                         additionalButtons={renderButtons()}
-                        additionalButtonsOnStart={renderTemplateButtons()}
+                        // additionalButtonsOnStart={renderTemplateButtons()}
                     />
                 </Box>
                 <BaseDialog
@@ -1172,7 +1172,7 @@ const NewsLetterInfo = ({ classes }) => {
                     </Box>
                 </BaseDialog>
                 {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
-                {
+                {/* {
                     dialogType === DialogType.Templates && <Templates
                         isCreateCampaign={true}
                         classes={classes}
@@ -1187,7 +1187,7 @@ const NewsLetterInfo = ({ classes }) => {
                         }}
                         isOpen={dialogType === DialogType.Templates}
                     />
-                }
+                } */}
                 <Loader isOpen={showLoader} />
             </Box>
             {renderDialog()}
