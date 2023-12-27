@@ -23,7 +23,7 @@ import { HiArrowRight } from "react-icons/hi";
 import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
-export const rootDomain = '/Pulseem/';
+export const rootDomain = '/Pulseem';
 
 export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
@@ -208,7 +208,7 @@ export const getRoutes = (
         },
         {
           title: t("master.MmsCampaignMnage.Text"),
-          href: `${sitePrefix}reports/MmsCampaigns`,
+          href: `${sitePrefix}MmsCampaigns`,
           isShow: true,
         }
       ],
