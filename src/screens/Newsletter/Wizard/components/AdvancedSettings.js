@@ -74,10 +74,10 @@ export const AdvancedSettings = ({
                             </MenuItem>
                         ))}
                     </Select>
-                    {!campaingnValues?.IsResponsive && <FormHelperText className={clsx(classes.f16, classes.red)}>{RenderHtml(t('campaigns.newsLetterEditor.helpTexts.cellularSupportCaution'))}</FormHelperText>}
                 </FormControl>
+                {!campaingnValues?.IsResponsive && <FormHelperText className={clsx(classes.f14, classes.red)}>{RenderHtml(t('campaigns.newsLetterEditor.helpTexts.cellularSupportCaution'))}</FormHelperText>}
             </Grid>
-            <Grid item xs={12} sm={6} className='textBoxWrapper'>
+            <Grid item xs={12} sm={6} className='selectWrapper'>
                 <Typography title={t("campaigns.newsLetterEditor.pre_text")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.pre_text")}</Typography>
                 <TextField
                     id="previewText"

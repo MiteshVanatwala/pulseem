@@ -12,10 +12,10 @@ import {
   testSend,
   saveUserBlock,
   deleteUserBlock,
-  saveTemplateToAccount,
-  getTemplateById,
-  getPublicTemplates,
-  getAllTemplatesBySubaccountId
+  // saveTemplateToAccount,
+  // getTemplateById,
+  // getPublicTemplates,
+  // getAllTemplatesBySubaccountId
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
@@ -45,9 +45,9 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-import Templates from './modals/Templates.tsx';
-import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
-import SaveTemplate from './modals/SaveTemplate';
+// import Templates from './modals/Templates.tsx';
+// import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
+// import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 import { sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
@@ -89,8 +89,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [lastSaveText, setLastSaveText] = useState(null);
   const [silentSave, setSilentSave] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
-  const [newTemplate, setNewTemplate] = useState('');
+  // const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
+  // const [newTemplate, setNewTemplate] = useState('');
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -150,13 +150,13 @@ const CampaignEditor = ({ classes, ...props }) => {
   // Get data by campaign id
   useEffect(() => {
     if (params?.id > 0) {
-      if (localStorage.getItem('reloadBeeEditor') == '1') {
+      if (localStorage.getItem('reloadBeeEditor') === '1') {
         localStorage.removeItem('reloadBeeEditor');
         window.location.reload(true);
       } else getData();
     }
-    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-    dispatch(getAllTemplatesBySubaccountId());
+    // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    // dispatch(getAllTemplatesBySubaccountId());
   }, []);
   useEffect(() => {
     if (userBlocks) {
@@ -270,17 +270,17 @@ const CampaignEditor = ({ classes, ...props }) => {
       const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
       let forceTemplate = null;
       let defaultContent = DefaultContent(isRtlLang);
-      if (templateId !== null) {
-        const templateResponse = await dispatch(getTemplateById(templateId));
+      // if (templateId !== null) {
+      //   const templateResponse = await dispatch(getTemplateById(templateId));
 
-        if (templateResponse?.payload?.StatusCode === 201) {
-          const responseData = templateResponse?.payload?.Data;
-          setNewTemplate(responseData)
-          forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
-        } else {
-          setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
-        }
-      }
+      //   if (templateResponse?.payload?.StatusCode === 201) {
+      //     const responseData = templateResponse?.payload?.Data;
+      //     setNewTemplate(responseData)
+      //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+      //   } else {
+      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+      //   }
+      // }
 
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
@@ -301,14 +301,14 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           else {
             const beeTest = new BeePlugin(beeObject);
-            let template = null;
+            let template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
 
-            if (forceTemplate !== null) {
-              template = forceTemplate;
-            }
-            else {
-            template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
-            }
+            // if (forceTemplate !== null) {
+            //   template = forceTemplate;
+            // }
+            // else {
+            //   template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
+            // }
 
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
@@ -384,7 +384,8 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         else if (saveRef.current?.showAnimation) {
-          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+          // setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+          setToastMessage(ToastMessages.CAMPAIGN_SAVED);
         }
 
         if (reInit) {
@@ -392,18 +393,18 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       }
 
-      if (saveRef.current?.saveTemplate) {
-        const templateResponse = await dispatch(saveTemplateToAccount({
-          Name: saveRef.current?.templateName,
-          JsonData: finalJson,
-          HTML: finalHtml,
-          Category: saveRef.current?.templateCategory
-        }));
-        if (!templateResponse.payload.Data) {
-          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
-        }
-        dispatch(getAllTemplatesBySubaccountId());
-      }
+      // if (saveRef.current?.saveTemplate) {
+      //   const templateResponse = await dispatch(saveTemplateToAccount({
+      //     Name: saveRef.current?.templateName,
+      //     JsonData: finalJson,
+      //     HTML: finalHtml,
+      //     Category: saveRef.current?.templateCategory
+      //   }));
+      //   if (!templateResponse.payload.Data) {
+      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+      //   }
+      //   dispatch(getAllTemplatesBySubaccountId());
+      // }
     } catch (e) {
       console.error(e);
     }
@@ -597,10 +598,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   const config = getConfig();
 
 
-  const saveTemplate = async (name, category) => {
-    saveRef.current = { templateName: name, templateCategory: category, saveTemplate: true, showAnimation: true };
-    await editorRef.current.save();
-  }
+  // const saveTemplate = async (name, category) => {
+  //   saveRef.current = { templateName: name, templateCategory: category, saveTemplate: true, showAnimation: true };
+  //   await editorRef.current.save();
+  // }
 
   const onBeforeReinit = async () => {
     saveRef.current = { showAnimation: false, reInitEditor: true };
@@ -675,43 +676,43 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
-  const renderTemplateButtons = () => {
-    return <>
-      <Button onClick={() => {
-        setLoader(true);
-        setTimeout(() => {
-          setDialog(DialogType.Templates);
-        }, 1000);
+  // const renderTemplateButtons = () => {
+  //   return <>
+  //     <Button onClick={() => {
+  //       setLoader(true);
+  //       setTimeout(() => {
+  //         setDialog(DialogType.Templates);
+  //       }, 1000);
 
-        setTimeout(() => {
-          setLoader(false);
-        }, 2000);
-      }}
-        variant='contained'
-        size='medium'
-        className={clsx(
-          classes.btn,
-          classes.btnRounded,
-          classes.backButton
-        )}
-        style={{ margin: '8px' }}
-      >
-        {t('common.templates')}
-      </Button>
-      <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
-        variant='contained'
-        size='medium'
-        className={clsx(
-          classes.btn,
-          classes.btnRounded,
-          classes.backButton
-        )}
-        style={{ margin: '8px' }}
-        startIcon={<BiSave />}
-      >
-        {t('common.saveTemplate')}
-      </Button></>
-  }
+  //       setTimeout(() => {
+  //         setLoader(false);
+  //       }, 2000);
+  //     }}
+  //       variant='contained'
+  //       size='medium'
+  //       className={clsx(
+  //         classes.btn,
+  //         classes.btnRounded,
+  //         classes.backButton
+  //       )}
+  //       style={{ margin: '8px' }}
+  //     >
+  //       {t('common.templates')}
+  //     </Button>
+  //     <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
+  //       variant='contained'
+  //       size='medium'
+  //       className={clsx(
+  //         classes.btn,
+  //         classes.btnRounded,
+  //         classes.backButton
+  //       )}
+  //       style={{ margin: '8px' }}
+  //       startIcon={<BiSave />}
+  //     >
+  //       {t('common.saveTemplate')}
+  //     </Button></>
+  // }
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
@@ -788,7 +789,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       {renderToast()}
       {showGalleryModal()}
       {showDocumentsModal()}
-      {
+      {/* {
         dialog === DialogType.Templates && <Templates
           classes={classes}
           onClose={(template) => {
@@ -800,7 +801,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           }}
           isOpen={dialog === DialogType.Templates}
         />
-      }
+      } */}
       <NoCreditsModal
         classes={classes}
         onClose={() => setDialog(null)}
@@ -834,7 +835,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         disabled={buttonDisabled}
         campaignId={campaignId}
         ignorePaddingBottom={true}
-        innerStyle={{ paddingInline: 15}}
+        innerStyle={{ paddingInline: 15 }}
         classes={classes}
         onExit={!isFromAutomation && onExit}
         onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
@@ -848,10 +849,10 @@ const CampaignEditor = ({ classes, ...props }) => {
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
-        additionalButtonsOnStart={renderTemplateButtons()}
+        // additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
-      <OverwriteTemplatePopUp
+      {/* <OverwriteTemplatePopUp
         classes={classes}
         onClose={(resp) => {
           if (resp) {
@@ -869,7 +870,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           if (resp !== undefined) saveTemplate(resp.name, resp.category);
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
-      />
+      /> */}
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
   )
