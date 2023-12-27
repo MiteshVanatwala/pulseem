@@ -170,5 +170,6 @@ export const PulseemFeatures = {
   BEE_AMP: '43',
   BEE_ENABLE_GOOGLE_FONTS: '44',
   DISABLE_TWO_FACTOR_AUTH: '45',
-  WHATSAPP: '46'
+  WHATSAPP: '46',
+  APIKEY_ACCESS: '47'
 }

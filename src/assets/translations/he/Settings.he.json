@@ -165,6 +165,7 @@
 		"createNewApiKey": "<p style='direction: rtl'>צור מפתח API חדש</p>",
 		"showApiKey": "<p style='direction: rtl'>הצג/הסתר מפתח API</p>",
 		"mainApi": "כתובת URL API ראשי",
-		"directApi": "כתובת URL API שליחה ישירה"
+		"directApi": "כתובת URL API שליחה ישירה",
+		"noAPIKeyAccess": "על מנת להשתמש ב-API שלנו, אנא פנו לצוות התמיכה שלנו ב <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
 	}
 }

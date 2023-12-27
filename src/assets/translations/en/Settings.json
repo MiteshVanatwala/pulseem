@@ -164,6 +164,7 @@
 		"createNewApiKey": "Regenerate Api Key",
 		"showApiKey": "<p style='direction: ltr'>Show/Hide API Key</p>",
 		"mainApi": "Main API URL Address",
-		"directApi": "Direct Send API URL Address"
+		"directApi": "Direct Send API URL Address",
+		"noAPIKeyAccess": "In order to start using our API, please contact our support team on <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
 	}
 }

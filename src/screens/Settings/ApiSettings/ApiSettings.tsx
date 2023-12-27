@@ -28,6 +28,7 @@ import { BiExport } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import PulseemRadio from '../../../components/Controlls/PulseemRadio';
 import InputMask from 'react-input-mask';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -59,6 +60,7 @@ const ApiSettings = ({ classes }: any) => {
     const dispatch = useDispatch();
     const { isRTL, windowSize } = useSelector((state: any) => state.core);
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
+    const { accountFeatures } = useSelector((state: any) => state.common);
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setShowLoader] = useState(false);
     const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
@@ -72,6 +74,7 @@ const ApiSettings = ({ classes }: any) => {
     const [copyStatus, setCopyStatus] = useState<boolean>(false);
     const [showRegenerate, setShowRegenerate] = useState<boolean>(false);
     const [isMainApi, setIsMainApi] = useState<boolean>(true);
+    const [canSeeAPIKey, setcanSeeAPIKey] = useState<boolean>(false);
 
     const localClasses = useStyles();
 
@@ -314,7 +317,10 @@ const ApiSettings = ({ classes }: any) => {
                                                         style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
                                                         children={
                                                             <Button
-                                                                onClick={() => setShowApiKey(!showApiKey)}
+                                                                onClick={() => {
+                                                                    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.APIKEY_ACCESS) > -1) setShowApiKey(!showApiKey)
+                                                                    else setcanSeeAPIKey(true);
+                                                                }}
                                                                 className={localClasses.pwdEveButton}
                                                                 startIcon={<div className={classes.copyIcon}>{showApiKey ? (
                                                                     <VisibilityOff style={{ fontSize: 18 }} />
@@ -340,7 +346,10 @@ const ApiSettings = ({ classes }: any) => {
                                                         style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
                                                         children={
                                                             <Button
-                                                                onClick={() => setShowRegenerate(true)}
+                                                                onClick={() => {
+                                                                    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.APIKEY_ACCESS) > -1) setShowRegenerate(true)
+                                                                    else setcanSeeAPIKey(true);
+                                                                }}
                                                                 className={localClasses.pwdEveButton}
                                                                 startIcon={<div className={classes.copyIcon}>{<HiOutlineRefresh style={{ fontSize: 18 }} />}</div>}
                                                             >
@@ -361,7 +370,10 @@ const ApiSettings = ({ classes }: any) => {
                                                         title={RenderHtml(t("notifications.copy"))}
                                                         style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
                                                         children={
-                                                            <CopyToClipboard text={apiKey} onCopy={handleCopyScript}>
+                                                            <CopyToClipboard text={apiKey} onCopy={() => {
+                                                                if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.APIKEY_ACCESS) > -1) handleCopyScript()
+                                                                else setcanSeeAPIKey(true);
+                                                            }}>
                                                                 <Button
                                                                     className={localClasses.pwdEveButton}
                                                                     startIcon={<div className={classes.copyIcon}>{copyStatus ? '\uE134' : '\ue0b0'}</div>}
@@ -421,6 +433,17 @@ const ApiSettings = ({ classes }: any) => {
                 title={t('integrations.apiKey')}
             >
                 {RenderHtml(t('settings.apiSettings.reGenerateConfirm'))}
+            </BaseDialog>}
+            {canSeeAPIKey && <BaseDialog
+                classes={classes}
+                open={canSeeAPIKey}
+                onClose={() => setcanSeeAPIKey(false)}
+                onCancel={() => setcanSeeAPIKey(false)}
+                onConfirm={() => setcanSeeAPIKey(false)}
+                showDefaultButtons={false}
+                title={t('common.Notice')}
+            >
+                {RenderHtml(t('settings.apiSettings.noAPIKeyAccess'))}
             </BaseDialog>}
             {tfaEmailVerification && <VerificationDialog
                 variant="emailTFA"
