@@ -103,10 +103,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         paddingRight: isRTL ? 30 : "",
         paddingLeft: isRTL ? "" : 30,
         maxWidth: 300,
-        width: '100%',
-        [theme.breakpoints.down('xs')]: {
-            width: 'max-content',
-        }
+        width: '100%'
     },
     inputLabel: {
         fontSize: 20,

@@ -1262,6 +1262,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                         style={{
                                                             display: "flex",
                                                             marginTop: "10px",
+                                                            marginBottom: "10px",
                                                         }}
                                                         direction="row"
                                                     >

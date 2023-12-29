@@ -342,6 +342,7 @@ const SendingMethod = ({
                                     style={{
                                         marginTop: 10,
                                         pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
+                                        width: windowSize === "xs" ? '100%' : ''
                                     }}
                                 >
                                     <FormControl

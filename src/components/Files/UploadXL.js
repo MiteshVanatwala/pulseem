@@ -48,7 +48,7 @@ const UploadXL = ({
 }) => {
     const { t } = useTranslation();
     const { extraData } = useSelector((state) => state.sms);
-    const { language, isRTL } = useSelector(state => state.core)
+    const { language, isRTL, windowSize } = useSelector(state => state.core)
     const { uploadProgress } = useSelector((state) => state.group);
     const dispatch = useDispatch();
     const styles = useStyles();
@@ -796,7 +796,7 @@ const UploadXL = ({
                 autoComplete="off"
                 className={clsx(
                     classes.customScroll,
-                    areaData !== '' && isRTL ? classes.ltr : isRTL ? null : classes.ltr,
+                    isRTL ? classes.rtl : classes.ltr,
                     highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
                 )
                 }
@@ -854,7 +854,7 @@ const UploadXL = ({
                         {extraButtons}
                     </>
                 ) : null}
-                <span style={{ marginTop: areaData === "" ? 12 : null }}>{t("sms.totalRecords")}:  {totalRecords}</span>
+                <span  className={windowSize === "xs" ? classes.dBlock : ''} style={{ marginTop: areaData === "" ? 12 : null }}>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
         </Grid>
         <Loader isOpen={showLoader} progress={uploadProgress} message={t("common.uploadInProgress")} />
