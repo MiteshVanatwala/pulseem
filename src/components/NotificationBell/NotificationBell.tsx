@@ -10,6 +10,7 @@ import { AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai';
 import { IoMdRemoveCircleOutline } from 'react-icons/io';
 import { ClickAwayListener } from "@material-ui/core";
 import { MdDomain } from 'react-icons/md';
+import { setShowVerificationDomain } from '../../redux/reducers/newsletterSlice';
 
 enum NotifyCenterType {
   File = 0,
@@ -84,7 +85,7 @@ const NotificationBell = ({ classes }: any) => {
           </Box>
         }
         case NotifyCenterType.DomainValidaion: {
-          return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+          return <Box className={classes.dFlex} style={{ alignItems: 'center' }} onClick={() => dispatch(setShowVerificationDomain(true))}>
             <MdDomain className={classes.notifyIcon} />
             {option.SourceID === 1 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.syntaxError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}
             {option.SourceID === 2 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.mailHeaderError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}

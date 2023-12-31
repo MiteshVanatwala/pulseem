@@ -9,11 +9,17 @@ import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
 import Illustration_BG_BL from '../assets/images/Illustration_BG_BL';
 import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
+import { BaseDialog } from '../components/DialogTemplates/BaseDialog';
+import { setShowVerificationDomain } from '../redux/reducers/newsletterSlice';
+import { useDispatch } from 'react-redux';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
   const { t } = useTranslation();
   const { isAdmin, isAllowSwitchAccount, isRTL } = useSelector(state => state.core)
+  const { showDomainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
+  const dispatch = useDispatch();
+
   let route, title;
 
   const routes = getRoutes(t);
@@ -59,6 +65,24 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
     }
   }, [])
 
+  const commonDialogs = () => {
+    return <BaseDialog
+      disableBackdropClick={false}
+      classes={classes}
+      open={showDomainVerificationPopUp}
+      onConfirm={() => {
+        dispatch(setShowVerificationDomain(false));
+      }}
+      onClose={() => {
+        dispatch(setShowVerificationDomain(false));
+      }}
+      onCancel={() => {
+        dispatch(setShowVerificationDomain(false));
+      }}
+      title={"Domain Verification"}
+    />
+  }
+
 
   return (
     <HelmetProvider>
@@ -78,6 +102,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
           <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
           <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
         </div>
+        {commonDialogs()}
         {children}
       </Container>
     </HelmetProvider>
