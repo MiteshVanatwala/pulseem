@@ -9,11 +9,13 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai';
 import { IoMdRemoveCircleOutline } from 'react-icons/io';
 import { ClickAwayListener } from "@material-ui/core";
+import { MdDomain } from 'react-icons/md';
 
 enum NotifyCenterType {
   File = 0,
   Unsubscribe = 1,
-  UploadRecipient = 2
+  UploadRecipient = 2,
+  DomainValidaion = 3
 }
 
 enum NotifyCenterStatus {
@@ -48,6 +50,7 @@ const NotificationBell = ({ classes }: any) => {
               </Box>
               <Box style={{ paddingInlineStart: 15 }}>
                 <a
+                  rel="noreferrer"
                   className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
                   href={`/Pulseem/DownloadFile.aspx?fileFormat=XLS&fileId=${option.SourceID}`}
                   target="_blank"
@@ -55,6 +58,7 @@ const NotificationBell = ({ classes }: any) => {
                   {t("master.download")} XLS
                 </a>
                 <a
+                  rel="noreferrer"
                   className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
                   href={`/Pulseem/DownloadFile.aspx?fileFormat=CSV&fileId=${option.SourceID}`}
                   target="_blank"
@@ -79,6 +83,13 @@ const NotificationBell = ({ classes }: any) => {
             <Typography className={classes.font14}>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</Typography>
           </Box>
         }
+        case NotifyCenterType.DomainValidaion: {
+          return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+            <MdDomain className={classes.notifyIcon} />
+            {option.SourceID === 1 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.syntaxError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}
+            {option.SourceID === 2 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.mailHeaderError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}
+          </Box>
+        }
         default: {
           break;
         }
@@ -87,7 +98,7 @@ const NotificationBell = ({ classes }: any) => {
     return (
       <MenuList>
         {
-          notifyCenterList && notifyCenterList?.length > 0  ? notifyCenterList?.map((option: any) => (
+          notifyCenterList && notifyCenterList?.length > 0 ? notifyCenterList?.map((option: any) => (
             <MenuItem
               key={option?.ID}
               className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}
@@ -113,7 +124,7 @@ const NotificationBell = ({ classes }: any) => {
         className={clsx(classes.appBarItemContainer, classes.paddingSides15)}
         style={{
           paddingRight: isRTL ? 15 : 0,
-          paddingLeft:  isRTL ? 0 : 15
+          paddingLeft: isRTL ? 0 : 15
         }}
       >
         <Badge
