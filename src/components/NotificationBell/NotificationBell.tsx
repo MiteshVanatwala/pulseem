@@ -10,7 +10,7 @@ import { AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai';
 import { IoMdRemoveCircleOutline } from 'react-icons/io';
 import { ClickAwayListener } from "@material-ui/core";
 import { MdDomain } from 'react-icons/md';
-import { setShowVerificationDomain } from '../../redux/reducers/newsletterSlice';
+import { setVerificationDomain } from '../../redux/reducers/newsletterSlice';
 
 enum NotifyCenterType {
   File = 0,
@@ -19,11 +19,11 @@ enum NotifyCenterType {
   DomainValidaion = 3
 }
 
-enum NotifyCenterStatus {
-  Unread = 0,
-  Read = 1,
-  Removed = 2
-}
+// enum NotifyCenterStatus {
+//   Unread = 0,
+//   Read = 1,
+//   Removed = 2
+// }
 
 const NotificationBell = ({ classes }: any) => {
   const [displayNotifications, toggleDisplayNotifications] = useState(false);
@@ -85,11 +85,11 @@ const NotificationBell = ({ classes }: any) => {
           </Box>
         }
         case NotifyCenterType.DomainValidaion: {
-          return <Box className={classes.dFlex} style={{ alignItems: 'center' }} onClick={() => dispatch(setShowVerificationDomain(true))}>
+          return <Box className={classes.dFlex} style={{ alignItems: 'center' }} onClick={() => dispatch(setVerificationDomain({ display: true, address: `${option.TargetName}` }))}>
             <MdDomain className={classes.notifyIcon} />
             {option.SourceID === 1 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.syntaxError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}
             {option.SourceID === 2 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.mailHeaderError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}
-          </Box>
+          </Box >
         }
         default: {
           break;

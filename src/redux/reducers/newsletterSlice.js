@@ -256,12 +256,17 @@ export const newsletterSlice = createSlice({
       GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
       FUTURE_DATE_PASSED: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.FUTURE_DATE_PASSED', showAnimtionCheck: false },
     },
-    showDomainVerificationPopUp: false
+    domainVerificationPopUp: {
+      domain: {
+        display: false,
+        address: ''
+      }
+    }
     //archiveDirectNewsletterReport: []
   },
   reducers: {
-    setShowVerificationDomain: (state, action) => {
-      state.showDomainVerificationPopUp = action.payload;
+    setVerificationDomain: (state, action) => {
+      state.domainVerificationPopUp = action.payload;
     }
   },
   extraReducers: builder => {
@@ -322,5 +327,5 @@ export const newsletterSlice = createSlice({
 })
 
 
-export const { setShowVerificationDomain } = newsletterSlice.actions
+export const { setVerificationDomain } = newsletterSlice.actions
 export default newsletterSlice.reducer

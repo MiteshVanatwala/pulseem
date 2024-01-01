@@ -673,5 +673,27 @@
     "uploadFiles": {
       "fileDoesNotSupportedForImport": "קבצי XLS לא נתמכים בייבוא נמענים למערכת. במידה וקיים הצורך לייבא נמענים מקובץ זה בהמשך, יש לייצא קובץ מסוג XLSX"
     }
+  },
+  "domainVerification": {
+    "popup": {
+      "title": "אימות דומיין ##domainAddress##",
+      "text": "טקסט טקסט טקסט",
+      "sections": {
+        "verifyDomain": {
+          "title": "אימות דומיין חדש",
+          "text": "<div><span>שלבים מקדימים (גם להוספת SPF וגם להוספת DKIM)</span><ul><li>יש להתחבר למערכת ניהול של הדומיין.<li>DNS להגיע למקום שבו ניתן לעדכן ולהוסיף רשומת</ul><b style=color:red><u>SPF</u></b><ul style=list-style:decimal><li><b>במידה ולא קיימת</b> <span>בהגדרות של ה DNS רשומת TXT שמכילה את התווים - v=spf</span><ul style=list-style:decimal><li>יש להוסיף רשומת DNS חדשה מסוג TXT<li>יש להקליד את הערך @ בשדה Host/Name<li>יש להקליד את הערך הבאה בשדה Content/TXT Value</li><span>v=spf1 include:youlinktv.com ip4: 62.219.80.0/24 ~all</span></ul></li><br><li><b>במידה וקיימת רשומה</b><ul style=list-style:decimal><li>יש לערוך אותה ולהוסעיף לה את הערכים באופן הבא<li>v=spf1 ip4:…<b>ip4: 62.219.80.0/24</b>… include…<span class=bold>include:youlinktv.com</span>~all</li><span>** יש להוסיף אך ורק את מה שמודגש</span></ul></li><br></ul><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><b style=color:red><u>DKIM</u></b><ul style=list-style:decimal><li>יש להוסיף רשומת TXT חדשה<li>יש להקליד את הערך<b>alfa_.domainkey</b>בשדה Host/Name<li>יש להקליד את הערך הבא בשדה Content/TXT Value</ul><span>v=DKIM1; k=rsa; h=sha256; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+bGl6UdyLB2oXWCGDxu715LS2EZ 0U6LwA3z6DrGMZALT+ZG33oYXUQVQmLQHg0mvTowJC9eEejTJWrbLPyd/20RU19XMyj7 NXnAAsJWbzRzQcRcc/mlgJPseKrjRzAo38WIDovuUxxpfLslRgX82c2jENw5Ff4gO/XeyLaTne WQIDAQAB</span><br><br><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><b style=color:red><u>DMARC</u></b><br><br><span>אם לא קיימת לכם רשומת DMARC, ניתן להוסיף רשומת DNS חדשה. <br/>אם זאת הפעם הראשונה שאתם מוסיפים רשומת DMARC, מומלץ להגדיר את סוג הפעולה כnone, <br/>על מנת לבחון מי שולח בשמכם מיילים ואת ההשפעה הפוטנציאלית לפני שמשנים את סוג הפעולה לreject או quarantine.</span><ul style=list-style:decimal><li>יש להוסיף רשומת TXT חדשה<li>יש להקליד את הערך dmarc_ בשדה Host/Name<li>יש להקליד את הערך הבא בשדה Content/TXT Value</li><span>v=DMARC1; p=none; rua=mailto:report@example.com</span><span><br/>** זאת בהנחה שהדומיין שלכם הוא com.example, יש להגדיר תיבה אליה תקבלו את הדוחות, <br/>חשוב לשים mailto לפני הכתובת המייל המלאה</span></ul><br><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><br></div>",
+          "button": "לחץ כאן לבדיקה"
+        },
+        "buyVerifiedDomain": {
+          "title": "רכוש דומיין מאומת",
+          "text": "ליצירת קשר עם מחלקת המכירות שלנו<br/><a href='mailto:sales@Pulseem.com' style='color:red'>sales@Pulseem.com</a>"
+        },
+        "sendFromSharedDomain": {
+          "title": "שליחה באמצעות דומיין שיתופי",
+          "text": "your-mail@pulseem.com<br/>תגובות למייל יישלחו לכתובת המייל האחרונה שאומתה לשליחה",
+          "button": "שימוש בדומיין שיתופי"
+        }
+      }
+    }
   }
 }
