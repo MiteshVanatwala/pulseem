@@ -2602,6 +2602,8 @@ const SmsSend = ({ classes, ...props }) => {
       ),
       renderButtons: false,
       showDefaultButtons: false,
+      onCancel: () => { Redirect({ url: "/react/SMSCampaigns" }) },
+      onClose: () => { Redirect({ url: "/react/SMSCampaigns" }) },
       exit: true
     }
   }
