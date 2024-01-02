@@ -74,7 +74,7 @@ const ApiSettings = ({ classes }: any) => {
     const [copyStatus, setCopyStatus] = useState<boolean>(false);
     const [showRegenerate, setShowRegenerate] = useState<boolean>(false);
     const [isMainApi, setIsMainApi] = useState<boolean>(true);
-    const [canSeeAPIKey, setcanSeeAPIKey] = useState<boolean>(false);
+    const [APIKeyRestrictionDialog, setAPIKeyRestrictionDialog] = useState<boolean>(false);
 
     const localClasses = useStyles();
 
@@ -173,6 +173,8 @@ const ApiSettings = ({ classes }: any) => {
             label: t("settings.apiSettings.directApi"),
         }
     ];
+
+    const APIFeatureAllowed = () => accountFeatures && ((isMainApi && accountFeatures?.indexOf(PulseemFeatures.UI_API) > -1) || (!isMainApi && accountFeatures?.indexOf(PulseemFeatures.DIRECT_API) > -1));
 
     return (
         <DefaultScreen
@@ -318,8 +320,8 @@ const ApiSettings = ({ classes }: any) => {
                                                         children={
                                                             <Button
                                                                 onClick={() => {
-                                                                    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.APIKEY_ACCESS) > -1) setShowApiKey(!showApiKey)
-                                                                    else setcanSeeAPIKey(true);
+                                                                    if (APIFeatureAllowed()) setShowApiKey(!showApiKey)
+                                                                    else setAPIKeyRestrictionDialog(true);
                                                                 }}
                                                                 className={localClasses.pwdEveButton}
                                                                 startIcon={<div className={classes.copyIcon}>{showApiKey ? (
@@ -347,8 +349,8 @@ const ApiSettings = ({ classes }: any) => {
                                                         children={
                                                             <Button
                                                                 onClick={() => {
-                                                                    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.APIKEY_ACCESS) > -1) setShowRegenerate(true)
-                                                                    else setcanSeeAPIKey(true);
+                                                                    if (APIFeatureAllowed()) setShowRegenerate(true)
+                                                                    else setAPIKeyRestrictionDialog(true);
                                                                 }}
                                                                 className={localClasses.pwdEveButton}
                                                                 startIcon={<div className={classes.copyIcon}>{<HiOutlineRefresh style={{ fontSize: 18 }} />}</div>}
@@ -371,8 +373,8 @@ const ApiSettings = ({ classes }: any) => {
                                                         style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
                                                         children={
                                                             <CopyToClipboard text={apiKey} onCopy={() => {
-                                                                if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.APIKEY_ACCESS) > -1) handleCopyScript()
-                                                                else setcanSeeAPIKey(true);
+                                                                if (APIFeatureAllowed()) handleCopyScript()
+                                                                else setAPIKeyRestrictionDialog(true);
                                                             }}>
                                                                 <Button
                                                                     className={localClasses.pwdEveButton}
@@ -434,12 +436,12 @@ const ApiSettings = ({ classes }: any) => {
             >
                 {RenderHtml(t('settings.apiSettings.reGenerateConfirm'))}
             </BaseDialog>}
-            {canSeeAPIKey && <BaseDialog
+            {APIKeyRestrictionDialog && <BaseDialog
                 classes={classes}
-                open={canSeeAPIKey}
-                onClose={() => setcanSeeAPIKey(false)}
-                onCancel={() => setcanSeeAPIKey(false)}
-                onConfirm={() => setcanSeeAPIKey(false)}
+                open={APIKeyRestrictionDialog}
+                onClose={() => setAPIKeyRestrictionDialog(false)}
+                onCancel={() => setAPIKeyRestrictionDialog(false)}
+                onConfirm={() => setAPIKeyRestrictionDialog(false)}
                 showDefaultButtons={false}
                 title={t('common.Notice')}
             >
