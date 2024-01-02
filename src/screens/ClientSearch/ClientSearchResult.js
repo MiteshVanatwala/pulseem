@@ -1696,7 +1696,7 @@ const ClientSearchResult = ({ classes }) => {
                 <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
                 <Typography >{Email}</Typography>
               </Box>
-              <Box className={clsx(classes.flex4)} style={{ maxWidth: '10%' }}>
+              <Box className={clsx(classes.flex4)}>
                 <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(true)}</Typography>
               </Box>
             </Box>
@@ -1707,7 +1707,7 @@ const ClientSearchResult = ({ classes }) => {
                 <Typography className={classes.bold}>{t("common.Cellphone")}</Typography>
                 <Typography >{Cellphone}</Typography>
               </Box>
-              <Box className={clsx(classes.flex4)} style={{ maxWidth: '10%' }}>
+              <Box className={clsx(classes.flex4)}>
                 <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(false)}</Typography>
               </Box>
             </Box>
