@@ -299,7 +299,7 @@ export const getRoutes = (
       options: [
         {
           title: t("master.RadMenuItemCreateAutomationResource.Text"),
-          href: "/Pulseem/CreateAutomations.aspx?fromreact=true",
+          href: `/Pulseem/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
           isShow: true,
         },
         {

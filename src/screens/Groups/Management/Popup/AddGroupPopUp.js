@@ -80,7 +80,6 @@ const AddGroupPopUp = ({
                     message: ToastMessages.GROUP_UPDATED,
                     Func: () => {
                         new Promise(async (resolutionFunc, rejectionFunc) => {
-                            await dispatch(getGroupsBySubAccountId())
                             await resolutionFunc(getData());
                             setNewGroupData(DEFAULT_NEW_GROUP);
                             if (data.IsTestGroup)

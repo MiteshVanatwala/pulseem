@@ -31,7 +31,7 @@ import { Title } from '../../../components/managment/Title';
 
 const AutomationsManagnentScreen = ({ classes }) => {
   const Redirect = useNavigate();
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -214,7 +214,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/CreateAutomations.aspx?fromreact=true'
+            href={`/Pulseem/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -271,7 +271,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}`)
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
         }
       },
       {
@@ -279,7 +279,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         icon: EditIcon,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true` : '',
+        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : '',
         rootClass: classes.paddingIcon,
         onClick: () => {
           if (IsActive) {

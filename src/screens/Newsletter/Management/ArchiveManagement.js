@@ -246,23 +246,27 @@ const ArchiveManagementScreen = ({ classes }) => {
 
     const list = searchResults ?? newsletterArchiveData;
 
+    const fields = {...exportColumnHeader};
+
     const exportOptions = {
       OrderItems: true,
       FormatDate: true,
       ConvertStatusToString: true,
       Statuses: EmailStatus,
-      Order: Object.keys(exportColumnHeader),
+      Order: Object.keys(fields),
       DeleteProperties: ["Status"]
     };
 
     try {
       const result = await HandleExportData(list, exportOptions);
 
+      delete fields["Status"];
+      
       ExportFile({
         data: result,
         fileName: 'emailReport',
         exportType: formatType,
-        fields: exportColumnHeader
+        fields: fields
       });
     } catch (e) {
       console.log(e);
@@ -621,7 +625,7 @@ const ArchiveManagementScreen = ({ classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialogType(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <Loader isOpen={showLoader} />
