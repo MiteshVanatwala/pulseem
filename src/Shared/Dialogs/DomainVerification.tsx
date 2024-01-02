@@ -2,12 +2,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { setVerificationDomain } from "../../redux/reducers/newsletterSlice";
 import { StateType } from "../../Models/StateTypes";
-import { MdArrowBackIos, MdArrowForwardIos, MdDomain, MdOutlineVerified } from "react-icons/md";
+import { MdArrowBackIos, MdArrowForwardIos, MdDomain, MdOutlineReportGmailerrorred, MdOutlineVerified } from "react-icons/md";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { useTranslation } from "react-i18next";
 import { Grid, Box, Accordion, AccordionSummary, makeStyles, AccordionDetails, Typography, Button } from '@material-ui/core'
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GrFormAdd, GrFormSubtract } from "react-icons/gr";
 import { PulseemResponse } from "../../Models/APIResponse";
 import { GetDomainVerification } from "../../redux/reducers/DomainVerificationSlice";
@@ -65,6 +65,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
     const [domainReady, setDomainReady] = useState<boolean>(false);
     const [sharedDomainReady, setSharedDomainReady] = useState<boolean>(false);
+    const [reason, setReason] = useState<string>('');
     const [callbackResponse, setCallbackResponse] = useState<any>({
         SourceID: 0,
         IsSPFApproved: false,
@@ -79,6 +80,10 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         SyntaxError = 1,
         GmailServers = 2
     }
+
+    useEffect(() => {
+        setReason('')
+    }, [activeAccordion])
 
     const verifyDomain = async (isSharedDomain: boolean) => {
         const response = await dispatch(GetDomainVerification(domain?.address)) as any;
@@ -114,6 +119,8 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                         break;
                     }
                 }
+                setReason(t(`common.domainVerification.popup.responses.${response.Data?.SourceID}`))
+                setTimeout(() => { setReason('') }, 5000);
                 break;
             }
             case 401: {
@@ -131,13 +138,18 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         return <Grid container>
             <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.verifyDomain.text"))}</Box>
             <Box className={classes.fullFlexColumn}>
-                {!domainReady && <Button
+                {!domainReady && <><Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
                     onClick={() => verifyDomain(false)}
                 >
                     {t('common.domainVerification.popup.sections.verifyDomain.button')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                </Button>}
+                </Button>
+                    {reason !== '' && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center', marginTop: 10 }}>
+                        <MdOutlineReportGmailerrorred className={clsx('flexEnd')} style={{ color: 'red', fontSize: 24 }} />
+                        <Typography style={{ marginInline: 5, fontWeight: 600 }}>{reason}</Typography>
+                    </Box>}
+                </>}
                 {domainReady && domain?.verifyCallback ? (<Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
                     onClick={() => domain?.verifyCallback && domain?.verifyCallback(callbackResponse)}
@@ -162,13 +174,18 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         return <Grid container>
             <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
             <Box className={classes.fullFlexColumn}>
-                {!sharedDomainReady && <Button
+                {!sharedDomainReady && <><Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
                     onClick={() => { verifyDomain(true) }}
                 >
                     {t('common.domainVerification.popup.sections.verifyDomain.button')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                </Button>}
+                </Button>
+                    {reason !== '' && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center', marginTop: 10 }}>
+                        <MdOutlineReportGmailerrorred className={clsx('flexEnd')} style={{ color: 'red', fontSize: 24 }} />
+                        <Typography style={{ marginInline: 5, fontWeight: 600 }}>{reason}</Typography>
+                    </Box>}
+                </>}
                 {sharedDomainReady && domain?.verifySharedCallback ? (<Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
                     onClick={() => domain?.verifySharedCallback && domain?.verifySharedCallback(callbackResponse)}

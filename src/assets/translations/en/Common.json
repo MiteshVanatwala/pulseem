@@ -687,6 +687,11 @@
       "title": "Domain Verification ##domainAddress##",
       "text": "aaa",
       "domainVerified": "Domain Verified",
+      "responses": {
+        "0": "Domain Verified",
+        "1": "Syntax Error",
+        "2": "The Domain was not passed Gmail verification"
+      },
       "sections": {
         "verifyDomain": {
           "title": "Verify a New Domain",
