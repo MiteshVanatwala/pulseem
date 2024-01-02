@@ -686,6 +686,7 @@
     "popup": {
       "title": "Domain Verification ##domainAddress##",
       "text": "aaa",
+      "domainVerified": "Domain Verified",
       "sections": {
         "verifyDomain": {
           "title": "Verify a New Domain",

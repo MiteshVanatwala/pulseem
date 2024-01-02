@@ -678,6 +678,7 @@
     "popup": {
       "title": "אימות דומיין ##domainAddress##",
       "text": "טקסט טקסט טקסט",
+      "domainVerified": "דומיין מאושר",
       "sections": {
         "verifyDomain": {
           "title": "אימות דומיין חדש",

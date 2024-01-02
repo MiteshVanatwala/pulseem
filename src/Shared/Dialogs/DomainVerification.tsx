@@ -2,19 +2,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { setVerificationDomain } from "../../redux/reducers/newsletterSlice";
 import { StateType } from "../../Models/StateTypes";
-import { MdArrowBackIos, MdArrowForwardIos, MdDomain } from "react-icons/md";
+import { MdArrowBackIos, MdArrowForwardIos, MdDomain, MdOutlineVerified } from "react-icons/md";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { useTranslation } from "react-i18next";
 import { Grid, Box, Accordion, AccordionSummary, makeStyles, AccordionDetails, Typography, Button } from '@material-ui/core'
 import clsx from "clsx";
 import { useState } from "react";
 import { GrFormAdd, GrFormSubtract } from "react-icons/gr";
+import { PulseemResponse } from "../../Models/APIResponse";
+import { GetDomainVerification } from "../../redux/reducers/DomainVerificationSlice";
+import { logout } from "../../helpers/Api/PulseemReactAPI";
 
 interface DomainVerificationObj {
     classes: any,
     domain: {
         display: boolean,
-        address: string
+        address: string,
+        verifyCallback?: Function | never,
+        verifySharedCallback?: Function | never
     }
 }
 
@@ -44,6 +49,7 @@ const useStyles = makeStyles({
             margin: 0
         }
     },
+    displayBlock: {},
     plusIcon: {
         width: 30,
 
@@ -57,58 +63,122 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     const { isRTL } = useSelector((state: StateType) => state.core);
     const { domainVerificationPopUp } = useSelector((state: StateType) => state.newsletter);
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
+    const [domainReady, setDomainReady] = useState<boolean>(false);
     const [sharedDomainReady, setSharedDomainReady] = useState<boolean>(false);
+    const [callbackResponse, setCallbackResponse] = useState<any>({
+        SourceID: 0,
+        IsSPFApproved: false,
+        IsDKIMApproved: false,
+        IsDMARCApprotved: false
+
+    } as any);
     const resetDomainObj = { domain: '', display: false };
 
-    const verifyDomainRegularity = () => {
-        // const response = await dispatch(verifyDomainRegularity())
-        // handleResponses(response.payload)
+    enum DomainSourceStatus {
+        Success = 0,
+        SyntaxError = 1,
+        GmailServers = 2
     }
 
-    const verifySharedDomainCreated = () => {
-        // const response = await dispatch(verifyDomainRegularity())
-        // handleResponses(response.payload)
+    const verifyDomain = async (isSharedDomain: boolean) => {
+        const response = await dispatch(GetDomainVerification(domain?.address)) as any;
+        handleResponses(response?.payload, isSharedDomain)
     }
 
-    const VerifyDomain = () => {
+    const handleResponses = (response: PulseemResponse, isSharedDomain: boolean) => {
+        switch (response.StatusCode) {
+            case 201: {
+                switch (response.Data?.SourceID) {
+                    case DomainSourceStatus.Success: {
+                        setCallbackResponse({
+                            SourceID: DomainSourceStatus.Success,
+                            ...response.Data
+                        });
+                        isSharedDomain ? setSharedDomainReady(true) : setDomainReady(true);
+                        break;
+                    }
+                    case DomainSourceStatus.SyntaxError: {
+                        setCallbackResponse({
+                            SourceID: DomainSourceStatus.SyntaxError,
+                            ...response.Data
+                        });
+                        isSharedDomain ? setSharedDomainReady(false) : setDomainReady(false);
+                        break;
+                    }
+                    case DomainSourceStatus.GmailServers: {
+                        setCallbackResponse({
+                            SourceID: DomainSourceStatus.GmailServers,
+                            ...response.Data
+                        });
+                        isSharedDomain ? setSharedDomainReady(false) : setDomainReady(false);
+                        break;
+                    }
+                }
+                break;
+            }
+            case 401: {
+                logout();
+                break;
+            }
+            case 500:
+            default: {
+                break;
+            }
+        }
+    }
+
+    const VerifyDomainTab = () => {
         return <Grid container>
             <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.verifyDomain.text"))}</Box>
             <Box className={classes.fullFlexColumn}>
-                <Button
+                {!domainReady && <Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                    onClick={verifyDomainRegularity}
+                    onClick={() => verifyDomain(false)}
                 >
                     {t('common.domainVerification.popup.sections.verifyDomain.button')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                </Button>
+                </Button>}
+                {domainReady && domain?.verifyCallback ? (<Button
+                    className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
+                    onClick={() => domain?.verifyCallback && domain?.verifyCallback(callbackResponse)}
+                >
+                    {t('common.domainVerification.popup.sections.verifyDomain.button')}
+                    {<MdOutlineVerified />}
+                </Button>) : domainReady && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center' }}>
+                    <MdOutlineVerified className={clsx('flexEnd')} style={{ color: 'green', fontSize: 36 }} textRendering={"Verified"} title="Verified" />
+                    <Typography style={{ marginInline: 5, fontWeight: 600 }}>{t('common.domainVerification.popup.domainVerified')}</Typography>
+                </Box>}
             </Box>
         </Grid>
     }
 
-    const BuyVerifiedDomain = () => {
+    const BuyVerifiedDomainTab = () => {
         return <Grid container>
             <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.buyVerifiedDomain.text"))}</Box>
         </Grid>
     }
 
-    const SharedDomain = () => {
+    const SharedDomainTab = () => {
         return <Grid container>
             <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
             <Box className={classes.fullFlexColumn}>
                 {!sharedDomainReady && <Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                    onClick={verifySharedDomainCreated}
+                    onClick={() => { verifyDomain(true) }}
                 >
                     {t('common.domainVerification.popup.sections.verifyDomain.button')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 </Button>}
-                {sharedDomainReady && <Button
+                {sharedDomainReady && domain?.verifySharedCallback ? (<Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                    onClick={verifySharedDomainCreated}
+                    onClick={() => domain?.verifySharedCallback && domain?.verifySharedCallback(callbackResponse)}
                 >
                     {t('common.domainVerification.popup.sections.sendFromSharedDomain.button')}
-                    {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                </Button>}
+                    {<MdOutlineVerified />}
+                </Button>) : sharedDomainReady && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center' }}>
+                    <MdOutlineVerified className={clsx('flexEnd')} style={{ color: 'green', fontSize: 36 }} textRendering={"Verified"} title="Verified" />
+                    <Typography style={{ marginInline: 5, fontWeight: 600 }}>{t('common.domainVerification.popup.domainVerified')}</Typography>
+                </Box>}
             </Box>
         </Grid>
     }
@@ -149,7 +219,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <VerifyDomain />
+                    <VerifyDomainTab />
                 </AccordionDetails>
             </Accordion>
             <Accordion
@@ -171,7 +241,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <BuyVerifiedDomain />
+                    <BuyVerifiedDomainTab />
                 </AccordionDetails>
             </Accordion>
             <Accordion
@@ -193,7 +263,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <SharedDomain />
+                    <SharedDomainTab />
                 </AccordionDetails>
             </Accordion>
         </Box>}
