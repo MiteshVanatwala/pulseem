@@ -704,7 +704,7 @@
         },
         "sendFromSharedDomain": {
           "title": "Send using Shared Domain",
-          "text": "your-mail@pulseem.com<br/>תגובות למייל יישלחו לכתובת המייל האחרונה שאומתה לשליחה",
+          "text": "תגובות למייל יישלחו לכתובת המייל האחרונה שאומתה לשליחה",
           "button": "Use Shared Domain"
         }
       }

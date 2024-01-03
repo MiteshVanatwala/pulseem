@@ -12,6 +12,7 @@ import { GrFormAdd, GrFormSubtract } from "react-icons/gr";
 import { PulseemResponse } from "../../Models/APIResponse";
 import { GetDomainVerification } from "../../redux/reducers/DomainVerificationSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
+import InputMask from 'react-input-mask';
 
 interface DomainVerificationObj {
     classes: any,
@@ -64,7 +65,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     const { domainVerificationPopUp } = useSelector((state: StateType) => state.newsletter);
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
     const [domainReady, setDomainReady] = useState<boolean>(false);
-    const [sharedDomainReady, setSharedDomainReady] = useState<boolean>(false);
+    const [sharedDomain, setSharedDomain] = useState<string>('@pulseem.co');
     const [reason, setReason] = useState<string>('');
     const [callbackResponse, setCallbackResponse] = useState<any>({
         SourceID: 0,
@@ -85,12 +86,12 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         setReason('')
     }, [activeAccordion])
 
-    const verifyDomain = async (isSharedDomain: boolean) => {
+    const verifyDomain = async () => {
         const response = await dispatch(GetDomainVerification(domain?.address)) as any;
-        handleResponses(response?.payload, isSharedDomain)
+        handleResponses(response?.payload)
     }
 
-    const handleResponses = (response: PulseemResponse, isSharedDomain: boolean) => {
+    const handleResponses = (response: PulseemResponse) => {
         switch (response.StatusCode) {
             case 201: {
                 switch (response.Data?.SourceID) {
@@ -99,7 +100,6 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                             SourceID: DomainSourceStatus.Success,
                             ...response.Data
                         });
-                        isSharedDomain ? setSharedDomainReady(true) : setDomainReady(true);
                         break;
                     }
                     case DomainSourceStatus.SyntaxError: {
@@ -107,7 +107,6 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                             SourceID: DomainSourceStatus.SyntaxError,
                             ...response.Data
                         });
-                        isSharedDomain ? setSharedDomainReady(false) : setDomainReady(false);
                         break;
                     }
                     case DomainSourceStatus.GmailServers: {
@@ -115,7 +114,6 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                             SourceID: DomainSourceStatus.GmailServers,
                             ...response.Data
                         });
-                        isSharedDomain ? setSharedDomainReady(false) : setDomainReady(false);
                         break;
                     }
                 }
@@ -140,7 +138,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
             <Box className={classes.fullFlexColumn}>
                 {!domainReady && <><Button
                     className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                    onClick={() => verifyDomain(false)}
+                    onClick={() => verifyDomain()}
                 >
                     {t('common.domainVerification.popup.sections.verifyDomain.button')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -170,34 +168,8 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         </Grid>
     }
 
-    const SharedDomainTab = () => {
-        return <Grid container>
-            <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
-            <Box className={classes.fullFlexColumn}>
-                {!sharedDomainReady && <><Button
-                    className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                    onClick={() => { verifyDomain(true) }}
-                >
-                    {t('common.domainVerification.popup.sections.verifyDomain.button')}
-                    {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                </Button>
-                    {reason !== '' && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center', marginTop: 10 }}>
-                        <MdOutlineReportGmailerrorred className={clsx('flexEnd')} style={{ color: 'red', fontSize: 24 }} />
-                        <Typography style={{ marginInline: 5, fontWeight: 600 }}>{reason}</Typography>
-                    </Box>}
-                </>}
-                {sharedDomainReady && domain?.verifySharedCallback ? (<Button
-                    className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                    onClick={() => domain?.verifySharedCallback && domain?.verifySharedCallback(callbackResponse)}
-                >
-                    {t('common.domainVerification.popup.sections.sendFromSharedDomain.button')}
-                    {<MdOutlineVerified />}
-                </Button>) : sharedDomainReady && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center' }}>
-                    <MdOutlineVerified className={clsx('flexEnd')} style={{ color: 'green', fontSize: 36 }} textRendering={"Verified"} title="Verified" />
-                    <Typography style={{ marginInline: 5, fontWeight: 600 }}>{t('common.domainVerification.popup.domainVerified')}</Typography>
-                </Box>}
-            </Box>
-        </Grid>
+    const inputLengthMask = () => {
+        return Array(sharedDomain.replace('@pulseem.co', '').length + 1).join('*') + '@pulseem.co';
     }
 
     return domain?.display ? (<BaseDialog
@@ -242,7 +214,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
             <Accordion
                 expanded={activeAccordion === 2}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
-                key={1}
+                key={2}
             >
                 <AccordionSummary
                     expandIcon={""}
@@ -264,7 +236,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
             <Accordion
                 expanded={activeAccordion === 3}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
-                key={1}
+                key={3}
             >
                 <AccordionSummary
                     expandIcon={""}
@@ -280,7 +252,34 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <SharedDomainTab />
+                    <Grid container>
+
+                        <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
+                        <Box className={classes.fullWidth}>
+                            <InputMask
+                                inputMode="email"
+                                dir="ltr"
+                                name="sharedDomain"
+                                className={clsx(classes.InputMaskTextField, classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                                mask={inputLengthMask}
+                                maskPlaceholder=""
+                                placeholder="@pulseem.co"
+                                value={sharedDomain}
+                                onChange={(event: any) => setSharedDomain(event.target.value)}
+                            // disabled={isAuthenticated}
+                            />
+                        </Box>
+                        <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text1"))}</Box>
+                        <Box className={classes.fullFlexColumn}>
+                            {domain?.verifySharedCallback && <Button
+                                className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
+                                onClick={() => domain?.verifySharedCallback && domain?.verifySharedCallback(callbackResponse)}
+                            >
+                                {t('common.domainVerification.popup.sections.sendFromSharedDomain.button')}
+                                {<MdOutlineVerified />}
+                            </Button>}
+                        </Box>
+                    </Grid>
                 </AccordionDetails>
             </Accordion>
         </Box>}

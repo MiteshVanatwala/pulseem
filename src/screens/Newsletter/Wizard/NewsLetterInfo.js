@@ -8,7 +8,7 @@ import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
-import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
+import { deleteCampaign, setVerificationDomain } from '../../../redux/reducers/newsletterSlice';
 import { getCampaignInfo, saveCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import WizardActions from '../../../components/Wizard/WizardActions';
@@ -347,6 +347,27 @@ const NewsLetterInfo = ({ classes }) => {
             }
             case 406: {
                 setToastMessage(ToastMessages.NULL_FILE)
+                break;
+            }
+            case 451: {
+                dispatch(setVerificationDomain({
+                    display: true,
+                    address: `${campaingnValues.FromEmail}`,
+                    verifyCallback: (obj) => {
+                        const { SourceID, IsSPFApproved, IsDKIMApproved, IsDMARCApprotved } = obj;
+                        console.log('SourceID', SourceID);
+                        console.log('IsSPFApproved', IsSPFApproved);
+                        console.log('IsDKIMApproved', IsDKIMApproved);
+                        console.log('IsDMARCApprotved', IsDMARCApprotved);
+                    },
+                    verifySharedCallback: (obj) => {
+                        const { SourceID, IsSPFApproved, IsDKIMApproved, IsDMARCApprotved } = obj;
+                        console.log('SourceID', SourceID);
+                        console.log('IsSPFApproved', IsSPFApproved);
+                        console.log('IsDKIMApproved', IsDKIMApproved);
+                        console.log('IsDMARCApprotved', IsDMARCApprotved);
+                    }
+                }))
                 break;
             }
             case 500: {
