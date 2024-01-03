@@ -284,7 +284,7 @@ const RecipientReport = ({ classes }: any) => {
           </Box>
         ) : (
           <>
-            <>{recipientsReportData?.Campaigns?.map(renderNewsletterRow)}</>
+            <>{recipientsReportData?.Campaigns?.map(windowSize === "xs" ? renderNewsletterPhoneRow : renderNewsletterRow)}</>
             {renderNewsletterPagination()}
           </>
         )}
@@ -358,6 +358,71 @@ const RecipientReport = ({ classes }: any) => {
     )
   }
 
+  const renderNewsletterPhoneRow = (row: any) => {
+    const statusText = ConvertNewsletterStatusText(row.Status);
+    
+    return (
+      <TableRow key={RandomID()} component="div" classes={rowStyle}>
+        <TableCell
+          style={{ flex: 1 }}
+          classes={{ root: classes.tableCellRoot }}
+          className={classes.p20}
+        >
+          <Box className={classes.spaceBetween}>
+            <Box className={classes.inlineGrid}>
+            <Typography className={classes.bold}>{t('campaigns.camapignName')}</Typography>
+              {row.Name}
+            </Box>
+            <Box>
+              <Typography className={classes.bold}>{t('common.Dates')}</Typography>
+              {FormatDate(row.SendDate)}
+            </Box>
+          </Box>
+          <Box className={clsx(classes.mt1)}>
+            <Box className={classes.flex}>
+              <Box className={clsx(classes.flex6)}>
+                <Typography className={classes.bold}>{t('common.Status')}</Typography>
+                <Typography className={clsx(
+                  classes.middleText,
+                  classes.recipientsStatus,
+                  classes.f15,
+                  {
+                    [classes.recipientsStatusCreated]: row?.Status === 1,
+                    [classes.recipientsStatusSent]: row?.Status === 4,
+                    [classes.recipientsStatusSending]: row?.Status === 2,
+                    [classes.recipientsStatusCanceled]: row?.Status === 5
+                  }
+                )}>
+                  {t(statusText)}
+                </Typography>
+              </Box>
+              <Box className={clsx(classes.flex4)}>
+                <Typography className={classes.bold}>{t('common.Opened')}</Typography>
+                {t(`common.${row.OpeningCount > 0 ? 'Yes' : 'No'}`)}
+              </Box>
+              <Box className={clsx(classes.flex4, classes.pt5, classes.textRight)}>
+                <ManagmentIcon
+                  onClick={async () => {
+                    setShowLoader(true);
+                    const response: any = await dispatch(getCampaignInfo(row.CampaignID));
+                    setShowLoader(false);
+                    setDialogType({
+                      type: 'newsletterpreview',
+                      data: row.CampaignID
+                    })
+                  }}
+                  classes={classes}
+                  icon={null}
+                  uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} style={{ paddingTop: 10 }} />}
+                />
+              </Box>
+            </Box>
+          </Box>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
   const renderSMSTableHead = () => {
     return (
       <TableHead>
@@ -395,7 +460,7 @@ const RecipientReport = ({ classes }: any) => {
           </Box>
         ) : (
           <>
-            {campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map((row: any) => renderRow(row, campaignType)) : recipientsReportData?.WhatsappCampaigns?.map((row: any) => renderRow(row, campaignType))}
+            {campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map((row: any) => windowSize =="xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType)) : recipientsReportData?.WhatsappCampaigns?.map((row: any) => windowSize =="xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType))}
             {campaignType === 'sms' ? renderSmsPagination() : renderWhasappPagination()}
           </>
         )}
@@ -676,6 +741,87 @@ const RecipientReport = ({ classes }: any) => {
     )
   }
 
+  const renderPhoneRow = (row: any, campaignType: string) => {
+    return (
+      <TableRow key={RandomID()} component="div" classes={rowStyle}>
+        <TableCell
+          style={{ flex: 1 }}
+          classes={{ root: classes.tableCellRoot }}
+          className={classes.p20}
+        >
+          <Box className={classes.spaceBetween}>
+            <Box className={classes.inlineGrid}>
+            <Typography className={classes.bold}>{t('campaigns.camapignName')}</Typography>
+              {row.Name}
+            </Box>
+            <Box>
+              <Typography className={classes.bold}>{t('common.Dates')}</Typography>
+              {FormatDate(row.SendDate)}
+            </Box>
+          </Box>
+          <Box className={clsx(classes.mt1)}>
+            <Box className={classes.flex}>
+              <Box className={clsx(classes.flex6)}>
+                <Typography className={classes.bold}>{t('common.Status')}</Typography>
+                {renderStatusCell(row.SmsStatus)}
+              </Box>
+              <Box className={clsx(classes.flex4)}>
+                <Typography className={classes.bold}>{t('common.Clicked')}</Typography>
+                {t(`common.${row?.ClicksCount > 0 ? 'Yes' : 'No'}`)}
+              </Box>
+              <Box className={clsx(classes.flex4, classes.pt5, classes.textRight)}>
+                <ManagmentIcon
+                  classes={classes}
+                  icon={null}
+                  uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} style={{ paddingTop: 10 }} />}
+                  onClick={async () => {
+                    if (campaignType === 'sms') {
+                      setShowLoader(true);
+                      const sms: any = await dispatch(getSmsByID(row.SMSCampaignID));
+                      setShowLoader(false);
+                      setDialogType({
+                        type: 'preview',
+                        data: sms?.payload
+                      })
+                    } else if (campaignType === 'whatsapp') {
+                      if (row.TemplateID) {
+                        setShowLoader(true);
+                        const templateData: templateListAPIProps = await dispatch<any>(
+                          getSavedTemplatesPreviewById({
+                            templateId: row.TemplateID,
+                          })
+                        );
+                        setShowLoader(false);
+                        if (templateData.payload.Status === apiStatus.SUCCESS) {
+                          const templates = templateData.payload?.Data?.Items;
+                          if (templates && templates?.length > 0) {
+                            const templateData: any = templates[0];
+                            onSavedTemplateChange(templateData?.Data);
+                            setDialogType({
+                              type: 'whatsapp',
+                              data: ''
+                            })
+                          }
+                        } else {
+                          templateData?.payload?.Message
+                            ? setToastMessage({
+                              ...ToastMessages.ERROR,
+                              message: templateData?.payload?.Message,
+                            })
+                            : setToastMessage(ToastMessages.ERROR);
+                        }
+                      }
+                    }
+                  }}
+                />
+              </Box>
+            </Box>
+          </Box>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
   const groupModal = () => {
     return (
       <BaseDialog
@@ -845,35 +991,35 @@ const RecipientReport = ({ classes }: any) => {
   const renderClientDetails = () => {
     const dateTimeFormat = 'DD/MM/YYYY, HH:mm a';
     return <Grid container spacing={2} className={clsx(classes.mgmtTitleContainer, classes.pr25, classes.pe25)}>
-      <Grid item md='auto' className={classes.flexGrow1}>
+      <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.first_name')}</div>
         <div className={classes.pt10}>{recipientsReportData?.ClientFirstName}</div>
       </Grid>
-      <Grid item md='auto' className={classes.flexGrow1}>
+      <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.last_name')}</div>
         <div className={classes.pt10}>{recipientsReportData?.ClientLastName}</div>
       </Grid>
-      <Grid item md='auto' className={classes.flexGrow1}>
+      <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.Mail')}</div>
         <div className={classes.pt10}>{recipientsReportData?.ClientEmail}</div>
       </Grid>
-      <Grid item md='auto' className={classes.flexGrow1}>
+      <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.emailStatus')}</div>
         <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.EMAIL, recipientsReportData?.ClientStatus))}</div>
       </Grid>
-      <Grid item md='auto' className={classes.flexGrow1}>
+      <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.cellphone')}</div>
         <div className={classes.pt10}>{recipientsReportData?.ClientCellphone}</div>
       </Grid>
-      <Grid item md='auto' className={classes.flexGrow1}>
+      <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.smsStatus')}</div>
         <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.SMS, recipientsReportData?.ClientSMSStatus))}</div>
       </Grid>
-      <Grid item md='auto' className={classes.flexGrow1}>
+      <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.createdDate')}</div>
         <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(dateTimeFormat)}</div>
       </Grid>
-      <Grid item md={'auto'} className={clsx(classes.flexGrow1, classes.pt15)}>
+      <Grid item md={'auto'} xs={6} className={clsx(classes.flexGrow1, classes.pt15)}>
         {/* @ts-ignore */}
         <img src={GroupsIcon} style={{ height: 20 }} alt="" />
         <div
@@ -1023,7 +1169,7 @@ const RecipientReport = ({ classes }: any) => {
         </Box>
         <Box className={clsx(classes.mt20)}>
           <Grid container>
-            <Grid item md={6}>
+            <Grid item md={6} className={classes.w100}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.newsletterCampaign')} classes={classes} isIcon={false} />
                 <SummaryLine classes={classes} Stats={recipientsReportData?.CampaignStatistics} CampaignType={'email'} />
@@ -1035,7 +1181,7 @@ const RecipientReport = ({ classes }: any) => {
                 </TableContainer>
               </Box>
             </Grid>
-            <Grid item md={6}>
+            <Grid item md={6} className={classes.w100}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.smsCampaign')} classes={classes} isIcon={false} />
                 <SummaryLine classes={classes} Stats={recipientsReportData?.SmsCampaignStatistics} CampaignType={'sms'} />
@@ -1047,7 +1193,7 @@ const RecipientReport = ({ classes }: any) => {
                 </TableContainer>
               </Box>
             </Grid>
-            <Grid item md={12}>
+            <Grid item md={12} className={classes.w100}>
               <Box className={classes.p5}>
                 <Title Text={t('recipient.whatsappCampaign')} classes={classes} isIcon={false} />
                 <SummaryLine classes={classes}
