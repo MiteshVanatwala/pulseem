@@ -14,6 +14,18 @@ export const GetDomainVerification = createAsyncThunk(
     }
 );
 
+export const SetSharedDomain = createAsyncThunk(
+    'DomainVerification/SetSharedDomain',
+    async (domainAddress: string, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`DomainVerification/SetSharedDomain?domain=${domainAddress}`);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
 const DomainVerificationSlice = createSlice({
     name: 'DomainVerification',
     initialState: {

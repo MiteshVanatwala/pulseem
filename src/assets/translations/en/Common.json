@@ -704,8 +704,10 @@
         },
         "sendFromSharedDomain": {
           "title": "Send using Shared Domain",
-          "text": "תגובות למייל יישלחו לכתובת המייל האחרונה שאומתה לשליחה",
-          "button": "Use Shared Domain"
+          "text": "תגובות למייל יישלחו לכתובת המייל הראשונה שאומתה לשליחה",
+          "button": "Use Shared Domain",
+          "placeholder": "{Email Prefix}",
+          "saveDomain": "Save Shared Domain"
         }
       }
     }
