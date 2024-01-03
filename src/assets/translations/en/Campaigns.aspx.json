@@ -489,6 +489,7 @@
   "newsLetterEditor": {
     "fromName": "From Name",
     "fromEmail": "From Email",
+    "replyTo": "Reply To Email",
     "campaignSubject": "Campaign Subject",
     "personalization": "Personalization",
     "dontSee_clickHere_mail": "If you do not see this email, click here",
@@ -506,6 +507,7 @@
       "Name": "Used to identify the campaign in the system. Recipients will not see this name",
       "FromName": "This field is mandatory",
       "FromEmail": "Only verified emails are allowed",
+      "ReplyEmail": "Only verified emails are allowed",
       "clickToVerify": "Click here to verify",
       "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
@@ -522,6 +524,7 @@
       "campaignName": "Please fill in campaign name",
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",
+      "ReplyEmail": "Please fill Reply To Email",
       "campaignSubject": "Please fill in a campaign subject",
       "invalidCampaignId": "Invalid campaign ID / not belong to the account",
       "CampaignNotFound": "Campaign not found or deleted",

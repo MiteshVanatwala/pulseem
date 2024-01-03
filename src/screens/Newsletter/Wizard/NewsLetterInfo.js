@@ -187,6 +187,7 @@ const NewsLetterInfo = ({ classes }) => {
         Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
         FromName: t('common.requiredField'),
         FromEmail: t('campaigns.newsLetterEditor.helpTexts.FromEmail'),
+        ReplyEmail: t('campaigns.newsLetterEditor.helpTexts.ReplyEmail'),
         PreviewText: t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')
     }
 
@@ -195,6 +196,7 @@ const NewsLetterInfo = ({ classes }) => {
         Subject: t('campaigns.newsLetterEditor.errors.campaignSubject'),
         FromName: t('campaigns.newsLetterEditor.errors.fromName'),
         FromEmail: t('campaigns.newsLetterEditor.errors.fromEmail'),
+        ReplyEmail: t('campaigns.newsLetterEditor.errors.ReplyEmail'),
     }
 
     const [campaingnValues, setCampaingnValues] = useState({
@@ -562,7 +564,7 @@ const NewsLetterInfo = ({ classes }) => {
     const CampaignBox1 = () => (
         <Box py={3} className={classes.ps15}>
             <SimpleGrid
-                spacing={{ xs: 2, sm: 5 }}
+                spacing={{ xs: 2, sm: 4 }}
                 gridArr={[
                     {
                         content:
@@ -587,6 +589,103 @@ const NewsLetterInfo = ({ classes }) => {
                                 </Box>
                             </Box>,
                         gridSize: { xs: 12, sm: 4 }
+                    },
+                    {
+                        content:
+                            <>
+                                {/* // <Box className={classes.flex}> */}
+                                <Box className={classes.w100}>
+                                    <Typography title={t("campaigns.newsLetterEditor.campaignSubject")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.campaignSubject")}</Typography>
+                                    <Box className={classes.flex}>
+
+                                        <TextField
+                                            id="outlined-basic"
+                                            label=""
+                                            variant="outlined"
+                                            name="Subject"
+                                            value={campaingnValues.Subject}
+                                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth', { [classes.textFieldError]: !!errors.Subject })}
+                                            autoComplete="off"
+                                            onChange={handleChange}
+                                            title={campaingnValues.Subject}
+                                        />
+                                        <EmojiPicker
+                                            classes={classes}
+                                            boxStyles={{ marginTop: 10 }}
+                                            OnSelectEmoji={(emoji) => {
+                                                setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })
+                                            }}
+                                        />
+                                    </Box>
+                                    <Box className='textBoxWrapper'>
+                                        <Typography className={clsx(errors.Subject ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                            {errors.Subject ? errors.Subject : helperTexts.Subject}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                            </>
+                        // </Box>
+                        ,
+                        gridSize: { xs: 12, sm: 6 }
+                    },
+                    {
+                        content: <Box className='selectWrapper'>
+                            <Typography title={t("campaigns.newsLetterEditor.personalization")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.personalization")}</Typography>
+                            <FormControl
+                                className={clsx(classes.selectInputFormControl, classes.w100)}
+                            >
+                                <Select
+                                    variant="standard"
+                                    name="personalization"
+                                    value={''}
+                                    className={classes.pbt5}
+                                    onChange={(event) => {
+                                        setCampaingnValues({
+                                            ...campaingnValues,
+                                            personalDatatoSubject: event.target.value,
+                                            Subject: `${campaingnValues.Subject} ##${event.target.value}##`
+                                        })
+                                    }}
+                                    renderValue={(selected) => {
+                                        if (!selected) {
+                                            return <MenuItem
+                                                key=''
+                                                value=''
+                                                name=''
+                                                disabled
+                                            >
+                                                {t("common.select")}
+                                            </MenuItem>;
+                                        }
+                                        return selected;
+                                    }}
+                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                    MenuProps={{
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: 300,
+                                                direction: isRTL ? 'rtl' : 'ltr'
+                                            },
+                                        },
+                                    }}
+                                >
+                                    <MenuItem key='' value='' disabled>{t("common.select")}</MenuItem>
+                                    {extraAccountDATA.map((item, index) => {
+                                        return <MenuItem
+                                            key={index}
+                                            value={item.value}
+                                            name={item.value}
+                                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                                        >
+                                            {t(item?.label)}
+                                        </MenuItem>
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        ,
+                        gridSize: { xs: 12, sm: 2 }
                     },
                     {
                         content:
@@ -666,100 +765,53 @@ const NewsLetterInfo = ({ classes }) => {
                         gridSize: { xs: 12, sm: 4 }
                     },
                     {
-
                         content:
-                            <>
-                                {/* // <Box className={classes.flex}> */}
-                                <Box className={classes.w100}>
-                                    <Typography title={t("campaigns.newsLetterEditor.campaignSubject")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.campaignSubject")}</Typography>
-                                    <Box className={classes.flex}>
-
-                                        <TextField
-                                            id="outlined-basic"
-                                            label=""
-                                            variant="outlined"
-                                            name="Subject"
-                                            value={campaingnValues.Subject}
-                                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth', { [classes.textFieldError]: !!errors.Subject })}
-                                            autoComplete="off"
-                                            onChange={handleChange}
-                                            title={campaingnValues.Subject}
-                                        />
-                                        <EmojiPicker
-                                            classes={classes}
-                                            boxStyles={{ marginTop: 10 }}
-                                            OnSelectEmoji={(emoji) => {
-                                                setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })
-                                            }}
-                                        />
-                                    </Box>
-                                    <Box className='textBoxWrapper'>
-                                        <Typography className={clsx(errors.Subject ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                            {errors.Subject ? errors.Subject : helperTexts.Subject}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                            </>
-                        // </Box>
-                        ,
-                        gridSize: { xs: 12, sm: 8 }
-                    },
-                    {
-                        content: <Box className='selectWrapper'>
-                            <Typography title={t("campaigns.newsLetterEditor.personalization")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.personalization")}</Typography>
-                            <FormControl
-                                className={clsx(classes.selectInputFormControl, classes.w100)}
-                            >
-                                <Select
-                                    variant="standard"
-                                    name="personalization"
-                                    value={''}
-                                    className={classes.pbt5}
-                                    onChange={(event) => {
-                                        setCampaingnValues({
-                                            ...campaingnValues,
-                                            personalDatatoSubject: event.target.value,
-                                            Subject: `${campaingnValues.Subject} ##${event.target.value}##`
-                                        })
-                                    }}
-                                    renderValue={(selected) => {
-                                        if (!selected) {
-                                            return <MenuItem
-                                                    key=''
-                                                    value=''
-                                                    name=''
-                                                    disabled
-                                                >
-                                                    {t("common.select")}
-                                                </MenuItem>;
-                                        }
-                                        return selected;
-                                    }}
-                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                                    MenuProps={{
-                                        PaperProps: {
-                                            style: {
-                                                maxHeight: 300,
-                                                direction: isRTL ? 'rtl' : 'ltr'
-                                            },
-                                        },
-                                    }}
+                            <Box className='selectWrapper'>
+                                <Typography title={t("campaigns.newsLetterEditor.replyTo")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.replyTo")}</Typography>
+                                <FormControl
+                                    className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
-                                    <MenuItem key='' value='' disabled>{t("common.select")}</MenuItem>
-                                    {extraAccountDATA.map((item, index) => {
-                                        return <MenuItem
-                                            key={index}
-                                            value={item.value}
-                                            name={item.value}
-                                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                                    <Select
+                                        variant="standard"
+                                        name="ReplyTo"
+                                        value={campaingnValues?.ReplyTo}
+                                        className={classes.pbt5}
+                                        onChange={(event, val) => {
+                                            setCampaingnValues({ ...campaingnValues, ReplyTo: event.target.value });
+                                            setErrors({ ...errors, ReplyTo: '' });
+                                        }}
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 300,
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem
+                                            key='-1'
+                                            value='-1'
+                                            disabled
                                         >
-                                            {t(item?.label)}
+                                            {t("common.select")}
                                         </MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </Box>
+                                        {verifiedEmails.map((item, index) => {
+                                            return <MenuItem
+                                                key={index}
+                                                value={item.Number}
+                                                name={item.Number}
+                                            >
+                                                {t(item.Number)}
+                                            </MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>
+                                <Typography className={clsx(errors.ReplyTo ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                    {errors.ReplyEmail ? errors.ReplyEmail : helperTexts.ReplyEmail + ' '}
+                                    <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
+                                </Typography>
+                            </Box>
                         ,
                         gridSize: { xs: 12, sm: 4 }
                     },
@@ -1133,7 +1185,7 @@ const NewsLetterInfo = ({ classes }) => {
                         }}
                         onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                         additionalButtons={renderButtons()}
-                        // additionalButtonsOnStart={renderTemplateButtons()}
+                    // additionalButtonsOnStart={renderTemplateButtons()}
                     />
                 </Box>
                 <BaseDialog
