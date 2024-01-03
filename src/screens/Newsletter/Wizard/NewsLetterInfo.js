@@ -24,7 +24,7 @@ import { AdvancedSettings } from './components/AdvancedSettings';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
-import { sitePrefix } from '../../../config';
+import { SharedEmailDomain, sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
@@ -215,7 +215,8 @@ const NewsLetterInfo = ({ classes }) => {
         IsResponsive: 1,
         FilesProperties: [],
         HtmlToEdit: '',
-        HtmlToSend: ''
+        HtmlToSend: '',
+        ReplyTo: ''
     })
 
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
@@ -278,6 +279,7 @@ const NewsLetterInfo = ({ classes }) => {
                     else {
                         campaingnValues.FromEmail = '-1';
                     }
+                    campaingnValues.ReplyTo = campaingnValues.FromEmail;
                 }
                 else {
                     const emailVerified = verifiedEmails.find((email) => {
@@ -289,7 +291,10 @@ const NewsLetterInfo = ({ classes }) => {
                 }
             }
             if (accountSettings?.DefaultFromName && accountSettings?.DefaultFromName !== '') {
-                setCampaingnValues({ ...campaingnValues, FromName: campaingnValues.FromName === '' ? accountSettings?.DefaultFromName : campaingnValues.FromName });
+                setCampaingnValues({
+                    ...campaingnValues,
+                    FromName: campaingnValues.FromName === '' ? accountSettings?.DefaultFromName : campaingnValues.FromName
+                });
             }
         }
     }
@@ -726,7 +731,7 @@ const NewsLetterInfo = ({ classes }) => {
                                         value={campaingnValues?.FromEmail}
                                         className={classes.pbt5}
                                         onChange={(event, val) => {
-                                            setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
+                                            setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value, ReplyTo: event.target.value.split("@").pop() !== SharedEmailDomain ? event.target.value : verifiedEmails[0]?.Number });
                                             setErrors({ ...errors, FromEmail: '' });
                                         }}
                                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
@@ -774,7 +779,10 @@ const NewsLetterInfo = ({ classes }) => {
                                     <Select
                                         variant="standard"
                                         name="ReplyTo"
-                                        value={campaingnValues?.ReplyTo}
+                                        value={campaingnValues?.FromEmail.split("@").pop() === SharedEmailDomain ?
+                                            (campaingnValues?.ReplyTo !== '' ? campaingnValues?.ReplyTo : verifiedEmails[0]?.Number) :
+                                            (campaingnValues?.ReplyTo ?? campaingnValues?.FromEmail)
+                                        }
                                         className={classes.pbt5}
                                         onChange={(event, val) => {
                                             setCampaingnValues({ ...campaingnValues, ReplyTo: event.target.value });
@@ -797,12 +805,12 @@ const NewsLetterInfo = ({ classes }) => {
                                             {t("common.select")}
                                         </MenuItem>
                                         {verifiedEmails.map((item, index) => {
-                                            return <MenuItem
+                                            return item.Number.split("@").pop() !== SharedEmailDomain && <MenuItem
                                                 key={index}
                                                 value={item.Number}
                                                 name={item.Number}
                                             >
-                                                {t(item.Number)}
+                                                {campaingnValues?.FromEmail === item.Number ? t("campaigns.newsLetterEditor.helpTexts.useFromEmailAsReply") : item.Number}
                                             </MenuItem>
                                         })}
                                     </Select>

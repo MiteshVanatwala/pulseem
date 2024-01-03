@@ -504,7 +504,8 @@
       "pre_helper_text": "הטקסט יופיע בשורת התצוגה במייל, טרם פתיחתו",
       "upload": "יופיע כקובץ מצורף במייל שתשלחו",
       "newAddress": "כתובת מייל חדשה",
-      "cellularSupportCaution": "<b>שים לב!</b> מותאם לסלולר לא נתמך בכל המכשירים והאפליקציות"
+      "cellularSupportCaution": "<b>שים לב!</b> מותאם לסלולר לא נתמך בכל המכשירים והאפליקציות",
+      "useFromEmailAsReply": "השתמש בכתובת אימייל השולח"
     },
     "errors": {
       "campaignWasNotSent": "הקמפיין לא נשלח!",

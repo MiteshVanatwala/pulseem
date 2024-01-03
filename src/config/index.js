@@ -11,6 +11,7 @@ const siteTrackingScriptUrl = process.env.REACT_APP_TRACKING_SCRIPT;
 const sitePrefix = process.env.REACT_APP_SITE_PREFIX;
 const UIApiSwaggerURL = process.env.REACT_APP_UI_API_SWAGGER_URL;
 const DirectApiSwaggerURL = process.env.REACT_APP_DIRECT_API_SWAGGER_URL;
+const SharedEmailDomain = 'pulseem.co'
 
 
 export {
@@ -22,5 +23,6 @@ export {
   //demoSiteTrackingURL,
   siteTrackingScriptUrl,
   UIApiSwaggerURL,
-  DirectApiSwaggerURL
+  DirectApiSwaggerURL,
+  SharedEmailDomain
 };
