@@ -3883,5 +3883,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .flexEnd': {
       alignSelf: 'flex-end'
     }
+  },
+  centeredLink: {
+    display: 'flex',
+    alignSelf: 'center',
+    textDecoration: 'underline',
+    cursor: 'pointer'
   }
 });

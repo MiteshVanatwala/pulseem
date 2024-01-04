@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { IoIosArrowDown } from 'react-icons/io';
-import { Grid, Box, Typography, TextField, makeStyles, FormControl, Button, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core'
+import { Grid, Box, Typography, TextField, makeStyles, FormControl, Button, FormControlLabel, Checkbox, MenuItem, ListItemIcon } from '@material-ui/core'
 import Select from '@mui/material/Select';
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
@@ -26,7 +26,7 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { SharedEmailDomain, sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlineVerified } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
 // import { DialogType } from '../../HtmlCampaign/helper/Config';
 // import Templates from '../../HtmlCampaign/modals/Templates';
@@ -167,6 +167,8 @@ const NewsLetterInfo = ({ classes }) => {
     const [campaignLoaded, setCampaignLoaded] = useState(false);
     const [newEditorDisabled, setNewEditorDisabled] = useState(false);
     const [template, setTemplate] = useState('');
+    const [continueToNewEditor, setContinueToNewEditor] = useState(false);
+    const [onSelectedSharedDomain, setOnSelectedSharedDomain] = useState(false);
 
     const navigate = useNavigate();
     const maxCharLimits = {
@@ -331,6 +333,11 @@ const NewsLetterInfo = ({ classes }) => {
             }
         }
     }
+    useEffect(() => {
+        if (onSelectedSharedDomain === true) {
+            onSelectSharedDomain();
+        }
+    }, [onSelectedSharedDomain])
     const handleSubmitNewsletterResponse = (res) => {
         switch (res?.StatusCode) {
             case 201: {
@@ -359,13 +366,10 @@ const NewsLetterInfo = ({ classes }) => {
                         console.log('IsSPFApproved', IsSPFApproved);
                         console.log('IsDKIMApproved', IsDKIMApproved);
                         console.log('IsDMARCApprotved', IsDMARCApprotved);
+                        handleContinueToEditor();
                     },
-                    verifySharedCallback: (obj) => {
-                        const { SourceID, IsSPFApproved, IsDKIMApproved, IsDMARCApprotved } = obj;
-                        console.log('SourceID', SourceID);
-                        console.log('IsSPFApproved', IsSPFApproved);
-                        console.log('IsDKIMApproved', IsDKIMApproved);
-                        console.log('IsDMARCApprotved', IsDMARCApprotved);
+                    verifySharedCallback: () => {
+                        setOnSelectedSharedDomain(true);
                     }
                 }))
                 break;
@@ -377,6 +381,26 @@ const NewsLetterInfo = ({ classes }) => {
             default: {
                 setToastMessage(ToastMessages.GENERAL_ERROR)
             }
+        }
+    }
+    const onSelectSharedDomain = async () => {
+        const sharedDomainAddress = accountSettings?.SubAccountSettings?.SharedEmailDomain;
+
+        dispatch(setVerificationDomain({
+            display: false,
+            address: `${sharedDomainAddress}`
+        }));
+
+        if (campaingnValues.FromEmail !== sharedDomainAddress) {
+            setLoader(true);
+            setCampaingnValues({ ...campaingnValues, FromEmail: sharedDomainAddress });
+            await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: sharedDomainAddress }))
+            setOnSelectedSharedDomain(false);
+            setLoader(false);
+            handleContinueToEditor();
+        }
+        else {
+            handleContinueToEditor();
         }
     }
     useEffect(() => {
@@ -509,9 +533,29 @@ const NewsLetterInfo = ({ classes }) => {
         return isError
     }
 
+    const handleContinueToEditor = () => {
+        const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && continueToNewEditor);
+        let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${campaingnValues.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${campaingnValues.CampaignID}`;
+        if (isFromAutomation) {
+            if (isNew) {
+                redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+            }
+            else {
+                redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+            }
+        }
+        if (!isBeeEditor) {
+            window.location = redirectUrl;
+        }
+        else {
+            navigate(redirectUrl);
+        }
+    }
+
     const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
         if (!handleValidations()) {
             setLoader(true);
+            setContinueToNewEditor(isNewEditor);
             await dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then(async (response) => {
                 setLoader(false);
 
@@ -522,6 +566,11 @@ const NewsLetterInfo = ({ classes }) => {
                 }
 
                 const saveInfo = JSON.parse(savedCampaign.Message);
+                setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo?.CampaignID });
+
+                if (savedCampaign?.StatusCode === 451) {
+                    return false;
+                }
 
                 // if (template?.Html && template?.JsonData) {
                 //     await dispatch(saveCampaign({
@@ -534,22 +583,23 @@ const NewsLetterInfo = ({ classes }) => {
 
 
                 if (isContiue) {
-                    const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
-                    let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
-                    if (isFromAutomation) {
-                        if (isNew) {
-                            redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
-                        }
-                        else {
-                            redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
-                        }
-                    }
-                    if (!isBeeEditor) {
-                        window.location = redirectUrl;
-                    }
-                    else {
-                        navigate(redirectUrl);
-                    }
+                    handleContinueToEditor();
+                    // const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
+                    // let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
+                    // if (isFromAutomation) {
+                    //     if (isNew) {
+                    //         redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+                    //     }
+                    //     else {
+                    //         redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+                    //     }
+                    // }
+                    // if (!isBeeEditor) {
+                    //     window.location = redirectUrl;
+                    // }
+                    // else {
+                    //     navigate(redirectUrl);
+                    // }
                 }
                 else if (isExit === true) {
                     if (isFromAutomation) {
@@ -780,6 +830,16 @@ const NewsLetterInfo = ({ classes }) => {
                                                 {t(item.Number)}
                                             </MenuItem>
                                         })}
+                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
+                                            key={verifiedEmails.length + 1}
+                                            value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                            name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                        >
+                                            <ListItemIcon style={{ minWidth: 25 }}>
+                                                <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} />
+                                            </ListItemIcon>
+                                            {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
+                                        </MenuItem>}
                                     </Select>
                                 </FormControl>
                                 <Typography className={clsx(errors.FromEmail ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -838,7 +898,7 @@ const NewsLetterInfo = ({ classes }) => {
                                 </FormControl>
                                 <Typography className={clsx(errors.ReplyTo ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
                                     {errors.ReplyEmail ? errors.ReplyEmail : helperTexts.ReplyEmail + ' '}
-                                    <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
+                                    {/* <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong> */}
                                 </Typography>
                             </Box>
                         ,

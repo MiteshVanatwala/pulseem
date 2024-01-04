@@ -5,7 +5,7 @@ import { StateType } from "../../Models/StateTypes";
 import { MdArrowBackIos, MdArrowForwardIos, MdDomain, MdErrorOutline, MdOutlineReportGmailerrorred, MdOutlineVerified } from "react-icons/md";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { useTranslation } from "react-i18next";
-import { Grid, Box, Accordion, AccordionSummary, makeStyles, AccordionDetails, Typography, Button, TextField, InputAdornment } from '@material-ui/core'
+import { Grid, Box, Accordion, AccordionSummary, makeStyles, AccordionDetails, Typography, Button, TextField, InputAdornment, Link } from '@material-ui/core'
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { GrFormAdd, GrFormSubtract } from "react-icons/gr";
@@ -14,6 +14,7 @@ import { GetDomainVerification, SetSharedDomain } from "../../redux/reducers/Dom
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { Loader } from "../../components/Loader/Loader";
 import { BiSave } from 'react-icons/bi'
+import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 
 interface DomainVerificationObj {
     classes: any,
@@ -149,9 +150,14 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         switch (response?.payload?.StatusCode) {
             case 201: {
                 setSharedDomainSaveProc({ inProgress: false, isSaved: true });
+                dispatch(getCommonFeatures({ forceRequest: true } as any));
                 break;
             }
             case 404: {
+                setSharedDomainSaveProc({ inProgress: false, isSaved: false });
+                break;
+            }
+            case 422: {
                 setSharedDomainSaveProc({ inProgress: false, isSaved: false });
                 break;
             }
@@ -161,27 +167,18 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
 
     }
 
-    const sharedDomainSaveStatus = () => {
-        if (sharedDomainSaveProc.inProgress) {
-            return <Loader isOpen={sharedDomainSaveProc.inProgress} size={20} showBackdrop={false} contained={true} />
-        }
-        if (sharedDomainSaveProc.isSaved === null) {
-            return <BiSave />
-        }
-        return sharedDomainSaveProc.isSaved === true ? <MdOutlineVerified /> : <MdErrorOutline />;
-    }
-
     return domain?.display ? (<BaseDialog
         disableBackdropClick={false}
         classes={classes}
         icon={<MdDomain className={classes.notifyIconWhite} />}
         open={domainVerificationPopUp?.display}
-        onConfirm={() => {
-            dispatch(setVerificationDomain({ ...resetDomainObj }));
-        }}
+        // onConfirm={() => {
+        //     dispatch(setVerificationDomain({ ...resetDomainObj }));
+        // }}
         onClose={() => {
             dispatch(setVerificationDomain({ ...resetDomainObj }));
         }}
+        showDefaultButtons={false}
         onCancel={() => {
             dispatch(setVerificationDomain({ ...resetDomainObj }));
         }}
@@ -282,38 +279,44 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                     <Grid container>
 
                         <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
-                        <Box className={classes.dFlex} style={{ marginBlock: 15 }}>
-                            <TextField
-                                inputMode="url"
-                                dir="ltr"
-                                className={clsx(classes.textField)}
-                                InputProps={{
-                                    style: { maxWidth: '100px !important', width: '100px !important' },
-                                    endAdornment: <InputAdornment position="end">{DOMAIN_EMAIL_SUFFIX}</InputAdornment>
-                                }}
-                                placeholder={t("common.domainVerification.popup.sections.sendFromSharedDomain.placeholder")}
-                                type="text"
-                                variant="standard"
-                                value={sharedDomain}
-                                onChange={(event: any) => setSharedDomain(event.target.value.replace('@', ''))}
-                            />
+                        <Box className={clsx(classes.fullWidth, classes.dFlex)} style={{ marginBlock: 15 }}>
+                            <Box style={{ maxWidth: 200 }}>
+                                <TextField
+                                    inputMode="url"
+                                    dir="ltr"
+                                    className={clsx(classes.textField)}
+                                    InputProps={{
+                                        style: { maxWidth: '100px !important', width: '100px !important' },
+                                        endAdornment: <InputAdornment position="end">{DOMAIN_EMAIL_SUFFIX}</InputAdornment>
+                                    }}
+                                    placeholder={t("common.domainVerification.popup.sections.sendFromSharedDomain.placeholder")}
+                                    type="text"
+                                    variant="standard"
+                                    value={sharedDomain}
+                                    onChange={(event: any) => setSharedDomain(event.target.value.replace('@', ''))}
+                                />
+                            </Box>
                             <Button
                                 style={{ marginInline: 15, minWidth: 150 }}
                                 className={clsx(classes.btn, classes.btnRounded, classes.f12, 'flexEnd')}
                                 onClick={saveSharedDomain}
-                                endIcon={sharedDomainSaveStatus()}
+                                endIcon={sharedDomainSaveProc.inProgress ? <Loader isOpen={sharedDomainSaveProc.inProgress} size={20} showBackdrop={false} contained={true} /> :
+                                    sharedDomainSaveProc.isSaved === null ? <BiSave /> :
+                                        sharedDomainSaveProc.isSaved === true ? <MdOutlineVerified /> :
+                                            <MdErrorOutline />
+                                }
                             >{t('common.domainVerification.popup.sections.sendFromSharedDomain.saveDomain')}</Button>
-                        </Box>
-                        <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text1"))}</Box>
-                        <Box className={classes.fullFlexColumn}>
-                            {domain?.verifySharedCallback && <Button
-                                className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
+                            {domain?.verifySharedCallback && <Link
+                                tabIndex={0}
+                                aria-label={t('common.domainVerification.popup.sections.sendFromSharedDomain.button')}
+                                title={t('common.domainVerification.popup.sections.sendFromSharedDomain.button')}
+                                className={clsx(classes.f14, 'flexEnd', classes.centeredLink)}
                                 onClick={() => domain?.verifySharedCallback && domain?.verifySharedCallback(callbackResponse)}
                             >
                                 {t('common.domainVerification.popup.sections.sendFromSharedDomain.button')}
-                                {<MdOutlineVerified />}
-                            </Button>}
+                            </Link>}
                         </Box>
+                        <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text1"))}</Box>
                     </Grid>
                 </AccordionDetails>
             </Accordion>
