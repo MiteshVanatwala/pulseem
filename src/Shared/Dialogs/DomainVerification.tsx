@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { setVerificationDomain } from "../../redux/reducers/newsletterSlice";
 import { StateType } from "../../Models/StateTypes";
-import { MdArrowBackIos, MdArrowForwardIos, MdDomain, MdOutlineReportGmailerrorred, MdOutlineVerified } from "react-icons/md";
+import { MdArrowBackIos, MdArrowForwardIos, MdDomain, MdErrorOutline, MdOutlineReportGmailerrorred, MdOutlineVerified } from "react-icons/md";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { useTranslation } from "react-i18next";
 import { Grid, Box, Accordion, AccordionSummary, makeStyles, AccordionDetails, Typography, Button, TextField, InputAdornment } from '@material-ui/core'
@@ -12,6 +12,8 @@ import { GrFormAdd, GrFormSubtract } from "react-icons/gr";
 import { PulseemResponse } from "../../Models/APIResponse";
 import { GetDomainVerification, SetSharedDomain } from "../../redux/reducers/DomainVerificationSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
+import { Loader } from "../../components/Loader/Loader";
+import { BiSave } from 'react-icons/bi'
 
 interface DomainVerificationObj {
     classes: any,
@@ -61,11 +63,13 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     const { t } = useTranslation();
     const localClasses = useStyles();
     const { isRTL } = useSelector((state: StateType) => state.core);
+    const { accountSettings } = useSelector((state: StateType) => state.common)
     const { domainVerificationPopUp } = useSelector((state: StateType) => state.newsletter);
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
     const [domainReady, setDomainReady] = useState<boolean>(false);
     const [sharedDomain, setSharedDomain] = useState<string>('');
     const [reason, setReason] = useState<string>('');
+    const [sharedDomainSaveProc, setSharedDomainSaveProc] = useState<any>({ inProgress: false, isSaved: null });
     const [callbackResponse, setCallbackResponse] = useState<any>({
         SourceID: 0,
         IsSPFApproved: false,
@@ -74,6 +78,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
 
     } as any);
     const resetDomainObj = { domain: '', display: false };
+    const DOMAIN_EMAIL_SUFFIX = '@pulseem.co';
 
     enum DomainSourceStatus {
         Success = 0,
@@ -84,6 +89,12 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     useEffect(() => {
         setReason('')
     }, [activeAccordion])
+
+    useEffect(() => {
+        if (accountSettings && accountSettings?.SubAccountSettings) {
+            setSharedDomain(accountSettings?.SubAccountSettings?.SharedEmailDomain.replace(DOMAIN_EMAIL_SUFFIX, ''));
+        }
+    }, [accountSettings]);
 
     const verifyDomain = async () => {
         const response = await dispatch(GetDomainVerification(domain?.address)) as any;
@@ -132,13 +143,32 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     }
 
     const saveSharedDomain = async () => {
-        const response = await dispatch(SetSharedDomain(sharedDomain + '@pulseem.co'));
-        
+        setSharedDomainSaveProc({ inProgress: true, isSaved: false });
+        const response = await dispatch(SetSharedDomain(sharedDomain + DOMAIN_EMAIL_SUFFIX));
+
         switch (response?.payload?.StatusCode) {
-            case 201: { break; }
+            case 201: {
+                setSharedDomainSaveProc({ inProgress: false, isSaved: true });
+                break;
+            }
+            case 404: {
+                setSharedDomainSaveProc({ inProgress: false, isSaved: false });
+                break;
+            }
             case 401: { logout(); break; }
         }
         // save shared domain on subaccountsettings table
+
+    }
+
+    const sharedDomainSaveStatus = () => {
+        if (sharedDomainSaveProc.inProgress) {
+            return <Loader isOpen={sharedDomainSaveProc.inProgress} size={20} showBackdrop={false} contained={true} />
+        }
+        if (sharedDomainSaveProc.isSaved === null) {
+            return <BiSave />
+        }
+        return sharedDomainSaveProc.isSaved === true ? <MdOutlineVerified /> : <MdErrorOutline />;
     }
 
     return domain?.display ? (<BaseDialog
@@ -259,7 +289,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                                 className={clsx(classes.textField)}
                                 InputProps={{
                                     style: { maxWidth: '100px !important', width: '100px !important' },
-                                    endAdornment: <InputAdornment position="end">@pulseem.co</InputAdornment>
+                                    endAdornment: <InputAdornment position="end">{DOMAIN_EMAIL_SUFFIX}</InputAdornment>
                                 }}
                                 placeholder={t("common.domainVerification.popup.sections.sendFromSharedDomain.placeholder")}
                                 type="text"
@@ -271,6 +301,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                                 style={{ marginInline: 15, minWidth: 150 }}
                                 className={clsx(classes.btn, classes.btnRounded, classes.f12, 'flexEnd')}
                                 onClick={saveSharedDomain}
+                                endIcon={sharedDomainSaveStatus()}
                             >{t('common.domainVerification.popup.sections.sendFromSharedDomain.saveDomain')}</Button>
                         </Box>
                         <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text1"))}</Box>
