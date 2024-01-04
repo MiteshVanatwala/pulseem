@@ -132,7 +132,12 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     }
 
     const saveSharedDomain = async () => {
-        await dispatch(SetSharedDomain(sharedDomain + '@pulseem.co'))
+        const response = await dispatch(SetSharedDomain(sharedDomain + '@pulseem.co'));
+        
+        switch (response?.payload?.StatusCode) {
+            case 201: { break; }
+            case 401: { logout(); break; }
+        }
         // save shared domain on subaccountsettings table
     }
 
@@ -247,7 +252,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                     <Grid container>
 
                         <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
-                        <Box className={classes.dFlex} style={{marginBlock: 15}}>
+                        <Box className={classes.dFlex} style={{ marginBlock: 15 }}>
                             <TextField
                                 inputMode="url"
                                 dir="ltr"
