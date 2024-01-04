@@ -23,7 +23,7 @@ const Istores = ({ classes }: any) => {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [errors, setErrors] = useState({
     api_key: '',
-    store_name: '',
+    StoreID: '',
     authentication_message: '',
     group_not_selected: ''
   });
@@ -34,7 +34,7 @@ const Istores = ({ classes }: any) => {
   const [settings, setSettings] = useState({
     ID: '',
     api_key: '',
-    store_name: '',
+    StoreID: '',
     PurchaseEventActive: false,
     AbandonedEventActive: false,
     Groups: {} as IntegrationGroups
@@ -131,7 +131,7 @@ const Istores = ({ classes }: any) => {
         setSettings({
           SubAccountID: 0,
           api_key: '',
-          store_name: '',
+          StoreID: '',
           PurchaseEventActive: false,
           AbandonedEventActive: false,
           Groups: {},
@@ -183,12 +183,12 @@ const Istores = ({ classes }: any) => {
   const authenticateStore = async () => {
     let errorsDump = errors;
     if (settings.api_key.trim() === '') errorsDump = { ...errorsDump, api_key: t('integrations.Istores.subTitle') };
-    if (settings.store_name.trim() === '') errorsDump = { ...errorsDump, store_name: t('integrations.Istores.storeIDDesc') };
+    if (settings.StoreID.trim() === '') errorsDump = { ...errorsDump, StoreID: t('integrations.Istores.storeIDDesc') };
     await setErrors(errorsDump);
-    if (settings.api_key.trim() !== '' && settings.store_name.trim() !== '') {
+    if (settings.api_key.trim() !== '' && settings.StoreID.trim() !== '') {
       setErrors({
         api_key: '',
-        store_name: '',
+        StoreID: '',
         authentication_message: '',
         group_not_selected: ''
       })
@@ -289,14 +289,14 @@ const Istores = ({ classes }: any) => {
               <TextField
                 size="small"
                 name="DefaultFromName"
-                value={settings.store_name}
-                onChange={(event) => setSettings({ ...settings, store_name: event.target.value })}
+                value={settings.StoreID}
+                onChange={(event) => setSettings({ ...settings, StoreID: event.target.value })}
                 className={clsx(classes.dBlock, classes.shopifySettingTextBox)}
                 disabled={isAuthenticated}
               />
-              {!!errors.store_name && (
+              {!!errors.StoreID && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>
-                  {errors.store_name}
+                  {errors.StoreID}
                 </Typography>
               )}
             </Box>
