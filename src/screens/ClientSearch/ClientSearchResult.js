@@ -1353,7 +1353,7 @@ const ClientSearchResult = ({ classes }) => {
     let date = null;
     const { FirstName, LastName, CreationDate } = row;
     let text = t("common.UpdatedOn");
-    date = moment(CreationDate, dateFormat);
+    date = CreationDate ? moment(CreationDate, dateFormat) :  null;
     return (
       <>
         {
@@ -1387,7 +1387,7 @@ const ClientSearchResult = ({ classes }) => {
           )
         }
         <Typography className={classes.grayTextCell}>
-          {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+          {date ? `${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}` : text}
         </Typography>
       </>
     );

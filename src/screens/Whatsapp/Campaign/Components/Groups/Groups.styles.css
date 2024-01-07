@@ -31,6 +31,7 @@
     }
     .groupText span {
         font-size: 16px !important;
+        max-width: 60%;
     }
     .group-container {
         padding-left: 10px !important;
@@ -40,9 +41,6 @@
     }
     .create-new-group {
         padding-top: 15px;
-    }
-    .MuiListItem-secondaryAction {
-        padding-right: 30% !important;
     }
 }
 /* .MuiListItemSecondaryAction-root {

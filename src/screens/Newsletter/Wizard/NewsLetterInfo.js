@@ -151,7 +151,7 @@ const NewsLetterInfo = ({ classes }) => {
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
 
-    const { isRTL, CoreToastMessages } = useSelector((state) => state.core);
+    const { windowSize, isRTL, CoreToastMessages } = useSelector((state) => state.core);
     // const { publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
     const { t } = useTranslation();
     const localClasses = useStyles()
@@ -929,7 +929,8 @@ const NewsLetterInfo = ({ classes }) => {
                         className={clsx(
                             classes.btn,
                             classes.btnRounded,
-                            classes.backButton
+                            classes.backButton,
+                            windowSize === 'sm' ? classes.dFlex : ''
                         )}
                         style={{ margin: '8px' }}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}

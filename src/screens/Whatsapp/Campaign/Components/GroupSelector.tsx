@@ -157,6 +157,7 @@ const GroupSelector = ({
 					style={{
 						display: 'flex',
 						marginTop: '10px',
+						marginBottom: '10px',
 					}}>
 					<span>
 						<>{translator('mainReport.totalReci')}</>:{' '}
@@ -174,8 +175,8 @@ const GroupSelector = ({
 						style={{ marginInlineStart: '5px' }}
 					>
 						<IconButton
-							style={{ paddingInline: 5, paddingBlock: 0, marginTop: -10 }}
-							className={clsx(classes.icon_Info, classes.f20)}
+							style={{ paddingInline: 5, paddingBlock: 0 }}
+							className={clsx(classes.icon_Info, classes.f18)}
 							aria-label={translator("mainReport.toolTip1")}
 						>
 							<BsInfoCircle />

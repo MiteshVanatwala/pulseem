@@ -689,7 +689,6 @@ const DirectEmailReportTab = ({
     const emailData = (directEmailReport && directEmailReport.TotalRecords) || 1;
     return (
       <TablePagination
-        style={{ flexWrap: 'nowrap' }}
         classes={classes}
         rows={emailData}
         rowsPerPage={rowsPerPage}

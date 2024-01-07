@@ -357,12 +357,8 @@ const SmsSend = ({ classes, ...props }) => {
       if (!finishedCampaigns || finishedCampaigns?.length === 0) {
         await dispatch(getFinishedCampaigns());
       }
-      if (!subAccountAllGroups || subAccountAllGroups?.length === 0) {
-        await dispatch(getGroupsBySubAccountId());
-      }
-      if (!testGroups || testGroups?.length === 0) {
-        await dispatch(getTestGroups());
-      }
+      await dispatch(getGroupsBySubAccountId());
+      await dispatch(getTestGroups());
 
       const campaignSettingsRes = await dispatch(getCampaignSettings(id));
 
@@ -822,10 +818,10 @@ const SmsSend = ({ classes, ...props }) => {
             </IconButton>
           </Tooltip>
         </Grid>
-        <Grid item md={12} xs={12} className={classes.tabDiv} style={{ height: 50 }}>
+        <Grid item md={12} xs={12} className={classes.tabDiv} style={{ height: windowSize === 'xs' ? 40 : 50 }}>
           <Grid item md={12} xs={12}
             className={
-              clsx(classes.btnTab, 'alignCenter', { [classes.currentActiveTab]: !!groupClick })
+              clsx(classes.tab1, classes.btnTab, !!groupClick ? classes.currentActiveTab : '', classes.w50)
             }
             style={{ cursor: "pointer" }}
             onClick={() => {
@@ -839,7 +835,7 @@ const SmsSend = ({ classes, ...props }) => {
           </Grid>
           <Grid item md={12} xs={12}
             className={
-              clsx(classes.btnTab, 'alignCenter', { [classes.currentActiveTab]: !!manualClick })
+              clsx(classes.tab1, classes.btnTab, !!manualClick ? classes.currentActiveTab : '', classes.w50)
             }
             style={{ cursor: "pointer" }}
             onClick={() => {
@@ -848,7 +844,7 @@ const SmsSend = ({ classes, ...props }) => {
               setmanualClick(true);
             }}
           >
-            <span style={{ marginInlineEnd: 15 }}>
+            <span style={{ marginInlineEnd: 15 }} className={classes.elipsis}>
               {t("mainReport.manual")}
             </span>
             <Tooltip
@@ -959,6 +955,7 @@ const SmsSend = ({ classes, ...props }) => {
                 style={{
                   display: "flex",
                   marginTop: "10px",
+                  marginBottom: "10px",
                 }}
               >
                 <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
@@ -1031,7 +1028,7 @@ const SmsSend = ({ classes, ...props }) => {
                   </Button>
                 )
               }
-              <span>{t("sms.totalRecords")}:  {totalRecords}</span>
+              <span className={windowSize === "xs" ? classes.dBlock : ''}>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
           ) : null}
         </Grid>

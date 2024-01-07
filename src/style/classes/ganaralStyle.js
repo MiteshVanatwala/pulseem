@@ -2277,6 +2277,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "flex-end",
     alignItems: "center",
     paddingTop: "15px",
+    paddingBottom: 20,
     width: "100%",
     display: "flex",
     marginTop: "auto",
@@ -3249,11 +3250,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: 30
     },
     '& .dialogTitle': {
-      width: '85%'
+      width: '85%',
+      direction: isRTL ? 'rtl' : 'ltr',
     }
   },
   textRight: {
     textAlign: "right",
+  },
+  textLeft: {
+    textAlign: "left",
   },
 
   elipsis: {
@@ -3348,7 +3353,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ltr: {
     direction: 'ltr'
   },
-
+  rtl: {
+    direction: 'rtl'
+  },
   selectPlaceholderInput: {
     height: '90%',
     opacity: 1,
