@@ -50,6 +50,7 @@ import { CreditType } from "../../../Models/Payments/NoCreditPopUp";
 import DynamicConfirmDialog from "../../../components/DialogTemplates/DynamicConfirmDialog";
 import { BsInfoCircle } from "react-icons/bs";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelpfer";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -196,7 +197,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const checkEmailAuth = () => {
         const isVerified = verifiedEmails.filter((email) => {
-            return email?.Number === newsletterInfo.FromEmail;
+            return email?.Number === newsletterInfo.FromEmail || IsSharedDomain(newsletterInfo.FromEmail);
         });
         setIsEmailVerified(isVerified?.length > 0);
         setNewEmailVerification(isVerified?.length <= 0);
@@ -445,7 +446,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         if (r.payload.StatusCode === 201) {
             const isVerified = verifiedEmails.filter((email) => {
-                return email?.Number === newsletterInfo.FromEmail;
+                return email?.Number === newsletterInfo.FromEmail || IsSharedDomain(newsletterInfo.FromEmail);
             });
             onSaveSettings(true, groupId.toString()).then(async () => {
                 if (isEmailVerified || isVerified?.length > 0) {

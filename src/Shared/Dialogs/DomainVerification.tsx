@@ -107,6 +107,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
             case 201: {
                 switch (response.Data?.SourceID) {
                     case DomainSourceStatus.Success: {
+                        setDomainReady(true);
                         setCallbackResponse({
                             SourceID: DomainSourceStatus.Success,
                             ...response.Data
@@ -147,9 +148,11 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         setSharedDomainSaveProc({ inProgress: true, isSaved: false });
         const response = await dispatch(SetSharedDomain(sharedDomain + DOMAIN_EMAIL_SUFFIX));
 
+        // @ts-ignore
         switch (response?.payload?.StatusCode) {
             case 201: {
                 setSharedDomainSaveProc({ inProgress: false, isSaved: true });
+                // @ts-ignore
                 dispatch(getCommonFeatures({ forceRequest: true } as any));
                 break;
             }
