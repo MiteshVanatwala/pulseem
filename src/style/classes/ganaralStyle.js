@@ -2668,7 +2668,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         paddingTop: 10,
         paddingInline: 10,
       },
-      
+
       '& .stepHead': {
         fontSize: 20,
         display: 'flex',
@@ -3880,7 +3880,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'contents'
   },
   underline: {
-		textDecoration: 'underline',
-		cursor: 'pointer',
-	}
+    textDecoration: 'underline',
+    cursor: 'pointer',
+  },
+  fullFlexColumn: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    '& .flexEnd': {
+      alignSelf: 'flex-end'
+    }
+  },
+  centeredLink: {
+    display: 'flex',
+    alignSelf: 'center',
+    textDecoration: 'underline',
+    cursor: 'pointer'
+  }
 });

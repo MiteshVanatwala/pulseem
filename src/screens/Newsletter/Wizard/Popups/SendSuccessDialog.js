@@ -2,8 +2,9 @@ import { Box, Typography, Button, Grid } from '@material-ui/core'
 import clsx from 'clsx';
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux';
 import Gif from "../../../../assets/images/managment/check-circle.gif";
+import useRedirect from '../../../../helpers/Routes/Redirect';
+import { sitePrefix } from '../../../../config';
 
 const SendSuccessDialog = ({
     classes,
@@ -11,7 +12,8 @@ const SendSuccessDialog = ({
     onBackToHome = () => null
 }) => {
     const { t } = useTranslation()
-    const { isRTL } = useSelector((state) => state.core);
+    const Redirect = useRedirect();
+
     return {
         showDivider: false,
         disableBackdropClick: true,
@@ -59,6 +61,8 @@ const SendSuccessDialog = ({
         ),
         renderButtons: false,
         showDefaultButtons: false,
+        onCancel: () => Redirect(`${sitePrefix}campaigns`),
+        onClose: () => Redirect(`${sitePrefix}campaigns`),
         exit: true
     }
 }
