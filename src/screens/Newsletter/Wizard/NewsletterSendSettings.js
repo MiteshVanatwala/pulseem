@@ -1373,7 +1373,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             <Box className={{ [classes.disabled]: newsletterInfo.IsDeleted }}>
                                 <WizardActions
                                     classes={classes}
-                                    onBack={{
+                                    onBack={newsletterSettings?.Status === 1 && {
                                         callback: () => { handlePreviousPage() }
                                     }}
                                     onDelete={newsletterSettings?.Status === 1 && onHandleDelete}
