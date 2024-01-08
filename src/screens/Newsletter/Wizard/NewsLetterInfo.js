@@ -181,7 +181,8 @@ const NewsLetterInfo = ({ classes }) => {
         Name: "",
         Subject: "",
         FromName: "",
-        FromEmail: ""
+        FromEmail: "",
+        ReplyTo: ""
     })
 
     const helperTexts = {
@@ -251,6 +252,17 @@ const NewsLetterInfo = ({ classes }) => {
             WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
         });
+
+        if (!campaingnValues?.ReplyTo || campaingnValues?.ReplyTo === '') {
+            const sharedDomainAddress = accountSettings?.SubAccountSettings?.SharedEmailDomain;
+
+            if (campaingnValues.FromEmail !== sharedDomainAddress) {
+                setCampaingnValues({ ...campaingnValues, ReplyTo: campaingnValues.FromEmail });
+            }
+            else {
+                setCampaingnValues({ ...campaingnValues, ReplyTo: verifiedEmails[0]?.Number });
+            }
+        }
     }
 
     // useEffect(() => {
@@ -518,7 +530,7 @@ const NewsLetterInfo = ({ classes }) => {
         let isError = false;
 
         Object.keys(tempError).forEach((key) => {
-            if (key === 'FromEmail' && data[key] === '-1') {
+            if ((key === 'FromEmail' && data[key] === '-1') || (key === 'ReplyTo' && data[key] === '-1')) {
                 tempError[key] = ErrorTexts[key];
                 isError = true
             }
