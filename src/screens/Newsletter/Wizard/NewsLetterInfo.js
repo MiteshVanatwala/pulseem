@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { IoIosArrowDown } from 'react-icons/io';
-import { Grid, Box, Typography, TextField, makeStyles, FormControl, Button, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core'
+import { Grid, Box, Typography, TextField, makeStyles, FormControl, Button, FormControlLabel, Checkbox, MenuItem, ListItemIcon } from '@material-ui/core'
 import Select from '@mui/material/Select';
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
-import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
+import { deleteCampaign, setVerificationDomain } from '../../../redux/reducers/newsletterSlice';
 import { getCampaignInfo, saveCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import WizardActions from '../../../components/Wizard/WizardActions';
@@ -24,9 +24,9 @@ import { AdvancedSettings } from './components/AdvancedSettings';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
-import { sitePrefix } from '../../../config';
+import { SharedEmailDomain, sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlineVerified } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
 // import { DialogType } from '../../HtmlCampaign/helper/Config';
 // import Templates from '../../HtmlCampaign/modals/Templates';
@@ -167,6 +167,8 @@ const NewsLetterInfo = ({ classes }) => {
     const [campaignLoaded, setCampaignLoaded] = useState(false);
     const [newEditorDisabled, setNewEditorDisabled] = useState(false);
     const [template, setTemplate] = useState('');
+    const [continueToNewEditor, setContinueToNewEditor] = useState(false);
+    const [onSelectedSharedDomain, setOnSelectedSharedDomain] = useState(false);
 
     const navigate = useNavigate();
     const maxCharLimits = {
@@ -179,7 +181,8 @@ const NewsLetterInfo = ({ classes }) => {
         Name: "",
         Subject: "",
         FromName: "",
-        FromEmail: ""
+        FromEmail: "",
+        ReplyTo: ""
     })
 
     const helperTexts = {
@@ -187,6 +190,7 @@ const NewsLetterInfo = ({ classes }) => {
         Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
         FromName: t('common.requiredField'),
         FromEmail: t('campaigns.newsLetterEditor.helpTexts.FromEmail'),
+        ReplyEmail: t('campaigns.newsLetterEditor.helpTexts.ReplyEmail'),
         PreviewText: t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')
     }
 
@@ -195,6 +199,7 @@ const NewsLetterInfo = ({ classes }) => {
         Subject: t('campaigns.newsLetterEditor.errors.campaignSubject'),
         FromName: t('campaigns.newsLetterEditor.errors.fromName'),
         FromEmail: t('campaigns.newsLetterEditor.errors.fromEmail'),
+        ReplyEmail: t('campaigns.newsLetterEditor.errors.ReplyEmail'),
     }
 
     const [campaingnValues, setCampaingnValues] = useState({
@@ -213,7 +218,8 @@ const NewsLetterInfo = ({ classes }) => {
         IsResponsive: 1,
         FilesProperties: [],
         HtmlToEdit: '',
-        HtmlToSend: ''
+        HtmlToSend: '',
+        ReplyTo: ''
     })
 
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
@@ -246,6 +252,17 @@ const NewsLetterInfo = ({ classes }) => {
             WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
         });
+
+        if (!campaingnValues?.ReplyTo || campaingnValues?.ReplyTo === '') {
+            const sharedDomainAddress = accountSettings?.SubAccountSettings?.SharedEmailDomain;
+
+            if (campaingnValues.FromEmail !== sharedDomainAddress) {
+                setCampaingnValues({ ...campaingnValues, ReplyTo: campaingnValues.FromEmail });
+            }
+            else {
+                setCampaingnValues({ ...campaingnValues, ReplyTo: verifiedEmails[0]?.Number });
+            }
+        }
     }
 
     // useEffect(() => {
@@ -276,6 +293,7 @@ const NewsLetterInfo = ({ classes }) => {
                     else {
                         campaingnValues.FromEmail = '-1';
                     }
+                    campaingnValues.ReplyTo = campaingnValues.FromEmail;
                 }
                 else {
                     const emailVerified = verifiedEmails.find((email) => {
@@ -287,7 +305,10 @@ const NewsLetterInfo = ({ classes }) => {
                 }
             }
             if (accountSettings?.DefaultFromName && accountSettings?.DefaultFromName !== '') {
-                setCampaingnValues({ ...campaingnValues, FromName: campaingnValues.FromName === '' ? accountSettings?.DefaultFromName : campaingnValues.FromName });
+                setCampaingnValues({
+                    ...campaingnValues,
+                    FromName: campaingnValues.FromName === '' ? accountSettings?.DefaultFromName : campaingnValues.FromName
+                });
             }
         }
     }
@@ -324,6 +345,11 @@ const NewsLetterInfo = ({ classes }) => {
             }
         }
     }
+    useEffect(() => {
+        if (onSelectedSharedDomain === true) {
+            onSelectSharedDomain();
+        }
+    }, [onSelectedSharedDomain])
     const handleSubmitNewsletterResponse = (res) => {
         switch (res?.StatusCode) {
             case 201: {
@@ -342,6 +368,24 @@ const NewsLetterInfo = ({ classes }) => {
                 setToastMessage(ToastMessages.NULL_FILE)
                 break;
             }
+            case 451: {
+                dispatch(setVerificationDomain({
+                    display: true,
+                    address: `${campaingnValues.FromEmail}`,
+                    verifyCallback: (obj) => {
+                        const { SourceID, IsSPFApproved, IsDKIMApproved, IsDMARCApprotved } = obj;
+                        console.log('SourceID', SourceID);
+                        console.log('IsSPFApproved', IsSPFApproved);
+                        console.log('IsDKIMApproved', IsDKIMApproved);
+                        console.log('IsDMARCApprotved', IsDMARCApprotved);
+                        handleContinueToEditor();
+                    },
+                    verifySharedCallback: () => {
+                        setOnSelectedSharedDomain(true);
+                    }
+                }))
+                break;
+            }
             case 500: {
                 setToastMessage(ToastMessages.GENERAL_ERROR)
                 break;
@@ -349,6 +393,26 @@ const NewsLetterInfo = ({ classes }) => {
             default: {
                 setToastMessage(ToastMessages.GENERAL_ERROR)
             }
+        }
+    }
+    const onSelectSharedDomain = async () => {
+        const sharedDomainAddress = accountSettings?.SubAccountSettings?.SharedEmailDomain;
+
+        dispatch(setVerificationDomain({
+            display: false,
+            address: `${sharedDomainAddress}`
+        }));
+
+        if (campaingnValues.FromEmail !== sharedDomainAddress) {
+            setLoader(true);
+            setCampaingnValues({ ...campaingnValues, FromEmail: sharedDomainAddress });
+            await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: sharedDomainAddress }))
+            setOnSelectedSharedDomain(false);
+            setLoader(false);
+            handleContinueToEditor();
+        }
+        else {
+            handleContinueToEditor();
         }
     }
     useEffect(() => {
@@ -466,7 +530,7 @@ const NewsLetterInfo = ({ classes }) => {
         let isError = false;
 
         Object.keys(tempError).forEach((key) => {
-            if (key === 'FromEmail' && data[key] === '-1') {
+            if ((key === 'FromEmail' && data[key] === '-1') || (key === 'ReplyTo' && data[key] === '-1')) {
                 tempError[key] = ErrorTexts[key];
                 isError = true
             }
@@ -481,9 +545,29 @@ const NewsLetterInfo = ({ classes }) => {
         return isError
     }
 
+    const handleContinueToEditor = () => {
+        const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && continueToNewEditor);
+        let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${campaingnValues.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${campaingnValues.CampaignID}`;
+        if (isFromAutomation) {
+            if (isNew) {
+                redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+            }
+            else {
+                redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+            }
+        }
+        if (!isBeeEditor) {
+            window.location = redirectUrl;
+        }
+        else {
+            navigate(redirectUrl);
+        }
+    }
+
     const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
         if (!handleValidations()) {
             setLoader(true);
+            setContinueToNewEditor(isNewEditor);
             await dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then(async (response) => {
                 setLoader(false);
 
@@ -494,6 +578,11 @@ const NewsLetterInfo = ({ classes }) => {
                 }
 
                 const saveInfo = JSON.parse(savedCampaign.Message);
+                setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo?.CampaignID });
+
+                if (savedCampaign?.StatusCode === 451) {
+                    return false;
+                }
 
                 // if (template?.Html && template?.JsonData) {
                 //     await dispatch(saveCampaign({
@@ -506,22 +595,23 @@ const NewsLetterInfo = ({ classes }) => {
 
 
                 if (isContiue) {
-                    const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
-                    let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
-                    if (isFromAutomation) {
-                        if (isNew) {
-                            redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
-                        }
-                        else {
-                            redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
-                        }
-                    }
-                    if (!isBeeEditor) {
-                        window.location = redirectUrl;
-                    }
-                    else {
-                        navigate(redirectUrl);
-                    }
+                    handleContinueToEditor();
+                    // const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
+                    // let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
+                    // if (isFromAutomation) {
+                    //     if (isNew) {
+                    //         redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+                    //     }
+                    //     else {
+                    //         redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+                    //     }
+                    // }
+                    // if (!isBeeEditor) {
+                    //     window.location = redirectUrl;
+                    // }
+                    // else {
+                    //     navigate(redirectUrl);
+                    // }
                 }
                 else if (isExit === true) {
                     if (isFromAutomation) {
@@ -562,7 +652,7 @@ const NewsLetterInfo = ({ classes }) => {
     const CampaignBox1 = () => (
         <Box py={3} className={classes.ps15}>
             <SimpleGrid
-                spacing={{ xs: 2, sm: 5 }}
+                spacing={{ xs: 2, sm: 4 }}
                 gridArr={[
                     {
                         content:
@@ -587,6 +677,103 @@ const NewsLetterInfo = ({ classes }) => {
                                 </Box>
                             </Box>,
                         gridSize: { xs: 12, sm: 4 }
+                    },
+                    {
+                        content:
+                            <>
+                                {/* // <Box className={classes.flex}> */}
+                                <Box className={classes.w100}>
+                                    <Typography title={t("campaigns.newsLetterEditor.campaignSubject")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.campaignSubject")}</Typography>
+                                    <Box className={classes.flex}>
+
+                                        <TextField
+                                            id="outlined-basic"
+                                            label=""
+                                            variant="outlined"
+                                            name="Subject"
+                                            value={campaingnValues.Subject}
+                                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth', { [classes.textFieldError]: !!errors.Subject })}
+                                            autoComplete="off"
+                                            onChange={handleChange}
+                                            title={campaingnValues.Subject}
+                                        />
+                                        <EmojiPicker
+                                            classes={classes}
+                                            boxStyles={{ marginTop: 10 }}
+                                            OnSelectEmoji={(emoji) => {
+                                                setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })
+                                            }}
+                                        />
+                                    </Box>
+                                    <Box className='textBoxWrapper'>
+                                        <Typography className={clsx(errors.Subject ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                            {errors.Subject ? errors.Subject : helperTexts.Subject}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                            </>
+                        // </Box>
+                        ,
+                        gridSize: { xs: 12, sm: 6 }
+                    },
+                    {
+                        content: <Box className='selectWrapper'>
+                            <Typography title={t("campaigns.newsLetterEditor.personalization")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.personalization")}</Typography>
+                            <FormControl
+                                className={clsx(classes.selectInputFormControl, classes.w100)}
+                            >
+                                <Select
+                                    variant="standard"
+                                    name="personalization"
+                                    value={''}
+                                    className={classes.pbt5}
+                                    onChange={(event) => {
+                                        setCampaingnValues({
+                                            ...campaingnValues,
+                                            personalDatatoSubject: event.target.value,
+                                            Subject: `${campaingnValues.Subject} ##${event.target.value}##`
+                                        })
+                                    }}
+                                    renderValue={(selected) => {
+                                        if (!selected) {
+                                            return <MenuItem
+                                                key=''
+                                                value=''
+                                                name=''
+                                                disabled
+                                            >
+                                                {t("common.select")}
+                                            </MenuItem>;
+                                        }
+                                        return selected;
+                                    }}
+                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                    MenuProps={{
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: 300,
+                                                direction: isRTL ? 'rtl' : 'ltr'
+                                            },
+                                        },
+                                    }}
+                                >
+                                    <MenuItem key='' value='' disabled>{t("common.select")}</MenuItem>
+                                    {extraAccountDATA.map((item, index) => {
+                                        return <MenuItem
+                                            key={index}
+                                            value={item.value}
+                                            name={item.value}
+                                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                                        >
+                                            {t(item?.label)}
+                                        </MenuItem>
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        ,
+                        gridSize: { xs: 12, sm: 2 }
                     },
                     {
                         content:
@@ -627,7 +814,7 @@ const NewsLetterInfo = ({ classes }) => {
                                         value={campaingnValues?.FromEmail}
                                         className={classes.pbt5}
                                         onChange={(event, val) => {
-                                            setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
+                                            setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value, ReplyTo: event.target.value.split("@").pop() !== SharedEmailDomain ? event.target.value : verifiedEmails[0]?.Number });
                                             setErrors({ ...errors, FromEmail: '' });
                                         }}
                                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
@@ -655,6 +842,16 @@ const NewsLetterInfo = ({ classes }) => {
                                                 {t(item.Number)}
                                             </MenuItem>
                                         })}
+                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
+                                            key={verifiedEmails.length + 1}
+                                            value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                            name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                        >
+                                            <ListItemIcon style={{ minWidth: 25 }}>
+                                                <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} />
+                                            </ListItemIcon>
+                                            {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
+                                        </MenuItem>}
                                     </Select>
                                 </FormControl>
                                 <Typography className={clsx(errors.FromEmail ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -666,100 +863,56 @@ const NewsLetterInfo = ({ classes }) => {
                         gridSize: { xs: 12, sm: 4 }
                     },
                     {
-
                         content:
-                            <>
-                                {/* // <Box className={classes.flex}> */}
-                                <Box className={classes.w100}>
-                                    <Typography title={t("campaigns.newsLetterEditor.campaignSubject")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.campaignSubject")}</Typography>
-                                    <Box className={classes.flex}>
-
-                                        <TextField
-                                            id="outlined-basic"
-                                            label=""
-                                            variant="outlined"
-                                            name="Subject"
-                                            value={campaingnValues.Subject}
-                                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth', { [classes.textFieldError]: !!errors.Subject })}
-                                            autoComplete="off"
-                                            onChange={handleChange}
-                                            title={campaingnValues.Subject}
-                                        />
-                                        <EmojiPicker
-                                            classes={classes}
-                                            boxStyles={{ marginTop: 10 }}
-                                            OnSelectEmoji={(emoji) => {
-                                                setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })
-                                            }}
-                                        />
-                                    </Box>
-                                    <Box className='textBoxWrapper'>
-                                        <Typography className={clsx(errors.Subject ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                            {errors.Subject ? errors.Subject : helperTexts.Subject}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                            </>
-                        // </Box>
-                        ,
-                        gridSize: { xs: 12, sm: 8 }
-                    },
-                    {
-                        content: <Box className='selectWrapper'>
-                            <Typography title={t("campaigns.newsLetterEditor.personalization")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.personalization")}</Typography>
-                            <FormControl
-                                className={clsx(classes.selectInputFormControl, classes.w100)}
-                            >
-                                <Select
-                                    variant="standard"
-                                    name="personalization"
-                                    value={''}
-                                    className={classes.pbt5}
-                                    onChange={(event) => {
-                                        setCampaingnValues({
-                                            ...campaingnValues,
-                                            personalDatatoSubject: event.target.value,
-                                            Subject: `${campaingnValues.Subject} ##${event.target.value}##`
-                                        })
-                                    }}
-                                    renderValue={(selected) => {
-                                        if (!selected) {
-                                            return <MenuItem
-                                                    key=''
-                                                    value=''
-                                                    name=''
-                                                    disabled
-                                                >
-                                                    {t("common.select")}
-                                                </MenuItem>;
-                                        }
-                                        return selected;
-                                    }}
-                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                                    MenuProps={{
-                                        PaperProps: {
-                                            style: {
-                                                maxHeight: 300,
-                                                direction: isRTL ? 'rtl' : 'ltr'
-                                            },
-                                        },
-                                    }}
+                            <Box className='selectWrapper'>
+                                <Typography title={t("campaigns.newsLetterEditor.replyTo")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.replyTo")}</Typography>
+                                <FormControl
+                                    className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
-                                    <MenuItem key='' value='' disabled>{t("common.select")}</MenuItem>
-                                    {extraAccountDATA.map((item, index) => {
-                                        return <MenuItem
-                                            key={index}
-                                            value={item.value}
-                                            name={item.value}
-                                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                                    <Select
+                                        variant="standard"
+                                        name="ReplyTo"
+                                        value={campaingnValues?.FromEmail.split("@").pop() === SharedEmailDomain ?
+                                            (campaingnValues?.ReplyTo !== '' ? campaingnValues?.ReplyTo : verifiedEmails[0]?.Number) :
+                                            (campaingnValues?.ReplyTo ?? campaingnValues?.FromEmail)
+                                        }
+                                        className={classes.pbt5}
+                                        onChange={(event, val) => {
+                                            setCampaingnValues({ ...campaingnValues, ReplyTo: event.target.value });
+                                            setErrors({ ...errors, ReplyTo: '' });
+                                        }}
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 300,
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem
+                                            key='-1'
+                                            value='-1'
+                                            disabled
                                         >
-                                            {t(item?.label)}
+                                            {t("common.select")}
                                         </MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </Box>
+                                        {verifiedEmails.map((item, index) => {
+                                            return item.Number.split("@").pop() !== SharedEmailDomain && <MenuItem
+                                                key={index}
+                                                value={item.Number}
+                                                name={item.Number}
+                                            >
+                                                {campaingnValues?.FromEmail === item.Number ? t("campaigns.newsLetterEditor.helpTexts.useFromEmailAsReply") : item.Number}
+                                            </MenuItem>
+                                        })}
+                                    </Select>
+                                </FormControl>
+                                <Typography className={clsx(errors.ReplyTo ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                    {errors.ReplyEmail ? errors.ReplyEmail : helperTexts.ReplyEmail + ' '}
+                                    {/* <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong> */}
+                                </Typography>
+                            </Box>
                         ,
                         gridSize: { xs: 12, sm: 4 }
                     },
@@ -1134,7 +1287,7 @@ const NewsLetterInfo = ({ classes }) => {
                         }}
                         onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                         additionalButtons={renderButtons()}
-                        // additionalButtonsOnStart={renderTemplateButtons()}
+                    // additionalButtonsOnStart={renderTemplateButtons()}
                     />
                 </Box>
                 <BaseDialog
