@@ -29,6 +29,8 @@ import { Title } from '../../../components/managment/Title';
 import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+
 
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
@@ -151,7 +153,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            disabled={!landingPagesDeletedData || landingPagesDeletedData?.length === 0}            
+            disabled={!landingPagesDeletedData || landingPagesDeletedData?.length === 0}
             className={clsx(classes.btn, classes.btnRounded)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({
@@ -256,10 +258,26 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         disable: accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) > -1,
         onClick: async () => {
           if (IsPayment) {
-            dispatch(downloadReport(row))
+            const purchasesResponse = await dispatch(downloadReport(row));
+            const purchases = purchasesResponse?.payload;
+            const fields = purchases?.length > 0 && Object.keys(purchases[0]);
+            ExportFile({
+              data: purchases,
+              fileName: 'purchaseReport',
+              exportType: 'xls',
+              fields: fields
+            });
           }
           else {
-            dispatch(exportSurvey(row))
+            const surveysResponse = await dispatch(exportSurvey(row));
+            const surveys = surveysResponse?.payload;
+            const fields = surveys?.length > 0 && Object.keys(surveys[0]);
+            ExportFile({
+              data: surveys,
+              fileName: 'surveyReport',
+              exportType: 'xls',
+              fields: fields
+            });
           }
         }
       },
