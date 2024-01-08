@@ -93,7 +93,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
 
     useEffect(() => {
         if (accountSettings && accountSettings?.SubAccountSettings) {
-            setSharedDomain(accountSettings?.SubAccountSettings?.SharedEmailDomain.replace(DOMAIN_EMAIL_SUFFIX, ''));
+            setSharedDomain(accountSettings?.SubAccountSettings?.SharedEmailDomain?.replace(DOMAIN_EMAIL_SUFFIX, ''));
         }
     }, [accountSettings]);
 
