@@ -42,5 +42,14 @@
     "400": "Group does not updated due to incorrect data",
     "402": "Group does not updated due to broken request",
     "404": "Not found"
-  }
+  },
+  "updateFrequency": "Update Frequency",
+  "results": "Results",
+  "totalRecipients": "Total Recipients",
+  "deleteGroup": "Delete Group",
+  "uploadedBy": "Uploaded By",
+  "on": "On",
+  "weekly": "Weekly",
+  "daily": "Daily",
+  "deleteGroupConfirmation": "Are you sure you want to delete group?"
 }

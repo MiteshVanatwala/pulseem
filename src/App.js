@@ -73,6 +73,7 @@ import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
 import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
+import FileUploads from './screens/Groups/FileUploads/FileUploads';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -482,6 +483,11 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}reports/Inbound/:type/:id`}
         element={<InboundMessages classes={classes} key="byTypeId" />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Groups/FileUploads`}
+        element={<FileUploads classes={classes} />}
       />
       <Route
         exact

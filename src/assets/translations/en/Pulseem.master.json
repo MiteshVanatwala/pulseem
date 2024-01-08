@@ -384,5 +384,7 @@
   "whatsapp": "Whatsapp",
   "responses": "Responses",
   "download": "Download",
-  "fileDownload": "File Download"
+  "fileDownload": "File Download",
+  "recipientManagement": "Recipient Management",
+  "recipientManagementDesc": "Use this page to manage recipient groups."
 }

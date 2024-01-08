@@ -97,7 +97,8 @@ export const getRoutes = (
         },
         {
           title: t("master.RadMenuItemResourceFileUploads.Text"),
-          href: `${rootDomain}/FileUploads.aspx?fromreact=true`,
+          // href: `${rootDomain}/FileUploads.aspx?fromreact=true`,
+          href: `${sitePrefix}Groups/FileUploads`,
           isShow: true,
         },
         {

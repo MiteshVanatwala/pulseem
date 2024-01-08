@@ -42,5 +42,14 @@
     "400": "הקבוצה לא עודכנה, אנא וודא שקבוצה זו דינמית",
     "402": "הקבוצה לא עודכנה, בדוק את הנתונים ונסה שוב",
     "404": "קבוצה לא נמצאה"
-  }
+  },
+  "updateFrequency": "Update Frequency",
+  "results": "Results",
+  "totalRecipients": "Total Recipients",
+  "deleteGroup": "Delete Group",
+  "uploadedBy": "Uploaded By",
+  "on": "On",
+  "weekly": "Weekly",
+  "daily": "Daily",
+  "deleteGroupConfirmation": "Are you sure you want to delete group?"
 }
