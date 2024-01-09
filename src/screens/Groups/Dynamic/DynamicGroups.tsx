@@ -50,12 +50,14 @@ import {
     getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
 import { GroupData } from '../../../Models/Groups/Group';
-import { sitePrefix } from '../../../config';
+// import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
+import useRedirect from '../../../helpers/Routes/Redirect';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
     const { t } = useTranslation();
+    const Redirect = useRedirect();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
     const { extraData } = useSelector((state: any) => state.sms);
     const { accountFeatures } = useSelector((state: any) => state.common);
@@ -501,8 +503,7 @@ const DynamicGroups = ({ classes }: any) => {
                 lable: t('campaigns.Image2Resource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    navigate(`/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`)
-                    // navigate(`${sitePrefix}groups/dynamic/edit/${GroupID}`)
+                    Redirect({ openNewTab: false, url: `/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`, preventRedirect: false })
                 }
             },
             // {
