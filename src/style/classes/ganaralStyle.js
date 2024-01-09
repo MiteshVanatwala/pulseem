@@ -2783,8 +2783,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         '& .formContainer': {
           position: 'relative',
           paddingLeft: 15,
+          paddingRight: 15,
+          paddingBottom: 10,
           // paddingLeft: isRTL ? 0 : 15,
           // paddingRight: isRTL ? 15 : 0,
+          [theme.breakpoints.down("xs")]: {
+            paddingLeft: 0,
+            paddingRight: 0,
+          },
           '& .form': {
             maxWidth: 900,
             background: '#fff',
