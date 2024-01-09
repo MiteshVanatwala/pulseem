@@ -707,9 +707,11 @@
           "text": "תגובות למייל יישלחו לכתובת המייל הראשונה שאומתה לשליחה",
           "button": "Use Shared Domain",
           "placeholder": "{Email Prefix}",
-          "saveDomain": "Save Shared Domain"
+          "saveDomain": "Save and Set From Email",
+          "saveAndContinue": "Save and Continue to Campaign Editor"
         }
       }
     }
-  }
+  },
+  "skip": "Skip"
 }
