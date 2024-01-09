@@ -28,6 +28,7 @@ import { updateWhatsappTier } from '../../../redux/reducers/whatsappSlice';
 import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.types';
 import { apiStatus } from '../../Whatsapp/Constant';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
+import { ListIcon } from '../../../assets/images/managment';
 
 const AccountSettingsEditor = ({ classes }: any) => {
 	const { t } = useTranslation();
@@ -258,20 +259,28 @@ const AccountSettingsEditor = ({ classes }: any) => {
 					<Title
 						classes={classes}
 						ContainerStyle={{ width: '100%' }}
+						isIcon={windowSize !== 'xs'}
 						Element={
-							<Box className={clsx(classes.flex, classes.spaceBetween, classes.flexWrap)}>
+							<Box className={clsx(classes.flex, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexWrap)}>
+								{
+									windowSize === 'xs' && <ListIcon className={classes.mr15} />
+								}
 								<Typography
 									style={{ width: 'auto' }}
 									className={clsx(classes.managementTitle, "mgmtTitle")}
 								>
 									{t("settings.accountSettings.title")}
 								</Typography>
-								<div>
+								<div >
 									<Button
 										className={clsx(
 											classes.btn,
 											classes.btnRounded,
-											classes.mr10
+											classes.mr10,
+											{
+												[classes.dFlex]: windowSize === 'xs',
+												[classes.mt10]: windowSize === 'xs',
+											}
 										)}
 										onClick={() =>
 											handleVerification('cellphone')
@@ -285,6 +294,10 @@ const AccountSettingsEditor = ({ classes }: any) => {
 										className={clsx(
 											classes.btn,
 											classes.btnRounded,
+											{
+												[classes.dFlex]: windowSize === 'xs',
+												[classes.mt10]: windowSize === 'xs',
+											}
 										)}
 										onClick={() =>
 											handleVerification('email')
@@ -304,7 +317,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 					/>
 				</Box>
 				<Divider />
-				<Box className={"containerBody"}>
+				<Box className={clsx("containerBody", classes.pt20)}>
 					<FORM_COMPANY_DETAILS
 						classes={classes}
 						setToastMessage={setToastMessage}
@@ -320,7 +333,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
 							}
 						}}
 					/>
-					<Divider style={{ marginTop: 35 }} />
 					<FORM_ACCOUNT_DETAILS
 						classes={classes}
 						setToastMessage={setToastMessage}

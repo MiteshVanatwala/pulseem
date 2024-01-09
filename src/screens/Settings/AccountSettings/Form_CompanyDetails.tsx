@@ -242,8 +242,7 @@ const FORM_COMPANY_DETAILS = ({
   return (
     <>
       <Box
-        style={{ marginTop: 34.5, paddingInline: 17.2 }}
-        className={"settingsWrapper"}
+        className={clsx("settingsWrapper", classes.pb25)}
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
@@ -255,7 +254,7 @@ const FORM_COMPANY_DETAILS = ({
           }}
         />
         <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-          <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} />
+          { windowSize !== 'xs' && <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> }
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
@@ -416,16 +415,20 @@ const FORM_COMPANY_DETAILS = ({
         <Title
           Text={t("settings.accountSettings.fixedComDetails.securitySettings")}
           classes={classes}
-          ContainerStyle={{ width: 'auto' }}
+          isIcon={false}
+          ContainerStyle={{
+            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
+              }`,
+          }}
         />
-        <Box className={"formContainer"} style={{ paddingInlineStart: 15 }}>
+        <Box className={clsx("formContainer", classes.pt20)}>
           <Grid container className={"form"} style={{ maxWidth: '100%' }}>
             {accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 && <Grid
               item
               xs={12}
               sm={3}
               md={4}
-              className={clsx(classes.dFlex, classes.mt3, classes.mr15, "selectWrapper")}
+              className={clsx(windowSize !== 'xs' ? classes.dFlex : '', classes.mt3, classes.mr15, "selectWrapper")}
               alignItems="center"
             >
               <Typography>
@@ -468,13 +471,13 @@ const FORM_COMPANY_DETAILS = ({
                 display: windowSize !== 'xs' ? 'flex' : 'block',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                height: '100%'
               }}>
                 <Button
                   className={clsx(
                     classes.btn,
                     classes.btnRounded,
-                    classes.mr15
+                    classes.mr15,
+                    windowSize === 'xs' ? classes.mb10 : ''
                   )}
                   onClick={() => {
                     onShowTwoFactorAuth('smsTFA');
@@ -514,7 +517,8 @@ const FORM_COMPANY_DETAILS = ({
                 classes.mt3,
                 classes.dFlex,
                 classes.flexWrap,
-                classes.spaceBetween
+                classes.spaceBetween,
+                classes.paddingSides10
               )}
             >
               <Button
