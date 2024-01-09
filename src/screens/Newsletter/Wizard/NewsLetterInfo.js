@@ -345,12 +345,12 @@ const NewsLetterInfo = ({ classes }) => {
             }
         }
     }
-    useEffect(() => {
-        if (onSelectedSharedDomain === true) {
-            onSelectSharedDomain();
-        }
-    }, [onSelectedSharedDomain])
-    const handleSubmitNewsletterResponse = (res) => {
+    // useEffect(() => {
+    //     if (onSelectedSharedDomain === true) {
+    //         onSelectSharedDomain();
+    //     }
+    // }, [onSelectedSharedDomain])
+    const handleSubmitNewsletterResponse = (res, isExit, isNewEditor, campaignId) => {
         switch (res?.StatusCode) {
             case 201: {
                 setToastMessage(ToastMessages.SUCEESS)
@@ -369,21 +369,29 @@ const NewsLetterInfo = ({ classes }) => {
                 break;
             }
             case 451: {
-                dispatch(setVerificationDomain({
-                    display: true,
-                    address: `${campaingnValues.FromEmail}`,
-                    verifyCallback: (obj) => {
-                        const { SourceID, IsSPFApproved, IsDKIMApproved, IsDMARCApprotved } = obj;
-                        console.log('SourceID', SourceID);
-                        console.log('IsSPFApproved', IsSPFApproved);
-                        console.log('IsDKIMApproved', IsDKIMApproved);
-                        console.log('IsDMARCApprotved', IsDMARCApprotved);
-                        handleContinueToEditor();
-                    },
-                    verifySharedCallback: () => {
-                        setOnSelectedSharedDomain(true);
-                    }
-                }))
+                if (!isExit) {
+                    dispatch(setVerificationDomain({
+                        display: true,
+                        address: `${campaingnValues.FromEmail}`,
+                        verifyCallback: (obj) => {
+                            // const { SourceID, IsSPFApproved, IsDKIMApproved, IsDMARCApprotved } = obj;
+                            handleContinueToEditor(isNewEditor, campaignId);
+                        },
+                        verifySharedCallback: async (obj) => {
+                            if (obj && obj.Skip === true) {
+                                handleContinueToEditor(isNewEditor, campaignId);
+                            }
+                            else {
+                                if (obj && obj.ReplyTo && obj.FromEmail) {
+                                    setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
+                                    await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, IsNewEditor: isNewEditor }));
+                                    handleContinueToEditor(isNewEditor, campaignId);
+                                }
+                            }
+                            // setOnSelectedSharedDomain(true);
+                        }
+                    }))
+                }
                 break;
             }
             case 500: {
@@ -393,26 +401,6 @@ const NewsLetterInfo = ({ classes }) => {
             default: {
                 setToastMessage(ToastMessages.GENERAL_ERROR)
             }
-        }
-    }
-    const onSelectSharedDomain = async () => {
-        const sharedDomainAddress = accountSettings?.SubAccountSettings?.SharedEmailDomain;
-
-        dispatch(setVerificationDomain({
-            display: false,
-            address: `${sharedDomainAddress}`
-        }));
-
-        if (campaingnValues.FromEmail !== sharedDomainAddress) {
-            setLoader(true);
-            setCampaingnValues({ ...campaingnValues, FromEmail: sharedDomainAddress });
-            await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: sharedDomainAddress }))
-            setOnSelectedSharedDomain(false);
-            setLoader(false);
-            handleContinueToEditor();
-        }
-        else {
-            handleContinueToEditor();
         }
     }
     useEffect(() => {
@@ -545,9 +533,9 @@ const NewsLetterInfo = ({ classes }) => {
         return isError
     }
 
-    const handleContinueToEditor = () => {
-        const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && continueToNewEditor);
-        let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${campaingnValues.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${campaingnValues.CampaignID}`;
+    const handleContinueToEditor = (isNewEditor = false, campaignId) => {
+        const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
+        let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${campaignId}` : `/Pulseem/Editor/CampaignEdit/${campaignId}`;
         if (isFromAutomation) {
             if (isNew) {
                 redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
@@ -556,12 +544,7 @@ const NewsLetterInfo = ({ classes }) => {
                 redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
             }
         }
-        if (!isBeeEditor) {
-            window.location = redirectUrl;
-        }
-        else {
-            navigate(redirectUrl);
-        }
+        window.location = redirectUrl;
     }
 
     const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
@@ -572,17 +555,14 @@ const NewsLetterInfo = ({ classes }) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
-                handleSubmitNewsletterResponse(savedCampaign);
-                if (savedCampaign?.StatusCode === 403) {
-                    return false;
-                }
-
                 const saveInfo = JSON.parse(savedCampaign.Message);
                 setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo?.CampaignID });
 
-                if (savedCampaign?.StatusCode === 451) {
+                handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor, saveInfo?.CampaignID);
+                
+                if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451) {
                     return false;
-                }
+                }              
 
                 // if (template?.Html && template?.JsonData) {
                 //     await dispatch(saveCampaign({
@@ -595,23 +575,7 @@ const NewsLetterInfo = ({ classes }) => {
 
 
                 if (isContiue) {
-                    handleContinueToEditor();
-                    // const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
-                    // let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
-                    // if (isFromAutomation) {
-                    //     if (isNew) {
-                    //         redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
-                    //     }
-                    //     else {
-                    //         redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
-                    //     }
-                    // }
-                    // if (!isBeeEditor) {
-                    //     window.location = redirectUrl;
-                    // }
-                    // else {
-                    //     navigate(redirectUrl);
-                    // }
+                    handleContinueToEditor(isNewEditor, saveInfo?.CampaignID);
                 }
                 else if (isExit === true) {
                     if (isFromAutomation) {

@@ -3418,6 +3418,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         minHeight: 25,
         display: 'flex',
         alignItems: 'center',
+        paddingInlineEnd: 40,
         '&:focus': {
           backgroundColor: '#fff !important'
         }

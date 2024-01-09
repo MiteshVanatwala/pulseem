@@ -256,18 +256,18 @@ const SummaryDialog = ({ classes,
         </Box>)
     }
     const handleFromEmailChanged = async (event, isSendRequest = false) => {
-        const fromEmaiLValue = event?.target?.value;
+        const fromEmailValue = event?.target?.value;
 
         if (newsletterInfo && newsletterInfo.CampaignID) {
-            const isShared = IsSharedDomain(fromEmaiLValue);
-            setFromEmail(fromEmaiLValue);
+            const isShared = IsSharedDomain(fromEmailValue);
+            setFromEmail(fromEmailValue);
             const updateInfo = { ...newsletterInfo };
-            updateInfo.FromEmail = fromEmaiLValue;
+            updateInfo.FromEmail = fromEmailValue;
 
             updateInfo.ReplyTo = isShared ? verifiedEmails[0]?.Number : (newsletterSendSummary?.ReplyTo ?? newsletterSendSummary?.FromEmail);
             dispatch(saveCampaignInfo(updateInfo));
 
-            const domainVerificationTest = await dispatch(GetDomainVerification(fromEmaiLValue?.split("@")[1]));
+            const domainVerificationTest = await dispatch(GetDomainVerification(fromEmailValue?.split("@")[1]));
             const response = domainVerificationTest?.payload;
 
             switch (response?.Data?.SourceID) {
@@ -275,21 +275,22 @@ const SummaryDialog = ({ classes,
                     dispatch(setVerificationDomain({
                         display: false
                     }));
-                    if (isSendRequest) {
-                        handleSendCampaign();
-                    }
+                    // if (isSendRequest) {
+                    //     handleSendCampaign();
+                    // }
                     break;
                 }
                 default:
                 case 1:  // DomainSourceStatus.SyntaxError
                 case 2: { // DomainSourceStatus.GmailServers
                     dispatch(setVerificationDomain({
+                        isSummary: true,
                         display: true,
-                        address: `${fromEmaiLValue?.split('@')[1]}`,
+                        address: `${fromEmailValue?.split('@')[1]}`,
                         verifyCallback: (obj) => {
                             const req = {
                                 target: {
-                                    value: fromEmaiLValue
+                                    value: fromEmailValue
                                 }
                             };
                             handleFromEmailChanged(req);
