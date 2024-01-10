@@ -274,6 +274,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 18,
     overflow: "hidden",
     color: "#333",
+    "@media screen and (min-width: 599px) and (max-width: 1280px)": {
+      paddingLeft: 5,
+      paddingRight: 5,
+    },
     "@media screen and (max-width: 1366px)": {
       fontSize: 15,
     },
@@ -1949,6 +1953,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   cellText: {
     display: "flex",
     flexDirection: "column",
+    "@media screen and (min-width: 599px) and (max-width: 958px)": {
+      flexDirection: "row",
+    },
     "& a, & p": {
       lineHeight: "1.1",
     },
@@ -1979,7 +1986,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
   hideInMiddleScreen: {
-    "@media screen and (max-width: 1170px) and (min-width: 768px)": {
+    "@media screen and (max-width: 1170px) and (min-width: 958px)": {
       display: "none",
       minWidth: 0,
       padding: 0,
