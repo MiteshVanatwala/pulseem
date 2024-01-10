@@ -125,7 +125,7 @@ const EventToGroups = ({
                             name={currentEvent && currentEvent.operatorKey}
                             value={currentEvent && currentEvent.operatorKey}
                             onChange={e => updateOperationData(e, "operatorKey", e.target.value)}
-                            style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left', maxHeight: 57 }}
+                            style={{ direction: isRTL ? 'rtl' : 'ltr', maxHeight: 57 }}
                             className={clsx('bottomAlignedSelect', classes.p10)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             PaperProps={{
