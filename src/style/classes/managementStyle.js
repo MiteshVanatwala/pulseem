@@ -1385,7 +1385,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     lineHeight: 1,
     color: '#FF0054',
     textDecoration: 'none',
-    paddingInlineEnd:30,
+    paddingInlineEnd: 30,
     paddingInlineStart: 16
   },
   categoryLabel: {

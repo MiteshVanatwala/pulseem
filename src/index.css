@@ -42,3 +42,65 @@ code {
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap');
+
+
+
+.scriptCode {
+  padding: 25px;
+  background: #1e1b1b;
+  color: #ff9467;
+  padding: 10px;
+  font-size: 14px;
+  word-break: break-all;
+  overflow: auto;
+  border-radius: 10px;
+  user-select: none;
+}
+
+.copy-label {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border: 1px solid #ff3343;
+  padding: 10px;
+  width: 120px;
+  border-radius: 4px;
+  height: 25px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.MuiButton-outlinedSizeSmall {
+  padding: 3px 9px;
+  font-size: 0.8125rem;
+}
+
+.MuiButtonBase-root {
+  color: inherit;
+  border: 0;
+  cursor: pointer;
+  margin: 0;
+  display: inline-flex;
+  outline: 0;
+  padding: 0;
+  position: relative;
+  align-items: center;
+  user-select: none;
+  border-radius: 0;
+  vertical-align: middle;
+  -moz-appearance: none;
+  justify-content: center;
+  text-decoration: none;
+  background-color: transparent;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.MuiButton-startIcon>div {
+  font-size: 18px;
+  padding: 0 5px;
+  font-size: 10px;
+  font-family: pulseemicons;
+}

@@ -92,7 +92,22 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
 
     useEffect(() => {
         setReason('')
-    }, [activeAccordion])
+    }, [activeAccordion]);
+
+
+    const handleCopyRecord = () => {
+        const elem = document.getElementById("copyStatusIcon");
+        const records = document.getElementById("dkimRecord");
+        if (elem) {
+            elem.innerHTML = "\uE134";
+            navigator.clipboard.writeText(records?.innerText ?? '');
+            setTimeout(() => {
+                elem.innerHTML = "\ue0b0";
+            }, 4000);
+        }
+    }
+
+    document.getElementById("copyLabel")?.addEventListener("click", handleCopyRecord);
 
     useEffect(() => {
         if (accountSettings && accountSettings?.SubAccountSettings) {
@@ -183,6 +198,33 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         domain?.verifySharedCallback && domain?.verifySharedCallback({ ...callbackResponse, Skip: true })
     }
 
+    const renderTestDomainButton = () => {
+        return <Box className={classes.fullFlexColumn} key={Math.floor(Math.random() * 100)}>
+            {!domainReady && <><Button
+                className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
+                onClick={() => verifyDomain()}
+            >
+                {t('common.domainVerification.popup.sections.verifyDomain.button')}
+                {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            </Button>
+                {reason !== '' && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center', marginTop: 10 }}>
+                    <MdOutlineReportGmailerrorred className={clsx('flexEnd')} style={{ color: 'red', fontSize: 24 }} />
+                    <Typography style={{ marginInline: 5, fontWeight: 600 }}>{reason}</Typography>
+                </Box>}
+            </>}
+            {domainReady && domain?.verifyCallback ? (<Button
+                className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
+                onClick={() => domain?.verifyCallback && domain?.verifyCallback(callbackResponse)}
+            >
+                {t('common.domainVerification.popup.sections.verifyDomain.button')}
+                {<MdOutlineVerified />}
+            </Button>) : domainReady && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center' }}>
+                <MdOutlineVerified className={clsx('flexEnd')} style={{ color: 'green', fontSize: 36 }} textRendering={"Verified"} title="Verified" />
+                <Typography style={{ marginInline: 5, fontWeight: 600 }}>{t('common.domainVerification.popup.domainVerified')}</Typography>
+            </Box>}
+        </Box>
+    }
+
     return domain?.display ? (<BaseDialog
         disableBackdropClick={false}
         classes={classes}
@@ -221,31 +263,11 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container>
-                        <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.verifyDomain.text"))}</Box>
-                        <Box className={classes.fullFlexColumn}>
-                            {!domainReady && <><Button
-                                className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                                onClick={() => verifyDomain()}
-                            >
-                                {t('common.domainVerification.popup.sections.verifyDomain.button')}
-                                {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                            </Button>
-                                {reason !== '' && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center', marginTop: 10 }}>
-                                    <MdOutlineReportGmailerrorred className={clsx('flexEnd')} style={{ color: 'red', fontSize: 24 }} />
-                                    <Typography style={{ marginInline: 5, fontWeight: 600 }}>{reason}</Typography>
-                                </Box>}
-                            </>}
-                            {domainReady && domain?.verifyCallback ? (<Button
-                                className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                                onClick={() => domain?.verifyCallback && domain?.verifyCallback(callbackResponse)}
-                            >
-                                {t('common.domainVerification.popup.sections.verifyDomain.button')}
-                                {<MdOutlineVerified />}
-                            </Button>) : domainReady && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center' }}>
-                                <MdOutlineVerified className={clsx('flexEnd')} style={{ color: 'green', fontSize: 36 }} textRendering={"Verified"} title="Verified" />
-                                <Typography style={{ marginInline: 5, fontWeight: 600 }}>{t('common.domainVerification.popup.domainVerified')}</Typography>
-                            </Box>}
+                        <Box style={{ position: 'absolute', left: 10, top: 10 }}>
+                            {activeAccordion === 1 && renderTestDomainButton()}
                         </Box>
+                        <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.verifyDomain.text"))}</Box>
+                        {renderTestDomainButton()}
                     </Grid>
                 </AccordionDetails>
             </Accordion>
@@ -377,7 +399,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                 <Button className={clsx(classes.btn, classes.btnRounded, classes.f14)} style={{ justifySelf: 'flex-end' }} onClick={handleSkip}>{t('common.skip')}</Button>
             </Box>}
         </Box>}
-    />) : (<></ >)
+    />) : (<></>)
 }
 
 export default DomainVerification;
