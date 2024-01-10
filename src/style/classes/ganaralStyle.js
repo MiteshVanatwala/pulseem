@@ -2783,8 +2783,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         '& .formContainer': {
           position: 'relative',
           paddingLeft: 15,
+          paddingRight: 15,
+          paddingBottom: 10,
           // paddingLeft: isRTL ? 0 : 15,
           // paddingRight: isRTL ? 15 : 0,
+          [theme.breakpoints.down("xs")]: {
+            paddingLeft: 0,
+            paddingRight: 0,
+          },
           '& .form': {
             maxWidth: 900,
             background: '#fff',
@@ -3410,11 +3416,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         },
       },
       '& .MuiSelect-select': {
-        minWidth: 100,
+        minWidth: '100px !important',
+        width: 'auto',
         maxWidth: '100%',
         borderRadius: 4,
-        paddingLeft: 0,
-        paddingRight: 0,
+        paddingInlineStart: 15,
+        paddingInlineEnd: 40,
+        // paddingLeft: 0,
+        // paddingRight: 0,
         minHeight: 25,
         display: 'flex',
         alignItems: 'center',
@@ -3897,5 +3906,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignSelf: 'center',
     textDecoration: 'underline',
     cursor: 'pointer'
+  },
+  flexEnd: {
+    justifyContent: 'flex-end'
   }
 });
