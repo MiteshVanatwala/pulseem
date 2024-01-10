@@ -97,6 +97,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     useEffect(() => {
         if (accountSettings && accountSettings?.SubAccountSettings) {
             setSharedDomain(accountSettings?.SubAccountSettings?.SharedEmailDomain?.replace(DOMAIN_EMAIL_SUFFIX, ''));
+            setReplyTo(verifiedEmails && verifiedEmails[0]?.Number);
         }
     }, [accountSettings]);
 
@@ -320,7 +321,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                                     <Select
                                         variant="standard"
                                         name="FromEmail"
-                                        value={replyTo ?? -1}
+                                        value={replyTo || verifiedEmails[0]?.Number}
                                         className={classes.pbt5}
                                         onChange={(event: any) => setReplyTo(event.target.value)}
                                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}

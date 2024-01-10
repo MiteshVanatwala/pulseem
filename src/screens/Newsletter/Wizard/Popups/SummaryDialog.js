@@ -295,10 +295,10 @@ const SummaryDialog = ({ classes,
                             };
                             handleFromEmailChanged(req);
                         },
-                        verifySharedCallback: () => {
+                        verifySharedCallback: (obj) => {
 
-                            const fromEmail = accountSettings?.SubAccountSettings?.SharedEmailDomain;
-                            const replyEmail = newsletterSendSummary?.ReplyTo || verifiedEmails[0]?.Number;
+                            const fromEmail = obj?.FromEmail || accountSettings?.SubAccountSettings?.SharedEmailDomain;
+                            const replyEmail = obj?.ReplyTo || verifiedEmails[0]?.Number;
 
                             setFromEmail(fromEmail);
                             setReplyTo(replyEmail);
