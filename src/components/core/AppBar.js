@@ -123,7 +123,7 @@ const AppBarItem = ({
                         >
                           {option.title}
                           {
-                            option.title === t("appBar.logout") && <option.iconSrc style={{ padding: '0 5px', marginLeft: 'auto' }} />
+                            option.title === t("appBar.logout") && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#fff' }} />
                           }
                         </MenuItem>
                       </Box>
@@ -212,7 +212,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const { username } = useSelector(state => state.user)
   const routes = getRoutes(t, isClal, accountFeatures, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
-    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username)
+    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL)
 
   const returnToAdmin = () => {
     window.location = '/Pulseem/ReactRedirect.aspx';
