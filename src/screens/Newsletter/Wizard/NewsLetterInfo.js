@@ -392,6 +392,9 @@ const NewsLetterInfo = ({ classes }) => {
                         }
                     }))
                 }
+                else {
+                    navigate(`${sitePrefix}Campaigns`);
+                }
                 break;
             }
             case 500: {
@@ -559,10 +562,10 @@ const NewsLetterInfo = ({ classes }) => {
                 setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo?.CampaignID });
 
                 handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor, saveInfo?.CampaignID);
-                
+
                 if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451) {
                     return false;
-                }              
+                }
 
                 // if (template?.Html && template?.JsonData) {
                 //     await dispatch(saveCampaign({
