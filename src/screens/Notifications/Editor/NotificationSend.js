@@ -169,7 +169,6 @@ const NotificationSend = ({ classes }) => {
                     open={validationErrorList}
                     onCancel={handleDialogClose}
                     onClose={handleDialogClose}
-                    onCancel={handleDialogClose}
                     onConfirm={handleDialogClose}
                     {...dialog}>
                     {dialog.content}
@@ -197,10 +196,11 @@ const NotificationSend = ({ classes }) => {
                     size='small'
                     onClick={handleDialogClose}
                     className={clsx(
-                        classes.confirmButton,
-                        classes.dialogConfirmButton,
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.middle
                     )}>
-                    {t('common.confirm')}
+                    {t('common.Ok')}
                 </Button>
             )
         };
@@ -418,7 +418,6 @@ const NotificationSend = ({ classes }) => {
                     open={summary}
                     onCancel={() => setSummary(null)}
                     onClose={() => setSummary(null)}
-                    onCancel={() => setSummary(null)}
                     {...dialog}>
                     {dialog.content}
                 </BaseDialog>
@@ -665,10 +664,11 @@ const NotificationSend = ({ classes }) => {
                         size='small'
                         onClick={() => { Redirect({ url: `${sitePrefix}Notifications` }) }}
                         className={clsx(
-                            classes.confirmButton,
-                            classes.dialogConfirmButton,
+                            classes.btn,
+                            classes.btnRounded,
+                            classes.middle
                         )}>
-                        {t('common.confirm')}
+                        {t('common.Ok')}
                     </Button>
                 )
             };
