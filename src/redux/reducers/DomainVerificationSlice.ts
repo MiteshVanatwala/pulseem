@@ -26,6 +26,19 @@ export const SetSharedDomain = createAsyncThunk(
     }
 );
 
+export const GetRestrictedDomains = createAsyncThunk(
+    'DomainVerification/GetRestrictedDomains',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`DomainVerification/GetRestrictedDomains`);
+            return response.data
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+
 const DomainVerificationSlice = createSlice({
     name: 'DomainVerification',
     initialState: {
