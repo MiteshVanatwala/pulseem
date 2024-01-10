@@ -711,6 +711,10 @@
           "saveAndContinue": "Save and Continue to Campaign Editor"
         }
       }
+    },
+    "settingPopUp": {
+      "title": "Domains Verification",
+      "selectDomain": "Select Domain to verify"
     }
   },
   "skip": "Skip"

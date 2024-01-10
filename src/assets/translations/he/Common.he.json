@@ -704,6 +704,10 @@
           "saveAndContinue": "שמור והמשך לעורך הקמפיין"
         }
       }
+    },
+    "settingPopUp": {
+      "title": "אימות דומיינים",
+      "selectDomain": "בחר דומיין לאימות"
     }
   },
   "skip": "דלג"

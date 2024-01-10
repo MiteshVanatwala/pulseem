@@ -21,6 +21,7 @@ import {
 	MdArrowForwardIos,
 	MdMobileFriendly,
 	MdOutlineMarkEmailRead,
+	MdOutlineVerified,
 } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
 import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
@@ -29,6 +30,7 @@ import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.t
 import { apiStatus } from '../../Whatsapp/Constant';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 import { ListIcon } from '../../../assets/images/managment';
+import DomainsVerificationPopUp from './Popups/DomainsVerificationPopUp';
 
 const AccountSettingsEditor = ({ classes }: any) => {
 	const { t } = useTranslation();
@@ -83,6 +85,8 @@ const AccountSettingsEditor = ({ classes }: any) => {
 
 	} as AccountSettings);
 	const [selectedTier, setSelectedTier] = useState<string>('1');
+	const restrictedDomains = sessionStorage.getItem("RestrictedEmailDomains");
+	const [showVerificationDomains, setShowVerificationDomains] = useState<boolean>(false);
 
 	const renderToast = () => {
 		setTimeout(() => {
@@ -271,7 +275,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 								>
 									{t("settings.accountSettings.title")}
 								</Typography>
-								<div >
+								<div>
 									<Button
 										className={clsx(
 											classes.btn,
@@ -294,6 +298,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 										className={clsx(
 											classes.btn,
 											classes.btnRounded,
+											classes.mr10,
 											{
 												[classes.dFlex]: windowSize === 'xs',
 												[classes.mt10]: windowSize === 'xs',
@@ -311,9 +316,24 @@ const AccountSettingsEditor = ({ classes }: any) => {
 											)}
 										</>
 									</Button>
+									<Button
+										className={clsx(
+											classes.btn,
+											classes.btnRounded,
+											{
+												[classes.dFlex]: windowSize === 'xs',
+												[classes.mt10]: windowSize === 'xs',
+											}
+										)}
+										startIcon={<MdOutlineVerified />}
+										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+										onClick={() => setShowVerificationDomains(!showVerificationDomains)}
+									>
+										{t('common.domainVerification.settingPopUp.title')}
+									</Button>
 								</div>
-						</Box>
-					}
+							</Box>
+						}
 					/>
 				</Box>
 				<Divider />
@@ -344,6 +364,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 					/>
 				</Box>
 			</Box>
+			{showVerificationDomains && <DomainsVerificationPopUp classes={classes} isOpen={showVerificationDomains} />}
 			{tfaEmailVerification && <VerificationDialog
 				variant="emailTFA"
 				textButtonOnSuccess={t('common.close')}
