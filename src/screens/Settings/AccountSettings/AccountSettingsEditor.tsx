@@ -364,7 +364,11 @@ const AccountSettingsEditor = ({ classes }: any) => {
 					/>
 				</Box>
 			</Box>
-			{showVerificationDomains && <DomainsVerificationPopUp classes={classes} isOpen={showVerificationDomains} />}
+			{showVerificationDomains && <DomainsVerificationPopUp
+				classes={classes} isOpen={showVerificationDomains}
+				onClose={() => setShowVerificationDomains(false)}
+				onConfirm={() => setShowVerificationDomains(false)}
+			/>}
 			{tfaEmailVerification && <VerificationDialog
 				variant="emailTFA"
 				textButtonOnSuccess={t('common.close')}

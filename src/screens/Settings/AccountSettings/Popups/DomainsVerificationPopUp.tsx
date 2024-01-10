@@ -9,7 +9,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
 
-const DomainsVerificationPopUp = ({ classes, isOpen }: any) => {
+const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) => {
     const { t } = useTranslation();
     const { verifiedEmails, accountSettings } = useSelector((state: StateType) => state.common);
     const restrictedDomains = sessionStorage.getItem("RestrictedEmailDomains");
@@ -91,12 +91,15 @@ const DomainsVerificationPopUp = ({ classes, isOpen }: any) => {
                 </FormControl>
             </Box>
         </Box>}
-    // onConfirm={() => {
-    // }}
-    // onClose={() => {
-    // }}
-    // onCancel={() => {
-    // }}
+        onConfirm={() => {
+            onConfirm && onConfirm();
+        }}
+        onClose={() => {
+            onClose && onClose();
+        }}
+        onCancel={() => {
+            onClose && onClose();
+        }}
     />
 }
 
