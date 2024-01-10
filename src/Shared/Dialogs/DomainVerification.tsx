@@ -263,7 +263,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container>
-                        <Box style={{ position: 'absolute', left: 10, top: 10 }}>
+                        <Box style={{ position: 'absolute', right: isRTL ? 'auto' : 0, left: isRTL ? 10 : 'auto', top: 10 }}>
                             {activeAccordion === 1 && renderTestDomainButton()}
                         </Box>
                         <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.verifyDomain.text"))}</Box>
