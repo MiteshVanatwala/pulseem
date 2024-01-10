@@ -73,10 +73,33 @@ const UnsubscribeOrDeletePopup = ({
         return (
             <>
                 {!showDropBox ? (<>
-                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
-                        <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
+                    <Box className={clsx(classes.dFlex)}>
+                        <RadioGroup
+                            aria-label='UnsubscribeType'
+                            name='UnsubscribeType'
+                            value={activeTab}>
+                            <FormControlLabel
+                                value='0'
+                                control={<Radio color='primary' checked={activeTab === 0} />}
+                                label={<Typography style={{ fontWeight: activeTab === 0 ? 'bold' : 500 }}>{t('recipient.phone&email')}</Typography>}
+                                onClick={() => setActiveTab(0)}
+                            />
+                            <FormControlLabel
+                                value='1'
+                                control={<Radio color='primary' checked={activeTab === 1} />}
+                                label={<Typography style={{ fontWeight: activeTab === 1 ? 'bold' : 500 }}>{t('recipient.emailOnly')}</Typography>}
+                                onClick={() => setActiveTab(1)}
+                            />
+                            <FormControlLabel
+                                value='2'
+                                control={<Radio color='primary' checked={activeTab === 2} />}
+                                label={<Typography style={{ fontWeight: activeTab === 2 ? 'bold' : 500 }}>{t('recipient.phoneOnly')}</Typography>}
+                                onClick={() => setActiveTab(2)}
+                            />
+                        </RadioGroup>
+                        {/* <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
                         <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
-                        <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
+                        <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box> */}
                     </Box>
                     {showEmailToNotify && <Box style={{ display: 'flex' }}>
                         <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
@@ -88,7 +111,7 @@ const UnsubscribeOrDeletePopup = ({
                                 <Select
                                     variant="standard"
                                     displayEmpty
-                                    value={notifyEmail}
+                                    value={notifyEmail || -1}
                                     className={classes.pbt5}
                                     onChange={(event, val) => {
                                         setNotifyEmail(event.target.value);
@@ -100,7 +123,6 @@ const UnsubscribeOrDeletePopup = ({
                                         PaperProps: {
                                             style: {
                                                 maxHeight: 300,
-                                                direction: isRTL ? 'rtl' : 'ltr'
                                             },
                                         },
                                     }}
@@ -121,7 +143,7 @@ const UnsubscribeOrDeletePopup = ({
                         </Box>
                     </Box>}
                 </>) : (
-                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} >
+                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
                         <FormControl>
                             <FormLabel id="unsubRadio" className={clsx(classes.f20, classes.p5)}><strong>{t('recipient.unsubSettings')}</strong></FormLabel>
                             <RadioGroup
