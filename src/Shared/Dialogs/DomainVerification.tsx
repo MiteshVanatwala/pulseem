@@ -373,7 +373,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                     </Grid>
                 </AccordionDetails>
             </Accordion>}
-            {!domain.isSummary && <Box className={classes.dFlex} style={{ justifyContent: 'flex-end' }}>
+            {!domain?.isSummary && domain?.verifySharedCallback && <Box className={classes.dFlex} style={{ justifyContent: 'flex-end' }}>
                 <Button className={clsx(classes.btn, classes.btnRounded, classes.f14)} style={{ justifySelf: 'flex-end' }} onClick={handleSkip}>{t('common.skip')}</Button>
             </Box>}
         </Box>}
