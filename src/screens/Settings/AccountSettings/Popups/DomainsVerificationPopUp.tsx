@@ -86,7 +86,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                             setSelectedDomain(domainFromEmail(item.Number) as any);
                             verifyDomain(item);
                         }}
-                    >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifyEmailAddr')}</Typography>}
+                    >{t('common.domainVerification.verifyDomain')}</Typography>}
                 </Box>
                 {index < verifiedEmails.length - 1 && <Divider style={{ marginBottom: 6 }} />}
             </>

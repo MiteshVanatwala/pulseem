@@ -802,9 +802,9 @@ const NewsLetterInfo = ({ classes }) => {
                                             {t("common.select")}
                                         </MenuItem>
                                         {verifiedEmails.map((item, index) => {
-                                            if (item && item.IsRestricted) {
-                                                return false;
-                                            }
+                                            // if (item && item.IsRestricted) {
+                                            //     return false;
+                                            // }
                                             return <MenuItem
                                                 key={index}
                                                 value={item.Number}

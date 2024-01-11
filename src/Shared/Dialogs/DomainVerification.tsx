@@ -242,6 +242,9 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         }}
         title={RenderHtml(t("common.domainVerification.popup.title").replace('##domainAddress##', domain.address !== '' ? `- ${domain.address}` : ''))}
         children={<Box className={clsx(classes.fullWidth)}>
+            <Box className={classes.mb20}>
+                {RenderHtml(t('common.domainVerification.popup.preText'))}
+            </Box>
             <Accordion
                 expanded={activeAccordion === 1}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
