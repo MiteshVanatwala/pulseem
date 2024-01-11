@@ -14,7 +14,7 @@ import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
-import { GetRestrictedDomains } from '../../redux/reducers/DomainVerificationSlice';
+// import { GetRestrictedDomains } from '../../redux/reducers/DomainVerificationSlice';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
@@ -40,10 +40,10 @@ const DashboardScreen = ({ classes }) => {
           }
         }
       }
-      const response = await dispatch(GetRestrictedDomains());
-      if (response?.payload?.StatusCode === 201) {
-        sessionStorage.setItem("RestrictedEmailDomains", response?.payload?.Data.map((d) => d.Domain));
-      }
+      // const response = await dispatch(GetRestrictedDomains());
+      // if (response?.payload?.StatusCode === 201) {
+      //   sessionStorage.setItem("RestrictedEmailDomains", response?.payload?.Data.map((d) => d.Domain));
+      // }
     }
     if (accountSettings) {
       initialize();

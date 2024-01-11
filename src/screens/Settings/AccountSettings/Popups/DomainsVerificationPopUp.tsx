@@ -8,11 +8,12 @@ import { StateType } from "../../../../Models/StateTypes";
 import { IoIosArrowDown } from "react-icons/io";
 import { useEffect, useState } from "react";
 import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
+import { VerifiedEmail } from "../../../../model/Common/commonProps.types";
 
 const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) => {
     const { t } = useTranslation();
     const { verifiedEmails, accountSettings } = useSelector((state: StateType) => state.common);
-    const restrictedDomains = sessionStorage.getItem("RestrictedEmailDomains");
+    // const restrictedDomains = sessionStorage.getItem("RestrictedEmailDomains");
     const [selectedEmail, setSelectedEmail] = useState<string>('-1');
     const dispatch = useDispatch();
 
@@ -63,8 +64,8 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                         >
                             {t("common.select")}
                         </MenuItem>
-                        {verifiedEmails.map((item: any, index: number) => {
-                            if (restrictedDomains && restrictedDomains.toLowerCase().indexOf(item.Number.split('@')[1]?.toLowerCase()) > -1) {
+                        {verifiedEmails.map((item: VerifiedEmail, index: number) => {
+                            if (item && item.IsRestricted) {
                                 return false;
                             }
                             return <MenuItem
@@ -73,6 +74,9 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                 // @ts-ignore
                                 name={item.Number}
                             >
+                                {item?.IsVerified && <ListItemIcon style={{ minWidth: 25 }}>
+                                    <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} />
+                                </ListItemIcon>}
                                 {t(item.Number)}
                             </MenuItem>
                         })}
