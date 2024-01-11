@@ -811,7 +811,7 @@ const NewsLetterInfo = ({ classes }) => {
                                                 name={item.Number}
                                             >
                                                 {item?.IsVerified && <ListItemIcon style={{ minWidth: 25 }}>
-                                                    <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} />
+                                                    <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
                                                 </ListItemIcon>}
                                                 {t(item.Number)}
                                             </MenuItem>
@@ -822,7 +822,7 @@ const NewsLetterInfo = ({ classes }) => {
                                             name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                         >
                                             <ListItemIcon style={{ minWidth: 25 }}>
-                                                <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} />
+                                                <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
                                             </ListItemIcon>
                                             {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
                                         </MenuItem>}
