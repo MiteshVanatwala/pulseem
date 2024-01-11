@@ -209,3 +209,5 @@ export const DateFormats = {
 }
 
 export const FBBusiness = 'https://business.facebook.com/wa/manage/';
+
+export const SizeOptionsOfHandHeldDevices = ['xs', 'sm', 'md'];

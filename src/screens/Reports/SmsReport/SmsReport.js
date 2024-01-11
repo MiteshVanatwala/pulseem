@@ -14,7 +14,7 @@ import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { smsReportStatus } from '../../../helpers/Constants';
+import { SizeOptionsOfHandHeldDevices, smsReportStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
@@ -82,7 +82,7 @@ const SmsReport = ({ classes }) => {
       onClick: () => window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=verified&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     ClickCount: {
-      title: ['xs', 'sm', 'md'].indexOf(windowSize) > -1 ? t('common.Total') : t('common.Clicks'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? t('common.Total') : t('common.Clicks'),
       href: null,
       onClick: null
     },
@@ -92,7 +92,7 @@ const SmsReport = ({ classes }) => {
       onClick: () => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Failed: {
-      title: ['xs', 'sm', 'md'].indexOf(windowSize) > -1 ? '' : t("common.failedStatus"),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("common.failedStatus"),
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -102,7 +102,7 @@ const SmsReport = ({ classes }) => {
       })
     },
     Removed: {
-      title: ['xs', 'sm', 'md'].indexOf(windowSize) > -1 ? '' : t('mainReport.removed'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.removed'),
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
@@ -116,7 +116,7 @@ const SmsReport = ({ classes }) => {
       onClick: () => window.location = `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
-      title: ['xs', 'sm', 'md'].indexOf(windowSize) > -1 ? '' : t('common.DLR'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -336,7 +336,7 @@ const SmsReport = ({ classes }) => {
       <Grid
         container
         spacing={2}
-        className={clsx(['xs', 'sm', 'md'].indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
+        className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -354,7 +354,7 @@ const SmsReport = ({ classes }) => {
           />
         </Grid>
 
-        {['xs', 'sm', 'md'].indexOf(windowSize) === -1 ?
+        {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ?
           <Grid item>
             <DateField
               toolbarDisabled={false}
@@ -371,7 +371,7 @@ const SmsReport = ({ classes }) => {
           </Grid>
           : null}
 
-        {['xs', 'sm', 'md'].indexOf(windowSize) === -1 ?
+        {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ?
           <Grid item>
             <DateField
               toolbarDisabled={false}
@@ -446,7 +446,7 @@ const SmsReport = ({ classes }) => {
     const dataLength = smsReport.length;
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
-        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && ['xs', 'sm', 'md'].indexOf(windowSize) === -1 && <Grid item>
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && <Grid item>
           <Button
             className={clsx(
               classes.btn, classes.btnRounded,
@@ -528,7 +528,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}) => {
-    const { title = ['xs', 'sm', 'md'].indexOf(windowSize) > -1 ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
+    const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
     const isLink = value > 0 && !!onClick;
     return (
       <Box style={{ display: 'flex', flexDirection: ['sm', 'md'].indexOf(windowSize) > -1 ? 'row' : 'column', cursor: isLink ? 'pointer' : null }}
@@ -797,7 +797,7 @@ const SmsReport = ({ classes }) => {
         <Box className='tableBodyContainer'>
           <TableBody>
             {rowData
-              .map(['xs', 'sm', 'md'].indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
+              .map(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
           </TableBody>
         </Box>
       )
@@ -812,7 +812,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {['xs', 'sm', 'md'].indexOf(windowSize) === -1 && renderTableHead()}
+          {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>
