@@ -614,7 +614,7 @@
       "popupDesc2": "This is a one-time process for each email you send from.",
       "firstSlide": {
         "verifiedEmails": "Verified emails",
-        "verifyEmailAddr": "Verify Email Address",
+        "verifyEmailAddr": "Check Verification",
         "addNewToVerify": "Verify Another Email"
       },
       "secondSlide": {
