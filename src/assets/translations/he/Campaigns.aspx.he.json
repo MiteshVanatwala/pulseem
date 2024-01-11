@@ -605,7 +605,7 @@
       "popupDesc2": "זהו תהליך חד פעמי לכל כתובת אימייל המשמשת לשליחה",
       "firstSlide": {
         "verifiedEmails": "אימיילים מאומתים",
-        "verifyEmailAddr": "אישור כתובת אימייל",
+        "verifyEmailAddr": "בדוק אימות",
         "addNewToVerify": "אמת כתובת אימייל נוספת"
       },
       "secondSlide": {

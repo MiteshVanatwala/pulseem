@@ -704,6 +704,22 @@
           "saveAndContinue": "שמור והמשך לעורך הקמפיין"
         }
       }
+    },
+    "settingPopUp": {
+      "title": "אימות דומיינים",
+      "selectDomain": "בחר דומיין לאימות"
+    },
+    "verifiedDomain": "דומיין מאומת",
+    "verificationResponse": {
+      "tableHeader": {
+        "sourceId": "מקור",
+        "domainName": "שם הדומיין",
+        "dkimApproved": "אימות DKIN",
+        "dmarcApproved": "אימות DMARC",
+        "spfApproved": "אימות SPF",
+        "lastReadTime": "תאריך קריאת אימייל האחרון",
+        "lastSendTime": "תאריך שליחת אימייל האחרון"
+      }
     }
   },
   "skip": "דלג"

@@ -711,6 +711,20 @@
           "saveAndContinue": "Save and Continue to Campaign Editor"
         }
       }
+    },
+    "settingPopUp": {
+      "title": "Domains Verification",
+      "selectDomain": "Select Domain to verify"
+    },
+    "verifiedDomain": "Verified Domain",
+    "verificationResponse": {
+      "sourceId": "Source",
+      "domainName": "Domain Name",
+      "dkimApproved": "DKIN Approved",
+      "dmarcApproved": "DMARC Approved",
+      "spfApproved": "SPF Approved",
+      "lastReadTime": "Last Read Email Time",
+      "lastSendTime": "Last Send Email Time"
     }
   },
   "skip": "Skip"
