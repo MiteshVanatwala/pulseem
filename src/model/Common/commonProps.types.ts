@@ -1,3 +1,11 @@
 export type commonProps = {
-    verifiedEmails: [];
+    verifiedEmails: VerifiedEmail[];
 };
+
+export interface VerifiedEmail {
+    ID: number | never,
+    Number?: string | any,
+    IsOptIn: boolean,
+    IsVerified: boolean,
+    IsRestricted: boolean
+}

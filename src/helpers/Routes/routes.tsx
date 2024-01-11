@@ -19,7 +19,7 @@ import {
 import { FaBinoculars } from 'react-icons/fa';
 import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
 import { logout } from "../Api/PulseemReactAPI";
-import { HiArrowRight } from "react-icons/hi";
+import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
@@ -29,7 +29,8 @@ export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
   style: string = '',
   isAllowSwitchAccount: Boolean = false,
-  title: string = "Settings"
+  title: string = "Settings",
+  isRTL: Boolean = false
 ) => ({
   key: "settings",
   title: title,
@@ -43,7 +44,7 @@ export const getSettingsItem = (
     { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: true },
     { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: true },
     { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: true },
-    { title: t("appBar.logout"), onClick: logout, iconSrc: HiArrowRight, isFaIcon: true, isShow: true },
+    { title: t("appBar.logout"), onClick: logout, iconSrc: isRTL ? HiArrowLeft : HiArrowRight, isFaIcon: true, isShow: true },
   ],
 });
 

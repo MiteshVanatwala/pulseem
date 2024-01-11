@@ -35,7 +35,7 @@ const FORM_ACCOUNT_DETAILS = ({
 	onTierChange = () => {},
 }: AccDtlPropTypes) => {
 	const { t } = useTranslation();
-	const { isRTL } = useSelector((state: any) => state.core);
+	const { isRTL, windowSize } = useSelector((state: any) => state.core);
 
 	const [accountDetails, setAccountDetails] = useState<AccountSettings | null>({
 		DefaultFromMail: '',
@@ -74,16 +74,18 @@ const FORM_ACCOUNT_DETAILS = ({
 
 	return (
 		<Box
-			style={{ marginTop: 10, paddingInline: 15 }}
 			className={'settingsWrapper'}>
 			<Title
 				Text={t('settings.accountSettings.actDetails.title')}
 				classes={classes}
-				ContainerStyle={{ width: 'auto' }}
-				Element={null}
+				isIcon={false}
+				ContainerStyle={{
+					padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
+						}`,
+				}}
 			/>
 			<Box className={'formContainer'}>
-				<Illustration_app_Settings className={"svg_app_settings"} />
+				{ windowSize !== 'xs' && <Illustration_app_Settings className={"svg_app_settings"} />}
 				<Grid container className={'form'}>
 					<Grid item xs={12} sm={6} md={4} className={'textBoxWrapper'}>
 						<Typography>
@@ -139,7 +141,7 @@ const FORM_ACCOUNT_DETAILS = ({
 								</>
 							</Typography>
 						</Grid>
-						<Grid item xs={12} sm={6} md={8} className={'textBoxWrapper'}>
+						<Grid item xs={12} sm={6} md={8} className={windowSize === 'xs' ? classes.pt10 : 'textBoxWrapper'}>
 							<RadioGroup
 								aria-label='UnsubscribeType'
 								name='UnsubscribeType'

@@ -46,7 +46,7 @@ const BulkStatus = ({ classes }) => {
         return t('dashboard.perValidRecipients')
       }
       default: {
-        return product?.Credits && product?.Credits > 0 ? parseFloat(product?.Credits.toFixed(2)) : 0;
+        return product?.Credits && product?.Credits > 0 ? parseFloat(product?.Credits?.toFixed(2))?.toLocaleString() : 0;
       }
     }
   }
@@ -180,26 +180,27 @@ const BulkStatus = ({ classes }) => {
             justifyContent='space-between'
           >
             <Box className={clsx(classes.flex1)}>
-              <NewsletterIcon className={classes.shoppingCartIcon} />
+              <SmsIcon className={classes.shoppingCartIcon} />
             </Box>
             <Box className={clsx(classes.flex2)}>
-              <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
+              <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             </Box>
-            <Box className={clsx(classes.flex2, classes.textCenter)}>
-              <Typography className={classes.bulkTitle}>
-                {getBillingTypeText(Newsletters)}
+            {!isAllowSms() && <Box className={classes.flex1}>&nbsp;</Box>}
+            <Box className={clsx(classes.flex2, isAllowSms() ? classes.textCenter : classes.flexEnd)} style={{ display: isAllowSms() ? null : 'flex' }}>
+              <Typography className={clsx(classes.bulkTitle, classes.bold)}
+                title={`${getBillingTypeText(Sms)} ${t('report.Credits')}`}
+                aria-label={`${getBillingTypeText(Sms)} ${t('report.Credits')}`}>
+                {getBillingTypeText(Sms)}
               </Typography>
             </Box>
-            <Box className={clsx(classes.flex1, classes.textRight)} onClick={() => showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })}>
+            {isAllowSms() && <Box className={clsx(classes.flex1, classes.textRight, classes.flexEnd)} onClick={() => showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') })}>
               <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)}>
                 {t('dashboard.purchase')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               </Button>
-            </Box>
+            </Box>}
           </Grid>
-
           <Divider />
-
           <Grid
             container
             item sm={12} md={12} lg={12} xl={12}
@@ -207,53 +208,29 @@ const BulkStatus = ({ classes }) => {
             justifyContent='space-between'
           >
             <Box className={clsx(classes.flex1)}>
-              <SmsIcon className={classes.shoppingCartIcon} />
+              <NewsletterIcon className={classes.shoppingCartIcon} />
             </Box>
             <Box className={clsx(classes.flex2)}>
-              <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
+              <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             </Box>
-            <Box className={clsx(classes.flex2, classes.textCenter)}>
-              <Typography className={classes.bulkTitle}>
-                {getBillingTypeText(Sms)}
+            {!isAllowNewsletter() && <Box className={classes.flex1}>&nbsp;</Box>}
+            <Box className={clsx(classes.flex2, isAllowNewsletter() ? classes.textCenter : classes.flexEnd)} style={{ display: isAllowNewsletter() ? null : 'flex' }}>
+              <Typography
+                className={clsx(classes.bulkTitle, classes.bold)}
+                title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
+                aria-label={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}>
+                {getBillingTypeText(Newsletters)}
               </Typography>
             </Box>
-            <Box className={clsx(classes.flex1, classes.textRight)} onClick={() => showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') })}>
+            {isAllowNewsletter() && <Box className={clsx(classes.flex1, classes.textRight, classes.flexEnd)} onClick={() => showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })}>
               <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)}>
                 {t('dashboard.purchase')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               </Button>
-            </Box>
+            </Box>}
+
           </Grid>
-
           <Divider />
-
-          {/* {Mms.Credits > 0 && <Grid
-            container
-            item sm={12} md={12} lg={12} xl={12}
-            className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-            justifyContent='space-between'
-          >
-            <Box className={clsx(classes.flex1)}>
-              <WhatsappIcon className={classes.shoppingCartIcon} />
-            </Box>
-            <Box className={clsx(classes.flex2)}>
-              <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
-            </Box>
-            <Box className={clsx(classes.flex2, classes.textCenter)}>
-              <Typography className={classes.bulkTitle}>
-                {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
-              </Typography>
-            </Box>
-            <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType(3)}>
-              <Button className={clsx(classes.btn, classes.btnRounded, classes.btnDisabled)}>
-                {t('dashboard.purchase')}
-                {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-              </Button>
-            </Box>
-          </Grid>}
-
-          <Divider /> */}
-
           {Notifications.FeatureExist && <Grid
             container
             item sm={12} md={12} lg={12} xl={12}

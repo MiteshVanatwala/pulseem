@@ -50,12 +50,14 @@ import {
     getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
 import { GroupData } from '../../../Models/Groups/Group';
-import { sitePrefix } from '../../../config';
+// import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
+import useRedirect from '../../../helpers/Routes/Redirect';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
     const { t } = useTranslation();
+    const Redirect = useRedirect();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
     const { extraData } = useSelector((state: any) => state.sms);
     const { accountFeatures } = useSelector((state: any) => state.common);
@@ -505,17 +507,17 @@ const DynamicGroups = ({ classes }: any) => {
                     // navigate(`${sitePrefix}groups/dynamic/edit/${GroupID}`)
                 }
             },
-            {
-                key: 'reset',
-                uIcon: ResetIcon,
-                lable: t("recipient.reset"),
-                remove: windowSize === 'xs',
-                rootClass: classes.paddingIcon,
-                onClick: () => {
-                    setSelectedGroups([GroupID])
-                    setDialog(DialogType.RESET_GROUP)
-                },
-            },
+            // {
+            //     key: 'reset',
+            //     uIcon: ResetIcon,
+            //     lable: t("recipient.reset"),
+            //     remove: windowSize === 'xs',
+            //     rootClass: classes.paddingIcon,
+            //     onClick: () => {
+            //         setSelectedGroups([GroupID])
+            //         setDialog(DialogType.RESET_GROUP)
+            //     },
+            // },
             {
                 key: 'settings',
                 uIcon: SettingIcon,
@@ -527,17 +529,17 @@ const DynamicGroups = ({ classes }: any) => {
                 },
                 rootClass: classes.paddingIcon,
             },
-            {
-                key: 'automation',
-                uIcon: AutomationIcon,
-                lable: t("recipient.automation"),
-                disable: !AutomationID,
-                rootClass: classes.paddingIcon,
-                onClick: () => {
-                    if (AutomationID)
-                        window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
-                }
-            },
+            // {
+            //     key: 'automation',
+            //     uIcon: AutomationIcon,
+            //     lable: t("recipient.automation"),
+            //     disable: !AutomationID,
+            //     rootClass: classes.paddingIcon,
+            //     onClick: () => {
+            //         if (AutomationID)
+            //             window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
+            //     }
+            // },
             {
                 key: 'delete',
                 uIcon: DeleteIcon,
@@ -561,12 +563,14 @@ const DynamicGroups = ({ classes }: any) => {
             >
                 {iconsMap.map(icon => (
                     <Grid
-                        className={clsx(icon.disable && classes.disabledCursor, classes.smallActionIcons, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
+                        className={'rowIconContainer'}
                         key={icon.key}
                         item >
                         {/* @ts-ignore */}
                         <ManagmentIcon
                             classes={classes}
+                            // @ts-ignore
+                            className={'rowIconContainer'}
                             {...icon}
                             uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                         />
@@ -1514,15 +1518,15 @@ const DynamicGroups = ({ classes }: any) => {
                     <TableBody>
                         {
                             groupData.Groups.length
-                            ? groupData.Groups
-                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)
-                            : (
-                                <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
-                                    <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
-                                        {t('common.NoDataTryFilter')}
-                                    </Grid>
-                                </Box>
-                            )
+                                ? groupData.Groups
+                                    .map(windowSize === 'xs' ? renderPhoneRow : renderRow)
+                                : (
+                                    <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
+                                        <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+                                            {t('common.NoDataTryFilter')}
+                                        </Grid>
+                                    </Box>
+                                )
                         }
                     </TableBody>
                 </DataTable>

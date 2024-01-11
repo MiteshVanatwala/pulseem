@@ -169,6 +169,7 @@ const NewsLetterInfo = ({ classes }) => {
     const [template, setTemplate] = useState('');
     const [continueToNewEditor, setContinueToNewEditor] = useState(false);
     const [onSelectedSharedDomain, setOnSelectedSharedDomain] = useState(false);
+    // const restrictedDomains = sessionStorage.getItem("RestrictedEmailDomains");
 
     const navigate = useNavigate();
     const maxCharLimits = {
@@ -392,6 +393,9 @@ const NewsLetterInfo = ({ classes }) => {
                         }
                     }))
                 }
+                else {
+                    navigate(`${sitePrefix}Campaigns`);
+                }
                 break;
             }
             case 500: {
@@ -559,10 +563,10 @@ const NewsLetterInfo = ({ classes }) => {
                 setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo?.CampaignID });
 
                 handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor, saveInfo?.CampaignID);
-                
+
                 if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451) {
                     return false;
-                }              
+                }
 
                 // if (template?.Html && template?.JsonData) {
                 //     await dispatch(saveCampaign({
@@ -798,11 +802,17 @@ const NewsLetterInfo = ({ classes }) => {
                                             {t("common.select")}
                                         </MenuItem>
                                         {verifiedEmails.map((item, index) => {
+                                            if (item && item.IsRestricted) {
+                                                return false;
+                                            }
                                             return <MenuItem
                                                 key={index}
                                                 value={item.Number}
                                                 name={item.Number}
                                             >
+                                                {item?.IsVerified && <ListItemIcon style={{ minWidth: 25 }}>
+                                                    <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} />
+                                                </ListItemIcon>}
                                                 {t(item.Number)}
                                             </MenuItem>
                                         })}

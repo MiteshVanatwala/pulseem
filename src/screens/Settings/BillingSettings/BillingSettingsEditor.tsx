@@ -168,7 +168,6 @@ const BillingSettingsEditor = ({ classes }: any) => {
 
   const FormBillingInformation = () => (
     <Box
-      style={{ marginTop: 42.6, paddingInline: 17.2 }}
       className={"settingsWrapper"}
     >
       <Title

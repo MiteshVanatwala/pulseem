@@ -23,7 +23,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
 
   if (subPage) {
     if (currentPage === 'settings') {
-      let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username)
+      let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL)
       const option = settingsRoutes.options.find((sr) => sr.key === subPage) //settingsRoutes && settingsRoutes.options[0].title || '';
       title = (option && option.title) ?? '';
     }
