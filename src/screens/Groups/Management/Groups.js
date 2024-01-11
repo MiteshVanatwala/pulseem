@@ -421,18 +421,23 @@ const Groups = ({ classes }) => {
         return (
             <Grid container wrap="nowrap" spacing={1} alignItems='center' className={['sm', 'md'].indexOf(windowSize) > -1 ? classes.groupNameCell : ''}>
                 {windowSize !== 'xs' && <Grid item sm={2} className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.flexJustifyCenter : ''}>
-                    <Checkbox
-                        color="primary"
-                        checked={selectedGroups && selectedGroups.includes(GroupID)}
-                        // indeterminate={}
-                        onClick={() => {
-                            if (selectedGroups.includes(GroupID)) {
-                                setSelectedGroups(selectedGroups.filter(item => item !== GroupID))
-                            } else {
-                                setSelectedGroups([...selectedGroups, GroupID])
-                            }
-                        }}
-                    />
+                    {
+                        !row.AutomationID && (
+                            <Checkbox
+                                disabled={row.AutomationID}
+                                color="primary"
+                                checked={selectedGroups && selectedGroups.includes(GroupID)}
+                                // indeterminate={}
+                                onClick={() => {
+                                    if (selectedGroups.includes(GroupID)) {
+                                        setSelectedGroups(selectedGroups.filter(item => item !== GroupID))
+                                    } else {
+                                        setSelectedGroups([...selectedGroups, GroupID])
+                                    }
+                                }}
+                            />
+                        )
+                    }
 
                 </Grid>}
                 <Grid item sm={10} className='rowTitle'>
@@ -639,6 +644,7 @@ const Groups = ({ classes }) => {
             UpdateDate,
             PendingClients,
             PendingSmsClients,
+            AutomationID,
         } = row;
         let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
             return e === true
@@ -656,7 +662,7 @@ const Groups = ({ classes }) => {
                     className={clsx(classes.flex2)}>
                     <Grid container direction="row">
                         <Grid item sm={12 - iconsCells}>
-                            {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })}
+                            {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate, AutomationID })}
                         </Grid>
                         {
                             row.IsAutoResponder === true ? (
