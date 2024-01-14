@@ -287,14 +287,7 @@ const SummaryDialog = ({ classes,
                         isSummary: true,
                         display: true,
                         address: `${fromEmailValue?.split('@')[1]}`,
-                        verifyCallback: (obj) => {
-                            const req = {
-                                target: {
-                                    value: fromEmailValue
-                                }
-                            };
-                            handleFromEmailChanged(req);
-                        },
+                        showSkip: false,
                         verifySharedCallback: (obj) => {
 
                             const fromEmail = obj?.FromEmail || accountSettings?.SubAccountSettings?.SharedEmailDomain;

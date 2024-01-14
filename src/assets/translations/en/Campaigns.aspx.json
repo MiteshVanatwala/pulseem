@@ -292,7 +292,8 @@
   },
   "imgSendResource1": {
     "AlternateText": "",
-    "ToolTip": "Send"
+    "ToolTip": "Send",
+    "nonVerifiedDomain": "From Email Domain address is not verified (Adding a new Record in your Domain Management System)"
   },
   "imgSettingsResource1": {
     "AlternateText": "",

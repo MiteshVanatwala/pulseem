@@ -85,7 +85,7 @@ const NotificationBell = ({ classes }: any) => {
           </Box>
         }
         case NotifyCenterType.DomainValidaion: {
-          return <Box className={classes.dFlex} style={{ alignItems: 'center' }} onClick={() => dispatch(setVerificationDomain({ display: true, address: `${option.TargetName}` }))}>
+          return <Box className={classes.dFlex} style={{ alignItems: 'center' }} onClick={() => dispatch(setVerificationDomain({ display: true, address: `${option.TargetName}`, showSkip: false }))}>
             <MdDomain className={classes.notifyIcon} />
             {option.SourceID === 1 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.syntaxError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}
             {option.SourceID === 2 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.mailHeaderError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}

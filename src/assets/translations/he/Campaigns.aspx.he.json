@@ -292,7 +292,8 @@
   },
   "imgSendResource1": {
     "AlternateText": "",
-    "ToolTip": "שלח"
+    "ToolTip": "שלח",
+    "nonVerifiedDomain":"כתובת מייל השולח מכילה דומיין אשר לא עבר תהליך אימות (הוספת רשומה בממשק ניהול הדומיין)"
   },
   "imgSettingsResource1": {
     "AlternateText": "",

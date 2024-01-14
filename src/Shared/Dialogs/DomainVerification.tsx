@@ -20,9 +20,11 @@ interface DomainVerificationObj {
     domain: {
         display: boolean,
         address: string,
-        verifyCallback?: Function | never,
         verifySharedCallback?: Function | never,
-        isSummary: boolean
+        isSummary: boolean,
+        isFullDescription: boolean,
+        preText?: string,
+        showSkip: boolean
     }
 }
 
@@ -112,9 +114,11 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     useEffect(() => {
         if (accountSettings && accountSettings?.SubAccountSettings) {
             setSharedDomain(accountSettings?.SubAccountSettings?.SharedEmailDomain?.replace(DOMAIN_EMAIL_SUFFIX, ''));
+        }
+        if (verifiedEmails && verifiedEmails?.length > 0) {
             setReplyTo(verifiedEmails && verifiedEmails[0]?.Number);
         }
-    }, [accountSettings]);
+    }, [accountSettings, verifiedEmails]);
 
     const verifyDomain = async () => {
         const response = await dispatch(GetDomainVerification(domain?.address)) as any;
@@ -198,33 +202,6 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         domain?.verifySharedCallback && domain?.verifySharedCallback({ ...callbackResponse, Skip: true })
     }
 
-    const renderTestDomainButton = () => {
-        return <Box className={classes.fullFlexColumn} key={Math.floor(Math.random() * 100)}>
-            {!domainReady && <><Button
-                className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                onClick={() => verifyDomain()}
-            >
-                {t('common.domainVerification.popup.sections.verifyDomain.button')}
-                {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-            </Button>
-                {reason !== '' && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center', marginTop: 10 }}>
-                    <MdOutlineReportGmailerrorred className={clsx('flexEnd')} style={{ color: 'red', fontSize: 24 }} />
-                    <Typography style={{ marginInline: 5, fontWeight: 600 }}>{reason}</Typography>
-                </Box>}
-            </>}
-            {domainReady && domain?.verifyCallback ? (<Button
-                className={clsx(classes.btn, classes.btnRounded, classes.f14, 'flexEnd')}
-                onClick={() => domain?.verifyCallback && domain?.verifyCallback(callbackResponse)}
-            >
-                {t('common.domainVerification.popup.sections.verifyDomain.button')}
-                {<MdOutlineVerified />}
-            </Button>) : domainReady && <Box style={{ display: 'flex', justifyContent: "flex-end", alignItems: 'center' }}>
-                <MdOutlineVerified className={clsx('flexEnd')} style={{ color: 'green', fontSize: 36 }} textRendering={"Verified"} title="Verified" />
-                <Typography style={{ marginInline: 5, fontWeight: 600 }}>{t('common.domainVerification.popup.domainVerified')}</Typography>
-            </Box>}
-        </Box>
-    }
-
     return domain?.display ? (<BaseDialog
         disableBackdropClick={false}
         classes={classes}
@@ -243,7 +220,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         title={RenderHtml(t("common.domainVerification.popup.title").replace('##domainAddress##', domain.address !== '' ? `- ${domain.address}` : ''))}
         children={<Box className={clsx(classes.fullWidth)}>
             <Box className={classes.mb20}>
-                {RenderHtml(t('common.domainVerification.popup.preText'))}
+                {RenderHtml(domain?.preText)}
             </Box>
             <Accordion
                 expanded={activeAccordion === 1}
@@ -266,15 +243,14 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container>
-                        <Box style={{ position: 'absolute', right: isRTL ? 'auto' : 0, left: isRTL ? 10 : 'auto', top: 10 }}>
-                            {activeAccordion === 1 && renderTestDomainButton()}
-                        </Box>
-                        <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.verifyDomain.text"))}</Box>
-                        {renderTestDomainButton()}
+                        <Box className={classes.fullWidth}>{
+                            domain.isFullDescription ? RenderHtml(t("common.domainVerification.popup.sections.verifyDomain.text"))
+                                : RenderHtml(t("common.domainVerification.popup.sections.verifyDomain.text"))
+                        }</Box>
                     </Grid>
                 </AccordionDetails>
             </Accordion>
-            <Accordion
+            {domain.isFullDescription && <Accordion
                 expanded={activeAccordion === 2}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
                 key={2}
@@ -297,8 +273,8 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                         <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.buyVerifiedDomain.text"))}</Box>
                     </Grid>
                 </AccordionDetails>
-            </Accordion>
-            {domain?.verifyCallback !== null && domain?.verifyCallback !== undefined && <Accordion
+            </Accordion>}
+            {domain?.verifySharedCallback !== null && domain?.verifySharedCallback !== undefined && <Accordion
                 expanded={activeAccordion === 3}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
                 key={3}
@@ -398,7 +374,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                     </Grid>
                 </AccordionDetails>
             </Accordion>}
-            {!domain?.isSummary && domain?.verifySharedCallback && <Box className={classes.dFlex} style={{ justifyContent: 'flex-end' }}>
+            {domain?.showSkip && <Box className={classes.dFlex} style={{ justifyContent: 'flex-end' }}>
                 <Button className={clsx(classes.btn, classes.btnRounded, classes.f14)} style={{ justifySelf: 'flex-end' }} onClick={handleSkip}>{t('common.skip')}</Button>
             </Box>}
         </Box>}

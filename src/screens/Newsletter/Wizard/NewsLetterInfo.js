@@ -352,6 +352,7 @@ const NewsLetterInfo = ({ classes }) => {
     //     }
     // }, [onSelectedSharedDomain])
     const handleSubmitNewsletterResponse = (res, isExit, isNewEditor, campaignId) => {
+        const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail });
         switch (res?.StatusCode) {
             case 201: {
                 setToastMessage(ToastMessages.SUCEESS)
@@ -374,10 +375,8 @@ const NewsLetterInfo = ({ classes }) => {
                     dispatch(setVerificationDomain({
                         display: true,
                         address: `${campaingnValues.FromEmail}`,
-                        verifyCallback: (obj) => {
-                            // const { SourceID, IsSPFApproved, IsDKIMApproved, IsDMARCApprotved } = obj;
-                            handleContinueToEditor(isNewEditor, campaignId);
-                        },
+                        preText: fromEmailProperty?.IsRestricted === true ? t('common.domainVerification.popup.restrictedPreText') : t('common.domainVerification.popup.preText'),
+                        showSkip: true,
                         verifySharedCallback: async (obj) => {
                             if (obj && obj.Skip === true) {
                                 handleContinueToEditor(isNewEditor, campaignId);
@@ -385,12 +384,13 @@ const NewsLetterInfo = ({ classes }) => {
                             else {
                                 if (obj && obj.ReplyTo && obj.FromEmail) {
                                     setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
-                                    await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, IsNewEditor: isNewEditor }));
+                                    await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
                                     handleContinueToEditor(isNewEditor, campaignId);
                                 }
                             }
                             // setOnSelectedSharedDomain(true);
-                        }
+                        },
+                        isFullDescription: true
                     }))
                 }
                 else {
@@ -494,6 +494,32 @@ const NewsLetterInfo = ({ classes }) => {
             setErrors({ ...errors, [e.target.name]: '' })
             setCampaingnValues({ ...campaingnValues, [e.target.name]: e.target.value })
         }
+    }
+
+    const handleFromEmailChange = (event) => {
+        const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === event.target.value });
+
+        setCampaingnValues({
+            ...campaingnValues,
+            FromEmail: event.target.value,
+            ReplyTo: event.target.value.split("@").pop() !== SharedEmailDomain ? event.target.value : fromEmailProperty.Number
+        });
+        setErrors({ ...errors, FromEmail: '' });
+
+        if (!fromEmailProperty.IsVerified) {
+            dispatch(setVerificationDomain({
+                display: true,
+                address: `${campaingnValues.FromEmail}`,
+                preText: fromEmailProperty.IsRestricted ? t('common.domainVerification.popup.restrictedPreText') : t('common.domainVerification.popup.preText'),
+                verifySharedCallback: async (obj) => {
+                    setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
+                    await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo }));
+                },
+                isFullDescription: true,
+                Skip: false
+            }));
+        }
+
     }
 
     const handleHideNewCautionMessage = (e) => {
@@ -782,8 +808,7 @@ const NewsLetterInfo = ({ classes }) => {
                                         value={campaingnValues?.FromEmail}
                                         className={classes.pbt5}
                                         onChange={(event, val) => {
-                                            setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value, ReplyTo: event.target.value.split("@").pop() !== SharedEmailDomain ? event.target.value : verifiedEmails[0]?.Number });
-                                            setErrors({ ...errors, FromEmail: '' });
+                                            handleFromEmailChange(event);
                                         }}
                                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                         MenuProps={{
