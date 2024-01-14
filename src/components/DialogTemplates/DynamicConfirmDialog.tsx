@@ -20,9 +20,6 @@ const DynamicConfirmDialog = ({
     const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
     );
-    const { verifiedEmails } = useSelector(
-        (state: { common: commonProps }) => state.common
-    );
 
     const dialog = {
         classes: classes,

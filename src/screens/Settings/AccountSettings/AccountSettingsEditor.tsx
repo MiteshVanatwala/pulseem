@@ -22,12 +22,14 @@ import {
 	MdArrowForwardIos,
 	MdMobileFriendly,
 	MdOutlineMarkEmailRead,
+	MdOutlineVerified,
 } from 'react-icons/md';
 import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { updateWhatsappTier } from '../../../redux/reducers/whatsappSlice';
 import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.types';
 import { apiStatus } from '../../Whatsapp/Constant';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
+import DomainsVerificationPopUp from './Popups/DomainsVerificationPopUp';
 
 const AccountSettingsEditor = () => {
 	const { t } = useTranslation();
@@ -84,6 +86,7 @@ const AccountSettingsEditor = () => {
 		ExpiryDate: null,
 	} as AccountSettings);
 	const [selectedTier, setSelectedTier] = useState<string>('1');
+	const [showVerificationDomains, setShowVerificationDomains] = useState<boolean>(false);
 
 	const renderToast = () => {
 		setTimeout(() => {
@@ -241,7 +244,7 @@ const AccountSettingsEditor = () => {
 		if (payload.Status === apiStatus.SUCCESS) {
 			setToastMessage(ToastMessages?.WHATSAPP_TIER_SAVED)
 			await dispatch<any>(getCommonFeatures());
-		} else{
+		} else {
 			setSelectedTier(prevSelectedTier)
 			setToastMessage(ToastMessages?.WHATSAPP_TIER_NOT_SAVED)
 		}
@@ -298,6 +301,21 @@ const AccountSettingsEditor = () => {
 								{t('settings.accountSettings.fixedComDetails.btnVerifyEmail')}
 							</>
 						</Button>
+						<Button
+							className={clsx(
+								classes.btn,
+								classes.btnNohover,
+								classes.noBorder,
+								classes.link,
+								classes.textCapitalize,
+								'link'
+							)}
+							startIcon={<MdOutlineVerified />}
+							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+							onClick={() => setShowVerificationDomains(!showVerificationDomains)}
+						>
+							{t('common.domainVerification.settingPopUp.title')}
+						</Button>
 					</Box>
 				</Box>
 				<Divider />
@@ -330,6 +348,11 @@ const AccountSettingsEditor = () => {
 					/>
 				</Box>
 			</Box>
+			{showVerificationDomains && <DomainsVerificationPopUp
+				classes={classes} isOpen={showVerificationDomains}
+				onClose={() => setShowVerificationDomains(false)}
+				onConfirm={() => setShowVerificationDomains(false)}
+			/>}
 			{tfaEmailVerification && (
 				<VerificationDialog
 					variant='emailTFA'

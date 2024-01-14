@@ -18,6 +18,7 @@
   "Immediate": "Immediate",
   "NoOpened": "Not Opened",
   "Opened": "Opened",
+  "UnOpened": "Unopened",
   "OverallSendInfo": "Send SMS to recipients in selected criteria that received email campaign for complete overall marketing.",
   "Partners": "Partners Program",
   "PulseemKosher": "System keeps the Sabbath and Jewish holidays",
@@ -574,7 +575,7 @@
   "back": "Back",
   "clientSubscriptionResultTitle": "Subscribers of Landing page ",
   "SelectFormat": "Select format",
-  "pageNotFound": "<h1>Oooops... 404!</h1><br/><p>Youv'e got lost :(</p><p>don't worry. we left the navigation menu bar on the top for you.</p>",
+  "pageNotFound": "<h1>Oooops... 404!</h1><br/><p>Youv'e got lost :(</p><p style='white-space: normal;'>don't worry. we left the navigation menu bar on the top for you.</p>",
   "saveTemplate": "Save Template",
   "exit": "Exit",
   "phone": "Phone",
@@ -639,5 +640,54 @@
     "uploadFiles": {
       "fileDoesNotSupportedForImport": "XLS Files does not support for later Recipients Upload. For this, you may need to export files as XLSX"
     }
-  }
+  },
+  "domainVerification": {
+    "popup": {
+      "restrictedPreText": "<h3 style='color:red'>שימו לב!!!</h3><br><b style='color:red'>זיהינו כי הדומיין שהגדרתם לטובת שליחת הניוזלטר, אינו דומיין מאומת:</b><br>השדה 'כתובת מייל השולח' מכיל שם משתמש עם דומיין מסוג Gmail, Hotmail, Yahoo וכד'.<br><br>להזכירכם, דרישות החובה החדשות של Gmail, מחייבות דומיין מאומת משלכם לטובת דיוור ניוזלטרים.<br><br>במידה ולא יתבצעו ההתאמות הנדרשות, לא ניתן יהיה לשלוח את הניוזלטר ולהגיע לתיבת ה- INBOX של לקוחותיכם.<br><br>אנו כאן כדי לעזור לכם - אנא בחרו את החלופה המועדפת עליכן/ם מתוך החלופות המוצעות:",
+      "preText": "<h3 style='color: red'>שימו לב!!!</h3><br/>זיהינו כי הדומיין שהגדרתם לטובת שליחת הניוזלטר, אינו דומיין מאומת: <br/>השדה 'כתובת מייל השולח' מכיל שם משתמש עם דומיין מסוג Gmail, Hotmail, Yahoo וכד' <br/><br/>להזכירכם, דרישות החובה החדשות של Gmail, מחייבות דומיין מאומת משלכם לטובת דיוור ניוזלטרים. <br/><br/>במידה ולא תבצעו את ההתאמות הנדרשות, לא תגיעו לתיבת ה- INBOX של לקוחותיכם. <br/>אנחנו כאן כדי לעזור לכם ולצורך כך בחרו את האפשרות המועדפת עליכם מתוך האפשרויות המוצעות: ",
+      "title": "Domain Verification ##domainAddress##",
+      "text": "aaa",
+      "domainVerified": "Domain Verified",
+      "responses": {
+        "0": "Domain Verified",
+        "1": "Syntax Error",
+        "2": "The Domain was not passed Gmail verification"
+      },
+      "sections": {
+        "verifyDomain": {
+          "title": "Verify a New Domain",
+          "text": "<div><span>שלבים מקדימים (גם להוספת SPF וגם להוספת DKIM)</span><ul><li>יש להתחבר למערכת ניהול של הדומיין.<li>DNS להגיע למקום שבו ניתן לעדכן ולהוסיף רשומת</ul><b style=color:red><u>SPF</u></b><ul style=list-style:decimal><li><b>במידה ולא קיימת</b> <span>בהגדרות של ה DNS רשומת TXT שמכילה את התווים - v=spf</span><ul style=list-style:decimal><li>יש להוסיף רשומת DNS חדשה מסוג TXT<li>יש להקליד את הערך @ בשדה Host/Name<li>יש להקליד את הערך הבאה בשדה Content/TXT Value</li><span>v=spf1 include:youlinktv.com ip4: 62.219.80.0/24 ~all</span></ul></li><br><li><b>במידה וקיימת רשומה</b><ul style=list-style:decimal><li>יש לערוך אותה ולהוסעיף לה את הערכים באופן הבא<li>v=spf1 ip4:…<b>ip4: 62.219.80.0/24</b>… include…<span class=bold>include:youlinktv.com</span>~all</li><span>** יש להוסיף אך ורק את מה שמודגש</span></ul></li><br></ul><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><b style=color:red><u>DKIM</u></b><ul style=list-style:decimal><li>יש להוסיף רשומת TXT חדשה<li>יש להקליד את הערך<b>alfa_.domainkey</b>בשדה Host/Name<li>יש להקליד את הערך הבא בשדה Content/TXT Value</ul><span id='copyLabel' class='copy-label'><span class='MuiButton-startIcon MuiButton-iconSizeSmall'><div id='copyStatusIcon'>\ue0b0</div></span>Copy</span><div id='dkimRecord' class='scriptCode'>v=DKIM1; k=rsa; h=sha256; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+bGl6UdyLB2oXWCGDxu715LS2EZ0U6LwA3z6DrGMZALT+ZG33oYXUQVQmLQHg0mvTowJC9eEejTJWrbLPyd/20RU19XMyj7NXnAAsJWbzRzQcRcc/mlgJPseKrjRzAo38WIDovuUxxpfLslRgX82c2jENw5Ff4gO/XeyLaTneWQIDAQAB</div><br><br><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><b style=color:red><u>DMARC</u></b><br><br><span>אם לא קיימת לכם רשומת DMARC, ניתן להוסיף רשומת DNS חדשה. אם זאת הפעם הראשונה שאתם מוסיפים רשומת DMARC, מומלץ להגדיר את סוג הפעולה כnone, על מנת לבחון מי שולח בשמכם מיילים ואת ההשפעה הפוטנציאלית לפני שמשנים את סוג הפעולה לreject או quarantine.</span><ul style=list-style:decimal><li>יש להוסיף רשומת TXT חדשה<li>יש להקליד את הערך dmarc_ בשדה Host/Name<li>יש להקליד את הערך הבא בשדה Content/TXT Value</li><span>v=DMARC1; p=none; rua=mailto:report@example.com</span><span><br/>** זאת בהנחה שהדומיין שלכם הוא com.example, יש להגדיר תיבה אליה תקבלו את הדוחות, חשוב לא לשכוח לשים mailto לפני</span></ul><br><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><br></div>",
+          "button": "Check Domain Verification Status"
+        },
+        "buyVerifiedDomain": {
+          "title": "Buy Verified Domain",
+          "text": "ליצירת קשר עם מחלקת המכירות שלנו<br/><a href='mailto:sales@Pulseem.com' style='color:red'>sales@Pulseem.com</a>"
+        },
+        "sendFromSharedDomain": {
+          "title": "Send using Shared Domain",
+          "text": "תגובות למייל יישלחו לכתובת המייל הראשונה שאומתה לשליחה",
+          "button": "Use Shared Domain",
+          "placeholder": "{Email Prefix}",
+          "saveDomain": "Save and Set From Email",
+          "saveAndContinue": "Save and Continue to Campaign Editor"
+        }
+      }
+    },
+    "settingPopUp": {
+      "title": "Domains Verification",
+      "selectDomain": "Select Domain to verify"
+    },
+    "verifyDomain": "Verify Domain",
+    "verifiedDomain": "Verified Domain",
+    "verificationResponse": {
+      "sourceId": "Source",
+      "domainName": "Domain Name",
+      "dkimApproved": "DKIN Approved",
+      "dmarcApproved": "DMARC Approved",
+      "spfApproved": "SPF Approved",
+      "lastReadTime": "Last Read Email Time",
+      "lastSendTime": "Last Send Email Time"
+    }
+  },
+  "skip": "Skip"
 }

@@ -159,5 +159,9 @@
   "recipientsRemoved": "Recipients were successfully removed from <b>\"##Name##\"</b>",
   "recipientsUploaded": "Recipients were successfully uploaded to <b>\"##Name##\"</b>",
   "notifyCenterTitle": "Notifications",
-  "noNewNotify": "There are no new notifications"
+  "noNewNotify": "There are no new notifications",
+  "domainValidation": {
+    "syntaxError": "Domain verification (“##DoaminAddress##”) failed due to mismatch in settings",
+    "mailHeaderError": "The domain verification (“##DoaminAddress##”) failed to verify with the GMAIL servers"
+  }
 }

@@ -35,10 +35,12 @@ import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
+import { MdError } from 'react-icons/md';
+import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 // import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  const { accountFeatures } = useSelector(state => state.common);
+  const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -340,10 +342,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
   }
 
   const renderCellIcons = (row) => {
-    const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive, IsNewEditor } = row
+    const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive, IsNewEditor, FromEmail } = row
 
     const cautionPopup = getCookie('showCautionDuplicateCampaign');
     const showCautionNewEditor = !IsNewEditor && (cautionPopup !== "false" ?? false);
+
+    const fromEmailNonVerified = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail && ve?.IsVerified === true })?.length <= 0;
+
 
     const renderCopyToClipoard = (
       showCopied === CampaignID ?
@@ -364,7 +369,30 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/react/Campaigns/SendSettings/${CampaignID}`
+        // href: `/react/Campaigns/SendSettings/${CampaignID}`,
+        errorElement: fromEmailNonVerified === true && <MdError
+          title={t('campaigns.imgSendResource1.nonVerifiedDomain')}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: isRTL ? 0 : 'auto',
+            right: isRTL ? 'auto' : 0,
+            zIndex: 100,
+            fontSize: 25,
+            fill: 'white',
+            backgroundColor: 'red',
+            borderRadius: 25,
+          }} />,
+        onClick: () => {
+          if (fromEmailNonVerified === true) {
+            alert('domain was not verified')
+          }
+          else {
+            dispatch(getGroupsBySubAccountId());
+            navigate(`/react/Campaigns/SendSettings/${CampaignID}`);
+
+          }
+        }
         //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
       },
       {
@@ -491,9 +519,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
               container>
               {map.map(icon => (
                 <Grid
+                  style={{ position: 'relative' }}
                   className={clsx(icon.disable && classes.disabledCursor)}
                   key={icon.key}
-                  item >
+                  item>
+                  {icon?.errorElement}
                   <ManagmentIcon
                     classes={classes}
                     {...icon}
@@ -1003,7 +1033,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         duplicateOptions={[]}
         handleClose={async (selectedOptions) => {
           setDuplicateDialog({});
-          if (selectedOptions !== undefined)  {
+          if (selectedOptions !== undefined) {
             clearSearch()
             handleClose()
             setPage(1)

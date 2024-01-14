@@ -22,6 +22,7 @@ import ConnectorsSlice from './reducers/ConnectorsSlice';
 import galleryReducer from './reducers/gallerySlice'
 import whatsappReducer from './reducers/whatsappSlice'
 import AccountSettingsSlice from './reducers/AccountSettingsSlice';
+// import DynamicGroupsSlice from './reducers/DynamicGroupsSlice';
 
 export default configureStore({
   reducer: {

@@ -18,6 +18,7 @@
   "Immediate": "מיידית",
   "NoOpened": "לא נפתחו",
   "Opened": "נפתחו",
+  "UnOpened": "לא נפתחו",
   "OverallSendInfo": "הפצת הודעת SMS ללקוחות בקרטריון הנבחר שקבלו קמפיין דיוור אלקטרוני להשלמת שיווק כולל",
   "Partners": "תכנית שותפים",
   "PulseemKosher": "מערכת שומרת שבת חגים יהודיים",
@@ -454,7 +455,7 @@
   "yourCampaignOnItsWay": "הקמפיין שלך בדרך",
   "folderAlreadyExists": "תיקייה עם שם זה כבר קיימת. יש לבחור שם אחר.",
   "maxImageSize": "הקובץ גדול מדי, נסו שנית",
-  "smsBulkTitle": "חבילות SMS",
+  "smsBulkTitle": "SMS חבילות",
   "smsBulk": "חבילת SMS",
   "newsletterBulkTitle": "חבילות דיוור",
   "newsletterBulk": "חבילת דיוור",
@@ -571,7 +572,7 @@
   "clientSubscriptionResultTitle": "הרשמות לפי ",
   "OpenTime": "זמן פתיחה",
   "SelectFormat": "בחר פורמט",
-  "pageNotFound": "<h1>אווופס... 404!</h1><br/><p>הלכת לאיבוד :(</p><p>אל דאגה. השארנו את שורת תפריט הניווט כאן למעלה, במיוחד בשבילך :)</p>",
+  "pageNotFound": "<h1>אווופס... 404!</h1><br/><p>הלכת לאיבוד :(</p><p style='white-space: normal;'>אל דאגה. השארנו את שורת תפריט הניווט כאן למעלה, במיוחד בשבילך :)</p>",
   "saveTemplate": "שמור תבנית",
   "exit": "צא",
   "phone": "טלפון",
@@ -635,5 +636,57 @@
     "uploadFiles": {
       "fileDoesNotSupportedForImport": "קבצי XLS לא נתמכים בייבוא נמענים למערכת. במידה וקיים הצורך לייבא נמענים מקובץ זה בהמשך, יש לייצא קובץ מסוג XLSX"
     }
-  }
+  },
+  "domainVerification": {
+    "popup": {
+      "restrictedPreText": "<h3 style='color:red'>שימו לב!!!</h3><br><b style='color:red'>זיהינו כי הדומיין שהגדרתם לטובת שליחת הניוזלטר, אינו דומיין מאומת:</b><br>השדה 'כתובת מייל השולח' מכיל שם משתמש עם דומיין מסוג Gmail, Hotmail, Yahoo וכד'.<br><br>להזכירכם, דרישות החובה החדשות של Gmail, מחייבות דומיין מאומת משלכם לטובת דיוור ניוזלטרים.<br><br>במידה ולא יתבצעו ההתאמות הנדרשות, לא ניתן יהיה לשלוח את הניוזלטר ולהגיע לתיבת ה- INBOX של לקוחותיכם.<br><br>אנו כאן כדי לעזור לכם - אנא בחרו את החלופה המועדפת עליכן/ם מתוך החלופות המוצעות:",
+      "preText": "<h3 style='color: red'>שימו לב!!!</h3><br/>זיהינו כי הדומיין שהגדרתם לטובת שליחת הניוזלטר, אינו דומיין מאומת: <br/>השדה 'כתובת מייל השולח' מכיל שם משתמש עם דומיין מסוג Gmail, Hotmail, Yahoo וכד' <br/><br/>להזכירכם, דרישות החובה החדשות של Gmail, מחייבות דומיין מאומת משלכם לטובת דיוור ניוזלטרים. <br/><br/>במידה ולא תבצעו את ההתאמות הנדרשות, לא תגיעו לתיבת ה- INBOX של לקוחותיכם. <br/>אנחנו כאן כדי לעזור לכם ולצורך כך בחרו את האפשרות המועדפת עליכם מתוך האפשרויות המוצעות: ",
+      "title": "אימות דומיין ##domainAddress##",
+      "text": "טקסט טקסט טקסט",
+      "domainVerified": "דומיין מאושר",
+      "responses": {
+        "0": "דומיין מאושר",
+        "1": "שגיאת Syntax",
+        "2": "הדומיין לא עבר בדיקה מול ג'ימייל"
+      },
+      "sections": {
+        "verifyDomain": {
+          "title": "אימות דומיין חדש",
+          "text": "<div><span>שלבים מקדימים (גם להוספת SPF וגם להוספת DKIM)</span><ul><li>יש להתחבר למערכת ניהול של הדומיין.<li>DNS להגיע למקום שבו ניתן לעדכן ולהוסיף רשומת</ul><b style=color:red><u>SPF</u></b><ul style=list-style:decimal><li><b>במידה ולא קיימת</b> <span>בהגדרות של ה DNS רשומת TXT שמכילה את התווים - v=spf</span><ul style=list-style:decimal><li>יש להוסיף רשומת DNS חדשה מסוג TXT<li>יש להקליד את הערך @ בשדה Host/Name<li>יש להקליד את הערך הבאה בשדה Content/TXT Value</li><span>v=spf1 include:youlinktv.com ip4: 62.219.80.0/24 ~all</span></ul></li><br><li><b>במידה וקיימת רשומה</b><ul style=list-style:decimal><li>יש לערוך אותה ולהוסעיף לה את הערכים באופן הבא<li>v=spf1 ip4:…<b>ip4: 62.219.80.0/24</b>… include…<span class=bold>include:youlinktv.com</span>~all</li><span>** יש להוסיף אך ורק את מה שמודגש</span></ul></li><br></ul><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><b style=color:red><u>DKIM</u></b><ul style=list-style:decimal><li>יש להוסיף רשומת TXT חדשה<li>יש להקליד את הערך<b> alfa_.domainkey </b>בשדה Host/Name<li>יש להקליד את הערך הבא בשדה Content/TXT Value</ul><span id='copyLabel' class='copy-label'><span class='MuiButton-startIcon MuiButton-iconSizeSmall'><div id='copyStatusIcon'>\ue0b0</div></span>העתק רשומה</span><div id='dkimRecord' class='scriptCode'>v=DKIM1; k=rsa; h=sha256; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+bGl6UdyLB2oXWCGDxu715LS2EZ0U6LwA3z6DrGMZALT+ZG33oYXUQVQmLQHg0mvTowJC9eEejTJWrbLPyd/20RU19XMyj7NXnAAsJWbzRzQcRcc/mlgJPseKrjRzAo38WIDovuUxxpfLslRgX82c2jENw5Ff4gO/XeyLaTneWQIDAQAB</div><br><br><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><b style=color:red><u>DMARC</u></b><br><br><span>אם לא קיימת לכם רשומת DMARC, ניתן להוסיף רשומת DNS חדשה. אם זאת הפעם הראשונה שאתם מוסיפים רשומת DMARC, מומלץ להגדיר את סוג הפעולה כnone, על מנת לבחון מי שולח בשמכם מיילים ואת ההשפעה הפוטנציאלית לפני שמשנים את סוג הפעולה לreject או quarantine.</span><ul style=list-style:decimal><li>יש להוסיף רשומת TXT חדשה<li>יש להקליד את הערך dmarc_ בשדה Host/Name<li>יש להקליד את הערך הבא בשדה Content/TXT Value</li><span>v=DMARC1; p=none; rua=mailto:report@example.com</span><span><br/>** זאת בהנחה שהדומיין שלכם הוא com.example, יש להגדיר תיבה אליה תקבלו את הדוחות, חשוב לא לשכוח לשים mailto לפני</span></ul><br><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><br></div>",
+          "button": "לחץ כאן לבדיקה"
+        },
+        "buyVerifiedDomain": {
+          "title": "רכוש דומיין מאומת",
+          "text": "ליצירת קשר עם מחלקת המכירות שלנו<br/><a href='mailto:sales@Pulseem.com' style='color:red'>sales@Pulseem.com</a>"
+        },
+        "sendFromSharedDomain": {
+          "title": "שליחה באמצעות דומיין שיתופי",
+          "text": "בחר את קידומת כתובת המייל השיתופי ממנו תישלח ההודעה",
+          "text1": "<b>שים לב! </b>תגובות למייל יישלחו לכתובת המייל הראשונה שאומתה לשליחה",
+          "button": "הגדר ככתובת השולח והמשך לעריכת הקמפיין",
+          "placeholder": "{קידומת מייל}",
+          "saveDomain": "שמור והגדר ככתובת השולח",
+          "saveAndContinue": "שמור והמשך לעורך הקמפיין"
+        }
+      }
+    },
+    "settingPopUp": {
+      "title": "אימות דומיינים",
+      "selectDomain": "בחר דומיין לאימות"
+    },
+    "verifyDomain": "אימות דומיין",
+    "verifiedDomain": "דומיין מאומת",
+    "verificationResponse": {
+      "tableHeader": {
+        "sourceId": "מקור",
+        "domainName": "שם הדומיין",
+        "dkimApproved": "אימות DKIM",
+        "dmarcApproved": "אימות DMARC",
+        "spfApproved": "אימות SPF",
+        "lastReadTime": "תאריך קריאת אימייל האחרון",
+        "lastSendTime": "תאריך שליחת אימייל האחרון"
+      }
+    }
+  },
+  "skip": "דלג"
 }
