@@ -481,7 +481,7 @@ const NewsLetterInfo = ({ classes }) => {
     }
 
     const handleFromEmailChange = (event) => {
-        const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === event.target.value });
+        const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === event.target.value })[0];
         setCampaingnValues({
             ...campaingnValues,
             FromEmail: event.target.value,
@@ -855,6 +855,7 @@ const NewsLetterInfo = ({ classes }) => {
                                                 }}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                                 onChange={(event, val) => {
+
                                                     setCampaingnValues({ ...campaingnValues, ReplyTo: event.target.value });
                                                     setErrors({ ...errors, ReplyTo: '' });
                                                 }}

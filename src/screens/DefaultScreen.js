@@ -7,10 +7,12 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { getRoutes, getSettingsItem } from '../helpers/Routes/routes';
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
+import DomainVerification from '../Shared/Dialogs/DomainVerification';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true }) => {
   const { t } = useTranslation();
   const { isAdmin, isAllowSwitchAccount } = useSelector(state => state.core)
+  const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   let route, title;
 
   if (subPage) {
@@ -69,6 +71,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         maxWidth='xl'
         className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null)}
       >
+        <DomainVerification classes={classes} domain={domainVerificationPopUp} />
         {children}
       </Container>
     </HelmetProvider>
