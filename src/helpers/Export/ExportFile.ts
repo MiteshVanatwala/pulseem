@@ -74,7 +74,7 @@ const exportAsXLSX = async (
 			XLSX.utils.sheet_add_aoa(ws, [finalHeading], { origin: 'A1' });
 		}
 
-		XLSX.utils.book_append_sheet(wb, ws, sheetName);
+		XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 		XLSX.writeFile(wb, fileName, { bookType: 'xlsx', type: 'buffer' });
 
 		resolve();
