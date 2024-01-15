@@ -369,7 +369,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
       preText: t(`common.domainVerification.campaignManagement.send.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', CampaignID),
       showSkip: false,
       options: [
-
+        !emailProps?.IsVerified && {
+          text: t('campaigns.newsletterSetUp'),
+          onCallback: () => {
+            navigate(`/react/Campaigns/Create/${CampaignID}`)
+          }
+        }
       ]
     }
 
@@ -392,7 +397,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && !IsSharedDomain(FromEmail) && <MdError
+        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && !IsSharedDomain(FromEmail) && Status !== 4 && <MdError
           title={t('campaigns.imgSendResource1.nonVerifiedDomain')}
           className={classes.errorIcon}
         />,

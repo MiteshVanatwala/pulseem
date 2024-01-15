@@ -849,6 +849,13 @@ const NewsLetterInfo = ({ classes }) => {
                                                     }
                                                 }
                                                 )}
+                                                {accountSettings?.SubAccountSettings?.SharedEmailDomain &&
+                                                    <option
+                                                        key={verifiedEmails.length + 1}
+                                                        value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                                    >
+                                                        {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
+                                                    </option>}
                                             </Select>
                                             <FormHelperText style={{ fontSize: '1rem' }}>
                                                 {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
