@@ -686,5 +686,7 @@
   "weSent": "שלחנו!",
   "campaignIsOnItsWay": "הקמפיין שלך בדרך ליעד",
   "newsletterSetUp": "הגדרות קמפיין",
-  "lastSaveAt": "שמירה אחרונה ב: "
+  "lastSaveAt": "שמירה אחרונה ב: ",
+  "editCampaignAnyway": "ערוך קמפיין (עורך אימיילים)",
+  "editSettings": "ערוך הגדרות"
 }

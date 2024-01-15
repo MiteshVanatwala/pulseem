@@ -542,7 +542,7 @@
       "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
       "FUTURE_DATE_PASSED": "The campaign sending date is passed, Please select future sending date.",
       "INVALID_CAMPAIGN_ID": "Invalid Campaign ID",
-      "ACCOUNT_RESTRICTED":"This account is restricted<br/>Please contact our sales team to arrange your payments"
+      "ACCOUNT_RESTRICTED": "This account is restricted<br/>Please contact our sales team to arrange your payments"
     },
     "success": "Success",
     "sendSettings": {
@@ -571,7 +571,7 @@
       "specialDateMissing": "Special date missing",
       "filters": "Filters",
       "segmentations": "Segmentations",
-      "totalNotToSend":"Total filtered",
+      "totalNotToSend": "Total filtered",
       "DidNotClicked": "Did not open or clicked",
       "smsMarketing": {
         "title": "SMS Marketing",
@@ -694,5 +694,7 @@
   "weSent": "We sent!",
   "campaignIsOnItsWay": "Your campaign is on its way",
   "newsletterSetUp": "Newsletter Set-Up",
-  "lastSaveAt": "Last save at: "
+  "lastSaveAt": "Last save at: ",
+  "editCampaignAnyway": "Edit Campaign (Email Builder)",
+  "editSettings": "Edit Settings"
 }

@@ -172,8 +172,7 @@ const NewsLetterInfo = ({ classes }) => {
         Name: "",
         Subject: "",
         FromName: "",
-        FromEmail: "",
-        ReplyEmail: ""
+        FromEmail: ""
     })
 
     const helperTexts = {
@@ -189,8 +188,7 @@ const NewsLetterInfo = ({ classes }) => {
         Name: t('campaigns.newsLetterEditor.errors.fromName'),
         Subject: t('campaigns.newsLetterEditor.errors.campaignSubject'),
         FromName: t('campaigns.newsLetterEditor.errors.fromName'),
-        FromEmail: t('campaigns.newsLetterEditor.errors.fromEmail'),
-        ReplyEmail: t('campaigns.newsLetterEditor.errors.ReplyEmail'),
+        FromEmail: t('campaigns.newsLetterEditor.errors.fromEmail')
     }
 
     const [campaingnValues, setCampaingnValues] = useState({
@@ -333,7 +331,7 @@ const NewsLetterInfo = ({ classes }) => {
             }
         }
     }
-    const handleSubmitNewsletterResponse = (res, isExit, isNewEditor, campaignId) => {
+    const handleSubmitNewsletterResponse = (res, isExit, isNewEditor) => {
         const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail });
 
         switch (res?.StatusCode) {
@@ -362,13 +360,13 @@ const NewsLetterInfo = ({ classes }) => {
                         showSkip: true,
                         verifySharedCallback: async (obj) => {
                             if (obj && obj.Skip === true) {
-                                handleContinueToEditor(isNewEditor, campaignId);
+                                handleContinueToEditor(isNewEditor, campaingnValues.CampaignID);
                             }
                             else {
                                 if (obj && obj.ReplyTo && obj.FromEmail) {
                                     setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
                                     await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
-                                    handleContinueToEditor(isNewEditor, campaignId);
+                                    handleContinueToEditor(isNewEditor, campaingnValues.CampaignID);
                                 }
                             }
                         },
@@ -565,8 +563,8 @@ const NewsLetterInfo = ({ classes }) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
-                handleSubmitNewsletterResponse(savedCampaign);
-                if (savedCampaign?.StatusCode === 403) {
+                handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor);
+                if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451) {
                     return false;
                 }
 
@@ -835,7 +833,7 @@ const NewsLetterInfo = ({ classes }) => {
                                 },
                                 {
                                     content:
-                                        <FormControl className={localClasses.select} error={errors.ReplyEmail}>
+                                        <FormControl className={localClasses.select}>
                                             <Select
                                                 vnative
                                                 displayEmpty
@@ -878,7 +876,7 @@ const NewsLetterInfo = ({ classes }) => {
                                                 })}
                                             </Select>
                                             <FormHelperText style={{ fontSize: '1rem' }} className={clsx(errors.ReplyTo ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                                {errors.ReplyEmail ? errors.ReplyEmail : helperTexts.ReplyEmail + ' '}
+                                                {helperTexts.ReplyEmail}
                                             </FormHelperText>
                                         </FormControl>,
                                     gridSize: { xs: 12, sm: 12 }

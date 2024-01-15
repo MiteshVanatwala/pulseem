@@ -2978,5 +2978,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       position: 'initial',
       paddingRight: '10px'
     }
+  },
+  textFieldWithTemplate: {
+    display: 'flex',
+    marginTop: 5,
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    height: 28,
+    padding: 5,
+    justifyContent: 'center'
+  },
+  justifyContentEnd: {
+    justifyContent: 'flex-end'
   }
 });

@@ -37,6 +37,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import { MdError } from 'react-icons/md';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
+import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 // import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
@@ -68,6 +69,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   moment.locale(language)
   const [verificationDialog, setVerificationDialog] = useState(false)
+  const [showDomainVerification, setShowDomainVerification] = useState(false);
+  const [domainAddressError, setDomainAddressError] = useState({
+    display: false,
+    address: '',
+    verifySharedCallback: null,
+    isSummary: false,
+    isFullDescription: false,
+    preText: '',
+    showSkip: false
+  });
 
   const getData = async () => {
     await dispatch(getNewslatterData())
@@ -346,9 +357,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
     const cautionPopup = getCookie('showCautionDuplicateCampaign');
     const showCautionNewEditor = !IsNewEditor && (cautionPopup !== "false" ?? false);
+    const emailProps = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail && ve?.IsVerified === true })[0];
 
-    const fromEmailNonVerified = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail && ve?.IsVerified === true })?.length <= 0;
-
+    const domainErrorObj = {
+      display: false,
+      address: FromEmail,
+      verifySharedCallback: null,
+      isSummary: false,
+      isFullDescription: false,
+      preText: t(`common.domainVerification.campaignManagement.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', CampaignID),
+      showSkip: false
+    }
 
     const renderCopyToClipoard = (
       showCopied === CampaignID ?
@@ -370,7 +389,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         // href: `/react/Campaigns/SendSettings/${CampaignID}`,
-        errorElement: fromEmailNonVerified === true && <MdError
+        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && <MdError
           title={t('campaigns.imgSendResource1.nonVerifiedDomain')}
           style={{
             position: 'absolute',
@@ -384,16 +403,15 @@ const NewsletterManagnentScreen = ({ classes }) => {
             borderRadius: 25,
           }} />,
         onClick: () => {
-          if (fromEmailNonVerified === true) {
-            alert('domain was not verified')
+          if (!emailProps?.IsVerified || emailProps?.IsRestricted) {
+            setDomainAddressError(domainErrorObj);
+            setShowDomainVerification(true)
           }
           else {
             dispatch(getGroupsBySubAccountId());
             navigate(`/react/Campaigns/SendSettings/${CampaignID}`);
-
           }
         }
-        //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -412,11 +430,34 @@ const NewsletterManagnentScreen = ({ classes }) => {
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
         onClick: () => {
-          if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
-            navigate(`/react/Campaigns/editor/${CampaignID}?fromreact=true`)
+          if (!emailProps?.IsVerified || emailProps?.IsRestricted) {
+            domainErrorObj.options = [{
+              text: t('campaigns.editSettings'),
+              onCallback: () => {
+                navigate(`/react/Campaigns/Create/${CampaignID}`)
+              }
+            },
+            {
+              text: t('campaigns.editCampaignAnyway'),
+              onCallback: () => {
+                if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+                  navigate(`/react/Campaigns/editor/${CampaignID}`)
+                }
+                else {
+                  window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
+                }
+              }
+            }];
+            setDomainAddressError(domainErrorObj);
+            setShowDomainVerification(true)
           }
           else {
-            window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
+            if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+              navigate(`/react/Campaigns/editor/${CampaignID}`)
+            }
+            else {
+              window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
+            }
           }
         },
         rootClass: classes.paddingIcon,
@@ -1042,6 +1083,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
           }
         }}
         campaignName={duplicateDialog?.name}
+      />
+      {/* Here we are using DomainVerification as a component and not via React Store */}
+      <DomainVerification
+        classes={classes}
+        domain={domainAddressError}
+        forceShow={showDomainVerification}
+        key={"fromManagement"}
+        onClose={() => {
+          setShowDomainVerification(false)
+        }}
       />
       <Loader isOpen={showLoader} />
     </DefaultScreen >

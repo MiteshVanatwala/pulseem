@@ -15,6 +15,11 @@ import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { IoIosArrowDown } from "react-icons/io";
 
+interface ButtonOptions {
+    text: string,
+    onCallback?: Function | never
+}
+
 interface DomainVerificationObj {
     classes: any,
     domain: {
@@ -24,8 +29,11 @@ interface DomainVerificationObj {
         isSummary: boolean,
         isFullDescription: boolean,
         preText?: string,
-        showSkip: boolean
-    }
+        showSkip: boolean,
+        options?: ButtonOptions[]
+    },
+    forceShow: boolean,
+    onClose?: Function | never,
 }
 
 const useStyles = makeStyles({
@@ -61,7 +69,7 @@ const useStyles = makeStyles({
     }
 });
 
-const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
+const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerificationObj) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const localClasses = useStyles();
@@ -69,11 +77,9 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
     const { accountSettings, verifiedEmails } = useSelector((state: StateType) => state.common)
     const { domainVerificationPopUp } = useSelector((state: StateType) => state.newsletter);
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
-    const [domainReady, setDomainReady] = useState<boolean>(false);
     const [sharedDomain, setSharedDomain] = useState<string>('');
     const [replyTo, setReplyTo] = useState<string>('');
-    const [reason, setReason] = useState<string>('');
-    const [callbackResponse, setCallbackResponse] = useState<any>({
+    const callbackResponse = {
         SourceID: 0,
         IsSPFApproved: false,
         IsDKIMApproved: false,
@@ -82,19 +88,15 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         FromEmail: null,
         Skip: null
 
-    } as any);
+    } as any;
     const resetDomainObj = { domain: '', display: false };
     const DOMAIN_EMAIL_SUFFIX = '@pulseem.co';
 
-    enum DomainSourceStatus {
-        Success = 0,
-        SyntaxError = 1,
-        GmailServers = 2
-    }
-
-    useEffect(() => {
-        setReason('')
-    }, [activeAccordion]);
+    // enum DomainSourceStatus {
+    //     Success = 0,
+    //     SyntaxError = 1,
+    //     GmailServers = 2
+    // }
 
 
     const handleCopyRecord = () => {
@@ -120,52 +122,49 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         }
     }, [accountSettings, verifiedEmails]);
 
-    const verifyDomain = async () => {
-        const response = await dispatch(GetDomainVerification(domain?.address)) as any;
-        handleResponses(response?.payload)
-    }
+    // const verifyDomain = async () => {
+    //     const response = await dispatch(GetDomainVerification(domain?.address)) as any;
+    //     handleResponses(response?.payload)
+    // }
 
-    const handleResponses = (response: PulseemResponse) => {
-        switch (response.StatusCode) {
-            case 201: {
-                switch (response.Data?.SourceID) {
-                    case DomainSourceStatus.Success: {
-                        setDomainReady(true);
-                        setCallbackResponse({
-                            SourceID: DomainSourceStatus.Success,
-                            ...response.Data
-                        });
-                        break;
-                    }
-                    case DomainSourceStatus.SyntaxError: {
-                        setCallbackResponse({
-                            SourceID: DomainSourceStatus.SyntaxError,
-                            ...response.Data
-                        });
-                        break;
-                    }
-                    case DomainSourceStatus.GmailServers: {
-                        setCallbackResponse({
-                            SourceID: DomainSourceStatus.GmailServers,
-                            ...response.Data
-                        });
-                        break;
-                    }
-                }
-                setReason(t(`common.domainVerification.popup.responses.${response.Data?.SourceID}`))
-                setTimeout(() => { setReason('') }, 5000);
-                break;
-            }
-            case 401: {
-                logout();
-                break;
-            }
-            case 500:
-            default: {
-                break;
-            }
-        }
-    }
+    // const handleResponses = (response: PulseemResponse) => {
+    //     switch (response.StatusCode) {
+    //         case 201: {
+    //             switch (response.Data?.SourceID) {
+    //                 case DomainSourceStatus.Success: {
+    //                     setCallbackResponse({
+    //                         SourceID: DomainSourceStatus.Success,
+    //                         ...response.Data
+    //                     });
+    //                     break;
+    //                 }
+    //                 case DomainSourceStatus.SyntaxError: {
+    //                     setCallbackResponse({
+    //                         SourceID: DomainSourceStatus.SyntaxError,
+    //                         ...response.Data
+    //                     });
+    //                     break;
+    //                 }
+    //                 case DomainSourceStatus.GmailServers: {
+    //                     setCallbackResponse({
+    //                         SourceID: DomainSourceStatus.GmailServers,
+    //                         ...response.Data
+    //                     });
+    //                     break;
+    //                 }
+    //             }
+    //             break;
+    //         }
+    //         case 401: {
+    //             logout();
+    //             break;
+    //         }
+    //         case 500:
+    //         default: {
+    //             break;
+    //         }
+    //     }
+    // }
 
     const saveSharedDomain = async () => {
 
@@ -202,7 +201,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         domain?.verifySharedCallback && domain?.verifySharedCallback({ ...callbackResponse, Skip: true })
     }
 
-    return domain?.display ? (<BaseDialog
+    return (domain?.display === true || forceShow === true) ? (<BaseDialog
         disableBackdropClick={false}
         classes={classes}
         icon={<MdDomain className={classes.notifyIconWhite} />}
@@ -211,18 +210,28 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
         //     dispatch(setVerificationDomain({ ...resetDomainObj }));
         // }}
         onClose={() => {
-            dispatch(setVerificationDomain({ ...resetDomainObj }));
+            if (onClose) {
+                onClose();
+            }
+            else {
+                dispatch(setVerificationDomain({ ...resetDomainObj }));
+            }
         }}
         showDefaultButtons={false}
         onCancel={() => {
-            dispatch(setVerificationDomain({ ...resetDomainObj }));
+            if (onClose) {
+                onClose();
+            }
+            else {
+                dispatch(setVerificationDomain({ ...resetDomainObj }));
+            }
         }}
         title={RenderHtml(t("common.domainVerification.popup.title").replace('##domainAddress##', domain.address !== '' ? `- ${domain.address}` : ''))}
         children={<Box className={clsx(classes.fullWidth)}>
             <Box className={classes.mb20}>
                 {RenderHtml(domain?.preText)}
             </Box>
-            <Accordion
+            {domain.isFullDescription && <Accordion
                 expanded={activeAccordion === 1}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
                 key={1}
@@ -249,7 +258,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                         }</Box>
                     </Grid>
                 </AccordionDetails>
-            </Accordion>
+            </Accordion>}
             {domain.isFullDescription && <Accordion
                 expanded={activeAccordion === 2}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
@@ -296,13 +305,13 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                     <Grid container>
 
                         <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
-                        <Box className={clsx(classes.dFlex, classes.flexColumn)} style={{ marginBlock: 15, alignContent: 'center', justifyContent: 'flex-start', gap: 15 }}>
+                        <Box className={clsx(classes.dFlex)} style={{ marginBlock: 15, alignContent: 'center', justifyContent: 'flex-start', gap: 15 }}>
                             <Box style={{ maxWidth: 200 }}>
-                                <Typography title={t("campaigns.newsLetterEditor.fromEmail")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromEmail")}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.fromEmail")} className={clsx(classes.alignDir, classes.bold)}>{t("campaigns.newsLetterEditor.fromEmail")}</Typography>
                                 <TextField
                                     inputMode="url"
                                     dir="ltr"
-                                    className={clsx(classes.textField)}
+                                    className={clsx(classes.textField, classes.textFieldWithTemplate)}
                                     InputProps={{
                                         style: { maxWidth: '100px !important', width: '100px !important' },
                                         endAdornment: <InputAdornment position="end">{DOMAIN_EMAIL_SUFFIX}</InputAdornment>
@@ -315,7 +324,7 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                                 />
                             </Box>
                             <Box className='selectWrapper' style={{ maxWidth: 200 }}>
-                                <Typography title={t("campaigns.newsLetterEditor.replyTo")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.replyTo")}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.replyTo")} className={clsx(classes.alignDir, classes.bold)}>{t("campaigns.newsLetterEditor.replyTo")}</Typography>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
@@ -365,17 +374,35 @@ const DomainVerification = ({ classes, domain }: DomainVerificationObj) => {
                                     </Select>
                                 </FormControl>
                             </Box>
-                            <Button
-                                style={{ marginBlock: 15, maxWidth: 200 }}
-                                className={clsx(classes.btn, classes.btnRounded, classes.f14)}
-                                onClick={saveSharedDomain}
-                            >{!domain.isSummary ? t('common.domainVerification.popup.sections.sendFromSharedDomain.saveAndContinue') : t('common.saveAndContinue')}</Button>
+                            <Box style={{ alignSelf: 'flex-end' }}>
+                                <Button
+                                    style={{ marginBlock: 0, marginInline: 15, maxHeight: 40, marginBottom: 5 }}
+                                    className={clsx(classes.actionButton,
+                                        classes.actionButtonLightGreen,
+                                        classes.backButton)}
+                                    onClick={saveSharedDomain}
+                                >{t('common.saveAndContinue')}</Button>
+                            </Box>
                         </Box>
                     </Grid>
                 </AccordionDetails>
             </Accordion>}
+            {domain?.options && <Box className={clsx(classes.dFlex, classes.justifyContentEnd)}>
+                {domain?.options.map((option: ButtonOptions) => {
+                    return <Button className={clsx(classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton)}
+                        style={{ marginInlineEnd: 15 }}
+                        onClick={() => option?.onCallback && option?.onCallback()}>{option.text}</Button>
+                })}
+            </Box>}
             {domain?.showSkip && <Box className={classes.dFlex} style={{ justifyContent: 'flex-end' }}>
-                <Button className={clsx(classes.btn, classes.btnRounded, classes.f14)} style={{ justifySelf: 'flex-end' }} onClick={handleSkip}>{t('common.skip')}</Button>
+                <Button
+                    className={clsx(classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton)}
+                    style={{ justifySelf: 'flex-end' }}
+                    onClick={handleSkip}>{t('common.skip')}</Button>
             </Box>}
         </Box>}
     />) : (<></>)
