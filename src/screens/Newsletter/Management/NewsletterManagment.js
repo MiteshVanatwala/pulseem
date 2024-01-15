@@ -38,6 +38,7 @@ import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import { MdError } from 'react-icons/md';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
+import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
 // import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
@@ -365,8 +366,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
       verifySharedCallback: null,
       isSummary: false,
       isFullDescription: false,
-      preText: t(`common.domainVerification.campaignManagement.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', CampaignID),
-      showSkip: false
+      preText: t(`common.domainVerification.campaignManagement.send.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', CampaignID),
+      showSkip: false,
+      options: [
+
+      ]
     }
 
     const renderCopyToClipoard = (
@@ -388,22 +392,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        // href: `/react/Campaigns/SendSettings/${CampaignID}`,
-        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && <MdError
+        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && !IsSharedDomain(FromEmail) && <MdError
           title={t('campaigns.imgSendResource1.nonVerifiedDomain')}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: isRTL ? 0 : 'auto',
-            right: isRTL ? 'auto' : 0,
-            zIndex: 100,
-            fontSize: 25,
-            fill: 'white',
-            backgroundColor: 'red',
-            borderRadius: 25,
-          }} />,
+          className={classes.errorIcon}
+        />,
         onClick: () => {
-          if (!emailProps?.IsVerified || emailProps?.IsRestricted) {
+          if ((!emailProps?.IsVerified || emailProps?.IsRestricted) && !IsSharedDomain(FromEmail)) {
             setDomainAddressError(domainErrorObj);
             setShowDomainVerification(true)
           }
@@ -430,15 +424,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
         onClick: () => {
-          if (!emailProps?.IsVerified || emailProps?.IsRestricted) {
+          if ((!emailProps?.IsVerified || emailProps?.IsRestricted) && !IsSharedDomain(FromEmail)) {
+            domainErrorObj.preText = t(`common.domainVerification.campaignManagement.edit.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', CampaignID);
             domainErrorObj.options = [{
-              text: t('campaigns.editSettings'),
+              text: t('campaigns.newsletterSetUp'),
               onCallback: () => {
                 navigate(`/react/Campaigns/Create/${CampaignID}`)
               }
             },
             {
-              text: t('campaigns.editCampaignAnyway'),
+              text: t('campaigns.skipToEditor'),
               onCallback: () => {
                 if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
                   navigate(`/react/Campaigns/editor/${CampaignID}`)

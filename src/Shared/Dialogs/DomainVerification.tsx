@@ -2,15 +2,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { setVerificationDomain } from "../../redux/reducers/newsletterSlice";
 import { StateType } from "../../Models/StateTypes";
-import { MdArrowBackIos, MdArrowForwardIos, MdDomain, MdOutlineReportGmailerrorred, MdOutlineVerified } from "react-icons/md";
+import { MdDomain, MdOutlineVerified } from "react-icons/md";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { useTranslation } from "react-i18next";
 import { Grid, Box, Accordion, AccordionSummary, makeStyles, AccordionDetails, Typography, Button, TextField, InputAdornment, FormControl, Select, MenuItem, ListItemIcon } from '@material-ui/core'
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { GrFormAdd, GrFormSubtract } from "react-icons/gr";
-import { PulseemResponse } from "../../Models/APIResponse";
-import { GetDomainVerification, SetSharedDomain } from "../../redux/reducers/DomainVerificationSlice";
+import { SetSharedDomain } from "../../redux/reducers/DomainVerificationSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { IoIosArrowDown } from "react-icons/io";
@@ -92,13 +91,6 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
     const resetDomainObj = { domain: '', display: false };
     const DOMAIN_EMAIL_SUFFIX = '@pulseem.co';
 
-    // enum DomainSourceStatus {
-    //     Success = 0,
-    //     SyntaxError = 1,
-    //     GmailServers = 2
-    // }
-
-
     const handleCopyRecord = () => {
         const elem = document.getElementById("copyStatusIcon");
         const records = document.getElementById("dkimRecord");
@@ -121,50 +113,6 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
             setReplyTo(verifiedEmails && verifiedEmails[0]?.Number);
         }
     }, [accountSettings, verifiedEmails]);
-
-    // const verifyDomain = async () => {
-    //     const response = await dispatch(GetDomainVerification(domain?.address)) as any;
-    //     handleResponses(response?.payload)
-    // }
-
-    // const handleResponses = (response: PulseemResponse) => {
-    //     switch (response.StatusCode) {
-    //         case 201: {
-    //             switch (response.Data?.SourceID) {
-    //                 case DomainSourceStatus.Success: {
-    //                     setCallbackResponse({
-    //                         SourceID: DomainSourceStatus.Success,
-    //                         ...response.Data
-    //                     });
-    //                     break;
-    //                 }
-    //                 case DomainSourceStatus.SyntaxError: {
-    //                     setCallbackResponse({
-    //                         SourceID: DomainSourceStatus.SyntaxError,
-    //                         ...response.Data
-    //                     });
-    //                     break;
-    //                 }
-    //                 case DomainSourceStatus.GmailServers: {
-    //                     setCallbackResponse({
-    //                         SourceID: DomainSourceStatus.GmailServers,
-    //                         ...response.Data
-    //                     });
-    //                     break;
-    //                 }
-    //             }
-    //             break;
-    //         }
-    //         case 401: {
-    //             logout();
-    //             break;
-    //         }
-    //         case 500:
-    //         default: {
-    //             break;
-    //         }
-    //     }
-    // }
 
     const saveSharedDomain = async () => {
 
@@ -206,24 +154,15 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
         classes={classes}
         icon={<MdDomain className={classes.notifyIconWhite} />}
         open={domainVerificationPopUp?.display}
-        // onConfirm={() => {
-        //     dispatch(setVerificationDomain({ ...resetDomainObj }));
-        // }}
         onClose={() => {
             if (onClose) {
                 onClose();
-            }
-            else {
-                dispatch(setVerificationDomain({ ...resetDomainObj }));
             }
         }}
         showDefaultButtons={false}
         onCancel={() => {
             if (onClose) {
                 onClose();
-            }
-            else {
-                dispatch(setVerificationDomain({ ...resetDomainObj }));
             }
         }}
         title={RenderHtml(t("common.domainVerification.popup.title").replace('##domainAddress##', domain.address !== '' ? `- ${domain.address}` : ''))}

@@ -2990,5 +2990,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   justifyContentEnd: {
     justifyContent: 'flex-end'
+  },
+  errorIcon: {
+    position: 'absolute',
+    top: 0,
+    left: isRTL ? 0 : 'auto',
+    right: isRTL ? 'auto' : 0,
+    zIndex: 100,
+    fontSize: 25,
+    fill: 'white',
+    backgroundColor: 'red',
+    borderRadius: 25
   }
 });

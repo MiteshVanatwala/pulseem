@@ -84,13 +84,6 @@ const NotificationBell = ({ classes }: any) => {
             <Typography className={classes.font14}>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</Typography>
           </Box>
         }
-        case NotifyCenterType.DomainValidaion: {
-          return <Box className={classes.dFlex} style={{ alignItems: 'center' }} onClick={() => dispatch(setVerificationDomain({ display: true, address: `${option.TargetName}`, showSkip: false }))}>
-            <MdDomain className={classes.notifyIcon} />
-            {option.SourceID === 1 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.syntaxError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}
-            {option.SourceID === 2 && <Typography className={classes.font14}>{RenderHtml(t('notifications.domainValidation.mailHeaderError').replace('##DoaminAddress##', `${option.TargetName}`))}</Typography>}
-          </Box >
-        }
         default: {
           break;
         }
@@ -99,7 +92,8 @@ const NotificationBell = ({ classes }: any) => {
     return (
       <MenuList>
         {
-          notifyCenterList && notifyCenterList?.length > 0 ? notifyCenterList?.map((option: any) => (
+          // 3 - Domain Validation - hide for now
+          notifyCenterList && notifyCenterList?.length > 0 ? notifyCenterList?.filter((n: any) => n.NotifyCenterTypeID !== 3).map((option: any) => (
             <MenuItem
               key={option?.ID}
               className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}

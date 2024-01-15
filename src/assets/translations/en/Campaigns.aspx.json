@@ -695,6 +695,5 @@
   "campaignIsOnItsWay": "Your campaign is on its way",
   "newsletterSetUp": "Newsletter Set-Up",
   "lastSaveAt": "Last save at: ",
-  "editCampaignAnyway": "Edit Campaign (Email Builder)",
-  "editSettings": "Edit Settings"
+  "skipToEditor": "Skip to Email Editor"
 }

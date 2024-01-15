@@ -586,8 +586,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         verifySharedCallback: null,
         isSummary: false,
         isFullDescription: false,
-        preText: t(`common.domainVerification.campaignManagement.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', campaign.CampaignID),
-        showSkip: false
+        preText: t(`common.domainVerification.campaignEditor.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', campaign.CampaignID),
+        showSkip: false,
+        options: [{
+          text: t('common.CampaignSettings'),
+          onCallback: () => {
+            window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+          }
+        }]
       }
       setDomainAddressError(domainErrorObj);
       setShowDomainVerification(true)
@@ -766,18 +772,12 @@ const CampaignEditor = ({ classes, ...props }) => {
               verifySharedCallback: null,
               isSummary: false,
               isFullDescription: false,
-              preText: t(`common.domainVerification.campaignManagement.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', campaign.CampaignID),
+              preText: t(`common.domainVerification.campaignEditor.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', campaign.CampaignID),
               showSkip: false,
               options: [{
-                text: t('campaigns.editSettings'),
+                text: t('common.CampaignSettings'),
                 onCallback: () => {
                   window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
-                }
-              },
-              {
-                text: t('common.backToCampaigns'),
-                onCallback: () => {
-                  window.location = `/react/Campaigns`
                 }
               }]
             }

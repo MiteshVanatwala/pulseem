@@ -28,6 +28,7 @@ import { DialogType } from '../../HtmlCampaign/helper/Config';
 import Templates from '../../HtmlCampaign/modals/Templates';
 import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 import { SharedEmailDomain } from '../../../config';
+import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -160,6 +161,16 @@ const NewsLetterInfo = ({ classes }) => {
     const [newEditorDisabled, setNewEditorDisabled] = useState(false);
     const [showEmoji, setShowEmoji] = useState(false);
     const [template, setTemplate] = useState('');
+    const [showDomainVerification, setShowDomainVerification] = useState(false);
+    const [domainAddressError, setDomainAddressError] = useState({
+        display: false,
+        address: '',
+        verifySharedCallback: null,
+        isSummary: false,
+        isFullDescription: false,
+        preText: '',
+        showSkip: false
+    });
 
     const navigate = useNavigate();
     const maxCharLimits = {
@@ -332,8 +343,6 @@ const NewsLetterInfo = ({ classes }) => {
         }
     }
     const handleSubmitNewsletterResponse = (res, isExit, isNewEditor) => {
-        const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail });
-
         switch (res?.StatusCode) {
             case 201: {
                 setToastMessage(ToastMessages.SUCEESS)
@@ -353,11 +362,16 @@ const NewsLetterInfo = ({ classes }) => {
             }
             case 451: {
                 if (!isExit) {
-                    dispatch(setVerificationDomain({
+                    const emailProps = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail })[0];
+
+                    const emailObj = {
+                        NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
+                        Restricted: 'common.domainVerification.campaignCreation.restricted.preText',
+                    }
+
+                    const domainErrorObj = {
                         display: true,
-                        address: `${campaingnValues.FromEmail}`,
-                        preText: fromEmailProperty?.IsRestricted === true ? t('common.domainVerification.popup.restrictedPreText') : t('common.domainVerification.popup.preText'),
-                        showSkip: true,
+                        address: campaingnValues.FromEmail,
                         verifySharedCallback: async (obj) => {
                             if (obj && obj.Skip === true) {
                                 handleContinueToEditor(isNewEditor, campaingnValues.CampaignID);
@@ -366,12 +380,23 @@ const NewsLetterInfo = ({ classes }) => {
                                 if (obj && obj.ReplyTo && obj.FromEmail) {
                                     setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
                                     await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
-                                    handleContinueToEditor(isNewEditor, campaingnValues.CampaignID);
                                 }
                             }
+                            setShowDomainVerification(false);
                         },
-                        isFullDescription: true
-                    }))
+                        isFullDescription: true,
+                        preText: t(emailObj[!emailProps?.IsVerified ? 'NonVerified' : 'Restricted']),
+                        showSkip: false,
+                        options: [{
+                            text: t('common.skip'),
+                            onCallback: () => {
+                                handleContinueToEditor(true, campaingnValues.CampaignID);
+                            }
+                        }]
+                    }
+
+                    setDomainAddressError(domainErrorObj);
+                    setShowDomainVerification(true);
                 }
                 else {
                     navigate(`/react/Campaigns`);
@@ -486,18 +511,29 @@ const NewsLetterInfo = ({ classes }) => {
             ReplyTo: event.target.value.split("@").pop() !== SharedEmailDomain ? event.target.value : fromEmailProperty.Number
         });
         setErrors({ ...errors, FromEmail: '' });
-        if (!fromEmailProperty.IsVerified) {
-            dispatch(setVerificationDomain({
+        if (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true) {
+            const emailProps = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail })[0];
+
+            const emailObj = {
+                NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
+                Restricted: 'common.domainVerification.campaignCreation.restricted.preText',
+            }
+
+            const domainErrorObj = {
                 display: true,
-                address: `${campaingnValues.FromEmail}`,
-                preText: fromEmailProperty.IsRestricted ? t('common.domainVerification.popup.restrictedPreText') : t('common.domainVerification.popup.preText'),
+                address: campaingnValues.FromEmail,
                 verifySharedCallback: async (obj) => {
                     setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
                     await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo }));
+                    setShowDomainVerification(false);
                 },
                 isFullDescription: true,
-                Skip: false
-            }));
+                preText: t(emailObj[!emailProps?.IsVerified ? 'NonVerified' : 'Restricted']),
+                showSkip: false
+            }
+
+            setDomainAddressError(domainErrorObj);
+            setShowDomainVerification(true);
         }
     }
 
@@ -1336,6 +1372,16 @@ const NewsLetterInfo = ({ classes }) => {
                     isOpen={dialogType === DialogType.Templates}
                 />
             }
+            {/* Here we are using DomainVerification as a component and not via React Store */}
+            {showDomainVerification && <DomainVerification
+                classes={classes}
+                domain={domainAddressError}
+                forceShow={showDomainVerification}
+                key={"fromManagement"}
+                onClose={() => {
+                    setShowDomainVerification(false)
+                }}
+            />}
             <Loader isOpen={showLoader} />
         </DefaultScreen >
     )

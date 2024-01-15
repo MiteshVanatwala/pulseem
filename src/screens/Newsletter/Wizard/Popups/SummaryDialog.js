@@ -262,59 +262,61 @@ const SummaryDialog = ({ classes,
             const updateInfo = { ...newsletterInfo };
             updateInfo.FromEmail = fromEmailValue;
 
-            updateInfo.ReplyTo = isShared ? verifiedEmails[0]?.Number : (newsletterSendSummary?.ReplyTo ?? newsletterSendSummary?.FromEmail);
+            updateInfo.ReplyTo = isShared ? verifiedEmails[0]?.Number : (newsletterSendSummary?.ReplyTo ?? verifiedEmails[0]?.Number);
             dispatch(saveCampaignInfo(updateInfo));
 
-            const domainVerificationTest = await dispatch(GetDomainVerification(fromEmailValue?.split("@")[1]));
-            const response = domainVerificationTest?.payload;
-
-            switch (response?.Data?.SourceID) {
-                case 0: { // DomainSourceStatus.Success
-                    dispatch(setVerificationDomain({
-                        display: false
-                    }));
-                    // if (isSendRequest) {
-                    //     handleSendCampaign();
-                    // }
-                    break;
-                }
-                default:
-                case 1:  // DomainSourceStatus.SyntaxError
-                case 2: { // DomainSourceStatus.GmailServers
-                    dispatch(setVerificationDomain({
-                        isSummary: true,
-                        display: true,
-                        address: `${fromEmailValue?.split('@')[1]}`,
-                        showSkip: false,
-                        verifySharedCallback: (obj) => {
-
-                            const fromEmail = obj?.FromEmail || accountSettings?.SubAccountSettings?.SharedEmailDomain;
-                            const replyEmail = obj?.ReplyTo || verifiedEmails[0]?.Number;
-
-                            setFromEmail(fromEmail);
-                            setReplyTo(replyEmail);
-
-                            updateInfo.FromEmail = fromEmail;
-                            updateInfo.ReplyTo = replyEmail;
-
-                            setIsSharedDomainEmail(true);
-                            dispatch(setVerificationDomain({
-                                display: false
-                            }));
-
-                            dispatch(saveCampaignInfo(updateInfo));
-                        }
-                    }))
-                    setDisableSend(true);
-                    break;
-                }
-            }
-
-            const isVerified = verifiedEmails.filter((ve) => { return ve.Number === updateInfo.FromEmail && ve.IsOptIn === true });
-            setDisableSend(isVerified?.length === 0 && !isShared);
-
             handleSharedDomain(updateInfo.FromEmail);
-            setFromEmailVerified(isVerified?.length > 0);
+
+            // const domainVerificationTest = await dispatch(GetDomainVerification(fromEmailValue?.split("@")[1]));
+            // const response = domainVerificationTest?.payload;
+
+            // switch (response?.Data?.SourceID) {
+            //     case 0: { // DomainSourceStatus.Success
+            //         dispatch(setVerificationDomain({
+            //             display: false
+            //         }));
+            //         // if (isSendRequest) {
+            //         //     handleSendCampaign();
+            //         // }
+            //         break;
+            //     }
+            //     default:
+            //     case 1:  // DomainSourceStatus.SyntaxError
+            //     case 2: { // DomainSourceStatus.GmailServers
+            //         dispatch(setVerificationDomain({
+            //             isSummary: true,
+            //             display: true,
+            //             address: `${fromEmailValue?.split('@')[1]}`,
+            //             showSkip: false,
+            //             verifySharedCallback: (obj) => {
+
+            //                 const fromEmail = obj?.FromEmail || accountSettings?.SubAccountSettings?.SharedEmailDomain;
+            //                 const replyEmail = obj?.ReplyTo || verifiedEmails[0]?.Number;
+
+            //                 setFromEmail(fromEmail);
+            //                 setReplyTo(replyEmail);
+
+            //                 updateInfo.FromEmail = fromEmail;
+            //                 updateInfo.ReplyTo = replyEmail;
+
+            //                 setIsSharedDomainEmail(true);
+            //                 dispatch(setVerificationDomain({
+            //                     display: false
+            //                 }));
+
+            //                 dispatch(saveCampaignInfo(updateInfo));
+            //             }
+            //         }))
+            //         setDisableSend(true);
+            //         break;
+            //     }
+            // }
+
+            // const isVerified = verifiedEmails.filter((ve) => { return ve.Number === updateInfo.FromEmail && ve.IsOptIn === true });
+            // setDisableSend(isVerified?.length === 0 && !isShared);
+
+
+            // setFromEmailVerified(isVerified?.length > 0);
         }
     }
 
@@ -358,7 +360,7 @@ const SummaryDialog = ({ classes,
                                 >
                                     {[{
                                         Number: newsletterSendSummary?.FromEmail
-                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.FromEmail })
+                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.FromEmail && ve.IsVerified === true })
                                     ].map((obj, index) => (
                                         obj.Number !== accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                             key={`ve_${index}`}
@@ -394,28 +396,29 @@ const SummaryDialog = ({ classes,
                                     <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("campaigns.newsLetterEditor.replyTo")}:</span>
                                 </Box>
                                 <Select
-                                    variant="outlined"
-                                    native
                                     style={{ width: '100%' }}
-                                    className={classes.pbt5}
+                                    className={classes.mt1}
                                     autoWidth={false}
-                                    value={replyTo}
+                                    native
                                     displayEmpty
+                                    value={replyTo}
                                     onChange={handleReplyToChanged}
                                     inputProps={{
                                         'aria-label': 'Without label',
                                         className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && !isSharedDomainEmail && classes.error),
                                         style: { width: '100%' }
                                     }}
+                                    variant='outlined'
 
                                 >
                                     {[{
-                                        Number: newsletterSendSummary?.ReplyTo
+                                        Number: newsletterSendSummary?.ReplyTo ?? t('common.select')
                                     }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.ReplyTo })
                                     ].map((obj, index) => (
                                         obj.Number !== accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                             key={`ve_${index}`}
                                             value={obj.Number}
+                                            disabled={obj.Number === t('common.select')}
                                         >
                                             {obj.Number}
                                         </option>
@@ -511,7 +514,7 @@ const SummaryDialog = ({ classes,
         renderButtons: () => (
             <Grid
                 container
-                // spacing={4}
+                spacing={4}
                 className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
                 <Grid item className={classes.paddingSides10}>
                     <Button
@@ -522,7 +525,8 @@ const SummaryDialog = ({ classes,
                             handleSendCampaign()
                         }}
                         className={clsx(
-                            classes.btn, classes.btnRounded,
+                            classes.dialogButton,
+                            classes.dialogConfirmButton,
                             FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
                         )}>
                         {t("sms.sendDialog")}
@@ -533,7 +537,10 @@ const SummaryDialog = ({ classes,
                         variant='contained'
                         size='small'
                         onClick={() => { setDialogType(null) }}
-                        className={clsx(classes.btn, classes.btnRounded)}
+                        className={clsx(
+                            classes.dialogButton,
+                            classes.dialogCancelButton
+                        )}
                     >
                         {t("sms.cancelDialog")}
                     </Button>
