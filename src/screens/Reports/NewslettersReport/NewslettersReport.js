@@ -469,8 +469,7 @@ const NewslettersReport = ({ classes }) => {
           <Button
             className={clsx(
               classes.btn,
-              classes.btnRounded,
-              newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
+              classes.btnRounded
             )}
             onClick={() => setDialog('exportFormat')}
             disabled={isSearching && !searchResults?.length}
