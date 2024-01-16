@@ -358,7 +358,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
     const cautionPopup = getCookie('showCautionDuplicateCampaign');
     const showCautionNewEditor = !IsNewEditor && (cautionPopup !== "false" ?? false);
-    const emailProps = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail && ve?.IsVerified === true })[0];
+    const emailProps = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail })[0];
 
     const domainErrorObj = {
       display: false,
@@ -366,7 +366,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       verifySharedCallback: null,
       isSummary: false,
       isFullDescription: false,
-      preText: t(`common.domainVerification.campaignManagement.send.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', CampaignID),
+      preText: t(`common.domainVerification.campaignManagement.send.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', CampaignID),
       showSkip: false,
       options: [
         !emailProps?.IsVerified && {
@@ -430,7 +430,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         onClick: () => {
           if ((!emailProps?.IsVerified || emailProps?.IsRestricted) && !IsSharedDomain(FromEmail)) {
-            domainErrorObj.preText = t(`common.domainVerification.campaignManagement.edit.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', CampaignID);
+            domainErrorObj.preText = t(`common.domainVerification.campaignManagement.edit.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', CampaignID);
             domainErrorObj.options = [{
               text: t('campaigns.newsletterSetUp'),
               onCallback: () => {

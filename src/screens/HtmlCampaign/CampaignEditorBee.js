@@ -51,6 +51,7 @@ import moment from 'moment';
 // import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
 // import SaveTemplate from './modals/SaveTemplate';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
+import { SharedEmailDomain } from '../../config';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -579,14 +580,15 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
   }
   const handleOpenTestSend = () => {
-    if (!emailProps?.IsVerified || emailProps?.IsRestricted) {
+    const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+    if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
       const domainErrorObj = {
         display: false,
         address: campaign.FromEmail,
         verifySharedCallback: null,
         isSummary: false,
         isFullDescription: false,
-        preText: t(`common.domainVerification.campaignEditor.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', campaign.CampaignID),
+        preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
         showSkip: false,
         options: [{
           text: t('common.CampaignSettings'),
@@ -765,14 +767,15 @@ const CampaignEditor = ({ classes, ...props }) => {
         >{t("common.save")}
         </Button>
         {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
-          if (!emailProps?.IsVerified || emailProps?.IsRestricted) {
+          const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+          if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
             const domainErrorObj = {
               display: false,
               address: campaign.FromEmail,
               verifySharedCallback: null,
               isSummary: false,
               isFullDescription: false,
-              preText: t(`common.domainVerification.campaignEditor.${!emailProps?.IsVerified ? 'nonVerified' : 'restricted'}.preText`).replace('##campaignId##', campaign.CampaignID),
+              preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
               showSkip: false,
               options: [{
                 text: t('common.CampaignSettings'),

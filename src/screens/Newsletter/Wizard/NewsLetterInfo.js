@@ -385,7 +385,7 @@ const NewsLetterInfo = ({ classes }) => {
                             setShowDomainVerification(false);
                         },
                         isFullDescription: true,
-                        preText: t(emailObj[!emailProps?.IsVerified ? 'NonVerified' : 'Restricted']),
+                        preText: t(emailObj[emailProps?.IsRestricted ? 'Restricted' : 'NonVerified']),
                         showSkip: false,
                         options: [{
                             text: t('common.skip'),
@@ -504,15 +504,15 @@ const NewsLetterInfo = ({ classes }) => {
     }
 
     const handleFromEmailChange = (event) => {
+        const isSharedDomain = event.target.value.split("@").pop() === SharedEmailDomain;
         const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === event.target.value })[0];
         setCampaingnValues({
             ...campaingnValues,
             FromEmail: event.target.value,
-            ReplyTo: event.target.value.split("@").pop() !== SharedEmailDomain ? event.target.value : fromEmailProperty.Number
+            ReplyTo: isSharedDomain ? verifiedEmails[0].Number : event.target.value
         });
         setErrors({ ...errors, FromEmail: '' });
-        if (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true) {
-            const emailProps = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail })[0];
+        if (!isSharedDomain && (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true)) {
 
             const emailObj = {
                 NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
@@ -521,14 +521,14 @@ const NewsLetterInfo = ({ classes }) => {
 
             const domainErrorObj = {
                 display: true,
-                address: campaingnValues.FromEmail,
+                address: fromEmailProperty.Number,
                 verifySharedCallback: async (obj) => {
                     setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
                     await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo }));
                     setShowDomainVerification(false);
                 },
                 isFullDescription: true,
-                preText: t(emailObj[!emailProps?.IsVerified ? 'NonVerified' : 'Restricted']),
+                preText: t(emailObj[fromEmailProperty?.IsRestricted ? 'Restricted' : 'NonVerified']),
                 showSkip: false
             }
 
