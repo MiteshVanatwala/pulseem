@@ -57,6 +57,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
 import { TablePagination } from '../../../components/managment';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { SizeOptions_XS_SM } from '../../../helpers/Constants';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -419,7 +420,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	const renderSearchSection = () => {
     return (
-			<Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
+			<Grid container spacing={2} className={clsx(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
 				<Grid item>
 					<TextField
 						variant='outlined'
@@ -849,7 +850,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
       return (
         <Box className='tableBodyContainer'>
           <TableBody>
-						{rowData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+						{rowData.map(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
           </TableBody>
         </Box>
       )
@@ -863,7 +864,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {windowSize !== 'xs' && renderTableHead()}
+          {SizeOptions_XS_SM.indexOf(windowSize) === -1 && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>

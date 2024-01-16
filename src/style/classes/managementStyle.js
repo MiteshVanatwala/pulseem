@@ -184,15 +184,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     flexDirection: "column",
     minWidth: 50,
     padding: 10,
-    "@media screen and (max-width: 1240px)": {
-      padding: "0px 5px",
-    },
-    "@media screen and (max-width: 1110px)": {
-      padding: "0px 10px",
-    },
-    "@media screen and (max-width: 475px)": {
-      padding: 10,
-    }
   },
   tableRowRoot: {
     display: "flex",
