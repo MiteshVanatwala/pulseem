@@ -336,9 +336,9 @@ const DirectSMSReportTab = ({
     )
   }
 
-  const handleShowContent = async (e) => {
-    await dispatch(setShowContent(e));
-    handleSearchInput(e, 'ShowContent', 'sms');
+  const handleShowContent = async (toggleValue) => {
+    await dispatch(setShowContent(toggleValue));
+    handleSearchInput(toggleValue, 'ShowContent', 'sms');
     handleSearch();
   }
 
@@ -358,7 +358,7 @@ const DirectSMSReportTab = ({
               height={15}
               width={40}
               className={clsx({ [classes.rtlSwitch]: isRTL })}
-              onChange={(e) => handleShowContent(e.target.value === 'on')}
+              onChange={(e) => handleShowContent(!showContent)}
             />
           }
           label={t('report.ShowContent')}
