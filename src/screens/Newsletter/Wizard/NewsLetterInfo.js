@@ -390,7 +390,7 @@ const NewsLetterInfo = ({ classes }) => {
                         options: [{
                             text: t('common.skip'),
                             onCallback: () => {
-                                handleContinueToEditor(true, campaingnValues.CampaignID);
+                                handleContinueToEditor(isNewEditor, campaingnValues.CampaignID);
                             }
                         }]
                     }
