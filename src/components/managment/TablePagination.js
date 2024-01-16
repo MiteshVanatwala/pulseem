@@ -108,7 +108,7 @@ export const TablePagination = ({
     return (
       <Grid
         item
-        className={clsx(classes.tablePadingtonGridItem, windowSize === "xs" ? classes.w100 : '')}
+        className={clsx(classes.tablePadingtonGridItem)}
       >
         {page > 1 &&
           <IconButton
