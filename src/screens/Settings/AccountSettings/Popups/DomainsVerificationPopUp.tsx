@@ -106,24 +106,25 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                     <Table className={classes.table} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.sourceId')}</TableCell>
+                                {/* <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.sourceId')}</TableCell> */}
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.domainName')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.dkimApproved')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.dmarcApproved')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.spfApproved')}</TableCell>
-                                <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastReadTime')}</TableCell>
-                                <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastSendTime')}</TableCell>
+                                <TableCell align="center">{t('common.status')}</TableCell>
+                                {/* <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastReadTime')}</TableCell>
+                                <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastSendTime')}</TableCell> */}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             <TableRow key={'IsDKIMApproved'}>
-                                <TableCell>{domainResponse?.SourceID === 0 ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
                                 <TableCell>{selectedDomain}</TableCell>
                                 <TableCell align="center">{domainResponse?.IsDKIMApproved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
                                 <TableCell align="center">{domainResponse?.IsDMARCApprotved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
                                 <TableCell align="center">{domainResponse?.IsSPFApproved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
-                                <TableCell align="center">{domainResponse?.LastReadMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastReadMailTime}</TableCell>
-                                <TableCell align="center">{domainResponse?.LastSendMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastSendMailTime}</TableCell>
+                                <TableCell>{domainResponse?.SourceID === 0 ? "אומת" : domainResponse?.SourceID === 1 ? "לא אומת" : "בתהליך" }</TableCell>
+                                {/* <TableCell align="center">{domainResponse?.LastReadMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastReadMailTime}</TableCell>
+                                <TableCell align="center">{domainResponse?.LastSendMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastSendMailTime}</TableCell> */}
                             </TableRow>
                         </TableBody>
                     </Table>

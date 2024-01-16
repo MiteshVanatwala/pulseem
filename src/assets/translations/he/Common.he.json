@@ -700,7 +700,7 @@
       "title": "אימות דומיינים",
       "selectDomain": "בחר דומיין לאימות"
     },
-    "verifyDomain": "אימות דומיין",
+    "verifyDomain": "סטטוס אימות דומיין",
     "verifiedDomain": "דומיין מאומת",
     "verificationResponse": {
       "tableHeader": {
