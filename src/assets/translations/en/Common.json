@@ -639,5 +639,23 @@
     "uploadFiles": {
       "fileDoesNotSupportedForImport": "XLS Files does not support for later Recipients Upload. For this, you may need to export files as XLSX"
     }
-  }
+  },
+  "settingPopUp": {
+    "title": "Domains Verification",
+    "selectDomain": "Select Domain for Verification"
+  },
+  "verifyDomain": "Domain Verifrication",
+  "verifiedDomain": "Domain Verified",
+  "verificationResponse": {
+    "tableHeader": {
+      "sourceId": "Verified",
+      "domainName": "Domain Name",
+      "dkimApproved": "DKIM Verification",
+      "dmarcApproved": "DMARC Verification",
+      "spfApproved": "SPF Verification",
+      "lastReadTime": "Last Read Email",
+      "lastSendTime": "Last Sent Email"
+    }
+  },
+  "skip": "Skip"
 }
