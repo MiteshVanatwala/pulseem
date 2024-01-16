@@ -3098,6 +3098,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	greenTextColor: {
 		'& p': {
 			color: '#27AE60 !important',
+			textDecorationColor: '#25af60 !important',
 		},
 	},
 	whatsappTextEditorWrapper: {
@@ -3220,5 +3221,26 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		backgroundColor: '#277BFF',
 		color: '#ffffff',
 		cursor: 'pointer',
-	}
+	},
+	greenTextColor: {
+		textDecorationColor: '#25af60 !important',
+		color: '#27AE60 !important',
+		'& p': {
+			color: '#27AE60 !important'
+		},
+	},
+	blueTextColor: {
+		textDecorationColor: '#25af60 !important',
+		color: '#3498DB !important',
+		'& p': {
+			color: '#3498DB !important'
+		},
+	},
+	redTextColor: {
+		textDecorationColor: '#ca332f !important',
+		color: '#ca332f !important',
+		'& p': {
+			color: '#ca332f !important'
+		},
+	},
 });
