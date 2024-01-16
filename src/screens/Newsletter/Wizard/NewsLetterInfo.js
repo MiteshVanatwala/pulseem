@@ -362,6 +362,7 @@ const NewsLetterInfo = ({ classes }) => {
             }
             case 451: {
                 if (!isExit) {
+                    const saveInfo = JSON.parse(res.Message);
                     const emailProps = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail })[0];
 
                     const emailObj = {
@@ -374,7 +375,7 @@ const NewsLetterInfo = ({ classes }) => {
                         address: campaingnValues.FromEmail,
                         verifySharedCallback: async (obj) => {
                             if (obj && obj.Skip === true) {
-                                handleContinueToEditor(isNewEditor, campaingnValues.CampaignID);
+                                handleContinueToEditor(isNewEditor, saveInfo.CampaignID);
                             }
                             else {
                                 if (obj && obj.ReplyTo && obj.FromEmail) {
@@ -390,7 +391,7 @@ const NewsLetterInfo = ({ classes }) => {
                         options: [{
                             text: t('common.skip'),
                             onCallback: () => {
-                                handleContinueToEditor(isNewEditor, campaingnValues.CampaignID);
+                                handleContinueToEditor(isNewEditor, saveInfo.CampaignID);
                             }
                         }]
                     }
