@@ -73,7 +73,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
 
     const filteredDomains = () => {
         return verifiedEmails.filter((obj: VerifiedEmail, index: number) => {
-            return index === verifiedEmails.findIndex((o: any) => domainFromEmail(obj.Number) === domainFromEmail(o.Number));
+            return (index === verifiedEmails.findIndex((o: any) => domainFromEmail(obj.Number) === domainFromEmail(o.Number)) && !obj.IsRestricted);
         }).map((item: VerifiedEmail, index: number) => {
             return <>
                 <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')} style={{ justifyContent: 'space-between', alignItems: 'center', height: 40 }}>
@@ -111,8 +111,8 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.dkimApproved')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.dmarcApproved')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.spfApproved')}</TableCell>
-                                <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastReadTime')}</TableCell>
-                                <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastSendTime')}</TableCell>
+                                <TableCell align="center">תאריך ניסיון אימות אחרון</TableCell>
+                                {/* <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastSendTime')}</TableCell> */}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -123,7 +123,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                 <TableCell align="center">{domainResponse?.IsDMARCApprotved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
                                 <TableCell align="center">{domainResponse?.IsSPFApproved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
                                 <TableCell align="center">{domainResponse?.LastReadMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastReadMailTime}</TableCell>
-                                <TableCell align="center">{domainResponse?.LastSendMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastSendMailTime}</TableCell>
+                                {/* <TableCell align="center">{domainResponse?.LastSendMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastSendMailTime}</TableCell> */}
                             </TableRow>
                         </TableBody>
                     </Table>
