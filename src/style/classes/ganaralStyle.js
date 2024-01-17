@@ -3244,7 +3244,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: isRTL ? 'row-reverse !important' : 'row',
     color: "#fff",
     fontWeight: 600,
-    textTransform: "capitalize",
     background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     '& .MuiStack-root': {
       display: 'flex',
