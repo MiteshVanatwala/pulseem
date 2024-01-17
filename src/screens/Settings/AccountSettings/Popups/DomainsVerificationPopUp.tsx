@@ -12,7 +12,6 @@ import { GetDomainVerification } from "../../../../redux/reducers/DomainVerifica
 import { logout } from "../../../../helpers/Api/PulseemReactAPI";
 import { Loader } from "../../../../components/Loader/Loader";
 import { AiOutlineStop } from "react-icons/ai";
-
 const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) => {
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -21,21 +20,18 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
     const [domainResponse, setDomainResponse] = useState<any>(null);
     const [selectedDomain, setSelectedDomain] = useState<string>('');
     const dispatch = useDispatch();
-
     const initVerifiedEmails = async () => {
         await dispatch(getAuthorizedEmails());
         setShowLoader(false)
     }
-
     useEffect(() => {
         if (!verifiedEmails || verifiedEmails?.length < 1) {
             initVerifiedEmails();
         }
-        else{
+        else {
             setShowLoader(false)
         }
     }, []);
-
     const verifyDomain = async (email: VerifiedEmail) => {
         setShowLoader(true);
         const domain = email.Number.split('@');
@@ -70,10 +66,17 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
             }
         }
     }
-
     const filteredDomains = () => {
         return verifiedEmails.filter((obj: VerifiedEmail, index: number) => {
             return (index === verifiedEmails.findIndex((o: any) => domainFromEmail(obj.Number) === domainFromEmail(o.Number)) && !obj.IsRestricted);
+        }).sort((a: VerifiedEmail, b: VerifiedEmail) => {
+            if (a.IsVerified && !b.IsVerified) {
+                return -1;
+            }
+            else if (!a.IsVerified && b.IsVerified) {
+                return 1;
+            }
+            return 0;
         }).map((item: VerifiedEmail, index: number) => {
             return <>
                 <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')} style={{ justifyContent: 'space-between', alignItems: 'center', height: 40 }}>
@@ -92,7 +95,6 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
             </>
         });
     }
-
     const VerificationResult = () => {
         return <BaseDialog
             disableBackdropClick={false}
@@ -106,14 +108,11 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                     <Table className={classes.table} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                {/* <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.sourceId')}</TableCell> */}
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.domainName')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.dkimApproved')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.dmarcApproved')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.spfApproved')}</TableCell>
-                                <TableCell align="center">{t('common.status')}</TableCell>
-                                {/* <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastReadTime')}</TableCell>
-                                <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastSendTime')}</TableCell> */}
+                                <TableCell align="center">{t('common.Status')}</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -122,9 +121,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                 <TableCell align="center">{domainResponse?.IsDKIMApproved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
                                 <TableCell align="center">{domainResponse?.IsDMARCApprotved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
                                 <TableCell align="center">{domainResponse?.IsSPFApproved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
-                                <TableCell>{domainResponse?.SourceID === 0 ? "אומת" : domainResponse?.SourceID === 1 ? "לא אומת" : "בתהליך" }</TableCell>
-                                {/* <TableCell align="center">{domainResponse?.LastReadMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastReadMailTime}</TableCell>
-                                <TableCell align="center">{domainResponse?.LastSendMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastSendMailTime}</TableCell> */}
+                                <TableCell>{domainResponse?.SourceID === 0 ? t("common.domainVerification.verifiedDomain") : domainResponse?.SourceID === 1 ? t("common.domainVerification.nonVerified") : t("report.inProcess")}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -148,7 +145,6 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
             }}
         />
     }
-
     return <BaseDialog
         disableBackdropClick={false}
         classes={classes}
@@ -181,5 +177,4 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         }}
     />
 }
-
 export default DomainsVerificationPopUp;

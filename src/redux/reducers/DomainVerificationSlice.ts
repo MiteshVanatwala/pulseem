@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
-
 export const GetDomainVerification = createAsyncThunk(
     'DomainVerification/GetDomainVerification',
     async (domainAddress: string, thunkAPI) => {
@@ -12,7 +11,6 @@ export const GetDomainVerification = createAsyncThunk(
         }
     }
 );
-
 export const SetSharedDomain = createAsyncThunk(
     'DomainVerification/SetSharedEmailDomain',
     async (domainAddress: string, thunkAPI) => {
@@ -24,20 +22,6 @@ export const SetSharedDomain = createAsyncThunk(
         }
     }
 );
-
-// export const GetRestrictedDomains = createAsyncThunk(
-//     'DomainVerification/GetRestrictedDomains',
-//     async (_, thunkAPI) => {
-//         try {
-//             const response = await PulseemReactInstance.get(`DomainVerification/GetRestrictedDomains`);
-//             return response.data
-//         } catch (error) {
-//             return console.log(error);
-//         }
-//     }
-// );
-
-
 const DomainVerificationSlice = createSlice({
     name: 'DomainVerification',
     initialState: {
@@ -58,6 +42,5 @@ const DomainVerificationSlice = createSlice({
         // })
     },
 })
-
 // export const { resetTwoFA } = DomainVerificationSlice.actions
 export default DomainVerificationSlice.reducer
