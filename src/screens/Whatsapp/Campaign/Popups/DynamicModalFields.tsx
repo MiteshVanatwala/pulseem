@@ -1,10 +1,10 @@
 import {
 	Box,
 	Button,
+	FormControl,
 	FormGroup,
 	Grid,
 	MenuItem,
-	Select,
 	Switch,
 	TextField,
 	Typography,
@@ -21,6 +21,8 @@ import {
 import { useSelector } from 'react-redux';
 import SiteTrackAlert from './SiteTrackAlert';
 import { checkSiteTrackingLink } from '../../Common';
+import { Select } from '@mui/material';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const DynamicModalFields = ({
 	classes,
@@ -98,30 +100,28 @@ const DynamicModalFields = ({
 	return (
 		<>
 			{activeDynamicButton?.includes('pField') && (
-				<Select
-					required
-					value={personalField}
-					displayEmpty
-					variant='standard'
-					className={classes.whatsappCampaignDynamicFieldPersonalField}
-					renderValue={
-						personalField !== ''
-							? undefined
-							: () => <>{translator('whatsappCampaign.pFieldPlaceholder')}</>
-					}
-					MenuProps={{
-						PaperProps: {
-							style: {
-								maxHeight: 48 * 4.5 + 8,
-								width: 250,
-								direction: isRTL ? 'rtl' : 'ltr',
+				<FormControl className={clsx(classes.selectInputFormControl, windowSize === 'xs' ? classes.w100 : classes.w50, classes.mt10)}>
+					<Select
+						variant="standard"
+						name="FromEmail"
+						value={personalField}
+						className={clsx(classes.pbt5, classes.w100)}
+						onChange={(event: any) => setPersonalField(event.target.value)}
+						IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+						MenuProps={{
+							PaperProps: {
+								style: {
+									maxHeight: 300,
+									direction: isRTL ? 'rtl' : 'ltr',
+								},
 							},
-						},
-					}}
-					onChange={(e: BaseSyntheticEvent) =>
-						setPersonalField(e.target.value)
-					}>
-					{Object.keys(personalFields)
+						}}
+						displayEmpty={true}
+					>
+						<MenuItem value={''}>
+							{translator('whatsappCampaign.pFieldPlaceholder')}
+						</MenuItem>
+						{Object.keys(personalFields)
 						?.filter(
 							(personalField) =>
 								personalFields[personalField] &&
@@ -132,7 +132,8 @@ const DynamicModalFields = ({
 								{personalFields[personalFieldKey]}
 							</MenuItem>
 						))}
-				</Select>
+					</Select>
+				</FormControl>
 			)}
 
 			{activeDynamicButton?.includes('text') && (
@@ -211,73 +212,65 @@ const DynamicModalFields = ({
 			)}
 
 			{activeDynamicButton?.includes('lPage') && (
-				<Select
-					required
-					value={landPage}
-					displayEmpty
-					variant='outlined'
-					className={classes.whatsappCampaignDynamicFieldLandingPage}
-					renderValue={
-						landPage !== ''
-							? undefined
-							: () => <>{translator('whatsappCampaign.lPagePlaceholder')}</>
-					}
-					MenuProps={{
-						PaperProps: {
-							style: {
-								maxHeight: 48 * 4.5 + 8,
-								width: 250,
-								direction: isRTL ? 'rtl' : 'ltr',
+				<FormControl className={clsx(classes.selectInputFormControl, windowSize === 'xs' ? classes.w100 : classes.w50, classes.mt10)}>
+					<Select
+						variant="standard"
+						value={landPage}
+						className={clsx(classes.pbt5, classes.w100)}
+						onChange={(event: any) => setLandPage(event.target.value)}
+						IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+						MenuProps={{
+							PaperProps: {
+								style: {
+									maxHeight: 300,
+									direction: isRTL ? 'rtl' : 'ltr',
+								},
 							},
-						},
-					}}
-					onChange={(e: BaseSyntheticEvent) => setLandPage(e.target.value)}>
-					{landingPageData?.map((landingPage: landingPageDataProps) => (
-						<MenuItem key={landingPage.CampaignID} value={landingPage.PageHref}>
-							{landingPage.CampaignName}
+						}}
+						displayEmpty={true}
+					>
+						<MenuItem value={''}>
+							{translator('whatsappCampaign.lPagePlaceholder')}
 						</MenuItem>
-					))}
-				</Select>
+						{landingPageData?.map((landingPage: landingPageDataProps) => (
+							<MenuItem key={landingPage.CampaignID} value={landingPage.PageHref}>
+								{landingPage.CampaignName}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
 			)}
 
 			{activeDynamicButton?.includes('navigation') && (
-				<Grid container>
-					<Grid item lg={12}>
-						<Select
-							required
-							value={navApp}
-							displayEmpty
-							variant='outlined'
-							className={classes.whatsappCampaignDynamicFieldNavigationSelect}
-							renderValue={
-								navApp !== ''
-									? undefined
-									: () => (
-											<>{translator('whatsappCampaign.navAppPlaceholder')}</>
-									  )
-							}
-							MenuProps={{
-								PaperProps: {
-									style: {
-										maxHeight: 48 * 4.5 + 8,
-										width: 250,
-										direction: isRTL ? 'rtl' : 'ltr',
+				<Grid container spacing={1}>
+					<Grid item xs={12} sm={6} md={6}>
+						<FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.mt10, windowSize === 'xs' ? classes.mb10 : '')}>
+							<Select
+								variant="standard"
+								value={navApp}
+								className={clsx(classes.pbt5, classes.w100)}
+								onChange={(event: any) => updateNavApp(event.target.value)}
+								IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+								MenuProps={{
+									PaperProps: {
+										style: {
+											maxHeight: 300,
+											direction: isRTL ? 'rtl' : 'ltr',
+										},
 									},
-								},
-							}}
-							onChange={(e: BaseSyntheticEvent) =>
-								updateNavApp(e.target.value)
-							}>
-							<MenuItem value='Waze'>Waze</MenuItem>
-							<MenuItem value='Google Maps'>Google Maps</MenuItem>
-						</Select>
+								}}
+							>
+								<MenuItem value='Waze'>Waze</MenuItem>
+								<MenuItem value='Google Maps'>Google Maps</MenuItem>
+							</Select>
+						</FormControl>
 					</Grid>
-					<Grid item lg={12}>
+					<Grid item xs={12} sm={6} md={6}>
 						<TextField
 							required
 							variant='outlined'
 							placeholder={translator('whatsappCampaign.navigationPlaceholder')}
-							className={classes.whatsappCampaignDynamicFieldNavigationText}
+							className={classes.w100}
 							onChange={(e: BaseSyntheticEvent) =>
 								updateNavAddress(e.target.value)
 							}
