@@ -29,6 +29,7 @@ interface DomainVerificationObj {
         isFullDescription: boolean,
         preText?: string,
         showSkip: boolean,
+        replyTo: string | never,
         options?: ButtonOptions[]
     },
     forceShow: boolean,
@@ -110,7 +111,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
             setSharedDomain(accountSettings?.SubAccountSettings?.SharedEmailDomain?.replace(DOMAIN_EMAIL_SUFFIX, ''));
         }
         if (verifiedEmails && verifiedEmails?.length > 0) {
-            setReplyTo(verifiedEmails && verifiedEmails[0]?.Number);
+            setReplyTo(domain.replyTo || (verifiedEmails && verifiedEmails[0]?.Number));
         }
     }, [accountSettings, verifiedEmails]);
 
@@ -270,7 +271,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                     <Select
                                         variant="standard"
                                         name="FromEmail"
-                                        value={replyTo || verifiedEmails[0]?.Number}
+                                        value={replyTo}
                                         className={classes.pbt5}
                                         onChange={(event: any) => setReplyTo(event.target.value)}
                                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}

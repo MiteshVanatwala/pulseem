@@ -364,6 +364,7 @@ const NewsLetterInfo = ({ classes }) => {
                 if (!isExit) {
                     const saveInfo = JSON.parse(res.Message);
                     const emailProps = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail })[0];
+                    const isSharedDomain = campaingnValues.FromEmail.split("@").pop() === SharedEmailDomain;
 
                     const emailObj = {
                         NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
@@ -387,6 +388,7 @@ const NewsLetterInfo = ({ classes }) => {
                         },
                         isFullDescription: true,
                         preText: t(emailObj[emailProps?.IsRestricted ? 'Restricted' : 'NonVerified']),
+                        replyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || campaingnValues.FromEmail),
                         showSkip: false,
                         options: [{
                             text: t('common.skip'),
@@ -510,7 +512,7 @@ const NewsLetterInfo = ({ classes }) => {
         setCampaingnValues({
             ...campaingnValues,
             FromEmail: event.target.value,
-            ReplyTo: isSharedDomain ? verifiedEmails[0].Number : event.target.value
+            ReplyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || event.target.value)
         });
         setErrors({ ...errors, FromEmail: '' });
         if (!isSharedDomain && (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true)) {
@@ -530,7 +532,8 @@ const NewsLetterInfo = ({ classes }) => {
                 },
                 isFullDescription: true,
                 preText: t(emailObj[fromEmailProperty?.IsRestricted ? 'Restricted' : 'NonVerified']),
-                showSkip: false
+                showSkip: false,
+                replyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || event.target.value)
             }
 
             setDomainAddressError(domainErrorObj);

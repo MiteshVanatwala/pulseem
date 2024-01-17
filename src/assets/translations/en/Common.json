@@ -716,7 +716,7 @@
         "lastReadTime": "Last Read Email",
         "lastSendTime": "Last Sent Email"
       }
-    },
-    "skip": "Skip"
-  }
+    }
+  },
+  "skip": "Skip"
 }
