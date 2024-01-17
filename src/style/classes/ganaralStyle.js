@@ -3001,5 +3001,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: 'red',
       borderRadius: 25
     }
+  },
+  tooltipIcon: {
+    display: 'flex',
+    backgroundColor: '#000',
+    color: '#fff',
+    fontSize: 16,
+    borderRadius: 25,
+    width: 26,
+    height: 26,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });

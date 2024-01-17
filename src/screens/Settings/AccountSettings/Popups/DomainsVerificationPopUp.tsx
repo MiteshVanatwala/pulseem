@@ -2,7 +2,7 @@ import { MdDomain, MdOutlineVerified } from "react-icons/md";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
-import { Box, Divider, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import { Box, Button, Divider, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../../../Models/StateTypes";
 import { useEffect, useState } from "react";
@@ -12,10 +12,14 @@ import { GetDomainVerification } from "../../../../redux/reducers/DomainVerifica
 import { logout } from "../../../../helpers/Api/PulseemReactAPI";
 import { Loader } from "../../../../components/Loader/Loader";
 import { AiOutlineStop } from "react-icons/ai";
+import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
+import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) => {
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState<boolean>(true);
     const { verifiedEmails } = useSelector((state: StateType) => state.common);
+    const { isRTL } = useSelector((state: StateType) => state.core);
+
     const [showVerificationResponse, setShowVerificationResponse] = useState<boolean>(false);
     const [domainResponse, setDomainResponse] = useState<any>(null);
     const [selectedDomain, setSelectedDomain] = useState<string>('');
@@ -96,6 +100,8 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         });
     }
     const VerificationResult = () => {
+        const [showInnerLoader, setShowInnerLoader] = useState<boolean>(false);
+
         return <BaseDialog
             disableBackdropClick={false}
             classes={classes}
@@ -113,9 +119,29 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.dkimApproved')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.dmarcApproved')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.spfApproved')}</TableCell>
-                                <TableCell align="center">{t('common.Status')}</TableCell>
-                                {/* <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastReadTime')}</TableCell>
-                                <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.lastSendTime')}</TableCell> */}
+                                <TableCell align="center">
+                                    <CustomTooltip
+                                        arrow
+                                        style={{ fontSize: 18, maxWidth: '400' }}
+                                        isSimpleTooltip={false}
+                                        classes={classes}
+                                        interactive={true}
+                                        placement={'top'}
+                                        title={<Typography className={classes.f16} noWrap={false}>{RenderHtml(t('common.gmailVerificationDescription'))}</Typography>}
+                                        text={<Box className={classes.dFlex}><Typography noWrap={false}>{t('common.gmailVerification')}</Typography><Box style={{ marginInline: 10 }} className={classes.tooltipIcon}>i</Box></Box>}
+                                    />
+
+                                    {/* <CustomTooltip
+                                        isSimpleTooltip={false}
+                                        classes={classes}
+                                        interactive={true}
+                                        arrow={true}
+                                        style={{ fontSize: 18 }}
+                                        placement={'top'}
+                                        text={<Typography noWrap={false} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>{RenderHtml(t('common.gmailVerificationDescription'))}</Typography>}
+                                    /> */}
+                                </TableCell>
+                                <TableCell align="center"></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -124,13 +150,24 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                 <TableCell align="center">{domainResponse?.IsDKIMApproved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
                                 <TableCell align="center">{domainResponse?.IsDMARCApprotved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
                                 <TableCell align="center">{domainResponse?.IsSPFApproved ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}</TableCell>
-                                <TableCell>{domainResponse?.SourceID === 0 ? t("common.domainVerification.verifiedDomain") : domainResponse?.SourceID === 1 ? t("common.domainVerification.nonVerified") : t("report.inProcess")}</TableCell>
-                                {/* <TableCell align="center">{domainResponse?.LastReadMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastReadMailTime}</TableCell>
-                                <TableCell align="center">{domainResponse?.LastSendMailTime === '0001-01-01T00:00:00' ? 'N/A' : domainResponse?.LastSendMailTime}</TableCell> */}
+                                <TableCell align="center">{domainResponse?.SourceID === 0 ? <MdOutlineVerified style={{ color: 'green', fontSize: 16 }} /> : domainResponse?.SourceID === 1 ? <AiOutlineStop style={{ color: 'red', fontSize: 20 }} /> : t("common.domainVerification.inTestProcess")}</TableCell>
+                                <TableCell align="center">
+                                    <Link
+                                        style={{ textDecoration: 'underline', cursor: 'pointer' }}
+                                        onClick={async () => {
+                                            setShowInnerLoader(true);
+                                            await dispatch(GetDomainVerification(selectedDomain));
+                                            setShowInnerLoader(false);
+                                        }}
+                                        className={clsx(classes.dInlineBlock, classes.ellipsisText, classes.graphCampaignName)}>
+                                        {t('common.refresh')}
+                                    </Link>
+                                </TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <Loader isOpen={showInnerLoader} key={'innerloader'} showBackdrop={true} />
             </Box>
             }
             onConfirm={() => {
@@ -156,7 +193,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         icon={<MdDomain className={classes.notifyIconWhite} />}
         open={isOpen}
         showDefaultButtons={false}
-        title={t("common.domainVerification.settingPopUp.title")}
+        title={t("common.domainVerification.verifyDomain")}
         children={<Box className={clsx(classes.fullWidth)}>
             <Box className='selectWrapper'>
                 <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
