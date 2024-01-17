@@ -129,7 +129,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                         interactive={true}
                                         placement={'top'}
                                         title={<Typography className={classes.f16} noWrap={false}>{RenderHtml(t('common.gmailVerificationDescription'))}</Typography>}
-                                        text={<Box className={classes.dFlex}><Typography noWrap={false} style={{fontSize: 14}}>{t('common.gmailVerification')}</Typography><Box style={{ marginInline: 10 }} className={classes.tooltipIcon}>i</Box></Box>}
+                                        text={<Box className={classes.dFlex}><Typography noWrap={false} style={{ fontSize: 15, fontWeight: 500, marginTop: 1 }}>{t('common.gmailVerification')}</Typography><Box style={{ marginInline: 10 }} className={classes.tooltipIcon}>i</Box></Box>}
                                     />
                                 </TableCell>
                                 <TableCell align="center"></TableCell>
