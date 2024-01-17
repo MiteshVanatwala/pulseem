@@ -98,6 +98,7 @@ export type whatsappMobilePreviewProps = {
 		fileLink: string;
 		fileType: string;
 	};
+	templateId?: string;
 };
 
 export type ButtonsProps = {
