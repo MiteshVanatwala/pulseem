@@ -706,6 +706,7 @@
     },
     "verifyDomain": "Domain Verifrication",
     "verifiedDomain": "Domain Verified",
+    "nonVerified": "Not Verified",
     "verificationResponse": {
       "tableHeader": {
         "sourceId": "Verified",

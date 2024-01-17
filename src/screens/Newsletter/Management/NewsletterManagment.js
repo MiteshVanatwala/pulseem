@@ -354,7 +354,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   }
 
   const renderCellIcons = (row) => {
-    const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive, IsNewEditor, FromEmail } = row
+    const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive, IsNewEditor, FromEmail, IsBasicEditor } = row
 
     const cautionPopup = getCookie('showCautionDuplicateCampaign');
     const showCautionNewEditor = !IsNewEditor && (cautionPopup !== "false" ?? false);
@@ -369,7 +369,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       preText: t(`common.domainVerification.campaignManagement.send.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', CampaignID),
       showSkip: false,
       options: [
-        !emailProps?.IsVerified && {
+        !emailProps?.IsVerified && !IsBasicEditor && {
           text: t('campaigns.newsletterSetUp'),
           onCallback: () => {
             navigate(`/react/Campaigns/Create/${CampaignID}`)

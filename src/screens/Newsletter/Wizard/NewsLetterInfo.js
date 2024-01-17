@@ -218,7 +218,8 @@ const NewsLetterInfo = ({ classes }) => {
         IsResponsive: 1,
         FilesProperties: [],
         HtmlToEdit: '',
-        HtmlToSend: ''
+        HtmlToSend: '',
+        ReplyTo: ''
     })
 
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
@@ -252,7 +253,7 @@ const NewsLetterInfo = ({ classes }) => {
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
         });
 
-        if (!campaingnValues?.ReplyTo || campaingnValues?.ReplyTo === '') {
+        if ((!campaingnValues?.ReplyTo || campaingnValues?.ReplyTo === '') && (campaingnValues.FromEmail !== '' && campaingnValues.FromEmail !== '-1')) {
             const sharedDomainAddress = accountSettings?.SubAccountSettings?.SharedEmailDomain;
             if (campaingnValues.FromEmail !== sharedDomainAddress) {
                 setCampaingnValues({ ...campaingnValues, ReplyTo: campaingnValues.FromEmail });
@@ -512,7 +513,7 @@ const NewsLetterInfo = ({ classes }) => {
         setCampaingnValues({
             ...campaingnValues,
             FromEmail: event.target.value,
-            ReplyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || event.target.value)
+            ReplyTo: isSharedDomain ? ((campaingnValues.ReplyTo !== '' && campaingnValues.ReplyTo) || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || event.target.value)
         });
         setErrors({ ...errors, FromEmail: '' });
         if (!isSharedDomain && (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true)) {
@@ -885,10 +886,7 @@ const NewsLetterInfo = ({ classes }) => {
                                                 vnative
                                                 displayEmpty
                                                 name="ReplyTo"
-                                                value={campaingnValues?.FromEmail.split("@").pop() === SharedEmailDomain ?
-                                                    (campaingnValues?.ReplyTo !== '' ? campaingnValues?.ReplyTo : verifiedEmails[0]?.Number) :
-                                                    (campaingnValues?.ReplyTo ?? campaingnValues?.FromEmail)
-                                                }
+                                                value={campaingnValues?.ReplyTo}
                                                 input={<OutlinedInput />}
                                                 MenuProps={{
                                                     PaperProps: {

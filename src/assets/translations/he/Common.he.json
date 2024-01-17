@@ -696,24 +696,22 @@
         }
       }
     },
-    "domainVerification": {
-      "settingPopUp": {
-        "title": "אימות דומיינים",
-        "selectDomain": "בחר דומיין לאימות"
-      },
-      "verifyDomain": "סטטוס אימות דומיין",
-      "verifiedDomain": "דומיין מאומת",
-      "nonVerified": "לא מאומת",
-      "verificationResponse": {
-        "tableHeader": {
-          "sourceId": "מקור",
-          "domainName": "שם הדומיין",
-          "dkimApproved": "אימות DKIM",
-          "dmarcApproved": "אימות DMARC",
-          "spfApproved": "אימות SPF",
-          "lastReadTime": "תאריך קריאת אימייל האחרון",
-          "lastSendTime": "תאריך שליחת אימייל האחרון"
-        }
+    "settingPopUp": {
+      "title": "אימות דומיינים",
+      "selectDomain": "בחר דומיין לאימות"
+    },
+    "verifyDomain": "סטטוס אימות דומיין",
+    "verifiedDomain": "דומיין מאומת",
+    "nonVerified": "לא מאומת",
+    "verificationResponse": {
+      "tableHeader": {
+        "sourceId": "מקור",
+        "domainName": "שם הדומיין",
+        "dkimApproved": "אימות DKIM",
+        "dmarcApproved": "אימות DMARC",
+        "spfApproved": "אימות SPF",
+        "lastReadTime": "תאריך קריאת אימייל האחרון",
+        "lastSendTime": "תאריך שליחת אימייל האחרון"
       }
     }
   },
