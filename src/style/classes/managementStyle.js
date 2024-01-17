@@ -794,7 +794,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tablePaginationSelect: {
     '& svg': {
       color: '#F65026',
-      marginLeft: -30,
+      marginLeft: isRTL ? 0 : -30,
+      marginRight: isRTL ? 30 : 0,
       fontSize: 20,
       top: 5,
     },
@@ -2247,7 +2248,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tablePadington: {
     '& .MuiSelect-select.MuiSelect-select': {
       paddingRight: !isRTL ? 25 : 0,
-      paddingLeft: 0,
+      paddingLeft: !isRTL ? 0 : 25,
       // paddingInlineEnd: isRTL ? 0 : 15,
       width: 50,
       textAlign: 'center'
