@@ -533,7 +533,7 @@ const SiteTrackingEditor = ({ classes }) => {
         return <Grid container spacing={2}>
             <Grid item xs={12} className={classes.baseButtonsContainer} style={{ marginBottom: 70 }}>
                 <Button
-                    className={clsx(classes.btn, classes.btnRounded)}
+                    className={clsx(classes.btn, classes.btnRounded, windowSize === 'xs' ? classes.w100 : '')}
                     style={{ margin: '8px' }}
                     onClick={() => { setDialogType({ type: 'deleteEvent' }) }}
                     endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -541,7 +541,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     {t("common.Delete")}
                 </Button>
                 <Button
-                    className={clsx(classes.btn, classes.btnRounded)}
+                    className={clsx(classes.btn, classes.btnRounded, windowSize === 'xs' ? classes.w100 : '')}
                     onClick={() => onSave()}
                     style={{ height: '100%', minWidth: 100, margin: '8px' }}
                     endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}

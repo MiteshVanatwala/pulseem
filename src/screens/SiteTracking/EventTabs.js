@@ -62,8 +62,8 @@ const EventTabs = ({ classes,
                 }
                 return <></>
             })}
-            <Box style={{ display: 'flex', flexDirection: 'row' }} className={classes.mt2}>
-                <Button onClick={() => { onAddEvent() }} style={{ justifyContent: 'flex-start' }} className={clsx(classes.btn, classes.btnRounded)} endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+            <Box style={{ display: windowSize === 'xs' ? 'block' : 'flex', flexDirection: 'row' }} className={classes.mt2}>
+                <Button onClick={() => { onAddEvent() }} style={{ justifyContent: windowSize !== 'xs' ? 'flex-start' : '' }} className={clsx(classes.btn, classes.btnRounded, windowSize === 'xs' ? classes.w100 : '' )} endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
                     {t("siteTracking.addEvent")}
                 </Button>
             </Box>
