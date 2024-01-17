@@ -120,26 +120,17 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.dmarcApproved')}</TableCell>
                                 <TableCell align="center">{t('common.domainVerification.verificationResponse.tableHeader.spfApproved')}</TableCell>
                                 <TableCell align="center">
+                                    {/* @ts-ignore */}
                                     <CustomTooltip
                                         arrow
-                                        style={{ fontSize: 18, maxWidth: '400' }}
+                                        style={{ fontSize: 16, maxWidth: '400' }}
                                         isSimpleTooltip={false}
                                         classes={classes}
                                         interactive={true}
                                         placement={'top'}
                                         title={<Typography className={classes.f16} noWrap={false}>{RenderHtml(t('common.gmailVerificationDescription'))}</Typography>}
-                                        text={<Box className={classes.dFlex}><Typography noWrap={false}>{t('common.gmailVerification')}</Typography><Box style={{ marginInline: 10 }} className={classes.tooltipIcon}>i</Box></Box>}
+                                        text={<Box className={classes.dFlex}><Typography noWrap={false} style={{fontSize: 14}}>{t('common.gmailVerification')}</Typography><Box style={{ marginInline: 10 }} className={classes.tooltipIcon}>i</Box></Box>}
                                     />
-
-                                    {/* <CustomTooltip
-                                        isSimpleTooltip={false}
-                                        classes={classes}
-                                        interactive={true}
-                                        arrow={true}
-                                        style={{ fontSize: 18 }}
-                                        placement={'top'}
-                                        text={<Typography noWrap={false} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>{RenderHtml(t('common.gmailVerificationDescription'))}</Typography>}
-                                    /> */}
                                 </TableCell>
                                 <TableCell align="center"></TableCell>
                             </TableRow>

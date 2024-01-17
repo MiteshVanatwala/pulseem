@@ -3006,10 +3006,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     backgroundColor: '#000',
     color: '#fff',
-    fontSize: 16,
+    fontSize: 13,
     borderRadius: 25,
-    width: 26,
-    height: 26,
+    width: 20,
+    height: 20,
     alignItems: 'center',
     justifyContent: 'center'
   }
