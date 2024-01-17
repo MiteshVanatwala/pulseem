@@ -74,7 +74,7 @@ import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
 import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
-import { SelectChangeEvent } from '@mui/material';
+import { SelectChangeEvent, Stack } from '@mui/material';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 
 const SendCampaign = ({
@@ -924,6 +924,31 @@ const SendCampaign = ({
 		}
 	}
 
+	const renderSubHeader = () => {
+		return (
+				<Title
+						Element={(
+								<Box className='stepHead'>
+										<Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
+												<span className={'stepTitle'}>
+														{translator("mainReport.sendSetting")}
+												</span>
+
+										</Stack>
+								</Box>
+						)}
+						classes={classes}
+						isIcon={false}
+						ContainerStyle={{
+								padding: 0,
+								minHeight: 42,
+								height: 'auto',
+								overflowY: 'hidden'
+						}}
+				/>
+		)
+}
+
 	return (
 		<DefaultScreen
 			subPage={'send2'}
@@ -940,58 +965,61 @@ const SendCampaign = ({
 							classes={classes}
 						/>
 						<Box className={'containerBody'}>
-							<Grid container style={{ marginBottom: '40px' }}>
-								<Grid item md={7} xs={12}>
-									<LeftPane
-										classes={classes}
-										allGroupList={allGroupList}
-										testGroupList={testGroupList}
-										finishedCampaigns={finishedCampaigns}
-										selectedGroups={selectedGroups}
-										setSelected={setSelectedGroups}
-										selectedFilterCampaigns={selectedFilterCampaigns}
-										setFilterCampaigns={setFilterCampaigns}
-										selectedFilterGroups={selectedFilterGroups}
-										setFilterGroups={setFilterGroups}
-										onNewGroupChange={setNewGroupName}
-										newGroupName={newGroupName}
-										onNewGroupSave={onNewGroupSave}
-										activeTab={activeTab}
-										setActiveTab={setActiveTab}
-										onFilter={onFilter}
-										isCreateNewGroup={isCreateNewGroup}
-										setIsCreateNewGroup={setIsCreateNewGroup}
-										onManualUpload={onManualUpload}
-										exceptionalDaysToggle={exceptionalDaysToggle}
-										exceptionalDays={exceptionalDays}
-										setExceptionalDaysToggle={setExceptionalDaysToggle}
-										setExceptionalDays={setExceptionalDays}
-										showTestGroups={showTestGroups}
-										setShowTestGroups={setShowTestGroups}
-									/>
+							{renderSubHeader()}
+							<Box className={clsx('bodyBlock', classes.pt20)}>
+								<Grid container style={{ marginBottom: '40px' }}>
+									<Grid item md={7} xs={12}>
+										<LeftPane
+											classes={classes}
+											allGroupList={allGroupList}
+											testGroupList={testGroupList}
+											finishedCampaigns={finishedCampaigns}
+											selectedGroups={selectedGroups}
+											setSelected={setSelectedGroups}
+											selectedFilterCampaigns={selectedFilterCampaigns}
+											setFilterCampaigns={setFilterCampaigns}
+											selectedFilterGroups={selectedFilterGroups}
+											setFilterGroups={setFilterGroups}
+											onNewGroupChange={setNewGroupName}
+											newGroupName={newGroupName}
+											onNewGroupSave={onNewGroupSave}
+											activeTab={activeTab}
+											setActiveTab={setActiveTab}
+											onFilter={onFilter}
+											isCreateNewGroup={isCreateNewGroup}
+											setIsCreateNewGroup={setIsCreateNewGroup}
+											onManualUpload={onManualUpload}
+											exceptionalDaysToggle={exceptionalDaysToggle}
+											exceptionalDays={exceptionalDays}
+											setExceptionalDaysToggle={setExceptionalDaysToggle}
+											setExceptionalDays={setExceptionalDays}
+											showTestGroups={showTestGroups}
+											setShowTestGroups={setShowTestGroups}
+										/>
+									</Grid>
+									<Grid item md={1} xs={12}></Grid>
+									<Grid item md={4} xs={12}>
+										<RightPane
+											classes={classes}
+											handleDatePicker={handleDatePicker}
+											sendDate={sendDate}
+											sendTime={sendTime}
+											handleRadioTime={handleRadioTime}
+											sendType={sendType}
+											handleSendType={handleSendType}
+											timePickerOpen={timePickerOpen}
+											handleTimePicker={handleTimePicker}
+											daysBeforeAfter={daysBeforeAfter}
+											handleSpecialDayChange={handleSpecialDayChange}
+											spectialDateFieldID={spectialDateFieldID}
+											handleSelectChange={handleSelectChange}
+											isSpecialDateBefore={isSpecialDateBefore}
+											setIsSpecialDateBefore={setIsSpecialDateBefore}
+											specialDatedropDown={specialDatedropDown}
+										/>
+									</Grid>
 								</Grid>
-								<Grid item md={1} xs={12}></Grid>
-								<Grid item md={4} xs={12}>
-									<RightPane
-										classes={classes}
-										handleDatePicker={handleDatePicker}
-										sendDate={sendDate}
-										sendTime={sendTime}
-										handleRadioTime={handleRadioTime}
-										sendType={sendType}
-										handleSendType={handleSendType}
-										timePickerOpen={timePickerOpen}
-										handleTimePicker={handleTimePicker}
-										daysBeforeAfter={daysBeforeAfter}
-										handleSpecialDayChange={handleSpecialDayChange}
-										spectialDateFieldID={spectialDateFieldID}
-										handleSelectChange={handleSelectChange}
-										isSpecialDateBefore={isSpecialDateBefore}
-										setIsSpecialDateBefore={setIsSpecialDateBefore}
-										specialDatedropDown={specialDatedropDown}
-									/>
-								</Grid>
-							</Grid>
+							</Box>
 							<Buttons
 								classes={classes}
 								onFormButtonClick={onFormButtonClick}
