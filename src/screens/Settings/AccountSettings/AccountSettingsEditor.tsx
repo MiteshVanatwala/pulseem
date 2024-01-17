@@ -100,7 +100,7 @@ const AccountSettingsEditor = () => {
 	const getData = async () => {
 		await dispatch(getAccountSettings());
 		setShowLoader(false);
-		const qs = window.location.search && queryString.parse(window.location.search);
+		const qs = window.location.search && queryString.parse(window.location.search) as any;
 		setShowVerificationDomains(qs?.sdv || false);
 	};
 	useEffect(() => {
