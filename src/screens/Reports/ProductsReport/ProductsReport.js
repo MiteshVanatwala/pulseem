@@ -177,10 +177,9 @@ const ProductsReport = ({ classes }) => {
                 <Grid item>
                     <TextField
                         variant='outlined'
-                        size='small'
                         value={searchData.ProductName ?? ''}
                         onChange={(e) => setSearchData({ ...searchData, ProductName: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
+                        className={clsx(classes.textField, classes.minWidth252, classes.h100)}
                         placeholder={t('report.ProductsReport.prodName')}
                     />
                 </Grid>
