@@ -13,7 +13,8 @@ import { ClickAwayListener } from "@material-ui/core";
 enum NotifyCenterType {
   File = 0,
   Unsubscribe = 1,
-  UploadRecipient = 2
+  UploadRecipient = 2,
+  DomainVerification = 3
 }
 
 enum NotifyCenterStatus {
@@ -87,7 +88,7 @@ const NotificationBell = ({ classes }: any) => {
     return (
       <MenuList>
         {
-          notifyCenterList && notifyCenterList?.length > 0  ? notifyCenterList?.map((option: any) => (
+          notifyCenterList && notifyCenterList?.length > 0 ? notifyCenterList?.filter((n: any) => { return n.NotifyCenterTypeID !== NotifyCenterType.DomainVerification }).map((option: any) => (
             <MenuItem
               key={option?.ID}
               className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}

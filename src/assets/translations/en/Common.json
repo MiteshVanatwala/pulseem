@@ -657,5 +657,8 @@
       "lastSendTime": "Last Sent Email"
     }
   },
-  "skip": "Skip"
+  "skip": "Skip",
+  "moreDetails": "More information",
+  "testVerificationDomain": "Test Domains Verifiation",
+  "domainVerificationDashboardPopupText": "<p>לקוחות יקרים,<br/><br/>האם אתם ערוכים לדרישות החובה ש- Gmail הכריזה בנוגע לאימות כתובות ה- EMAILמהן יוצאים הקמפיינים שלכם?<br/><br/>החל מה- 29/1/24, אנו מיישרים קו עם הדרישות המחמירות של Gmail ולא נאפשר שליחת ניוזלטרים מדומיינים שאינם מאומתים.<br/><br/>לביצוע בדיקה הבוחנת אם הדומיינים שברשותכם מאומתים, לחצו על הכפתור מטה.<br/>לקבלת מידע מלא המפרט על הסיבות לשינויים, מהות ההתאמות הנדרשות, ביצוע תהליך האימות וכד', לחצו על 'מידע נוסף'."
 }

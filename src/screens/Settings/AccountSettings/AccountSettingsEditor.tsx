@@ -30,6 +30,7 @@ import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.t
 import { apiStatus } from '../../Whatsapp/Constant';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 import DomainsVerificationPopUp from './Popups/DomainsVerificationPopUp';
+import queryString from 'query-string';
 
 
 const AccountSettingsEditor = () => {
@@ -99,6 +100,8 @@ const AccountSettingsEditor = () => {
 	const getData = async () => {
 		await dispatch(getAccountSettings());
 		setShowLoader(false);
+		const qs = window.location.search && queryString.parse(window.location.search);
+		setShowVerificationDomains(qs?.sdv || false);
 	};
 	useEffect(() => {
 		getData();
