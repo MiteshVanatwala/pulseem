@@ -360,6 +360,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
     const showCautionNewEditor = !IsNewEditor && (cautionPopup !== "false" ?? false);
     const emailProps = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail })[0];
 
+    const editUrlArray = { NEW: `/react/Campaigns/Create/${CampaignID}`, OLD: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`, BASIC: `/Pulseem/CampaignEdit.aspx?CampaignID=${CampaignID}&Culture=he-IL&fromreact=true` };
+
     const domainErrorObj = {
       display: false,
       address: FromEmail,
@@ -368,15 +370,23 @@ const NewsletterManagnentScreen = ({ classes }) => {
       isFullDescription: false,
       preText: t(`common.domainVerification.campaignManagement.send.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', CampaignID),
       showSkip: false,
-      options: [
-        !emailProps?.IsVerified && !IsBasicEditor && {
-          text: t('campaigns.newsletterSetUp'),
-          onCallback: () => {
-            navigate(`/react/Campaigns/Create/${CampaignID}`)
-          }
-        }
-      ]
+      options: null
     }
+
+    domainErrorObj.options = [{
+      text: t('campaigns.newsletterSetUp'),
+      onCallback: () => {
+        if (IsBasicEditor) {
+          navigate(editUrlArray.BASIC);
+        }
+        else if (IsNewEditor) {
+          navigate(editUrlArray.NEW);
+        }
+        else {
+          navigate(editUrlArray.OLD);
+        }
+      }
+    }];
 
     const renderCopyToClipoard = (
       showCopied === CampaignID ?
@@ -431,23 +441,37 @@ const NewsletterManagnentScreen = ({ classes }) => {
         onClick: () => {
           if ((!emailProps?.IsVerified || emailProps?.IsRestricted) && !IsSharedDomain(FromEmail)) {
             domainErrorObj.preText = t(`common.domainVerification.campaignManagement.edit.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', CampaignID);
-            domainErrorObj.options = [{
-              text: t('campaigns.newsletterSetUp'),
-              onCallback: () => {
-                navigate(`/react/Campaigns/Create/${CampaignID}`)
-              }
-            },
-            {
-              text: t('campaigns.skipToEditor'),
-              onCallback: () => {
-                if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
-                  navigate(`/react/Campaigns/editor/${CampaignID}`)
+
+            const editUrlArray = { NEW: `/react/Campaigns/Create/${CampaignID}`, OLD: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`, BASIC: `/Pulseem/CampaignEdit.aspx?CampaignID=${CampaignID}&Culture=he-IL&fromreact=true` };
+
+            if (!IsBasicEditor) {
+              domainErrorObj.options = [{
+                text: t('campaigns.newsletterSetUp'),
+                onCallback: () => {
+                  navigate(editUrlArray.NEW)
                 }
-                else {
-                  window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
+              },
+              {
+                text: t('campaigns.skipToEditor'),
+                onCallback: () => {
+                  if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+                    navigate(editUrlArray.NEW)
+                  }
+                  else {
+                    window.location = editUrlArray.OLD
+                  }
                 }
-              }
-            }];
+              }];
+            }
+            else {
+              domainErrorObj.options = [{
+                text: t('campaigns.newsletterSetUp'),
+                onCallback: () => {
+                  window.location = editUrlArray.BASIC
+                }
+              }]
+            }
+
             setDomainAddressError(domainErrorObj);
             setShowDomainVerification(true)
           }
