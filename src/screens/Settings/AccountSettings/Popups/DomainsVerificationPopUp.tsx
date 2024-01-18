@@ -82,7 +82,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
             }
             return 0;
         }).map((item: VerifiedEmail, index: number) => {
-            return <>
+            return <Box key={`ve_${index}`}>
                 <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')} style={{ justifyContent: 'space-between', alignItems: 'center', height: 40 }}>
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
                         {item.IsVerified ? <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}
@@ -96,7 +96,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                     >{t('common.domainVerification.verifyDomain')}</Typography>}
                 </Box>
                 {index < verifiedEmails.length - 1 && <Divider style={{ marginBottom: 6 }} />}
-            </>
+            </Box>
         });
     }
     const VerificationResult = () => {
