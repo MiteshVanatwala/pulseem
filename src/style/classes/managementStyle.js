@@ -1576,6 +1576,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 400,
     fontSize: '1.1rem',
     lineHeight: "2.1rem",
+    padding: '0px 15px',
+    display: 'inline-block'
   },
   bulkContent: {
     fontWeight: 300,
@@ -1590,8 +1592,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 20,
   },
   dashboardTopPaper: {
+    paddingBottom: 10,
     [theme.breakpoints.up("lg")]: {
-      minHeight: 330,
+      // minHeight: 330,
     },
     [theme.breakpoints.down("md")]: {
       paddingBottom: 0,
