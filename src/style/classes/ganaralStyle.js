@@ -3416,7 +3416,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       },
       '& .MuiSelect-select': {
         minWidth: '100px !important',
-        width: 'auto',
+        width: '100%',
         maxWidth: '100%',
         borderRadius: 4,
         paddingInlineStart: 15,
