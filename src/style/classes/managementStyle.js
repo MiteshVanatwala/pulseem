@@ -33,9 +33,9 @@ const barHeight = {
 const tipsFontSize = {
   xs: 13,
   sm: 13,
-  md: 11,
-  lg: 13,
-  xl: 13,
+  md: 15,
+  lg: 15,
+  xl: 15,
 };
 
 const shortcutFontSize = {
@@ -1424,7 +1424,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "space-between",
     width: "80%",
     position: "absolute",
-    top: "calc(72% - 24px)",
+    top: "60%",
     zIndex: 1,
   },
   carouselTips: {
