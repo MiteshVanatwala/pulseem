@@ -177,6 +177,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         />
     }
     return <BaseDialog
+        customContainerStyle={classes.summaryContainer}
         disableBackdropClick={false}
         classes={classes}
         icon={<MdDomain className={classes.notifyIconWhite} />}
@@ -185,9 +186,17 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         title={t("common.domainVerification.verifyDomain")}
         children={<Box className={clsx(classes.fullWidth)}>
             <Box className='selectWrapper'>
-                <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
-                    <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.pb15}>
+                <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }}>
+                    <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} className={classes.pb15}>
                         <Typography className={clsx(classes.bold)} variant='h6'>{t('common.domainVerification.settingPopUp.selectDomain')} </Typography>
+                        <Link
+                            style={{ fontSize: 15, textDecoration: 'underline' }}
+                            target="_blank"
+                            title={t('common.dnsRecordsGuide')}
+                            aria-label={t('common.dnsRecordsGuide')}
+                            href="https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%9B%D7%99%D7%9D/%d7%9e%d7%a1%d7%9e%d7%9a-%d7%94%d7%a1%d7%91%d7%a8-%d7%9c%d7%94%d7%95%d7%a1%d7%a4%d7%aa-spf-dkim/">
+                            {t('common.dnsRecordsGuide')}
+                        </Link>
                     </Box>
                     <Box className={clsx('contactDataBox', classes.sidebar)}>
                         {filteredDomains()}

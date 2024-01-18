@@ -55,6 +55,8 @@ const SendSuccessDialog = ({
                 </Grid>
             </Box>
         ),
+        onCancel: () => { onBackToCampaigns() },
+        onClose: () => { onBackToCampaigns() },
         renderButtons: false,
         showDefaultButtons: false,
         onCancel: () => onBackToCampaigns(),

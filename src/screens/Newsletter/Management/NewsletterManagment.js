@@ -70,6 +70,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [duplicateDialog, setDuplicateDialog] = useState({});
   const [toastMessage, setToastMessage] = useState(null);
   const [showDomainVerification, setShowDomainVerification] = useState(false);
+  const [verificationDialog, setVerificationDialog] = useState(false)
   const [domainAddressError, setDomainAddressError] = useState({
     display: false,
     address: '',
@@ -93,6 +94,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
     return null;
   }
+  
 
   const getData = async () => {
     await dispatch(getNewslatterData())
@@ -342,8 +344,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
     const cautionPopup = getCookie('showCautionDuplicateCampaign');
     const showCautionNewEditor = !IsNewEditor && (cautionPopup !== "false" ?? false);
     const emailProps = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail })[0];
+
     const campaignSettingsUrl = `/react/Campaigns/Create/${CampaignID}`;
     const editUrlArray = { NEW: `/react/Campaigns/Editor/${CampaignID}`, OLD: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`, BASIC: `/Pulseem/CampaignEdit.aspx?CampaignID=${CampaignID}&Culture=he-IL&fromreact=true` };
+
     const domainErrorObj = {
       display: false,
       address: FromEmail,

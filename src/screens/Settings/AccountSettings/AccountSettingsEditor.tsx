@@ -86,7 +86,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
 
 	} as AccountSettings);
 	const [selectedTier, setSelectedTier] = useState<string>('1');
-	// const restrictedDomains = sessionStorage.getItem("RestrictedEmailDomains");
 	const [showVerificationDomains, setShowVerificationDomains] = useState<boolean>(false);
 
 	const renderToast = () => {

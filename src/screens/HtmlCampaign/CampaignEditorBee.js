@@ -45,9 +45,9 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-// import Templates from './modals/Templates.tsx';
-// import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
-// import SaveTemplate from './modals/SaveTemplate';
+// // import Templates from './modals/Templates.tsx';
+// // import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
+// // import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 import { sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
@@ -171,6 +171,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
     // dispatch(getAllTemplatesBySubaccountId());
+    // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    // dispatch(getAllTemplatesBySubaccountId());
   }, []);
   useEffect(() => {
     if (userBlocks) {
@@ -243,6 +245,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups());
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
+    await dispatch(getAuthorizedEmails());
     setDataReady(true);
     const initBeeToken = () => {
       dispatch(getBeeToken());
@@ -298,14 +301,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       // if (templateId !== null) {
       //   const templateResponse = await dispatch(getTemplateById(templateId));
 
-      //   if (templateResponse?.payload?.StatusCode === 201) {
-      //     const responseData = templateResponse?.payload?.Data;
-      //     setNewTemplate(responseData)
-      //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
-      //   } else {
-      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
-      //   }
-      // }
+      // //   if (templateResponse?.payload?.StatusCode === 201) {
+      // //     const responseData = templateResponse?.payload?.Data;
+      // //     setNewTemplate(responseData)
+      // //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+      // //   } else {
+      // //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+      // //   }
+      // // }
 
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
@@ -738,9 +741,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   //       variant='contained'
   //       size='medium'
   //       className={clsx(
-  //         classes.btn,
-  //         classes.btnRounded,
-  //         classes.backButton
+  //         classes.actionButton,
+  //         classes.actionButtonOutlinedBlue
   //       )}
   //       style={{ margin: '8px' }}
   //     >
@@ -750,9 +752,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   //       variant='contained'
   //       size='medium'
   //       className={clsx(
-  //         classes.btn,
-  //         classes.btnRounded,
-  //         classes.backButton
+  //         classes.actionButton,
+  //         classes.actionButtonOutlinedBlue,
   //       )}
   //       style={{ margin: '8px' }}
   //       startIcon={<BiSave />}
@@ -777,31 +778,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           color="primary"
         >{t("common.save")}
         </Button>
-        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
-          const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
-          if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
-            const domainErrorObj = {
-              display: false,
-              address: campaign.FromEmail,
-              verifySharedCallback: null,
-              isSummary: false,
-              isFullDescription: false,
-              preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
-              showSkip: false,
-              options: [{
-                text: t('common.CampaignSettings'),
-                onCallback: () => {
-                  window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
-                }
-              }]
-            }
-            setDomainAddressError(domainErrorObj);
-            setShowDomainVerification(true)
-          }
-          else {
-            saveDesign(true);
-          }
-        }}
+        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={saveDesign}
           variant='contained'
           size='medium'
           className={clsx(
@@ -923,6 +900,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         // additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
+      {/* <OverwriteTemplatePopUp
       {/* <OverwriteTemplatePopUp
         classes={classes}
         onClose={(resp) => {

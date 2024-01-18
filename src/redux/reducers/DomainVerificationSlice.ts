@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-// import { PulseemResponse } from '../../Models/APIResponse';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
-
 export const GetDomainVerification = createAsyncThunk(
     'DomainVerification/GetDomainVerification',
     async (domainAddress: string, thunkAPI) => {
@@ -13,7 +11,6 @@ export const GetDomainVerification = createAsyncThunk(
         }
     }
 );
-
 export const SetSharedDomain = createAsyncThunk(
     'DomainVerification/SetSharedEmailDomain',
     async (domainAddress: string, thunkAPI) => {

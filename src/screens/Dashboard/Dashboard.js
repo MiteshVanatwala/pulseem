@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Button, Checkbox, FormControlLabel, Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
@@ -22,8 +22,8 @@ const DashboardScreen = ({ classes }) => {
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [member, setMember] = useState(null);
   const [showDomainVerificationMessage, setShowDomainVerificationMessage] = useState(true);
+  const [member, setMember] = useState(null);
 
   useEffect(() => {
     const initialize = async () => {
@@ -55,6 +55,11 @@ const DashboardScreen = ({ classes }) => {
 
   const renderPasswordText = () => {
     return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange ?? ''))
+  }
+
+  const handleShowDomainCookie = () => {
+    const cookie = getCookie("popup_hide_domain_verification");
+    setCookie("popup_hide_domain_verification", cookie !== 'true');
   }
 
   return (

@@ -43,7 +43,7 @@ const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => 
                             variant='contained'
                             size='medium'
                             component="a"
-                            onClick={() => window.open('https://site.pulseem.com')}
+                            onClick={() => window.open('https://site.pulseem.co.il/new-requirements-for-bulk-email-senders-to-gmail/')}
                             className={clsx(
                                 classes.btn,
                                 classes.btnRounded,

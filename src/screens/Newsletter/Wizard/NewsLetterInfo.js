@@ -356,11 +356,6 @@ const NewsLetterInfo = ({ classes }) => {
             }
         }
     }
-    // useEffect(() => {
-    //     if (onSelectedSharedDomain === true) {
-    //         onSelectSharedDomain();
-    //     }
-    // }, [onSelectedSharedDomain])
     const handleSubmitNewsletterResponse = (res, isExit, isNewEditor) => {
         switch (res?.StatusCode) {
             case 201: {

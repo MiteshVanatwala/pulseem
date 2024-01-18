@@ -1,5 +1,4 @@
 import { SharedEmailDomain } from "../../config";
-
 const IsSharedDomain = (emailAddress: String) => {
     if (emailAddress !== '') {
         const domainAddress = emailAddress?.split('@');
@@ -9,5 +8,4 @@ const IsSharedDomain = (emailAddress: String) => {
     }
     return false;
 }
-
 export { IsSharedDomain };
