@@ -179,6 +179,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         />
     }
     return <BaseDialog
+        customContainerStyle={classes.summaryContainer}
         disableBackdropClick={false}
         classes={classes}
         icon={<MdDomain className={classes.notifyIconWhite} />}
