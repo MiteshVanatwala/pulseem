@@ -1594,7 +1594,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   dashboardTopPaper: {
     paddingBottom: 10,
     [theme.breakpoints.up("lg")]: {
-      // minHeight: 330,
+      minHeight: 330,
     },
     [theme.breakpoints.down("md")]: {
       paddingBottom: 0,
