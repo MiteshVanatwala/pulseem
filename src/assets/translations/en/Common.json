@@ -707,7 +707,7 @@
         "preText": "<h3 style='color:red'>Attention!!!</h3><b style='color:red'>We recognized that the domain defined for sending the newsletter is not a verified domain.</b><p>The field ' The sender's email address contains a free domain of the type Gmail / Hotmail / Yahoo / Walla, etc.<br>To remind you, the new mandatory requirements of Gmail require your own verified domain for the benefit of mailing newsletters.<br/><br/>If the adjustments are not made required, it will not be possible to send the newsletter.<br><br>We are here to help you - please choose the preferred alternative from the alternatives offered:"
       },
       "nonVerified": {
-        "preText": "<h3 style='color:red'>Attention!!!</h3><b style='color:red'>We detected that the domain defined for sending the newsletter is not a verified domain.</b><br/>< p>Remind you, the new mandatory requirements of Gmail require a verified domain for mailing newsletters. <br/><br/>If the necessary adjustments are not made, it will not be possible to send the newsletter.<br/><br/>We are here to help you - please choose the preferred alternative from the alternatives offered:</p>"
+        "preText": "<h3 style='color:red'>Attention!!!</h3><b style='color:red'>We detected that the domain defined for sending the newsletter is not a verified domain.</b><br/><p>Remind you, the new mandatory requirements of Gmail require a verified domain for mailing newsletters. <br/><br/>If the necessary adjustments are not made, it will not be possible to send the newsletter.<br/><br/>We are here to help you - please choose the preferred alternative from the alternatives offered:</p>"
       }
     },
     "campaignEditor": {

@@ -57,11 +57,6 @@ const DashboardScreen = ({ classes }) => {
     return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange ?? ''))
   }
 
-  const handleShowDomainCookie = () => {
-    const cookie = getCookie("popup_hide_domain_verification");
-    setCookie("popup_hide_domain_verification", cookie !== 'true');
-  }
-
   return (
     <DefaultScreen
       currentPage='dashboard'
