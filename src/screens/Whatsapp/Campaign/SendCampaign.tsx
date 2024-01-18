@@ -128,8 +128,8 @@ const SendCampaign = ({
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [isCreateNewGroup, setIsCreateNewGroup] = useState<boolean>(false);
 
 	const [allGroupList, setAllGroupList] = useState<testGroupDataProps[]>([]);
@@ -180,6 +180,7 @@ const SendCampaign = ({
 					getSpecialDateDropDown();
 					getCampaignSettingData(groupsData, campaignsData);
 				})();
+				setIsAccountSetup(true);
 			} else {
 				setIsLoader(false);
 				setIsAccountSetup(false);

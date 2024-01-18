@@ -134,7 +134,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
 		[]
@@ -188,6 +188,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					});
 				}
 				setIsAccountSetup(true);
+			} else {
+				setIsAccountSetup(false);
 			}
 			setIsLoader(false);
 		})();

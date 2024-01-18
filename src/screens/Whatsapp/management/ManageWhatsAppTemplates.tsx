@@ -117,8 +117,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		fileLink: '',
 		fileType: '',
 	});
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [templateListData, setTemplateListData] = useState<
 		templateListItemsProps[]
 	>([]);
@@ -167,6 +167,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						pageSize: Number(rowsPerPage),
 					});
 				}
+				setIsAccountSetup(true);
 			} else {
 				setIsLoader(false);
 				setIsAccountSetup(false);
