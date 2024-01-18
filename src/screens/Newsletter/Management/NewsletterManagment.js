@@ -38,6 +38,8 @@ import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redu
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import Toast from '../../../components/Toast/Toast.component';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
+import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
+import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
@@ -67,6 +69,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const { publicTemplates } = useSelector(state => state.campaignEditor);
   const [duplicateDialog, setDuplicateDialog] = useState({});
   const [toastMessage, setToastMessage] = useState(null);
+  const [showDomainVerification, setShowDomainVerification] = useState(false);
+  const [domainAddressError, setDomainAddressError] = useState({
+    display: false,
+    address: '',
+    verifySharedCallback: null,
+    isSummary: false,
+    isFullDescription: false,
+    preText: '',
+    showSkip: false
+  });
 
   moment.locale(language);
 
@@ -325,11 +337,23 @@ const NewsletterManagnentScreen = ({ classes }) => {
   }
 
   const renderCellIcons = (row) => {
-    const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive, IsNewEditor, FromEmail } = row
+    const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive, IsNewEditor, FromEmail, IsBasicEditor } = row
 
     const cautionPopup = getCookie('showCautionDuplicateCampaign');
     const showCautionNewEditor = !IsNewEditor && (cautionPopup !== "false" ?? false);
-    const fromEmailNonVerified = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail && ve?.IsVerified === true })?.length <= 0;
+    const emailProps = verifiedEmails?.filter((ve) => { return ve?.Number === FromEmail })[0];
+    const campaignSettingsUrl = `/react/Campaigns/Create/${CampaignID}`;
+    const editUrlArray = { NEW: `/react/Campaigns/Editor/${CampaignID}`, OLD: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`, BASIC: `/Pulseem/CampaignEdit.aspx?CampaignID=${CampaignID}&Culture=he-IL&fromreact=true` };
+    const domainErrorObj = {
+      display: false,
+      address: FromEmail,
+      verifySharedCallback: null,
+      isSummary: false,
+      isFullDescription: false,
+      preText: t(`common.domainVerification.campaignManagement.send.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', CampaignID),
+      showSkip: false,
+      options: null
+    }
 
     const renderCopyToClipoard = (
       showCopied === CampaignID ?
@@ -343,16 +367,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
 
     const iconsMap = [[
-      // {
-      //   key: 'send',
-      //   uIcon: SendIcon,
-      //   lable: t('campaigns.imgSendResource1.ToolTip'),
-      //   remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
-      //   rootClass: classes.sendIcon,
-      //   textClass: classes.sendIconText,
-      //   href: `${sitePrefix}Campaigns/SendSettings/${CampaignID}`
-      //   //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
-      // },
       {
         key: 'preview',
         uIcon: PreviewIcon,
@@ -370,11 +384,45 @@ const NewsletterManagnentScreen = ({ classes }) => {
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
         onClick: () => {
-          if (row.IsNewEditor && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
-            navigate(`${sitePrefix}Campaigns/editor/${CampaignID}?fromreact=true`)
+          if ((!emailProps?.IsVerified || emailProps?.IsRestricted) && !IsSharedDomain(FromEmail)) {
+            domainErrorObj.preText = t(`common.domainVerification.campaignManagement.edit.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', CampaignID);
+            if (!IsBasicEditor) {
+              domainErrorObj.options = [{
+                text: t('campaigns.newsletterSetUp'),
+                onCallback: () => {
+                  navigate(campaignSettingsUrl)
+                }
+              },
+              {
+                text: t('campaigns.skipToEditor'),
+                onCallback: () => {
+                  if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+                    navigate(editUrlArray.NEW)
+                  }
+                  else {
+                    window.location = editUrlArray.OLD
+                  }
+                }
+              }];
+            }
+            else {
+              domainErrorObj.options = [{
+                text: t('campaigns.newsletterSetUp'),
+                onCallback: () => {
+                  window.location = editUrlArray.BASIC
+                }
+              }]
+            }
+            setDomainAddressError(domainErrorObj);
+            setShowDomainVerification(true)
           }
           else {
-            window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
+            if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+              navigate(editUrlArray.NEW)
+            }
+            else {
+              window.location = editUrlArray.OLD
+            }
           }
         },
         rootClass: classes.paddingIcon,
@@ -470,27 +518,26 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: clsx(classes.sendIcon, 'sendIcon'),
         textClass: classes.sendIconText,
-        errorElement: fromEmailNonVerified === true && <MdError
+        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && !IsSharedDomain(FromEmail) && Status !== 4 && <MdError
           title={t('campaigns.imgSendResource1.nonVerifiedDomain')}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: isRTL ? 0 : 'auto',
-            right: isRTL ? 'auto' : 0,
-            zIndex: 100,
-            fontSize: 25,
-            fill: 'orange',
-            backgroundColor: 'red',
-            borderRadius: 25,
-          }} />,
+          className={classes.errorIcon}
+        />,
         onClick: () => {
-          if (fromEmailNonVerified === true) {
-            alert('domain was not verified')
-            // Show verification domain popup
+          if ((!emailProps?.IsVerified || emailProps?.IsRestricted) && !IsSharedDomain(FromEmail)) {
+            if (!IsBasicEditor) {
+              domainErrorObj.options = [{
+                text: t('campaigns.newsletterSetUp'),
+                onCallback: () => {
+                  navigate(campaignSettingsUrl);
+                }
+              }];
+            }
+            setDomainAddressError(domainErrorObj);
+            setShowDomainVerification(true)
           }
           else {
             dispatch(getGroupsBySubAccountId());
-            navigate(`${sitePrefix}Campaigns/SendSettings/${CampaignID}`);
+            navigate(`/react/Campaigns/SendSettings/${CampaignID}`);
           }
         }
       },
@@ -922,6 +969,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
           }
         }}
         campaignName={duplicateDialog?.name}
+      />
+      {/* Here we are using DomainVerification as a component and not via React Store */}
+      <DomainVerification
+        classes={classes}
+        domain={domainAddressError}
+        forceShow={showDomainVerification}
+        key={"fromManagement"}
+        onClose={() => {
+          setShowDomainVerification(false)
+        }}
       />
       <Loader isOpen={showLoader} />
       {renderToast()}

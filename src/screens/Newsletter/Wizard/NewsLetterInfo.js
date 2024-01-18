@@ -31,6 +31,7 @@ import { Title } from '../../../components/managment/Title';
 // import { DialogType } from '../../HtmlCampaign/helper/Config';
 // import Templates from '../../HtmlCampaign/modals/Templates';
 // import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
+import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -166,10 +167,20 @@ const NewsLetterInfo = ({ classes }) => {
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [campaignLoaded, setCampaignLoaded] = useState(false);
     const [newEditorDisabled, setNewEditorDisabled] = useState(false);
-    const [template, setTemplate] = useState('');
+    // const [template, setTemplate] = useState('');
     const [continueToNewEditor, setContinueToNewEditor] = useState(false);
     const [onSelectedSharedDomain, setOnSelectedSharedDomain] = useState(false);
     // const restrictedDomains = sessionStorage.getItem("RestrictedEmailDomains");
+    const [showDomainVerification, setShowDomainVerification] = useState(false);
+    const [domainAddressError, setDomainAddressError] = useState({
+        display: false,
+        address: '',
+        verifySharedCallback: null,
+        isSummary: false,
+        isFullDescription: false,
+        preText: '',
+        showSkip: false
+    });
 
     const navigate = useNavigate();
     const maxCharLimits = {
@@ -200,7 +211,7 @@ const NewsLetterInfo = ({ classes }) => {
         Subject: t('campaigns.newsLetterEditor.errors.campaignSubject'),
         FromName: t('campaigns.newsLetterEditor.errors.fromName'),
         FromEmail: t('campaigns.newsLetterEditor.errors.fromEmail'),
-        ReplyEmail: t('campaigns.newsLetterEditor.errors.ReplyEmail'),
+        // ReplyEmail: t('campaigns.newsLetterEditor.errors.ReplyEmail'),
     }
 
     const [campaingnValues, setCampaingnValues] = useState({
@@ -254,9 +265,8 @@ const NewsLetterInfo = ({ classes }) => {
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
         });
 
-        if (!campaingnValues?.ReplyTo || campaingnValues?.ReplyTo === '') {
+        if ((!campaingnValues?.ReplyTo || campaingnValues?.ReplyTo === '') && (campaingnValues.FromEmail !== '' && campaingnValues.FromEmail !== '-1')) {
             const sharedDomainAddress = accountSettings?.SubAccountSettings?.SharedEmailDomain;
-
             if (campaingnValues.FromEmail !== sharedDomainAddress) {
                 setCampaingnValues({ ...campaingnValues, ReplyTo: campaingnValues.FromEmail });
             }
@@ -351,8 +361,7 @@ const NewsLetterInfo = ({ classes }) => {
     //         onSelectSharedDomain();
     //     }
     // }, [onSelectedSharedDomain])
-    const handleSubmitNewsletterResponse = (res, isExit, isNewEditor, campaignId) => {
-        const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail });
+    const handleSubmitNewsletterResponse = (res, isExit, isNewEditor) => {
         switch (res?.StatusCode) {
             case 201: {
                 setToastMessage(ToastMessages.SUCEESS)
@@ -372,29 +381,44 @@ const NewsLetterInfo = ({ classes }) => {
             }
             case 451: {
                 if (!isExit) {
-                    dispatch(setVerificationDomain({
+                    const saveInfo = JSON.parse(res.Message);
+                    const emailProps = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail })[0];
+                    const isSharedDomain = campaingnValues.FromEmail.split("@").pop() === SharedEmailDomain;
+                    const emailObj = {
+                        NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
+                        Restricted: 'common.domainVerification.campaignCreation.restricted.preText',
+                    }
+                    const domainErrorObj = {
                         display: true,
-                        address: `${campaingnValues.FromEmail}`,
-                        preText: fromEmailProperty?.IsRestricted === true ? t('common.domainVerification.popup.restrictedPreText') : t('common.domainVerification.popup.preText'),
-                        showSkip: true,
+                        address: campaingnValues.FromEmail,
                         verifySharedCallback: async (obj) => {
                             if (obj && obj.Skip === true) {
-                                handleContinueToEditor(isNewEditor, campaignId);
+                                handleContinueToEditor(isNewEditor, saveInfo.CampaignID);
                             }
                             else {
                                 if (obj && obj.ReplyTo && obj.FromEmail) {
                                     setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
                                     await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
-                                    handleContinueToEditor(isNewEditor, campaignId);
                                 }
                             }
-                            // setOnSelectedSharedDomain(true);
+                            setShowDomainVerification(false);
                         },
-                        isFullDescription: true
-                    }))
+                        isFullDescription: true,
+                        preText: t(emailObj[emailProps?.IsRestricted ? 'Restricted' : 'NonVerified']),
+                        replyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || campaingnValues.FromEmail),
+                        showSkip: false,
+                        options: [{
+                            text: t('common.skip'),
+                            onCallback: () => {
+                                handleContinueToEditor(isNewEditor, saveInfo.CampaignID);
+                            }
+                        }]
+                    }
+                    setDomainAddressError(domainErrorObj);
+                    setShowDomainVerification(true);
                 }
                 else {
-                    navigate(`${sitePrefix}Campaigns`);
+                    navigate(`/react/Campaigns`);
                 }
                 break;
             }
@@ -497,29 +521,35 @@ const NewsLetterInfo = ({ classes }) => {
     }
 
     const handleFromEmailChange = (event) => {
-        const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === event.target.value });
-
+        const isSharedDomain = event.target.value.split("@").pop() === SharedEmailDomain;
+        const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === event.target.value })[0];
         setCampaingnValues({
             ...campaingnValues,
             FromEmail: event.target.value,
-            ReplyTo: event.target.value.split("@").pop() !== SharedEmailDomain ? event.target.value : fromEmailProperty.Number
+            ReplyTo: isSharedDomain ? ((campaingnValues.ReplyTo !== '' && campaingnValues.ReplyTo) || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || event.target.value)
         });
         setErrors({ ...errors, FromEmail: '' });
-
-        if (!fromEmailProperty.IsVerified) {
-            dispatch(setVerificationDomain({
+        if (!isSharedDomain && (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true)) {
+            const emailObj = {
+                NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
+                Restricted: 'common.domainVerification.campaignCreation.restricted.preText',
+            }
+            const domainErrorObj = {
                 display: true,
-                address: `${campaingnValues.FromEmail}`,
-                preText: fromEmailProperty.IsRestricted ? t('common.domainVerification.popup.restrictedPreText') : t('common.domainVerification.popup.preText'),
+                address: fromEmailProperty.Number,
                 verifySharedCallback: async (obj) => {
                     setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
                     await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo }));
+                    setShowDomainVerification(false);
                 },
                 isFullDescription: true,
-                Skip: false
-            }));
+                preText: t(emailObj[fromEmailProperty?.IsRestricted ? 'Restricted' : 'NonVerified']),
+                showSkip: false,
+                replyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || event.target.value)
+            }
+            setDomainAddressError(domainErrorObj);
+            setShowDomainVerification(true);
         }
-
     }
 
     const handleHideNewCautionMessage = (e) => {
@@ -588,7 +618,7 @@ const NewsLetterInfo = ({ classes }) => {
                 const saveInfo = JSON.parse(savedCampaign.Message);
                 setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo?.CampaignID });
 
-                handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor, saveInfo?.CampaignID);
+                handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor);
 
                 if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451) {
                     return false;
@@ -718,6 +748,7 @@ const NewsLetterInfo = ({ classes }) => {
                                 className={clsx(classes.selectInputFormControl, classes.w100)}
                             >
                                 <Select
+                                    native
                                     variant="standard"
                                     name="personalization"
                                     value={''}
@@ -731,14 +762,14 @@ const NewsLetterInfo = ({ classes }) => {
                                     }}
                                     renderValue={(selected) => {
                                         if (!selected) {
-                                            return <MenuItem
+                                            return <option
                                                 key=''
                                                 value=''
                                                 name=''
                                                 disabled
                                             >
                                                 {t("common.select")}
-                                            </MenuItem>;
+                                            </option>;
                                         }
                                         return selected;
                                     }}
@@ -752,16 +783,16 @@ const NewsLetterInfo = ({ classes }) => {
                                         },
                                     }}
                                 >
-                                    <MenuItem key='' value='' disabled>{t("common.select")}</MenuItem>
+                                    <option key='' value='' disabled>{t("common.select")}</option>
                                     {extraAccountDATA.map((item, index) => {
-                                        return <MenuItem
+                                        return <option
                                             key={index}
                                             value={item.value}
                                             name={item.value}
                                             style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                                         >
                                             {t(item?.label)}
-                                        </MenuItem>
+                                        </option>
                                     })}
                                 </Select>
                             </FormControl>
@@ -803,6 +834,7 @@ const NewsLetterInfo = ({ classes }) => {
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
                                     <Select
+                                        native
                                         variant="standard"
                                         name="FromEmail"
                                         value={campaingnValues?.FromEmail}
@@ -819,38 +851,38 @@ const NewsLetterInfo = ({ classes }) => {
                                             },
                                         }}
                                     >
-                                        <MenuItem
+                                        <option
                                             key='-1'
                                             value='-1'
                                             disabled
                                         >
                                             {t("common.select")}
-                                        </MenuItem>
+                                        </option>
                                         {verifiedEmails.map((item, index) => {
                                             // if (item && item.IsRestricted) {
                                             //     return false;
                                             // }
-                                            return <MenuItem
+                                            return <option
                                                 key={index}
                                                 value={item.Number}
                                                 name={item.Number}
                                             >
-                                                {item?.IsVerified && <ListItemIcon style={{ minWidth: 25 }}>
+                                                {/* {item?.IsVerified && <ListItemIcon style={{ minWidth: 25 }}>
                                                     <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
-                                                </ListItemIcon>}
+                                                </ListItemIcon>} */}
                                                 {t(item.Number)}
-                                            </MenuItem>
+                                            </option>
                                         })}
-                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
+                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                             key={verifiedEmails.length + 1}
                                             value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                             name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                         >
-                                            <ListItemIcon style={{ minWidth: 25 }}>
+                                            {/* <ListItemIcon style={{ minWidth: 25 }}>
                                                 <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
-                                            </ListItemIcon>
+                                            </ListItemIcon> */}
                                             {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
-                                        </MenuItem>}
+                                        </option>}
                                     </Select>
                                 </FormControl>
                                 <Typography className={clsx(errors.FromEmail ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -869,12 +901,10 @@ const NewsLetterInfo = ({ classes }) => {
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
                                     <Select
+                                        native
                                         variant="standard"
                                         name="ReplyTo"
-                                        value={campaingnValues?.FromEmail.split("@").pop() === SharedEmailDomain ?
-                                            (campaingnValues?.ReplyTo !== '' ? campaingnValues?.ReplyTo : verifiedEmails[0]?.Number) :
-                                            (campaingnValues?.ReplyTo ?? campaingnValues?.FromEmail)
-                                        }
+                                        value={campaingnValues?.ReplyTo}
                                         className={classes.pbt5}
                                         onChange={(event, val) => {
                                             setCampaingnValues({ ...campaingnValues, ReplyTo: event.target.value });
@@ -889,21 +919,21 @@ const NewsLetterInfo = ({ classes }) => {
                                             },
                                         }}
                                     >
-                                        <MenuItem
+                                        <option
                                             key='-1'
                                             value='-1'
                                             disabled
                                         >
                                             {t("common.select")}
-                                        </MenuItem>
+                                        </option>
                                         {verifiedEmails.map((item, index) => {
-                                            return item.Number.split("@").pop() !== SharedEmailDomain && <MenuItem
+                                            return item.Number.split("@").pop() !== SharedEmailDomain && <option
                                                 key={index}
                                                 value={item.Number}
                                                 name={item.Number}
                                             >
                                                 {campaingnValues?.FromEmail === item.Number ? t("campaigns.newsLetterEditor.helpTexts.useFromEmailAsReply") : item.Number}
-                                            </MenuItem>
+                                            </option>
                                         })}
                                     </Select>
                                 </FormControl>
@@ -1341,6 +1371,16 @@ const NewsLetterInfo = ({ classes }) => {
                         isOpen={dialogType === DialogType.Templates}
                     />
                 } */}
+                {/* Here we are using DomainVerification as a component and not via React Store */}
+                {showDomainVerification && <DomainVerification
+                    classes={classes}
+                    domain={domainAddressError}
+                    forceShow={showDomainVerification}
+                    key={"fromManagement"}
+                    onClose={() => {
+                        setShowDomainVerification(false)
+                    }}
+                />}
                 <Loader isOpen={showLoader} />
             </Box>
             {renderDialog()}

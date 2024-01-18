@@ -50,7 +50,8 @@ import { CreditType } from "../../../Models/Payments/NoCreditPopUp";
 import DynamicConfirmDialog from "../../../components/DialogTemplates/DynamicConfirmDialog";
 import { BsInfoCircle } from "react-icons/bs";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
-import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelpfer";
+import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelper";
+import { sitePrefix } from "../../../config";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -970,11 +971,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 classes,
                 onBackToCampaigns: () => {
                     setDialogType(null);
-                    navigate('/react/campaigns');
+                    navigate(`${sitePrefix}campaigns`);
                 },
                 onBackToHome: () => {
                     setDialogType(null);
-                    navigate('/react');
+                    navigate(`${sitePrefix}`);
                 }
             }),
             summary: ConfirmationDialog({ classes: classes, count: data }),

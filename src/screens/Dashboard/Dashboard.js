@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { Grid } from '@material-ui/core';
+import { Button, Checkbox, FormControlLabel, Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
 import BulkStatus from '../../components/Balance/BulkStatus';
@@ -14,7 +14,7 @@ import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
-// import { GetRestrictedDomains } from '../../redux/reducers/DomainVerificationSlice';
+import DahsboardDomainVerificationPopup from './Popup/DahsboardDomainVerificationPopup';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
@@ -23,7 +23,7 @@ const DashboardScreen = ({ classes }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [member, setMember] = useState(null);
-  const dispatch = useDispatch();
+  const [showDomainVerificationMessage, setShowDomainVerificationMessage] = useState(true);
 
   useEffect(() => {
     const initialize = async () => {
@@ -40,10 +40,6 @@ const DashboardScreen = ({ classes }) => {
           }
         }
       }
-      // const response = await dispatch(GetRestrictedDomains());
-      // if (response?.payload?.StatusCode === 201) {
-      //   sessionStorage.setItem("RestrictedEmailDomains", response?.payload?.Data.map((d) => d.Domain));
-      // }
     }
     if (accountSettings) {
       initialize();
@@ -110,8 +106,11 @@ const DashboardScreen = ({ classes }) => {
         IsOpen={showChangePassword}
         OnClose={() => setShowChangePassword(false)}
         Text={renderPasswordText()}
-      />
-      }
+      />}
+      <DahsboardDomainVerificationPopup
+        classes={classes}
+        isOpen={showDomainVerificationMessage}
+        onClose={() => setShowDomainVerificationMessage(false)} />
     </DefaultScreen>
   )
 }

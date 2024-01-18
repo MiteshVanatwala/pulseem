@@ -59,7 +59,7 @@ export const getAuthorizedEmails = createAsyncThunk(
 			const response = await PulseemReactInstance.get(
 				`authorization/GetAuthorizedEmails`
 			);
-			return response.data;
+			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
 		}
