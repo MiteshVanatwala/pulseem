@@ -22,7 +22,7 @@ import {
 	MdArrowForwardIos,
 	MdMobileFriendly,
 	MdOutlineMarkEmailRead,
-	MdOutlineVerified,
+	MdOutlineVerified
 } from 'react-icons/md';
 import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { updateWhatsappTier } from '../../../redux/reducers/whatsappSlice';
@@ -30,6 +30,8 @@ import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.t
 import { apiStatus } from '../../Whatsapp/Constant';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 import DomainsVerificationPopUp from './Popups/DomainsVerificationPopUp';
+import queryString from 'query-string';
+
 
 const AccountSettingsEditor = () => {
 	const { t } = useTranslation();
@@ -98,6 +100,8 @@ const AccountSettingsEditor = () => {
 	const getData = async () => {
 		await dispatch(getAccountSettings());
 		setShowLoader(false);
+		const qs = window.location.search && queryString.parse(window.location.search) as any;
+		setShowVerificationDomains(qs?.sdv || false);
 	};
 	useEffect(() => {
 		getData();
@@ -409,6 +413,11 @@ const AccountSettingsEditor = () => {
 					}}
 				/>
 			)}
+			{showVerificationDomains && <DomainsVerificationPopUp
+				classes={classes} isOpen={showVerificationDomains}
+				onClose={() => setShowVerificationDomains(false)}
+				onConfirm={() => setShowVerificationDomains(false)}
+			/>}
 			<Loader isOpen={showLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);

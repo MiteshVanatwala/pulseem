@@ -9,14 +9,14 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai';
 import { IoMdRemoveCircleOutline } from 'react-icons/io';
 import { ClickAwayListener } from "@material-ui/core";
-import { MdDomain } from 'react-icons/md';
-import { setVerificationDomain } from '../../redux/reducers/newsletterSlice';
+// import { MdDomain } from 'react-icons/md';
+// import { setVerificationDomain } from '../../redux/reducers/newsletterSlice';
 
 enum NotifyCenterType {
   File = 0,
   Unsubscribe = 1,
   UploadRecipient = 2,
-  DomainValidaion = 3
+  DomainVerification = 3
 }
 
 // enum NotifyCenterStatus {
@@ -92,8 +92,7 @@ const NotificationBell = ({ classes }: any) => {
     return (
       <MenuList>
         {
-          // 3 - Domain Validation - hide for now
-          notifyCenterList && notifyCenterList?.length > 0 ? notifyCenterList?.filter((n: any) => n.NotifyCenterTypeID !== 3).map((option: any) => (
+          notifyCenterList && notifyCenterList?.length > 0 ? notifyCenterList?.filter((n: any) => { return n.NotifyCenterTypeID !== NotifyCenterType.DomainVerification }).map((option: any) => (
             <MenuItem
               key={option?.ID}
               className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}

@@ -5,9 +5,9 @@ export type ReportStateType = {
     exportPRData: Array<any>;
     responsesReportDetails: Array<any>;
     TotalResponses: number;
-  };
-  
-  export type CoreStateType = {
+};
+
+export type CoreStateType = {
     language: "he" | "en";
     isRTL: boolean;
     windowSize: "xs" | "sm" | "md" | "lg" | "xl";
@@ -25,9 +25,9 @@ export type ReportStateType = {
     isAllowSwitchAccount: boolean | null;
     billingTypeId: String | null;
     accountSettings: any;
-  };
-  
-  export type StateType = {
+};
+
+export type StateType = {
     core: CoreStateType;
     user: any;
     newsletter: any;
@@ -50,5 +50,4 @@ export type ReportStateType = {
     connectors: any;
     accountSettings: any;
     whatsapp: any;
-  };
-  
+};

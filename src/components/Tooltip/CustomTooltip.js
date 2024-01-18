@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 const HtmlTooltip = withStyles(({ style }) => ({
   tooltip: {
-    maxWidth: 220,
+    maxWidth: 440,
     backgroundColor: '#000',
     ...style
   },
