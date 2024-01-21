@@ -4,7 +4,7 @@ export const GetDomainVerification = createAsyncThunk(
     'DomainVerification/GetDomainVerification',
     async (domainAddress: string, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.get(`DomainVerification/GetDomainVerification?domain=${domainAddress}`);
+            const response = await PulseemReactInstance.get(`DomainVerification/GetDomainVerification/${domainAddress}`);
             return response.data
         } catch (error) {
             return console.log(error);
