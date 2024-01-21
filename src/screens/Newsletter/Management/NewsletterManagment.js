@@ -14,7 +14,7 @@ import {
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
-  getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign
+  getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign, resetNewsletterInfo
 } from '../../../redux/reducers/newsletterSlice'
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
 import { useSelector, useDispatch } from 'react-redux'
@@ -411,6 +411,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             setShowDomainVerification(true)
           }
           else {
+            dispatch(resetNewsletterInfo());
             dispatch(getGroupsBySubAccountId());
             navigate(`/react/Campaigns/SendSettings/${CampaignID}`);
           }

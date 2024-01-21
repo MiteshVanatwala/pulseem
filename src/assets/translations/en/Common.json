@@ -704,6 +704,10 @@
       "title": "Domains Verification",
       "selectDomain": "Select Domain for Verification"
     },
+    "sendSettings": {
+      "domainNotVerified": "The Email addess which defined as From Email, is not verified.",
+      "backToCampaigns": "Back to Campaigns"
+    },
     "verifyDomain": "Domain Verifrication",
     "verifiedDomain": "Domain Verified",
     "nonVerified": "Not Verified",

@@ -45,6 +45,7 @@ import WizardActions from "../../../components/Wizard/WizardActions";
 import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog.js";
 import SendResponseDialog from './Popups/SendResponseDialog';
 import UploadInProgressDialog from "./Popups/UploadInProgressDialog";
+import DynamicConfirmDialog from "../../../components/DialogTemplates/DynamicConfirmDialog";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -160,6 +161,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [quickSendClients, setQuickSendClients] = useState(null);
     const [totalClientsToSend, setTotalClientsToSend] = useState(0);
     const [reCheckAuth, setRecheckAuth] = useState(false);
+    const [domainIsAllowed, setDomainIsAllowed] = useState(true);
     const MAX_UPLOAD_LIMITATION = 5000;
 
     useEffect(() => {
@@ -169,6 +171,20 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         setTotalClientsToSend(total);
     }, [selectedGroups]);
+
+    useEffect(() => {
+        if ((verifiedEmails && verifiedEmails?.length > 0) && (newsletterInfo && newsletterInfo?.CampaignID > 0)) {
+            const email = verifiedEmails.filter((email) => {
+                return email?.Number === newsletterInfo.FromEmail;
+            });
+
+            if (!email[0]?.IsVerified) {
+                setDomainIsAllowed(false);
+                // navigate('/react/campaigns')
+            }
+        }
+
+    }, [verifiedEmails, newsletterInfo])
 
     //#region Email Authentication
 
@@ -1314,7 +1330,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         }}
                         onDelete={newsletterSettings?.Status === 1 && onHandleDelete}
                         onExit={() => { setDialogType({ type: "exit" }) }}
-                        additionalButtons={newsletterSettings?.Status === 1 && renderButtons()}
+                        additionalButtons={newsletterSettings?.Status === 1 && domainIsAllowed && renderButtons()}
                     />
                 </Box>
             }
@@ -1456,6 +1472,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel={() => setDialogType(null)}
                 onConfirm={() => handleConfirmC()}
             />}
+            <DynamicConfirmDialog
+                classes={classes}
+                isOpen={!domainIsAllowed}
+                title={t('campaigns.newsLetterMgmt.payAttention')}
+                text={t('common.domainVerification.sendSettings.domainNotVerified')}
+                onConfirm={() => {setDomainIsAllowed(true); navigate('/react/campaigns')}}
+                onClose={() => {setDomainIsAllowed(true); navigate('/react/campaigns')}}
+                confirmButtonText={t('common.domainVerification.sendSettings.backToCampaigns')}
+            />
             <Loader isOpen={showLoader} />
         </DefaultScreen>
     )
