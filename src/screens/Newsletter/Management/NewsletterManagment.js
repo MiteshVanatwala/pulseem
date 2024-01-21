@@ -469,6 +469,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             setShowDomainVerification(true)
           }
           else {
+            dispatch(resetNewsletterInfo());
             if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
               navigate(editUrlArray.NEW)
             }
