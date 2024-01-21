@@ -46,6 +46,7 @@ import VerificationDialog from "../../../components/DialogTemplates/Verification
 import SendResponseDialog from './Popups/SendResponseDialog';
 import UploadInProgressDialog from "./Popups/UploadInProgressDialog";
 import DynamicConfirmDialog from "../../../components/DialogTemplates/DynamicConfirmDialog";
+import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelper";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -178,7 +179,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 return email?.Number === newsletterInfo.FromEmail;
             });
 
-            if (!email[0]?.IsVerified) {
+            if (!email[0]?.IsVerified && !IsSharedDomain(newsletterInfo?.FromEmail)) {
                 setDomainIsAllowed(false);
                 // navigate('/react/campaigns')
             }
@@ -438,7 +439,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 return email?.Number === newsletterInfo.FromEmail;
             });
             onSaveSettings(true, groupId.toString()).then(async () => {
-                if (isEmailVerified || isVerified?.length > 0) {
+                if (isEmailVerified || isVerified?.length > 0 || IsSharedDomain(newsletterInfo?.FromEmail)) {
                     setLoader(true);
                     await dispatch(getSendSummary(params?.id));
                     setDialogType({ type: 'SummaryDialog', IsQuickSend: true });
