@@ -2977,6 +2977,40 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiSelect-icon': {
       position: 'initial',
       paddingRight: '10px'
+    },
+    textFieldWithTemplate: {
+      display: 'flex',
+      marginTop: 5,
+      border: '1px solid #ccc',
+      borderRadius: 4,
+      height: 28,
+      padding: 5,
+      justifyContent: 'center'
+    },
+    justifyContentEnd: {
+      justifyContent: 'flex-end'
+    },
+    errorIcon: {
+      position: 'absolute',
+      top: 0,
+      left: isRTL ? 0 : 'auto',
+      right: isRTL ? 'auto' : 0,
+      zIndex: 100,
+      fontSize: 25,
+      fill: 'white',
+      backgroundColor: 'red',
+      borderRadius: 25
     }
+  },
+  tooltipIcon: {
+    display: 'flex',
+    backgroundColor: '#000',
+    color: '#fff',
+    fontSize: 13,
+    borderRadius: 25,
+    width: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
