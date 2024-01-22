@@ -821,6 +821,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w50: {
     width: '50%'
   },
+  w60: {
+    width: '60%'
+  },
   w70: {
     width: '70%'
   },
@@ -2107,7 +2110,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-    }
+    },
+    [theme.breakpoints.down("xs")]: {
+      minWidth: 'auto',
+      fontSize: 16,
+    },
   },
   currentActiveTab: {
     borderBottom: '4px solid #ff2c44 !important',
@@ -3244,7 +3251,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: isRTL ? 'row-reverse !important' : 'row',
     color: "#fff",
     fontWeight: 600,
-    textTransform: "capitalize",
     background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     '& .MuiStack-root': {
       display: 'flex',
@@ -3339,7 +3345,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           }
         }
       }
-    }
+    },
+    [theme.breakpoints.down('xs')]: {
+      width: 'auto !important'
+    },
   },
 
   textFieldError: {
@@ -3417,7 +3426,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       },
       '& .MuiSelect-select': {
         minWidth: '100px !important',
-        width: 'auto',
+        width: '100%',
         maxWidth: '100%',
         borderRadius: 4,
         paddingInlineStart: 15,

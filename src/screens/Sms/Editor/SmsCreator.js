@@ -881,6 +881,7 @@ const SmsCreator = ({ classes }) => {
                     <Button
                       className={clsx(classes.infoButtons, classes.bgGreen)}
                       onClick={() => seteditmenuClick(!editmenuClick)}
+                      onBlur={() => setTimeout(() => { seteditmenuClick(false) }, 250)  }
                     >
                       <AiOutlinePlusCircle className={classes.addOptionsIcon} />
                       {t("mainReport.add")}

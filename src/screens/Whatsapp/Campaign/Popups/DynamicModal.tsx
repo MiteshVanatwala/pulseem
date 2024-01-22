@@ -247,14 +247,14 @@ const DynamicModal = ({
 
 	return (
 		<>
-			<Box style={{ height: '203px' }}>
+			<Box>
 				<Grid
 					container
 					className={classes.whatsappCampaignDynamicFieldContent}>
 					<Grid
 						container
 						className={classes.whatsappCampaignDynamicFieldContentText}>
-						<Stack direction='row' spacing={0}>
+						<Stack direction='row' spacing={0} className={classes.dBlock}>
 							{templateCategory !== 3 && dynamicButtons.map(
 								(button: dynamicButtonProps, index: number) => (
 									<Button

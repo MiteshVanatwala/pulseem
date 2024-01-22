@@ -57,6 +57,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
 import { TablePagination } from '../../../components/managment';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { SizeOptions_XS_SM } from '../../../helpers/Constants';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -419,7 +420,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	const renderSearchSection = () => {
     return (
-			<Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
+			<Grid container spacing={2} className={clsx(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
 				<Grid item>
 					<TextField
 						variant='outlined'
@@ -549,8 +550,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							<Grid item>{translator('whatsappReport.sent')}</Grid>
 						</Grid>
 					</TableCell>
-					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('whatsappReport.read')}</TableCell>
-					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{translator('whatsappReport.clicks')}</TableCell>
+					<TableCell classes={cellStyle} className={clsx(classes.flex1, classes.greenTextColor)} align='center'>{translator('whatsappReport.read')}</TableCell>
+					<TableCell classes={cellStyle} className={clsx(classes.flex2, classes.blueTextColor)} align='center'>{translator('whatsappReport.clicks')}</TableCell>
 					<TableCell classes={cellStyle} className={classes.flex2} align='center'></TableCell>
 					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('whatsappReport.cost')}</TableCell>
 					{hasRevenue && <TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('common.revenue')}</TableCell>}
@@ -597,7 +598,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 								{translator("whatsappReport.read")}
 							</Typography>
 							<Grid container spacing={2}>
-								<Grid item className={`${report.Read >= 1 && classes.underline}`}>
+								<Grid item className={clsx(`${report.Read >= 1 && classes.underline}`, classes.greenTextColor)}>
 									{getTableTypographyCells('', report.Read, reportCellNames.READ, report, true)}
 								</Grid>
 							</Grid>
@@ -609,7 +610,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                 {translator('whatsappReport.clicks')}
               </Typography>
               <Grid container spacing={2}>
-                <Grid item className={`${report?.ClicksCount >= 1 && classes.underline}`}>
+                <Grid item className={clsx(`${report?.ClicksCount >= 1 && classes.underline}`, classes.blueTextColor)}>
 									{getTableTypographyCells('', report.ClicksCount, reportCellNames.CLICKS, report, true)}
                 </Grid>
               </Grid>
@@ -619,7 +620,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                 {translator('whatsappReport.unique')}
               </Typography>
               <Grid container spacing={2}>
-                <Grid item className={`${report?.UniqueClicksCount >= 1 && classes.underline}`}>
+                <Grid item className={clsx(`${report?.UniqueClicksCount >= 1 && classes.underline}`, classes.blueTextColor)}>
 									{ getTableTypographyCells( '', report.UniqueClicksCount, reportCellNames.UNIQUE, report, true) }
                 </Grid>
               </Grid>
@@ -629,7 +630,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                 {translator('common.Removed')}
               </Typography>
               <Grid container spacing={2}>
-                <Grid item className={`${report?.Removed >= 1 && classes.underline}`}>
+                <Grid item className={clsx(`${report?.Removed >= 1 && classes.underline}`, classes.redTextColor)}>
 									{getTableTypographyCells('', report.Removed, reportCellNames.REMOVED, report, true)}
                 </Grid>
               </Grid>
@@ -639,7 +640,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                 {translator('common.failedStatus')}
               </Typography>
               <Grid container spacing={2}>
-                <Grid item className={`${report?.Failed >= 1 && classes.underline}`}>
+                <Grid item className={clsx(`${report?.Failed >= 1 && classes.underline}`, classes.redTextColor)}>
 									{getTableTypographyCells('', report.Failed, reportCellNames.FAILED, report, true)}
                 </Grid>
               </Grid>
@@ -703,7 +704,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						<Grid
 							item
 							className={`${
-								report?.Sent >= 1 && 'underline'
+								report?.Sent >= 1 && classes.underline
 							}`}>
 							{getTableTypographyCells(
 								translator('whatsappReport.sent'),
@@ -720,8 +721,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					align='center'
 					className={clsx(
 						classes.tableCellBody,
-						`${report?.Read >= 1 && 'underline'}`,
-						classes.flex1
+						`${report?.Read >= 1 && classes.underline}`,
+						classes.flex1,
+						classes.greenTextColor
 					)}>
 					{getTableTypographyCells(
 						translator('whatsappReport.read'),
@@ -736,7 +738,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					align='center'
 					className={clsx(
 						classes.tableCellBody,
-						classes.flex2
+						classes.flex2,
+						classes.blueTextColor
 					)}>
 					<Grid container justifyContent='space-around'>
 						<Grid item>
@@ -751,7 +754,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							item
 							className={`${
 								report?.UniqueClicksCount >= 1 &&
-								'underline'
+								classes.underline
 							}`}>
 							{getTableTypographyCells(
 								translator('whatsappReport.unique'),
@@ -774,9 +777,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					<Grid container justifyContent='space-around'>
 						<Grid
 							item
-							className={`${
-								report?.Removed >= 1 && 'underline'
-							}`}>
+							className={clsx(
+								`${
+								report?.Removed >= 1 && classes.underline
+								}`,
+								classes.redTextColor
+							)}>
 							{getTableTypographyCells(
 								translator('common.Removed'),
 								report.Removed,
@@ -787,9 +793,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						</Grid>
 						<Grid
 							item
-							className={`${
-								report?.Failed >= 1 && 'underline'
-							}`}>
+							className={clsx(
+								`${
+									report?.Failed >= 1 && classes.underline
+								}`,
+								classes.redTextColor
+							)}>
 							{getTableTypographyCells(
 								translator('common.failedStatus'),
 								report.Failed,
@@ -849,7 +858,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
       return (
         <Box className='tableBodyContainer'>
           <TableBody>
-						{rowData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+						{rowData.map(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
           </TableBody>
         </Box>
       )
@@ -863,7 +872,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {windowSize !== 'xs' && renderTableHead()}
+          {SizeOptions_XS_SM.indexOf(windowSize) === -1 && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>

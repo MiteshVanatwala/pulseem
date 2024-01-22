@@ -1086,9 +1086,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <Title
                 Element={(
                     <Box className='stepHead'>
-                        <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
-                            <span>2</span>
-                        </Stack>
                         <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
                             <span className={'stepTitle'}>
                                 {t("mainReport.sendSetting")}

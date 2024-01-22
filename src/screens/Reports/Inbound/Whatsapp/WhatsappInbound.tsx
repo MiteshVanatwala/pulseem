@@ -372,47 +372,32 @@ const WhatsappInbound = ({ classes }: any) => {
     );
   };
   return (
-    <>
-      {inboundWhatsappReport?.StatusCode === 201 ? (
-        <Box className={classes.p20}>
-          {renderHeader()}
-          <SearchLine
-            key="sl"
-            currentPage={page}
-            showAutoCompleteForm={false}
-            classes={classes}
-            onSetPage={(val: number) => setPage(val)}
-            onFilterRequest={(val: wpInbdDefaultFilterType) => setRequest(val)}
-            onSetIsSearching={(val: boolean) => setIsSearching(val)}
-          />
-          {renderTable()}
-          {renderTablePagination()}
-          <ConfirmRadioDialog
-            classes={classes}
-            isOpen={dialog === "exportFormat"}
-            title={t("campaigns.exportFile")}
-            radioTitle={t("common.SelectFormat")}
-            onConfirm={(e: any) => handleDownloadCsv(e)}
-            onCancel={() => setDialog(null)}
-            cookieName={"exportFormat"}
-            defaultValue="xlsx"
-            options={ExportFileTypes}
-          />
-          <Loader isOpen={showLoader} showBackdrop={true} />
-        </Box>
-      ) : (
-        <>
-          <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
-            <Typography style={{ fontSize: 30 }}>
-              {RenderHtml(t("common.whatsappCommingSoon"))}
-            </Typography>
-            <ImWhatsapp
-              style={{ color: "#25D366", fontSize: 40, marginTop: 15 }}
-            />
-          </Box>
-        </>
-      )}
-    </>
+    <Box className={classes.p20}>
+      {renderHeader()}
+      <SearchLine
+        key="sl"
+        currentPage={page}
+        showAutoCompleteForm={false}
+        classes={classes}
+        onSetPage={(val: number) => setPage(val)}
+        onFilterRequest={(val: wpInbdDefaultFilterType) => setRequest(val)}
+        onSetIsSearching={(val: boolean) => setIsSearching(val)}
+      />
+      {renderTable()}
+      {renderTablePagination()}
+      <ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialog === "exportFormat"}
+        title={t("campaigns.exportFile")}
+        radioTitle={t("common.SelectFormat")}
+        onConfirm={(e: any) => handleDownloadCsv(e)}
+        onCancel={() => setDialog(null)}
+        cookieName={"exportFormat"}
+        defaultValue="xlsx"
+        options={ExportFileTypes}
+      />
+      <Loader isOpen={showLoader} showBackdrop={true} />
+    </Box>
   );
 };
 

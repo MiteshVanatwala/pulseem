@@ -117,8 +117,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		fileLink: '',
 		fileType: '',
 	});
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [templateListData, setTemplateListData] = useState<
 		templateListItemsProps[]
 	>([]);
@@ -167,6 +167,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						pageSize: Number(rowsPerPage),
 					});
 				}
+				setIsAccountSetup(true);
 			} else {
 				setIsLoader(false);
 				setIsAccountSetup(false);
@@ -783,9 +784,26 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
         {translator(getApiErrorResponseMessage('templateError', failedTemplateReason))}
       </Typography>
     ),
-    onConfirm: async () => {
-      setDialogType({});
-    }
+    renderButtons: () => (
+			<Grid
+				container
+				spacing={4}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						variant='contained'
+						size='small'
+						onClick={() => { setDialogType(null) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded
+						)}>
+						{translator('common.Ok')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
   })
 
 	const getDeleteDialog = () => ({
@@ -816,12 +834,26 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				/>
 			</Box>
     ),
-    onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-    }
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={4}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						variant='contained'
+						size='small'
+						onClick={() => { setDialogType(null) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded
+						)}>
+						{translator('common.Ok')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
   })
 
 	const getSubmitTemplateDialog = () => ({
@@ -1014,7 +1046,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						/>
 
 						<Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.paddingSides25)}>
-							<Grid item xs={6} lg={2}>
+							<Grid item xs={12} md={6} lg={2}>
 								<TextField
 									variant='outlined'
 									size='small'
@@ -1030,7 +1062,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 							<Grid
 								item
-								xs={6}
+								xs={12}
+								md={6}
 								lg={2}
 							>
 								<Box className='selectWrapper'>

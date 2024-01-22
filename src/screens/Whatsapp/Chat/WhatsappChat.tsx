@@ -88,8 +88,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [dialogType, setDialogType] = useState<any>({});
@@ -239,6 +239,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				getSavedTemplateFields();
 				setIsLoader(true);
 				await getPhoneNumber();
+				setIsAccountSetup(true);
 			} else {
 				setIsLoader(false);
 				setIsAccountSetup(false);

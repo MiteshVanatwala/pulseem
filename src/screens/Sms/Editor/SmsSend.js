@@ -1267,7 +1267,7 @@ const SmsSend = ({ classes, ...props }) => {
                   pointerEvents: sendType === "3" ? "auto" : "none",
                 }}
               >
-                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100, classes.mb10)}>
+                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, windowSize !== 'xs' ? classes.w100 : '', classes.mb10)}>
                   <Select
                     placeholder={t('common.select')}
                     variant="standard"
@@ -1306,7 +1306,7 @@ const SmsSend = ({ classes, ...props }) => {
                 className={classes.dateBox}
                 style={{
                   marginTop: 10,
-                  display: "flex",
+                  display: windowSize === 'xs' ? "inline-block" : "flex",
                   alignItems: "center",
                   width: "370px",
                   pointerEvents: sendType === "3" ? "auto" : "none",
