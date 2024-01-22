@@ -821,6 +821,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w50: {
     width: '50%'
   },
+  w60: {
+    width: '60%'
+  },
   w70: {
     width: '70%'
   },
@@ -2107,7 +2110,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-    }
+    },
+    [theme.breakpoints.down("xs")]: {
+      minWidth: 'auto',
+      fontSize: 16,
+    },
   },
   currentActiveTab: {
     borderBottom: '4px solid #ff2c44 !important',
@@ -3338,7 +3345,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           }
         }
       }
-    }
+    },
+    [theme.breakpoints.down('xs')]: {
+      width: 'auto !important'
+    },
   },
 
   textFieldError: {
