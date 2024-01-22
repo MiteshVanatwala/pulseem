@@ -404,7 +404,7 @@ const SummaryDialog = ({ classes,
                                     </Select>
                                 </FormControl>
                             </Box>}
-                            <Box className={classes.sumChild}>
+                            <Box className={clsx(classes.sumChild, classes.mt20)}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
                                 <span className={classes.bodySum}>{newsletterSendSummary?.Subject}</span>
 

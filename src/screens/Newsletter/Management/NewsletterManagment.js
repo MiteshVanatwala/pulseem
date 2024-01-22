@@ -14,7 +14,7 @@ import {
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
-  getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign
+  getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign, resetNewsletterInfo
 } from '../../../redux/reducers/newsletterSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -421,6 +421,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             setShowDomainVerification(true)
           }
           else {
+            dispatch(resetNewsletterInfo());
             if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
               navigate(editUrlArray.NEW)
             }
@@ -522,7 +523,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: clsx(classes.sendIcon, 'sendIcon'),
         textClass: classes.sendIconText,
-        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && !IsSharedDomain(FromEmail) && Status !== 4 && <MdError
+        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && !IsSharedDomain(FromEmail) && Status === 1 && <MdError
           title={t('campaigns.imgSendResource1.nonVerifiedDomain')}
           className={classes.errorIcon}
         />,
@@ -540,6 +541,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             setShowDomainVerification(true)
           }
           else {
+            dispatch(resetNewsletterInfo());
             dispatch(getGroupsBySubAccountId());
             navigate(`/react/Campaigns/SendSettings/${CampaignID}`);
           }

@@ -235,6 +235,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                     inputMode="url"
                                     dir="ltr"
                                     className={clsx(classes.textField, classes.textFieldWithTemplate)}
+                                    style={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #D6D1E6', marginTop: 7}}
                                     InputProps={{
                                         style: { maxWidth: '100px !important', width: '100px !important' },
                                         endAdornment: <InputAdornment position="end">{DOMAIN_EMAIL_SUFFIX}</InputAdornment>

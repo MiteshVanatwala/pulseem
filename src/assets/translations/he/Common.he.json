@@ -737,6 +737,10 @@
       "title": "אימות דומיינים",
       "selectDomain": "בחר דומיין לאימות"
     },
+    "sendSettings": {
+      "domainNotVerified": "כתובת השולח שהוגדרה בקמפיין זה אינה מאומתת.",
+      "backToCampaigns": "חזרה לעמוד קמפיינים"
+    },
     "verifyDomain": "סטטוס אימות דומיין",
     "verifiedDomain": "דומיין מאומת",
     "nonVerified": "לא מאומת",

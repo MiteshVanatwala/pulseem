@@ -47,8 +47,7 @@ export const downloadReport = createAsyncThunk(
   'report/ExportPurchase/', async ({ ID, Name }, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`${apiURL}/report/ExportPurchase/${ID}`);
-      
-      return JSON.parse(response.data);
+      return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -59,9 +58,7 @@ export const exportSurvey = createAsyncThunk(
     try {
 
       const response = await PulseemReactInstance.get(`${apiURL}/report/ExportSurvey/${ID}`);
-
-      return JSON.parse(response.data);
-
+      return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

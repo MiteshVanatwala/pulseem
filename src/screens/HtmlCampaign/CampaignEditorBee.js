@@ -778,7 +778,33 @@ const CampaignEditor = ({ classes, ...props }) => {
           color="primary"
         >{t("common.save")}
         </Button>
-        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={saveDesign}
+        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
+           saveDesign(false, null, false);
+          const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+          if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
+            const domainErrorObj = {
+              display: false,
+              address: campaign.FromEmail,
+              verifySharedCallback: null,
+              isSummary: false,
+              isFullDescription: false,
+              preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
+              showSkip: false,
+              options: [{
+                text: t('common.CampaignSettings'),
+                onCallback: () => {
+                  window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+                }
+              }]
+            }
+            setDomainAddressError(domainErrorObj);
+            setShowDomainVerification(true)
+          }
+          else {
+            saveDesign(true);
+          }
+
+        }}
           variant='contained'
           size='medium'
           className={clsx(

@@ -267,6 +267,9 @@ export const newsletterSlice = createSlice({
   reducers: {
     setVerificationDomain: (state, action) => {
       state.domainVerificationPopUp = action.payload;
+    },
+    resetNewsletterInfo: (state, action) => {
+      state.newsletterInfo = [];
     }
   },
   extraReducers: builder => {
@@ -327,5 +330,5 @@ export const newsletterSlice = createSlice({
 })
 
 
-export const { setVerificationDomain } = newsletterSlice.actions
+export const { setVerificationDomain, resetNewsletterInfo } = newsletterSlice.actions
 export default newsletterSlice.reducer

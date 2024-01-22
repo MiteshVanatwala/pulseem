@@ -521,7 +521,7 @@ const NewsLetterInfo = ({ classes }) => {
         setCampaingnValues({
             ...campaingnValues,
             FromEmail: event.target.value,
-            ReplyTo: isSharedDomain ? ((campaingnValues.ReplyTo !== '' && campaingnValues.ReplyTo) || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || event.target.value)
+            ReplyTo: isSharedDomain ? ((campaingnValues.ReplyTo !== '' && campaingnValues.ReplyTo) || verifiedEmails[0].Number) : event.target.value
         });
         setErrors({ ...errors, FromEmail: '' });
         if (!isSharedDomain && (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true)) {
@@ -540,7 +540,7 @@ const NewsLetterInfo = ({ classes }) => {
                 isFullDescription: true,
                 preText: t(emailObj[fromEmailProperty?.IsRestricted ? 'Restricted' : 'NonVerified']),
                 showSkip: false,
-                replyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : (campaingnValues.ReplyTo || event.target.value)
+                replyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : event.target.value
             }
             setDomainAddressError(domainErrorObj);
             setShowDomainVerification(true);
