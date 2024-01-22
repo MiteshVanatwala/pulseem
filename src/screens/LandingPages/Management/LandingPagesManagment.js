@@ -28,6 +28,7 @@ import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const navigate = useNavigate()
@@ -280,10 +281,26 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         disable: accountFeatures?.indexOf('13') > -1,
         onClick: async () => {
           if (IsPayment) {
-            dispatch(downloadReport(row))
+            const purchasesResponse = await dispatch(downloadReport(row));
+            const purchases = purchasesResponse?.payload;
+            const fields = purchases?.length > 0 && Object.keys(purchases[0]);
+            ExportFile({
+              data: purchases,
+              fileName: 'purchaseReport',
+              exportType: 'xls',
+              fields: fields
+            });
           }
           else {
-            dispatch(exportSurvey(row))
+            const surveysResponse = await dispatch(exportSurvey(row));
+            const surveys = surveysResponse?.payload;
+            const fields = surveys?.length > 0 && Object.keys(surveys[0]);
+            ExportFile({
+              data: surveys,
+              fileName: 'surveyReport',
+              exportType: 'xls',
+              fields: fields
+            });
           }
         }
       },
