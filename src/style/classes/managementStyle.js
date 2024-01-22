@@ -2159,8 +2159,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       '&.firstSlide': {
         '& .contactDataBox': {
           overflowX: 'clip',
-          overflowY: 'auto',
-          height: 'calc(100% - 80px)'
+          overflowY: 'auto'
         },
         '& .emailBox': {
           '& span': {

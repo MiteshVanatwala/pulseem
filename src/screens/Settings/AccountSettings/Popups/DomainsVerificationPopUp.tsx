@@ -186,7 +186,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         title={t("common.domainVerification.verifyDomain")}
         children={<Box className={clsx(classes.fullWidth)}>
             <Box className='selectWrapper'>
-                <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }}>
+                <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }}>
                     <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} className={classes.pb15}>
                         <Typography className={clsx(classes.bold)} variant='h6'>{t('common.domainVerification.settingPopUp.selectDomain')} </Typography>
                         <Link
