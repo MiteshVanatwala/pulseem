@@ -393,7 +393,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && !IsSharedDomain(FromEmail) && Status !== 4 && <MdError
+        errorElement: (!emailProps?.IsVerified || emailProps?.IsRestricted) === true && !IsSharedDomain(FromEmail) && Status === 1 && <MdError
           title={t('campaigns.imgSendResource1.nonVerifiedDomain')}
           className={classes.errorIcon}
         />,
