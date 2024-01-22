@@ -7,4 +7,6 @@ export type DynamicContentProps = {
     isOpen: boolean;
     onCancel: () => void;
     onConfirm: () => void;
+    onClose: () => void;
+    confirmButtonText: string;
 };

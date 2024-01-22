@@ -17,7 +17,7 @@ import { saveCampaignInfo, sendCampaign, setVerificationDomain } from "../../../
 import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
 import { Loader } from "../../../../components/Loader/Loader";
 import { IoIosArrowDown } from "react-icons/io";
-import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelpfer";
+import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
 import { MdOutlineVerified } from "react-icons/md";
 import { GetDomainVerification } from "../../../../redux/reducers/DomainVerificationSlice";
 
@@ -39,7 +39,7 @@ const SummaryDialog = ({ classes,
     const [subDetailsActive, setsubDetailsActive] = useState(false);
     const [subRecipientsDetails, setsubRecipients] = useState(false);
     const [fromEmail, setFromEmail] = useState(null);
-    const [replyTo, setReplyTo] = useState('');
+    const [replyTo, setReplyTo] = useState(null);
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails, isSweepingApproval, accountSettings } = useSelector(state => state.common);
@@ -93,7 +93,6 @@ const SummaryDialog = ({ classes,
                     value: fromEmail
                 }
             };
-
             handleFromEmailChanged(req);
             setShowLoader(false);
             setDisableSend(false);
@@ -114,7 +113,7 @@ const SummaryDialog = ({ classes,
     }, [])
 
     useEffect(() => {
-        if (isSweepingApproval === true || !isSharedDomainEmail) {
+        if (isSweepingApproval === true || isSharedDomainEmail) {
             setDisableSend(false);
             setFromEmailVerified(true);
         }
@@ -133,12 +132,10 @@ const SummaryDialog = ({ classes,
     const handleSharedDomain = (emailAddress) => {
         const isShared = IsSharedDomain(emailAddress);
         setIsSharedDomainEmail(isShared);
-
         if (isShared) {
-            setReplyTo(verifiedEmails[0]?.Number);
+            setReplyTo(replyTo || newsletterSendSummary.ReplyTo || verifiedEmails[0]?.Number);
         }
     }
-
     useEffect(() => {
         handleSharedDomain(newsletterSendSummary?.FromEmail);
     }, [newsletterSendSummary])
@@ -264,66 +261,12 @@ const SummaryDialog = ({ classes,
             const updateInfo = { ...newsletterInfo };
             updateInfo.FromEmail = fromEmailValue;
 
-            updateInfo.ReplyTo = isShared ? verifiedEmails[0]?.Number : (newsletterSendSummary?.ReplyTo ?? newsletterSendSummary?.FromEmail);
+            updateInfo.ReplyTo = isShared ? (newsletterSendSummary.ReplyTo || verifiedEmails[0].Number) : (newsletterSendSummary.ReplyTo || fromEmailValue);
+
             dispatch(saveCampaignInfo(updateInfo));
 
-            const domainVerificationTest = await dispatch(GetDomainVerification(fromEmailValue?.split("@")[1]));
-            const response = domainVerificationTest?.payload;
-
-            switch (response?.Data?.SourceID) {
-                case 0: { // DomainSourceStatus.Success
-                    dispatch(setVerificationDomain({
-                        display: false
-                    }));
-                    // if (isSendRequest) {
-                    //     handleSendCampaign();
-                    // }
-                    break;
-                }
-                default:
-                case 1:  // DomainSourceStatus.SyntaxError
-                case 2: { // DomainSourceStatus.GmailServers
-                    dispatch(setVerificationDomain({
-                        isSummary: true,
-                        display: true,
-                        address: `${fromEmailValue?.split('@')[1]}`,
-                        verifyCallback: (obj) => {
-                            const req = {
-                                target: {
-                                    value: fromEmailValue
-                                }
-                            };
-                            handleFromEmailChanged(req);
-                        },
-                        verifySharedCallback: (obj) => {
-
-                            const fromEmail = obj?.FromEmail || accountSettings?.SubAccountSettings?.SharedEmailDomain;
-                            const replyEmail = obj?.ReplyTo || verifiedEmails[0]?.Number;
-
-                            setFromEmail(fromEmail);
-                            setReplyTo(replyEmail);
-
-                            updateInfo.FromEmail = fromEmail;
-                            updateInfo.ReplyTo = replyEmail;
-
-                            setIsSharedDomainEmail(true);
-                            dispatch(setVerificationDomain({
-                                display: false
-                            }));
-
-                            dispatch(saveCampaignInfo(updateInfo));
-                        }
-                    }))
-                    setDisableSend(true);
-                    break;
-                }
-            }
-
-            const isVerified = verifiedEmails.filter((ve) => { return ve.Number === updateInfo.FromEmail && ve.IsOptIn === true });
-            setDisableSend(isVerified?.length === 0 && !isShared);
-
             handleSharedDomain(updateInfo.FromEmail);
-            setFromEmailVerified(isVerified?.length > 0);
+
         }
     }
 
@@ -355,6 +298,7 @@ const SummaryDialog = ({ classes,
                                     className={clsx(classes.selectInputFormControl, classes.width90P, classes.mb10)}
                                 >
                                     <Select
+                                        native
                                         variant="standard"
                                         style={{ width: '100%' }}
                                         className={classes.pbt5}
@@ -379,25 +323,25 @@ const SummaryDialog = ({ classes,
                                     >
                                         {[{
                                             Number: newsletterSendSummary?.FromEmail
-                                        }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.FromEmail })
+                                        }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.FromEmail && ve.IsVerified === true })
                                         ].map((obj, index) => (
-                                            obj.Number !== accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
+                                            obj.Number !== accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                                 key={`ve_${index}`}
                                                 value={obj.Number}
                                             >
                                                 {obj.Number}
-                                            </MenuItem>
+                                            </option>
                                         ))}
-                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
+                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                             key={verifiedEmails.length + 1}
                                             value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                             name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                         >
-                                            <ListItemIcon style={{ minWidth: 25 }}>
+                                            {/* <ListItemIcon style={{ minWidth: 25 }}>
                                                 <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} />
-                                            </ListItemIcon>
+                                            </ListItemIcon> */}
                                             {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
-                                        </MenuItem>}
+                                        </option>}
                                     </Select>
                                 </FormControl>
                             </Box>
@@ -423,6 +367,7 @@ const SummaryDialog = ({ classes,
                                     className={clsx(classes.selectInputFormControl, classes.width90P, classes.mb10)}
                                 >
                                     <Select
+                                        native
                                         variant="standard"
                                         style={{ width: '100%' }}
                                         className={classes.pbt5}
@@ -449,17 +394,17 @@ const SummaryDialog = ({ classes,
                                             Number: newsletterSendSummary?.ReplyTo
                                         }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.ReplyTo })
                                         ].map((obj, index) => (
-                                            obj.Number !== accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
+                                            obj.Number !== accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                                 key={`ve_${index}`}
                                                 value={obj.Number}
                                             >
                                                 {obj.Number}
-                                            </MenuItem>
+                                            </option>
                                         ))}
                                     </Select>
                                 </FormControl>
                             </Box>}
-                            <Box className={classes.sumChild}>
+                            <Box className={clsx(classes.sumChild, classes.mt20)}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
                                 <span className={classes.bodySum}>{newsletterSendSummary?.Subject}</span>
 

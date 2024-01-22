@@ -31,6 +31,7 @@ import { apiStatus } from '../../Whatsapp/Constant';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 import { ListIcon } from '../../../assets/images/managment';
 import DomainsVerificationPopUp from './Popups/DomainsVerificationPopUp';
+import queryString from 'query-string';
 
 const AccountSettingsEditor = ({ classes }: any) => {
 	const { t } = useTranslation();
@@ -85,7 +86,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
 
 	} as AccountSettings);
 	const [selectedTier, setSelectedTier] = useState<string>('1');
-	// const restrictedDomains = sessionStorage.getItem("RestrictedEmailDomains");
 	const [showVerificationDomains, setShowVerificationDomains] = useState<boolean>(false);
 
 	const renderToast = () => {
@@ -98,6 +98,8 @@ const AccountSettingsEditor = ({ classes }: any) => {
 	const getData = async () => {
 		await dispatch(getAccountSettings());
 		setShowLoader(false);
+		const qs = window.location.search && queryString.parse(window.location.search) as any;
+		setShowVerificationDomains(qs?.sdv || false);
 	}
 	useEffect(() => {
 		getData();
@@ -320,6 +322,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 										className={clsx(
 											classes.btn,
 											classes.btnRounded,
+											classes.mr10,
 											{
 												[classes.dFlex]: windowSize === 'xs',
 												[classes.mt10]: windowSize === 'xs',
@@ -329,7 +332,9 @@ const AccountSettingsEditor = ({ classes }: any) => {
 										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 										onClick={() => setShowVerificationDomains(!showVerificationDomains)}
 									>
-										{t('common.domainVerification.settingPopUp.title')}
+										<>
+											{t('common.domainVerification.settingPopUp.title')}
+										</>
 									</Button>
 								</div>
 							</Box>

@@ -25,7 +25,6 @@ export const ManagmentIcon = ({
 }) => {
   const buttonRef = useRef();
   const Redirect = useRedirect();
-
   if (remove)
     return null
 

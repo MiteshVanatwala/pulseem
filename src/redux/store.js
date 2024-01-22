@@ -23,6 +23,7 @@ import galleryReducer from './reducers/gallerySlice'
 import whatsappReducer from './reducers/whatsappSlice'
 import AccountSettingsSlice from './reducers/AccountSettingsSlice';
 import DynamicGroupsSlice from './reducers/DynamicGroupsSlice';
+import DomainVerificationSlice from './reducers/DomainVerificationSlice';
 
 export default configureStore({
   reducer: {
@@ -49,7 +50,7 @@ export default configureStore({
     connectors: ConnectorsSlice,
     whatsapp: whatsappReducer,
     accountSettings: AccountSettingsSlice,
-    connectors: ConnectorsSlice,
-    dynamicGroups: DynamicGroupsSlice
+    dynamicGroups: DynamicGroupsSlice,
+    domainVerification: DomainVerificationSlice
   },
 });

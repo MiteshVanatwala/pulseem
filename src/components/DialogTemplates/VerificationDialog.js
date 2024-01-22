@@ -18,6 +18,8 @@ import {
 } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { IsSharedDomain } from '../../helpers/Functions/DomainVerificationHelper';
+import { GetDomainVerification } from '../../redux/reducers/DomainVerificationSlice';
 
 
 const VerificationDialog = ({
@@ -190,6 +192,12 @@ const VerificationDialog = ({
                                     addTwoFactorValue();
                                 }
                                 else {
+                                    if (!IsSharedDomain(selectedVerificationContact)) {
+                                        const spliitedDomain = selectedVerificationContact.split('@');
+                                        if (spliitedDomain?.length > 0) {
+                                            dispatch(GetDomainVerification(spliitedDomain[1]));
+                                        }
+                                    }
                                     NextSlide();
                                 }
                                 break;

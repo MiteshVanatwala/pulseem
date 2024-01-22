@@ -683,49 +683,94 @@
     }
   },
   "domainVerification": {
-    "popup": {
-      "title": "Domain Verification ##domainAddress##",
-      "text": "aaa",
-      "domainVerified": "Domain Verified",
-      "responses": {
-        "0": "Domain Verified",
-        "1": "Syntax Error",
-        "2": "The Domain was not passed Gmail verification"
+    "title": "Domain Verification ##domainAddress##",
+    "campaignManagement": {
+      "send": {
+        "restricted": {
+          "preText": "<h3 style='color:red'>Attention!!!</h3><b style='color:red'>We have identified that the domain defined for sending the newsletter is not a verified domain.</b><br><p >The 'sender email address' field found on the 'campaign settings' page contains a free domain of the type Gmail / Hotmail / Yahoo / Walla, etc.<br/>To remind you, the new mandatory requirements of Gmail require a verified domain for mailing newsletters.<br> <br><br>If the necessary adjustments are not made, it will not be possible to send the newsletter.<br><br>To make a change in the settings of the domain from which the campaign is sent,<br/> enter the 'Campaign Settings' page by clicking on the button below</ a><br>On the 'Campaign Settings' page, you can re-enter the verified domain name under field: 'Sender email address'. <br/>If the domain you enter is not verified, you must follow the detailed instructions."
+        },
+        "nonVerified": {
+          "preText": "<h3 style='color:red'>Attention!!!</h3><b style='color:red'>This campaign contains unverified domain settings.</b><br><p>Remind you, requirements Gmail's mandatory news requires a verified domain for mailing newsletters. If the necessary adjustments are not made, it will not be possible to send the newsletter. To change the settings of the domain from which the campaign is sent, go to the Settings page. Campaign' by clicking the button below</a><br><br>Then, you can re-enter the verified domain name under the 'Sender email address' field.<br>If the domain that is entered is not verified, you must follow the detailed instructions."
+        }
       },
+      "edit": {
+        "restricted": {
+          "preText": "<h3 style='color:red'>Attention!!!</h3><b style='color:red'>This campaign contains unverified domain settings.</b><br><p>The field 'address The sender email' found on the 'Campaign Settings' page contains a username with a Gmail / Hotmail/ Yahoo domain, etc.<br>To remind you, the new mandatory requirements of Gmail require a verified domain for mailing newsletters.<br><br>If not The necessary adjustments will be made, it will not be possible to send the newsletter.<br><br>To make a change in the settings of the domain from which the campaign was sent,<br/> enter the 'Campaign Settings' page by clicking the button below</a><br><br> After that, you can re-enter the verified domain name under the 'Sender email address' field.<br>If the domain being entered is not verified, follow the detailed instructions."
+        },
+        "nonVerified": {
+          "preText": "<h3 style='color:red'>Attention!!!</h3><b style='color:red'>This campaign contains unverified domain settings.</b><br><p>Remind you, requirements Gmail's mandatory news requires a verified domain for mailing newsletters. If the necessary adjustments are not made, it will not be possible to send the newsletter. To change the settings of the domain from which the campaign is sent, go to the Settings page. Campaign' by clicking the button below</a><br><br>Then, you can re-enter the verified domain name under the 'Sender email address' field.<br>If the domain that is entered is not verified, you must follow the detailed instructions."
+        }
+      }
+    },
+    "campaignCreation": {
+      "restricted": {
+        "preText": "<h3 style='color:red'>Attention!!!</h3><b style='color:red'>We recognized that the domain defined for sending the newsletter is not a verified domain.</b><p>The field ' The sender's email address contains a free domain of the type Gmail / Hotmail / Yahoo / Walla, etc.<br>To remind you, the new mandatory requirements of Gmail require your own verified domain for the benefit of mailing newsletters.<br/><br/>If the adjustments are not made required, it will not be possible to send the newsletter.<br><br>We are here to help you - please choose the preferred alternative from the alternatives offered:"
+      },
+      "nonVerified": {
+        "preText": "<h3 style='color:red'>Attention!!!</h3><b style='color:red'>We detected that the domain defined for sending the newsletter is not a verified domain.</b><br/><p>Remind you, the new mandatory requirements of Gmail require a verified domain for mailing newsletters. <br/><br/>If the necessary adjustments are not made, it will not be possible to send the newsletter.<br/><br/>We are here to help you - please choose the preferred alternative from the alternatives offered:</p>"
+      }
+    },
+    "campaignEditor": {
+      "restricted": {
+        "preText": "<h3 style='color:red; margin-bottom: 0'>Attention!!!</h3><b style='color:red'>It is not possible to proceed to the sending stage of the campaign, until the process of setting up the verified domain is completed. </b><br><p>To remind you, the new mandatory requirements of Gmail require a verified domain for mailing newsletters. <br/><br/>If the necessary adjustments are not made, it will not be possible to send the newsletter. <br/><br/>To make a change in the settings of the domain from which the campaign was sent, go to the 'Campaign Settings' page <br/>by clicking on the button below. <br/><br/>On the 'Campaign Settings' page, you can re-enter the verified domain name under field: 'Sender email address'.<br/> If the domain entered is not verified, you must follow the detailed instructions."
+      },
+      "nonVerified": {
+        "preText": "<h3 style='color:red; margin-bottom: 0'>Attention!!!</h3><b style='color:red'>It is not possible to proceed to the sending stage of the campaign, until the process of setting up the verified domain is completed. </b><br><p>To remind you, the new mandatory requirements of Gmail require a verified domain for mailing newsletters. <br/><br/>If the necessary adjustments are not made, it will not be possible to send the newsletter. <br/><br/>To make a change in the settings of the domain from which the campaign was sent, go to the 'Campaign Settings' page <br/>by clicking on the button below. <br/><br/>On the 'Campaign Settings' page, you can re-enter the verified domain name under field: 'Sender email address'.<br/> If the domain entered is not verified, you must follow the detailed instructions."
+      }
+    },
+    "popup": {
+      "title": "Domain verification ##domainAddress##",
       "sections": {
         "verifyDomain": {
-          "title": "Verify a New Domain",
-          "text": "<div><span>שלבים מקדימים (גם להוספת SPF וגם להוספת DKIM)</span><ul><li>יש להתחבר למערכת ניהול של הדומיין.<li>DNS להגיע למקום שבו ניתן לעדכן ולהוסיף רשומת</ul><b style=color:red><u>SPF</u></b><ul style=list-style:decimal><li><b>במידה ולא קיימת</b> <span>בהגדרות של ה DNS רשומת TXT שמכילה את התווים - v=spf</span><ul style=list-style:decimal><li>יש להוסיף רשומת DNS חדשה מסוג TXT<li>יש להקליד את הערך @ בשדה Host/Name<li>יש להקליד את הערך הבאה בשדה Content/TXT Value</li><span>v=spf1 include:youlinktv.com ip4: 62.219.80.0/24 ~all</span></ul></li><br><li><b>במידה וקיימת רשומה</b><ul style=list-style:decimal><li>יש לערוך אותה ולהוסעיף לה את הערכים באופן הבא<li>v=spf1 ip4:…<b>ip4: 62.219.80.0/24</b>… include…<span class=bold>include:youlinktv.com</span>~all</li><span>** יש להוסיף אך ורק את מה שמודגש</span></ul></li><br></ul><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><b style=color:red><u>DKIM</u></b><ul style=list-style:decimal><li>יש להוסיף רשומת TXT חדשה<li>יש להקליד את הערך<b>alfa_.domainkey</b>בשדה Host/Name<li>יש להקליד את הערך הבא בשדה Content/TXT Value</ul><span id='copyLabel' class='copy-label'><span class='MuiButton-startIcon MuiButton-iconSizeSmall'><div id='copyStatusIcon'>\ue0b0</div></span>Copy</span><div id='dkimRecord' class='scriptCode'>v=DKIM1; k=rsa; h=sha256; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+bGl6UdyLB2oXWCGDxu715LS2EZ0U6LwA3z6DrGMZALT+ZG33oYXUQVQmLQHg0mvTowJC9eEejTJWrbLPyd/20RU19XMyj7NXnAAsJWbzRzQcRcc/mlgJPseKrjRzAo38WIDovuUxxpfLslRgX82c2jENw5Ff4gO/XeyLaTneWQIDAQAB</div><br><br><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><b style=color:red><u>DMARC</u></b><br><br><span>אם לא קיימת לכם רשומת DMARC, ניתן להוסיף רשומת DNS חדשה. אם זאת הפעם הראשונה שאתם מוסיפים רשומת DMARC, מומלץ להגדיר את סוג הפעולה כnone, על מנת לבחון מי שולח בשמכם מיילים ואת ההשפעה הפוטנציאלית לפני שמשנים את סוג הפעולה לreject או quarantine.</span><ul style=list-style:decimal><li>יש להוסיף רשומת TXT חדשה<li>יש להקליד את הערך dmarc_ בשדה Host/Name<li>יש להקליד את הערך הבא בשדה Content/TXT Value</li><span>v=DMARC1; p=none; rua=mailto:report@example.com</span><span><br/>** זאת בהנחה שהדומיין שלכם הוא com.example, יש להגדיר תיבה אליה תקבלו את הדוחות, חשוב לא לשכוח לשים mailto לפני</span></ul><br><span>** חשוב, יש לפנות אלינו במייל חוזר לאחר ביצוע ההגדרות על מנת שנוכל לבדוק את תקינותם ולהגדיר אותם מהצד שלנו</span><br><br><br></div>",
-          "button": "Check Domain Verification Status"
+          "title": "Existing domain verification",
+          "text": "Do you have your own domain? perfect. <b> The best recommendation</b> is to use it.<br/>Now, you must perform a verification process for your domain - go to <a href='https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%9B%D7%99%D7%9D/%d7%9e%d7%a1%d7%9e%d7%9a-%d7%94%d7%a1%d7%91%d7%a8-%d7%9c%d7%94%d7%95%d7%a1%d7%a4%d7%aa-spf-dkim/' title='Existing domain verification guide' target='_blank'>guide</a>,<br/>Emplement the detailed SPF and DKIM records, plus publish your DMARC policy. <br/>After you have finished, perform a validation check according to the instructions posted near the end of the guide.",
+          "button": "Click here for Test"
         },
         "buyVerifiedDomain": {
-          "title": "Buy Verified Domain",
-          "text": "ליצירת קשר עם מחלקת המכירות שלנו<br/><a href='mailto:sales@Pulseem.com' style='color:red'>sales@Pulseem.com</a>"
+          "title": "Purchase of a business domain",
+          "text": "If you do not have your own business domain, <b>our recommendation</b> is to purchase such a domain. You have 2 alternatives: <br/><ul style='list-style-type: decimal;'><li>You can purchase a domain independently and then verify the domain you purchased according to the instructions detailed at the bottom <a href='https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%9B%D7%99%D7%9D/%d7%9e%d7%a1%d7%9e%d7%9a-%d7%94%d7%a1%d7%91%d7%a8-%d7%9c%d7%94%d7%95%d7%a1%d7%a4%d7%aa-spf-dkim/' title= 'Existing domain verification guide' target='_blank'>for the guide</a>.</li><li>Use the Pulseem sales team to purchase a business domain and verify it according to the requirements.<br/>Contact the support team by phone: <a href='tel:03-5240290'>03-5240290</a> or send an email: <a href='mailto:sales@pulseem.com'>sales@pulseem.com</a></li></ul>"
         },
         "sendFromSharedDomain": {
-          "title": "Send using Shared Domain",
-          "text": "תגובות למייל יישלחו לכתובת המייל הראשונה שאומתה לשליחה",
-          "button": "Use Shared Domain",
-          "placeholder": "{Email Prefix}",
-          "saveDomain": "Save and Set From Email",
-          "saveAndContinue": "Save and Continue to Campaign Editor"
+          "title": "Sending via Shared Domain",
+          "text": "In case you have chosen not to verify your domain, we allow you to send via a Shared Domain of Pulseem.<br/>To understand the meaning and consequences of using a shared domain, go to <a href='https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%9B%D7%99%D7%9D/%d7%9e%d7%a1%d7%9e%d7%9a-%d7%94%d7%a1%d7%91%d7%a8-%d7%9c%d7%94%d7%95%d7%a1%d7%a4%d7%aa-spf-dkim/' title='Existing domain verification guide' target='_blank'>to the guide</a>.<br/><br/>If however You chose this option, you must follow 2 instructions:<br/><ul style='list-style-type: decimal;'><li>First, you must choose your username. The domain will be permanent and will end in: pulseem.co.</li><li>After that, enter the email address you want your customers to return to if necessary in the field: 'Reply To Email'.</li></ul>",
+          "text1": "<b>Pay attention! </b>Replies to the email will be sent to the first email address verified for sending",
+          "button": "Set as From Email address and proceed to edit the campaign",
+          "placeholder": "{Email prefix}",
+          "saveDomain": "Save and set as From Email address",
+          "saveAndContinue": "Save and continue to Campaign Editor"
         }
       }
     },
     "settingPopUp": {
       "title": "Domains Verification",
-      "selectDomain": "Select Domain to verify"
+      "selectDomain": "Select Domain for Verification"
     },
-    "verifiedDomain": "Verified Domain",
+    "sendSettings": {
+      "domainNotVerified": "The Email addess which defined as From Email, is not verified.",
+      "backToCampaigns": "Back to Campaigns"
+    },
+    "verifyDomain": "Domain Verifrication",
+    "verifiedDomain": "Domain Verified",
+    "nonVerified": "Not Verified",
+    "inTestProcess": "In Progress",
     "verificationResponse": {
-      "sourceId": "Source",
-      "domainName": "Domain Name",
-      "dkimApproved": "DKIN Approved",
-      "dmarcApproved": "DMARC Approved",
-      "spfApproved": "SPF Approved",
-      "lastReadTime": "Last Read Email Time",
-      "lastSendTime": "Last Send Email Time"
+      "tableHeader": {
+        "sourceId": "Verified",
+        "domainName": "Domain Name",
+        "dkimApproved": "DKIM Verification",
+        "dmarcApproved": "DMARC Verification",
+        "spfApproved": "SPF Verification",
+        "lastReadTime": "Last Read Email",
+        "lastSendTime": "Last Sent Email"
+      }
     }
   },
-  "skip": "Skip"
+  "skip": "Skip",
+  "moreDetails": "More information",
+  "testVerificationDomain": "Test Domains Verifiation",
+  "gmailVerification": "Gmail Verified",
+  "gmailVerificationDescription": "This column shows the corresponding status of the selected domain with GMAIL servers.<br/>The test process takes several minutes. You can click the refresh button to get an updated status according to the following details:<br/><br/><svg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 1024 1024' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg' style='color: red; font-size: 20px; vertical-align: middle'><path d='M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372 0-89 31.3-170.8 83.5-234.8l523.3 523.3C682.8 852.7 601 884 512 884zm288.5-137.2L277.2 223.5C341.2 171.3 423 140 512 140c205.4 0 372 166.6 372 372 0 89-31.3 170.8-83.5 234.8z'></path></svg>&nbsp;Unverified domain - please contact Pulseem's support department by phone: 03-5240290 or by email at: support@pulseem.com.<br/> <svg stroke='currentColor' fill='currentColor' stroke-width='0' viewBox='0 0 24 24' height='1em' width='1em' xmlns='http://www.w3.org/2000/svg' style='color: green; font-size: 20px; vertical-align: middle'><path fill='none' d='M0 0h24v24H0z'></path><path d='M23 11.99L20.56 9.2l.34-3.69-3.61-.82L15.4 1.5 12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 11.99l2.44 2.79-.34 3.7 3.61.82 1.89 3.2 3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69 2.44-2.8zm-3.95 1.48l-.56.65.08.85.18 1.95-1.9.43-.84.19-.44.74-.99 1.68-1.78-.77-.8-.34-.79.34-1.78.77-.99-1.67-.44-.74-.84-.19-1.9-.43.18-1.96.08-.85-.56-.65L3.67 12l1.29-1.48.56-.65-.09-.86-.18-1.94 1.9-.43.84-.19.44-.74.99-1.68 1.78.77.8.34.79-.34 1.78-.77.99 1.68.44.74.84.19 1.9.43-.18 1.95-.08.85.56.65 1.29 1.47-1.28 1.48z'></path><path d='M10.09 13.75l-2.32-2.33-1.48 1.49 3.8 3.81 7.34-7.36-1.48-1.49z'></path></svg> - Domain successfully verified",
+  "domainVerificationDashboardPopupText": "<p><h3>Dear customers,</h3><br/><br/>Are you prepared for the mandatory requirements that Gmail has announced regarding the verification of the EMAIL addresses from which your campaigns originate?<br/><br/><b><u>As of 1/29/24</u>, we are aligning with Gmail's strict requirements and will not allow sending newsletters from UnVerified domains.</b><br/><br/>To perform a test that examines whether the domains you have are verified, click on the button below.<br/>For complete information detailing the reasons for the changes, the reasons for the required adjustments, the execution of the verification process, etc., click on 'More information'.",
+  "refresh": "Refresh",
+  "dnsRecordsGuide": "How to add dns records"
 }

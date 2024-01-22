@@ -50,7 +50,8 @@ import { CreditType } from "../../../Models/Payments/NoCreditPopUp";
 import DynamicConfirmDialog from "../../../components/DialogTemplates/DynamicConfirmDialog";
 import { BsInfoCircle } from "react-icons/bs";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
-import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelpfer";
+import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelper";
+import { sitePrefix } from "../../../config";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -183,6 +184,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [reCheckAuth, setRecheckAuth] = useState(false);
     const [noCreditLeft, setNoCreditLeft] = useState(false);
     const [showDeleteSmsMarketingDialog, setShowDeleteSmsMarketingDialog] = useState(false);
+    const [domainIsAllowed, setDomainIsAllowed] = useState(true);
     const MAX_UPLOAD_LIMITATION = 5000;
 
     useEffect(() => {
@@ -192,6 +194,20 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         setTotalClientsToSend(total);
     }, [selectedGroups]);
+
+    useEffect(() => {
+        if ((verifiedEmails && verifiedEmails?.length > 0) && (newsletterInfo && newsletterInfo?.CampaignID > 0)) {
+            const email = verifiedEmails.filter((email) => {
+                return email?.Number === newsletterInfo.FromEmail;
+            });
+
+            if (!email[0]?.IsVerified && !IsSharedDomain(newsletterInfo?.FromEmail)) {
+                setDomainIsAllowed(false);
+                // navigate('/react/campaigns')
+            }
+        }
+
+    }, [verifiedEmails, newsletterInfo])
 
     //#region Email Authentication
 
@@ -449,7 +465,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 return email?.Number === newsletterInfo.FromEmail || IsSharedDomain(newsletterInfo.FromEmail);
             });
             onSaveSettings(true, groupId.toString()).then(async () => {
-                if (isEmailVerified || isVerified?.length > 0) {
+                if (isEmailVerified || isVerified?.length > 0 || IsSharedDomain(newsletterInfo?.FromEmail)) {
                     setLoader(true);
                     await dispatch(getSendSummary(params?.id));
                     setDialogType({ type: 'SummaryDialog', IsQuickSend: true });
@@ -970,11 +986,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 classes,
                 onBackToCampaigns: () => {
                     setDialogType(null);
-                    navigate('/react/campaigns');
+                    navigate(`${sitePrefix}campaigns`);
                 },
                 onBackToHome: () => {
                     setDialogType(null);
-                    navigate('/react');
+                    navigate(`${sitePrefix}`);
                 }
             }),
             summary: ConfirmationDialog({ classes: classes, count: data }),
@@ -1511,6 +1527,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel={() => setDialogType(null)}
                 onConfirm={() => handleConfirmC()}
             />}
+            <DynamicConfirmDialog
+                classes={classes}
+                isOpen={!domainIsAllowed}
+                title={t('campaigns.newsLetterMgmt.payAttention')}
+                text={t('common.domainVerification.sendSettings.domainNotVerified')}
+                onConfirm={() => {setDomainIsAllowed(true); navigate('/react/campaigns')}}
+                onClose={() => {setDomainIsAllowed(true); navigate('/react/campaigns')}}
+                confirmButtonText={t('common.domainVerification.sendSettings.backToCampaigns')}
+            />
             <Loader isOpen={showLoader} />
         </DefaultScreen>
     )
