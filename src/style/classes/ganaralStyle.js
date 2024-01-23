@@ -3903,5 +3903,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   flexEnd: {
     justifyContent: 'flex-end'
-  }
+  },
+  flexStart: {
+    justifyContent: "flex-start"
+  },
 });

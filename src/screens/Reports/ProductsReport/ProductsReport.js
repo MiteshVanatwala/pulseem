@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, MenuItem, Checkbox, ListItemText, Divider } from '@material-ui/core'
 import Select from '@mui/material/Select';
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
@@ -282,7 +282,9 @@ const ProductsReport = ({ classes }) => {
         )
     }
 
-    const renderIntData = (value, data = {}) => {
+    const colorTextStyle = { red: classes.textColorRed, blue: classes.textColorBlue, green: classes.sendIconText, grey: classes.textColorGrey };
+
+    const renderIntData = (value, data = {}, type = null) => {
         const {
             // title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), 
             // href = '', 
@@ -292,7 +294,7 @@ const ProductsReport = ({ classes }) => {
             <Box style={{ display: 'flex', flexDirection: 'column' }} >
                 <Typography component={'p'}
                     onClick={() => onClick?.()}
-                    className={clsx(classes.middleText,
+                    className={clsx(classes.middleText, colorTextStyle[type],
                         (onClick && value > 0) ? classes.link : '')}
                     target="_blank">
                     {value?.toLocaleString() ?? '0'}
@@ -370,6 +372,7 @@ const ProductsReport = ({ classes }) => {
         )
     }
 
+
     const renderPhoneRow = (row) => {
         const {
             ProductId,
@@ -388,25 +391,44 @@ const ProductsReport = ({ classes }) => {
                 key={uniqueKey}
                 classes={rowStyle}>
                 <TableCell
-                    classes={cellBodyStyle}
-                >
-                    <Grid
-                        container
-                        className={classes.noPadding}
-                    >
-                        <Grid item sm={4}>
+                    classes={cellBodyStyle}>
+                    <Box className={clsx(classes.flex, classes.flexStart)}>
+                        <Box style={{ alignSelf: 'flex-start' }}>
                             <LazyBackground
-                                style={{ backgroundSize: 'contain' }}
+                                style={{ backgroundSize: 'contain', height: 70, minWidth: 70, width: 70 }}
                                 url={ImageURL}
                                 title={ProductName}
-                                height={'100px'}
                             />
-                        </Grid>
-
-                        <Grid item sm={6}>
-                            <Typography>{ProductName}</Typography>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                        <Box>
+                            <Box className={clsx(classes.flex)}>
+                                <Typography className={clsx(classes.font12, classes.bold)}>
+                                    <Box title={ProductName} aria-label={ProductName} className={classes.ellipsisText} style={{ maxWidth: '95%' }}>{ProductName}</Box> ({Price})
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+                    <Divider style={{ marginBlock: 10, width: '100%' }} />
+                    <Box className={clsx(classes.flex, classes.mb25)}>
+                        <Box className={classes.flex} style={{ gap: 5, textAlign: 'center' }}>
+                            <Box className={clsx(classes.flex3)}>
+                                <Typography className={clsx(classes.font12, classes.bold)}>{t("client.Purchased")}</Typography>
+                                <Typography className={clsx(colorTextStyle.blue, classes.elipsis)}>
+                                    {renderIntData(Purchased, Purchased > 0 && hrefs.Purchased, 'blue')}
+                                </Typography>
+                            </Box>
+                            <Box className={clsx(classes.flex3)}>
+                                <Typography className={clsx(classes.bold)}>{t("report.ProductsReport.abandoned")}</Typography>
+                                <Typography className={clsx(colorTextStyle.red, classes.elipsis)}>
+                                    {renderIntData(Abandoned, Abandoned > 0 && hrefs.Abandoned, 'red')}
+                                </Typography>
+                            </Box>
+                            <Box className={clsx(classes.flex3)}>
+                                <Typography className={clsx(classes.bold)}>{t("client.totalRevenue")}</Typography>
+                                <Typography className={clsx(classes.elipsis)}>{renderIntData(TotalRevenue, hrefs.TotalRevenue, 'green')}</Typography>
+                            </Box>
+                        </Box>
+                    </Box>
                 </TableCell>
             </TableRow>
         )
@@ -438,7 +460,7 @@ const ProductsReport = ({ classes }) => {
                         className: windowSize === "xs" && classes.dNone,
                     }}
                 >
-                    <Box className='tableBodyContainer groupsTable'>
+                    <Box className='tableBodyContainer'>
                         <TableBody>
                             {productsReportDetails?.Products
                                 .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
