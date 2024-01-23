@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { FormControl, Link, ListItemIcon, MenuItem } from "@material-ui/core";
+import { Link } from "@material-ui/core";
 import Select from '@mui/material/Select';
 import { Box, Grid, Button } from "@material-ui/core";
 import { FaChevronDown } from 'react-icons/fa';
@@ -13,11 +13,10 @@ import { getAuthorizedEmails, isSweepingApprovalAccount } from "../../../../redu
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
-import { saveCampaignInfo, sendCampaign, setVerificationDomain } from "../../../../redux/reducers/newsletterSlice";
+import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
 import { Loader } from "../../../../components/Loader/Loader";
 import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
-import { GetDomainVerification } from "../../../../redux/reducers/DomainVerificationSlice";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
