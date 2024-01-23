@@ -192,7 +192,7 @@ const ProductsReport = ({ classes }) => {
                             labelId="category"
                             id="category"
                             multiple
-                            style={{ minWidth: 300 }}
+                            style={{ minWidth: windowSize !== 'xs' ? 300 : 200 }}
                             value={searchData.CategoryID}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             inputProps={{
@@ -371,7 +371,45 @@ const ProductsReport = ({ classes }) => {
     }
 
     const renderPhoneRow = (row) => {
-        return <></>
+        const {
+            ProductId,
+            ImageURL,
+            ProductName,
+            CategoryName,
+            Price,
+            Purchased,
+            Abandoned,
+            TotalRevenue,
+            uniqueKey
+        } = row
+        const hrefs = getHrefs(ProductId)
+        return (
+            <TableRow
+                key={uniqueKey}
+                classes={rowStyle}>
+                <TableCell
+                    classes={cellBodyStyle}
+                >
+                    <Grid
+                        container
+                        className={classes.noPadding}
+                    >
+                        <Grid item sm={4}>
+                            <LazyBackground
+                                style={{ backgroundSize: 'contain' }}
+                                url={ImageURL}
+                                title={ProductName}
+                                height={'100px'}
+                            />
+                        </Grid>
+
+                        <Grid item sm={6}>
+                            <Typography>{ProductName}</Typography>
+                        </Grid>
+                    </Grid>
+                </TableCell>
+            </TableRow>
+        )
     }
 
     const handleRowsPerPageSearching = (val) => {
