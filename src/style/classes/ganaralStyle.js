@@ -3972,5 +3972,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: 20,
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+  flexStart: {
+    justifyContent: "flex-start"
+  },
 });
