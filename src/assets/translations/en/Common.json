@@ -749,7 +749,7 @@
       "domainNotVerified": "The Email addess which defined as From Email, is not verified.",
       "backToCampaigns": "Back to Campaigns"
     },
-    "verifyDomain": "Domain Verifrication",
+    "verifyDomain": "Domain Verifrication Status",
     "verifiedDomain": "Domain Verified",
     "nonVerified": "Not Verified",
     "inTestProcess": "In Progress",
