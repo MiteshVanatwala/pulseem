@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, MenuItem, Checkbox, ListItemText, Divider } from '@material-ui/core'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
 import Select from '@mui/material/Select';
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
@@ -378,7 +378,6 @@ const ProductsReport = ({ classes }) => {
             ProductId,
             ImageURL,
             ProductName,
-            CategoryName,
             Price,
             Purchased,
             Abandoned,
@@ -389,46 +388,52 @@ const ProductsReport = ({ classes }) => {
         return (
             <TableRow
                 key={uniqueKey}
-                classes={rowStyle}>
+                classes={rowStyle}
+                style={{ justifyContent: 'left' }}>
                 <TableCell
-                    classes={cellBodyStyle}>
-                    <Box className={clsx(classes.flex, classes.flexStart)}>
-                        <Box style={{ alignSelf: 'flex-start' }}>
+                    classes={cellBodyStyle}
+                    className={classes.w100}
+                >
+                    <Grid container spacing={2}>
+                        <Grid item sm={4} xs={4}>
                             <LazyBackground
                                 style={{ backgroundSize: 'contain', height: 70, minWidth: 70, width: 70 }}
                                 url={ImageURL}
                                 title={ProductName}
                             />
-                        </Box>
-                        <Box>
-                            <Box className={clsx(classes.flex)}>
-                                <Typography className={clsx(classes.font12, classes.bold)}>
-                                    <Box title={ProductName} aria-label={ProductName} className={classes.ellipsisText} style={{ maxWidth: '95%' }}>{ProductName}</Box> ({Price})
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-                    <Divider style={{ marginBlock: 10, width: '100%' }} />
-                    <Box className={clsx(classes.flex, classes.mb25)}>
-                        <Box className={classes.flex} style={{ gap: 5, textAlign: 'center' }}>
-                            <Box className={clsx(classes.flex3)}>
-                                <Typography className={clsx(classes.font12, classes.bold)}>{t("client.Purchased")}</Typography>
-                                <Typography className={clsx(colorTextStyle.blue, classes.elipsis)}>
-                                    {renderIntData(Purchased, Purchased > 0 && hrefs.Purchased, 'blue')}
-                                </Typography>
-                            </Box>
-                            <Box className={clsx(classes.flex3)}>
-                                <Typography className={clsx(classes.bold)}>{t("report.ProductsReport.abandoned")}</Typography>
-                                <Typography className={clsx(colorTextStyle.red, classes.elipsis)}>
-                                    {renderIntData(Abandoned, Abandoned > 0 && hrefs.Abandoned, 'red')}
-                                </Typography>
-                            </Box>
-                            <Box className={clsx(classes.flex3)}>
-                                <Typography className={clsx(classes.bold)}>{t("client.totalRevenue")}</Typography>
-                                <Typography className={clsx(classes.elipsis)}>{renderIntData(TotalRevenue, hrefs.TotalRevenue, 'green')}</Typography>
-                            </Box>
-                        </Box>
-                    </Box>
+                        </Grid>
+                        <Grid item sm={8} xs={8}>
+                            <Typography className={clsx(classes.bold, classes.ellipsisText, classes.f14)}>
+                                {ProductName}
+                            </Typography>
+                            <Typography className={clsx(classes.pt5, classes.f14, classes.semibold)}>
+                                <span className={classes.bold}>{t("report.ProductsReport.price")}:</span> {Price}
+                            </Typography>
+
+                            <Grid container className={classes.pt5}>
+                                <Grid item xs={6} sm={6}>
+                                    <Typography className={clsx(classes.f14, classes.bold)}>{t("client.Purchased")}</Typography>
+                                    <Typography className={clsx(colorTextStyle.blue, classes.elipsis)}>
+                                        {renderIntData(Purchased, Purchased > 0 && hrefs.Purchased, 'blue')}
+                                    </Typography>
+                                </Grid>
+                                
+                                <Grid item xs={6} sm={6}>
+                                    <Typography className={clsx(classes.f14, classes.bold)}>{t("report.ProductsReport.abandoned")}</Typography>
+                                    <Typography className={clsx(colorTextStyle.red, classes.elipsis)}>
+                                        {renderIntData(Abandoned, Abandoned > 0 && hrefs.Abandoned, 'red')}
+                                    </Typography>
+                                </Grid>
+                                
+                                <Grid item xs={6} sm={6} className={classes.pt5}>
+                                    <Typography className={clsx(classes.f14, classes.bold)}>{t("client.totalRevenue")}</Typography>
+                                    <Typography className={clsx(classes.elipsis)}>
+                                        {renderIntData(TotalRevenue, hrefs.TotalRevenue, 'green')}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </TableCell>
             </TableRow>
         )
