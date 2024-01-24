@@ -400,7 +400,7 @@ const ApiSettings = ({ classes }: any) => {
                         {/* Explanations */}
                         <Box className={classes.mt25} style={{ maxWidth: 768 }}>
                             {RenderHtml(t('settings.apiSettings.mainApiExplainTitle'))}
-                            {RenderHtml(t('settings.apiSettings.mainApiExplainDesc'))}
+                            {RenderHtml(t('settings.apiSettings.mainApiExplainDesc').replace(!isMainApi ? 'ui-api' : '', !isMainApi ? 'api' : ''))}
                         </Box>
                     </Box>
                 </Box>
