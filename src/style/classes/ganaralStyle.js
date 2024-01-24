@@ -538,13 +538,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: `12px !important`,
   },
   f13: {
-    fontSize: 13,
+    fontSize: '13px !important',
   },
   mxAuto: {
     marginInline: "auto",
   },
   f14: {
-    fontSize: 14,
+    fontSize: '14px !important',
   },
   f15: {
     fontSize: 15,
