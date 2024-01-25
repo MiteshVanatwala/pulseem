@@ -5,6 +5,7 @@ import { Button, Checkbox, FormControlLabel, Grid } from "@material-ui/core";
 import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 import clsx from "clsx";
 import { useNavigate } from "react-router";
+import { RxOpenInNewWindow } from "react-icons/rx";
 import { useSelector } from "react-redux";
 import { StateType } from "../../../Models/StateTypes";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
@@ -49,7 +50,7 @@ const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => 
                                 classes.btnRounded,
                                 classes.middle
                             )}
-                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                            endIcon={<RxOpenInNewWindow style={{ transform: isRTL ? 'rotateY(180deg)' : '' }} />}
                         >
                             {t('common.moreDetails')}
                         </Button>
