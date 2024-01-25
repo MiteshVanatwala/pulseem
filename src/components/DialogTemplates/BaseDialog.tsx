@@ -169,7 +169,7 @@ export const BaseDialog = ({
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
               ? "calc(70vh)"
-              : "calc(45vh)",
+              : "calc(65vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}

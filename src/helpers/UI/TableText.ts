@@ -359,10 +359,6 @@ export const ConvertClientStatus = (statusType: SourceType, statusId: number) =>
         case SourceType.EMAIL:
         default: {
             switch (statusId.toString()) {
-                case '-1':
-                default: {
-                    return 'client.clientStatus.email.NoEmail';
-                }
                 case '1': {
                     return 'client.clientStatus.email.Active';
                 }
@@ -377,6 +373,10 @@ export const ConvertClientStatus = (statusType: SourceType, statusId: number) =>
                 }
                 case '5': {
                     return 'client.clientStatus.email.Pending';
+                }
+                case '-1':
+                default: {
+                    return 'client.clientStatus.email.NoEmail';
                 }
             }
         }

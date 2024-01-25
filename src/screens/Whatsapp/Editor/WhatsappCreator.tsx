@@ -94,9 +94,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [codeExpirationTime, setCodeExpirationTime] = useState<number | undefined>(0);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
@@ -134,6 +134,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						setIsLoader(false);
 					}
 				});
+				setIsAccountSetup(true);
 			} else {
 				setIsLoader(false);
 				setIsAccountSetup(false);

@@ -346,7 +346,7 @@ const SendingMethod = ({
                                     }}
                                 >
                                     <FormControl
-                                        className={clsx(classes.selectInputFormControl, classes.w100, classes.mb10)}
+                                        className={clsx(classes.selectInputFormControl, windowSize !== 'xs' ? classes.w100 : '', classes.mb10)}
                                     >
                                         <Select
                                             variant="standard"

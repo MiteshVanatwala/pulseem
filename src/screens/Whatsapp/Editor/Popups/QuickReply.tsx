@@ -163,7 +163,7 @@ const QuickReply = ({
 									disabled={quickReplyButtons?.length >= 3 ? true : false}
 									className={clsx(classes.btn, classes.btnRounded)}
 								>
-									<AiOutlinePlusCircle className={classes.addOptionsIcon} />
+									<AiOutlinePlusCircle className={clsx(classes.addOptionsIcon, classes.fBlack)} />
 									{translator('whatsapp.quickReply.addMore')}
 								</Button>
 							)}	

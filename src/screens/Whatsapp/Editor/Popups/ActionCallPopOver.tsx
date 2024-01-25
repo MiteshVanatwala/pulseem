@@ -46,7 +46,7 @@ const ActionCallPopOver = ({
 	templateText,
 }: actionProps) => {
 	const { t: translator } = useTranslation();
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { windowSize, isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [autoCompleteOptions, setAutoCompleteOptions] = useState<string[]>([]);
 	const [validationErrors, setValidationErrors] = useState<string[]>([]);
 	const [dialogType, setDialogType] = useState<any>({
@@ -314,7 +314,7 @@ const ActionCallPopOver = ({
 				<Grid container className={classes.callToActionFields}>
 					{callToActionFieldRows.map(
 						(row: callToActionRowProps, index: number) => (
-							<Grid container spacing={3} key={'TOC' + index}>
+							<Grid container spacing={3} key={'TOC' + index} className={classes.noMargin}>
 								<Grid item xs={12} sm={6} md={2}>
 									<Typography>
 										<>{translator('whatsapp.typeOfAction')}</>
@@ -464,13 +464,12 @@ const ActionCallPopOver = ({
 									)
 								}
 								{isEditable && (
-									<Grid item md={1}>
-										<Typography style={{ visibility: 'hidden' }}>
-											<>{translator('whatsapp.callToActionRemoveButton')}</>
-										</Typography>
+									<Grid item md={1} xs={12} style={{ textAlign: isRTL ? 'left': 'right' }}>
 										<IconButton
 											color='secondary'
-											onClick={() => onDeleteRow(row)}>
+											onClick={() => onDeleteRow(row)}
+											className={ windowSize !== 'xs' ? classes.mt24 : ''}
+										>
 											<DeleteOutlineIcon />
 										</IconButton>
 									</Grid>
@@ -482,13 +481,13 @@ const ActionCallPopOver = ({
 
 			<DialogActions className={classes.pt50}>
 					<Grid container>
-						<Grid item md={6}>
+						<Grid item md={6} xs={6}>
 							{callToActionFieldRows?.length < 2 && (
 								<Button
 									disabled={!isEditable}
 									variant='contained'
 									onClick={addMore}
-									className={clsx(classes.btn, classes.btnRounded)}
+									className={clsx(classes.btn, classes.btnRounded, classes.mt10)}
 								>
 									<AiOutlinePlusCircle className={clsx(classes.mr10, classes.f18)} />
 									{translator('whatsapp.quickReply.addMore')}
@@ -496,7 +495,7 @@ const ActionCallPopOver = ({
 							)}
 						</Grid>
 
-						<Grid item className={clsx(classes.justifyContentEnd, classes.w100)} md={6}>
+						<Grid item className={clsx(classes.justifyContentEnd)} md={6} xs={6}>
 							<Button
 								onClick={() => closeCallToAction(true)}
 								variant='contained'
