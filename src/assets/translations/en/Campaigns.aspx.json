@@ -489,8 +489,8 @@
   "newsletters": "Newsletters",
   "newsLetterEditor": {
     "fromName": "From Name",
-    "fromEmail": "From Email",
-    "replyTo": "Reply To Email",
+    "fromEmail": "<b>From</b> Email",
+    "replyTo": "<b>Reply To</b> Email",
     "campaignSubject": "Campaign Subject",
     "personalization": "Personalization",
     "dontSee_clickHere_mail": "If you do not see this email, click here",
@@ -604,7 +604,8 @@
       "doNotSend": "Do not send",
       "smsComplementary": "Complementary SMS Marketing",
       "optimalPulseConflictMessage": "Choosing \"Optimal Send\" will cancel the Pulse send you already set.<br/>Do you wish to proceed?"
-    }
+    },
+    "domainVerificationTooltip": "Sending mailings will only be possible from a verified domain.<br/>After setting up the verified domain, you can choose an email address to reply to in the next field."
   },
   "newsLetterMgmt": {
     "emailVerification": {

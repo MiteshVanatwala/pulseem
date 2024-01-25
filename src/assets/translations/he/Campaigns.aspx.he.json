@@ -480,8 +480,8 @@
   "newsletters": "ניוזלטרים",
   "newsLetterEditor": {
     "fromName": "שם השולח",
-    "fromEmail": "כתובת אימייל השולח",
-    "replyTo": "כתובת אימייל להשבה",
+    "fromEmail": "כתובת אימייל <b>השולח</b>",
+    "replyTo": "כתובת אימייל <b>להשבה</b>",
     "campaignSubject": "נושא הקמפיין",
     "personalization": "מידע אישי בשורת הנושא",
     "dontSee_clickHere_mail": "אם אינך רואה מייל זה לחץ כאן",
@@ -595,7 +595,8 @@
       "doNotSend": "לא לשלוח",
       "smsComplementary": "שיווק משלים ב-SMS",
       "optimalPulseConflictMessage": "בחירת \"שליחה אופטימלית\" תבטל את השליחה בפולסים שהגדרתם<br/>האם ברצונכם להמשיך?"
-    }
+    },
+    "domainVerificationTooltip": "שליחת דיוור תתאפשר מדומיין מאומת בלבד.<br/>לאחר הגדרת הדומיין המאומת ניתן לבחור כתובת אימייל להשב בשדה ליד."
   },
   "newsLetterMgmt": {
     "emailVerification": {

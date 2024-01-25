@@ -3035,5 +3035,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: 20,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  errorBg: {
+    backgroundColor: '#fde2e2'
+  },
+  fromEmailSelect: {
+    '& :focus': {
+      backgroundColor: 'transparent !important'
+    }
   }
 });

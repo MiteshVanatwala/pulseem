@@ -343,7 +343,7 @@ const SummaryDialog = ({ classes,
                             </Box>}
                             <Box style={{ width: '100%' }}>
                                 <Box>
-                                    <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("campaigns.newsLetterEditor.replyTo")}:</span>
+                                    <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}:</span>
                                 </Box>
                                 <Select
                                     style={{ width: '100%' }}

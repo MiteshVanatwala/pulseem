@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
-import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button, Checkbox, FormControlLabel } from '@material-ui/core'
+import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button, Checkbox, FormControlLabel, Tooltip } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,6 +29,7 @@ import Templates from '../../HtmlCampaign/modals/Templates';
 import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 import { SharedEmailDomain } from '../../../config';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -230,6 +231,7 @@ const NewsLetterInfo = ({ classes }) => {
 
     const [hideCautionNewMessage, setHideCautionNewMessage] = useState(false)
     const [hideCautionOldMessage, setHideCautionOldMessage] = useState(false)
+    const [isVerifiedDomain, setIsVerifiedDomain] = useState(false);
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
 
@@ -281,6 +283,15 @@ const NewsLetterInfo = ({ classes }) => {
     // useEffect(() => {
     //     dispatch(getPublicTemplates(isRTL));
     // }, [isRTL])
+
+    useEffect(() => {
+        if (campaingnValues && campaingnValues?.FromEmail && verifiedEmails?.length > 0) {
+            if (campaingnValues?.FromEmail !== '') {
+                const isVerified = verifiedEmails?.filter((ve) => { return ve.Number === campaingnValues?.FromEmail })[0]?.IsVerified;
+                setIsVerifiedDomain(isVerified);
+            }
+        }
+    }, [campaingnValues, verifiedEmails])
 
     const setDefaultEmailAndName = () => {
         if (accountSettings) {
@@ -816,7 +827,22 @@ const NewsLetterInfo = ({ classes }) => {
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("campaigns.newsLetterEditor.fromEmail")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromEmail")}</Typography>,
+                                    content: <Box className={classes.dFlex}>
+                                        <Typography
+                                            title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')}
+                                            className={classes.alignDir}
+                                            style={{ marginInlineEnd: 10}}>
+                                            {RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}
+                                        </Typography>
+                                        {!isVerifiedDomain && <Tooltip
+                                            placement='top'
+                                            title={RenderHtml(t("campaigns.newsLetterEditor.domainVerificationTooltip"))}
+                                            classes={{ tooltip: classes.customWidth }}
+                                            sx={{ justifyContent: 'center', zIndex: 9999999999999, direction: isRTL ? 'rtl' : 'ltr'  }}
+                                        >
+                                            <span className={classes.bodyInfo}>i</span>
+                                        </Tooltip>}
+                                    </Box>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
@@ -829,7 +855,7 @@ const NewsLetterInfo = ({ classes }) => {
                                                 onChange={(event, val) => {
                                                     handleFromEmailChange(event);
                                                 }}
-
+                                                className={clsx(classes.fromEmailSelect, !isVerifiedDomain ? classes.errorBg : null)}
                                                 name="FromEmail"
                                                 input={<OutlinedInput />}
                                                 MenuProps={{
@@ -876,7 +902,7 @@ const NewsLetterInfo = ({ classes }) => {
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("campaigns.newsLetterEditor.replyTo")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.replyTo")}</Typography>,
+                                    content: <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>', '').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
