@@ -23,7 +23,7 @@ import GroupSummary from '../../../components/GroupSummary/GroupSummary';
 import { Summary } from '../../../model/Groups/GroupSummary.types';
 
 const FileUploads = ({ classes }: ClassesType) => {
-  const { language, windowSize, rowsPerPage } = useSelector((state: any) => state.core)
+  const { windowSize, rowsPerPage } = useSelector((state: any) => state.core)
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [showLoader, setLoader] = useState(false);
@@ -76,6 +76,20 @@ const FileUploads = ({ classes }: ClassesType) => {
       }
     ];
     setUploadedFileList(data);
+  }
+
+  const getGroups = async (ID: number) => {
+    // const response = await PulseemReactInstance.get(`/FileUploads/GetGroups/${ID}`);
+    // console.log(response);
+  }
+
+  const getUploadResult = async (ID: number) => {
+    // const response = await PulseemReactInstance.get(`/FileUploads/UploadResult/${ID}`);
+    // console.log(response);
+  }
+
+  const cancelUpload = async (ID: number) => {
+    // const response = await PulseemReactInstance.put(`/FileUploads/Cancel/${ID}`);
   }
 
   const renderTableHead = () => {
@@ -138,10 +152,16 @@ const FileUploads = ({ classes }: ClassesType) => {
           {/* {moment(row.CreationDate).format("DD/MM/YYYY HH:mm")} */}
           {row.Status}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.underline)} onClick={() => setDialogType({ type: 'group', data: row })}>
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.underline)} onClick={() => {
+          getGroups(row.ID);
+          setDialogType({ type: 'group', data: row.ID })
+        }}>
           {t('common.Groups')}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex2, classes.underline)} onClick={() => setDialogType({ type: 'results', data: row })}>
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex2, classes.underline)} onClick={() => {
+          getUploadResult(row.ID);
+          setDialogType({ type: 'results', data: row.ID })
+        }}>
           {t('group.results')}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={classes.flex2}>
@@ -198,7 +218,7 @@ const FileUploads = ({ classes }: ClassesType) => {
     )
   }
 
-  const getDeleteDialog = (data = '') => ({
+  const getDeleteDialog = (ID: number) => ({
     title: t('group.delete'),
     showDivider: false,
     content: (
@@ -207,6 +227,7 @@ const FileUploads = ({ classes }: ClassesType) => {
       </Typography>
     ),
     onConfirm: async () => {
+      await cancelUpload(ID);
     }
   })
 
@@ -241,8 +262,25 @@ const FileUploads = ({ classes }: ClassesType) => {
     content: (
       <></>
     ),
-    onConfirm: async () => {
-    }
+    renderButtons: () => (
+      <Grid
+        container
+        spacing={4}
+        className={clsx(classes.dialogButtonsContainer)}
+      >
+        <Button
+          variant='contained'
+          size='small'
+          style={{ maxWidth: 100 }}
+          onClick={() => setDialogType(null)}
+          className={clsx(
+            classes.btn,
+            classes.btnRounded
+          )}>
+          {t('common.Ok')}
+        </Button>
+      </Grid>
+    ),
   })
 
   const renderDialog = () => {
