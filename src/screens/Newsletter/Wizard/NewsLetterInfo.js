@@ -30,6 +30,7 @@ import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, sav
 import { SharedEmailDomain } from '../../../config';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -288,7 +289,8 @@ const NewsLetterInfo = ({ classes }) => {
         if (campaingnValues && campaingnValues?.FromEmail && verifiedEmails?.length > 0) {
             if (campaingnValues?.FromEmail !== '') {
                 const isVerified = verifiedEmails?.filter((ve) => { return ve.Number === campaingnValues?.FromEmail })[0]?.IsVerified;
-                setIsVerifiedDomain(isVerified);
+                const isSharedDomain = IsSharedDomain(campaingnValues?.FromEmail)
+                setIsVerifiedDomain(isSharedDomain || isVerified);
             }
         }
     }, [campaingnValues, verifiedEmails])
