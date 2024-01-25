@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-    Box, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography
+    Box, Button, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -19,6 +19,8 @@ import { PulseemReactInstance } from '../../../helpers/Api/PulseemReactAPI';
 import { UploadedFile } from '../../../model/Groups/FileUploads.types';
 import { DeleteIcon } from '../../../assets/images/managment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import GroupSummary from '../../../components/GroupSummary/GroupSummary';
+import { Summary } from '../../../model/Groups/GroupSummary.types';
 
 const FileUploads = ({ classes }: ClassesType) => {
   const { language, windowSize, rowsPerPage } = useSelector((state: any) => state.core)
@@ -136,16 +138,16 @@ const FileUploads = ({ classes }: ClassesType) => {
           {/* {moment(row.CreationDate).format("DD/MM/YYYY HH:mm")} */}
           {row.Status}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.underline)}>
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.underline)} onClick={() => setDialogType({ type: 'group', data: row })}>
           {t('common.Groups')}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex2, classes.underline)}>
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex2, classes.underline)} onClick={() => setDialogType({ type: 'results', data: row })}>
           {t('group.results')}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={classes.flex2}>
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
-          <DeleteIcon width={18} height={20} className={'rowIcon'}  onClick={() => {
+          <DeleteIcon width={18} height={20} className={clsx('rowIcon', classes.underline)}  onClick={() => {
             setDialogType({
               type: 'delete',
               data: row.ID
@@ -208,14 +210,29 @@ const FileUploads = ({ classes }: ClassesType) => {
     }
   })
 
-  const getResultDialog = (data: any) => ({
-    title: t('group.delete'),
+  const getResultDialog = (summary: Summary) => ({
+    title: t('common.UploadResults'),
     showDivider: false,
-    content: (
-      <></>
+    content: <GroupSummary classes={classes} summary={summary} />,
+    renderButtons: () => (
+      <Grid
+        container
+        spacing={4}
+        className={clsx(classes.dialogButtonsContainer)}
+      >
+        <Button
+          variant='contained'
+          size='small'
+          style={{ maxWidth: 100 }}
+          onClick={() => setDialogType(null)}
+          className={clsx(
+            classes.btn,
+            classes.btnRounded
+          )}>
+          {t('common.Ok')}
+        </Button>
+      </Grid>
     ),
-    onConfirm: async () => {
-    }
   })
 
   const getGroupDialog = (data: any) => ({
@@ -229,8 +246,7 @@ const FileUploads = ({ classes }: ClassesType) => {
   })
 
   const renderDialog = () => {
-    const { data, type } = dialogType || {}
-    // const campaign = newslettersData?.find((e) => { return parseInt(e.CampaignID) === parseInt(data) });
+    const { data, type }: any = dialogType || {}
 
     const dialogContent: { [key: string]: {} } = {
       groups: getGroupDialog(data),
