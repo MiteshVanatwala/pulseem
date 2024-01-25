@@ -968,7 +968,7 @@ const SmsSend = ({ classes, ...props }) => {
                   classes={{ tooltip: classes.customWidth }}
                   style={{ marginInlineStart: "5px" }}
                 >
-                  <IconButton style={{ paddingInline: 5, paddingBlock: 0, marginTop: -10 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                  <IconButton style={{ paddingInline: 5, paddingBlock: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
                     <BsInfoCircle />
                   </IconButton>
                 </Tooltip>
@@ -1422,7 +1422,7 @@ const SmsSend = ({ classes, ...props }) => {
             classes={{ tooltip: classes.customWidth }}
             className={clsx(classes.ml5, classes.mt1)}
           >
-            <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+            <IconButton style={{ padding: 0, marginInlineStart: 10 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
               <BsInfoCircle />
             </IconButton>
           </Tooltip>
