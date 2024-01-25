@@ -19,7 +19,7 @@ import {
 import { FaBinoculars } from 'react-icons/fa';
 import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
 import { logout } from "../Api/PulseemReactAPI";
-import { HiArrowRight } from "react-icons/hi";
+import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
@@ -29,7 +29,8 @@ export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
   style: string = '',
   isAllowSwitchAccount: Boolean = false,
-  title: string = "Settings"
+  title: string = "Settings",
+  isRTL: Boolean = false
 ) => ({
   key: "settings",
   title: title,
@@ -43,7 +44,7 @@ export const getSettingsItem = (
     { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: true },
     { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: true },
     { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: true },
-    { title: t("appBar.logout"), onClick: logout, iconSrc: HiArrowRight, isFaIcon: true, isShow: true },
+    { title: t("appBar.logout"), onClick: logout, iconSrc: isRTL ? HiArrowLeft : HiArrowRight, isFaIcon: true, isShow: true },
   ],
 });
 
@@ -342,7 +343,7 @@ export const getRoutes = (
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
         { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
         { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },
-        { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: false },
+        { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: true },
         { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: true },
         { title: t('master.RadMenuItemResource16.Text'), href: `${rootDomain}/CampaignComparison.aspx?fromreact=true`, isShow: false },
         { key: 'recipientReport', title: t('master.RadMenuItemResource18.Text'), href: `${sitePrefix}Reports/Recipient`, isShow: true },

@@ -187,8 +187,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		typeOfAction: 'phonenumber',
 		fields: phoneNumberField,
 	};
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const { isRTL, windowSize } = useSelector((state: { core: coreProps }) => state.core);
 	// const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [campaignName, setCampaignName] = useState<string>('');
@@ -295,6 +295,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				if (!SubAccountSettings?.DomainAddress) {
 					dispatch(getCommonFeatures());
 				}
+				setIsAccountSetup(true);
 			} else {
 				setIsLoader(false);
 				setIsAccountSetup(false);

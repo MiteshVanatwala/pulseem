@@ -50,6 +50,8 @@ import { CreditType } from "../../../Models/Payments/NoCreditPopUp";
 import DynamicConfirmDialog from "../../../components/DialogTemplates/DynamicConfirmDialog";
 import { BsInfoCircle } from "react-icons/bs";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelper";
+import { sitePrefix } from "../../../config";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -182,6 +184,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [reCheckAuth, setRecheckAuth] = useState(false);
     const [noCreditLeft, setNoCreditLeft] = useState(false);
     const [showDeleteSmsMarketingDialog, setShowDeleteSmsMarketingDialog] = useState(false);
+    const [domainIsAllowed, setDomainIsAllowed] = useState(true);
     const MAX_UPLOAD_LIMITATION = 5000;
 
     useEffect(() => {
@@ -192,11 +195,25 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setTotalClientsToSend(total);
     }, [selectedGroups]);
 
+    useEffect(() => {
+        if ((verifiedEmails && verifiedEmails?.length > 0) && (newsletterInfo && newsletterInfo?.CampaignID > 0)) {
+            const email = verifiedEmails.filter((email) => {
+                return email?.Number === newsletterInfo.FromEmail;
+            });
+
+            if (!email[0]?.IsVerified && !IsSharedDomain(newsletterInfo?.FromEmail)) {
+                setDomainIsAllowed(false);
+                // navigate('/react/campaigns')
+            }
+        }
+
+    }, [verifiedEmails, newsletterInfo])
+
     //#region Email Authentication
 
     const checkEmailAuth = () => {
         const isVerified = verifiedEmails.filter((email) => {
-            return email?.Number === newsletterInfo.FromEmail;
+            return email?.Number === newsletterInfo.FromEmail || IsSharedDomain(newsletterInfo.FromEmail);
         });
         setIsEmailVerified(isVerified?.length > 0);
         setNewEmailVerification(isVerified?.length <= 0);
@@ -445,10 +462,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         if (r.payload.StatusCode === 201) {
             const isVerified = verifiedEmails.filter((email) => {
-                return email?.Number === newsletterInfo.FromEmail;
+                return email?.Number === newsletterInfo.FromEmail || IsSharedDomain(newsletterInfo.FromEmail);
             });
             onSaveSettings(true, groupId.toString()).then(async () => {
-                if (isEmailVerified || isVerified?.length > 0) {
+                if (isEmailVerified || isVerified?.length > 0 || IsSharedDomain(newsletterInfo?.FromEmail)) {
                     setLoader(true);
                     await dispatch(getSendSummary(params?.id));
                     setDialogType({ type: 'SummaryDialog', IsQuickSend: true });
@@ -969,11 +986,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 classes,
                 onBackToCampaigns: () => {
                     setDialogType(null);
-                    navigate('/react/campaigns');
+                    navigate(`${sitePrefix}campaigns`);
                 },
                 onBackToHome: () => {
                     setDialogType(null);
-                    navigate('/react');
+                    navigate(`${sitePrefix}`);
                 }
             }),
             summary: ConfirmationDialog({ classes: classes, count: data }),
@@ -1085,9 +1102,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <Title
                 Element={(
                     <Box className='stepHead'>
-                        <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
-                            <span>2</span>
-                        </Stack>
                         <Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
                             <span className={'stepTitle'}>
                                 {t("mainReport.sendSetting")}
@@ -1262,6 +1276,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                         style={{
                                                             display: "flex",
                                                             marginTop: "10px",
+                                                            marginBottom: "10px",
                                                         }}
                                                         direction="row"
                                                     >
@@ -1371,7 +1386,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             <Box className={{ [classes.disabled]: newsletterInfo.IsDeleted }}>
                                 <WizardActions
                                     classes={classes}
-                                    onBack={{
+                                    onBack={newsletterSettings?.Status === 1 && {
                                         callback: () => { handlePreviousPage() }
                                     }}
                                     onDelete={newsletterSettings?.Status === 1 && onHandleDelete}
@@ -1512,6 +1527,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel={() => setDialogType(null)}
                 onConfirm={() => handleConfirmC()}
             />}
+            <DynamicConfirmDialog
+                classes={classes}
+                isOpen={!domainIsAllowed}
+                title={t('campaigns.newsLetterMgmt.payAttention')}
+                text={t('common.domainVerification.sendSettings.domainNotVerified')}
+                onConfirm={() => {setDomainIsAllowed(true); navigate('/react/campaigns')}}
+                onClose={() => {setDomainIsAllowed(true); navigate('/react/campaigns')}}
+                confirmButtonText={t('common.domainVerification.sendSettings.backToCampaigns')}
+            />
             <Loader isOpen={showLoader} />
         </DefaultScreen>
     )

@@ -17,12 +17,14 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { fileTypes } from '../../Constant';
 import { checkLanguage, getFileType, getTextDirection } from '../../Common';
+import clsx from 'clsx';
 
 const WhatsappMobilePreview = ({
 	classes,
 	templateData,
 	buttonType,
 	fileData,
+	templateId = '',
 }: whatsappMobilePreviewProps) => {
 	const { templateText, templateButtons } = templateData;
 	const { t: translator } = useTranslation();
@@ -82,6 +84,14 @@ const WhatsappMobilePreview = ({
 	};
 	return (
 		<Box className={classes.phoneDiv}>
+			{
+				templateId !== '' && (
+					<>
+						<div className={classes.bold}>{translator('common.templateId')}:</div>
+						<div className={clsx(classes.pt5, classes.pb15)}>{templateId}</div>
+					</>
+				)
+			}
 			<div className={classes.whatsappPhoneImg}>
 				<div className={classes.whatsappMobileSection}>
 					<div className={`${classes.whatsappMobileMarvelDevice} nexus5`}>

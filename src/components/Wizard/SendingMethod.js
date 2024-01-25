@@ -342,10 +342,11 @@ const SendingMethod = ({
                                     style={{
                                         marginTop: 10,
                                         pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
+                                        width: windowSize === "xs" ? '100%' : ''
                                     }}
                                 >
                                     <FormControl
-                                        className={clsx(classes.selectInputFormControl, classes.w100, classes.mb10)}
+                                        className={clsx(classes.selectInputFormControl, windowSize !== 'xs' ? classes.w100 : '', classes.mb10)}
                                     >
                                         <Select
                                             variant="standard"

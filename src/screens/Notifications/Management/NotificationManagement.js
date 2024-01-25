@@ -751,12 +751,11 @@ const NotificationManagement = ({ classes }) => {
           size='small'
           onClick={handleDialogClose}
           className={clsx(
-            classes.confirmButton,
             classes.btn,
             classes.btnRounded,
             classes.middle
           )}>
-          {t('common.confirm')}
+          {t('common.Ok')}
         </Button>
       )
     };

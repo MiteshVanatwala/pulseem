@@ -608,17 +608,18 @@ const MmsManagnentScreen = ({ classes }) => {
             })}
         </Box>
       ),
-      renderButtons: () => (
+      renderButtons: () => (<Box className={clsx(classes.dFlex, classes.flexCenter)}>
         <Button
           variant='contained'
           size='small'
           onClick={handleClose}
           className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded
           )}>
-          {t('common.Ok')}
+          {t('common.close')}
         </Button>
+      </Box>
       )
     }
   }
@@ -661,6 +662,7 @@ const MmsManagnentScreen = ({ classes }) => {
       childrenPadding: false,
       contentStyle: classes.pt2rem,
       isMMS: true,
+      title: `${t('notifications.preview')} - ${t('common.campaignID')}: ${data.MmsCampaignID}`,
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -679,18 +681,18 @@ const MmsManagnentScreen = ({ classes }) => {
           />
         </Box>
       ),
-      renderButtons: () => (
+      renderButtons: () => (<Box className={clsx(classes.dFlex, classes.flexCenter)}>
         <Button
           variant='contained'
           size='small'
           onClick={handleClose}
           className={clsx(
-            classes.confirmButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded
           )}>
-          {t('common.confirm')}
+          {t('common.close')}
         </Button>
-      )
+      </Box>)
     };
   }
 

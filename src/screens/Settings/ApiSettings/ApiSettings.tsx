@@ -28,6 +28,7 @@ import { BiExport } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import PulseemRadio from '../../../components/Controlls/PulseemRadio';
 import InputMask from 'react-input-mask';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -59,6 +60,7 @@ const ApiSettings = ({ classes }: any) => {
     const dispatch = useDispatch();
     const { isRTL, windowSize } = useSelector((state: any) => state.core);
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
+    const { accountFeatures } = useSelector((state: any) => state.common);
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setShowLoader] = useState(false);
     const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
@@ -72,6 +74,7 @@ const ApiSettings = ({ classes }: any) => {
     const [copyStatus, setCopyStatus] = useState<boolean>(false);
     const [showRegenerate, setShowRegenerate] = useState<boolean>(false);
     const [isMainApi, setIsMainApi] = useState<boolean>(true);
+    const [APIKeyRestrictionDialog, setAPIKeyRestrictionDialog] = useState<boolean>(false);
 
     const localClasses = useStyles();
 
@@ -170,6 +173,8 @@ const ApiSettings = ({ classes }: any) => {
             label: t("settings.apiSettings.directApi"),
         }
     ];
+
+    const APIFeatureAllowed = () => accountFeatures && ((isMainApi && accountFeatures?.indexOf(PulseemFeatures.UI_API) > -1) || (!isMainApi && accountFeatures?.indexOf(PulseemFeatures.DIRECT_API) > -1));
 
     return (
         <DefaultScreen
@@ -314,7 +319,10 @@ const ApiSettings = ({ classes }: any) => {
                                                         style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
                                                         children={
                                                             <Button
-                                                                onClick={() => setShowApiKey(!showApiKey)}
+                                                                onClick={() => {
+                                                                    if (APIFeatureAllowed()) setShowApiKey(!showApiKey)
+                                                                    else setAPIKeyRestrictionDialog(true);
+                                                                }}
                                                                 className={localClasses.pwdEveButton}
                                                                 startIcon={<div className={classes.copyIcon}>{showApiKey ? (
                                                                     <VisibilityOff style={{ fontSize: 18 }} />
@@ -340,7 +348,10 @@ const ApiSettings = ({ classes }: any) => {
                                                         style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
                                                         children={
                                                             <Button
-                                                                onClick={() => setShowRegenerate(true)}
+                                                                onClick={() => {
+                                                                    if (APIFeatureAllowed()) setShowRegenerate(true)
+                                                                    else setAPIKeyRestrictionDialog(true);
+                                                                }}
                                                                 className={localClasses.pwdEveButton}
                                                                 startIcon={<div className={classes.copyIcon}>{<HiOutlineRefresh style={{ fontSize: 18 }} />}</div>}
                                                             >
@@ -361,7 +372,10 @@ const ApiSettings = ({ classes }: any) => {
                                                         title={RenderHtml(t("notifications.copy"))}
                                                         style={{ maxWidth: 'unset !important', textOverflow: 'unset !important', overflow: 'unset !important', direction: isRTL ? 'rtl' : 'ltr' }}
                                                         children={
-                                                            <CopyToClipboard text={apiKey} onCopy={handleCopyScript}>
+                                                            <CopyToClipboard text={apiKey} onCopy={() => {
+                                                                if (APIFeatureAllowed()) handleCopyScript()
+                                                                else setAPIKeyRestrictionDialog(true);
+                                                            }}>
                                                                 <Button
                                                                     className={localClasses.pwdEveButton}
                                                                     startIcon={<div className={classes.copyIcon}>{copyStatus ? '\uE134' : '\ue0b0'}</div>}
@@ -400,7 +414,7 @@ const ApiSettings = ({ classes }: any) => {
                         {/* Explanations */}
                         <Box className={classes.mt25} style={{ maxWidth: 768 }}>
                             {RenderHtml(t('settings.apiSettings.mainApiExplainTitle'))}
-                            {RenderHtml(t('settings.apiSettings.mainApiExplainDesc'))}
+                            {RenderHtml(t('settings.apiSettings.mainApiExplainDesc').replace(!isMainApi ? 'ui-api' : '', !isMainApi ? 'api' : ''))}
                         </Box>
                     </Box>
                 </Box>
@@ -421,6 +435,17 @@ const ApiSettings = ({ classes }: any) => {
                 title={t('integrations.apiKey')}
             >
                 {RenderHtml(t('settings.apiSettings.reGenerateConfirm'))}
+            </BaseDialog>}
+            {APIKeyRestrictionDialog && <BaseDialog
+                classes={classes}
+                open={APIKeyRestrictionDialog}
+                onClose={() => setAPIKeyRestrictionDialog(false)}
+                onCancel={() => setAPIKeyRestrictionDialog(false)}
+                onConfirm={() => setAPIKeyRestrictionDialog(false)}
+                showDefaultButtons={false}
+                title={t('common.Notice')}
+            >
+                {RenderHtml(t('settings.apiSettings.noAPIKeyAccess'))}
             </BaseDialog>}
             {tfaEmailVerification && <VerificationDialog
                 variant="emailTFA"

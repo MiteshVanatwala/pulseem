@@ -17,7 +17,7 @@ import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus } from '../../../helpers/Constants';
+import { EmailStatus, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
@@ -80,7 +80,7 @@ const NewslettersReport = ({ classes }) => {
       }),
     },
     OpenCount: {
-      title: windowSize === 'xs' ? t('common.Total') : t('mainReport.GridButtonColumnResource1.HeaderText'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? t('common.Total') : t('mainReport.GridButtonColumnResource1.HeaderText'),
       href: ``,
       clickable: false
     },
@@ -100,7 +100,7 @@ const NewslettersReport = ({ classes }) => {
       clickable: true
     },
     ClickCount: {
-      title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? t('common.Total') : t('common.Clicks'),
       href: ``,
       clickable: false
     },
@@ -112,7 +112,7 @@ const NewslettersReport = ({ classes }) => {
       // onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
     },
     RemovedClients: {
-      title: windowSize === 'xs' ? '' : t('common.Removed'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('common.Removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -127,7 +127,7 @@ const NewslettersReport = ({ classes }) => {
       }),
     },
     SendError: {
-      title: windowSize === 'xs' ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
       onClick: () => { window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true` }
       // onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -159,7 +159,7 @@ const NewslettersReport = ({ classes }) => {
       clickable: false
     },
     NotOpened: {
-      title: windowSize === 'xs' ? '' : t("mainReport.GridButtonColumnResource3.HeaderText"),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("mainReport.GridButtonColumnResource3.HeaderText"),
       href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -387,7 +387,7 @@ const NewslettersReport = ({ classes }) => {
       <Grid
         container
         spacing={2}
-        className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
+        className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant="standard"
@@ -469,8 +469,7 @@ const NewslettersReport = ({ classes }) => {
           <Button
             className={clsx(
               classes.btn,
-              classes.btnRounded,
-              newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
+              classes.btnRounded
             )}
             onClick={() => setDialog('exportFormat')}
             disabled={isSearching && !searchResults?.length}
@@ -552,7 +551,7 @@ const NewslettersReport = ({ classes }) => {
     const showUpdateDate = LastEditDate ? udate.format('L') : '';
     const showTimeUpdate = LastEditDate ? udate.format('LT') : '';
 
-    if (windowSize === 'xs') {
+    if (SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1) {
       return (
         <>
           <Typography noWrap={false} className={classes.nameEllipsis}>
@@ -576,7 +575,7 @@ const NewslettersReport = ({ classes }) => {
     }
     return (
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-        <Grid item className={clsx(windowSize !== 'xs' && classes.w20)}>
+        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && classes.w20)}>
           {isChecked && <Checkbox
             color='primary'
             checked={toFileArray.includes(CampaignID)}
@@ -589,7 +588,7 @@ const NewslettersReport = ({ classes }) => {
             }}
           />}
         </Grid>
-        <Grid item className={clsx(windowSize !== 'xs' ? classes.w80 : '', 'rowTitle')}>
+        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? classes.w80 : '', 'rowTitle')}>
           <Tooltip
             arrow
             title={row.Name}
@@ -685,7 +684,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), onClick, textStyle = null, isRevenueCol = false } = data
+    const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? '' : t("notifications.tblBody.total"), onClick, textStyle = null, isRevenueCol = false } = data
     const isLink = (value > 0 && clickable) || isRevenueCol;
     return (
       <Box className={classes.cellText}
@@ -966,7 +965,7 @@ const NewslettersReport = ({ classes }) => {
       return (
         <TableBody>
           {rowData
-            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+            .map(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
         </TableBody>
       )
     }
@@ -979,7 +978,7 @@ const NewslettersReport = ({ classes }) => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {windowSize !== 'xs' && renderTableHead()}
+          {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>

@@ -255,10 +255,23 @@ export const newsletterSlice = createSlice({
       CAMPAIGN_DELETED_SUCCESS: { severity: 'success', color: 'success', message: "campaigns.newsLetterEditor.sendSettings.deleted", showAnimtionCheck: false },
       GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
       FUTURE_DATE_PASSED: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.FUTURE_DATE_PASSED', showAnimtionCheck: false },
+    },
+    domainVerificationPopUp: {
+      domain: {
+        display: false,
+        address: ''
+      }
     }
     //archiveDirectNewsletterReport: []
   },
-  reducers: {},
+  reducers: {
+    setVerificationDomain: (state, action) => {
+      state.domainVerificationPopUp = action.payload;
+    },
+    resetNewsletterInfo: (state, action) => {
+      state.newsletterInfo = [];
+    }
+  },
   extraReducers: builder => {
     builder.addCase(getNewslatterData.fulfilled, (state, { payload }) => {
       state.newslettersData = payload.filter(row => !row.IsDeleted)
@@ -317,5 +330,5 @@ export const newsletterSlice = createSlice({
 })
 
 
-
+export const { setVerificationDomain, resetNewsletterInfo } = newsletterSlice.actions
 export default newsletterSlice.reducer

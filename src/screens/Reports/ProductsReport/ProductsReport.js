@@ -177,10 +177,9 @@ const ProductsReport = ({ classes }) => {
                 <Grid item>
                     <TextField
                         variant='outlined'
-                        size='small'
                         value={searchData.ProductName ?? ''}
                         onChange={(e) => setSearchData({ ...searchData, ProductName: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
+                        className={clsx(classes.textField, classes.minWidth252, classes.h100)}
                         placeholder={t('report.ProductsReport.prodName')}
                     />
                 </Grid>
@@ -193,7 +192,7 @@ const ProductsReport = ({ classes }) => {
                             labelId="category"
                             id="category"
                             multiple
-                            style={{ minWidth: 300 }}
+                            style={{ minWidth: windowSize !== 'xs' ? 300 : 200 }}
                             value={searchData.CategoryID}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             inputProps={{
@@ -283,7 +282,9 @@ const ProductsReport = ({ classes }) => {
         )
     }
 
-    const renderIntData = (value, data = {}) => {
+    const colorTextStyle = { red: classes.textColorRed, blue: classes.textColorBlue, green: classes.sendIconText, grey: classes.textColorGrey };
+
+    const renderIntData = (value, data = {}, type = null) => {
         const {
             // title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), 
             // href = '', 
@@ -293,7 +294,7 @@ const ProductsReport = ({ classes }) => {
             <Box style={{ display: 'flex', flexDirection: 'column' }} >
                 <Typography component={'p'}
                     onClick={() => onClick?.()}
-                    className={clsx(classes.middleText,
+                    className={clsx(classes.middleText, colorTextStyle[type],
                         (onClick && value > 0) ? classes.link : '')}
                     target="_blank">
                     {value?.toLocaleString() ?? '0'}
@@ -371,8 +372,71 @@ const ProductsReport = ({ classes }) => {
         )
     }
 
+
     const renderPhoneRow = (row) => {
-        return <></>
+        const {
+            ProductId,
+            ImageURL,
+            ProductName,
+            Price,
+            Purchased,
+            Abandoned,
+            TotalRevenue,
+            uniqueKey
+        } = row
+        const hrefs = getHrefs(ProductId)
+        return (
+            <TableRow
+                key={uniqueKey}
+                classes={rowStyle}
+                style={{ justifyContent: 'left' }}>
+                <TableCell
+                    classes={cellBodyStyle}
+                    className={classes.w100}
+                >
+                    <Grid container spacing={2}>
+                        <Grid item sm={4} xs={4}>
+                            <LazyBackground
+                                style={{ backgroundSize: 'contain', height: 70, minWidth: 70, width: 70 }}
+                                url={ImageURL}
+                                title={ProductName}
+                            />
+                        </Grid>
+                        <Grid item sm={8} xs={8}>
+                            <Typography className={clsx(classes.bold, classes.ellipsisText, classes.f14)}>
+                                {ProductName}
+                            </Typography>
+                            <Typography className={clsx(classes.pt5, classes.f14, classes.semibold)}>
+                                <span className={classes.bold}>{t("report.ProductsReport.price")}:</span> {Price}
+                            </Typography>
+
+                            <Grid container className={classes.pt5}>
+                                <Grid item xs={6} sm={6}>
+                                    <Typography className={clsx(classes.f14, classes.bold)}>{t("client.Purchased")}</Typography>
+                                    <Typography className={clsx(colorTextStyle.blue, classes.elipsis)}>
+                                        {renderIntData(Purchased, Purchased > 0 && hrefs.Purchased, 'blue')}
+                                    </Typography>
+                                </Grid>
+                                
+                                <Grid item xs={6} sm={6}>
+                                    <Typography className={clsx(classes.f14, classes.bold)}>{t("report.ProductsReport.abandoned")}</Typography>
+                                    <Typography className={clsx(colorTextStyle.red, classes.elipsis)}>
+                                        {renderIntData(Abandoned, Abandoned > 0 && hrefs.Abandoned, 'red')}
+                                    </Typography>
+                                </Grid>
+                                
+                                <Grid item xs={6} sm={6} className={classes.pt5}>
+                                    <Typography className={clsx(classes.f14, classes.bold)}>{t("client.totalRevenue")}</Typography>
+                                    <Typography className={clsx(classes.elipsis)}>
+                                        {renderIntData(TotalRevenue, hrefs.TotalRevenue, 'green')}
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </TableCell>
+            </TableRow>
+        )
     }
 
     const handleRowsPerPageSearching = (val) => {
@@ -401,7 +465,7 @@ const ProductsReport = ({ classes }) => {
                         className: windowSize === "xs" && classes.dNone,
                     }}
                 >
-                    <Box className='tableBodyContainer groupsTable'>
+                    <Box className='tableBodyContainer'>
                         <TableBody>
                             {productsReportDetails?.Products
                                 .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}

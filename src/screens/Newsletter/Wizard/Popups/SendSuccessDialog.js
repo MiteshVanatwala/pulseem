@@ -1,8 +1,6 @@
 import { Box, Typography, Button, Grid } from '@material-ui/core'
 import clsx from 'clsx';
-import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux';
 import Gif from "../../../../assets/images/managment/check-circle.gif";
 
 const SendSuccessDialog = ({
@@ -11,7 +9,7 @@ const SendSuccessDialog = ({
     onBackToHome = () => null
 }) => {
     const { t } = useTranslation()
-    const { isRTL } = useSelector((state) => state.core);
+
     return {
         showDivider: false,
         disableBackdropClick: true,
@@ -57,8 +55,12 @@ const SendSuccessDialog = ({
                 </Grid>
             </Box>
         ),
+        onCancel: () => { onBackToCampaigns() },
+        onClose: () => { onBackToCampaigns() },
         renderButtons: false,
         showDefaultButtons: false,
+        onCancel: () => onBackToCampaigns(),
+        onClose: () => onBackToCampaigns(),
         exit: true
     }
 }

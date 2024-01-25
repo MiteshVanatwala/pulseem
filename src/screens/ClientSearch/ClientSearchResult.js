@@ -1353,7 +1353,7 @@ const ClientSearchResult = ({ classes }) => {
     let date = null;
     const { FirstName, LastName, CreationDate } = row;
     let text = t("common.UpdatedOn");
-    date = moment(CreationDate, dateFormat);
+    date = CreationDate ? moment(CreationDate, dateFormat) :  null;
     return (
       <>
         {
@@ -1387,7 +1387,7 @@ const ClientSearchResult = ({ classes }) => {
           )
         }
         <Typography className={classes.grayTextCell}>
-          {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+          {date ? `${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}` : text}
         </Typography>
       </>
     );
@@ -1661,10 +1661,10 @@ const ClientSearchResult = ({ classes }) => {
     
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
-        return t(ConvertClientStatus(Status, SourceType.EMAIL))
+        return t(ConvertClientStatus(SourceType.EMAIL, Status))
       }
       else if (Cellphone && !isEmail && Cellphone !== '') {
-        return t(ConvertClientStatus(SmsStatus, SourceType.SMS))
+        return t(ConvertClientStatus(SourceType.SMS, SmsStatus))
       }
       return t("emailStatus.noStatus")
     }
@@ -1692,9 +1692,11 @@ const ClientSearchResult = ({ classes }) => {
           </Box>
           <Box className={clsx(classes.mt5)} style={{ maxWidth: '90%' }}>
             <Box className={classes.flex}>
-              <Box className={clsx(classes.flex6)}>
+              <Box className={clsx(classes.flex6, classes.w60)}>
                 <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
-                <Typography >{Email}</Typography>
+                <Typography className={classes.elipsis}>
+                  {Email}
+                </Typography>
               </Box>
               <Box className={clsx(classes.flex4)}>
                 <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(true)}</Typography>

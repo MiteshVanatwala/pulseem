@@ -210,7 +210,7 @@ const SmsSummary = ({ classes,
         </Box> : null}
         <Grid
           container
-          spacing={4}
+          // spacing={4}
           className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
           <Grid item>
             <Button

@@ -719,6 +719,19 @@ const SmsManagnentScreen = ({ classes }) => {
 						);
 					})}
 				</Box>
+			),
+			renderButtons: () => (<Box className={clsx(classes.dFlex, classes.flexCenter)}>
+				<Button
+					variant='contained'
+					size='small'
+					onClick={handleClose}
+					className={clsx(
+						classes.btn,
+						classes.btnRounded
+					)}>
+					{t('common.close')}
+				</Button>
+			</Box>
 			)
 		};
 	};

@@ -33,9 +33,9 @@ const barHeight = {
 const tipsFontSize = {
   xs: 13,
   sm: 13,
-  md: 11,
-  lg: 13,
-  xl: 13,
+  md: 15,
+  lg: 15,
+  xl: 15,
 };
 
 const shortcutFontSize = {
@@ -184,15 +184,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     flexDirection: "column",
     minWidth: 50,
     padding: 10,
-    "@media screen and (max-width: 1240px)": {
-      padding: "0px 5px",
-    },
-    "@media screen and (max-width: 1110px)": {
-      padding: "0px 10px",
-    },
-    "@media screen and (max-width: 475px)": {
-      padding: 10,
-    }
   },
   tableRowRoot: {
     display: "flex",
@@ -274,6 +265,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 18,
     overflow: "hidden",
     color: "#333",
+    "@media screen and (min-width: 599px) and (max-width: 1280px)": {
+      paddingLeft: 5,
+      paddingRight: 5,
+    },
     "@media screen and (max-width: 1366px)": {
       fontSize: 15,
     },
@@ -799,7 +794,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tablePaginationSelect: {
     '& svg': {
       color: '#F65026',
-      marginLeft: -30,
+      marginLeft: isRTL ? 0 : -30,
+      marginRight: isRTL ? 30 : 0,
       fontSize: 20,
       top: 5,
     },
@@ -1385,7 +1381,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     lineHeight: 1,
     color: '#FF0054',
     textDecoration: 'none',
-    paddingInlineEnd:30,
+    paddingInlineEnd: 30,
     paddingInlineStart: 16
   },
   categoryLabel: {
@@ -1428,7 +1424,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "space-between",
     width: "80%",
     position: "absolute",
-    top: "calc(72% - 24px)",
+    top: "60%",
     zIndex: 1,
   },
   carouselTips: {
@@ -1580,6 +1576,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 400,
     fontSize: '1.1rem',
     lineHeight: "2.1rem",
+    padding: '0px 15px',
+    display: 'inline-block'
   },
   bulkContent: {
     fontWeight: 300,
@@ -1594,6 +1592,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 20,
   },
   dashboardTopPaper: {
+    paddingBottom: 10,
     [theme.breakpoints.up("lg")]: {
       minHeight: 330,
     },
@@ -1949,6 +1948,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   cellText: {
     display: "flex",
     flexDirection: "column",
+    "@media screen and (min-width: 599px) and (max-width: 958px)": {
+      flexDirection: "row",
+    },
     "& a, & p": {
       lineHeight: "1.1",
     },
@@ -1979,7 +1981,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
   hideInMiddleScreen: {
-    "@media screen and (max-width: 1170px) and (min-width: 768px)": {
+    "@media screen and (max-width: 1170px) and (min-width: 958px)": {
       display: "none",
       minWidth: 0,
       padding: 0,
@@ -2152,8 +2154,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       '&.firstSlide': {
         '& .contactDataBox': {
           overflowX: 'clip',
-          overflowY: 'auto',
-          height: 'calc(100% - 80px)'
+          overflowY: 'auto'
         },
         '& .emailBox': {
           '& span': {
@@ -2249,7 +2250,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tablePadington: {
     '& .MuiSelect-select.MuiSelect-select': {
       paddingRight: !isRTL ? 25 : 0,
-      paddingLeft: 0,
+      paddingLeft: !isRTL ? 0 : 25,
       // paddingInlineEnd: isRTL ? 0 : 15,
       width: 50,
       textAlign: 'center'

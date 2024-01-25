@@ -45,13 +45,16 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-// import Templates from './modals/Templates.tsx';
-// import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
-// import SaveTemplate from './modals/SaveTemplate';
+// // import Templates from './modals/Templates.tsx';
+// // import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
+// // import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 import { sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
+import DomainVerification from '../../Shared/Dialogs/DomainVerification';
+import { SharedEmailDomain } from '../../config';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -68,7 +71,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
-  const { tokenAlive, accountSettings, accountFeatures } = useSelector(state => state.common)
+  const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -91,6 +94,17 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   // const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
   // const [newTemplate, setNewTemplate] = useState('');
+  const [domainAddressError, setDomainAddressError] = useState({
+    display: false,
+    address: '',
+    verifySharedCallback: null,
+    isSummary: false,
+    isFullDescription: false,
+    preText: '',
+    showSkip: false
+  });
+  const [showDomainVerification, setShowDomainVerification] = useState(false);
+  const [emailProps, setEmailProps] = useState(null);
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -155,6 +169,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         window.location.reload(true);
       } else getData();
     }
+    // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    // dispatch(getAllTemplatesBySubaccountId());
     // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
     // dispatch(getAllTemplatesBySubaccountId());
   }, []);
@@ -228,12 +244,24 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getUserblocks());
+    await dispatch(getAuthorizedEmails());
+    await dispatch(getAuthorizedEmails());
     setDataReady(true);
     const initBeeToken = () => {
       dispatch(getBeeToken());
     }
     initBeeToken();
   }
+
+  const initRestrictions = async () => {
+    const subAccountEmails = verifiedEmails?.filter((ve) => { return ve?.Number === campaign.FromEmail })[0];
+    setEmailProps(subAccountEmails);
+  }
+  useEffect(() => {
+    if (campaign && campaign.CampaignID && verifiedEmails?.length > 0) {
+      initRestrictions();
+    }
+  }, [campaign, verifiedEmails]);
   //#region Init Bee Token & Configuration
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
@@ -273,14 +301,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       // if (templateId !== null) {
       //   const templateResponse = await dispatch(getTemplateById(templateId));
 
-      //   if (templateResponse?.payload?.StatusCode === 201) {
-      //     const responseData = templateResponse?.payload?.Data;
-      //     setNewTemplate(responseData)
-      //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
-      //   } else {
-      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
-      //   }
-      // }
+      // //   if (templateResponse?.payload?.StatusCode === 201) {
+      // //     const responseData = templateResponse?.payload?.Data;
+      // //     setNewTemplate(responseData)
+      // //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+      // //   } else {
+      // //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+      // //   }
+      // // }
 
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
@@ -564,10 +592,32 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
   }
   const handleOpenTestSend = () => {
-    saveDesign(false, null, false).then(async (r) => {
-      setIsResponseModal(false);
-      editorRef.current.send();
-    });
+    const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+    if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
+      const domainErrorObj = {
+        display: false,
+        address: campaign.FromEmail,
+        verifySharedCallback: null,
+        isSummary: false,
+        isFullDescription: false,
+        preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
+        showSkip: false,
+        options: [{
+          text: t('common.CampaignSettings'),
+          onCallback: () => {
+            window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+          }
+        }]
+      }
+      setDomainAddressError(domainErrorObj);
+      setShowDomainVerification(true)
+    }
+    else {
+      saveDesign(false, null, false).then(async (r) => {
+        setIsResponseModal(false);
+        editorRef.current.send();
+      });
+    }
   }
 
   // const handleAutoSave = () => {
@@ -691,9 +741,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   //       variant='contained'
   //       size='medium'
   //       className={clsx(
-  //         classes.btn,
-  //         classes.btnRounded,
-  //         classes.backButton
+  //         classes.actionButton,
+  //         classes.actionButtonOutlinedBlue
   //       )}
   //       style={{ margin: '8px' }}
   //     >
@@ -703,9 +752,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   //       variant='contained'
   //       size='medium'
   //       className={clsx(
-  //         classes.btn,
-  //         classes.btnRounded,
-  //         classes.backButton
+  //         classes.actionButton,
+  //         classes.actionButtonOutlinedBlue,
   //       )}
   //       style={{ margin: '8px' }}
   //       startIcon={<BiSave />}
@@ -730,7 +778,33 @@ const CampaignEditor = ({ classes, ...props }) => {
           color="primary"
         >{t("common.save")}
         </Button>
-        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={saveDesign}
+        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
+           saveDesign(false, null, false);
+          const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
+          if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
+            const domainErrorObj = {
+              display: false,
+              address: campaign.FromEmail,
+              verifySharedCallback: null,
+              isSummary: false,
+              isFullDescription: false,
+              preText: t(`common.domainVerification.campaignEditor.${emailProps?.IsRestricted ? 'restricted' : 'nonVerified'}.preText`).replace('##campaignId##', campaign.CampaignID),
+              showSkip: false,
+              options: [{
+                text: t('common.CampaignSettings'),
+                onCallback: () => {
+                  window.location = `/react/Campaigns/Create/${campaign.CampaignID}`
+                }
+              }]
+            }
+            setDomainAddressError(domainErrorObj);
+            setShowDomainVerification(true)
+          }
+          else {
+            saveDesign(true);
+          }
+
+        }}
           variant='contained'
           size='medium'
           className={clsx(
@@ -853,6 +927,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       {/* <OverwriteTemplatePopUp
+      {/* <OverwriteTemplatePopUp
         classes={classes}
         onClose={(resp) => {
           if (resp) {
@@ -871,6 +946,15 @@ const CampaignEditor = ({ classes, ...props }) => {
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
       /> */}
+      <DomainVerification
+        classes={classes}
+        domain={domainAddressError}
+        forceShow={showDomainVerification}
+        key={"fromBeeEditor"}
+        onClose={() => {
+          setShowDomainVerification(false)
+        }}
+      />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
   )

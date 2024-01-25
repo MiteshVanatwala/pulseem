@@ -94,9 +94,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [codeExpirationTime, setCodeExpirationTime] = useState<number | undefined>(0);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
@@ -134,6 +134,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						setIsLoader(false);
 					}
 				});
+				setIsAccountSetup(true);
 			} else {
 				setIsLoader(false);
 				setIsAccountSetup(false);
@@ -562,6 +563,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			if (templateData?.payload?.Data?.Data && templates) {
 				const templateData = templates?.Data;
 				const templateName = templates?.FriendlyTemplateName || '';
+				setCategory(templates?.CategoryId === 3 ? (templates?.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW) : categoryName[templates?.CategoryId || 1]);
 				if (templateData) {
 					setUpdatedTemplateData(templateData);
 				}
@@ -577,7 +579,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					setTemplateData(updatedTemplateData);
 					setButtonType(updatedButtonType);
 				}
-				setCategory(templates?.CategoryId === 3 ? (templates?.Language === 'en' ? authenticationTypes.AUTHENTICATIONEN : authenticationTypes.AUTHENTICATIONHEBREW) : categoryName[templates?.CategoryId || 1]);
 				if (updatedTemplateData?.templateButtons?.length > 0) {
 					if (updatedButtonType === buttonTypes.QUICK_REPLY) {
 						setQuickReplyButtons(updatedTemplateData.templateButtons);

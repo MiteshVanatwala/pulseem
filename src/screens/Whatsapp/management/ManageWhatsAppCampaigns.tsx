@@ -134,7 +134,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
 		[]
@@ -188,6 +188,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					});
 				}
 				setIsAccountSetup(true);
+			} else {
+				setIsAccountSetup(false);
 			}
 			setIsLoader(false);
 		})();
@@ -523,7 +525,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						onSavedTemplateChange(templateData?.Data);
 					}
 				}
-				setDialogType({type: 'preview'})
+				setDialogType({type: 'preview', data: previewTemplateId})
 			} else {
 				templateData?.payload?.Message
 					? setToastMessage({
@@ -880,7 +882,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		/>
   })
 
-	const getPreviewDialog = () => ({
+	const getPreviewDialog = (templateId: string) => ({
     title: translator('whatsappManagement.preview'),
     showDivider: false,
     content: (
@@ -890,15 +892,30 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					templateData={templateData}
 					buttonType={buttonType}
 					fileData={fileData}
+					templateId={templateId}
 				/>
 			</Box>
     ),
-    onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-    }
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={4}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						variant='contained'
+						size='small'
+						onClick={() => { setDialogType(null) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded
+						)}>
+						{translator('common.Ok')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
   })
 	
 	const getGroup = () => ({
@@ -960,7 +977,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
   }
 
 	const renderDialog = () => {
-    const { type } = dialogType || {}
+    const { type, data } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'duplicate') {
     	currentDialog = getDuplicateDialog();
@@ -969,7 +986,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
 		} else if (type === 'preview') {
-			currentDialog = getPreviewDialog();
+			currentDialog = getPreviewDialog(data);
 		} else if (type === 'restoreDeleted') {
 			currentDialog = getRestoreDeletedDialog();
 		}

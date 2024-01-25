@@ -364,7 +364,7 @@ const VerificationDialog = ({
                         </Typography>
                         <Divider />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
+                    <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }} >
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.pb15}>
                             <Typography className={clsx(classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                             <Button
@@ -551,7 +551,7 @@ const VerificationDialog = ({
                         </Typography>
                         <Divider />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
+                    <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }} >
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.mb15}>
                             <Typography className={clsx(classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
                             <Button
@@ -736,7 +736,7 @@ const VerificationDialog = ({
                         </Typography>
                         <Divider style={{ marginTop: 15 }} />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
+                    <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }} >
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.pb15}>
                             <Typography className={clsx(classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
                             <Button
@@ -947,7 +947,7 @@ const VerificationDialog = ({
                         </Typography>
                         <Divider style={{ marginTop: 15 }} />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
+                    <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }} >
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} classes={classes.pb15}>
                             <Typography className={clsx(classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                             <Button

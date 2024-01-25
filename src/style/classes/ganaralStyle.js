@@ -538,13 +538,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: `12px !important`,
   },
   f13: {
-    fontSize: 13,
+    fontSize: '13px !important',
   },
   mxAuto: {
     marginInline: "auto",
   },
   f14: {
-    fontSize: 14,
+    fontSize: '14px !important',
   },
   f15: {
     fontSize: 15,
@@ -820,6 +820,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   w50: {
     width: '50%'
+  },
+  w60: {
+    width: '60%'
   },
   w70: {
     width: '70%'
@@ -2107,7 +2110,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-    }
+    },
+    [theme.breakpoints.down("xs")]: {
+      minWidth: 'auto',
+      fontSize: 16,
+    },
   },
   currentActiveTab: {
     borderBottom: '4px solid #ff2c44 !important',
@@ -2277,6 +2284,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "flex-end",
     alignItems: "center",
     paddingTop: "15px",
+    paddingBottom: 20,
     width: "100%",
     display: "flex",
     marginTop: "auto",
@@ -2667,7 +2675,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         paddingTop: 10,
         paddingInline: 10,
       },
-      
+
       '& .stepHead': {
         fontSize: 20,
         display: 'flex',
@@ -2782,8 +2790,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         '& .formContainer': {
           position: 'relative',
           paddingLeft: 15,
+          paddingRight: 15,
+          paddingBottom: 10,
           // paddingLeft: isRTL ? 0 : 15,
           // paddingRight: isRTL ? 15 : 0,
+          [theme.breakpoints.down("xs")]: {
+            paddingLeft: 0,
+            paddingRight: 0,
+          },
           '& .form': {
             maxWidth: 900,
             background: '#fff',
@@ -3237,7 +3251,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: isRTL ? 'row-reverse !important' : 'row',
     color: "#fff",
     fontWeight: 600,
-    textTransform: "capitalize",
     background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     '& .MuiStack-root': {
       display: 'flex',
@@ -3249,11 +3262,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: 30
     },
     '& .dialogTitle': {
-      width: '85%'
+      width: '85%',
+      direction: isRTL ? 'rtl' : 'ltr',
     }
   },
   textRight: {
     textAlign: "right",
+  },
+  textLeft: {
+    textAlign: "left",
   },
 
   elipsis: {
@@ -3328,7 +3345,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           }
         }
       }
-    }
+    },
+    [theme.breakpoints.down('xs')]: {
+      width: 'auto !important'
+    },
   },
 
   textFieldError: {
@@ -3348,7 +3368,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ltr: {
     direction: 'ltr'
   },
-
+  rtl: {
+    direction: 'rtl'
+  },
   selectPlaceholderInput: {
     height: '90%',
     opacity: 1,
@@ -3403,14 +3425,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         },
       },
       '& .MuiSelect-select': {
-        minWidth: 100,
+        minWidth: '100px !important',
+        width: '100%',
         maxWidth: '100%',
         borderRadius: 4,
-        paddingLeft: 0,
-        paddingRight: 0,
+        paddingInlineStart: 15,
+        paddingInlineEnd: 40,
+        // paddingLeft: 0,
+        // paddingRight: 0,
         minHeight: 25,
         display: 'flex',
         alignItems: 'center',
+        paddingInlineEnd: 40,
         '&:focus': {
           backgroundColor: '#fff !important'
         }
@@ -3610,6 +3636,29 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiSelect-icon': {
       position: 'initial',
       paddingRight: '10px'
+    },
+    textFieldWithTemplate: {
+      display: 'flex',
+      marginTop: 5,
+      border: '1px solid #ccc',
+      borderRadius: 4,
+      height: 28,
+      padding: 5,
+      justifyContent: 'center'
+    },
+    justifyContentEnd: {
+      justifyContent: 'flex-end'
+    },
+    errorIcon: {
+      position: 'absolute',
+      top: 0,
+      left: isRTL ? 0 : 'auto',
+      right: isRTL ? 'auto' : 0,
+      zIndex: 100,
+      fontSize: 25,
+      fill: 'white',
+      backgroundColor: 'red',
+      borderRadius: 25
     }
   },
   alignSelfCenter: {
@@ -3878,5 +3927,56 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
   alignItemsStart: {
     alignItems: "start",
-  }
+  },
+  fullFlexColumn: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    '& .flexEnd': {
+      alignSelf: 'flex-end'
+    }
+  },
+  centeredLink: {
+    display: 'flex',
+    alignSelf: 'center',
+    textDecoration: 'underline',
+    cursor: 'pointer'
+  },
+  flexEnd: {
+    justifyContent: 'flex-end'
+  },
+  textFieldWithTemplate: {
+    display: 'flex',
+    marginTop: 5,
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    height: 28,
+    padding: 5,
+    justifyContent: 'center'
+  },
+  errorIcon: {
+    position: 'absolute',
+    top: 0,
+    left: isRTL ? 0 : 'auto',
+    right: isRTL ? 'auto' : 0,
+    zIndex: 100,
+    fontSize: 25,
+    fill: 'white',
+    backgroundColor: 'red',
+    borderRadius: 25
+  },
+  tooltipIcon: {
+    display: 'flex',
+    backgroundColor: '#000',
+    color: '#fff',
+    fontSize: 13,
+    borderRadius: 25,
+    width: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  flexStart: {
+    justifyContent: "flex-start"
+  },
 });

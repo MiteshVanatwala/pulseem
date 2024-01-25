@@ -11,7 +11,7 @@ import {
     FormControlLabel,
     IconButton,
 } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
@@ -67,6 +67,7 @@ const AddGroupPopUp = ({
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
     const [saveDisabled, setSaveDisabled] = useState(false);
     const [showLoader, setLoader] = useState(false);
+    const { isRTL } = useSelector((state) => state.core);
 
     const handleAddGroup = async (data, callback) => {
         setSaveDisabled(true);
@@ -271,12 +272,8 @@ const AddGroupPopUp = ({
                             }}
                         />
                     </Box>
-                    <Box
-                        className={clsx(
-                            classes.flex1,
-                            classes.flex
-                        )}
-                    >
+                </Box>
+                    <Box className={clsx(classes.pt5, isRTL ? classes.textLeft : classes.textRight)}>
                         <FormControlLabel
                             control={
                                 <Checkbox checked={newGroupData.IsTestGroup} onClick={() => { setNewGroupData({ ...newGroupData, IsTestGroup: !newGroupData.IsTestGroup, IsDynamic: isDynamic }) }} name="testGroup" size="small" color="primary" />
@@ -305,7 +302,6 @@ const AddGroupPopUp = ({
                             </IconButton>
                         </CustomTooltip>
                     </Box>
-                </Box>
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </BaseDialog>
         </>

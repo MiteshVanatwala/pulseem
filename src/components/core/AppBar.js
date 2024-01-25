@@ -123,7 +123,7 @@ const AppBarItem = ({
                         >
                           {option.title}
                           {
-                            option.title === t("appBar.logout") && <option.iconSrc style={{ padding: '0 5px', marginLeft: 'auto' }} />
+                            option.title === t("appBar.logout") && <option.iconSrc style={{ padding: '0 5px', marginInlineStart: 'auto', color: '#fff' }} />
                           }
                         </MenuItem>
                       </Box>
@@ -212,7 +212,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const { username } = useSelector(state => state.user)
   const routes = getRoutes(t, isClal, accountFeatures, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
-    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username)
+    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL)
 
   const returnToAdmin = () => {
     window.location = '/Pulseem/ReactRedirect.aspx';
@@ -274,7 +274,6 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
       routes[3],
       routes[4],
       routes[5],
-      routes[7],
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
       { title: t('report.DirectSendReport'), key: 'directSendReport', href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount === true }      //routes[1]
