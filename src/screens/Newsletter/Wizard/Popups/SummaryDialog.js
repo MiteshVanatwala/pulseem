@@ -341,7 +341,7 @@ const SummaryDialog = ({ classes,
                                     }
                                 >{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</Link>
                             </Box>}
-                            {isSharedDomainEmail && <Box style={{ width: '100%' }}>
+                            <Box style={{ width: '100%' }}>
                                 <Box>
                                     <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("campaigns.newsLetterEditor.replyTo")}:</span>
                                 </Box>
@@ -374,7 +374,7 @@ const SummaryDialog = ({ classes,
                                         </option>
                                     ))}
                                 </Select>
-                            </Box>}
+                            </Box>
                             <Box className={clsx(classes.sumChild, classes.mt20)}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
                                 <span className={classes.bodySum}>{newsletterSendSummary?.Subject}</span>
