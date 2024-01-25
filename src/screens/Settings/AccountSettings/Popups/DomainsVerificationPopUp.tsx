@@ -70,7 +70,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         }
     }
     const filteredDomains = () => {
-        return verifiedEmails.filter((obj: VerifiedEmail, index: number) => {
+        return verifiedEmails?.filter((obj: VerifiedEmail, index: number) => {
             return (index === verifiedEmails.findIndex((o: any) => domainFromEmail(obj.Number) === domainFromEmail(o.Number)) && !obj.IsRestricted);
         }).sort((a: VerifiedEmail, b: VerifiedEmail) => {
             if (a.IsVerified && !b.IsVerified) {
@@ -87,12 +87,12 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                         {item.IsVerified ? <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}
                         <Typography className='emailText' title={item.Number} style={{ fontSize: 16, paddingInline: 15 }}>{domainFromEmail(item.Number)} </Typography>
                     </Box>
-                    {!item.IsVerified && <Typography className={clsx(classes.link, 'emailVerLink')}
+                    <Typography className={clsx(classes.link, 'emailVerLink')}
                         onClick={() => {
                             setSelectedDomain(domainFromEmail(item.Number) as any);
                             verifyDomain(item);
                         }}
-                    >{t('common.domainVerification.verifyDomain')}</Typography>}
+                    >{t('common.domainVerification.verifyDomain')}</Typography>
                 </Box>
                 {index < verifiedEmails.length - 1 && <Divider style={{ marginBottom: 6 }} />}
             </Box>

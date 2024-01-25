@@ -18,6 +18,7 @@ const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => 
         setCookie("popup_hide_domain_verification", cookie !== 'true' ? 'true' : 'false');
     }
     return <BaseDialog
+        title={t('common.domainVerification.verifyDomain')}
         children={<>
             {RenderHtml(t("common.domainVerificationDashboardPopupText"))}
             <FormControlLabel
@@ -36,6 +37,7 @@ const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => 
         onClose={onClose}
         onConfirm={onClose}
         showDefaultButtons={false}
+        renderTitle={null}
         renderButtons={() => {
             return <>
                 <Grid container spacing={2} className={classes.linePadding} style={{ justifyContent: 'flex-end' }}>
