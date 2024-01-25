@@ -3922,9 +3922,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'contents'
   },
   underline: {
-		textDecoration: 'underline',
-		cursor: 'pointer',
-	},
+    textDecoration: 'underline',
+    cursor: 'pointer',
+  },
   alignItemsStart: {
     alignItems: "start",
   },
