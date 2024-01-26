@@ -546,7 +546,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const highlightText = (tagData: tagDataProps) => {
-		let updatedVariables = getDynamicFields(tagData?.children);
+		let updatedVariables = getDynamicFields(tagData?.children, true);
 		const highlightVariables = (
 			<>
 				{updatedVariables?.map((variable, index) => (
@@ -609,7 +609,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setButtonType(templatePreviewData?.buttonType);
 			setTemplateData(templatePreviewData?.templateData);
 			setDynamicVariable(
-				getDynamicFields(templatePreviewData?.templateData.templateText)
+				getDynamicFields(templatePreviewData?.templateData.templateText, true)
 			);
 			if (templatePreviewData?.buttonType === 'quickReply') {
 				setQuickReplyButtons(templatePreviewData?.templateData.templateButtons);
@@ -650,7 +650,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			templateButtons: buttons,
 		});
 		setDynamicVariable(
-			getDynamicFields(template)
+			getDynamicFields(template, true)
 		);
 		setQuickReplyButtons(buttons);
 		setFileData({
