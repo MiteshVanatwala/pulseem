@@ -7,9 +7,9 @@ import {
     TableHead, TableRow, TextField, Typography, TableBody
 } from '@material-ui/core';
 import {
-    TablePagination, DateField
+    TablePagination, DateField, ManagmentIcon
 } from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
+import { PreviewIcon, SearchIcon } from '../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
@@ -20,6 +20,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { ImWhatsapp } from 'react-icons/im';
+import { WhatsappTemplatePreview } from '../../../components/WhatsappTemplatePreview/WhatsappTemplatePreview';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -44,6 +45,8 @@ const DirectWhatsappReportTab = ({
     const { t } = useTranslation();
     const [showLoader, setLoader] = useState(false)
     const [page, setPage] = useState(1);
+    const [openTemplatePreview, setTemplatePreview] = useState(false);
+    const [templateID, setTemplateID] = useState(null);
 
     const handleSearch = async () => {
         setLoader(true);
@@ -389,10 +392,7 @@ const DirectWhatsappReportTab = ({
                     <TableCell
                         classes={cellStyle}
                         className={classes.flex1}
-                        style={{ inlineSize: 90 }}
-                        align='center'>
-                        {t('common.templateId')}
-                    </TableCell>
+                        align='center'></TableCell>
                 </TableRow>
             </TableHead>
         )
@@ -452,7 +452,7 @@ const DirectWhatsappReportTab = ({
                     {renderCell(Text, 'content')}
                 </TableCell>
                 <TableCell
-                    classes={noborderCell}
+                    classes={cellStyle}
                     align='center'
                     className={classes.flex1} title={ErrorMessage}>
                     <CustomTooltip
@@ -492,9 +492,17 @@ const DirectWhatsappReportTab = ({
                                 placement={"top"}
                                 title={<Typography noWrap={false}>{ReferenceId}</Typography>}
                             >
-                                {ReferenceId && ReferenceId !== '' && <Typography>
-                                    {t('common.showTemplateId')}
-                                </Typography>}
+                                {ReferenceId && ReferenceId !== '' && <>
+                                    <ManagmentIcon
+                                        icon={PreviewIcon}
+                                        lable={t('campaigns.Image1Resource1.ToolTip')}
+                                        onClick={() => {
+                                            setTemplateID(ReferenceId);
+                                            setTemplatePreview(true);
+                                        }}
+				                        classes={classes}
+                                    />
+                                </>}
                             </CustomTooltip>
                         </TableCell>
                     </>
@@ -635,6 +643,8 @@ const DirectWhatsappReportTab = ({
                 <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
             </Box>
         </>}
+
+        <WhatsappTemplatePreview classes={classes} templateID={templateID} openPreview={openTemplatePreview} closeModel={() => setTemplatePreview(false)} />
     </>
 }
 
