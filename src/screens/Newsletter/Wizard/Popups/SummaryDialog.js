@@ -17,6 +17,7 @@ import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsl
 import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
 import { Loader } from "../../../../components/Loader/Loader";
 import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
+import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -39,7 +40,7 @@ const SummaryDialog = ({ classes,
     const [replyTo, setReplyTo] = useState(null);
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
-    const { verifiedEmails, isSweepingApproval, accountSettings } = useSelector(state => state.common);
+    const { verifiedEmails, isSweepingApproval, accountSettings, accountFeatures } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [disableSend, setDisableSend] = useState(false);
     const [verPopupOpen, setVerPopupOpen] = useState(false);
@@ -319,7 +320,7 @@ const SummaryDialog = ({ classes,
                                             {obj.Number}
                                         </option>
                                     ))}
-                                    {accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                    {accountFeatures?.indexOf(PulseemFeatures.HideSharedDomain) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                         key={verifiedEmails.length + 1}
                                         value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                         name={accountSettings?.SubAccountSettings?.SharedEmailDomain}

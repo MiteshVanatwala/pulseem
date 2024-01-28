@@ -167,5 +167,15 @@ export const PulseemFeatures = {
   OTPSUGGESTION: '40',
   BEE_EDITOR: '41',
   REVENUE: '42',
-  BEE_AMP: '43'
+  BEE_AMP: '43',
+  EnableBeeGoogleFonts: '44',
+  DisableTwoFactorAuth: '45',
+  Whatsapp: '46',
+  NewEmailKosher: '47',
+  DisablePendingEmailOTP: '48',
+  UIAPI: '49',
+  DirectAPI: '50',
+  NotToShowCreditsHistoryFeature: '51',
+  AllowEuroPayment: '52',
+  HideSharedDomain: '53'
 }
