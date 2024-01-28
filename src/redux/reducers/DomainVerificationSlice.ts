@@ -22,8 +22,6 @@ export const SetSharedDomain = createAsyncThunk(
         }
     }
 );
-
-
 const DomainVerificationSlice = createSlice({
     name: 'DomainVerification',
     initialState: {
