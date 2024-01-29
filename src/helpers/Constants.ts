@@ -212,3 +212,25 @@ export const FBBusiness = 'https://business.facebook.com/wa/manage/';
 
 export const SizeOptionsOfHandHeldDevices = ['xs', 'sm', 'md'];
 export const SizeOptions_XS_SM = ['xs', 'sm'];
+
+export const LandingPagesAnswerType = {
+    SYSTEM_DEFAULT_MESSAGE: 0,
+    POPUP_MESSAGE: 1,
+    REDIRECT_URL: 2,
+    DOWNLOAD_FILE: 3,
+    TRANSFER_TO_PAYMENT_PAGE: 4,
+    SEND_WEBHOOK: 5
+}
+
+export const PlaceHolders = {
+    GOOGLE_ANALYTICS: "<!--Google Analytics--><script>(function (i, s, o, g, r, a, m) { i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () { (i[r].q = i[r].q || []).push(arguments) }, i[r].l = 1 * new Date(); a = s.createElement(o), m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m) })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga'); ga('create', 'UA-XXXXX-Y', 'auto'); ga('send', 'pageview');</script><!-- End Google Analytics -->",
+    GOOGLE_CONVERSION: "<!-- Google Code for Purchase Conversion Page --><script type=&quot;text/javascript&quot;>var google_conversion_id=1234567890;var google_conversion_language=&quot;en_US&quot;;var google_conversion_format=&quot;1&quot;;var google_conversion_color=&quot;666666&quot;;var google_conversion_label=&quot;xxx-XXx1xXXX123X1xX&quot;;var google_remarketing_only=&quot;false&quot;var google_conversion_value=10.0;var google_conversion_currency=&quot;USD&quot;</script><script type=&quot;text/javascript&quot;src=&quot;//www.googleadservices.com/pagead/conversion.js&quot;></script><noscript><img height=1 width=1 border=0src=&quot;//www.googleadservices.com/pagead/conversion/1234567890/?value=10.0&amp;currency_code=USD&amp;label=xxx-XXx1xXXX123X1xX&amp;guid=ON&amp;script=0&quot;></noscript>",
+    GOOGLE_TAG_MANAGER: "<!-- Google Tag Manager --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=!0;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f)})(window,document,'script','dataLayer','GTM-XXXX');</script><!-- End Google Tag Manager --><!-- Google Tag Manager(noscript)--><noscript><iframe src=&quot;https://www.googletagmanager.com/ns.html?id=GTM-XXXX&quot;height=&quot;0&quot; width=&quot;0&quot; style=&quot;display:none;visibility:hidden&quot;></iframe></noscript><!-- End Google Tag Manager(noscript)-->",
+    FACEBOOK_PIXEL: "<!--Facebook Pixel Code--><script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','//connect.facebook.net/en_US/fbevents.js');// Insert Your Facebook Pixel ID below. fbq('init','FB_PIXEL_ID');fbq('track','PageView');</script><!-- Insert Your Facebook Pixel ID below. --><noscript><img height=&quot;1&quot; width=&quot;1&quot; style=&quot;display:none&quot; src=&quot;https://www.facebook.com/tr?id=FB_PIXEL_ID&amp;ev=PageView&amp;noscript=1&quot; /></noscript><!-- End Facebook Pixel Code -->",
+    CSS_STYLE: "div { font-family: tahoma; color:#ddd !important; font-style: italic; }"
+}
+
+export const BEE_EDITOR_TYPES = {
+    CAMPAIGN: 'Campaign',
+    LANDING_PAGE: 'LandingPage'
+}

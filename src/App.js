@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
+import BeeEditorPage from './screens/BeeEditorPage/BeeEditorPage.tsx';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
@@ -73,6 +74,8 @@ import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
 import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
+//import EditDynamicGroups from './screens/Groups/Dynamic/EditDynamicGroups';
+import CreateLandingPage from './screens/LandingPages/CreateLandingPage/CreateLandingPage';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -162,6 +165,10 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`${sitePrefix}Campaigns/editor/:id`}
         element={<CampaignEditorBee classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}BeeEditor/:type/:id`}
+        element={<BeeEditorPage classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Campaigns/SendSettings/:id`}
@@ -307,6 +314,14 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}CreateLandingPage`}
+        element={<CreateLandingPage classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}CreateLandingPage/:id`}
+        element={<CreateLandingPage classes={classes} />}
       />
       <Route
         path={`/LandingPageWizard`}

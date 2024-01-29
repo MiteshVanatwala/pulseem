@@ -31,6 +31,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 
+import { sitePrefix } from '../../../config';
 
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
@@ -145,9 +146,11 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            href='/Pulseem/LandingPageWizard.aspx?fromreact=true'
+            // href='/Pulseem/LandingPageWizard.aspx?fromreact=true'
             className={clsx(classes.btn, classes.btnRounded)}
-            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            onClick={() => navigate(`${sitePrefix}CreateLandingPage`)}
+          >
             {t('landingPages.CreateNewResource.Text')}
           </Button>
         </Grid>}
@@ -542,10 +545,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-
     let sortData = isSearching ? searchResults : landingPagesData;
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+    if (!sortData.length) {
+      return (
+        <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }} >
+          <Typography>{t('common.NoDataTryFilter')}</Typography>
+        </Box>
+      )
+    }
     return (
       <Box className='tableBodyContainer'>
         <TableBody>

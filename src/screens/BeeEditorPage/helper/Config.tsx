@@ -1,23 +1,25 @@
 import { v4 as uuidv4 } from 'uuid';
 import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translations/BeeEditor/Languages';
 import { FONTS } from '../../../helpers/Fonts/Init';
+import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
 const AUTO_SAVE_SECONDS = 180; // 3 minutes
 
 export interface ConfigOptions {
+    moduleType: string;
     classes: any;
     onSaveUserBlock: Function;
     IsRTL: Boolean;
     openModal: any;
     SetDialog: dialog;
     EditRow: Function;
-    SaveCampaign: save;
-    AutoSaveCampaign: Function,
+    Save: save;
+    AutoSave: Function,
     DesignChange: Function,
     DeleteBlock: Function;
-    CampaignId: Number;
+    Id: Number;
     PulseemEditBlock: Function;
     getRows: Function;
     handleDeleteRow: Function;
@@ -28,16 +30,17 @@ export interface ConfigOptions {
 
 export const BeeConfig = (Options: ConfigOptions) => {
     const {
+        moduleType,
         classes,
         onSaveUserBlock,
         IsRTL,
         EditRow,
         openModal,
         SetDialog,
-        CampaignId,
+        Id,
         DeleteBlock,
-        SaveCampaign,
-        AutoSaveCampaign,
+        Save,
+        AutoSave,
         DesignChange,
         getRows,
         handleEditRow,
@@ -47,8 +50,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         t
     } = Options;
     return {
-        uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
-        container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
+        uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
+        container: 'page-bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: true,
         //autosave: AUTO_SAVE_SECONDS,
@@ -63,6 +66,67 @@ export const BeeConfig = (Options: ConfigOptions) => {
         editorFonts: FONTS(),
         workspace: {
             type: 'default', // 'mixed'|'amp_only'|'html_only'
+        },
+        defaultForm: {
+            structure: {
+                title: 'Form title',
+                description: "A BEE test form",
+                fields: {
+                    firstName: { type: 'text', label: 'First Name', canBeRemovedFromLayout: true },
+                    lastName: { type: 'text', label: 'Last Name', canBeRemovedFromLayout: true },
+                    email: { type: 'email', label: 'Email', canBeRemovedFromLayout: true },
+                    telephone: { type: 'tel', label: 'Telephone', canBeRemovedFromLayout: true },
+                    cellphone: { type: 'tel', label: 'Cellphone', canBeRemovedFromLayout: true, attributes: { pattern: "[0-9]{3}-[0-9]{3}-[0-9]{4}" } },
+                    address: { type: 'text', label: 'Address', canBeRemovedFromLayout: true },
+                    city: { type: 'text', label: 'City', canBeRemovedFromLayout: true },
+                    company: { type: 'text', label: 'Company', canBeRemovedFromLayout: true },
+                    birthDate: { type: 'text', label: 'Birth Date', canBeRemovedFromLayout: true },
+                    zip: { type: 'text', label: 'Zip', canBeRemovedFromLayout: true },
+                    country: { type: 'text', label: 'Country', canBeRemovedFromLayout: true },
+                    gender: {
+                        type: "select",
+                        label: "Gender",
+                        options: [{
+                                type: "option",
+                                label: "Male",
+                                value: "M"
+                            },
+                            {
+                                type: "option",
+                                label: "Female",
+                                value: "F"
+                            },
+                            {
+                                type: "option",
+                                label: "Not telling",
+                                value: "-"
+                            }
+                        ]
+                    },
+                    confirmation: { type: 'checkbox', label: 'Confirmation', canBeRemovedFromLayout: false },
+                    submit: { type: 'submit', label: '', canBeRemovedFromLayout: false, attributes: { value: 'Submit', name: "submit_button" }},
+                },
+                layout: [
+                    ['firstName', 'lastName'],
+                    ['email'],
+                    ['telephone', 'cellphone'],
+                    ['address', 'zip'],
+                    ['city', 'country'],
+                    ['company'],
+                    ['birthDate'],
+                    ['confirmation'],
+                    ['submit'],
+                ],
+                attributes: {
+                    "accept-charset": "UTF-8",
+                    action: "http://example.com/read-form-script",
+                    autocomplete: "on",
+                    enctype: "multipart/form-data",
+                    method: "post",
+                    novalidate: false,
+                    target: "_self"
+                },
+            }
         },
         defaultModulesOrder: [
             'Heading',
@@ -88,11 +152,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
             }
         },
         onSaveRow: async (jsonFile: any) => {
-            if (jsonFile) {
-                const json = JSON.parse(jsonFile)
-                //const rowName = json.metadata.name;
-                onSaveUserBlock(jsonFile, json);
-            }
+            if (jsonFile) onSaveUserBlock(jsonFile, JSON.parse(jsonFile));
         },
         contentDialog: {
             saveRow: {
@@ -155,17 +215,25 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 }
 
             },
+            manageForm: {
+                label: 'Edit form',
+                handler: async (resolve: any, reject: any, args: any) => { 
+                //   const structure = await onHandleManageForm(args)
+                //   structure ? resolve(structure) : reject()
+                    reject()
+                } 
+            },
         },
         //#region Methods
         onSave: async (jsonFile: any, htmlFile: any, ampHtml: any) => {
-            await SaveCampaign({
-                campaignId: CampaignId,
+            await Save({
+                campaignId: Id,
                 JsonData: jsonFile,
                 HtmlData: ampHtml ?? htmlFile
             });
         },
         onSend: () => {
-            SetDialog(DialogType.TEST_SEND);
+            // SetDialog(DialogType.TEST_SEND);
         },
         onWarning: (alertMessage: any) => {
             // console.log('onWarning ', alertMessage)
@@ -176,7 +244,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         onLoad: (jsonFile: any) => {
             // console.log(jsonFile);
         },
-        onAutoSave: () => AutoSaveCampaign(),
+        onAutoSave: () => moduleType === BEE_EDITOR_TYPES.CAMPAIGN ? AutoSave() : {},
         onChange: () => DesignChange()
         //#endregion
     }
@@ -327,17 +395,16 @@ export const DefaultContent = (IsRTL: Boolean) => {
 };
 
 export const DialogType = {
-    TEST_SEND: "testSend",
     DELETE: "delete",
-    SUCCESS_SENT: "campaigns.successSent",
     MISSING_API_KEY: "common.missingApi",
-    CAMPAIGN_NOT_FOUND: "campaigns.campaignNotFound",
-    CANNOT_CREATE_GROUP: "campaigns.cannotCreateGroup",
+    CAMPAIGN_NOT_FOUND: "landingPages.landingPageNotFound",
     ERROR_OCCURED: "common.ErrorOccured",
-    NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
     GENERIC: "generic",
     NO_CREDITS_LEFT: "sms.noCredits",
     Templates: "templates",
-    SET_USER_BLOCK: "campaigns.saveBlock",
-    SAVE_TEMPLATE: "campaigns.saveTemplate"
+    SAVE_TEMPLATE: "saveTemplate",
+    LOGOUT: "logout",
+    EXIT: "exit",
+    RENDER_TEMPLATE_CONFIRMATION: "RenderTemplateConfirmation",
+    EDIT_ROW: "EditRow"
 };
