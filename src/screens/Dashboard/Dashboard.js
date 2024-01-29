@@ -14,19 +14,16 @@ import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
-import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
-import { getCookie, setCookie } from '../../helpers/Functions/cookies';
-import { useNavigate } from 'react-router';
 import DahsboardDomainVerificationPopup from './Popup/DahsboardDomainVerificationPopup';
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
+  const { windowSize, isRTL } = useSelector(state => state.core);
+  const { accountSettings } = useSelector(state => state.common);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showDomainVerificationMessage, setShowDomainVerificationMessage] = useState(true);
   const [member, setMember] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const initialize = async () => {
@@ -60,18 +57,13 @@ const DashboardScreen = ({ classes }) => {
     return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange ?? ''))
   }
 
-  const handleShowDomainCookie = () => {
-    const cookie = getCookie("popup_hide_domain_verification");
-    setCookie("popup_hide_domain_verification", cookie !== 'true');
-  }
-
   return (
     <DefaultScreen
       currentPage='dashboard'
       classes={classes}
-      customStyle={classes.dashboard}>
+      customStyle={clsx(classes.dashboard, classes.mb75)}>
       <Grid container>
-        <Grid item xs={12} sm={9} md={10} className={clsx(classes.pt20, classes.dashboardTop)}>
+        <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
               <BulkStatus classes={classes} />
@@ -81,14 +73,14 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
-            <Grid item xs={12} sm={12} md={12} lg={3}>
+            <Grid item xs={12} sm={12} md={12} lg={4}>
               <PulseemTips
                 classes={classes}
                 t={t}
                 isRTL={isRTL}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={9}>
+            <Grid item xs={12} sm={12} md={12} lg={8}>
               <LatestReports
                 classes={classes}
                 windowSize={windowSize}
@@ -98,7 +90,7 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={3} md={2} className={classes.dashboardSide}>
+        <Grid item xs={12} sm={4} md={3} lg={3} xl={2} className={classes.dashboardSide}>
           <Shortcut
             windowSize={windowSize}
             classes={classes}
@@ -109,6 +101,7 @@ const DashboardScreen = ({ classes }) => {
       </Grid>
       {toastMessage && renderToast()}
       {showChangePassword && <ChangePassword
+        classes={classes}
         SetToast={setToastMessage}
         IsOpen={showChangePassword}
         OnClose={() => setShowChangePassword(false)}

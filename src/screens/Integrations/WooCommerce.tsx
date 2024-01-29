@@ -14,9 +14,8 @@ const WooCommerce = ({ classes }: any) => {
         variant='contained'
         size='medium'
         className={clsx(
-          classes.actionButton,
-          classes.actionButtonLightBlue,
-          classes.backButton,
+          classes.btn,
+          classes.btnRounded,
           classes.mt20
         )}
         color="primary"

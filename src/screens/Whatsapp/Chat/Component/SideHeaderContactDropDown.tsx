@@ -1,10 +1,10 @@
-import { makeStyles, MenuItem, Select, TextField } from '@material-ui/core';
-import { BaseSyntheticEvent } from 'react';
+import { MenuItem } from '@material-ui/core';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { SideHeaderContactDropDownProps } from '../Types/WhatsappChat.type';
 import { coreProps } from '../../Campaign/Types/WhatsappCampaign.types';
 import { useSelector } from 'react-redux';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 const SideHeaderContactDropDown = ({
 	classes,
@@ -14,58 +14,34 @@ const SideHeaderContactDropDown = ({
 }: SideHeaderContactDropDownProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const useStyles = makeStyles(() => ({
-		selectRoot: {
-			fontSize: '18px',
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
-	}));
-	const muiclasses = useStyles();
 
 	return (
-		<>
-			<div className={`${classes.whatsappChat} chat__contact-wrapper`}>
-				&emsp;
-				{phoneNumbersList?.length === 1 ? (
-					// <TextField
-					// 	required
-					// 	type='text'
-					// 	disabled
-					// 	className={clsx(classes.buttonField)}
-					// 	onChange={(e: BaseSyntheticEvent) => onActiveUserChange(e)}
-					// 	value={activePhoneNumber}
-					// />
-					<span>{activePhoneNumber}</span>
-				) : (
-					<Select
-						type='text'
-						classes={{ root: muiclasses.selectRoot }}
-						onChange={(e: BaseSyntheticEvent) => onActiveUserChange(e)}
-						MenuProps={{
-							PaperProps: {
-								style: {
-									direction: isRTL ? 'rtl' : 'ltr',
-								},
+		<div className={clsx(classes.whatsappChat, 'chat__contact-wrapper', classes.paddingSides10)}>
+			{phoneNumbersList?.length === 1 ? (
+				<span>{activePhoneNumber}</span>
+			) : (
+				<Select
+					variant="standard"
+					displayEmpty
+					value={activePhoneNumber}
+					onChange={(event: SelectChangeEvent) => onActiveUserChange(event)}
+					MenuProps={{
+						PaperProps: {
+							style: {
+								maxHeight: 300,
+								direction: isRTL ? 'rtl' : 'ltr',
 							},
-						}}
-						value={activePhoneNumber}>
-						{phoneNumbersList?.length > 0 ? (
-							phoneNumbersList?.map((phone: string, index: number) => (
-								<MenuItem key={index} value={phone}>
-									{phone}
-								</MenuItem>
-							))
-						) : (
-							<MenuItem key={'no-data-template'} disabled>
-								<>{translator('whatsapp.noTemplateAaliable')}</>
-							</MenuItem>
-						)}
-					</Select>
-				)}
-			</div>
-		</>
+						},
+					}}
+				>
+					{phoneNumbersList?.length > 0 ? (
+						phoneNumbersList?.map((phone: string, index: number) => <MenuItem key={index} value={phone}>{phone}</MenuItem>)
+					) : (
+						<MenuItem key={'no-data-template'} disabled>{translator('whatsapp.noTemplateAaliable')}</MenuItem>
+					)}
+				</Select>
+			)}
+		</div>
 	);
 };
 

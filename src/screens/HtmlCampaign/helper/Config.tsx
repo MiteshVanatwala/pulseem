@@ -7,23 +7,23 @@ type save = (a: any) => void;
 const AUTO_SAVE_SECONDS = 180; // 3 minutes
 
 export interface ConfigOptions {
-    classes: any,
-    onSaveUserBlock: Function,
-    IsRTL: Boolean,
-    openModal: any,
-    SetDialog: dialog,
-    EditRow: Function,
-    SaveCampaign: save,
+    classes: any;
+    onSaveUserBlock: Function;
+    IsRTL: Boolean;
+    openModal: any;
+    SetDialog: dialog;
+    EditRow: Function;
+    SaveCampaign: save;
     AutoSaveCampaign: Function,
     DesignChange: Function,
-    DeleteBlock: Function,
-    CampaignId: Number,
-    PulseemEditBlock: Function,
-    getRows: Function,
-    handleDeleteRow: Function,
-    handleEditRow: Function,
+    DeleteBlock: Function;
+    CampaignId: Number;
+    PulseemEditBlock: Function;
+    getRows: Function;
+    handleDeleteRow: Function;
+    handleEditRow: Function;
     // HandleAutoSave: Function,
-    t: any
+    t: any;
 }
 
 export const BeeConfig = (Options: ConfigOptions) => {
@@ -51,7 +51,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: true,
-        // autosave: AUTO_SAVE_SECONDS,
+        //autosave: AUTO_SAVE_SECONDS,
         loadingSpinnerDisableOnSave: true,
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
@@ -130,11 +130,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
 
                             const rows = await getRows(args.handle);
                             const row = rows.find((r: any) => {
-                                return r.metadata.uuid === args.row?.metadata?.uuid
+                                return r.metadata.uuid === args.row?.metadata?.uuid;
                             });
 
                             row.metadata.name = results?.name;
-                            row.metadata.tags = results?.tags ?? t('campaigns.savedBlocks');
+                            row.metadata.tags = results?.tags ?? t("campaigns.savedBlocks");
 
                             const saveBlockObj = {
                                 Category: results?.name,
@@ -185,126 +185,125 @@ export const DefaultContent = (IsRTL: Boolean) => {
     return {
         titleDefaultStyles: {
             h1: {
-                'direction': IsRTL ? 'rtl' : 'ltr',
-                'text-align': IsRTL ? 'right' : 'left'
+                direction: IsRTL ? "rtl" : "ltr",
+                "text-align": IsRTL ? "right" : "left",
             },
             h2: {
-                'direction': IsRTL ? 'rtl' : 'ltr',
-                'text-align': IsRTL ? 'right' : 'left'
+                direction: IsRTL ? "rtl" : "ltr",
+                "text-align": IsRTL ? "right" : "left",
             },
             h3: {
-                'direction': IsRTL ? 'rtl' : 'ltr',
-                'text-align': IsRTL ? 'right' : 'left'
+                direction: IsRTL ? "rtl" : "ltr",
+                "text-align": IsRTL ? "right" : "left",
             },
             h4: {
-                'direction': IsRTL ? 'rtl' : 'ltr',
-                'text-align': IsRTL ? 'right' : 'left'
+                direction: IsRTL ? "rtl" : "ltr",
+                "text-align": IsRTL ? "right" : "left",
             },
             h5: {
-                'direction': IsRTL ? 'rtl' : 'ltr',
-                'text-align': IsRTL ? 'right' : 'left'
-            }
+                direction: IsRTL ? "rtl" : "ltr",
+                "text-align": IsRTL ? "right" : "left",
+            },
         },
         contentDefaults: {
             title: {
                 blockOptions: {
-                    align: IsRTL ? 'right' : 'left'
-                }
+                    align: IsRTL ? "right" : "left",
+                },
             },
             text: {
-                html: IsRTL ? "<p style='font-size: 14px;text-align: right; direction: rtl;'>אני בלוק טקסט מוכן לתוכן שלך.</p>" : "<p style='font-size: 14px;text-align:left; direction: ltr;'>I&apos;m a new Text block ready for your content.</p>",
+                html: IsRTL
+                    ? "<p style='font-size: 14px;text-align: right; direction: rtl;'>אני בלוק טקסט מוכן לתוכן שלך.</p>"
+                    : "<p style='font-size: 14px;text-align:left; direction: ltr;'>I&apos;m a new Text block ready for your content.</p>",
                 styles: {
-                    textAlign: IsRTL ? 'right' : 'left',
-                    direction: IsRTL ? 'rtl' : 'ltr'
+                    textAlign: IsRTL ? "right" : "left",
+                    direction: IsRTL ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    textAlign: IsRTL ? 'right' : 'left',
-                    direction: IsRTL ? 'rtl' : 'ltr'
-
-                }
+                    textAlign: IsRTL ? "right" : "left",
+                    direction: IsRTL ? "rtl" : "ltr",
+                },
             },
             paragraph: {
                 styles: {
-                    textAlign: IsRTL ? 'right' : 'left',
-                    direction: IsRTL ? 'rtl' : 'ltr'
+                    textAlign: IsRTL ? "right" : "left",
+                    direction: IsRTL ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    textAlign: IsRTL ? 'right' : 'left',
-                    direction: IsRTL ? 'rtl' : 'ltr'
-
-                }
+                    textAlign: IsRTL ? "right" : "left",
+                    direction: IsRTL ? "rtl" : "ltr",
+                },
             },
             list: {
                 styles: {
-                    textAlign: IsRTL ? 'right' : 'left',
-                    direction: IsRTL ? 'rtl' : 'ltr'
+                    textAlign: IsRTL ? "right" : "left",
+                    direction: IsRTL ? "rtl" : "ltr",
                 },
                 blockOptions: {
-                    textAlign: IsRTL ? 'right' : 'left',
-                    direction: IsRTL ? 'rtl' : 'ltr'
-
-                }
-            }
+                    textAlign: IsRTL ? "right" : "left",
+                    direction: IsRTL ? "rtl" : "ltr",
+                },
+            },
         },
         defaultTemplate: {
-            "page": {
-                "title": "Template Base",
-                "description": "Test template for BEE",
-                "template": {
-                    "name": "template-base",
-                    "type": "basic",
-                    "version": "0.0.1"
+            page: {
+                title: "Template Base",
+                description: "Test template for BEE",
+                template: {
+                    name: "template-base",
+                    type: "basic",
+                    version: "0.0.1",
                 },
-                "body": {
-                    "type": "mailup-bee-page-proprerties",
-                    "container": {
-                        "style": {
-                            "background-color": "#FFFFFF"
-                        }
+                body: {
+                    type: "mailup-bee-page-proprerties",
+                    container: {
+                        style: {
+                            "background-color": "#FFFFFF",
+                        },
                     },
-                    "content": {
-                        "style": {
+                    content: {
+                        style: {
                             "font-family": "Arial, 'Helvetica Neue', Helvetica, sans-serif",
-                            "color": "#000000"
+                            color: "#000000",
                         },
-                        "computedStyle": {
-                            "linkColor": "#0068A5",
-                            "messageBackgroundColor": "transparent",
-                            "messageWidth": "600px"
-                        }
+                        computedStyle: {
+                            linkColor: "#0068A5",
+                            messageBackgroundColor: "transparent",
+                            messageWidth: "600px",
+                        },
                     },
-                    "webFonts": []
+                    webFonts: [],
                 },
-                "rows": [
+                rows: [
                     {
-                        "type": "one-column-empty",
-                        "container": {
-                            "style": {
+                        type: "one-column-empty",
+                        container: {
+                            style: {
                                 "background-color": "transparent",
                                 "background-image": "none",
                                 "background-repeat": "no-repeat",
-                                "background-position": "top left"
-                            }
-                        },
-                        "content": {
-                            "style": {
-                                "background-color": "transparent",
-                                "color": "#000000",
-                                "width": "600px",
-                                "background-image": "none",
-                                "background-repeat": "no-repeat",
-                                "background-position": "top left"
+                                "background-position": "top left",
                             },
-                            "computedStyle": {
-                                "rowColStackOnMobile": true,
-                                "rowReverseColStackOnMobile": false
-                            }
                         },
-                        "columns": [
+                        content: {
+                            style: {
+                                "background-color": "transparent",
+                                color: "#000000",
+                                width: "600px",
+                                "background-image": "none",
+                                "background-repeat": "no-repeat",
+                                "background-position": "top left",
+                            },
+                            computedStyle: {
+                                rowColStackOnMobile: true,
+                                rowReverseColStackOnMobile: false,
+                            },
+                        },
+                        columns: [
                             {
                                 "grid-columns": 12,
-                                "modules": [],
-                                "style": {
+                                modules: [],
+                                style: {
                                     "background-color": "transparent",
                                     "padding-top": "5px",
                                     "padding-right": "0px",
@@ -313,19 +312,19 @@ export const DefaultContent = (IsRTL: Boolean) => {
                                     "border-top": "0px solid transparent",
                                     "border-right": "0px solid transparent",
                                     "border-bottom": "0px solid transparent",
-                                    "border-left": "0px solid transparent"
+                                    "border-left": "0px solid transparent",
                                 },
-                                "uuid": uuidv4()
-                            }
+                                uuid: uuidv4(),
+                            },
                         ],
-                        "uuid": uuidv4()
-                    }
-                ]
+                        uuid: uuidv4(),
+                    },
+                ],
             },
-            "comments": {}
-        }
-    }
-}
+            comments: {},
+        },
+    };
+};
 
 export const DialogType = {
     TEST_SEND: "testSend",

@@ -51,7 +51,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         marginTop: 45,
         fontWeight: '500',
         color: '#555',
-        fontSize: '22px'
+        fontSize: '22px',
+        [theme.breakpoints.down('xs')]: {
+            fontSize: 18,
+            marginBottom: 0,
+        },
     },
     mobilePreviewSummary: {
         width: mobileWidth[windowSize],
@@ -72,7 +76,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     tagSelected: {
         '& .MuiAutocomplete-tag': {
             marginTop: 5,
-            backgroundColor: '#1c82b2',
+            background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
             '& .MuiChip-label': {
                 color: '#fff !important'
             },
@@ -98,7 +102,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     dateBox: {
         paddingRight: isRTL ? 30 : "",
         paddingLeft: isRTL ? "" : 30,
-        maxWidth: 300
+        maxWidth: 300,
+        width: '100%',
+        [theme.breakpoints.down('xs')]: {
+            width: 'auto',
+        },
     },
     inputLabel: {
         fontSize: 20,
@@ -144,18 +152,28 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     blueDoc:
     {
-        border: "1px solid #3DA6F7",
+        border: "1px solid #FF3343",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: "#3DA6F7",
+        color: "#FF3343",
+        minWidth: 30,
+        minHeight: 30
+    },
+    redDoc: {
+        border: "1px solid #ff3343",
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#ff3343",
         minWidth: 30,
         minHeight: 30
     },
     greenDoc:
     {
-        border: "1px solid #018901",
+        border: "1px solid #ff3343",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",
@@ -223,7 +241,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     spanSum:
     {
         fontSize: 20,
-        color: "#1771ad",
+        color: "#ff3343",
         marginBottom: "7px"
     },
     bodySum:
@@ -352,9 +370,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         justifyContent: "center",
         borderBottomLeftRadius: "4px",
         borderTopLeftRadius: "4px",
-        border: "1px solid #277BFF",
+        border: "1px solid #FF3343",
         height: 40,
-        color: "#277BFF",
+        color: "#FF3343",
         cursor: "pointer",
         paddingRight: 10,
         paddingLeft: 10,
@@ -369,10 +387,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         justifyContent: "center",
         borderBottomLeftRadius: "4px",
         borderTopLeftRadius: "4px",
-        border: "1px solid #277BFF",
+        border: "1px solid #FF3343",
         height: 40,
         color: "#ffffff",
-        backgroundColor: " #277BFF",
+        backgroundColor: " #FF3343",
         cursor: "pointer",
         paddingRight: 10,
         paddingLeft: 10,
@@ -388,9 +406,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         borderBottomRightRadius: "4px",
         borderTopRightRadius: "4px",
         borderLeft: "none",
-        border: "1px solid #277BFF",
+        border: "1px solid #FF3343",
         height: 40,
-        color: "#277BFF",
+        color: "#FF3343",
         cursor: "pointer",
         paddingRight: 10,
         paddingLeft: 10,
@@ -405,10 +423,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         justifyContent: "center",
         borderBottomLeftRadius: "4px",
         borderTopLeftRadius: "4px",
-        border: "1px solid #277BFF",
+        border: "1px solid #FF3343",
         height: 40,
         color: "#ffffff",
-        backgroundColor: "#277BFF"
+        backgroundColor: "#FF3343"
     },
     reciTrue: {
         display: "flex",
@@ -418,10 +436,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         borderBottomRightRadius: "4px",
         borderTopRightRadius: "4px",
         borderLeft: "none",
-        border: "1px solid #277BFF",
+        border: "1px solid #FF3343",
         height: 40,
         color: "#ffffff",
-        backgroundColor: " #277BFF",
+        backgroundColor: " #FF3343",
         cursor: "pointer",
         paddingRight: 10,
         paddingLeft: 10,
@@ -437,10 +455,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         borderBottomRightRadius: "4px",
         borderTopRightRadius: "4px",
         borderLeft: "none",
-        border: "1px solid #277BFF",
+        border: "1px solid #FF3343",
         height: 40,
         color: "#ffffff",
-        backgroundColor: "#277BFF",
+        backgroundColor: "#FF3343",
         paddingRight: 10,
         paddingLeft: 10,
         "@media screen and (max-width: 375px)": {
@@ -497,7 +515,33 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         color: 'white'
     },
     management: {
-        maxWidth: 1500
+        maxWidth: 1600,
+        '&.MuiContainer-root': {
+            // marginLeft: 207
+        },
+        '& .topSection': {
+            marginTop: 37.870,
+            border: '2px solid #F0F5FF',
+            borderRadius: 10,
+            paddingBottom: 31,
+            background: '#fff',
+            '& .searchLine': {
+                paddingInlineStart: 31,
+                '& .MuiGrid-item': {
+                    marginRight: 27.42,
+                    "@media screen and (max-width: 414px)": {
+                        marginRight: 10
+                    }
+                }
+            },
+            "@media screen and (max-width: 765px)": {
+                paddingBottom: 17,
+            },
+            '&.onlyTitleBar': {
+                paddingBottom: 0,
+                marginBottom: 31,
+            }
+        },
     },
     adjustC:
     {
@@ -526,7 +570,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
 
         '&:hover':
         {
-            backgroundColor: "#6495ED",
+            background: "linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)",
             color: "#fff",
             zIndex: "9"
         }
@@ -544,9 +588,16 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     manualChild:
     {
         display: "flex",
-        // justifyContent: "space-between",
         alignItems: "center",
-        marginTop: "15px"
+        marginTop: "15px",
+        [theme.breakpoints.down('xs')]: {
+            display: "block",
+            paddingBottom: 10,
+            textAlign: 'center',
+            '& button': {
+                marginBottom: 10,
+            }
+        },
     },
     listValues:
     {
@@ -571,7 +622,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         display: "flex",
         alignItems: "center",
         color: "#fff",
-        backgroundColor: "#007bff",
+        backgroundColor: "#ff3343",
         borderRadius: "20px",
         justifyContent: "center",
         padding: "5px",
@@ -603,7 +654,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         alignItems: 'center',
         borderRadius: 25,
         marginTop: 4,
-        backgroundColor: '#1771ad',
+        backgroundColor: '#ff3343',
         marginInlineStart: 4,
         justifyContent: 'center',
         height: 20,
@@ -652,8 +703,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     {
         width: "100%",
         padding: "8px",
-        border: "1px solid #bbb",
-        borderRadius: "5px",
+        borderBottom: "1px solid #bbb",
         color: "#bbb",
         maxHeight: 75,
         overflow: 'auto',
@@ -681,7 +731,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         width: "70px",
         padding: "6px",
         borderRadius: "20px",
-        backgroundColor: "#1771ad",
+        backgroundColor: "#ff3343",
         marginInlineEnd: "4px",
         marginBottom: "4px",
         color: "white",
@@ -732,7 +782,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         borderRadius: "5px",
         justifyContent: "space-between",
         alignItems: "center",
-        margin: "0 5px"
+        margin: "0 5px",
         // marginTop: "15px"
     },
     pulseParentDiv:
@@ -853,9 +903,8 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             flexDirection: 'column-reverse',
         }
     },
-    mobileGrid:
-    {
-        padding: "0px !important",
+    mobileGrid: {
+        padding: "0px 10px !important",
         margin: "0px !important"
     },
     report: {
@@ -879,8 +928,8 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     grDoc:
     {
-        border: "1px solid #1771AD",
-        color: "#1771AD",
+        border: "1px solid #ff3343",
+        color: "#ff3343",
         borderRadius: "50%",
         padding: "10px",
         display: "flex"
@@ -958,8 +1007,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         marginTop: 12,
         display: "flex",
         justifyContent: "space-between",
-        flexDirection: flexDirection[windowSize]
-
+        flexDirection: flexDirection[windowSize],
+        [theme.breakpoints.down('xs')]: {
+            paddingBottom: 20
+        },
     },
     createGroupContainer:
     {
@@ -975,7 +1026,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     addOptionsIcon:
     {
-        fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px"
+        fontSize: "18px", color: "#fff", marginInlineEnd: "10px"
     },
     testSendContaier:
     {
@@ -1017,6 +1068,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         fontSize: 12
     },
     filterButtonsContainer: {
+        [theme.breakpoints.down('xs')]: {
+            paddingBottom: 10
+        },
+        // paddingBottom: 5,
         '& *:not(svg):not(span)': {
             marginInlineEnd: 5
         },
@@ -1031,9 +1086,6 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         },
         "@media screen and (max-width: 480px)": {
             marginInline: 10,
-            '& *:not(svg):not(span):not(.MuiInputBase-formControl)': {
-                marginTop: 5
-            },
         },
         '& .MuiInputBase-formControl': {
             width: '100%',
@@ -1053,7 +1105,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         }
     },
     twoLineButton: {
-        borderColor: '#1c82b2',
+        borderColor: '#ff3343',
         cursor: 'pointer',
         '&:hover': {
             backgroundColor: 'transparent'
@@ -1061,7 +1113,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         '& label, & span': {
             fontSize: 16,
             cursor: 'pointer',
-            color: '#1c82b2',
+            color: '#ff3343',
             lineHeight: 1.5,
             textTransform: 'capitalize',
             fontWeight: 400
@@ -1073,6 +1125,22 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         '&:hover': {
             borderColor: '#1c82b2',
             backgroundColor: '#1c82b2',
+        },
+        '& label, & span': {
+            fontSize: 16,
+            cursor: 'pointer',
+            color: '#fff',
+            lineHeight: 1.5,
+            textTransform: 'capitalize',
+            fontWeight: 400
+        }
+    },
+    buttonActiveRed: {
+        borderColor: '#ff2747',
+        backgroundColor: '#ff2747',
+        '&:hover': {
+            borderColor: '#ff2747',
+            backgroundColor: '#ff2747',
         },
         '& label, & span': {
             fontSize: 16,

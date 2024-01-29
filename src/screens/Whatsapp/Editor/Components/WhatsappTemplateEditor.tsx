@@ -171,7 +171,11 @@ const WhatsappTemplateEditor = ({
 											key={button.id}
 											className={classes.whatsappActionButtonsBox}>
 											<Button
-												className={classes.whatsappActionButtons}
+												className={clsx(
+													// classes.whatsappActionButtons,
+													classes.btn,
+													classes.btnRounded
+												)}
 												onClick={() => OnEditorActionButtonClick(button)}>
 												{field.value}
 											</Button>
@@ -230,7 +234,8 @@ const WhatsappTemplateEditor = ({
 									{onButtonClick && (
 										<Button
 											className={clsx(
-												classes.whatsappInfoButtons,
+												classes.btn,
+												classes.btnRounded,
 												isDisableButton(button.buttonTitle)
 													? classes.disabled
 													: null

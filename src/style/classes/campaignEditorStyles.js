@@ -24,7 +24,7 @@ export const getCampaignEditorStyle = (windowSize, isRTL) => ({
     borderRadius: 0,
     boxSizing: 'border-box',
     border: '1px solid rgba(0, 0, 0, 0.12)',
-    width: 'calc(100% - 60px)',
+    width: '100%',
     minHeight: 300,
     maxHeight: 400,
     overflowY: 'hidden',

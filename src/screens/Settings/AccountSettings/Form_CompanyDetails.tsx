@@ -4,11 +4,11 @@ import {
   Button,
   FormControl,
   Grid,
-  OutlinedInput,
-  Select,
+  MenuItem,
   TextField,
   Typography
 } from "@material-ui/core";
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,15 +28,18 @@ import {
   CompDtlPropTypes
 } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import useCore from "../../../helpers/hooks/Core";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
 import { Title } from "../../../components/managment/Title";
+import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
+import ILLUSTRATION_DATA_ANALYSIS from "../../../assets/images/settings/Illustration_data_Analysis";
+import { IoIosArrowDown } from "react-icons/io";
 
 
 const FORM_COMPANY_DETAILS = ({
+  classes,
   setToastMessage,
   ToastMessages,
   Settings,
@@ -44,7 +47,6 @@ const FORM_COMPANY_DETAILS = ({
   onShowTwoFactorAuth
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
   const { accountSettings, accountFeatures } = useSelector((state: any) => state.common);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
@@ -132,7 +134,7 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    const newSettings = { ...Settings, TwoFactorAuthEnabled: accountFeatures?.indexOf(45) === -1 } as AccountSettings;
+    const newSettings = { ...Settings, TwoFactorAuthEnabled: accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 } as AccountSettings;
     setCompanyDetails(newSettings);
     if (Settings)
       handleQueryString2FA();
@@ -240,15 +242,19 @@ const FORM_COMPANY_DETAILS = ({
   return (
     <>
       <Box
-        style={{ marginTop: 10, paddingInline: 15 }}
-        className={"settingsWrapper"}
+        className={clsx("settingsWrapper", classes.pb25)}
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
-          Classes={classes}
-          Element={null}
+          classes={classes}
+          isIcon={false}
+          ContainerStyle={{
+            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
+              }`,
+          }}
         />
-        <Box className={"formContainer"}>
+        <Box className={"formContainer"} style={{ marginBottom: 25 }}>
+          { windowSize !== 'xs' && <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> }
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
@@ -408,84 +414,70 @@ const FORM_COMPANY_DETAILS = ({
         </Box>
         <Title
           Text={t("settings.accountSettings.fixedComDetails.securitySettings")}
-          Classes={classes}
+          classes={classes}
+          isIcon={false}
+          ContainerStyle={{
+            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
+              }`,
+          }}
         />
-        <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
-          <Grid container className={"form"}>
-            {accountFeatures?.indexOf(45) === -1 && <Grid
+        <Box className={clsx("formContainer", classes.pt20)}>
+          <Grid container className={"form"} style={{ maxWidth: '100%' }}>
+            {accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 && <Grid
               item
               xs={12}
               sm={3}
               md={4}
-              className={clsx(classes.dFlex, classes.mt3, "selectWrapper")}
+              className={clsx(windowSize !== 'xs' ? classes.dFlex : '', classes.mt3, classes.mr15, "selectWrapper")}
               alignItems="center"
             >
               <Typography>
-                <>
-                  {t(
-                    "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
-                  )}
-                </>
+                {t("settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth")}
               </Typography>
-              <FormControl
-                variant="outlined" className={classes.formControl}
-                style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10, maxWidth: 210 }}
-              >
+              <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                 <Select
-                  native
+                  variant="standard"
+                  autoWidth
+                  value={`${companyDetails?.TwoFactorAuthOptionID ?? 202}`}
+                  name="TwoFactorAuthOptionID"
+                  onChange={(e: SelectChangeEvent) => { handleTwoFactorOption(e) }}
+                  IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                   MenuProps={{
                     PaperProps: {
                       style: {
-                        maxHeight: 40
+                        direction: isRTL ? 'rtl' : 'ltr'
                       },
-                    }
+                    },
                   }}
-                  input={<OutlinedInput />}
-                  inputProps={{
-                    'aria-label': 'Without label',
-                    style: {
-                      padding: 10,
-                      maxWidth: 210,
-                      paddingInlineStart: 15,
-                    }
-                  }}
-                  autoWidth
-                  value={companyDetails?.TwoFactorAuthOptionID ?? 202}
-                  name="TwoFactorAuthOptionID"
-                  onChange={(e: any) => { handleTwoFactorOption(e) }}
                 >
                   {[
                     { name: t("settings.accountSettings.auth.everyDay"), value: 101 },
                     { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
-                  ].map((so, index) => {
+                  ].map((so) => {
                     return (
-                      <option
+                      <MenuItem
                         key={so.value}
                         value={so.value}
-                        className={classes.dropDownItem}
                       >
                         {so.name}
-                      </option>
+                      </MenuItem>
                     );
                   })}
                 </Select>
               </FormControl>
             </Grid>}
-            {accountFeatures?.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
+            {accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
                 display: windowSize !== 'xs' ? 'flex' : 'block',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                height: '100%'
               }}>
                 <Button
                   className={clsx(
                     classes.btn,
-                    classes.btnNohover,
-                    classes.noBorder,
-                    classes.link,
-                    classes.textCapitalize,
-                    "link"
+                    classes.btnRounded,
+                    classes.mr15,
+                    windowSize === 'xs' ? classes.mb10 : ''
                   )}
                   onClick={() => {
                     onShowTwoFactorAuth('smsTFA');
@@ -502,11 +494,7 @@ const FORM_COMPANY_DETAILS = ({
                 <Button
                   className={clsx(
                     classes.btn,
-                    classes.btnNohover,
-                    classes.noBorder,
-                    classes.link,
-                    classes.textCapitalize,
-                    "link"
+                    classes.btnRounded
                   )}
                   onClick={() => {
                     onShowTwoFactorAuth('emailTFA');
@@ -529,12 +517,13 @@ const FORM_COMPANY_DETAILS = ({
                 classes.mt3,
                 classes.dFlex,
                 classes.flexWrap,
-                classes.spaceBetween
+                classes.spaceBetween,
+                classes.paddingSides10
               )}
             >
               <Button
                 className={clsx(
-                  classes.btn,
+                  // classes.btn,
                   classes.btnNohover,
                   classes.noBorder,
                   classes.link,
@@ -560,8 +549,9 @@ const FORM_COMPANY_DETAILS = ({
                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 className={clsx(
                   classes.mt5,
-                  classes.actionButton,
-                  classes.actionButtonLightGreen
+                  classes.btn,
+                  classes.btnRounded,
+                  "saveFixedDetails"
                 )}>
                 {/* @ts-ignore */}
                 {t('settings.accountSettings.fixedComDetails.btnUpdate')}
@@ -574,6 +564,7 @@ const FORM_COMPANY_DETAILS = ({
       {RenderDialog()}
       {showChangePassword && <ChangePassword
         Text={null}
+        classes={classes}
         SetToast={setToastMessage}
         IsOpen={showChangePassword}
         OnClose={() => setShowChangePassword(false)}

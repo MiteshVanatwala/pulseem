@@ -21,25 +21,25 @@ const Buttons = ({ classes, onFormButtonClick, displayDeleteButton = true }: But
 			}
 			className={clsx(classes.baseButtonsContainer, 'baseButtonsContainer')}>
 			{
-				displayDeleteButton && (
-					<Button
-						variant='contained'
-						size='medium'
-						className={clsx(classes.actionButton, classes.actionButtonRed)}
-						style={{ margin: '8px', padding: '13px 0' }}
-						onClick={() => onFormButtonClick('delete')}>
-						<BsTrash size={18} />
-					</Button>
-				)
+				displayDeleteButton && (<Button
+					variant='contained'
+					size='medium'
+					className={clsx(
+						classes.btn,
+						classes.btnRounded
+					)}
+					style={{ marginInlineStart: '8px' }}
+					onClick={() => onFormButtonClick('delete')}>
+					<BsTrash size={18} style={{ marginLeft: 0 }} />
+				</Button>)
 			}
 
 			<Button
 				variant='contained'
 				size='medium'
 				className={clsx(
-					classes.actionButton,
-					classes.actionButtonLightBlue,
-					classes.backButton
+					classes.btn,
+					classes.btnRounded,
 				)}
 				color='primary'
 				style={{ margin: '8px' }}
@@ -50,9 +50,9 @@ const Buttons = ({ classes, onFormButtonClick, displayDeleteButton = true }: But
 				variant='contained'
 				size='medium'
 				className={clsx(
-					classes.actionButton,
-					classes.actionButtonLightGreen,
-					classes.backButton
+					classes.btn,
+					classes.btnRounded,
+					classes.redButton
 				)}
 				color='primary'
 				style={{ margin: '8px' }}

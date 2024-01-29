@@ -215,13 +215,14 @@ const ChatFooterContent = ({
 									<Grid className={classes.manageTemplatesHeaderButtons}>
 										<Button
 											className={clsx(
-												classes.whatsappChatSendTemplateButton,
-												'green'
+												classes.btn,
+												classes.btnRounded
 											)}
 											size='small'
 											style={{ padding: '6px 22px' }}
-											onClick={() => setIsTemplateModal(true)}>
-											<>{translator('whatsappChat.send')}</>
+											onClick={() => setIsTemplateModal(true)}
+										>
+											{translator('whatsappChat.send')}
 										</Button>
 									</Grid>
 								</Stack>

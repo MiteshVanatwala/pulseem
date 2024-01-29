@@ -1,11 +1,12 @@
 {
   "logPageHeaderResource1": {
-    "Text": "Groups Management"
+    "Text": "Groups Management",
+    "Dynamic": "Dynamic Groups Management"
   },
   "deleteRecipient": "Delete Recipients",
   "unsubscribe": "Unsubscribe Recipient",
   "emails": "Emails",
-  "sms/mms": "Sms/Mms",
+  "sms/mms": "SMS / WhatsApp",
   "totalRecipients": "Recipients",
   "Active": "Active",
   "Removed": "Removed",
@@ -131,5 +132,8 @@
   "maximumRecordLimitation": "You can unsubscribe/delete up to 1,000 recipients per request.",
   "unsubSetting1Tooltip": "Example: When typing a cellphone number, this setting will also unsubscribe the email address linked to it",
   "unsubSettings": "Unsubscribe settings",
-  "maxUploadLimitation": "You are able to upload up to 5,000 recipients at once"
+  "newsletterCampaign": "Newsletter Campaign",
+  "smsCampaign": "SMS Campaign",
+  "maxUploadLimitation": "You are able to upload up to 5,000 recipients at once",
+  "whatsappCampaign": "Whatsapp Campaign"
 }

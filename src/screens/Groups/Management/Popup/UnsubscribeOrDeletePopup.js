@@ -3,14 +3,14 @@ import {
     Grid,
     Typography,
     FormControlLabel,
-    OutlinedInput,
     Button,
     FormControl,
     FormLabel,
     RadioGroup,
     Radio,
-    Select
+    MenuItem
 } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { useTranslation } from "react-i18next";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { BsInfoCircleFill } from "react-icons/bs";
@@ -27,6 +27,7 @@ import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { getTwoFactorAuthValues } from '../../../../redux/reducers/commonSlice';
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
+import { IoIosArrowDown } from "react-icons/io";
 
 const UnsubscribeOrDeletePopup = ({
     classes,
@@ -54,7 +55,6 @@ const UnsubscribeOrDeletePopup = ({
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [limitationWarning, setLimitationWarning] = useState(false);
-    // const [allData, setAllData] = useState(null);
     const [enteredValue, setEnteredValues] = useState(null);
     const [confirmUnsubscsribe, setConfirmUnsubscsribe] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -73,52 +73,77 @@ const UnsubscribeOrDeletePopup = ({
         return (
             <>
                 {!showDropBox ? (<>
-                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
-                        <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
+                    <Box className={clsx(classes.dFlex)}>
+                        <RadioGroup
+                            aria-label='UnsubscribeType'
+                            name='UnsubscribeType'
+                            value={activeTab}>
+                            <FormControlLabel
+                                value='0'
+                                control={<Radio color='primary' checked={activeTab === 0} />}
+                                label={<Typography style={{ fontWeight: activeTab === 0 ? 'bold' : 500 }}>{t('recipient.phone&email')}</Typography>}
+                                onClick={() => setActiveTab(0)}
+                            />
+                            <FormControlLabel
+                                value='1'
+                                control={<Radio color='primary' checked={activeTab === 1} />}
+                                label={<Typography style={{ fontWeight: activeTab === 1 ? 'bold' : 500 }}>{t('recipient.emailOnly')}</Typography>}
+                                onClick={() => setActiveTab(1)}
+                            />
+                            <FormControlLabel
+                                value='2'
+                                control={<Radio color='primary' checked={activeTab === 2} />}
+                                label={<Typography style={{ fontWeight: activeTab === 2 ? 'bold' : 500 }}>{t('recipient.phoneOnly')}</Typography>}
+                                onClick={() => setActiveTab(2)}
+                            />
+                        </RadioGroup>
+                        {/* <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
                         <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
-                        <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
+                        <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box> */}
                     </Box>
                     {showEmailToNotify && <Box style={{ display: 'flex' }}>
                         <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                             <Typography>{RenderHtml(t("recipient.unsubscribed.notifyEmail"))}</Typography>
-                            <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                            <FormControl
+                                variant="standard"
+                                className={clsx(classes.selectInputFormControl)}
+                            >
                                 <Select
-                                    native
+                                    variant="standard"
                                     displayEmpty
-                                    value={notifyEmail}
+                                    value={notifyEmail || -1}
+                                    className={classes.pbt5}
                                     onChange={(event, val) => {
                                         setNotifyEmail(event.target.value);
                                     }}
                                     label={t("recipient.unsubscribed.notifyEmail")}
                                     name="FromEmail"
-                                    input={
-                                        <OutlinedInput />
-                                    }
+                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                     MenuProps={{
                                         PaperProps: {
                                             style: {
-                                                width: '100%',
+                                                maxHeight: 300,
                                             },
                                         },
                                     }}
-                                    inputProps={{ 'aria-label': 'Without label' }}
                                 >
-                                    <option disabled value="-1" key="-1">{t("common.select")}</option>
-                                    {twoFactorAuthEmails.map((item, index) => {
-                                        return <option
-                                            key={`exd_${index}`}
-                                            value={item.AuthValue}
-                                        >
-                                            {t(item.AuthValue)}
-                                        </option>
+                                    <MenuItem disabled value="-1" key="-1">{t("common.select")}</MenuItem>
+                                    {
+                                        twoFactorAuthEmails.map((item, index) => {
+                                            return <MenuItem
+                                                key={`exd_${index}`}
+                                                value={item.AuthValue}
+                                            >
+                                                {t(item.AuthValue)}
+                                            </MenuItem>
+                                        })
                                     }
-                                    )}
                                 </Select>
                             </FormControl>
                         </Box>
                     </Box>}
                 </>) : (
-                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} >
+                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
                         <FormControl>
                             <FormLabel id="unsubRadio" className={clsx(classes.f20, classes.p5)}><strong>{t('recipient.unsubSettings')}</strong></FormLabel>
                             <RadioGroup
@@ -221,12 +246,14 @@ const UnsubscribeOrDeletePopup = ({
         if (confirmUnsubscsribe === true) {
             handleUnsubSubmit();
         }
+
     }, [confirmUnsubscsribe, unsubscribeOption]);
 
     useEffect(() => {
         if (confirmDelete === true && finalData) {
             openConfirmDialog();
         }
+
     }, [confirmDelete]);
 
     const openConfirmDialog = () => {
@@ -618,10 +645,9 @@ const UnsubscribeOrDeletePopup = ({
                 classes={classes}
                 open={confirm || isSubmitted}
                 title={t("common.systemNotice")}
-                icon={<div className={classes.dialogIconContent}>
+                icon={<div className={clsx(classes.dialogIconContent, 'unicode')}>
                     {'\uE0D5'}
                 </div>}
-                showDivider={true}
                 onClose={DialogObject[dialogType].summaryOnClose}
                 onCancel={DialogObject[dialogType].summaryOnClose}
                 onConfirm={DialogObject[dialogType].onSummaryConfirm}
@@ -641,11 +667,11 @@ const UnsubscribeOrDeletePopup = ({
                 classes={classes}
                 open={limitationWarning}
                 title={t("common.systemNotice")}
-                icon={<div className={classes.dialogIconContent}>
+                icon={<div className={clsx(classes.dialogIconContent, 'unicode')}>
                     {'\uE0D5'}
                 </div>}
                 showDefaultButtons={false}
-                showDivider={true}
+                showDivider={false}
                 onClose={() => { setLimitationWarning(false) }}
                 onCancel={() => { setLimitationWarning(false) }}
                 renderButtons={() => {
@@ -716,21 +742,20 @@ const UnsubscribeOrDeletePopup = ({
             open={dialogType}
             childrenStyle={showDropBox ? classes.h50v : classes.h10v}
             title={
-                <Box className={clsx(classes.flex, classes.justifyBetween)}>
+                <Box className={clsx(classes.flex, classes.justifyBetween, classes.alignItemsCenter)}>
                     <Box>
                         {DialogObject[dialogType].title}
                     </Box>
                     {showDropBox && <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
-                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
+                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#fff' }} className={clsx(classes.paddingSides15, classes.pt5)} />
                         </label>
                     </Box>}
                 </Box>
             }
-            icon={< div className={classes.dialogIconContent} >
+            icon={<div className={clsx(classes.dialogIconContent, 'unicode', classes.pt10)} >
                 {'\uE0D5'}
             </div >}
-            showDivider={true}
             onClose={onClose}
             onCancel={onClose}
             onConfirm={DialogObject[dialogType].onConfirm}

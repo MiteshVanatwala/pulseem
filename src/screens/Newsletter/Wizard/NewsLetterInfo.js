@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
-import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button, Checkbox, FormControlLabel, Tooltip } from '@material-ui/core'
+import { IoIosArrowDown } from 'react-icons/io';
+import { Grid, Box, Typography, TextField, makeStyles, FormControl, Button, FormControlLabel, Checkbox, MenuItem, ListItemIcon } from '@material-ui/core'
+import Select from '@mui/material/Select';
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,12 +24,13 @@ import { AdvancedSettings } from './components/AdvancedSettings';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
-import { BiSave } from 'react-icons/bi'
+import { SharedEmailDomain, sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { DialogType } from '../../HtmlCampaign/helper/Config';
-import Templates from '../../HtmlCampaign/modals/Templates';
-import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
-import { SharedEmailDomain } from '../../../config';
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlineVerified } from 'react-icons/md';
+import { Title } from '../../../components/managment/Title';
+// import { DialogType } from '../../HtmlCampaign/helper/Config';
+// import Templates from '../../HtmlCampaign/modals/Templates';
+// import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
@@ -136,6 +139,11 @@ const useStyles = makeStyles({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        '& .MuiCheckbox-root': {
+            "@media screen and (max-width: 768px)": {
+                paddingInline: 0
+            },
+        }
     }
 })
 
@@ -146,8 +154,8 @@ const NewsLetterInfo = ({ classes }) => {
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
 
-    const { isRTL, CoreToastMessages } = useSelector((state) => state.core);
-    const { publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
+    const { windowSize, isRTL, CoreToastMessages } = useSelector((state) => state.core);
+    // const { publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -161,8 +169,10 @@ const NewsLetterInfo = ({ classes }) => {
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [campaignLoaded, setCampaignLoaded] = useState(false);
     const [newEditorDisabled, setNewEditorDisabled] = useState(false);
-    const [showEmoji, setShowEmoji] = useState(false);
-    const [template, setTemplate] = useState('');
+    // const [template, setTemplate] = useState('');
+    const [continueToNewEditor, setContinueToNewEditor] = useState(false);
+    const [onSelectedSharedDomain, setOnSelectedSharedDomain] = useState(false);
+    // const restrictedDomains = sessionStorage.getItem("RestrictedEmailDomains");
     const [showDomainVerification, setShowDomainVerification] = useState(false);
     const [domainAddressError, setDomainAddressError] = useState({
         display: false,
@@ -185,7 +195,8 @@ const NewsLetterInfo = ({ classes }) => {
         Name: "",
         Subject: "",
         FromName: "",
-        FromEmail: ""
+        FromEmail: "",
+        ReplyTo: ""
     })
 
     const helperTexts = {
@@ -193,15 +204,16 @@ const NewsLetterInfo = ({ classes }) => {
         Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
         FromName: t('common.requiredField'),
         FromEmail: t('campaigns.newsLetterEditor.helpTexts.FromEmail'),
-        PreviewText: t('campaigns.newsLetterEditor.helpTexts.pre_helper_text'),
-        ReplyEmail: t('campaigns.newsLetterEditor.helpTexts.ReplyEmail')
+        ReplyEmail: t('campaigns.newsLetterEditor.helpTexts.ReplyEmail'),
+        PreviewText: t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')
     }
 
     const ErrorTexts = {
         Name: t('campaigns.newsLetterEditor.errors.fromName'),
         Subject: t('campaigns.newsLetterEditor.errors.campaignSubject'),
         FromName: t('campaigns.newsLetterEditor.errors.fromName'),
-        FromEmail: t('campaigns.newsLetterEditor.errors.fromEmail')
+        FromEmail: t('campaigns.newsLetterEditor.errors.fromEmail'),
+        // ReplyEmail: t('campaigns.newsLetterEditor.errors.ReplyEmail'),
     }
 
     const [campaingnValues, setCampaingnValues] = useState({
@@ -266,9 +278,6 @@ const NewsLetterInfo = ({ classes }) => {
             }
         }
     }
-    // const handleClickOutsideEmoji = () => {
-    //     setShowEmoji(false);
-    // }
 
     // useEffect(() => {
     //     const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
@@ -308,6 +317,7 @@ const NewsLetterInfo = ({ classes }) => {
                     else {
                         campaingnValues.FromEmail = '-1';
                     }
+                    campaingnValues.ReplyTo = campaingnValues.FromEmail;
                 }
                 else {
                     const emailVerified = verifiedEmails.find((email) => {
@@ -319,7 +329,10 @@ const NewsLetterInfo = ({ classes }) => {
                 }
             }
             if (accountSettings?.DefaultFromName && accountSettings?.DefaultFromName !== '') {
-                setCampaingnValues({ ...campaingnValues, FromName: campaingnValues.FromName === '' ? accountSettings?.DefaultFromName : campaingnValues.FromName });
+                setCampaingnValues({
+                    ...campaingnValues,
+                    FromName: campaingnValues.FromName === '' ? accountSettings?.DefaultFromName : campaingnValues.FromName
+                });
             }
         }
     }
@@ -379,12 +392,10 @@ const NewsLetterInfo = ({ classes }) => {
                     const saveInfo = JSON.parse(res.Message);
                     const emailProps = verifiedEmails.filter((ve) => { return ve.Number === campaingnValues.FromEmail })[0];
                     const isSharedDomain = campaingnValues.FromEmail.split("@").pop() === SharedEmailDomain;
-
                     const emailObj = {
                         NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
                         Restricted: 'common.domainVerification.campaignCreation.restricted.preText',
                     }
-
                     const domainErrorObj = {
                         display: true,
                         address: campaingnValues.FromEmail,
@@ -411,7 +422,6 @@ const NewsLetterInfo = ({ classes }) => {
                             }
                         }]
                     }
-
                     setDomainAddressError(domainErrorObj);
                     setShowDomainVerification(true);
                 }
@@ -469,26 +479,24 @@ const NewsLetterInfo = ({ classes }) => {
         await dispatch(saveCampaignInfo(campaingnValues))
     }
 
-    const renderTemplateButtons = () => !parseInt(id) && <Button onClick={() => {
-        setLoader(true);
-        setTimeout(() => {
-            setDialogType(DialogType.Templates);
-        }, 1000);
+    // const renderTemplateButtons = () => !parseInt(id) && <Button onClick={() => {
+    //     setLoader(true);
+    //     setTimeout(() => {
+    //         setDialogType(DialogType.Templates);
+    //     }, 1000);
 
-        setTimeout(() => {
-            setLoader(false);
-        }, 2000);
-    }}
-        variant='contained'
-        size='medium'
-        className={clsx(
-            classes.actionButton,
-            classes.actionButtonOutlinedBlue
-        )}
-        style={{ margin: '8px' }}
-    >
-        {t('common.templates')}
-    </Button>
+    //     setTimeout(() => {
+    //         setLoader(false);
+    //     }, 2000);
+    // }}
+    //     className={clsx(
+    //         classes.btn,
+    //         classes.btnRounded
+    //     )}
+    //     style={{ margin: '8px' }}
+    // >
+    //     {t('common.templates')}
+    // </Button>
 
     useEffect(() => {
         if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
@@ -530,12 +538,10 @@ const NewsLetterInfo = ({ classes }) => {
         });
         setErrors({ ...errors, FromEmail: '' });
         if (!isSharedDomain && (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true)) {
-
             const emailObj = {
                 NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
                 Restricted: 'common.domainVerification.campaignCreation.restricted.preText',
             }
-
             const domainErrorObj = {
                 display: true,
                 address: fromEmailProperty.Number,
@@ -549,7 +555,6 @@ const NewsLetterInfo = ({ classes }) => {
                 showSkip: false,
                 replyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : event.target.value
             }
-
             setDomainAddressError(domainErrorObj);
             setShowDomainVerification(true);
         }
@@ -581,7 +586,7 @@ const NewsLetterInfo = ({ classes }) => {
         let isError = false;
 
         Object.keys(tempError).forEach((key) => {
-            if (key === 'FromEmail' && data[key] === '-1') {
+            if ((key === 'FromEmail' && data[key] === '-1') || (key === 'ReplyTo' && data[key] === '-1')) {
                 tempError[key] = ErrorTexts[key];
                 isError = true
             }
@@ -598,7 +603,7 @@ const NewsLetterInfo = ({ classes }) => {
 
     const handleContinueToEditor = (isNewEditor = false, campaignId) => {
         const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
-        let redirectUrl = isBeeEditor ? `/react/Campaigns/editor/${campaignId}` : `/Pulseem/Editor/CampaignEdit/${campaignId}`;
+        let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${campaignId}` : `/Pulseem/Editor/CampaignEdit/${campaignId}`;
         if (isFromAutomation) {
             if (isNew) {
                 redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
@@ -613,25 +618,29 @@ const NewsLetterInfo = ({ classes }) => {
     const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
         if (!handleValidations()) {
             setLoader(true);
+            setContinueToNewEditor(isNewEditor);
             await dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then(async (response) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
+                const saveInfo = JSON.parse(savedCampaign.Message);
+                setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo?.CampaignID });
+
                 handleSubmitNewsletterResponse(savedCampaign, isExit, isNewEditor);
+
                 if (savedCampaign?.StatusCode === 403 || savedCampaign?.StatusCode === 451) {
                     return false;
                 }
 
-                const saveInfo = JSON.parse(savedCampaign.Message);
+                // if (template?.Html && template?.JsonData) {
+                //     await dispatch(saveCampaign({
+                //         Name: campaingnValues.Name,
+                //         campaignId: saveInfo.CampaignID,
+                //         JsonData: template?.JsonData,
+                //         HTML: template?.Html
+                //     }));
+                // }
 
-                if (template?.Html && template?.JsonData) {
-                    await dispatch(saveCampaign({
-                        Name: campaingnValues.Name,
-                        campaignId: saveInfo.CampaignID,
-                        JsonData: template?.JsonData,
-                        HTML: template?.Html
-                    }));
-                }
 
                 if (isContiue) {
                     handleContinueToEditor(isNewEditor, saveInfo?.CampaignID);
@@ -641,14 +650,14 @@ const NewsLetterInfo = ({ classes }) => {
                         window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
                         return false;
                     }
-                    navigate(`/react/Campaigns`);
+                    navigate(`${sitePrefix}Campaigns`);
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     if (isFromAutomation) {
-                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
                     }
                     else {
-                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}`)
+                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
                     }
                     initFilesAndCredits(saveInfo.CampaignID);
                 }
@@ -658,7 +667,7 @@ const NewsLetterInfo = ({ classes }) => {
     const handleDelete = async () => {
         await dispatch(deleteCampaign(campaingnValues.CampaignID));
         setConfirmDelete(false)
-        navigate('/react/Campaigns');
+        navigate(`${sitePrefix}Campaigns`);
     }
     const renderToast = () => {
         if (toastMessage) {
@@ -673,294 +682,279 @@ const NewsLetterInfo = ({ classes }) => {
         return null;
     }
     const CampaignBox1 = () => (
-        <Box py={3}>
+        <Box py={3} className={classes.ps15}>
             <SimpleGrid
-                spacing={3}
-                centerlize={true}
-                gridArr={
-                    [
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Typography title={t("campaigns.camapignName")} className={classes.alignDir}>{t("campaigns.camapignName")}</Typography>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content: <TextField
-                                        id="campaignName"
-                                        label=""
-                                        variant="outlined"
-                                        name="Name"
-                                        value={campaingnValues.Name}
-                                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
-                                        autoComplete="off"
-                                        onChange={handleChange}
-                                        error={errors.Name}
-                                        title={campaingnValues.Name}
-                                        helperText={errors.Name ? errors.Name : helperTexts.Name}
-                                    />,
-                                    gridSize: { xs: 12, sm: 12 }
-                                }
-                                ]}
-                            />,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Typography title={t("campaigns.newsLetterEditor.campaignSubject")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.campaignSubject")}</Typography>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content:
-                                        <Box className={classes.flex}>
-                                            <TextField
-                                                id="outlined-basic"
-                                                label=""
-                                                variant="outlined"
-                                                name="Subject"
-                                                value={campaingnValues.Subject}
-                                                className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
-                                                autoComplete="off"
-                                                onChange={handleChange}
-                                                error={errors.Subject}
-                                                title={campaingnValues.Subject}
-                                                helperText={errors.Subject ? errors.Subject : helperTexts.Subject}
-                                            />
-                                            <EmojiPicker
-                                                classes={classes}
-                                                boxStyles={{ marginTop: 30 }}
-                                                OnSelectEmoji={(emoji) => {
-                                                    setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })
-                                                }}
-                                            />
-                                        </Box>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                }
-                                ]}
-                            />,
-                            gridSize: { xs: 12, sm: 6 }
-                        },
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Typography title={t("campaigns.newsLetterEditor.personalization")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.personalization")}</Typography>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content: <>
-                                        <FormControl className={localClasses.select}>
-                                            <Select
-                                                native
-                                                displayEmpty
-                                                value={''}
-                                                onChange={(event) => {
-                                                    setCampaingnValues(
-                                                        {
-                                                            ...campaingnValues,
-                                                            personalDatatoSubject: event.target.value,
-                                                            Subject: `${campaingnValues.Subject} ##${event.target.value}##`
-                                                        })
-                                                }}
-                                                input={<OutlinedInput />}
-                                                renderValue={(selected) => {
-                                                    if (!selected) {
-                                                        return <option>{t("common.select")}</option>;
-                                                    }
+                spacing={{ xs: 2, sm: 4 }}
+                gridArr={[
+                    {
+                        content:
+                            <Box>
+                                <Typography title={t("campaigns.camapignName")} className={classes.alignDir}>{t("campaigns.camapignName")}</Typography>
+                                <TextField
+                                    id="campaignName"
+                                    label=""
+                                    variant="outlined"
+                                    name="Name"
+                                    value={campaingnValues.Name}
+                                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth', { [classes.textFieldError]: !!errors.Name })}
+                                    autoComplete="off"
+                                    onChange={handleChange}
+                                    error={errors.Name}
+                                    title={campaingnValues.Name}
+                                />
+                                <Box className='textBoxWrapper'>
+                                    <Typography className={clsx(errors.Name ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                        {errors.Name ? errors.Name : helperTexts.Name}
+                                    </Typography>
+                                </Box>
+                            </Box>,
+                        gridSize: { xs: 12, sm: 4 }
+                    },
+                    {
+                        content:
+                            <>
+                                {/* // <Box className={classes.flex}> */}
+                                <Box className={classes.w100}>
+                                    <Typography title={t("campaigns.newsLetterEditor.campaignSubject")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.campaignSubject")}</Typography>
+                                    <Box className={classes.flex}>
 
-                                                    return selected;
-                                                }}
-                                                MenuProps={{
-                                                    PaperProps: {
-                                                        style: {
-                                                            maxHeight: 48 * 4.5 + 8,
-                                                            width: 250,
-                                                        },
-                                                    },
-                                                }}
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                            >
-                                                <option>{t("common.select")}</option>;
-                                                {extraAccountDATA.map((item, index) => (
-                                                    <option
-                                                        key={`exd_${index}`}
-                                                        value={item.value}
-                                                    >
-                                                        {t(item.label)}
-                                                    </option>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-
-
-                                    </>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                }
-                                ]}
-                            />,
-                            gridSize: { xs: 12, sm: 2 }
-                        },
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Typography title={t("campaigns.newsLetterEditor.fromName")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromName")}</Typography>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content: <TextField
-                                        id="outlined-basic"
-                                        label=""
-                                        variant="outlined"
-                                        name="FromName"
-                                        value={campaingnValues.FromName !== '' ? campaingnValues.FromName : accountSettings?.DefaultFromName}
-                                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
-                                        autoComplete="off"
-                                        onChange={handleChange}
-                                        error={errors.FromName}
-                                        title={campaingnValues.FromName}
-                                        helperText={errors.FromName ? errors.FromName : helperTexts.FromName}
-                                    />,
-                                    gridSize: { xs: 12, sm: 12 }
-                                }
-                                ]}
-                            />,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Box className={classes.dFlex}>
-                                        <Typography
-                                            title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')}
-                                            className={classes.alignDir}
-                                            style={{ marginInlineEnd: 10}}>
-                                            {RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}
+                                        <TextField
+                                            id="outlined-basic"
+                                            label=""
+                                            variant="outlined"
+                                            name="Subject"
+                                            value={campaingnValues.Subject}
+                                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth', { [classes.textFieldError]: !!errors.Subject })}
+                                            autoComplete="off"
+                                            onChange={handleChange}
+                                            title={campaingnValues.Subject}
+                                        />
+                                        <EmojiPicker
+                                            classes={classes}
+                                            boxStyles={{ marginTop: 10 }}
+                                            OnSelectEmoji={(emoji) => {
+                                                setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })
+                                            }}
+                                        />
+                                    </Box>
+                                    <Box className='textBoxWrapper'>
+                                        <Typography className={clsx(errors.Subject ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                            {errors.Subject ? errors.Subject : helperTexts.Subject}
                                         </Typography>
-                                        {!isVerifiedDomain && <Tooltip
-                                            placement='top'
-                                            title={RenderHtml(t("campaigns.newsLetterEditor.domainVerificationTooltip"))}
-                                            classes={{ tooltip: classes.customWidth }}
-                                            sx={{ justifyContent: 'center', zIndex: 9999999999999, direction: isRTL ? 'rtl' : 'ltr'  }}
+                                    </Box>
+                                </Box>
+
+                            </>
+                        // </Box>
+                        ,
+                        gridSize: { xs: 12, sm: 6 }
+                    },
+                    {
+                        content: <Box className='selectWrapper'>
+                            <Typography title={t("campaigns.newsLetterEditor.personalization")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.personalization")}</Typography>
+                            <FormControl
+                                className={clsx(classes.selectInputFormControl, classes.w100)}
+                            >
+                                <Select
+                                    native
+                                    variant="standard"
+                                    name="personalization"
+                                    value={''}
+                                    className={classes.pbt5}
+                                    onChange={(event) => {
+                                        setCampaingnValues({
+                                            ...campaingnValues,
+                                            personalDatatoSubject: event.target.value,
+                                            Subject: `${campaingnValues.Subject} ##${event.target.value}##`
+                                        })
+                                    }}
+                                    renderValue={(selected) => {
+                                        if (!selected) {
+                                            return <option
+                                                key=''
+                                                value=''
+                                                name=''
+                                                disabled
+                                            >
+                                                {t("common.select")}
+                                            </option>;
+                                        }
+                                        return selected;
+                                    }}
+                                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                    MenuProps={{
+                                        PaperProps: {
+                                            style: {
+                                                maxHeight: 300,
+                                                direction: isRTL ? 'rtl' : 'ltr'
+                                            },
+                                        },
+                                    }}
+                                >
+                                    <option key='' value='' disabled>{t("common.select")}</option>
+                                    {extraAccountDATA.map((item, index) => {
+                                        return <option
+                                            key={index}
+                                            value={item.value}
+                                            name={item.value}
+                                            style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                                         >
-                                            <span className={classes.bodyInfo}>i</span>
-                                        </Tooltip>}
-                                    </Box>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content:
-                                        <FormControl className={localClasses.select} error={errors.FromEmail}>
-                                            <Select
-                                                native
-                                                displayEmpty
-                                                value={campaingnValues?.FromEmail}
-                                                onChange={(event, val) => {
-                                                    handleFromEmailChange(event);
-                                                }}
-                                                className={clsx(classes.fromEmailSelect, !isVerifiedDomain ? classes.errorBg : null)}
-                                                name="FromEmail"
-                                                input={<OutlinedInput />}
-                                                MenuProps={{
-                                                    PaperProps: {
-                                                        style: {
-                                                            maxHeight: 48 * 4.5 + 8,
-                                                            width: 250,
-                                                        },
-                                                    },
-                                                }}
-                                                inputProps={{ 'aria-label': 'Without label' }}
+                                            {t(item?.label)}
+                                        </option>
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        ,
+                        gridSize: { xs: 12, sm: 2 }
+                    },
+                    {
+                        content:
+                            <Box>
+                                <Typography title={t("campaigns.newsLetterEditor.fromName")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromName")}</Typography>
+                                <TextField
+                                    id="outlined-basic"
+                                    label=""
+                                    variant="outlined"
+                                    name="FromName"
+                                    value={campaingnValues.FromName !== '' ? campaingnValues.FromName : accountSettings?.DefaultFromName}
+                                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth', { [classes.textFieldError]: !!errors.FromName })}
+                                    autoComplete="off"
+                                    onChange={handleChange}
+                                    // error={errors.FromName}
+                                    title={campaingnValues.FromName}
+                                // helperText={errors.FromName ? errors.FromName : helperTexts.FromName}
+                                />
+                                <Box className='textBoxWrapper'>
+                                    <Typography className={clsx(errors.FromName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                        {errors.FromName ? errors.FromName : helperTexts.FromName}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        ,
+                        gridSize: { xs: 12, sm: 4 }
+                    },
+                    {
+                        content:
+                            <Box className='selectWrapper'>
+                                <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>','')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
+                                <FormControl
+                                    className={clsx(classes.selectInputFormControl, classes.w100)}
+                                >
+                                    <Select
+                                        native
+                                        variant="standard"
+                                        name="FromEmail"
+                                        value={campaingnValues?.FromEmail}
+                                        className={clsx(classes.pbt5, classes.fromEmailSelect, !isVerifiedDomain ? classes.errorBg : null)}
+                                        onChange={(event, val) => {
+                                            handleFromEmailChange(event);
+                                        }}
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 300,
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <option
+                                            key='-1'
+                                            value='-1'
+                                            disabled
+                                        >
+                                            {t("common.select")}
+                                        </option>
+                                        {verifiedEmails.map((item, index) => {
+                                            // if (item && item.IsRestricted) {
+                                            //     return false;
+                                            // }
+                                            return <option
+                                                key={index}
+                                                value={item.Number}
+                                                name={item.Number}
                                             >
-                                                <option disabled value="-1" key="-1">{t("common.select")}</option>
-                                                {verifiedEmails.map((item, index) => {
-                                                    if (item.IsOptIn) {
-                                                        return <option
-                                                            key={`exd_${index}`}
-                                                            value={item.Number}
-                                                        >
-                                                            {t(item.Number)}
-                                                        </option>
-                                                    }
-                                                }
-                                                )}
-                                                {accountSettings?.SubAccountSettings?.SharedEmailDomain &&
-                                                    <option
-                                                        key={verifiedEmails.length + 1}
-                                                        value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
-                                                    >
-                                                        {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
-                                                    </option>}
-                                            </Select>
-                                            <FormHelperText style={{ fontSize: '1rem' }}>
-                                                {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
-                                                <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
-                                            </FormHelperText>
-                                        </FormControl>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                }
-                                ]}
-                            />,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>', '').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content:
-                                        <FormControl className={localClasses.select}>
-                                            <Select
-                                                native
-                                                displayEmpty
-                                                name="ReplyTo"
-                                                value={campaingnValues?.ReplyTo}
-                                                input={<OutlinedInput />}
-                                                MenuProps={{
-                                                    PaperProps: {
-                                                        style: {
-                                                            maxHeight: 48 * 4.5 + 8,
-                                                            width: 250,
-                                                        },
-                                                    },
-                                                }}
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                onChange={(event, val) => {
-
-                                                    setCampaingnValues({ ...campaingnValues, ReplyTo: event.target.value });
-                                                    setErrors({ ...errors, ReplyTo: '' });
-                                                }}
+                                                {/* {item?.IsVerified && <ListItemIcon style={{ minWidth: 25 }}>
+                                                    <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
+                                                </ListItemIcon>} */}
+                                                {t(item.Number)}
+                                            </option>
+                                        })}
+                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                            key={verifiedEmails.length + 1}
+                                            value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                            name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                        >
+                                            {/* <ListItemIcon style={{ minWidth: 25 }}>
+                                                <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
+                                            </ListItemIcon> */}
+                                            {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
+                                        </option>}
+                                    </Select>
+                                </FormControl>
+                                <Typography className={clsx(errors.FromEmail ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                    {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
+                                    <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
+                                </Typography>
+                            </Box>
+                        ,
+                        gridSize: { xs: 12, sm: 4 }
+                    },
+                    {
+                        content:
+                            <Box className='selectWrapper'>
+                                <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>','').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>
+                                <FormControl
+                                    className={clsx(classes.selectInputFormControl, classes.w100)}
+                                >
+                                    <Select
+                                        native
+                                        variant="standard"
+                                        name="ReplyTo"
+                                        value={campaingnValues?.ReplyTo}
+                                        className={classes.pbt5}
+                                        onChange={(event, val) => {
+                                            setCampaingnValues({ ...campaingnValues, ReplyTo: event.target.value });
+                                            setErrors({ ...errors, ReplyTo: '' });
+                                        }}
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    maxHeight: 300,
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        <option
+                                            key='-1'
+                                            value='-1'
+                                            disabled
+                                        >
+                                            {t("common.select")}
+                                        </option>
+                                        {verifiedEmails.map((item, index) => {
+                                            return item.Number.split("@").pop() !== SharedEmailDomain && <option
+                                                key={index}
+                                                value={item.Number}
+                                                name={item.Number}
                                             >
-                                                <option
-                                                    key='-1'
-                                                    value='-1'
-                                                    disabled
-                                                >
-                                                    {t("common.select")}
-                                                </option>
-                                                {verifiedEmails.map((item, index) => {
-                                                    return item.Number.split("@").pop() !== SharedEmailDomain && <option
-                                                        key={index}
-                                                        value={item.Number}
-                                                        name={item.Number}
-                                                    >
-                                                        {campaingnValues?.FromEmail === item.Number ? t("campaigns.newsLetterEditor.helpTexts.useFromEmailAsReply") : item.Number}
-                                                    </option>
-                                                })}
-                                            </Select>
-                                            <FormHelperText style={{ fontSize: '1rem' }} className={clsx(errors.ReplyTo ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                                {helperTexts.ReplyEmail}
-                                            </FormHelperText>
-                                        </FormControl>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                }
-                                ]}
-                            />,
-                            gridSize: { xs: 12, sm: 4 }
-                        }
-                    ]
-                }
+                                                {campaingnValues?.FromEmail === item.Number ? t("campaigns.newsLetterEditor.helpTexts.useFromEmailAsReply") : item.Number}
+                                            </option>
+                                        })}
+                                    </Select>
+                                </FormControl>
+                                <Typography className={clsx(errors.ReplyTo ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                    {errors.ReplyEmail ? errors.ReplyEmail : helperTexts.ReplyEmail + ' '}
+                                    {/* <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong> */}
+                                </Typography>
+                            </Box>
+                        ,
+                        gridSize: { xs: 12, sm: 4 }
+                    },
 
+                ]}
             />
         </Box>
     )
@@ -1073,97 +1067,75 @@ const NewsLetterInfo = ({ classes }) => {
                 window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
                 return false;
             }
-            navigate('/react/Campaigns');
+            navigate(`${sitePrefix}Campaigns`);
         }
     }
 
     const renderButtons = () => {
         const wizardButtons = [];
-        const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1
-        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1
-        if (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
+        const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
+        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
+        if (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
             wizardButtons.push(<>
                 <Button
                     onClick={() =>
                         handleSubmit()}
-                    variant='contained'
-                    size='medium'
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightBlue,
+                        classes.btn,
+                        classes.btnRounded,
                         classes.backButton
                     )}
                     style={{ margin: '8px' }}
-                    startIcon={<BiSave />}
-                    color="primary"
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >{t("common.save")}
                 </Button>
                 <Button onClick={() => handleSubmit(true, false, false)}
-                    variant='contained'
-                    size='medium'
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightGreen,
+                        classes.btn,
+                        classes.btnRounded,
                         classes.backButton
                     )}
-                    style={{ marginInlineStart: '8px' }}
-                    color="primary"
+                    style={{ margin: '8px' }}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >{t('common.continue')}</Button>
             </>);
         }
         else {
             if (id !== null && campaingnValues.IsNewEditor === true) {
-                wizardButtons.push(<Button
-                    onClick={() => handleSubmit(true, false, true)}
-                    variant='contained'
-                    size='medium'
+                wizardButtons.push(<Button onClick={() => handleSubmit(true, false, true)}
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightGreen,
-                        classes.backButton,
-                        classes.ribbonContainer
-                    )}
-                    style={{ marginInlineStart: '8px' }}
-                    color="primary"
-                >
-                    {t('master.continueToNewEditor')}
-                    <div className="wrap">
-                        <span className="ribbon">{t('mainReport.newFeature')}</span>
-                    </div>
-                </Button>)
-            }
-            else {
-                wizardButtons.push(<><Button
-                    onClick={() => showCautionOldEditor ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, false)}
-                    variant='contained'
-                    size='medium'
-                    className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightGreen,
+                        classes.btn,
+                        classes.btnRounded,
                         classes.backButton
                     )}
-                    style={{ marginInlineStart: '8px' }}
-                    color="primary"
-                >{t('common.saveAndContinue')}</Button>
+                    style={{ margin: '8px', }}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                >{t('master.continueToNewEditor')}</Button>)
+            }
+            else {
+                wizardButtons.push(<>
+                    <Button
+                        onClick={() => showCautionOldEditor ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, false)}
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded,
+                            classes.backButton,
+                            windowSize === 'sm' ? classes.dFlex : ''
+                        )}
+                        style={{ margin: '8px' }}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    >{t('common.saveAndContinue')}</Button>
                     {(id === null || id === undefined) && <Button
                         disabled={newEditorDisabled}
                         onClick={() => showCautionNewEditor ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, true)}
-                        variant='contained'
-                        size='medium'
                         className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen,
-                            classes.backButton,
-                            classes.ribbonContainer
+                            classes.btn,
+                            classes.btnRounded,
+                            classes.backButton
                         )}
-                        style={{ marginInlineStart: '8px' }}
-                        color="primary"
-                    >
-                        {t('master.continueToNewEditor')}
-                        <div className="wrap">
-                            <span className="ribbon">{t('mainReport.newFeature')}</span>
-                        </div>
-                    </Button>}
+                        style={{ margin: '8px' }}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    >{t('master.continueToNewEditor')}</Button>}
                 </>)
             }
         }
@@ -1293,7 +1265,7 @@ const NewsLetterInfo = ({ classes }) => {
 
         const currentDialog = dialogContent[type] || {}
         return (
-            dialogType && <BaseDialog
+            dialogType && type !== dialogType.Templates && <BaseDialog
                 classes={classes}
                 open={dialogType}
                 onCancel={() => setDialogType(null)}
@@ -1310,117 +1282,119 @@ const NewsLetterInfo = ({ classes }) => {
             currentPage="newsletter"
             subPage={"newsletterInfo"}
             classes={classes}
-            containerClass={clsx(classes.management, classes.mb50)}
+            customPadding={true}
+            containerClass={clsx(classes.mb50, classes.editorCont)}
         >
+            <Box className="head">
+                <Title Text={t("campaigns.createNewsLetterHeader")} classes={classes} />
+            </Box>
+            <Box className={"containerBody"}>
+                {CampaignBox1()}
+                {/* <Divider /> */}
+                <Grid container spacing={3} className={classes.ps15}>
+                    {/* Additional Text */}
+                    <Grid item xs={12} sm={5} >
+                        <AdditionalText
+                            classes={classes}
+                            localClasses={localClasses}
+                            selectedCheck={{ ...selectedCheck }}
+                            campaingnValues={{ ...campaingnValues }}
+                            handleChangeCheckbox={handleChangeCheckbox}
+                            handleSelectionRadio={handleSelectionRadio}
+                        />
+                    </Grid>
+                    {/* Advanced settings */}
+                    <Grid item xs={12} sm={7}>
+                        <AdvancedSettings
+                            classes={classes}
+                            localClasses={localClasses}
+                            campaingnValues={{ ...campaingnValues }}
+                            setCampaingnValues={setCampaingnValues}
+                            setShowGallery={setShowGallery}
+                            removeAttachmentFile={removeAttachmentFile}
+                        />
+                    </Grid>
+                </Grid>
+
+                <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 15 }}>
+                    <WizardActions
+                        classes={classes}
+                        onBack={{
+                            callback: () => { setConfirmExit(true) }
+                        }}
+                        onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
+                        additionalButtons={renderButtons()}
+                    // additionalButtonsOnStart={renderTemplateButtons()}
+                    />
+                </Box>
+                <BaseDialog
+                    classes={classes}
+                    open={confirmExit}
+                    title={t("campaigns.GridButtonColumnResource2.confirmExit")}
+                    showDivider={true}
+                    onClose={() => handleExit(false)}
+                    onCancel={() => handleExit(null)}
+                    onConfirm={() => handleExit(true)}
+                    disableBackdropClick={true}
+                    cancelText="common.No"
+                    confirmText="common.Yes"
+                >
+                    <Box>
+                        <Typography variant="subtitle1">
+                            {t("campaigns.GridButtonColumnResource2.confirmExitText")}
+                        </Typography>
+                    </Box>
+                </BaseDialog>
+                <BaseDialog
+                    classes={classes}
+                    open={confirmDelete}
+                    title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
+                    showDivider={true}
+                    onClose={() => setConfirmDelete(false)}
+                    onCancel={() => setConfirmDelete(false)}
+                    onConfirm={() => handleDelete()}
+                    cancelText="common.Cancel"
+                    confirmText="common.Ok"
+                >
+                    <Box>
+                        <Typography variant="subtitle1">
+                            {t("campaigns.GridButtonColumnResource2.ConfirmText")}
+                        </Typography>
+                    </Box>
+                </BaseDialog>
+                {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
+                {/* {
+                    dialogType === DialogType.Templates && <Templates
+                        isCreateCampaign={true}
+                        classes={classes}
+                        onClose={async (template) => {
+                            setDialogType(null);
+                            if (template !== undefined) {
+                                const response = await dispatch(getTemplateById(template.ID));
+                                if (response.payload.StatusCode === 201) {
+                                    setTemplate(response?.payload?.Data);
+                                }
+                            }
+                        }}
+                        isOpen={dialogType === DialogType.Templates}
+                    />
+                } */}
+                {/* Here we are using DomainVerification as a component and not via React Store */}
+                {showDomainVerification && <DomainVerification
+                    classes={classes}
+                    domain={domainAddressError}
+                    forceShow={showDomainVerification}
+                    key={"fromManagement"}
+                    onClose={() => {
+                        setShowDomainVerification(false)
+                    }}
+                />}
+                <Loader isOpen={showLoader} />
+            </Box>
             {renderDialog()}
             {showGalleryModal()}
             {renderToast()}
-            <Typography className={classes.managementTitle}>
-                {t("campaigns.createNewsLetterHeader")}
-            </Typography>
-            <Divider />
-            {CampaignBox1()}
-            <Divider />
-            <Grid container spacing={3}>
-                {/* Additional Text */}
-                <Grid item xs={12} sm={5}>
-                    <AdditionalText
-                        classes={classes}
-                        localClasses={localClasses}
-                        selectedCheck={{ ...selectedCheck }}
-                        campaingnValues={{ ...campaingnValues }}
-                        handleChangeCheckbox={handleChangeCheckbox}
-                        handleSelectionRadio={handleSelectionRadio}
-                    />
-                </Grid>
-                {/* Advanced settings */}
-                <Grid item xs={12} sm={7}>
-                    <AdvancedSettings
-                        classes={classes}
-                        localClasses={localClasses}
-                        campaingnValues={{ ...campaingnValues }}
-                        setCampaingnValues={setCampaingnValues}
-                        setShowGallery={setShowGallery}
-                        removeAttachmentFile={removeAttachmentFile}
-                    />
-                </Grid>
-            </Grid>
-
-            <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 25 }}>
-                <WizardActions
-                    classes={classes}
-                    onBack={{
-                        callback: () => { setConfirmExit(true) }
-                    }}
-                    onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
-                    additionalButtons={renderButtons()}
-                // additionalButtonsOnStart={renderTemplateButtons()}
-                />
-            </Box>
-            <BaseDialog
-                classes={classes}
-                open={confirmExit}
-                title={t("campaigns.GridButtonColumnResource2.confirmExit")}
-                showDivider={true}
-                onClose={() => handleExit(false)}
-                onCancel={() => handleExit(null)}
-                onConfirm={() => handleExit(true)}
-                disableBackdropClick={true}
-                cancelText="common.No"
-                confirmText="common.Yes"
-            >
-                <Box>
-                    <Typography variant="subtitle1">
-                        {t("campaigns.GridButtonColumnResource2.confirmExitText")}
-                    </Typography>
-                </Box>
-            </BaseDialog>
-            <BaseDialog
-                classes={classes}
-                open={confirmDelete}
-                title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
-                showDivider={true}
-                onClose={() => setConfirmDelete(false)}
-                onCancel={() => setConfirmDelete(false)}
-                onConfirm={() => handleDelete()}
-                cancelText="common.Cancel"
-                confirmText="common.Ok"
-            >
-                <Box>
-                    <Typography variant="subtitle1">
-                        {t("campaigns.GridButtonColumnResource2.ConfirmText")}
-                    </Typography>
-                </Box>
-            </BaseDialog>
-            {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
-            {
-                dialogType === DialogType.Templates && <Templates
-                    isCreateCampaign={true}
-                    classes={classes}
-                    onClose={async (template) => {
-                        setDialogType(null);
-                        if (template !== undefined) {
-                            const response = await dispatch(getTemplateById(template.ID));
-                            if (response.payload.StatusCode === 201) {
-                                setTemplate(response?.payload?.Data);
-                            }
-                        }
-                    }}
-                    isOpen={dialogType === DialogType.Templates}
-                />
-            }
-            {/* Here we are using DomainVerification as a component and not via React Store */}
-            {showDomainVerification && <DomainVerification
-                classes={classes}
-                domain={domainAddressError}
-                forceShow={showDomainVerification}
-                key={"fromManagement"}
-                onClose={() => {
-                    setShowDomainVerification(false)
-                }}
-            />}
-            <Loader isOpen={showLoader} />
-        </DefaultScreen >
+        </DefaultScreen>
     )
 }
 

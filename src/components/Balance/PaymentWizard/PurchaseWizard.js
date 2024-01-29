@@ -48,12 +48,14 @@ const PurchaseWizard = ({ classes,
         }
 
         initData();
+
     }, []);
 
     useEffect(() => {
         if (packageId) {
             dispatch(getPaymentURL({ PackageId: packageId, Culture: isRTL ? 'il' : 'us' }));
         }
+
     }, [packageId])
 
     const selectPackage = (packageId) => {
@@ -104,7 +106,6 @@ const PurchaseWizard = ({ classes,
                     onComplete={onPaymentResult}
                     paymentUrl={paymentUrl}
                     onStepBack={onStepBack}
-                    t={t}
                 />
             }
             case 3: {

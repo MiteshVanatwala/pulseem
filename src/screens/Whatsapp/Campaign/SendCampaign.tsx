@@ -1,7 +1,6 @@
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import Title from '../../../components/Wizard/Title';
-import { Grid } from '@material-ui/core';
+import { Grid, Box, Typography } from '@material-ui/core';
 import {
 	APICreateGroupData,
 	ApiCreateGroupPayload,
@@ -29,6 +28,7 @@ import {
 	ApiSendCampaignData,
 	coreProps,
 } from './Types/WhatsappCampaign.types';
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import RightPane from './Components/RightPane';
 import LeftPane from './Components/LeftPane';
@@ -38,7 +38,6 @@ import Buttons from './Components/Buttons';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import moment from 'moment';
 import Toast from '../../../components/Toast/Toast.component';
-import ValidationAlert from './Popups/ValidationAlert';
 import {
 	addRecipient,
 	addRecipients,
@@ -69,10 +68,14 @@ import {
 	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import { useNavigate, useParams } from 'react-router-dom';
-import AlertModal from '../Editor/Popups/AlertModal';
 import SendCampaignSuccess from './Popups/SendCampaignSuccess';
 import NoSetup from '../NoSetup/NoSetup';
 import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
+import { Title } from '../../../components/managment/Title';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sitePrefix } from '../../../config';
+import { SelectChangeEvent, Stack } from '@mui/material';
+import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 
 const SendCampaign = ({
 	classes,
@@ -96,7 +99,7 @@ const SendCampaign = ({
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
+
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [selectedGroups, setSelectedGroups] = useState<testGroupDataProps[]>(
 		[]
@@ -119,20 +122,14 @@ const SendCampaign = ({
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
-	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
-	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState<boolean>(false);
-	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
-	const [isSendCampaignSuccessOpen, setIsSendCampaignSuccessOpen] =
-		useState<boolean>(false);
 	const [newGroupName, setNewGroupName] = useState<string>('');
 
 	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
-	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [isCreateNewGroup, setIsCreateNewGroup] = useState<boolean>(false);
 
 	const [allGroupList, setAllGroupList] = useState<testGroupDataProps[]>([]);
@@ -148,6 +145,10 @@ const SendCampaign = ({
 	>([]);
 	const [campaignSummary, setCampaignSummary] =
 		useState<ApiGetCampaignSummaryPayloadData>();
+	const [dialogType, setDialogType] = useState<any>({
+		type: '',
+		data: ''
+	});
 
 	useEffect(() => {
 		(async () => {
@@ -179,6 +180,7 @@ const SendCampaign = ({
 					getSpecialDateDropDown();
 					getCampaignSettingData(groupsData, campaignsData);
 				})();
+				setIsAccountSetup(true);
 			} else {
 				setIsLoader(false);
 				setIsAccountSetup(false);
@@ -317,7 +319,7 @@ const SendCampaign = ({
 	};
 
 	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
-		handleSendDate(value);
+		handleSendDate(moment(value));
 	};
 
 	const handleRadioTime = (value: MaterialUiPickersDate | null) => {
@@ -363,7 +365,7 @@ const SendCampaign = ({
 		}
 	};
 
-	const handleSelectChange = (e: BaseSyntheticEvent) => {
+	const handleSelectChange = (e: SelectChangeEvent) => {
 		if (e.target.value === '0') {
 			setDateFieldID('0');
 		} else {
@@ -418,9 +420,9 @@ const SendCampaign = ({
 			} else {
 				saveCampaignSettingData?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: saveCampaignSettingData?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: saveCampaignSettingData?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 				return apiStatus?.ERROR;
 			}
@@ -448,12 +450,18 @@ const SendCampaign = ({
 									moment(sendDate).diff(moment(), 'seconds') > 86400) ||
 								sendType === '3'
 							) {
-								setIsSummaryModal(true);
+								setDialogType({
+									type: 'summary'
+								})
 							} else {
-								setExceedLimitModal(true);
+								setDialogType({
+									type: 'exceedDailyLimit'
+								})
 							}
 						} else {
-							setIsSummaryModal(true);
+							setDialogType({
+								type: 'summary'
+							})
 						}
 					} else {
 						setToastMessage({
@@ -464,9 +472,9 @@ const SendCampaign = ({
 				} else {
 					campaignSummaryData?.Message
 						? setToastMessage({
-								...ToastMessages.ERROR,
-								message: campaignSummaryData?.Message,
-						  })
+							...ToastMessages.ERROR,
+							message: campaignSummaryData?.Message,
+						})
 						: setToastMessage(ToastMessages.ERROR);
 				}
 			}
@@ -474,16 +482,12 @@ const SendCampaign = ({
 		setIsLoader(false);
 	};
 
-	const onDeleteClick = () => {
-		setIsDeleteCampaignOpen(true);
-	};
-
 	const onDeleteCampaign = async () => {
+		setDialogType({ type: '', data: '' })
 		if (campaignID) {
 			const deleteData: commonAPIResponseProps = await dispatch<any>(
 				deleteCampaign(campaignID)
 			);
-			setIsDeleteCampaignOpen(false);
 			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 				setTimeout(() => {
@@ -492,22 +496,25 @@ const SendCampaign = ({
 			} else {
 				deleteData?.payload?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: deleteData?.payload?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
-		setIsDeleteCampaignOpen(false);
 	};
 
 	const onFormButtonClick = async (buttonName: string) => {
 		switch (buttonName) {
 			case buttons.DELETE:
-				onDeleteClick();
+				setDialogType({
+					type: 'delete'
+				})
 				break;
 			case buttons.EXIT:
-				setIsExitCampaignOpen(true);
+				setDialogType({
+					type: 'exit'
+				})
 				break;
 			case buttons.SAVE:
 				onCampaignSave(true, true, true);
@@ -574,7 +581,9 @@ const SendCampaign = ({
 			setGroupSendValidationErrors([
 				translator('whatsappCampaign.groupNameRequired'),
 			]);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			})
 		}
 	};
 
@@ -637,9 +646,9 @@ const SendCampaign = ({
 			setIsLoader(false);
 			createGroupData?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: createGroupData?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: createGroupData?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -712,14 +721,16 @@ const SendCampaign = ({
 		}
 		if (!isValidated) {
 			setGroupSendValidationErrors(validationErrors);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			})
 		}
 		return isValidated;
 	};
 
 	const onSummarySend = async () => {
-		setIsSummaryModal(false);
 		setIsLoader(true);
+		setDialogType({ type: '' });
 		let sendCampaignPayload: ApiSendCampaignData = {
 			WACampaignID: Number(campaignID),
 		};
@@ -731,21 +742,22 @@ const SendCampaign = ({
 				await dispatch<any>(sendCampaign(sendCampaignPayload));
 			setIsLoader(false);
 			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
-				setIsSendCampaignSuccessOpen(true);
+				setDialogType({
+					type: 'sendCampaignSuccess'
+				});
 				setRandomlyCount('');
 			} else {
 				sendCampaignData?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: sendCampaignData?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: sendCampaignData?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
 	};
 
 	const onExitCampaign = () => {
-		setIsExitCampaignOpen(false);
 		if (FromAutomation) {
 			window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 		} else {
@@ -753,9 +765,190 @@ const SendCampaign = ({
 		}
 	};
 
-	const onExceedLimitYes = () => {
-		setExceedLimitModal(false);
-	};
+	const getExitDialog = () => ({
+		title: translator('whatsappManagement.LeaveCampaignCreation'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsappManagement.LeaveCampaignCreationDesc')}
+			</Typography>
+		),
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={async () => {
+				await onCampaignSave(true, true, true);
+				onExitCampaign();
+			}}
+			onCancel={() => setDialogType({ type: '', data: '' })}
+		/>
+	})
+
+	const getDeleteDialog = () => ({
+		title: translator('whatsapp.alertModal.DeleteText'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsapp.alertModal.DeleteTitle')}
+			</Typography>
+		),
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDeleteCampaign()}
+			onCancel={() => setDialogType({ type: '', data: '' })}
+		/>
+	})
+
+	const getValidationDialog = () => ({
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		content: (
+			<ul className={clsx(classes.noMargin, classes.mb20)}>
+				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
+					<li key={index} className={classes.validationAlertModalLi}>
+						{requiredField}
+					</li>
+				))}
+			</ul>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
+	})
+
+	const getExceedDailyLimit = () => ({
+		title: translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{`${translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage')}
+					${campaignSummary?.NextAvailableTime
+						? moment(campaignSummary?.NextAvailableTime).format('DD.MM.YYYY HH:MM')
+						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+					}`}
+			</Typography>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
+	})
+
+	const getSummary = () => ({
+		title: translator('whatsappCampaign.summary'),
+		showDivider: false,
+		showDefaultButtons: false,
+		content: (
+			<SummaryModal
+				classes={classes}
+				campaignName={''}
+				fromNumber={''}
+				onSummaryModalClose={() => setDialogType({ type: '' })}
+				onConfirmOrYes={onSummarySend}
+				selectedGroups={selectedGroups}
+				selectedFilterGroups={selectedFilterGroups}
+				selectedFilterCampaigns={selectedFilterCampaigns}
+				sendType={sendType}
+				sendDate={sendDate}
+				sendTime={sendTime}
+				isSpecialDateBefore={isSpecialDateBefore}
+				daysBeforeAfter={daysBeforeAfter}
+				specialDatedropDown={specialDatedropDown}
+				spectialDateFieldID={spectialDateFieldID}
+				campaignSummary={campaignSummary}
+				randomlyCount={randomlyCount}
+				setRandomlyCount={setRandomlyCount}
+				resetRandomCount={() => setRandomlyCount('')}
+			/>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
+	})
+
+	const getSendCampaignSuccess = () => ({
+		title: translator('campaigns.campaignIsOnItsWay'),
+		showDivider: false,
+		showDefaultButtons: false,
+		content: (
+			<SendCampaignSuccess
+				classes={classes}
+				isFromAutomation={!!FromAutomation}
+				onBackToHome={() => navigate(`${sitePrefix}`)}
+				onBackToCampaigns={() =>
+					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
+				}
+				onBackToAutomation={() => window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`}
+			/>
+		),
+		onConfirm: async () => {
+			setDialogType({ type: '' });
+		}
+	})
+
+	const renderDialog = () => {
+		const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'exit') {
+			currentDialog = getExitDialog();
+		} else if (type === 'validation') {
+			currentDialog = getValidationDialog();
+		} else if (type === 'delete') {
+			currentDialog = getDeleteDialog();
+		} else if (type === 'exceedDailyLimit') {
+			currentDialog = getExceedDailyLimit();
+		} else if (type === 'summary') {
+			currentDialog = getSummary();
+		} else if (type === 'sendCampaignSuccess') {
+			currentDialog = getSendCampaignSuccess();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
+
+	const renderSubHeader = () => {
+		return (
+				<Title
+						Element={(
+								<Box className='stepHead'>
+										<Stack direction={{ xs: 'column', sm: 'column', md: 'row' }} ml={1} >
+												<span className={'stepTitle'}>
+														{translator("mainReport.sendSetting")}
+												</span>
+
+										</Stack>
+								</Box>
+						)}
+						classes={classes}
+						isIcon={false}
+						ContainerStyle={{
+								padding: 0,
+								minHeight: 42,
+								height: 'auto',
+								overflowY: 'hidden'
+						}}
+				/>
+		)
+}
 
 	return (
 		<DefaultScreen
@@ -763,168 +956,87 @@ const SendCampaign = ({
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}
-			containerClass={null}>
+			containerClass={classes.editorCont}
+		>
 			{isAccountSetup ? (
-				<div>
-					<div className={classes.mb50}>
+				<Box className={"head"}>
+					<Box className={clsx('topSection', classes.mb50)}>
 						<Title
-							title={translator('whatsappCampaign.whatsappCampaign')}
+							Text={translator('whatsappCampaign.header')}
 							classes={classes}
-							stepNumber={2}
-							subTitle={translator('mainReport.sendSetting')}
 						/>
-						<Grid container style={{ marginBottom: '40px' }}>
-							<Grid item md={7} xs={12}>
-								<LeftPane
-									classes={classes}
-									allGroupList={allGroupList}
-									testGroupList={testGroupList}
-									finishedCampaigns={finishedCampaigns}
-									selectedGroups={selectedGroups}
-									setSelected={setSelectedGroups}
-									selectedFilterCampaigns={selectedFilterCampaigns}
-									setFilterCampaigns={setFilterCampaigns}
-									selectedFilterGroups={selectedFilterGroups}
-									setFilterGroups={setFilterGroups}
-									onNewGroupChange={setNewGroupName}
-									newGroupName={newGroupName}
-									onNewGroupSave={onNewGroupSave}
-									activeTab={activeTab}
-									setActiveTab={setActiveTab}
-									onFilter={onFilter}
-									isCreateNewGroup={isCreateNewGroup}
-									setIsCreateNewGroup={setIsCreateNewGroup}
-									onManualUpload={onManualUpload}
-									exceptionalDaysToggle={exceptionalDaysToggle}
-									exceptionalDays={exceptionalDays}
-									setExceptionalDaysToggle={setExceptionalDaysToggle}
-									setExceptionalDays={setExceptionalDays}
-									showTestGroups={showTestGroups}
-									setShowTestGroups={setShowTestGroups}
-								/>
-							</Grid>
-							<Grid item md={1} xs={12}></Grid>
-							<Grid item md={4} xs={12}>
-								<RightPane
-									classes={classes}
-									handleDatePicker={handleDatePicker}
-									sendDate={sendDate}
-									sendTime={sendTime}
-									handleRadioTime={handleRadioTime}
-									sendType={sendType}
-									handleSendType={handleSendType}
-									timePickerOpen={timePickerOpen}
-									handleTimePicker={handleTimePicker}
-									daysBeforeAfter={daysBeforeAfter}
-									handleSpecialDayChange={handleSpecialDayChange}
-									spectialDateFieldID={spectialDateFieldID}
-									handleSelectChange={handleSelectChange}
-									isSpecialDateBefore={isSpecialDateBefore}
-									setIsSpecialDateBefore={setIsSpecialDateBefore}
-									specialDatedropDown={specialDatedropDown}
-								/>
-							</Grid>
-						</Grid>
-						<Buttons
-							classes={classes}
-							onFormButtonClick={onFormButtonClick}
-							displayBackButton={true}
-							showSendButton={FromAutomation ? (!!FromAutomation && !!isSendCampaign) : true}
-							showContinueButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : false}
-							isSummary={!FromAutomation}
-						/>
-					</div>
-					<SummaryModal
-						classes={classes}
-						isOpen={isSummaryModal}
-						campaignName={''}
-						fromNumber={''}
-						onSummaryModalClose={() => setIsSummaryModal(false)}
-						onConfirmOrYes={onSummarySend}
-						selectedGroups={selectedGroups}
-						selectedFilterGroups={selectedFilterGroups}
-						selectedFilterCampaigns={selectedFilterCampaigns}
-						sendType={sendType}
-						sendDate={sendDate}
-						sendTime={sendTime}
-						isSpecialDateBefore={isSpecialDateBefore}
-						daysBeforeAfter={daysBeforeAfter}
-						specialDatedropDown={specialDatedropDown}
-						spectialDateFieldID={spectialDateFieldID}
-						campaignSummary={campaignSummary}
-						randomlyCount={randomlyCount}
-						setRandomlyCount={setRandomlyCount}
-						resetRandomCount={() => setRandomlyCount('')}
-					/>
-					<ValidationAlert
-						classes={classes}
-						isOpen={isValidationAlert}
-						onClose={() => setIsValidationAlert(false)}
-						title={translator('whatsappCampaign.sendValidation')}
-						requiredFields={groupSendValidationErrors}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={isDeleteCampaignOpen}
-						onClose={() => setIsDeleteCampaignOpen(false)}
-						title={translator('whatsapp.alertModal.DeleteText')}
-						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
-						type='delete'
-						onConfirmOrYes={() => onDeleteCampaign()}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={isExitCampaignOpen}
-						onClose={onExitCampaign}
-						title={translator('whatsappManagement.LeaveCampaignCreation')}
-						subtitle={translator(
-							'whatsappManagement.LeaveCampaignCreationDesc'
-						)}
-						type='delete'
-						onConfirmOrYes={async () => {
-							setIsExitCampaignOpen(false);
-							const saveCampaignData = await onCampaignSave(false, true, true);
-							if (saveCampaignData === apiStatus.SUCCESS) {
-								onExitCampaign();
-							}
-						}}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={exceedLimitModal}
-						onClose={() => setExceedLimitModal(false)}
-						title={translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
-						)}
-						subtitle={`${translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${
-							campaignSummary?.NextAvailableTime
-								? moment(campaignSummary?.NextAvailableTime).format(
-										'DD.MM.YYYY HH:MM'
-								  )
-								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
-						}`}
-						type='alert'
-						onConfirmOrYes={() => onExceedLimitYes()}
-					/>
-					<SendCampaignSuccess
-						classes={classes}
-						isOpen={isSendCampaignSuccessOpen}
-						isFromAutomation={!!FromAutomation}
-						onBackToHome={() => navigate('/react')}
-						onBackToCampaigns={() =>
-							navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
-						}
-						onBackToAutomation={() => window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
-						}
-						onClose={() => setIsSendCampaignSuccessOpen(false)}
-					/>
+						<Box className={'containerBody'}>
+							{renderSubHeader()}
+							<Box className={clsx('bodyBlock', classes.pt20)}>
+								<Grid container style={{ marginBottom: '40px' }}>
+									<Grid item md={7} xs={12}>
+										<LeftPane
+											classes={classes}
+											allGroupList={allGroupList}
+											testGroupList={testGroupList}
+											finishedCampaigns={finishedCampaigns}
+											selectedGroups={selectedGroups}
+											setSelected={setSelectedGroups}
+											selectedFilterCampaigns={selectedFilterCampaigns}
+											setFilterCampaigns={setFilterCampaigns}
+											selectedFilterGroups={selectedFilterGroups}
+											setFilterGroups={setFilterGroups}
+											onNewGroupChange={setNewGroupName}
+											newGroupName={newGroupName}
+											onNewGroupSave={onNewGroupSave}
+											activeTab={activeTab}
+											setActiveTab={setActiveTab}
+											onFilter={onFilter}
+											isCreateNewGroup={isCreateNewGroup}
+											setIsCreateNewGroup={setIsCreateNewGroup}
+											onManualUpload={onManualUpload}
+											exceptionalDaysToggle={exceptionalDaysToggle}
+											exceptionalDays={exceptionalDays}
+											setExceptionalDaysToggle={setExceptionalDaysToggle}
+											setExceptionalDays={setExceptionalDays}
+											showTestGroups={showTestGroups}
+											setShowTestGroups={setShowTestGroups}
+										/>
+									</Grid>
+									<Grid item md={1} xs={12}></Grid>
+									<Grid item md={4} xs={12}>
+										<RightPane
+											classes={classes}
+											handleDatePicker={handleDatePicker}
+											sendDate={sendDate}
+											sendTime={sendTime}
+											handleRadioTime={handleRadioTime}
+											sendType={sendType}
+											handleSendType={handleSendType}
+											timePickerOpen={timePickerOpen}
+											handleTimePicker={handleTimePicker}
+											daysBeforeAfter={daysBeforeAfter}
+											handleSpecialDayChange={handleSpecialDayChange}
+											spectialDateFieldID={spectialDateFieldID}
+											handleSelectChange={handleSelectChange}
+											isSpecialDateBefore={isSpecialDateBefore}
+											setIsSpecialDateBefore={setIsSpecialDateBefore}
+											specialDatedropDown={specialDatedropDown}
+										/>
+									</Grid>
+								</Grid>
+							</Box>
+							<Buttons
+								classes={classes}
+								onFormButtonClick={onFormButtonClick}
+								displayBackButton={true}
+								showSendButton={FromAutomation ? (!!FromAutomation && !isSendCampaign) : true}
+								showContinueButton={FromAutomation ? (!!FromAutomation && !!isSendCampaign) : false}
+								isSummary={!FromAutomation}
+							/>
+						</Box>
+					</Box>
 					{renderToast()}
-				</div>
+				</Box>
 			) : (
 				!isLoader && <NoSetup classes={classes} />
 			)}
+			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);

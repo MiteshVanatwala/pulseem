@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { PulseemResponse } from '../../Models/APIResponse';
 import { AccountSettings } from '../../Models/Account/AccountSettings';
 import { LoginPassword } from '../../Models/Account/Password';
 import { TwoFactorAuthAllowed } from '../../Models/Auth/TwoFactorAuth';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getAccountSettings = createAsyncThunk(
     'AccountSettings/Get',
@@ -109,6 +109,27 @@ export const checkCellphoneAuthorization = createAsyncThunk(
         }
     })
 
+export const getApiKey = createAsyncThunk(
+    'GetKey', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`ApiSettings/GetKey`);
+            return response.data as PulseemResponse
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const generateApiKey = createAsyncThunk(
+    'GenerateNewApiKey', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`ApiSettings/GenerateNewApiKey`);
+            return response.data as PulseemResponse
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+
 interface AuthorizationValues {
     value: string,
     isTwoFa: boolean
@@ -156,7 +177,7 @@ const AccountSettingsSlice = createSlice({
                 Message: '',
                 Data: ''
             } as PulseemResponse
-        },
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getAccountSettings.fulfilled, (state, action) => {

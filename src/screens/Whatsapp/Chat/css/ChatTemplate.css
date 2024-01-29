@@ -61,7 +61,6 @@
 
 .accordion .handle label:before {
 	font-family: 'fontawesome';
-	content: '\f054';
 	display: inline-block;
 	margin-right: 10px;
 	font-size: 0.58em;

@@ -34,9 +34,7 @@ const UploadInProgressDialog = ({
                             variant='contained'
                             size='medium'
                             className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonLightBlue,
-                                classes.backButton
+                                classes.btn, classes.btnRounded
                             )}
                             style={{ margin: '8px' }}
                             color="primary"
