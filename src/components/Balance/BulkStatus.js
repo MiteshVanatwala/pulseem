@@ -302,7 +302,7 @@ const BulkStatus = ({ classes }) => {
                 </Grid>
 
                 <Grid item md={3} xs={6} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-                  <Typography className={clsx(classes.bold)}>
+                  <Typography className={clsx(classes.bold, classes.elipsis, classes.noWrap)} style={{ whiteSpace: 'normal' }}>
                     {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(Whatsapp)} ${t('common.NIS')}`}
                   </Typography>
                 </Grid>
