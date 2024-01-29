@@ -833,14 +833,14 @@ const NewsLetterInfo = ({ classes }) => {
                                         <Typography
                                             title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')}
                                             className={classes.alignDir}
-                                            style={{ marginInlineEnd: 10}}>
+                                            style={{ marginInlineEnd: 10 }}>
                                             {RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}
                                         </Typography>
                                         {!isVerifiedDomain && <Tooltip
                                             placement='top'
                                             title={RenderHtml(t("campaigns.newsLetterEditor.domainVerificationTooltip"))}
                                             classes={{ tooltip: classes.customWidth }}
-                                            sx={{ justifyContent: 'center', zIndex: 9999999999999, direction: isRTL ? 'rtl' : 'ltr'  }}
+                                            sx={{ justifyContent: 'center', zIndex: 9999999999999, direction: isRTL ? 'rtl' : 'ltr' }}
                                         >
                                             <span className={classes.bodyInfo}>i</span>
                                         </Tooltip>}
@@ -882,7 +882,7 @@ const NewsLetterInfo = ({ classes }) => {
                                                     }
                                                 }
                                                 )}
-                                                {accountSettings?.SubAccountSettings?.SharedEmailDomain &&
+                                                {accountFeatures?.indexOf(PulseemFeatures.HideSharedDomain) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain &&
                                                     <option
                                                         key={verifiedEmails.length + 1}
                                                         value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
