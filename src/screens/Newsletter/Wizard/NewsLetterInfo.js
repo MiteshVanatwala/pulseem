@@ -32,6 +32,8 @@ import { Title } from '../../../components/managment/Title';
 // import Templates from '../../HtmlCampaign/modals/Templates';
 // import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -242,6 +244,7 @@ const NewsLetterInfo = ({ classes }) => {
 
     const [hideCautionNewMessage, setHideCautionNewMessage] = useState(false)
     const [hideCautionOldMessage, setHideCautionOldMessage] = useState(false)
+    const [isVerifiedDomain, setIsVerifiedDomain] = useState(false);
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
 
@@ -290,6 +293,16 @@ const NewsLetterInfo = ({ classes }) => {
     // useEffect(() => {
     //     dispatch(getPublicTemplates(isRTL));
     // }, [isRTL])
+
+    useEffect(() => {
+        if (campaingnValues && campaingnValues?.FromEmail && verifiedEmails?.length > 0) {
+            if (campaingnValues?.FromEmail !== '') {
+                const isVerified = verifiedEmails?.filter((ve) => { return ve.Number === campaingnValues?.FromEmail })[0]?.IsVerified;
+                const isSharedDomain = IsSharedDomain(campaingnValues?.FromEmail)
+                setIsVerifiedDomain(isSharedDomain || isVerified);
+            }
+        }
+    }, [campaingnValues, verifiedEmails])
 
     const setDefaultEmailAndName = () => {
         if (accountSettings) {
@@ -824,7 +837,7 @@ const NewsLetterInfo = ({ classes }) => {
                     {
                         content:
                             <Box className='selectWrapper'>
-                                <Typography title={t("campaigns.newsLetterEditor.fromEmail")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromEmail")}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>','')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
@@ -833,7 +846,7 @@ const NewsLetterInfo = ({ classes }) => {
                                         variant="standard"
                                         name="FromEmail"
                                         value={campaingnValues?.FromEmail}
-                                        className={classes.pbt5}
+                                        className={clsx(classes.pbt5, classes.fromEmailSelect, !isVerifiedDomain ? classes.errorBg : null)}
                                         onChange={(event, val) => {
                                             handleFromEmailChange(event);
                                         }}
@@ -891,7 +904,7 @@ const NewsLetterInfo = ({ classes }) => {
                     {
                         content:
                             <Box className='selectWrapper'>
-                                <Typography title={t("campaigns.newsLetterEditor.replyTo")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.replyTo")}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>','').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >

@@ -3976,4 +3976,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   flexStart: {
     justifyContent: "flex-start"
   },
+  errorBg: {
+    backgroundColor: '#fde2e2'
+  },
+  fromEmailSelect: {
+    '& :focus': {
+      backgroundColor: 'transparent !important'
+    }
+  }
 });

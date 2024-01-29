@@ -230,7 +230,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                         <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
                         <Box className={clsx(classes.dFlex)} style={{ marginBlock: 15, alignContent: 'center', justifyContent: 'flex-start', gap: 15 }}>
                             <Box style={{ maxWidth: 200 }}>
-                                <Typography title={t("campaigns.newsLetterEditor.fromEmail")} className={clsx(classes.alignDir, classes.bold)}>{t("campaigns.newsLetterEditor.fromEmail")}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>','')} className={clsx(classes.alignDir)}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
                                 <TextField
                                     inputMode="url"
                                     dir="ltr"
@@ -248,7 +248,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                 />
                             </Box>
                             <Box className='selectWrapper' style={{ maxWidth: 200 }}>
-                                <Typography title={t("campaigns.newsLetterEditor.replyTo")} className={clsx(classes.alignDir, classes.bold)}>{t("campaigns.newsLetterEditor.replyTo")}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>', '').replace('</b>', '')} className={clsx(classes.alignDir)}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
