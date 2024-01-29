@@ -286,12 +286,13 @@ const AccountSettingsEditor = ({ classes }: any) => {
 											{
 												[classes.dFlex]: windowSize === 'xs',
 												[classes.mt10]: windowSize === 'xs',
+												[classes.f12]: windowSize === 'xs',
 											}
 										)}
 										onClick={() =>
 											handleVerification('cellphone')
 										}
-										startIcon={<MdMobileFriendly />}
+										startIcon={<MdMobileFriendly className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />}
 										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 									>
 										{t("settings.accountSettings.fixedComDetails.btnVerifyNumber")}
@@ -304,12 +305,13 @@ const AccountSettingsEditor = ({ classes }: any) => {
 											{
 												[classes.dFlex]: windowSize === 'xs',
 												[classes.mt10]: windowSize === 'xs',
+												[classes.f12]: windowSize === 'xs',
 											}
 										)}
 										onClick={() =>
 											handleVerification('email')
 										}
-										startIcon={<MdOutlineMarkEmailRead />}
+										startIcon={<MdOutlineMarkEmailRead className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />}
 										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 									>
 										<>
