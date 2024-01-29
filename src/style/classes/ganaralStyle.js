@@ -3002,6 +3002,29 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderRadius: 25
     }
   },
+  textFieldWithTemplate: {
+    display: 'flex',
+    marginTop: 5,
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    height: 28,
+    padding: 5,
+    justifyContent: 'center'
+  },
+  justifyContentEnd: {
+    justifyContent: 'flex-end'
+  },
+  errorIcon: {
+    position: 'absolute',
+    top: 0,
+    left: isRTL ? 0 : 'auto',
+    right: isRTL ? 'auto' : 0,
+    zIndex: 100,
+    fontSize: 25,
+    fill: 'white',
+    backgroundColor: 'red',
+    borderRadius: 25
+  },
   tooltipIcon: {
     display: 'flex',
     backgroundColor: '#000',
@@ -3012,5 +3035,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: 20,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  errorBg: {
+    backgroundColor: '#fde2e2'
+  },
+  fromEmailSelect: {
+    '& :focus': {
+      backgroundColor: 'transparent !important'
+    }
   }
 });

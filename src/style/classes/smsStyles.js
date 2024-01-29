@@ -1084,10 +1084,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         }
     },
     customWidth: {
-        maxWidth: 200,
+        maxWidth: 250,
         backgroundColor: "black",
         fontSize: "14px",
-        textAlign: 'center'
+        textAlign: 'center',
+        direction: isRTL ? 'rtl' : 'ltr'
     },
     noMaxWidth: {
         maxWidth: "none",

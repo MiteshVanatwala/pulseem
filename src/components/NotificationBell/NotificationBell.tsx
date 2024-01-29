@@ -9,6 +9,8 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai';
 import { IoMdRemoveCircleOutline } from 'react-icons/io';
 import { ClickAwayListener } from "@material-ui/core";
+// import { MdDomain } from 'react-icons/md';
+// import { setVerificationDomain } from '../../redux/reducers/newsletterSlice';
 
 enum NotifyCenterType {
   File = 0,
@@ -17,11 +19,11 @@ enum NotifyCenterType {
   DomainVerification = 3
 }
 
-enum NotifyCenterStatus {
-  Unread = 0,
-  Read = 1,
-  Removed = 2
-}
+// enum NotifyCenterStatus {
+//   Unread = 0,
+//   Read = 1,
+//   Removed = 2
+// }
 
 const NotificationBell = ({ classes }: any) => {
   const [displayNotifications, toggleDisplayNotifications] = useState(false);
@@ -49,6 +51,7 @@ const NotificationBell = ({ classes }: any) => {
               </Box>
               <Box style={{ paddingInlineStart: 15 }}>
                 <a
+                  rel="noreferrer"
                   className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
                   href={`/Pulseem/DownloadFile.aspx?fileFormat=XLS&fileId=${option.SourceID}`}
                   target="_blank"
@@ -56,6 +59,7 @@ const NotificationBell = ({ classes }: any) => {
                   {t("master.download")} XLS
                 </a>
                 <a
+                  rel="noreferrer"
                   className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
                   href={`/Pulseem/DownloadFile.aspx?fileFormat=CSV&fileId=${option.SourceID}`}
                   target="_blank"
@@ -111,7 +115,12 @@ const NotificationBell = ({ classes }: any) => {
       <Box
         zIndex='tooltip'
         //onMouseLeave={handleClose}
-        className={clsx(classes.appBarItemContainer, classes.paddingSides15)}>
+        className={clsx(classes.appBarItemContainer, classes.paddingSides15)}
+        style={{
+          paddingRight: isRTL ? 15 : 0,
+          paddingLeft: isRTL ? 0 : 15
+        }}
+      >
         <Badge
           badgeContent={unreadMessages}
           color="error"
@@ -130,8 +139,8 @@ const NotificationBell = ({ classes }: any) => {
             }}
           />
         </Badge>
-        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal>
-          <div className={clsx(classes.notificationUpdateContainer, classes.p15, classes.pt10, classes.sidebar)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
+        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal className={classes.notificationUpdateContainerPopper}>
+          <div className={clsx(classes.notificationUpdateContainer, classes.paddingSides15, classes.pt10)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
             <div className={clsx(classes.bold)} style={{ textAlign: isRTL ? 'right' : 'left' }}>
               {t('notifications.notifyCenterTitle')}
             </div>
