@@ -262,7 +262,7 @@ const SummaryDialog = ({ classes,
             const updateInfo = { ...newsletterInfo };
             updateInfo.FromEmail = fromEmailValue;
 
-            updateInfo.ReplyTo = isShared ? (newsletterSendSummary.ReplyTo || verifiedEmails[0].Number) : (newsletterSendSummary.ReplyTo || fromEmailValue);
+            updateInfo.ReplyTo = isShared ? (replyTo || verifiedEmails[0].Number) : (replyTo || fromEmailValue);
 
             dispatch(saveCampaignInfo(updateInfo));
 
@@ -274,7 +274,7 @@ const SummaryDialog = ({ classes,
     const handleReplyToChanged = (event) => {
         if (newsletterInfo && newsletterInfo.CampaignID) {
             setReplyTo(event.target.value);
-            const updateInfo = { ...newsletterInfo };
+            const updateInfo = { ...newsletterInfo, FromEmail: fromEmail !== '' ? fromEmail : newsletterInfo.FromEmail };
             updateInfo.ReplyTo = event.target.value;
             dispatch(saveCampaignInfo(updateInfo));
         }
