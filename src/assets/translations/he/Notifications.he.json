@@ -159,5 +159,9 @@
   "recipientsRemoved": "הסרת הנמענים מ- <b>\"##Name##</b>\" בוצעה בהצלחה",
   "recipientsUploaded": "הרשומה הועלתה בהצלחה ל-<b>\"##Name##</b>\"",
   "notifyCenterTitle": "התראות",
-  "noNewNotify": "אין התראות חדשות"
+  "noNewNotify": "אין התראות חדשות",
+  "domainValidation": {
+    "syntaxError": "אימות הדומיין (“##DoaminAddress##”) נכשל עקב אי התאמה בהגדרות",
+    "mailHeaderError": "אימות הדומיין (“##DoaminAddress##”) נכשל בבדיקה מול השרתים של GMAIL"
+  }
 }

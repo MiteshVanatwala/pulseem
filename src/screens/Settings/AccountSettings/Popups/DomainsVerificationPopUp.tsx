@@ -2,7 +2,7 @@ import { MdDomain, MdOutlineVerified } from "react-icons/md";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
-import { Box, Button, Divider, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import { Box, Divider, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../../../Models/StateTypes";
 import { useEffect, useState } from "react";
@@ -82,21 +82,21 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
             }
             return 0;
         }).map((item: VerifiedEmail, index: number) => {
-            return <>
+            return <Box key={`ve_${index}`}>
                 <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')} style={{ justifyContent: 'space-between', alignItems: 'center', height: 40 }}>
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
                         {item.IsVerified ? <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} /> : <AiOutlineStop style={{ color: 'red', fontSize: 20 }} />}
                         <Typography className='emailText' title={item.Number} style={{ fontSize: 16, paddingInline: 15 }}>{domainFromEmail(item.Number)} </Typography>
                     </Box>
-                    {!item.IsVerified && <Typography className={clsx(classes.link, 'emailVerLink')}
+                    <Typography className={clsx(classes.link, 'emailVerLink')}
                         onClick={() => {
                             setSelectedDomain(domainFromEmail(item.Number) as any);
                             verifyDomain(item);
                         }}
-                    >{t('common.domainVerification.verifyDomain')}</Typography>}
+                    >{t('common.domainVerification.verifyDomain')}</Typography>
                 </Box>
                 {index < verifiedEmails.length - 1 && <Divider style={{ marginBottom: 6 }} />}
-            </>
+            </Box>
         });
     }
     const VerificationResult = () => {

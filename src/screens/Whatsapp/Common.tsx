@@ -28,7 +28,7 @@ const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
 const dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
 const dynamicFieldNewLine = new RegExp('^\n$');
 
-export const getDynamicFields = (text: string, replaceNewLine: boolean = false) => {
+export const getDynamicFields = (text: string) => {
 	let indices = [];
 	for (let i = 0; i < text?.length; i++) {
 		if (dynamicFieldL5.test(text?.slice(i, i + 5))) {
@@ -37,7 +37,7 @@ export const getDynamicFields = (text: string, replaceNewLine: boolean = false) 
 		if (dynamicFieldL6.test(text?.slice(i, i + 6))) {
 			indices.push(text?.slice(i, i + 6));
 		}
-		if (replaceNewLine && dynamicFieldNewLine.test(text?.slice(i, i + 1))) {
+		if (dynamicFieldNewLine.test(text?.slice(i, i + 1))) {
 			indices.push(text?.slice(i, i + 1));
 		}
 	}

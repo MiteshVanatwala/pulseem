@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { Link, MenuItem, Select, Typography } from "@material-ui/core";
+import { Link } from "@material-ui/core";
+import Select from '@mui/material/Select';
 import { Box, Grid, Button } from "@material-ui/core";
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
@@ -14,6 +15,8 @@ import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
+import { Loader } from "../../../../components/Loader/Loader";
+import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -33,15 +36,18 @@ const SummaryDialog = ({ classes,
     const [subDetailsActive, setsubDetailsActive] = useState(false);
     const [subRecipientsDetails, setsubRecipients] = useState(false);
     const [fromEmail, setFromEmail] = useState(null);
-    const { isRTL } = useSelector(state => state.core);
+    const [replyTo, setReplyTo] = useState(null);
+    const { isRTL, windowSize } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
-    const { verifiedEmails, isSweepingApproval } = useSelector(state => state.common);
+    const { verifiedEmails, isSweepingApproval, accountSettings } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [disableSend, setDisableSend] = useState(false);
     const [verPopupOpen, setVerPopupOpen] = useState(false);
     const [fromEmailVerified, setFromEmailVerified] = useState(true);
     const [verifyStep, setVerifyStep] = useState(0);
     const [verifyValue, setVerifyValue] = useState('');
+    const [showLoader, setShowLoader] = useState(false);
+    const [isSharedDomainEmail, setIsSharedDomainEmail] = useState(false);
 
     const {
         FinalClients,
@@ -72,12 +78,31 @@ const SummaryDialog = ({ classes,
     const { t } = useTranslation();
 
     const handleSendCampaign = async () => {
+        setShowLoader(true);
         setDisableSend(true);
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
-        handleSendResponse({
-            ...sendResponse.payload,
-            fromEmail: fromEmail
-        });
+
+        const response = sendResponse?.payload;
+
+        if (response.StatusCode === 451) {
+            const req = {
+                target: {
+                    value: fromEmail
+                }
+            };
+
+            handleFromEmailChanged(req);
+            setShowLoader(false);
+            setDisableSend(false);
+        }
+        else {
+            handleSendResponse({
+                ...sendResponse.payload,
+                fromEmail: fromEmail
+            });
+            setDisableSend(false);
+            setShowLoader(false);
+        }
     }
 
     useEffect(() => {
@@ -86,19 +111,33 @@ const SummaryDialog = ({ classes,
     }, [])
 
     useEffect(() => {
-        if (isSweepingApproval === true) {
+        if (isSweepingApproval === true || isSharedDomainEmail) {
             setDisableSend(false);
             setFromEmailVerified(true);
         }
     }, [isSweepingApproval])
 
     useEffect(() => {
-        const verifiedEmail = verifiedEmails.filter((vm) => { return vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true });
+        const verifiedEmail = verifiedEmails.filter((vm) => { return (vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true) || IsSharedDomain(newsletterSendSummary?.FromEmail) });
         setFromEmail(newsletterSendSummary?.FromEmail);
-        if ((!verifiedEmail || verifiedEmail?.length <= 0) && !isSweepingApproval) {
+        setReplyTo(newsletterSendSummary?.ReplyTo);
+        if ((!verifiedEmail || verifiedEmail?.length <= 0) && !isSweepingApproval && !isSharedDomainEmail) {
             setDisableSend(true);
             setFromEmailVerified(false);
         }
+    }, [newsletterSendSummary]);
+
+    const handleSharedDomain = (emailAddress) => {
+        const isShared = IsSharedDomain(emailAddress);
+        setIsSharedDomainEmail(isShared);
+
+        if (isShared) {
+            setReplyTo(replyTo || newsletterSendSummary.ReplyTo || verifiedEmails[0]?.Number);
+        }
+    }
+
+    useEffect(() => {
+        handleSharedDomain(newsletterSendSummary?.FromEmail);
     }, [newsletterSendSummary])
 
     const renderWhenToSend = () => {
@@ -213,16 +252,33 @@ const SummaryDialog = ({ classes,
             {TotalNotToSend >= 0 && renderDetailsLine(`<b>${t('campaigns.newsLetterEditor.sendSettings.totalNotToSend')}</b>`, TotalNotToSend?.toLocaleString())}
         </Box>)
     }
-    const handleFromEmailChanged = (event) => {
+    const handleFromEmailChanged = async (event, isSendRequest = false) => {
+        const fromEmailValue = event?.target?.value;
+
         if (newsletterInfo && newsletterInfo.CampaignID) {
-            setFromEmail(event.target.value);
+            const isShared = IsSharedDomain(fromEmailValue);
+            setFromEmail(fromEmailValue);
             const updateInfo = { ...newsletterInfo };
-            updateInfo.FromEmail = event.target.value;
+            updateInfo.FromEmail = fromEmailValue;
+
+            updateInfo.ReplyTo = isShared ? (replyTo || verifiedEmails[0].Number) : (replyTo || fromEmailValue);
+
             dispatch(saveCampaignInfo(updateInfo));
-            const isVerified = verifiedEmails.filter((ve) => { return ve.Number === updateInfo.FromEmail && ve.IsOptIn === true });
-            setDisableSend(isVerified?.length === 0);
+
+            handleSharedDomain(updateInfo.FromEmail);
+
         }
     }
+
+    const handleReplyToChanged = (event) => {
+        if (newsletterInfo && newsletterInfo.CampaignID) {
+            setReplyTo(event.target.value);
+            const updateInfo = { ...newsletterInfo, FromEmail: fromEmail !== '' ? fromEmail : newsletterInfo.FromEmail };
+            updateInfo.ReplyTo = event.target.value;
+            dispatch(saveCampaignInfo(updateInfo));
+        }
+    }
+
     const currentDialog = {
         style: { paddingBottom: 20 },
         title: `${t("sms.smsSummaryDialogTitle")} '${newsletterSendSummary?.CampaignName}'`,
@@ -232,7 +288,7 @@ const SummaryDialog = ({ classes,
             <>
                 <Box style={{ fontSize: "22px", marginTop: "5px" }}>
                     <Box className={classes.baseSum} style={{ display: 'flex', width: '100%' }}>
-                        <Box className={classes.sumLeft} style={{ width: '50%' }}>
+                        <Box className={classes.sumLeft} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
                             <Box>
                                 <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("sms.smsSummaryCampaignFrom")}:</span>
                             </Box>
@@ -247,25 +303,32 @@ const SummaryDialog = ({ classes,
                                     onChange={handleFromEmailChanged}
                                     inputProps={{
                                         'aria-label': 'Without label',
-                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
+                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && !isSharedDomainEmail && classes.error),
                                         style: { width: '100%' }
                                     }}
                                     variant='outlined'
                                 >
                                     {[{
                                         Number: newsletterSendSummary?.FromEmail
-                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true })
-                                    ].map((obj) => (
-                                        <option
-                                            key={obj.Number}
+                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.FromEmail && ve.IsVerified === true })
+                                    ].map((obj, index) => (
+                                        obj.Number !== accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                            key={`ve_${index}`}
                                             value={obj.Number}
                                         >
                                             {obj.Number}
                                         </option>
                                     ))}
+                                    {accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                        key={verifiedEmails.length + 1}
+                                        value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                        name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
+                                    >
+                                        {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
+                                    </option>}
                                 </Select>
                             </Box>
-                            <Box className={classes.sumChild}>
+                            {(!fromEmailVerified && !isSharedDomainEmail) && <Box className={classes.sumChild}>
                                 <Link className={clsx(classes.link)}
                                     style={{ margin: 0 }}
                                     onClick={() => {
@@ -277,8 +340,42 @@ const SummaryDialog = ({ classes,
                                     }
                                     }
                                 >{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</Link>
+                            </Box>}
+                            <Box style={{ width: '100%' }}>
+                                <Box>
+                                    <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}:</span>
+                                </Box>
+                                <Select
+                                    style={{ width: '100%' }}
+                                    className={classes.mt1}
+                                    autoWidth={false}
+                                    native
+                                    displayEmpty
+                                    value={replyTo}
+                                    onChange={handleReplyToChanged}
+                                    inputProps={{
+                                        'aria-label': 'Without label',
+                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && !isSharedDomainEmail && classes.error),
+                                        style: { width: '100%' }
+                                    }}
+                                    variant='outlined'
+
+                                >
+                                    {[{
+                                        Number: newsletterSendSummary?.ReplyTo ?? t('common.select')
+                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true && ve.Number !== newsletterSendSummary?.ReplyTo })
+                                    ].map((obj, index) => (
+                                        obj.Number !== accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                            key={`ve_${index}`}
+                                            value={obj.Number}
+                                            disabled={obj.Number === t('common.select')}
+                                        >
+                                            {obj.Number}
+                                        </option>
+                                    ))}
+                                </Select>
                             </Box>
-                            <Box className={classes.sumChild}>
+                            <Box className={clsx(classes.sumChild, classes.mt20)}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
                                 <span className={classes.bodySum}>{newsletterSendSummary?.Subject}</span>
 
@@ -301,15 +398,13 @@ const SummaryDialog = ({ classes,
                                 <span className={classes.bodySum}>
                                     {`${t("sms.smsSummaryDialogTotalRecipients")}: ${FinalClients?.toLocaleString()}`}
                                 </span>
-                                {
-                                    !IsQuickSend && <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
-                                        {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
-                                    </Link>
-                                }
+                                <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
+                                    {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
+                                </Link>
                             </Box>
                         </Box>
-                        {PreviewURL && <Box className={classes.sumRight} style={{ width: '50%' }}>
-                            <Stack direction='column' alignItems='center' spacing={2}>
+                        {PreviewURL && <Box className={classes.sumRight} style={{ width: windowSize === 'xs' || windowSize === 'sm' ? '100%' : '50%' }}>
+                            <Stack direction='column' alignItems='center' spacing={2} className={classes.paddingInline25}>
                                 <Stack className={classes.previewIframe}>
                                     {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
                                 </Stack>
@@ -332,7 +427,7 @@ const SummaryDialog = ({ classes,
                         </Box>
                     }
                 </Box>
-                {!IsQuickSend && <Box>
+                <Box>
                     {detailsHide ? null : <ul className={classes.sumList}>
                         <li
                             onClick={() => { setsubRecipients(!subRecipientsDetails) }}
@@ -345,58 +440,62 @@ const SummaryDialog = ({ classes,
                     </ul>}
                     {subRecipientsDetails ? renderFilterDetails() : null}
                 </Box>
+                {
+                    verPopupOpen && <VerificationDialog
+                        classes={classes}
+                        isOpen={verPopupOpen && !isSharedDomainEmail}
+                        step={verifyStep ?? 0}
+                        value={verifyValue ?? ''}
+                        onClose={async (verifiedEmail) => {
+                            if (verifiedEmail) {
+                                const updateInfo = { ...newsletterInfo };
+                                updateInfo.FromEmail = verifiedEmail;
+                                await dispatch(saveCampaignInfo(updateInfo));
+                                setFromEmail(verifiedEmail);
+                                setDisableSend(false);
+                                setFromEmailVerified(true);
+                            }
+                            setVerPopupOpen(false);
+                        }}
+                    />
                 }
-                <Grid
-                    container
-                    spacing={4}
-                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
-                    <Grid item>
-                        <Button
-                            variant='contained'
-                            size='small'
-                            disabled={disableSend}
-                            onClick={() => {
-                                handleSendCampaign()
-                            }}
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogConfirmButton,
-                                FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
-                            )}>
-                            {t("sms.sendDialog")}
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            variant='contained'
-                            size='small'
-                            onClick={() => { setDialogType(null) }}
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogCancelButton
-                            )}>
-                            {t("sms.cancelDialog")}
-                        </Button>
-                    </Grid>
-                </Grid>
-                {verPopupOpen && <VerificationDialog
-                    classes={classes}
-                    isOpen={verPopupOpen}
-                    step={verifyStep ?? 0}
-                    value={verifyValue ?? ''}
-                    onClose={async (verifiedEmail) => {
-                        if (verifiedEmail) {
-                            const updateInfo = { ...newsletterInfo };
-                            updateInfo.FromEmail = verifiedEmail;
-                            await dispatch(saveCampaignInfo(updateInfo));
-                            setFromEmail(verifiedEmail);
-                            setDisableSend(false);
-                            setFromEmailVerified(true);
-                        }
-                        setVerPopupOpen(false);
-                    }}
-                />}
             </>
+        ),
+        renderButtons: () => (
+            <Grid
+                container
+                spacing={4}
+                className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                <Grid item className={classes.paddingSides10}>
+                    <Button
+                        variant='contained'
+                        size='small'
+                        disabled={disableSend}
+                        onClick={() => {
+                            handleSendCampaign()
+                        }}
+                        className={clsx(
+                            classes.dialogButton,
+                            classes.dialogConfirmButton,
+                            FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
+                        )}>
+                        {t("sms.sendDialog")}
+                    </Button>
+                </Grid>
+                <Grid item className={classes.paddingSides10}>
+                    <Button
+                        variant='contained'
+                        size='small'
+                        onClick={() => { setDialogType(null) }}
+                        className={clsx(
+                            classes.dialogButton,
+                            classes.dialogCancelButton
+                        )}
+                    >
+                        {t("sms.cancelDialog")}
+                    </Button>
+                </Grid>
+            </Grid>
         ),
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,
         confirmText: t("common.send"),
@@ -412,6 +511,7 @@ const SummaryDialog = ({ classes,
         onCancel={() => { setDialogType(null) }}
         {...currentDialog}>
         {currentDialog.content}
+        <Loader isOpen={showLoader} />
     </BaseDialog>
 
 }
