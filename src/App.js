@@ -75,7 +75,7 @@ import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
 import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
 //import EditDynamicGroups from './screens/Groups/Dynamic/EditDynamicGroups';
-import CreateLandingPage from './screens/LandingPages/CreateLandingPage/CreateLandingPage';
+import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
