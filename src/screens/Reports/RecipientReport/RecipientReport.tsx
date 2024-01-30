@@ -301,7 +301,7 @@ const RecipientReport = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex3, classes.f15)}>
+          className={clsx(classes.flex3, classes.f15, classes.reipientReportCampaignName)}>
           {row.Name}
         </TableCell>
         <TableCell
@@ -667,7 +667,7 @@ const RecipientReport = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex3, classes.f15)}>
+          className={clsx(classes.flex3, classes.f15, classes.reipientReportCampaignName)}>
           {row.Name}
         </TableCell>
         <TableCell

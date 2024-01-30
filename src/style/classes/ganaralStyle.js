@@ -3983,5 +3983,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& :focus': {
       backgroundColor: 'transparent !important'
     }
+  },
+  reipientReportCampaignName: {
+    display: 'grid !important',
+    wordBreak: 'break-all',
+    minHeight: 50,
+    margin: 'auto',
   }
 });
