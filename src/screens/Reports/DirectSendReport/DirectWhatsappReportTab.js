@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
@@ -16,10 +16,8 @@ import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { WhatsappStatus } from '../../../helpers/Constants';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
-import { ImWhatsapp } from 'react-icons/im';
 import { ConvertColorStatus, ConvertWhatsappStatusText, SourceType } from '../../../helpers/UI/TableText';
 import { IoIosArrowDown } from 'react-icons/io';
 import { Title } from '../../../components/managment/Title';
@@ -621,22 +619,13 @@ const DirectWhatsappReportTab = ({
     }
 
     return <>
-        {directWhatsappReport?.StatusCode === 201 ? (
-            <>
-                <Box className={clsx('topSection', classes.mt10)}>
-                    <Title Text={title} classes={classes} />
-                    {renderSearchLine()}
-                </Box>
-                {renderTable()}
-                {renderTablePagination()}
-                <Loader isOpen={showLoader} />
-            </>
-        ) : <>
-            <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
-                <Typography style={{ fontSize: 30 }}>{RenderHtml(t('common.whatsappCommingSoon'))}</Typography>
-                <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
-            </Box>
-        </>}
+        <Box className={clsx('topSection', classes.mt10)}>
+            <Title Text={title} classes={classes} />
+            {renderSearchLine()}
+        </Box>
+        {renderTable()}
+        {renderTablePagination()}
+        <Loader isOpen={showLoader} />
     </>
 }
 
