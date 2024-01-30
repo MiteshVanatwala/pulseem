@@ -149,7 +149,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
             // href='/Pulseem/LandingPageWizard.aspx?fromreact=true'
             className={clsx(classes.btn, classes.btnRounded)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-            onClick={() => navigate(`${sitePrefix}CreateLandingPage`)}
+            onClick={() => navigate(`${sitePrefix}LandingPages/Create`)}
           >
             {t('landingPages.CreateNewResource.Text')}
           </Button>

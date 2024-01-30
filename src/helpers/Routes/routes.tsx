@@ -260,18 +260,18 @@ export const getRoutes = (
       title: t("master.RadItemLandingPagesMenu.Text"),
       pageTitle: t("landingPages.logPageHeaderResource1.Text"),
       iconUnicode: "\ue09d",
-      href: `${sitePrefix}EditRegistrationPage`,
+      href: `${sitePrefix}LandingPages`,
       isShow: true,
       icon: <img alt="Landing Pages" src={LandingPageIcon} />,
       options: [
         {
           title: t("master.RadMenuItemLandingPage.Text"),
-          href: `${sitePrefix}CreateLandingPage`,
+          href: `${sitePrefix}LandingPages/Create`,
           isShow: true,
         },
         {
           title: t("master.RadMenuItemLandingManagement.Text"),
-          href: `${sitePrefix}EditRegistrationPage`,
+          href: `${sitePrefix}LandingPages`,
           isShow: true,
         },
         {

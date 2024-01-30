@@ -313,11 +313,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			cancelText: "common.No",
 			onConfirm: async () => {
 				const response = await save();
-				navigate(`${sitePrefix}EditRegistrationPage`);
+				navigate(`${sitePrefix}LandingPages`);
 			},
 			onClose: () => {
 				setDialogType(null);
-				navigate(`${sitePrefix}EditRegistrationPage`);
+				navigate(`${sitePrefix}LandingPages`);
 			},
 		};
 	}
@@ -345,7 +345,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			),
 			onConfirm: async () => {
 				const response = await save();
-				navigate(`${sitePrefix}EditRegistrationPage`);
+				navigate(`${sitePrefix}LandingPages`);
 			},
 		};
 	}

@@ -109,11 +109,11 @@ export const DASHBOARD_SHORTCUT = {
     pages: [
       {
         title: 'landingPages.CreateNewResource.Text',
-        link: '/Pulseem/LandingPageWizard.aspx'
+        link: '/react/LandingPages/Create'
       },
       {
         title: 'landingPages.logPageHeaderResource1.Text',
-        link: '/react/EditRegistrationPage'
+        link: '/react/LandingPages'
       }
     ]
   },

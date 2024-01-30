@@ -204,7 +204,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   });
 
   const navigateToLandingPageManagement = () => {
-    navigate(`${sitePrefix}EditRegistrationPage`);
+    navigate(`${sitePrefix}LandingPages`);
     return false;
   }
 
@@ -460,7 +460,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   const handleExitLandingPage = (saveBeforeExit = true) => {
     setDialogType(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
-    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}EditRegistrationPage`;
+    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}LandingPages`;
 
     if (saveBeforeExit) {
       saveDesign(true, redirectLink, false);
@@ -472,7 +472,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
 
   const onExit = () => setDialogType({ type: DialogType.EXIT })
   
-  const onBack = () => saveDesign(true, `${sitePrefix}CreateLandingPage/${moduleId}`);
+  const onBack = () => saveDesign(true, `${sitePrefix}LandingPages/Create/${moduleId}`);
 
   const renderToast = () => {
     if (toastMessage) {

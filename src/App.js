@@ -312,15 +312,15 @@ const renderRoutes = (classes, redirect) => {
         element={<ClientSearchResult classes={classes} />}
       />
       <Route
-        path={`${sitePrefix}EditRegistrationPage`}
+        path={`${sitePrefix}LandingPages`}
         element={<LandingPagesesManagment classes={classes} />}
       />
       <Route
-        path={`${sitePrefix}CreateLandingPage`}
+        path={`${sitePrefix}LandingPages/Create`}
         element={<CreateLandingPage classes={classes} />}
       />
       <Route
-        path={`${sitePrefix}CreateLandingPage/:id`}
+        path={`${sitePrefix}LandingPages/Create/:id`}
         element={<CreateLandingPage classes={classes} />}
       />
       <Route
