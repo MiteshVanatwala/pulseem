@@ -506,7 +506,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         backgroundColor: 'black'
     },
     fBlack: {
-        color: 'black'
+        color: 'black !important'
     },
     black: {
         color: '#626262'
