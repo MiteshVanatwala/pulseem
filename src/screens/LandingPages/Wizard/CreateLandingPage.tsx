@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Checkbox, Chip, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import { ClassesType } from '../../Classes.types';
@@ -11,20 +11,16 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { Autocomplete, Select } from '@mui/material';
-import { IoIosArrowDown } from 'react-icons/io';
+import { Autocomplete } from '@mui/material';
 import { BEE_EDITOR_TYPES, LandingPagesAnswerType, PlaceHolders } from '../../../helpers/Constants';
-import { DateField } from '../../../components/managment';
-import moment from 'moment';
 import PulseemTags from '../../../components/Tags/PulseemTags';
 import { FileGallery } from '../../../Models/Files/FileGallery';
-import { BiPlus, BiUpload } from 'react-icons/bi';
+import { BiUpload } from 'react-icons/bi';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { RandomID } from '../../../helpers/Functions/functions';
 import { validateEmailAddress } from '../../../helpers/Utils/common';
 import { isValidHttpUrl } from '../../../helpers/Utils/TextHelper';
-import Groups from '../../../components/Groups/GroupsHandler/Groups';
 import { Group } from '../../../Models/Groups/Group';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { BsInfoCircle } from 'react-icons/bs';
@@ -48,16 +44,15 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { isRTL, windowSize } = useSelector(
+	const { isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [dialogType, setDialogType] = useState<{
 		type: string;
 	} | null>(null);
-	const [confirmExit, setConfirmExit] = useState<boolean>(false);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
-	const { verifiedEmails, accountSettings, accountFeatures } = useSelector((state: any) => state.common);
+	const { accountFeatures } = useSelector((state: any) => state.common);
 	const { testGroups } = useSelector((state: any) => state.sms);
 	const [errors, setErrors] = useState({
 		formName: '',
