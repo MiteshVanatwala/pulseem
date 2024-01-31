@@ -858,7 +858,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					/>
 					<Tab
 						label={<>
-							<Typography style={{whiteSpace: 'nowrap', textAlign: 'center', fontSize: 20, fontWeight: 500 }}>
+							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 20, fontWeight: 500 }}>
 								{translator("landingPages.formOfflineProperties")}
 								<Tooltip
 									disableFocusListener
@@ -900,7 +900,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					/>
 					<Tab
 						label={<>
-							<Typography style={{whiteSpace: 'nowrap', textAlign: 'center', fontSize: 20, fontWeight: 500 }}>
+							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 20, fontWeight: 500 }}>
 								{translator("landingPages.linkPreviewSettings")}
 								<Tooltip
 									disableFocusListener
