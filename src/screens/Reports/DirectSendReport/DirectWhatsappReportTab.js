@@ -491,7 +491,7 @@ const DirectWhatsappReportTab = ({
                             >
                                 {ReferenceId && ReferenceId !== '' && <>
                                     <ManagmentIcon
-                                        icon={PreviewIcon}
+                                        uIcon={<PreviewIcon width={18} height={20} className={'PreviewIcon'} />}
                                         lable={t('campaigns.Image1Resource1.ToolTip')}
                                         onClick={() => {
                                             setTemplateID(ReferenceId);
