@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon,
-  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon
+  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon, SettingIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, RestorDialogContent, PopMassage, SearchField
@@ -250,6 +250,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     )
 
     const iconsMap = [
+      {
+        key: 'settings',
+        uIcon: SettingIcon,
+        lable: t("recipient.settings"),
+        remove: windowSize === 'xs',
+        onClick: () => {
+          navigate(`${sitePrefix}LandingPages/Create/${ID}`)
+        },
+        rootClass: classes.paddingIcon,
+      },
       {
         key: 'purchase/survey',
         uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,

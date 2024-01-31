@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Chip, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
+import { Box, Button, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import { ClassesType } from '../../Classes.types';
@@ -11,24 +11,19 @@ import { coreProps } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { Autocomplete } from '@mui/material';
-import { BEE_EDITOR_TYPES, LandingPagesAnswerType, PlaceHolders } from '../../../helpers/Constants';
-import PulseemTags from '../../../components/Tags/PulseemTags';
+import { BEE_EDITOR_TYPES, LandingPagesAnswerType } from '../../../helpers/Constants';
 import { FileGallery } from '../../../Models/Files/FileGallery';
-import { BiUpload } from 'react-icons/bi';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { RandomID } from '../../../helpers/Functions/functions';
 import { validateEmailAddress } from '../../../helpers/Utils/common';
 import { isValidHttpUrl } from '../../../helpers/Utils/TextHelper';
-import { Group } from '../../../Models/Groups/Group';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { BsInfoCircle } from 'react-icons/bs';
-import { getAllLPTemplatesBySubaccountId, getLPPublicTemplates, getLPTemplateById, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
+import { getById, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, getLPTemplateById, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
 import { sitePrefix } from '../../../config';
 import { useNavigate, useParams } from 'react-router-dom';
 // import Templates from '../../HtmlCampaign/modals/Templates';
-import { GrFormAdd, GrFormSubtract } from 'react-icons/gr';
 import Templates from '../../BeeEditorPage/modals/Templates';
 import { getCookie } from '../../../helpers/Functions/cookies';
 import { TabContext, TabPanel } from '@material-ui/lab';
@@ -38,6 +33,8 @@ import SubscriberSettings from './Tabs/SubscriberSettings';
 import SeoSettings from './Tabs/SeoSettings';
 import DevelopmentSettings from './Tabs/DevelopmentSettings';
 import LinkPreviewSettings from './Tabs/LinkPreviewSettings';
+import { LandingPageModel } from '../../../Models/LandingPage/LandingPage';
+import { PulseemResponse } from '../../../Models/APIResponse';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -53,9 +50,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	} | null>(null);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { accountFeatures } = useSelector((state: any) => state.common);
-	const { testGroups } = useSelector((state: any) => state.sms);
 	const [errors, setErrors] = useState({
-		formName: '',
+		PageName: '',
 		formLanguage: '',
 		shortURL: '',
 		pageTitle: '',
@@ -85,40 +81,71 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
 	const [isGalleryConfirmed, setIsFileSelected] = useState(false);
 	const [emailId, setEmailId] = useState('');
-	const [showTestGroups, setShowTestGroups] = useState(false);
-	const [selectedGroups, setSelectedGroups] = useState<any>([]);
-	const [allGroupsSelected, setAllGroupsSelected] = useState(false);
-	const [formValues, setFormValues] = useState<any>({
-		formName: '',
-		formLanguage: isRTL ? 0 : 1,
-		shortURL: '',
-		answerType: 0,
-		pageTitle: '',
-		answerMessage: '',
-		paymentURL: '',
-		paymentAPIUsername: '',
-		paymentTerminalNumber: '',
-		offlineDate: null,
-		offlineURL: null,
-		pageDescription: '',
-		googleAnalytics: '',
-		googleConvertion: '',
-		googleTagManager: '',
-		facebookPixel: '',
-		cssStyle: '',
-		previewTitle: '',
-		previewIcon: '',
-		previewDescription: '',
-		seoPageTitle: '',
-		seoKeywords: [],
-		seoDescription: '',
-		reportLeadsToEmails: [],
-		updateExistingRecipients: 0,
-		limitSubscribers: '',
-		duplicateMailConfirmation: true,
-		IsNewEditor: true
-	})
-	const [expandedIndexes, setExpandedIndexes] = useState([1, 2, 3, 4]);
+	const [landingPageModel, setLandingPageModel] = useState<LandingPageModel>({
+		ID: 0,
+		GroupID: 0,
+		GroupIDs: [],
+		IsClientScript: false,
+		CmbSelection: '',
+		HtmlFileName: '',
+		ButtonText: '',
+		PageName: '',
+		AnswerOption: '',
+		AnswerData: '',
+		SubmitCounter: 0,
+		ViewCounter: 0,
+		ConfirmationText: '',
+		Status: 1,
+		PageHtml: '',
+		HasPrefunpage: false,
+		PrefunImage: '',
+		HasComments: false,
+		PageUrl: '',
+		PageType: 0,
+		AnswerType: 0,
+		IsResponsive: false,
+		DownloadUrl: '',
+		OfflineDate: '',
+		OfflineUrl: '',
+		HtmlToEdit: '',
+		HtmlFile: '',
+		BaseLanguage: 0,
+		IsTemplate: null,
+		CategoryID: null,
+		IsUpdate: false,
+		IsAccessibility: false,
+		TerminalNumber: '',
+		APIUserName: '',
+		DepartmentId: null,
+		LinkPreviewTitle: '',
+		LinkPreviewIcon: '',
+		LinkPreviewIconName: '',
+		LinkPreviewDescription: '',
+		LinkPreviewIconExtrnalURL: '',
+		IsPreviewIconFromExtrnalURL: false,
+		EmailsToReport: null,
+		SplitRegistrations: false,
+		DoubleOptin: false,
+		SubscriptionsLimit: null,
+		Systems: '',
+		FacebookPageID: '',
+		FacebookPrefunPage: false,
+		FacebookPrefunImage: '',
+		FacebookComments: false,
+		ClientJavaScript: '',
+		ClientBodyScript: '',
+		ClientHtmlCode: '',
+		ClientCssStyle: '',
+		PageTitle: '',
+		MetaDescription: '',
+		MetaKeywords: '',
+		GoogleAnalyticsCode: '',
+		GoogleConvertionCode: '',
+		GoogleTagManagerCode: '',
+		FacebookPixelCode: '',
+		IsNewEditor: null
+	});
+
 	const [tabValue, setTabValue] = useState<string>('1');
 	const [template, setTemplate] = useState('');
 	const { publicTemplates, templatesBySubAccount } = useSelector(
@@ -127,6 +154,14 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	const getData = async () => {
 		setIsLoader(true);
+
+		// @ts-ignore
+		const res = await dispatch(getById(id));
+		const response = res.payload as PulseemResponse;
+
+		if (response.StatusCode === 201) {
+			setLandingPageModel(response.Data);
+		}
 
 		if (subAccountAllGroups.length === 0) {
 			dispatch(getGroupsBySubAccountId());
@@ -188,9 +223,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const removeEmailId = async (event: any, fileId: string) => {
 		event.preventDefault();
 		event.stopPropagation();
-		setFormValues({
-			...formValues,
-			reportLeadsToEmails: formValues.reportLeadsToEmails.filter((f: string) => f !== fileId)
+		setLandingPageModel({
+			...landingPageModel,
+			EmailsToReport: landingPageModel.EmailsToReport.filter((f: string) => f !== fileId)
 		});
 	}
 
@@ -257,7 +292,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									emailId: isValid ? '' : translator('common.invalidEmail')
 								});
 
-								if (isValid && formValues.reportLeadsToEmails.indexOf(emailId) !== -1) {
+								if (isValid && landingPageModel.EmailsToReport.indexOf(emailId) !== -1) {
 									setErrors({
 										...errors,
 										emailId: translator('common.EmailExist')
@@ -266,9 +301,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								}
 
 								if (isValid) {
-									setFormValues({
-										...formValues,
-										reportLeadsToEmails: [...formValues.reportLeadsToEmails, emailId]
+									setLandingPageModel({
+										...landingPageModel,
+										EmailsToReport: [...landingPageModel.EmailsToReport, emailId]
 									});
 									setDialogType(null);
 									setEmailId('');
@@ -386,30 +421,30 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const save = async () => {
 		const errorDump = {
 			...errors,
-			formName: !formValues.formName.trim() ? translator('landingPages.formNameRequired') : '',
-			shortURL: !formValues.shortURL.trim() ? translator('landingPages.shortURLRequired') : '',
+			PageName: !landingPageModel.PageName.trim() ? translator('landingPages.PageNameRequired') : '',
+			shortURL: !landingPageModel.PageUrl.trim() ? translator('landingPages.shortURLRequired') : '',
 			answerMessage: [
 				LandingPagesAnswerType.POPUP_MESSAGE,
 				LandingPagesAnswerType.REDIRECT_URL,
 				LandingPagesAnswerType.DOWNLOAD_FILE
-			].indexOf(formValues.answerType) > -1 && !formValues.answerMessage.trim() ? translator('landingPages.answerMessageRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData.trim() ? translator('landingPages.answerMessageRequired') : '',
 			paymentURL: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(formValues.answerType) > -1 && !formValues.paymentURL.trim() ? translator('landingPages.URLRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData.trim() ? translator('landingPages.URLRequired') : '',
 			paymentAPIUsername: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(formValues.answerType) > -1 && !formValues.paymentAPIUsername.trim() ? translator('landingPages.APIUsernameRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.APIUserName.trim() ? translator('landingPages.APIUsernameRequired') : '',
 			paymentTerminalNumber: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(formValues.answerType) > -1 && !formValues.paymentTerminalNumber.trim() ? translator('landingPages.terminalNumberRequired') : '',
-			offlineURL: formValues.offlineDate && !isValidHttpUrl(formValues.offlineURL) ? translator('landingPages.invalidRedirectURLWhenOffline') : '',
-			group: selectedGroups.length === 0 ? translator('landingPages.selectAtleastOneGroup') : ''
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber.trim() ? translator('landingPages.terminalNumberRequired') : '',
+			offlineURL: landingPageModel.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? translator('landingPages.invalidRedirectURLWhenOffline') : '',
+			group: landingPageModel.GroupIDs.length === 0 ? translator('landingPages.selectAtleastOneGroup') : ''
 		};
 		setErrors(errorDump);
 
-		if (!errorDump.formName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
+		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
 			//@ts-ignore
-			const response = await dispatch(saveLandingPage(formValues));
+			const response = await dispatch(saveLandingPage(landingPageModel));
 			console.log(response);
 			return true;
 		}
@@ -461,7 +496,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			);
 		}
 		else {
-			if (id !== null && formValues?.IsNewEditor === true) {
+			if (id !== null && landingPageModel?.IsNewEditor === true) {
 				wizardButtons.push(
 					<Button
 						onClick={saveAndContinueToNewEditor}
@@ -509,323 +544,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		);
 	}
 
-	const callbackUpdateGroups = (groups: any) => {
-		const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
-		const groupList: Group[] = found
-			? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
-			: [...selectedGroups, groups];
-		setSelectedGroups(groupList);
-	}
-
-	const callbackSelectAll = () => {
-		let groupList: Group[] = [];
-		if (!allGroupsSelected) {
-			groupList = showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups];
-		} else {
-			groupList = [];
-		}
-		setSelectedGroups(groupList);
-		setAllGroupsSelected(!allGroupsSelected);
-	}
-
-	const SEOSettings = () => {
-		return (
-			<Accordion expanded={expandedIndexes.indexOf(4) !== -1}>
-				<AccordionSummary
-					aria-controls="panel1a-content"
-					id="panel1a-header"
-					expandIcon={expandedIndexes.indexOf(4) === -1 ? <GrFormAdd size={26} /> : <GrFormSubtract size={26} />}
-					onClick={() => setExpandedIndexes(expandedIndexes.indexOf(4) === -1 ? expandedIndexes.concat(4) : expandedIndexes.filter(item => item !== 4))}
-					className={classes.greyBackground}
-				>
-					<Typography className={clsx(classes.fBlack, classes.bold)}>{translator('landingPages.SEOSettings')}</Typography>
-				</AccordionSummary>
-				<AccordionDetails>
-					<Grid container spacing={3} className={clsx(classes.p15)}>
-						<Grid item md={12}>
-							<Box>
-								<Typography title={translator("landingPages.pageTitle")} className={classes.alignDir}>
-									{translator("landingPages.pageTitle")}
-								</Typography>
-								<TextField
-									id="pageTitle"
-									label=""
-									variant="outlined"
-									name="pageTitle"
-									value={formValues.seoPageTitle}
-									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.seoPageTitle })}
-									autoComplete="off"
-									onChange={(e: any) => setFormValues({ ...formValues, seoPageTitle: e.target.value })}
-									error={!!errors.seoPageTitle}
-									title={formValues.seoPageTitle}
-								/>
-							</Box>
-						</Grid>
-
-						<Grid item md={12}>
-							<Box>
-								<Typography title={translator("landingPages.keywords")} className={classes.alignDir}>
-									{translator("landingPages.keywords")}
-								</Typography>
-								<Autocomplete
-									clearIcon={false}
-									options={[]}
-									freeSolo
-									multiple
-									value={formValues.seoKeywords}
-									onChange={(event: any, value: any, reason: any) => {
-										setFormValues({
-											...formValues,
-											seoKeywords: value
-										})
-									}}
-									renderTags={(value: any, props: any) =>
-										value.map((option: string, index: any) => (
-											<Chip label={option} {...props({ index })} className={clsx(classes.MuiChipRoot)} />
-										))
-									}
-									renderInput={(params: any) => <TextField {...params} className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.formName })} />}
-								/>
-								{/* <TextField
-									id="pageTitle"
-									label=""
-									variant="outlined"
-									name="pageTitle"
-									value={formValues.keywords}
-									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.formName })}
-									autoComplete="off"
-									onChange={(e: any) => setFormValues({ ...formValues, pageTitle: e.target.value })}
-									error={!!errors.pageTitle}
-									title={formValues.pageTitle}
-								/> */}
-							</Box>
-						</Grid>
-
-						<Grid item md={12}>
-							<Box>
-								<Typography title={translator("landingPages.description")} className={classes.alignDir}>
-									{translator("landingPages.description")}
-								</Typography>
-								<textarea
-									placeholder={translator("landingPages.description")}
-									maxLength={1000}
-									id="yourMessage"
-									className={clsx(classes.textarea, classes.sidebar)}
-									// style={{ textAlign: alignment }}
-									onChange={(e: any) => setFormValues({ ...formValues, pageDescription: e.target.value })}
-									value={formValues.pageDescription}
-								></textarea>
-							</Box>
-						</Grid>
-
-						<Grid item md={3}>
-							<Box>
-								<Typography title={translator("landingPages.googleAnalytics")} className={classes.alignDir}>
-									{translator("landingPages.googleAnalytics")}
-								</Typography>
-								<textarea
-									placeholder={PlaceHolders.GOOGLE_ANALYTICS}
-									maxLength={1000}
-									id="yourMessage"
-									className={clsx(classes.textarea, classes.sidebar)}
-									// style={{ textAlign: alignment }}
-									onChange={(e: any) => setFormValues({ ...formValues, googleAnalytics: e.target.value })}
-									value={formValues.googleAnalytics}
-								></textarea>
-							</Box>
-						</Grid>
-
-						<Grid item md={3}>
-							<Box>
-								<Typography title={translator("landingPages.googleConvertion")} className={classes.alignDir}>
-									{translator("landingPages.googleConvertion")}
-								</Typography>
-								<textarea
-									placeholder={PlaceHolders.GOOGLE_CONVERSION}
-									maxLength={1000}
-									id="yourMessage"
-									className={clsx(classes.textarea, classes.sidebar)}
-									// style={{ textAlign: alignment }}
-									onChange={(e: any) => setFormValues({ ...formValues, googleConvertion: e.target.value })}
-									value={formValues.googleConvertion}
-								></textarea>
-							</Box>
-						</Grid>
-
-						<Grid item md={3}>
-							<Box>
-								<Typography title={translator("landingPages.googleTagManager")} className={classes.alignDir}>
-									{translator("landingPages.googleTagManager")}
-								</Typography>
-								<textarea
-									placeholder={PlaceHolders.GOOGLE_TAG_MANAGER}
-									maxLength={1000}
-									id="yourMessage"
-									className={clsx(classes.textarea, classes.sidebar)}
-									onChange={(e: any) => setFormValues({ ...formValues, googleTagManager: e.target.value })}
-									value={formValues.googleTagManager}
-								></textarea>
-							</Box>
-						</Grid>
-
-						<Grid item md={3}>
-							<Box>
-								<Typography title={translator("landingPages.facebookPixel")} className={classes.alignDir}>
-									{translator("landingPages.facebookPixel")}
-								</Typography>
-								<textarea
-									placeholder={PlaceHolders.FACEBOOK_PIXEL}
-									maxLength={1000}
-									id="facebookPixel"
-									className={clsx(classes.textarea, classes.sidebar)}
-									// style={{ textAlign: alignment }}
-									onChange={(e: any) => setFormValues({ ...formValues, facebookPixel: e.target.value })}
-									value={formValues.facebookPixel}
-								></textarea>
-							</Box>
-						</Grid>
-					</Grid>
-				</AccordionDetails>
-			</Accordion>
-		);
-	}
-
-	const linkPreviewSettings = () => {
-		return (
-			<Accordion expanded={expandedIndexes.indexOf(6) !== -1}>
-				<AccordionSummary
-					aria-controls="panel1a-content"
-					id="panel1a-header"
-					expandIcon={expandedIndexes.indexOf(6) === -1 ? <GrFormAdd size={26} /> : <GrFormSubtract size={26} />}
-					onClick={() => setExpandedIndexes(expandedIndexes.indexOf(6) === -1 ? expandedIndexes.concat(6) : expandedIndexes.filter(item => item !== 6))}
-					className={classes.greyBackground}
-				>
-					<Typography className={clsx(classes.fBlack, classes.bold)}>
-						{translator("landingPages.linkPreviewSettings")}
-						<Tooltip
-							disableFocusListener
-							title={translator('landingPages.linkPreviewTooltip')}
-							classes={{
-								tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-								arrow: classes.fBlack
-							}}
-							enterTouchDelay={50}
-							placement={"top"}
-						>
-							<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
-								<BsInfoCircle />
-							</IconButton>
-						</Tooltip>
-					</Typography>
-				</AccordionSummary>
-				<AccordionDetails>
-					<Grid container spacing={3} className={clsx(classes.p15, classes.pt2rem)}>
-						<Grid item md={12}>
-							<Typography className={clsx(classes.f22, classes.bold, classes.pb5)}>
-								{translator("landingPages.linkPreviewSettings")}
-								<Tooltip
-									disableFocusListener
-									title={translator('landingPages.linkPreviewTooltip')}
-									classes={{
-										tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-										arrow: classes.fBlack
-									}}
-									enterTouchDelay={50}
-									placement={"top"}
-								>
-									<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
-										<BsInfoCircle />
-									</IconButton>
-								</Tooltip>
-							</Typography>
-						</Grid>
-
-						<Grid item md={4}>
-							<Box>
-								<Typography title={translator("landingPages.previewTitle")} className={classes.alignDir}>
-									{translator("landingPages.previewTitle")}
-								</Typography>
-								<TextField
-									id="previewTitle"
-									label=""
-									variant="outlined"
-									name="Name"
-									value={formValues.previewTitle}
-									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.previewTitle })}
-									autoComplete="off"
-									onChange={(e: any) => setFormValues({ ...formValues, previewTitle: e.target.value })}
-									error={!!errors.previewTitle}
-									title={formValues.previewTitle}
-								/>
-								<Box className='textBoxWrapper'>
-									<Typography className={clsx(errors.previewTitle ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-										{errors.previewTitle ?? errors.previewTitle}
-									</Typography>
-								</Box>
-							</Box>
-						</Grid>
-
-						<Grid item md={4}>
-							<Box>
-								<Typography title={translator("landingPages.previewIcon")} className={classes.alignDir}>
-									{translator("landingPages.previewIcon")}
-								</Typography>
-								<PulseemTags
-									title={""}
-									style={null}
-									classes={classes}
-									tagStyle={{ maxWidth: 150 }}
-									// @ts-ignore
-									items={filesProperties?.map((f) => {
-										return {
-											Name: f.FileName,
-											ID: f.ID
-										};
-									})}
-									// @ts-ignore
-									onShowModal={() => filesProperties.length === 0 && setDialogType({ type: 'galleryDialog' })}
-									// @ts-ignore
-									handleRemove={removeAttachmentFile}
-									// @ts-ignore
-									icon={<BiUpload />}
-								/>
-								<Box className='textBoxWrapper'>
-									<Typography className={clsx(errors.formName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-										{errors.previewIcon ?? errors.previewIcon}
-									</Typography>
-								</Box>
-							</Box>
-						</Grid>
-
-						<Grid item md={4}>
-							<Box>
-								<Typography title={translator("landingPages.previewDescription")} className={classes.alignDir}>
-									{translator("landingPages.previewDescription")}
-								</Typography>
-								<TextField
-									id="previewDescription"
-									label=""
-									variant="outlined"
-									name="Name"
-									value={formValues.previewDescription}
-									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.previewDescription })}
-									autoComplete="off"
-									onChange={(e: any) => setFormValues({ ...formValues, previewDescription: e.target.value })}
-									error={!!errors.previewDescription}
-									title={formValues.previewDescription}
-								/>
-								<Box className='textBoxWrapper'>
-									<Typography className={clsx(errors.previewDescription ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-										{errors.previewDescription ?? errors.previewDescription}
-									</Typography>
-								</Box>
-							</Box>
-						</Grid>
-					</Grid>
-				</AccordionDetails>
-			</Accordion>
-		);
-	}
 
 	return (
 		<DefaultScreen
@@ -894,6 +612,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						value='5'
 					/>
 					<Tab
+						style={{ overflow: 'unset' }}
 						label={<>
 							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 20, fontWeight: 500 }}>
 								{translator("landingPages.linkPreviewSettings")}
@@ -920,33 +639,31 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				</Tabs>
 				<TabContext value={`${tabValue}`}>
 					<TabPanel value='1'>
-						<FormProperties classes={classes} data={formValues} onUpdate={setFormValues} onSetDialog={setDialogType} />
+						<FormProperties classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} onSetDialog={setDialogType} />
 					</TabPanel>
 					<TabPanel value='2'>
-						<OfflineProperties classes={classes} data={formValues} onUpdate={setFormValues} />
+						<OfflineProperties classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
 					</TabPanel>
 					<TabPanel value='3'>
 						<SubscriberSettings
 							classes={classes}
-							data={formValues}
-							onUpdate={setFormValues}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
 							onSetDialog={setDialogType}
-							callbackSelectAll={callbackSelectAll}
 							removeEmailId={removeEmailId}
-							callbackUpdateGroups={callbackUpdateGroups}
 						/>
 					</TabPanel>
 					<TabPanel value='4'>
-						<SeoSettings classes={classes} data={formValues} onUpdate={setFormValues} />
+						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
 					</TabPanel>
 					<TabPanel value='5'>
-						<DevelopmentSettings classes={classes} data={formValues} onUpdate={setFormValues} />
+						<DevelopmentSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
 					</TabPanel>
 					<TabPanel value='6'>
 						<LinkPreviewSettings
 							classes={classes}
-							data={formValues}
-							onUpdate={setFormValues}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
 							filesProperties={filesProperties}
 							onSetDialog={setDialogType}
 							removeAttachmentFile={removeAttachmentFile} />

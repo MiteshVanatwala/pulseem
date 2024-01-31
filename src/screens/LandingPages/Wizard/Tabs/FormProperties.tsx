@@ -3,24 +3,30 @@ import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { BsInfoCircle } from "react-icons/bs";
 import { IoIosArrowDown } from "react-icons/io";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LandingPagesAnswerType } from "../../../../helpers/Constants";
 import { useState } from "react";
+import { coreProps } from "../../../Whatsapp/Campaign/Types/WhatsappCampaign.types";
 
 
 const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
     const dispatch: any = useDispatch();
     const { t: translator } = useTranslation();
+    const { isRTL } = useSelector(
+        (state: { core: coreProps }) => state.core
+    );
+
+    console.log(data);
 
     const [errors, setErrors] = useState({
-        formName: '',
+        PageName: '',
         formLanguage: '',
         shortURL: '',
         pageTitle: '',
-        answerMessage: '',
-        paymentURL: '',
-        paymentAPIUsername: '',
-        paymentTerminalNumber: '',
+        AnswerData: '',
+        PageUrl: '',
+        APIUserName: '',
+        TerminalNumber: '',
         offlineURL: '',
         group: '',
         pageDescription: '',
@@ -52,16 +58,16 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                     label=""
                     variant="outlined"
                     name="Name"
-                    value={data.formName}
-                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.formName })}
+                    value={data.PageName}
+                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.PageName })}
                     autoComplete="off"
-                    onChange={(e: any) => onUpdate({ ...data, formName: e.target.value })}
-                    error={!!errors.formName}
-                    title={data.formName}
+                    onChange={(e: any) => onUpdate({ ...data, PageName: e.target.value })}
+                    error={!!errors.PageName}
+                    title={data.PageName}
                 />
                 <Box className='textBoxWrapper'>
-                    <Typography className={clsx(errors.formName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                        {errors.formName ?? errors.formName}
+                    <Typography className={clsx(errors.PageName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                        {errors.PageName ?? errors.PageName}
                     </Typography>
                 </Box>
             </Box>
@@ -76,10 +82,10 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                     <Select
                         variant="standard"
                         name="FromEmail"
-                        value={data.formLanguage}
+                        value={data.BaseLanguage}
                         className={classes.pbt5}
                         onChange={(event, val) => {
-                            onUpdate({ ...data, formLanguage: event.target.value });
+                            onUpdate({ ...data, BaseLanguage: event.target.value });
                             setErrors({ ...errors, formLanguage: '' });
                         }}
                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
@@ -87,6 +93,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                             PaperProps: {
                                 style: {
                                     maxHeight: 300,
+                                    direction: isRTL ? 'rtl' : 'ltr'
                                 },
                             },
                         }}
@@ -127,16 +134,16 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                     label=""
                     variant="outlined"
                     name="Name"
-                    value={data.shortURL}
+                    value={data.PageUrl}
                     className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.shortURL })}
                     autoComplete="off"
-                    onChange={(e: any) => onUpdate({ ...data, shortURL: e.target.value })}
+                    onChange={(e: any) => onUpdate({ ...data, PageUrl: e.target.value })}
                     error={!!errors.shortURL}
-                    title={data.shortURL}
+                    title={data.PageUrl}
                 />
                 <Box className='textBoxWrapper'>
                     <Typography className={clsx(classes.f16)}>
-                        https://testpul.site/{data.shortURL}
+                        https://testpul.site/{data.PageUrl}
                     </Typography>
                     <Typography className={clsx(classes.errorText, classes.f14)}>
                         {errors.shortURL ?? errors.shortURL}
@@ -153,11 +160,11 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                 <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
                         variant="standard"
-                        name="FromEmail"
-                        value={data.answerType}
+                        name="AnswerType"
+                        value={data.AnswerType}
                         className={classes.pbt5}
                         onChange={(event, val) => {
-                            onUpdate({ ...data, answerType: event.target.value });
+                            onUpdate({ ...data, AnswerType: event.target.value });
                             if (event.target.value === LandingPagesAnswerType.SEND_WEBHOOK) onSetDialog({ type: 'sendWebhook' })
                         }}
                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
@@ -165,16 +172,17 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                             PaperProps: {
                                 style: {
                                     maxHeight: 300,
-                                },
+                                    direction: isRTL ? 'rtl' : 'ltr'
+                                }
                             },
                         }}
                     >
-                        <MenuItem value={LandingPagesAnswerType.SYSTEM_DEFAULT_MESSAGE}>{translator("landingPages.systemDefaultMessage")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.POPUP_MESSAGE}>{translator("landingPages.popupMessage")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.SYSTEM_DEFAULT_MESSAGE.toString()}>{translator("landingPages.systemDefaultMessage")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.POPUP_MESSAGE.toString()}>{translator("landingPages.popupMessage")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.REDIRECT_URL.toString()}>{translator("landingPages.redirectToURL")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE.toString()}>{translator("landingPages.downloadFile")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE.toString()}>{translator("landingPages.transferToPaymentPage")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK.toString()}>{translator("landingPages.sendWebhook")}</MenuItem>
                     </Select>
                 </FormControl>
             </Box>
@@ -193,16 +201,16 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                         <TextField
                             label=""
                             variant="outlined"
-                            value={data.answerMessage}
-                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.answerMessage })}
+                            value={data.AnswerData}
+                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.AnswerData })}
                             autoComplete="off"
-                            onChange={(e: any) => onUpdate({ ...data, answerMessage: e.target.value })}
-                            error={!!errors.answerMessage}
-                            title={data.answerMessage}
+                            onChange={(e: any) => onUpdate({ ...data, AnswerData: e.target.value })}
+                            error={!!errors.AnswerData}
+                            title={data.AnswerData}
                         />
                         <Box className='textBoxWrapper'>
-                            <Typography className={clsx(errors.answerMessage ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                {errors.answerMessage ?? errors.answerMessage}
+                            <Typography className={clsx(errors.AnswerData ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                {errors.AnswerData ?? errors.AnswerData}
                             </Typography>
                         </Box>
                     </Box>
@@ -221,16 +229,16 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                             <TextField
                                 label=""
                                 variant="outlined"
-                                value={data.paymentURL}
-                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.paymentURL })}
+                                value={data.PageUrl}
+                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.PageUrl })}
                                 autoComplete="off"
-                                onChange={(e: any) => onUpdate({ ...data, paymentURL: e.target.value })}
-                                error={!!errors.paymentURL}
-                                title={data.paymentURL}
+                                onChange={(e: any) => onUpdate({ ...data, PageUrl: e.target.value })}
+                                error={!!errors.PageUrl}
+                                title={data.PageUrl}
                             />
                             <Box className='textBoxWrapper'>
-                                <Typography className={clsx(errors.paymentURL ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                    {errors.paymentURL ?? errors.paymentURL}
+                                <Typography className={clsx(errors.PageUrl ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                    {errors.PageUrl ?? errors.PageUrl}
                                 </Typography>
                             </Box>
                         </Box>
@@ -244,16 +252,16 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                             <TextField
                                 label=""
                                 variant="outlined"
-                                value={data.paymentAPIUsername}
-                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.paymentAPIUsername })}
+                                value={data.APIUserName}
+                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.APIUserName })}
                                 autoComplete="off"
-                                onChange={(e: any) => onUpdate({ ...data, paymentAPIUsername: e.target.value })}
-                                error={!!errors.paymentAPIUsername}
-                                title={data.paymentAPIUsername}
+                                onChange={(e: any) => onUpdate({ ...data, APIUserName: e.target.value })}
+                                error={!!errors.APIUserName}
+                                title={data.APIUserName}
                             />
                             <Box className='textBoxWrapper'>
-                                <Typography className={clsx(errors.paymentAPIUsername ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                    {errors.paymentAPIUsername ?? errors.paymentAPIUsername}
+                                <Typography className={clsx(errors.APIUserName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                    {errors.APIUserName ?? errors.APIUserName}
                                 </Typography>
                             </Box>
                         </Box>
@@ -267,16 +275,16 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                             <TextField
                                 label=""
                                 variant="outlined"
-                                value={data.paymentTerminalNumber}
-                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.paymentTerminalNumber })}
+                                value={data.TerminalNumber}
+                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.TerminalNumber })}
                                 autoComplete="off"
-                                onChange={(e: any) => onUpdate({ ...data, paymentTerminalNumber: e.target.value })}
-                                error={!!errors.paymentTerminalNumber}
-                                title={data.paymentTerminalNumber}
+                                onChange={(e: any) => onUpdate({ ...data, TerminalNumber: e.target.value })}
+                                error={!!errors.TerminalNumber}
+                                title={data.TerminalNumber}
                             />
                             <Box className='textBoxWrapper'>
-                                <Typography className={clsx(errors.paymentTerminalNumber ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                    {errors.paymentTerminalNumber ?? errors.paymentTerminalNumber}
+                                <Typography className={clsx(errors.TerminalNumber ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                    {errors.TerminalNumber ?? errors.TerminalNumber}
                                 </Typography>
                             </Box>
                         </Box>

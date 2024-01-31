@@ -17,9 +17,9 @@ const DevelopmentSettings = ({ classes, data, onUpdate }: any) => {
                     maxLength={1000}
                     id="yourMessage"
                     className={clsx(classes.textarea, classes.sidebar)}
-                    // style={{ textAlign: alignment }}
-                    onChange={(e: any) => onUpdate({ ...data, cssStyle: e.target.value })}
-                    value={data.cssStyle}
+                    style={{ textAlign: 'left' }}
+                    onChange={(e: any) => onUpdate({ ...data, ClientCssStyle: e.target.value })}
+                    value={data.ClientCssStyle}
                 ></textarea>
             </Box>
         </Grid>

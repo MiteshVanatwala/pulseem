@@ -17,7 +17,7 @@ const OfflineProperties = ({ classes, data, onUpdate }: any) => {
         paymentURL: '',
         paymentAPIUsername: '',
         paymentTerminalNumber: '',
-        offlineURL: '',
+        OfflineUrl: '',
         group: '',
         pageDescription: '',
         googleAnalytics: '',
@@ -45,14 +45,12 @@ const OfflineProperties = ({ classes, data, onUpdate }: any) => {
                 </Typography>
                 {/* @ts-ignore */}
                 <DateField
-                    minDate={moment()}
-                    maximumDate={moment().add(100, 'y')}
                     classes={classes}
-                    value={data.offlineDate}
+                    value={data.OfflineDate}
                     onChange={(value: any) => {
                         onUpdate({
                             ...data,
-                            offlineDate: value
+                            OfflineDate: value
                         })
                     }}
                     placeholder={translator('common.FromDate')}
@@ -65,19 +63,19 @@ const OfflineProperties = ({ classes, data, onUpdate }: any) => {
                     hideInvalidDateMessage={true}
                 />
                 {
-                    data.offlineDate && (
+                    data.OfflineDate && (
                         <Button
                             className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)}
                             onClick={() => {
                                 onUpdate({
                                     ...data,
-                                    offlineDate: null,
-                                    offlineURL: '',
+                                    OfflineDate: null,
+                                    OfflineUrl: '',
                                 });
 
                                 setErrors({
                                     ...errors,
-                                    offlineURL: '',
+                                    OfflineUrl: '',
                                 })
                             }}
                         >
@@ -98,16 +96,16 @@ const OfflineProperties = ({ classes, data, onUpdate }: any) => {
                     label=""
                     variant="outlined"
                     name="redirectURLWhenOffline"
-                    value={data.offlineURL}
-                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.offlineURL })}
+                    value={data.OfflineUrl}
+                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.OfflineUrl })}
                     autoComplete="off"
-                    onChange={(e: any) => onUpdate({ ...data, offlineURL: e.target.value })}
-                    error={!!errors.offlineURL}
-                    title={data.offlineURL}
+                    onChange={(e: any) => onUpdate({ ...data, OfflineUrl: e.target.value })}
+                    error={!!errors.OfflineUrl}
+                    title={data.OfflineUrl}
                 />
                 <Box className='textBoxWrapper'>
-                    <Typography className={clsx(errors.offlineURL ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                        {errors.offlineURL ?? errors.offlineURL}
+                    <Typography className={clsx(errors.OfflineUrl ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                        {errors.OfflineUrl ?? errors.OfflineUrl}
                     </Typography>
                 </Box>
             </Box>

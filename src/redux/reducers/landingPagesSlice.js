@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { apiURL } from '../../config/index';
-import { ExportFile } from '../../helpers/Export/ExportFile';
 import { getUniqueValuesOfKey } from '../../helpers/Utils/common';
 import { publicTemplates } from "../../assets/data/LandingPageTemplates.json"
 
@@ -80,25 +79,25 @@ export const saveLandingPage = createAsyncThunk(
 
 export const saveLPTemplateToAccount = createAsyncThunk(
   '/landingpages/SaveAsTemplate', async (data, thunkAPI) => {
-      try {
-          // const response = await PulseemReactInstance.post(`landingpages/SaveAsTemplate`, data);
-          // return response.data;
-          return {};
-      } catch (error) {
-          return thunkAPI.rejectWithValue({ error: error.message });
-      }
+    try {
+      // const response = await PulseemReactInstance.post(`landingpages/SaveAsTemplate`, data);
+      // return response.data;
+      return {};
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
   })
 
 export const getLPBeeToken = createAsyncThunk(
   '/CampaignEditor/GetBeeLPToken/',
   async (_, thunkAPI) => {
     try {
-        const response = await PulseemReactInstance.get(`/CampaignEditor/GetBeeLPToken`);
-        return JSON.parse(response.data)
+      const response = await PulseemReactInstance.get(`/CampaignEditor/GetBeeLPToken`);
+      return JSON.parse(response.data)
     } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
-});
+  });
 
 export const getLPPublicTemplates = createAsyncThunk(
   '/landingpages/GetPublicTemplates', async (isRTL, thunkAPI) => {
@@ -109,64 +108,75 @@ export const getLPPublicTemplates = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-})
+  })
 
 export const getAllLPTemplatesBySubaccountId = createAsyncThunk(
   '/landingpages/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
     try {
-        // const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
-        // return response.data
-        return { Data: publicTemplates };
+      // const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
+      // return response.data
+      return { Data: publicTemplates };
     } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
-})
+  })
 
 export const getLPTemplateById = createAsyncThunk(
   '/landingpages/GetTemplateById/', async (id, thunkAPI) => {
     try {
-        // const response = await PulseemReactInstance.get(`/CampaignEditor/GetTemplateById/${id}`);
-        // return response.data
-        return {
-          Data: ''
-        };
+      // const response = await PulseemReactInstance.get(`/CampaignEditor/GetTemplateById/${id}`);
+      // return response.data
+      return {
+        Data: ''
+      };
     } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
-})
+  })
 
 export const saveLPUserBlock = createAsyncThunk(
   '/landingpages/SaveUserBlock/', async (block, thunkAPI) => {
     try {
-        // const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, block);
-        // return JSON.parse(response.data)
-        return {};
+      // const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, block);
+      // return JSON.parse(response.data)
+      return {};
     } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
-});
+  });
 
 export const getLPUserblocks = createAsyncThunk(
   '/landingpages/GetUserblocks/', async (thunkAPI) => {
-      try {
-          // const response = await PulseemReactInstance.get(`/CampaignEditor/GetUserblocks`);
-          // return response.data
-          return {};
-      } catch (error) {
-          return thunkAPI.rejectWithValue({ error: error.message });
-      }
-});
+    try {
+      // const response = await PulseemReactInstance.get(`/CampaignEditor/GetUserblocks`);
+      // return response.data
+      return {};
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 export const deleteLPUserBlock = createAsyncThunk(
   '/landingpages/DeleteUserBlock/', async (id, thunkAPI) => {
     try {
-        // const response = await PulseemReactInstance.delete(`/CampaignEditor/DeleteUserBlock/${id}`);
-        // return JSON.parse(response.data)
-        return {};
+      // const response = await PulseemReactInstance.delete(`/CampaignEditor/DeleteUserBlock/${id}`);
+      // return JSON.parse(response.data)
+      return {};
     } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
-});
+  });
+
+export const getById = createAsyncThunk(
+  '/landingpages/getById/', async (id, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`/landingpages/getById/${id}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 
 export const landingPagesSlice = createSlice({
   name: 'newsletter',
@@ -184,7 +194,7 @@ export const landingPagesSlice = createSlice({
     ToastMessages: {
       LANDING_PAGE_SAVED: { severity: 'success', color: 'success', message: 'landingPages.landingPageSaved', showAnimtionCheck: true },
       TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
-  },
+    },
   },
   reducers: {},
   extraReducers: builder => {
@@ -219,8 +229,8 @@ export const landingPagesSlice = createSlice({
       state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
     })
     builder.addCase(getAllLPTemplatesBySubaccountId.fulfilled, (state, action) => {
-        state.templatesBySubAccount = action.payload.Data || [];
-        state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
+      state.templatesBySubAccount = action.payload.Data || [];
+      state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
     })
 
     builder.addCase(downloadReport.rejected, (_, action) => console.log('Error - api downloadReport: ' + action.error))

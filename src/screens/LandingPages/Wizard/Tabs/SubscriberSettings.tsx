@@ -1,18 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Box, Checkbox, FormControl, FormControlLabel, Grid, MenuItem, TextField, Typography } from '@material-ui/core';
+import { Box, Checkbox, Divider, FormControl, FormControlLabel, Grid, MenuItem, TextField, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
 import PulseemTags from '../../../../components/Tags/PulseemTags';
 import { BiPlus } from 'react-icons/bi';
 import Groups from '../../../../components/Groups/GroupsHandler/Groups';
+import { Group } from '../../../../Models/Groups/Group';
+import { coreProps } from '../../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 
-const SubscriberSettings =  ({ classes, data, onUpdate, callbackUpdateGroups, callbackSelectAll, removeEmailId, onSetDialog }: any) => {
+const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, onShowTestGroups }: any) => {
     const { t: translator } = useTranslation();
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
+    const { isRTL } = useSelector(
+        (state: { core: coreProps }) => state.core
+    );
     const [errors, setErrors] = useState({
         formName: '',
         formLanguage: '',
@@ -36,57 +41,58 @@ const SubscriberSettings =  ({ classes, data, onUpdate, callbackUpdateGroups, ca
         seoPageTitle: '',
         seoKeywords: '',
         seoDescription: '',
-        reportLeadsToEmails: '',
+        EmailsToReport: '',
         updateExistingRecipients: '',
         limitSubscribers: '',
         emailId: '',
     });
     const [showTestGroups, setShowTestGroups] = useState(false);
     const [selectedGroups, setSelectedGroups] = useState<any>([]);
+    const [allGroupsSelected, setAllGroupsSelected] = useState(false);
+
+    const callbackUpdateGroups = (groups: any) => {
+        const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
+        const groupList: Group[] = found
+            ? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
+            : [...selectedGroups, groups];
+        setSelectedGroups(groupList);
+        onUpdate({ ...data, GroupIDs: groupList.map(g => g.GroupID.toString()) })
+    }
+
+    const callbackSelectAll = () => {
+        let groupList: Group[] = [];
+        if (!allGroupsSelected) {
+            groupList = showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups];
+        } else {
+            groupList = [];
+        }
+        setSelectedGroups(groupList);
+        setAllGroupsSelected(!allGroupsSelected);
+        onUpdate({ ...data, GroupIDs: groupList.map(g => g.GroupID.toString()) })
+    }
+
+    const onRemoveGroup = (leftGroups: Group[]) => {
+        if (leftGroups && leftGroups?.length > 0) {
+            setSelectedGroups(leftGroups);
+            onUpdate({ ...data, GroupIDs: leftGroups.map(g => g.GroupID.toString()) })
+        }
+        else {
+            setSelectedGroups([]);
+            onUpdate({ ...data, GroupIDs: [] })
+        }
+    }
+
+    useEffect(() => {
+        if (data && data?.SelectedGroupList?.length > 0) {
+            const selected = data.SelectedGroupList.map((x: any) => { return subAccountAllGroups.find((s: any) => s.GroupID === parseInt(x.trim())) })
+            setSelectedGroups(selected);
+        }
+    }, [])
+
+
 
     return (
         <Grid container spacing={3} className={clsx(classes.p15)}>
-            <Grid item md={12}>
-                <Box>
-                    <Typography title={translator("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold)}>
-                        {translator("landingPages.addSubscribersToGroups")}
-                    </Typography>
-                    <Groups
-                        classes={classes}
-                        list={
-                            showTestGroups ? [...subAccountAllGroups, ...testGroups] : [...subAccountAllGroups]
-                        }
-                        // @ts-ignore
-                        showTestGroups={showTestGroups}
-                        // test={showTestGroups}
-                        selectedList={selectedGroups}
-                        //@ts-ignore
-                        callbackSelectedGroups={callbackUpdateGroups}
-                        //@ts-ignore
-                        callbackSelectAll={callbackSelectAll}
-                        //@ts-ignore
-                        callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
-                        showSortBy={true}
-                        showFilter={false}
-                        showSelectAll={true}
-                        isFilterSelected={false}
-                        bsDot={null}
-                        isNotifications={false}
-                        isSms={true}
-                        isCampaign={false}
-                        noSelectionText={''}
-                        //@ts-ignore
-                        innerHeight={325}
-                    // isFilterSelected={false}
-                    />
-                    <Box className='textBoxWrapper'>
-                        <Typography className={clsx(errors.group ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                            {errors.group ?? errors.group}
-                        </Typography>
-                    </Box>
-                </Box>
-            </Grid>
-
             <Grid item md={4}>
                 <Box>
                     <Typography title={translator("landingPages.reportLeadsToEmails")} className={classes.alignDir}>
@@ -98,7 +104,7 @@ const SubscriberSettings =  ({ classes, data, onUpdate, callbackUpdateGroups, ca
                         classes={classes}
                         tagStyle={{ maxWidth: 150 }}
                         // @ts-ignore
-                        items={data.reportLeadsToEmails?.map((f) => {
+                        items={data?.EmailsToReport?.split(',')?.map((f) => {
                             return {
                                 Name: f,
                                 ID: f
@@ -112,8 +118,8 @@ const SubscriberSettings =  ({ classes, data, onUpdate, callbackUpdateGroups, ca
                         icon={<BiPlus />}
                     />
                     <Box className='textBoxWrapper'>
-                        <Typography className={clsx(errors.reportLeadsToEmails ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                            {errors.reportLeadsToEmails ?? errors.reportLeadsToEmails}
+                        <Typography className={clsx(errors.EmailsToReport ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                            {errors.EmailsToReport ?? errors.EmailsToReport}
                         </Typography>
                     </Box>
                 </Box>
@@ -128,7 +134,7 @@ const SubscriberSettings =  ({ classes, data, onUpdate, callbackUpdateGroups, ca
                         <Select
                             variant="standard"
                             name="FromEmail"
-                            value={data.updateExistingRecipients}
+                            value={data.IsUpdate ? 1 : 0}
                             className={classes.pbt5}
                             onChange={(event, val) => onUpdate({ ...data, updateExistingRecipients: event.target.value })}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
@@ -136,6 +142,7 @@ const SubscriberSettings =  ({ classes, data, onUpdate, callbackUpdateGroups, ca
                                 PaperProps: {
                                     style: {
                                         maxHeight: 300,
+                                        direction: isRTL ? 'rtl' : 'ltr'
                                     },
                                 },
                             }}
@@ -157,11 +164,11 @@ const SubscriberSettings =  ({ classes, data, onUpdate, callbackUpdateGroups, ca
                         label=""
                         variant="outlined"
                         name="Name"
-                        value={data.limitNumberOfSubscribers}
+                        value={data.SubscriptionsLimit}
                         className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
                         autoComplete="off"
-                        onChange={(e: any) => onUpdate({ ...data, limitNumberOfSubscribers: e.target.value < 0 ? 0 : e.target.value })}
-                        title={data.limitNumberOfSubscribers}
+                        onChange={(e: any) => onUpdate({ ...data, SubscriptionsLimit: e.target.value < 0 ? 0 : e.target.value })}
+                        title={data.SubscriptionsLimit}
                         type='number'
                     />
                 </Box>
@@ -175,13 +182,54 @@ const SubscriberSettings =  ({ classes, data, onUpdate, callbackUpdateGroups, ca
                             inputProps={{ "aria-label": "secondary checkbox" }}
                             onClick={() => onUpdate({
                                 ...data,
-                                duplicateMailConfirmation: !data.duplicateMailConfirmation
+                                DoubleOptin: !data.DoubleOptin
                             })}
-                            checked={data.duplicateMailConfirmation}
+                            checked={data.DoubleOptin}
                         />
                     }
                     label={translator("landingPages.duplicateEmailConfirmation")}
                 />
+            </Grid>
+            <Grid item md={12}>
+                <Box>
+                    <Typography title={translator("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold)}>
+                        {translator("landingPages.addSubscribersToGroups")}
+                    </Typography>
+                    <Groups
+                        classes={classes}
+                        list={
+                            subAccountAllGroups
+                        }
+                        // @ts-ignore
+                        showTestGroups={false}
+                        // test={showTestGroups}
+                        selectedList={selectedGroups}
+                        //@ts-ignore
+                        callbackSelectedGroups={callbackUpdateGroups}
+                        //@ts-ignore
+                        callbackSelectAll={callbackSelectAll}
+                        //@ts-ignore
+                        callbackShowTestGroup={() => onShowTestGroups(!showTestGroups)}
+                        callbackUpdateGroups={onRemoveGroup}
+                        showSortBy={true}
+                        showFilter={false}
+                        showSelectAll={true}
+                        isFilterSelected={false}
+                        bsDot={null}
+                        isNotifications={false}
+                        isSms={false}
+                        isCampaign={false}
+                        noSelectionText={''}
+                        //@ts-ignore
+                        innerHeight={325}
+                    // isFilterSelected={false}
+                    />
+                    <Box className='textBoxWrapper'>
+                        <Typography className={clsx(errors.group ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                            {errors.group ?? errors.group}
+                        </Typography>
+                    </Box>
+                </Box>
             </Grid>
         </Grid>
     )

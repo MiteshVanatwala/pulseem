@@ -214,12 +214,12 @@ export const SizeOptionsOfHandHeldDevices = ['xs', 'sm', 'md'];
 export const SizeOptions_XS_SM = ['xs', 'sm'];
 
 export const LandingPagesAnswerType = {
-    SYSTEM_DEFAULT_MESSAGE: 0,
-    POPUP_MESSAGE: 1,
-    REDIRECT_URL: 2,
-    DOWNLOAD_FILE: 3,
-    TRANSFER_TO_PAYMENT_PAGE: 4,
-    SEND_WEBHOOK: 5
+    SYSTEM_DEFAULT_MESSAGE: 1,
+    POPUP_MESSAGE: 2,
+    REDIRECT_URL: 3,
+    DOWNLOAD_FILE: 4,
+    TRANSFER_TO_PAYMENT_PAGE: 5,
+    SEND_WEBHOOK: 6
 }
 
 export const PlaceHolders = {

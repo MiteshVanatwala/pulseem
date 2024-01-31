@@ -19,7 +19,7 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
         paymentTerminalNumber: '',
         offlineURL: '',
         group: '',
-        pageDescription: '',
+        MetaDescription: '',
         googleAnalytics: '',
         googleConvertion: '',
         googleTagManager: '',
@@ -28,8 +28,8 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
         previewTitle: '',
         previewIcon: '',
         previewDescription: '',
-        seoPageTitle: '',
-        seoKeywords: '',
+        PageTitle: '',
+        MetaKeywords: '',
         seoDescription: '',
         reportLeadsToEmails: '',
         updateExistingRecipients: '',
@@ -48,12 +48,12 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
                     label=""
                     variant="outlined"
                     name="pageTitle"
-                    value={data.seoPageTitle}
-                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.seoPageTitle })}
+                    value={data.PageTitle}
+                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.PageTitle })}
                     autoComplete="off"
-                    onChange={(e: any) => onUpdate({ ...data, seoPageTitle: e.target.value })}
-                    error={!!errors.seoPageTitle}
-                    title={data.seoPageTitle}
+                    onChange={(e: any) => onUpdate({ ...data, PageTitle: e.target.value })}
+                    error={!!errors.PageTitle}
+                    title={data.PageTitle}
                 />
             </Box>
         </Grid>
@@ -68,16 +68,25 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
                     options={[]}
                     freeSolo
                     multiple
-                    value={data.seoKeywords}
+                    key={data.MetaKeywords}
+                    value={data?.MetaKeywords}
                     onChange={(event: any, value: any, reason: any) => {
-                        onUpdate({
-                            ...data,
-                            seoKeywords: value
-                        })
+                        if (reason === 'createOption') {
+                            onUpdate({
+                                ...data,
+                                MetaKeywords: `${data.MetaKeywords}, ${value[0]}`
+                            })
+                        }
                     }}
                     renderTags={(value: any, props: any) =>
-                        value.map((option: string, index: any) => (
-                            <Chip label={option} {...props({ index })} className={clsx(classes.MuiChipRoot)} />
+                        value?.split(',').map((option: string, index: any) => (
+                            <Chip label={option} {...props({ index })} className={clsx(classes.MuiChipRoot)} onDelete={() => {
+                                const filteredMeta = data.MetaKeywords?.split(',').filter((m: any) => { return m !== option });
+                                onUpdate({
+                                    ...data,
+                                    MetaKeywords: filteredMeta.join(',')
+                                })
+                            }} />
                         ))
                     }
                     renderInput={(params: any) => <TextField {...params} className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.formName })} />}
@@ -95,9 +104,8 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
                     maxLength={1000}
                     id="yourMessage"
                     className={clsx(classes.textarea, classes.sidebar)}
-                    // style={{ textAlign: alignment }}
-                    onChange={(e: any) => onUpdate({ ...data, pageDescription: e.target.value })}
-                    value={data.pageDescription}
+                    onChange={(e: any) => onUpdate({ ...data, MetaDescription: e.target.value })}
+                    value={data.MetaDescription}
                 ></textarea>
             </Box>
         </Grid>
@@ -112,9 +120,9 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
                     maxLength={1000}
                     id="yourMessage"
                     className={clsx(classes.textarea, classes.sidebar)}
-                    // style={{ textAlign: alignment }}
-                    onChange={(e: any) => onUpdate({ ...data, googleAnalytics: e.target.value })}
-                    value={data.googleAnalytics}
+                    style={{ textAlign: 'left', direction: 'ltr' }}
+                    onChange={(e: any) => onUpdate({ ...data, ClientJavaScript: e.target.value })}
+                    value={data.ClientJavaScript}
                 ></textarea>
             </Box>
         </Grid>
@@ -129,9 +137,9 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
                     maxLength={1000}
                     id="yourMessage"
                     className={clsx(classes.textarea, classes.sidebar)}
-                    // style={{ textAlign: alignment }}
-                    onChange={(e: any) => onUpdate({ ...data, googleConvertion: e.target.value })}
-                    value={data.googleConvertion}
+                    style={{ textAlign: 'left', direction: 'ltr' }}
+                    onChange={(e: any) => onUpdate({ ...data, ClientBodyScript: e.target.value })}
+                    value={data.ClientBodyScript}
                 ></textarea>
             </Box>
         </Grid>
@@ -146,6 +154,7 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
                     maxLength={1000}
                     id="yourMessage"
                     className={clsx(classes.textarea, classes.sidebar)}
+                    style={{ textAlign: 'left', direction: 'ltr' }}
                     onChange={(e: any) => onUpdate({ ...data, googleTagManager: e.target.value })}
                     value={data.googleTagManager}
                 ></textarea>
@@ -162,7 +171,7 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
                     maxLength={1000}
                     id="facebookPixel"
                     className={clsx(classes.textarea, classes.sidebar)}
-                    // style={{ textAlign: alignment }}
+                    style={{ textAlign: 'left', direction: 'ltr' }}
                     onChange={(e: any) => onUpdate({ ...data, facebookPixel: e.target.value })}
                     value={data.facebookPixel}
                 ></textarea>
