@@ -174,7 +174,7 @@ const ApiSettings = ({ classes }: any) => {
         }
     ];
 
-    const APIFeatureAllowed = () => accountFeatures && ((isMainApi && accountFeatures?.indexOf(PulseemFeatures.UIAPI) > -1) || (!isMainApi && accountFeatures?.indexOf(PulseemFeatures.DirectAPI) > -1));
+    const APIFeatureAllowed = () => accountFeatures && ((isMainApi && accountFeatures?.indexOf(PulseemFeatures.UI_API) > -1) || (!isMainApi && accountFeatures?.indexOf(PulseemFeatures.DIRECT_API) > -1));
 
     return (
         <DefaultScreen

@@ -881,7 +881,7 @@ const NewsLetterInfo = ({ classes }) => {
                                                 {t(item.Number)}
                                             </option>
                                         })}
-                                        {accountFeatures?.indexOf(PulseemFeatures.HideSharedDomain) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                             key={verifiedEmails.length + 1}
                                             value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                             name={accountSettings?.SubAccountSettings?.SharedEmailDomain}

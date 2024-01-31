@@ -134,7 +134,7 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    const newSettings = { ...Settings, TwoFactorAuthEnabled: accountFeatures?.indexOf(PulseemFeatures.DisableTwoFactorAuth) === -1 } as AccountSettings;
+    const newSettings = { ...Settings, TwoFactorAuthEnabled: accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 } as AccountSettings;
     setCompanyDetails(newSettings);
     if (Settings)
       handleQueryString2FA();
@@ -423,7 +423,7 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={clsx("formContainer", classes.pt20)}>
           <Grid container className={"form"} style={{ maxWidth: '100%' }}>
-            {accountFeatures?.indexOf(PulseemFeatures.DisableTwoFactorAuth) === -1 && <Grid
+            {accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 && <Grid
               item
               xs={12}
               sm={3}
@@ -466,7 +466,7 @@ const FORM_COMPANY_DETAILS = ({
                 </Select>
               </FormControl>
             </Grid>}
-            {accountFeatures?.indexOf(PulseemFeatures.DisableTwoFactorAuth) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
+            {accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
                 display: windowSize !== 'xs' ? 'flex' : 'block',
                 justifyContent: 'flex-start',

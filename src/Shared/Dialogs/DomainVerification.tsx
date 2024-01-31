@@ -209,7 +209,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                     </Grid>
                 </AccordionDetails>
             </Accordion>}
-            {accountFeatures?.indexOf(PulseemFeatures.HideSharedDomain) === -1 && domain?.verifySharedCallback !== null && domain?.verifySharedCallback !== undefined && <Accordion
+            {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && domain?.verifySharedCallback !== null && domain?.verifySharedCallback !== undefined && <Accordion
                 expanded={activeAccordion === 3}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
                 key={3}
@@ -286,7 +286,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                                 {t(item.Number)}
                                             </MenuItem>
                                         })}
-                                        {accountFeatures?.indexOf(PulseemFeatures.HideSharedDomain) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
+                                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
                                             key={verifiedEmails.length + 1}
                                             value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                             // @ts-ignore
