@@ -837,7 +837,7 @@ const NewsLetterInfo = ({ classes }) => {
                     {
                         content:
                             <Box className='selectWrapper'>
-                                <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>','')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
@@ -881,7 +881,7 @@ const NewsLetterInfo = ({ classes }) => {
                                                 {t(item.Number)}
                                             </option>
                                         })}
-                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                             key={verifiedEmails.length + 1}
                                             value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                             name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
@@ -904,7 +904,7 @@ const NewsLetterInfo = ({ classes }) => {
                     {
                         content:
                             <Box className='selectWrapper'>
-                                <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>','').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>', '').replace('</b>', '')} className={classes.alignDir}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >

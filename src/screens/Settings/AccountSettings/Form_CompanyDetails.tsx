@@ -254,7 +254,7 @@ const FORM_COMPANY_DETAILS = ({
           }}
         />
         <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-          { windowSize !== 'xs' && <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> }
+          {windowSize !== 'xs' && <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} />}
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>

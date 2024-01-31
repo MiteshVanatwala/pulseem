@@ -4004,5 +4004,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& :focus': {
       backgroundColor: 'transparent !important'
     }
+  },
+  reipientReportCampaignName: {
+    display: 'grid !important',
+    wordBreak: 'break-all',
+    minHeight: 50,
+    margin: 'auto',
+  },
+  selectOption: {
+    width: '100%',
+    display: 'flex',
+    height: '30px !important',
+    alignItems: 'center !important',
+    paddingInline: '15px !important',
+    paddingBlock: '10px !important'
   }
 });
