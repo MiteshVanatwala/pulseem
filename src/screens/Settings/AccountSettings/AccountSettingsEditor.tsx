@@ -328,9 +328,10 @@ const AccountSettingsEditor = ({ classes }: any) => {
 											{
 												[classes.dFlex]: windowSize === 'xs',
 												[classes.mt10]: windowSize === 'xs',
+												[classes.f12]: windowSize === 'xs',
 											}
 										)}
-										startIcon={<MdOutlineVerified />}
+										startIcon={<MdOutlineVerified className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />}
 										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 										onClick={() => setShowVerificationDomains(!showVerificationDomains)}
 									>
