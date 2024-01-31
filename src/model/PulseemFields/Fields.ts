@@ -168,13 +168,14 @@ export const PulseemFeatures = {
   BEE_EDITOR: '41',
   REVENUE: '42',
   BEE_AMP: '43',
-  BEE_ENABLE_GOOGLE_FONTS: '44',
-  DISABLE_TWO_FACTOR_AUTH: '45',
-  WHATSAPP: '46',
-  NEW_EMAIL_KOSHER: '47',
-  DISABLED_PENDING_EMAIL_OTP: '48',
-  UI_API: '49',
-  DIRECT_API: '50',
-  NOT_TO_SHOW_CREDITS_HISTORY_FEATURE: '51',
-  ALLOW_EURO_PAYMENT: '52'
+  EnableBeeGoogleFonts: '44',
+  DisableTwoFactorAuth: '45',
+  Whatsapp: '46',
+  NewEmailKosher: '47',
+  DisablePendingEmailOTP: '48',
+  UIAPI: '49',
+  DirectAPI: '50',
+  NotToShowCreditsHistoryFeature: '51',
+  AllowEuroPayment: '52',
+  HideSharedDomain: '53'
 }

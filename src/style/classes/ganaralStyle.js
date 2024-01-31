@@ -3989,5 +3989,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     wordBreak: 'break-all',
     minHeight: 50,
     margin: 'auto',
+  },
+  selectOption: {
+    width: '100%',
+    display: 'flex',
+    height: '30px !important',
+    alignItems: 'center !important',
+    paddingInline: '15px !important',
+    paddingBlock: '10px !important'
   }
 });

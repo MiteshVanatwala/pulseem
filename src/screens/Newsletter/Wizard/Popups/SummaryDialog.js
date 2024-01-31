@@ -18,6 +18,7 @@ import VerificationDialog from "../../../../components/DialogTemplates/Verificat
 import { Loader } from "../../../../components/Loader/Loader";
 import { IoIosArrowDown } from "react-icons/io";
 import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
+import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -40,7 +41,7 @@ const SummaryDialog = ({ classes,
     const [replyTo, setReplyTo] = useState(null);
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
-    const { verifiedEmails, isSweepingApproval, accountSettings } = useSelector(state => state.common);
+    const { verifiedEmails, isSweepingApproval, accountSettings, accountFeatures } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [disableSend, setDisableSend] = useState(false);
     const [verPopupOpen, setVerPopupOpen] = useState(false);
@@ -296,28 +297,19 @@ const SummaryDialog = ({ classes,
                                     className={clsx(classes.selectInputFormControl, classes.width90P, classes.mb10)}
                                 >
                                     <Select
-                                        native
-                                        variant="standard"
                                         style={{ width: '100%' }}
                                         className={classes.pbt5}
                                         autoWidth={false}
+                                        native
                                         value={fromEmail}
                                         displayEmpty
                                         onChange={handleFromEmailChanged}
                                         inputProps={{
                                             'aria-label': 'Without label',
-                                            className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && !isSharedDomainEmail && classes.error),
-                                            style: { width: '100%' }
+                                            className: clsx(classes.selectOption, classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && !isSharedDomainEmail && classes.error)
                                         }}
                                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                                        MenuProps={{
-                                            PaperProps: {
-                                                style: {
-                                                    maxHeight: 300,
-                                                    direction: isRTL ? 'rtl' : 'ltr'
-                                                },
-                                            },
-                                        }}
+                                        variant='standard'
                                     >
                                         {[{
                                             Number: newsletterSendSummary?.FromEmail
@@ -330,14 +322,11 @@ const SummaryDialog = ({ classes,
                                                 {obj.Number}
                                             </option>
                                         ))}
-                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
+                                        {accountFeatures?.indexOf(PulseemFeatures.HideSharedDomain) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
                                             key={verifiedEmails.length + 1}
                                             value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                             name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                         >
-                                            {/* <ListItemIcon style={{ minWidth: 25 }}>
-                                                <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} />
-                                            </ListItemIcon> */}
                                             {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
                                         </option>}
                                     </Select>
@@ -356,7 +345,7 @@ const SummaryDialog = ({ classes,
                                     }
                                 >{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</Link>
                             </Box>}
-                            <Box style={{ width: '100%' }}>
+                            <Box className={classes.mt10} style={{ width: '100%' }}>
                                 <Box>
                                     <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}:</span>
                                 </Box>
@@ -375,7 +364,7 @@ const SummaryDialog = ({ classes,
                                         onChange={handleReplyToChanged}
                                         inputProps={{
                                             'aria-label': 'Without label',
-                                            className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && !isSharedDomainEmail && classes.error),
+                                            className: clsx(classes.selectOption, classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && !isSharedDomainEmail && classes.error),
                                             style: { width: '100%' }
                                         }}
                                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
@@ -401,7 +390,7 @@ const SummaryDialog = ({ classes,
                                         ))}
                                     </Select>
                                 </FormControl>
-                            </Box>}
+                            </Box>
                             <Box className={clsx(classes.sumChild, classes.mt20)}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
                                 <span className={classes.bodySum}>{newsletterSendSummary?.Subject}</span>
