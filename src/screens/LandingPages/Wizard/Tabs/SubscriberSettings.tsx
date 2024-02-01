@@ -103,11 +103,10 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         style={null}
                         classes={classes}
                         tagStyle={{ maxWidth: 150 }}
-                        // @ts-ignore // TODO (Mitesh): make it beautiful
-                        items={data?.EmailsToReport?.split(',')[0] !== '' && data?.EmailsToReport?.split(',')?.map((f) => {
+                        items={data.EmailsToReport.map((emailId: string) => {
                             return {
-                                Name: f,
-                                ID: f
+                                Name: emailId,
+                                ID: emailId
                             };
                         })}
                         // @ts-ignore
@@ -136,7 +135,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                             name="FromEmail"
                             value={data.IsUpdate ? 1 : 0}
                             className={classes.pbt5}
-                            onChange={(event, val) => onUpdate({ ...data, updateExistingRecipients: event.target.value })}
+                            onChange={(event, val) => onUpdate({ ...data, IsUpdate: event.target.value })}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             MenuProps={{
                                 PaperProps: {

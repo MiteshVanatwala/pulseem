@@ -123,7 +123,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		LinkPreviewDescription: '',
 		LinkPreviewIconExtrnalURL: '',
 		IsPreviewIconFromExtrnalURL: false,
-		EmailsToReport: null,
+		EmailsToReport: [],
 		SplitRegistrations: false,
 		DoubleOptin: false,
 		SubscriptionsLimit: null,
@@ -250,6 +250,31 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		};
 	}
 
+	const addEmailId = () => {
+		let isValid = validateEmailAddress(emailId);
+		setErrors({
+			...errors,
+			emailId: isValid ? '' : translator('common.invalidEmail')
+		});
+
+		if (isValid && landingPageModel.EmailsToReport.indexOf(emailId) !== -1) {
+			setErrors({
+				...errors,
+				emailId: translator('common.EmailExist')
+			});
+			isValid = false;
+		}
+
+		if (isValid) {
+			setLandingPageModel({
+				...landingPageModel,
+				EmailsToReport: [...landingPageModel.EmailsToReport, emailId]
+			});
+			setDialogType(null);
+			setEmailId('');
+		}
+	}
+
 	const renderAddEmailIdDialog = () => {
 		return {
 			showDivider: false,
@@ -268,6 +293,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 						autoComplete="off"
 						onChange={(e: any) => setEmailId(e.target.value.trim())}
+						onKeyUp={(e: any) => (e.keyCode === 13 || e.code === "Enter") && addEmailId()}
 						title={emailId}
 					/>
 					<Box className='textBoxWrapper'>
@@ -285,30 +311,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				>
 					<Grid item>
 						<Button
-							onClick={() => {
-								let isValid = validateEmailAddress(emailId);
-								setErrors({
-									...errors,
-									emailId: isValid ? '' : translator('common.invalidEmail')
-								});
-
-								if (isValid && landingPageModel.EmailsToReport.indexOf(emailId) !== -1) {
-									setErrors({
-										...errors,
-										emailId: translator('common.EmailExist')
-									});
-									isValid = false;
-								}
-
-								if (isValid) {
-									setLandingPageModel({
-										...landingPageModel,
-										EmailsToReport: [...landingPageModel.EmailsToReport, emailId]
-									});
-									setDialogType(null);
-									setEmailId('');
-								}
-							}}
+							onClick={addEmailId}
 							className={clsx(
 								classes.btn,
 								classes.btnRounded
@@ -322,6 +325,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							onClick={() => {
 								setDialogType(null);
 								setEmailId('');
+								setErrors({ ...errors, emailId: '' });
 							}}
 							className={clsx(
 								classes.btn,
@@ -566,12 +570,12 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					<Tab
 						label={translator('landingPages.formProperties')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
-						className={classes.iconTab}
+						className={clsx(classes.iconTab, classes.f18)}
 						value='1'
 					/>
 					<Tab
 						label={<>
-							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 20, fontWeight: 500 }}>
+							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 18, fontWeight: 500 }}>
 								{translator("landingPages.formOfflineProperties")}
 								<Tooltip
 									disableFocusListener
@@ -590,31 +594,31 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							</Typography>
 						</>}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
-						className={classes.iconTab}
+						className={clsx(classes.iconTab, classes.f18)}
 						value='2'
 					/>
 					<Tab
 						label={translator('landingPages.subscriberSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
-						className={classes.iconTab}
+						className={clsx(classes.iconTab, classes.f18)}
 						value='3'
 					/>
 					<Tab
 						label={translator('landingPages.SEOSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
-						className={classes.iconTab}
+						className={clsx(classes.iconTab, classes.f18)}
 						value='4'
 					/>
 					<Tab
 						label={translator('landingPages.developmentSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
-						className={classes.iconTab}
+						className={clsx(classes.iconTab, classes.f18)}
 						value='5'
 					/>
 					<Tab
 						style={{ overflow: 'unset' }}
 						label={<>
-							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 20, fontWeight: 500 }}>
+							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 18, fontWeight: 500 }}>
 								{translator("landingPages.linkPreviewSettings")}
 								<Tooltip
 									disableFocusListener
@@ -633,7 +637,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							</Typography>
 						</>}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
-						className={classes.iconTab}
+						className={clsx(classes.iconTab, classes.f18)}
 						value='6'
 					/>
 				</Tabs>

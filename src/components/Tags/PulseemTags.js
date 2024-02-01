@@ -26,7 +26,7 @@ const PulseemTags = ({
         >
             {(!items || items.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
             {items && items.length > 0 ? (
-                <Box className={classes.mappedGroup} style={{ maxWidth: '95%' }}>
+                <Box className={classes.mappedGroup} style={{ maxWidth: '90%' }}>
                     {items.map((item, index) => {
                         return (
                             <Box key={index} className={clsx(classes.selectedGroupsDiv)}>
