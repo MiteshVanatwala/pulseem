@@ -670,6 +670,10 @@
   "smsCampaignDates": "תאריך קמפיין SMS",
   "smsCampaignStatus": "סטטוס קמפיין SMS",
   "smsCampaignClicked": "הקלקות לקמפיין SMS",
+  "whatsappCampaignName": "שם קמפיין Whatsapp",
+  "whatsappCampaignDates": "תאריך קמפיין Whatsapp",
+  "whatsappCampaignStatus": "סטטוס קמפיין Whatsapp",
+  "whatsappCampaignClicked": "הקלקות לקמפיין Whatsapp",
   "tooltips": {
     "uploadFiles": {
       "fileDoesNotSupportedForImport": "קבצי XLS לא נתמכים בייבוא נמענים למערכת. במידה וקיים הצורך לייבא נמענים מקובץ זה בהמשך, יש לייצא קובץ מסוג XLSX"

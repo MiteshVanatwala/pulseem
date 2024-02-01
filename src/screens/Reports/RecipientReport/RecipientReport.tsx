@@ -135,34 +135,56 @@ const RecipientReport = ({ classes }: any) => {
 
     const {
       Campaigns = [],
-      SmsCampaigns = []
+      SmsCampaigns = [],
+      WhatsappCampaigns = []
     } = reportData?.payload?.Data;
 
-    const CampaignsLength = Campaigns.length;
-    const SmsCampaignsLength = SmsCampaigns.length;
+    const CampaignsLength = Campaigns?.length || 0;
+    const SmsCampaignsLength = SmsCampaigns?.length || 0;
+    const WhatsappCampaignLength = WhatsappCampaigns?.length || 0;
     const exportData = [];
 
-    if (CampaignsLength || SmsCampaignsLength) {
-      for (let ind = 0, len = Math.max(CampaignsLength, SmsCampaignsLength); ind < len; ind++) {
+    if (CampaignsLength || SmsCampaignsLength || WhatsappCampaignLength) {
+      for (let ind = 0, len = Math.max(CampaignsLength, SmsCampaignsLength, WhatsappCampaignLength); ind < len; ind++) {
         exportData.push({
           [`${t('common.newsletterCampaignName')}`]: ind < CampaignsLength ? `${Campaigns[ind]['Name']}` : '',
           [`${t('common.newsletterCampaignDates')}`]: ind < CampaignsLength ? FormatDate(Campaigns[ind]['SendDate']) : '',
           [`${t('common.newsletterCampaignStatus')}`]: ind < CampaignsLength ? t(ConvertNewsletterStatusText(Campaigns[ind]['Status'])) : '',
           [`${t('common.newsletterCampaignOpened')}`]: ind < CampaignsLength ? t(`common.${Campaigns[ind]['OpeningCount'] > 0 ? 'Yes' : 'No'}`) : '',
-          "": "",
+          "|": "|",
           [`${t('common.smsCampaignName')}`]: ind < SmsCampaignsLength ? `${SmsCampaigns[ind]['Name']}` : '',
           [`${t('common.smsCampaignDates')}`]: ind < SmsCampaignsLength ? FormatDate(SmsCampaigns[ind]['SendDate']) : '',
           [`${t('common.smsCampaignStatus')}`]: ind < SmsCampaignsLength ? renderSMSStatus(SmsCampaigns[ind]['SmsStatus']) : '',
-          [`${t('common.smsCampaignClicked')}`]: ind < SmsCampaignsLength ? t(`common.${SmsCampaigns[ind]['ClicksCount'] > 0 ? 'Yes' : 'No'}`) : ''
+          [`${t('common.smsCampaignClicked')}`]: ind < SmsCampaignsLength ? t(`common.${SmsCampaigns[ind]['ClicksCount'] > 0 ? 'Yes' : 'No'}`) : '',
+          "||": "|",
+          [`${t('common.whatsappCampaignName')}`]: ind < WhatsappCampaignLength ? `${WhatsappCampaigns[ind]['Name']}` : '',
+          [`${t('common.whatsappCampaignDates')}`]: ind < WhatsappCampaignLength ? FormatDate(WhatsappCampaigns[ind]['SendDate']) : '',
+          [`${t('common.whatsappCampaignStatus')}`]: ind < WhatsappCampaignLength ? renderSMSStatus(WhatsappCampaigns[ind]['SmsStatus']) : '',
+          [`${t('common.whatsappCampaignClicked')}`]: ind < WhatsappCampaignLength ? t(`common.${WhatsappCampaigns[ind]['ClicksCount'] > 0 ? 'Yes' : 'No'}`) : ''
         })
       }
 
       try {
         await ExportFile({
           data: exportData,
-          fileName: 'CampaignReport',
+          fileName: 'RecipientReport',
           exportType: format,
-          fields: []
+          fields: [
+            t('common.newsletterCampaignName'),
+            t('common.newsletterCampaignDates'),
+            t('common.newsletterCampaignStatus'),
+            t('common.newsletterCampaignOpened'),
+            "|",
+            t('common.smsCampaignName'),
+            t('common.smsCampaignDates'),
+            t('common.smsCampaignStatus'),
+            t('common.smsCampaignClicked'),
+            "||",
+            t('common.whatsappCampaignName'),
+            t('common.whatsappCampaignDates'),
+            t('common.whatsappCampaignStatus'),
+            t('common.whatsappCampaignClicked'),
+          ]
         });
       } catch (error) {
         setToastMessage({
@@ -1229,7 +1251,7 @@ const RecipientReport = ({ classes }: any) => {
         onConfirm={(format: string) => downloadRecipientReport(format)}
         onCancel={() => setDialogType(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       {groupModal()}
