@@ -15,13 +15,13 @@ const flex12 = {
 };
 const blue = "#0371AD";
 
-const iconPadding = {
-  xs: "0.5rem 0.8rem 0.5em",
-  sm: "0.8rem 1.1rem 0.2rem",
-  md: "0.8rem 1.1rem 0.2rem",
-  lg: "0.8rem 1.1rem 0.2rem",
-  xl: "0.8rem 1.1rem 0.2rem",
-};
+// const iconPadding = {
+//   xs: "0.5rem 0.8rem 0.5em",
+//   sm: "0.8rem 1.1rem 0.2rem",
+//   md: "0.8rem 1.1rem 0.2rem",
+//   lg: "0.8rem 1.1rem 0.2rem",
+//   xl: "0.8rem 1.1rem 0.2rem",
+// };
 
 const barHeight = {
   sm: "",
@@ -312,7 +312,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "center",
     textDecoration: "none",
     width: "100%",
-    padding: iconPadding[windowSize],
+    // padding: iconPadding[windowSize],
     color: "#333",
     "@media screen and (max-width: 768px) and (min-width: 480px)": {
       padding: 0,
