@@ -52,35 +52,35 @@ const RecipientReport = ({ classes }: any) => {
     data: any
   } | null>(null);
   const [toastMessage, setToastMessage] =
-		useState<toastProps['SUCCESS']>(resetToastData);
+    useState<toastProps['SUCCESS']>(resetToastData);
   const ToastMessages = useSelector(
     (state: { whatsapp: { ToastMessages: toastProps } }) => state.whatsapp.ToastMessages
   );
   const [buttonType, setButtonType] = useState<string>('');
-	const [fileData, setFileData] = useState<{
-		fileLink: string;
-		fileType: string;
-	}>({
-		fileLink: '',
-		fileType: '',
-	});
+  const [fileData, setFileData] = useState<{
+    fileLink: string;
+    fileType: string;
+  }>({
+    fileLink: '',
+    fileType: '',
+  });
   const [templateData, setTemplateData] = useState<templateDataProps>({
-		templateText: '',
-		templateButtons: [],
-	});
+    templateText: '',
+    templateButtons: [],
+  });
 
   let updatedTemplateData: templateDataProps = {
-		templateText: '',
-		templateButtons: [],
-	};
-	let updatedButtonType: string = '';
-	let updatedFileData: {
-		fileLink: string;
-		fileType: string;
-	} = {
-		fileLink: '',
-		fileType: '',
-	};
+    templateText: '',
+    templateButtons: [],
+  };
+  let updatedButtonType: string = '';
+  let updatedFileData: {
+    fileLink: string;
+    fileType: string;
+  } = {
+    fileLink: '',
+    fileType: '',
+  };
 
   type reportRequest = {
     Email: string;
@@ -112,7 +112,7 @@ const RecipientReport = ({ classes }: any) => {
       Email: filterRequest.Email && (IsValidEmail(filterRequest.Email) ? '' : t('recipient.errors.email')),
       Cellphone: filterRequest.Cellphone && (IsValidPhone(filterRequest.Cellphone) ? '' : t('recipient.errors.cellPhone'))
     };
-    
+
     if ((filterRequest.Email && !formErrors.Email) || (filterRequest.Cellphone && !formErrors.Cellphone)) {
       setIsSearching(true);
       setShowLoader(true);
@@ -133,17 +133,17 @@ const RecipientReport = ({ classes }: any) => {
       IsExport: true
     })) as any;
 
-    const { 
+    const {
       Campaigns = [],
       SmsCampaigns = []
     } = reportData?.payload?.Data;
-    
+
     const CampaignsLength = Campaigns.length;
     const SmsCampaignsLength = SmsCampaigns.length;
     const exportData = [];
 
     if (CampaignsLength || SmsCampaignsLength) {
-      for (let ind=0, len=Math.max(CampaignsLength, SmsCampaignsLength); ind<len; ind++) {
+      for (let ind = 0, len = Math.max(CampaignsLength, SmsCampaignsLength); ind < len; ind++) {
         exportData.push({
           [`${t('common.newsletterCampaignName')}`]: ind < CampaignsLength ? `${Campaigns[ind]['Name']}` : '',
           [`${t('common.newsletterCampaignDates')}`]: ind < CampaignsLength ? FormatDate(Campaigns[ind]['SendDate']) : '',
@@ -156,7 +156,7 @@ const RecipientReport = ({ classes }: any) => {
           [`${t('common.smsCampaignClicked')}`]: ind < SmsCampaignsLength ? t(`common.${SmsCampaigns[ind]['ClicksCount'] > 0 ? 'Yes' : 'No'}`) : ''
         })
       }
-  
+
       try {
         await ExportFile({
           data: exportData,
@@ -360,7 +360,7 @@ const RecipientReport = ({ classes }: any) => {
 
   const renderNewsletterPhoneRow = (row: any) => {
     const statusText = ConvertNewsletterStatusText(row.Status);
-    
+
     return (
       <TableRow key={RandomID()} component="div" classes={rowStyle}>
         <TableCell
@@ -370,7 +370,7 @@ const RecipientReport = ({ classes }: any) => {
         >
           <Box className={classes.spaceBetween}>
             <Box className={classes.inlineGrid}>
-            <Typography className={classes.bold}>{t('campaigns.camapignName')}</Typography>
+              <Typography className={classes.bold}>{t('campaigns.camapignName')}</Typography>
               {row.Name}
             </Box>
             <Box>
@@ -460,7 +460,7 @@ const RecipientReport = ({ classes }: any) => {
           </Box>
         ) : (
           <>
-            {campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map((row: any) => windowSize =="xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType)) : recipientsReportData?.WhatsappCampaigns?.map((row: any) => windowSize =="xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType))}
+            {campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map((row: any) => windowSize == "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType)) : recipientsReportData?.WhatsappCampaigns?.map((row: any) => windowSize == "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType))}
             {campaignType === 'sms' ? renderSmsPagination() : renderWhasappPagination()}
           </>
         )}
@@ -511,153 +511,153 @@ const RecipientReport = ({ classes }: any) => {
 
   // Whatsapp
   const onSavedTemplateChange = (templateData: savedTemplateDataProps) => {
-		if (templateData) {
-			setUpdatedTemplateData(templateData);
-		}
-		setFileData(updatedFileData);
-		setButtonType(updatedButtonType);
-		setTemplateData(updatedTemplateData);
-	};
+    if (templateData) {
+      setUpdatedTemplateData(templateData);
+    }
+    setFileData(updatedFileData);
+    setButtonType(updatedButtonType);
+    setTemplateData(updatedTemplateData);
+  };
 
   const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
-		if ('quick-reply' in templateData?.types) {
-			saveQuickreplyTemplate(templateData);
-		}
-		if ('call-to-action' in templateData?.types) {
-			saveCallToActionTemplate(templateData);
-		} else if ('card' in templateData?.types) {
-			saveCardTemplate(templateData);
-		} else if ('media' in templateData?.types) {
-			saveMediaTemplate(templateData);
-		} else if ('text' in templateData?.types) {
-			saveTextTemplate(templateData);
-		}
-	};
+    if ('quick-reply' in templateData?.types) {
+      saveQuickreplyTemplate(templateData);
+    }
+    if ('call-to-action' in templateData?.types) {
+      saveCallToActionTemplate(templateData);
+    } else if ('card' in templateData?.types) {
+      saveCardTemplate(templateData);
+    } else if ('media' in templateData?.types) {
+      saveMediaTemplate(templateData);
+    } else if ('text' in templateData?.types) {
+      saveTextTemplate(templateData);
+    }
+  };
 
   const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
-		const quickReplyData: savedTemplateQuickReplyProps =
-			templateData?.types['quick-reply'];
-		updatedButtonType = 'quickReply';
-		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
-		updatedTemplateData.templateText = quickReplyData?.body;
-		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-	};
+    const quickReplyData: savedTemplateQuickReplyProps =
+      templateData?.types['quick-reply'];
+    updatedButtonType = 'quickReply';
+    const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
+    updatedTemplateData.templateText = quickReplyData?.body;
+    updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+  };
 
-	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
-		const callToActionData: savedTemplateCallToActionProps =
-			templateData?.types['call-to-action'];
-		updatedButtonType = 'callToAction';
-		const buttonData = setButtonsData(
-			'callToAction',
-			callToActionData?.actions
-		);
-		updatedTemplateData.templateText = callToActionData?.body;
-		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-	};
+  const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
+    const callToActionData: savedTemplateCallToActionProps =
+      templateData?.types['call-to-action'];
+    updatedButtonType = 'callToAction';
+    const buttonData = setButtonsData(
+      'callToAction',
+      callToActionData?.actions
+    );
+    updatedTemplateData.templateText = callToActionData?.body;
+    updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+  };
 
-	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
-		const cardData: savedTemplateCardProps = templateData?.types['card'];
-		updatedTemplateData.templateText = cardData?.title;
-		if (cardData?.actions?.length > 0) {
-			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
-				updatedButtonType = 'callToAction';
-				const buttonData = setButtonsData('callToAction', cardData?.actions);
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-			} else {
-				updatedButtonType = 'quickReply';
-				const buttonData = setButtonsData('quickReply', cardData?.actions);
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-			}
-		}
-		if (cardData?.media?.length > 0) {
-			updatedFileData.fileLink = cardData?.media[0];
-		}
-	};
+  const saveCardTemplate = (templateData: savedTemplateDataProps) => {
+    const cardData: savedTemplateCardProps = templateData?.types['card'];
+    updatedTemplateData.templateText = cardData?.title;
+    if (cardData?.actions?.length > 0) {
+      if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
+        updatedButtonType = 'callToAction';
+        const buttonData = setButtonsData('callToAction', cardData?.actions);
+        updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+      } else {
+        updatedButtonType = 'quickReply';
+        const buttonData = setButtonsData('quickReply', cardData?.actions);
+        updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+      }
+    }
+    if (cardData?.media?.length > 0) {
+      updatedFileData.fileLink = cardData?.media[0];
+    }
+  };
 
-	const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
-		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
-		updatedTemplateData.templateText = mediaData?.body;
-		if (mediaData?.media?.length > 0) {
-			updatedFileData.fileLink = mediaData?.media[0];
-			updatedFileData.fileType = mediaData?.media_type;
-		}
-	};
+  const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
+    const mediaData: savedTemplateMediaProps = templateData?.types['media'];
+    updatedTemplateData.templateText = mediaData?.body;
+    if (mediaData?.media?.length > 0) {
+      updatedFileData.fileLink = mediaData?.media[0];
+      updatedFileData.fileType = mediaData?.media_type;
+    }
+  };
 
-	const saveTextTemplate = (templateData: savedTemplateDataProps) => {
-		const textData: savedTemplateTextProps = templateData?.types['text'];
-		updatedTemplateData.templateText = textData?.body;
-	};
+  const saveTextTemplate = (templateData: savedTemplateDataProps) => {
+    const textData: savedTemplateTextProps = templateData?.types['text'];
+    updatedTemplateData.templateText = textData?.body;
+  };
 
   const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
-		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
-		switch (buttonType) {
-			case 'quickReply':
-				buttonData = data?.map((button: buttonsDataProps) => {
-					return {
-						id: uniqid(),
-						typeOfAction: '',
-						fields: [
-							{
-								fieldName: 'whatsapp.websiteButtonText',
-								type: 'text',
-								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-								value: button.title,
-							},
-						],
-					};
-				});
-				return buttonData ? buttonData : [];
-			case 'callToAction':
-				buttonData = data?.map((button: buttonsDataProps) => {
-					if (button?.type === 'PHONE_NUMBER') {
-						return {
-							id: uniqid(),
-							typeOfAction: 'phonenumber',
-							fields: [
-								{
-									fieldName: 'whatsapp.phoneButtonText',
-									type: 'text',
-									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
-									value: button.title,
-								},
-								{
-									fieldName: 'whatsapp.country',
-									type: 'select',
-									placeholder: 'Select Your Country Code',
-									value: '+972',
-								},
-								{
-									fieldName: 'whatsapp.phoneNumber',
-									type: 'tel',
-									placeholder: 'whatsapp.phoneNumberPlaceholder',
-									value: button.phone,
-								},
-							],
-						};
-					} else {
-						return {
-							id: uniqid(),
-							typeOfAction: 'website',
-							fields: [
-								{
-									fieldName: 'whatsapp.websiteButtonText',
-									type: 'text',
-									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-									value: button.title,
-								},
-								{
-									fieldName: 'whatsapp.websiteURL',
-									type: 'text',
-									placeholder: 'whatsapp.websiteURLPlaceholder',
-									value: button.url,
-								},
-							],
-						};
-					}
-				});
-				return buttonData ? buttonData : [];
-		}
-	};
+    let buttonData: quickReplyButtonProps[] | callToActionProps = [];
+    switch (buttonType) {
+      case 'quickReply':
+        buttonData = data?.map((button: buttonsDataProps) => {
+          return {
+            id: uniqid(),
+            typeOfAction: '',
+            fields: [
+              {
+                fieldName: 'whatsapp.websiteButtonText',
+                type: 'text',
+                placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+                value: button.title,
+              },
+            ],
+          };
+        });
+        return buttonData ? buttonData : [];
+      case 'callToAction':
+        buttonData = data?.map((button: buttonsDataProps) => {
+          if (button?.type === 'PHONE_NUMBER') {
+            return {
+              id: uniqid(),
+              typeOfAction: 'phonenumber',
+              fields: [
+                {
+                  fieldName: 'whatsapp.phoneButtonText',
+                  type: 'text',
+                  placeholder: 'whatsapp.phoneButtonTextPlaceholder',
+                  value: button.title,
+                },
+                {
+                  fieldName: 'whatsapp.country',
+                  type: 'select',
+                  placeholder: 'Select Your Country Code',
+                  value: '+972',
+                },
+                {
+                  fieldName: 'whatsapp.phoneNumber',
+                  type: 'tel',
+                  placeholder: 'whatsapp.phoneNumberPlaceholder',
+                  value: button.phone,
+                },
+              ],
+            };
+          } else {
+            return {
+              id: uniqid(),
+              typeOfAction: 'website',
+              fields: [
+                {
+                  fieldName: 'whatsapp.websiteButtonText',
+                  type: 'text',
+                  placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+                  value: button.title,
+                },
+                {
+                  fieldName: 'whatsapp.websiteURL',
+                  type: 'text',
+                  placeholder: 'whatsapp.websiteURLPlaceholder',
+                  value: button.url,
+                },
+              ],
+            };
+          }
+        });
+        return buttonData ? buttonData : [];
+    }
+  };
 
   const renderRow = (row: any, campaignType: string) => {
     return (
@@ -751,7 +751,7 @@ const RecipientReport = ({ classes }: any) => {
         >
           <Box className={classes.spaceBetween}>
             <Box className={classes.inlineGrid}>
-            <Typography className={classes.bold}>{t('campaigns.camapignName')}</Typography>
+              <Typography className={classes.bold}>{t('campaigns.camapignName')}</Typography>
               {row.Name}
             </Box>
             <Box>
@@ -1032,8 +1032,9 @@ const RecipientReport = ({ classes }: any) => {
       </Grid>
       <Grid item md={1} className={clsx(classes.flexGrow1, classes.pt20)}>
         <Button
-          onClick={() => setDialogType({ type: 'exportFormat', data: ''})}
-          className={clsx(classes.btn, classes.btnRounded, classes.searchButton, classes.floatRight, classes.mt1)}
+          onClick={() => setDialogType({ type: 'exportFormat', data: '' })}
+          className={clsx(classes.btn, classes.btnRounded, classes.mt1)}
+          style={{ whiteSpace: 'nowrap' }}
           endIcon={<FaFileExcel className={clsx(classes.f25)} />}>
           {t('master.download')}
         </Button>
@@ -1042,29 +1043,29 @@ const RecipientReport = ({ classes }: any) => {
   }
 
   const getSMSPreviewDialog = (data: any = {}) => {
-		return {
+    return {
       title: t('whatsappManagement.preview'),
-			childrenPadding: false,
-			contentStyle: classes.pt2rem,
-			showDivider: false,
+      childrenPadding: false,
+      contentStyle: classes.pt2rem,
+      showDivider: false,
       showDefaultButtons: false,
-			content: (
-				<Box>
-					<Preview
-						classes={classes}
-						mobileFullsize={true}
-						model={data}
-						ShowRedirectButton={
-							data?.RedirectButtonText && data?.RedirectButtonText !== ''
-						}
-						showTitle={false}
-						showID={true}
-						isSMS={true}
-					/>
-				</Box>
-			)
-		};
-	};
+      content: (
+        <Box>
+          <Preview
+            classes={classes}
+            mobileFullsize={true}
+            model={data}
+            ShowRedirectButton={
+              data?.RedirectButtonText && data?.RedirectButtonText !== ''
+            }
+            showTitle={false}
+            showID={true}
+            isSMS={true}
+          />
+        </Box>
+      )
+    };
+  };
 
   const getWhatsappPreviewDialog = () => ({
     title: t('whatsappManagement.preview'),
@@ -1072,19 +1073,19 @@ const RecipientReport = ({ classes }: any) => {
     showDefaultButtons: false,
     content: (
       <Box className={classes.alertModalContentMobile}>
-				<WhatsappMobilePreview
-					classes={classes}
-					templateData={templateData}
-					buttonType={buttonType}
-					fileData={fileData}
-				/>
-			</Box>
+        <WhatsappMobilePreview
+          classes={classes}
+          templateData={templateData}
+          buttonType={buttonType}
+          fileData={fileData}
+        />
+      </Box>
     ),
     onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
+      setDialogType({
+        type: '',
+        data: ''
+      });
     }
   })
 
@@ -1094,7 +1095,7 @@ const RecipientReport = ({ classes }: any) => {
     customContainerStyle: classes.beeTemplate,
     showDefaultButtons: false,
     content: (
-      <Box style={{ minHeight: 'calc(70vh)', height: 'calc(70vh)'}}>
+      <Box style={{ minHeight: 'calc(70vh)', height: 'calc(70vh)' }}>
         <iframe
           src={`${actionURL}PreviewCampaign.aspx?CampaignID=${templateData}&fromreact=true`}
           style={{ border: "none !important", width: '100%', height: '100%' }}
@@ -1103,54 +1104,54 @@ const RecipientReport = ({ classes }: any) => {
           classes={classes}
           data={templateData}
         /> */}
-			</Box>
+      </Box>
     ),
     onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
+      setDialogType({
+        type: '',
+        data: ''
+      });
     }
   })
 
   const renderDialog = () => {
-		const { type, data } = dialogType || {}
-    
-		if (type) {
-			const dialogContent: { [key: string]: {} } = {
-				preview: getSMSPreviewDialog(data),
+    const { type, data } = dialogType || {}
+
+    if (type) {
+      const dialogContent: { [key: string]: {} } = {
+        preview: getSMSPreviewDialog(data),
         whatsapp: getWhatsappPreviewDialog(),
         newsletterpreview: getNewsletterPreviewDialog(data),
-			}
+      }
       if (dialogContent[type] === undefined) return <></>;
-			const currentDialog: any = (type && dialogContent[type]) || {};
-			return (
-				dialogType && <BaseDialog
-					classes={classes}
-					open={dialogType}
-					childrenStyle={classes.mb25}
-					onClose={() => setDialogType(null)}
-					onCancel={() => setDialogType(null)}
-					{...currentDialog}>
-					{currentDialog.content}
-				</BaseDialog>
-			)
-		}
-	}
+      const currentDialog: any = (type && dialogContent[type]) || {};
+      return (
+        dialogType && <BaseDialog
+          classes={classes}
+          open={dialogType}
+          childrenStyle={classes.mb25}
+          onClose={() => setDialogType(null)}
+          onCancel={() => setDialogType(null)}
+          {...currentDialog}>
+          {currentDialog.content}
+        </BaseDialog>
+      )
+    }
+  }
 
   const resetToast = () => {
-		setToastMessage(resetToastData);
-	};
+    setToastMessage(resetToastData);
+  };
 
   const renderToast = () => {
-		if (toastMessage.message?.length > 0) {
-			setTimeout(() => {
-				resetToast();
-			}, 4000);
-			return <Toast data={toastMessage} />;
-		}
-		return null;
-	};
+    if (toastMessage.message?.length > 0) {
+      setTimeout(() => {
+        resetToast();
+      }, 4000);
+      return <Toast data={toastMessage} />;
+    }
+    return null;
+  };
 
   return (
     <DefaultScreen
