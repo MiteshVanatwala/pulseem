@@ -113,6 +113,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textTransform: 'none',
 		fontWeight: '600',
 		cursor: 'pointer',
+		border: 'solid 1px #ff3343',
 		'&:hover': {
 			backgroundColor: '#ff3343',
 			color: '#fff',
