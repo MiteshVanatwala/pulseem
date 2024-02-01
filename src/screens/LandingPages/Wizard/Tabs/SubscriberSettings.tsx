@@ -103,8 +103,8 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         style={null}
                         classes={classes}
                         tagStyle={{ maxWidth: 150 }}
-                        // @ts-ignore
-                        items={data?.EmailsToReport?.split(',')?.map((f) => {
+                        // @ts-ignore // TODO (Mitesh): make it beautiful
+                        items={data?.EmailsToReport?.split(',')[0] !== '' && data?.EmailsToReport?.split(',')?.map((f) => {
                             return {
                                 Name: f,
                                 ID: f
