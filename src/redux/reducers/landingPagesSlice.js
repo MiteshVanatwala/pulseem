@@ -66,12 +66,11 @@ export const exportSurvey = createAsyncThunk(
   })
 
 export const saveLandingPage = createAsyncThunk(
-  'landingpages/save',
+  'landingpages/CreateOrUpdate',
   async (data, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.post(`landingpages/save`, data);
-      // return response.data
-      return true;
+      const response = await PulseemReactInstance.post(`landingpages/CreateOrUpdate`, data);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

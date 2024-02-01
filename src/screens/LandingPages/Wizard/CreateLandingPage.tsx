@@ -425,30 +425,32 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const save = async () => {
 		const errorDump = {
 			...errors,
-			PageName: !landingPageModel.PageName.trim() ? translator('landingPages.PageNameRequired') : '',
-			shortURL: !landingPageModel.PageUrl.trim() ? translator('landingPages.shortURLRequired') : '',
+			PageName: !landingPageModel.PageName?.trim() ? translator('landingPages.PageNameRequired') : '',
+			shortURL: !landingPageModel.PageUrl?.trim() ? translator('landingPages.shortURLRequired') : '',
 			answerMessage: [
 				LandingPagesAnswerType.POPUP_MESSAGE,
 				LandingPagesAnswerType.REDIRECT_URL,
 				LandingPagesAnswerType.DOWNLOAD_FILE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData.trim() ? translator('landingPages.answerMessageRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? translator('landingPages.answerMessageRequired') : '',
 			paymentURL: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData.trim() ? translator('landingPages.URLRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? translator('landingPages.URLRequired') : '',
 			paymentAPIUsername: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.APIUserName.trim() ? translator('landingPages.APIUsernameRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.APIUserName?.trim() ? translator('landingPages.APIUsernameRequired') : '',
 			paymentTerminalNumber: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber.trim() ? translator('landingPages.terminalNumberRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? translator('landingPages.terminalNumberRequired') : '',
 			offlineURL: landingPageModel.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? translator('landingPages.invalidRedirectURLWhenOffline') : '',
 			group: landingPageModel.GroupIDs.length === 0 ? translator('landingPages.selectAtleastOneGroup') : ''
 		};
 		setErrors(errorDump);
 
 		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
+
+			const req = { ...landingPageModel, SelectedGroupList: null, EmailsToReport: landingPageModel?.EmailsToReport?.join(',') };
 			//@ts-ignore
-			const response = await dispatch(saveLandingPage(landingPageModel));
+			const response = await dispatch(saveLandingPage(req));
 			console.log(response);
 			return true;
 		}

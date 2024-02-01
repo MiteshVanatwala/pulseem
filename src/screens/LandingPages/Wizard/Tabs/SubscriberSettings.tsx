@@ -103,7 +103,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         style={null}
                         classes={classes}
                         tagStyle={{ maxWidth: 150 }}
-                        items={data.EmailsToReport.map((emailId: string) => {
+                        items={data?.EmailsToReport && data?.EmailsToReport.map((emailId: string) => {
                             return {
                                 Name: emailId,
                                 ID: emailId

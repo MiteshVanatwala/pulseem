@@ -177,12 +177,12 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
                             },
                         }}
                     >
-                        <MenuItem value={LandingPagesAnswerType.SYSTEM_DEFAULT_MESSAGE.toString()}>{translator("landingPages.systemDefaultMessage")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.POPUP_MESSAGE.toString()}>{translator("landingPages.popupMessage")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.REDIRECT_URL.toString()}>{translator("landingPages.redirectToURL")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE.toString()}>{translator("landingPages.downloadFile")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE.toString()}>{translator("landingPages.transferToPaymentPage")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK.toString()}>{translator("landingPages.sendWebhook")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.SYSTEM_DEFAULT_MESSAGE}>{translator("landingPages.systemDefaultMessage")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.POPUP_MESSAGE}>{translator("landingPages.popupMessage")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem>
                     </Select>
                 </FormControl>
             </Box>
