@@ -392,6 +392,24 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		};
 	}
 
+	const getValidationDialog = () => ({
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		childrenStyle: classes.noPadding,
+		showDefaultButtons: false,
+		content: (
+			<ul className={clsx(classes.noMargin, classes.mb20, classes.errorText)}>
+				{
+					Object.values(errors).map((error: any) => error && (
+						<li className={classes.validationAlertModalLi}>
+							{error}
+						</li>
+					))
+				}
+			</ul>
+		)
+	})
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -405,6 +423,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			currentDialog = renderConfirmExitDialog();
 		} else if (type === 'template') {
 			currentDialog = renderTemplateDialog();
+		} else if (type === 'validationDialog') {
+			currentDialog = getValidationDialog();
 		}
 
 		if (type) {
@@ -425,7 +445,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const save = async () => {
 		const errorDump = {
 			...errors,
-			PageName: !landingPageModel.PageName?.trim() ? translator('landingPages.PageNameRequired') : '',
+			PageName: !landingPageModel.PageName?.trim() ? translator('landingPages.formNameRequired') : '',
 			shortURL: !landingPageModel.PageUrl?.trim() ? translator('landingPages.shortURLRequired') : '',
 			answerMessage: [
 				LandingPagesAnswerType.POPUP_MESSAGE,
@@ -445,7 +465,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			group: landingPageModel.GroupIDs.length === 0 ? translator('landingPages.selectAtleastOneGroup') : ''
 		};
 		setErrors(errorDump);
-
+		console.log('errors');
+		console.log(errorDump);
 		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
 
 			const req = { ...landingPageModel, SelectedGroupList: null, EmailsToReport: landingPageModel?.EmailsToReport?.join(',') };
@@ -453,6 +474,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			const response = await dispatch(saveLandingPage(req));
 			console.log(response);
 			return true;
+		} else {
+			setDialogType({ type : 'validationDialog' })
 		}
 	}
 
@@ -549,7 +572,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			</Button>
 		);
 	}
-
 
 	return (
 		<DefaultScreen
