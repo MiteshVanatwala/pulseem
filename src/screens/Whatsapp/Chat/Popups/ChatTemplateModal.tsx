@@ -2,7 +2,7 @@ import { Button, Grid } from '@material-ui/core';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import '../css/ChatTemplate.css';
-import { FaChevronRight } from 'react-icons/fa';
+import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import { chatModalProps } from '../Types/WhatsappChat.type';
 import {
 	buttonsDataProps,
@@ -22,6 +22,7 @@ import {
 import { buttonTypes, templateTypes } from '../../Constant';
 import uniqid from 'uniqid';
 import { getTemplateName } from '../../Common';
+import { useState } from 'react';
 
 const ChatTemplateModal = ({
 	classes,
@@ -30,6 +31,7 @@ const ChatTemplateModal = ({
 }: chatModalProps) => {
 	const theme = useTheme();
 	const { t: translator } = useTranslation();
+	const [ expandedTemplate, setExpandedTemplate ] = useState<any>([]);
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
 		switch (buttonType) {
@@ -266,16 +268,35 @@ const ChatTemplateModal = ({
 								type='checkbox'
 								name='collapse'
 								id={template?.TemplateId}
+								onChange={(event: any) => {
+									if (event.target.checked) {
+										setExpandedTemplate([...expandedTemplate, template?.TemplateId])
+									} else {
+										setExpandedTemplate(expandedTemplate.filter((item: any) => item !== template?.TemplateId))
+									}
+								}}
 							/>
 							<h2 className='handle'>
 								<label htmlFor={template?.TemplateId}>
-									<FaChevronRight
-										style={{
-											marginRight: '10px',
-											fontSize: '0.7rem',
-											fontFamily: 'fontawesome',
-										}}
-									/>
+									{
+										expandedTemplate.indexOf(template?.TemplateId) != -1 ? (
+											<FaChevronDown
+													style={{
+														marginRight: '10px',
+														fontSize: '0.7rem',
+														fontFamily: 'fontawesome',
+													}}
+												/>
+										) : (
+											<FaChevronRight
+												style={{
+													marginRight: '10px',
+													fontSize: '0.7rem',
+													fontFamily: 'fontawesome',
+												}}
+											/>
+										)
+									}
 									{getTemplateName(template)}
 								</label>
 							</h2>
