@@ -47,7 +47,7 @@ const SmsReport = ({ classes }) => {
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
   const dispatch = useDispatch()
-  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
+  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
