@@ -465,14 +465,12 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			group: landingPageModel.GroupIDs.length === 0 ? translator('landingPages.selectAtleastOneGroup') : ''
 		};
 		setErrors(errorDump);
-		console.log('errors');
-		console.log(errorDump);
 		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
-
+			setIsLoader(true);
 			const req = { ...landingPageModel, SelectedGroupList: null, EmailsToReport: landingPageModel?.EmailsToReport?.join(',') };
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
-			console.log(response);
+			setIsLoader(false);
 			return true;
 		} else {
 			setDialogType({ type : 'validationDialog' })
