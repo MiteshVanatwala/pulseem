@@ -394,7 +394,7 @@ const RecipientChart = ({ classes, }) => {
 
         const recipientsReportChart = recipientsReport.reduce((prevVal, newVal) => {
             if (newVal.Total > 0) {
-                if ((!Notifications.FeatureExist && newVal.ReportSection === 2) || (!Sms.FeatureExist && newVal.ReportSection === 1)) return prevVal        
+                if ((!Notifications.FeatureExist && newVal.ReportSection === 2) || (!Sms.FeatureExist && newVal.ReportSection === 1)) return prevVal
                 else prevVal.push(newVal);
             }
             return prevVal
@@ -425,7 +425,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`${sitePrefix}groups?NewGroup=true`}
+                        redirect={`${sitePrefix}Groups?NewGroup=true`}
                         buttonClass={classes.createButton} />
                 )}
 
@@ -461,7 +461,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`${sitePrefix}/Groups?NewGroup=true`}
+                        redirect={`${sitePrefix}Groups?NewGroup=true`}
                         buttonClass={classes.importButtonBlue} />
                 }
             </Grid>
