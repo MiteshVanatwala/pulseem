@@ -84,7 +84,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
   const getProductJSON = () => {
     const productJSON = [];
     if (structure === Structure.Horizontal) {
-      var productCol = JSON.parse(JSON.stringify(PulColItem));
+      var productCol: any = JSON.parse(JSON.stringify(PulColItem));
       productCol['uuid'] = uuidv4();
       if (isImageVisible) {
         let image = PulImage;
@@ -134,9 +134,9 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       productCol['modules'] = moduleItems;
       productJSON.push(productCol);
     } else {
-      let productCol = Object.assign({}, PulColItem);
+      let productCol: any = Object.assign({}, PulColItem);
       productCol['uuid'] = uuidv4();
-      const moduleItems = [];
+      let moduleItems = [];
       if (isImageVisible) {
         let image = PulImage;
         image['descriptor']['image']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
@@ -190,7 +190,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
   }, []);
 
   const getProductNumbers = () => {
-    return range(1, maxProducts+1).map((item: string) => <MenuItem key={item} value={item}>{item}</MenuItem>)
+    return range(1, maxProducts+1).map((item: number) => <MenuItem key={`${item}`} value={`${item}`}>{item}</MenuItem>)
   }
   return (
     <BaseDialog
