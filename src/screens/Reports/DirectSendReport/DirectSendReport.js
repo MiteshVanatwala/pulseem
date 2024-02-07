@@ -278,6 +278,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "Text": t('common.messageContent'),
       "ErrorMessage": t('report.failure'),
       "ReferenceId": t('common.templateId'),
+      "Cost": t('whatsappReport.cost'),
     }
   };
 
