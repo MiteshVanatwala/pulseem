@@ -39,7 +39,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import { Loader } from '../../../components/Loader/Loader';
 import { HiOutlineUserGroup } from "react-icons/hi";
@@ -76,7 +76,7 @@ const useStyleNew = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     width: "100%",
-    border: "1px solid #efefef",
+    border: "1px solid #efefef"
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -85,6 +85,7 @@ const useStyleNew = makeStyles((theme) => ({
   iconButton: {
     padding: 10,
   },
+
 }));
 
 const defaultAccountExtraData = [
@@ -105,17 +106,17 @@ const defaultAccountExtraData = [
 
 
 const SmsCreator = ({ classes }) => {
-	const { t } = useTranslation();
-	const { id } = useParams();
-	const queryParams = new URLSearchParams(window.location.search)
-	const FromAutomation = queryParams.get("FromAutomation") || false
-	const NodeToEdit = queryParams.get("NodeToEdit") || false
-	document.title = t("sms.pageTitle");
-	const styles = useStyles();
-	const btnStyle = useStyleNew();
-	const inputProps = {
-		maxLength: "13"
-	}
+  const { t } = useTranslation();
+  const { id } = useParams();
+  const queryParams = new URLSearchParams(window.location.search)
+  const FromAutomation = queryParams.get("FromAutomation") || false
+  const NodeToEdit = queryParams.get("NodeToEdit") || false
+  document.title = t("sms.pageTitle");
+  const styles = useStyles();
+  const btnStyle = useStyleNew();
+  const inputProps = {
+    maxLength: "13"
+  }
 
   const Redirect = useRedirect();
   const dispatch = useDispatch();
@@ -406,25 +407,25 @@ const SmsCreator = ({ classes }) => {
     }
   }, [reInitFromNumber])
 
-	const getAutomationReturnUrl = (campaignId) => {
-		return `/pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
-	}
-	const getSavedData = async () => {
-		if (id) {
-			let response = await dispatch(getSmsByID(id))
-			if (response && !response.error) {
-				setcampaignNumber(response.payload.FromNumber);
-				setmessageCount(response.payload.CreditsPerSms);
-				setSmsModel(response.payload);
-				setIsLinksStatistics(response.payload.IsLinksStatistics);
-				setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
-				return response.payload;
-			}
-			else {
-				logout();
-			}
-		}
-	}
+  const getAutomationReturnUrl = (campaignId) => {
+    return `/pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+  }
+  const getSavedData = async () => {
+    if (id) {
+      let response = await dispatch(getSmsByID(id))
+      if (response && !response.error) {
+        setcampaignNumber(response.payload.FromNumber);
+        setmessageCount(response.payload.CreditsPerSms);
+        setSmsModel(response.payload);
+        setIsLinksStatistics(response.payload.IsLinksStatistics);
+        setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
+        return response.payload;
+      }
+      else {
+        logout();
+      }
+    }
+  }
 
   const toggleChecked = () => {
     setChecked((prev) => !prev);
@@ -526,85 +527,85 @@ const SmsCreator = ({ classes }) => {
       isValid = false;
     }
 
-		if (smsModel.Text === "") {
-			isValid = false
-		}
-		let english = /^[ A-Za-z0-9]*$/;
-		if (campaignNumber === "" || !english.test(campaignNumber)) {
-			setcampaignNumberValidated(true);
-			isValid = false;
-		}
-		if (!isValid) {
-			setDialogType({ type: "valiateError" })
-		}
-		return isValid;
-	};
-	const handleSend = async () => {
-		if (phone !== "") {
-			if (id) {
-				const smsQuickSendData = {
-					...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-						SmsCampaignID: id, Credits: messageCount,
-						TotalRecipients: 1
-					}
-				}
-				setLoader(true);
-				let r = await dispatch(smsQuick(smsQuickSendData));
-				setLoader(false);
-				handleSendResult(r.payload.Result)
-			}
-			else {
-				if (smsCampaignId !== "") {
-					const smsQuickSendData = {
-						...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-							SmsCampaignID: smsCampaignId, Credits: messageCount,
-							TotalRecipients: 1
-						}
-					}
-					setLoader(true);
-					let r = await dispatch(smsQuick(smsQuickSendData));
-					setCampaignId(r.payload.SmsCampaignId)
-					setLoader(false);
-					handleSendResult(r.payload.Result)
-				}
-				else {
-					const smsQuickSendData = {
-						...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-							SmsCampaignID: -1, Credits: messageCount,
-							TotalRecipients: 1
-						}
-					}
-					setLoader(true);
-					let r = await dispatch(smsQuick(smsQuickSendData));
-					setCampaignId(r.payload.SmsCampaignId)
-					setLoader(false);
-					handleSendResult(r.payload.Result)
-				}
-			}
-		} else {
-			setToastMessage(ToastMessages.INVALID_NUMBER);
-		}
-	};
-	const onLeave = (e) => {
-		if (!modalOpen && campaignNumber !== storedValue) {
-			setDialogType({ type: 'alert' });
-		}
-	}
-	const handleRestore = async () => {
-		setrestoreBool(true);
-		setcampaignNumber(StaticNumber);
-		setLoader(true);
-		//let r = await dispatch(getCommonFeatures());
-		setLoader(false);
-		// setcampaignNumber(r.payload.DefaultCellNumber)
-		setLoader(true);
-		let response = await dispatch(getSMSVirtualNumber(accountSettings.DefaultCellNumber));
-		setLoader(false);
-		setcampaignNumber(response.payload.Number);
-		setStaticNumber(response.payload.Number);
-		setremovalNumber(response.payload.RemovalKey);
-		setremovalMessageButtonDisabled(false);
-	}
+    if (smsModel.Text === "") {
+      isValid = false
+    }
+    let english = /^[ A-Za-z0-9]*$/;
+    if (campaignNumber === "" || !english.test(campaignNumber)) {
+      setcampaignNumberValidated(true);
+      isValid = false;
+    }
+    if (!isValid) {
+      setDialogType({ type: "valiateError" })
+    }
+    return isValid;
+  };
+  const handleSend = async () => {
+    if (phone !== "") {
+      if (id) {
+        const smsQuickSendData = {
+          ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            SmsCampaignID: id, Credits: messageCount,
+            TotalRecipients: 1
+          }
+        }
+        setLoader(true);
+        let r = await dispatch(smsQuick(smsQuickSendData));
+        setLoader(false);
+        handleSendResult(r.payload.Result)
+      }
+      else {
+        if (smsCampaignId !== "") {
+          const smsQuickSendData = {
+            ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+              SmsCampaignID: smsCampaignId, Credits: messageCount,
+              TotalRecipients: 1
+            }
+          }
+          setLoader(true);
+          let r = await dispatch(smsQuick(smsQuickSendData));
+          setCampaignId(r.payload.SmsCampaignId)
+          setLoader(false);
+          handleSendResult(r.payload.Result)
+        }
+        else {
+          const smsQuickSendData = {
+            ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+              SmsCampaignID: -1, Credits: messageCount,
+              TotalRecipients: 1
+            }
+          }
+          setLoader(true);
+          let r = await dispatch(smsQuick(smsQuickSendData));
+          setCampaignId(r.payload.SmsCampaignId)
+          setLoader(false);
+          handleSendResult(r.payload.Result)
+        }
+      }
+    } else {
+      setToastMessage(ToastMessages.INVALID_NUMBER);
+    }
+  };
+  const onLeave = (e) => {
+    if (!modalOpen && campaignNumber !== storedValue) {
+      setDialogType({ type: 'alert' });
+    }
+  }
+  const handleRestore = async () => {
+    setrestoreBool(true);
+    setcampaignNumber(StaticNumber);
+    setLoader(true);
+    //let r = await dispatch(getCommonFeatures());
+    setLoader(false);
+    // setcampaignNumber(r.payload.DefaultCellNumber)
+    setLoader(true);
+    let response = await dispatch(getSMSVirtualNumber(accountSettings.DefaultCellNumber));
+    setLoader(false);
+    setcampaignNumber(response.payload.Number);
+    setStaticNumber(response.payload.Number);
+    setremovalNumber(response.payload.RemovalKey);
+    setremovalMessageButtonDisabled(false);
+  }
 
   const onAddText = (text) => {
     text = text.trim();
@@ -869,7 +870,7 @@ const SmsCreator = ({ classes }) => {
 
               <Grid container className={clsx(classes.p5)} >
                 <Grid
-                  item xs={12} md={12} sm={12} className={clsx(windowSize === "xs" ? classes.messageButtons : classes.justifyContentEnd)} style={{paddingTop: '5px'}}
+                  item xs={12} md={12} sm={12} className={clsx(windowSize === "xs" ? classes.messageButtons : classes.justifyContentEnd)} style={{ paddingTop: '5px' }}
                 >
                   <Tooltip
                     disableFocusListener
@@ -881,7 +882,7 @@ const SmsCreator = ({ classes }) => {
                     <Button
                       className={clsx(classes.infoButtons, classes.bgGreen)}
                       onClick={() => seteditmenuClick(!editmenuClick)}
-                      onBlur={() => setTimeout(() => { seteditmenuClick(false) }, 250)  }
+                      onBlur={() => setTimeout(() => { seteditmenuClick(false) }, 250)}
                     >
                       <AiOutlinePlusCircle className={classes.addOptionsIcon} />
                       {t("mainReport.add")}
@@ -1147,35 +1148,35 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
-	const validationCheckpoint = async (callbackFunc) => {
-		if (validationCheck()) {
-			if (isSiteTracking === true) {
-				const smsMessagValue = smsMessageRef.current.value;
-				if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') === -1) {
-					let text = smsModel.Text;
-					const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
-					const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
-					let originUrl = originalLink[0];
-					let newUrl = originUrl.trim();
-					newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
-					text = smsModel.Text.replace(originUrl, newUrl);
-					setSmsModel((currentState) => {
-						currentState.Text = text;
-						return currentState;
-					});
-				}
-				if (!isLinksStatistics) {
-					setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
-				}
-				else {
-					callbackFunc();
-				}
-			}
-			else {
-				callbackFunc();
-			}
-		}
-	}
+  const validationCheckpoint = async (callbackFunc) => {
+    if (validationCheck()) {
+      if (isSiteTracking === true) {
+        const smsMessagValue = smsMessageRef.current.value;
+        if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') === -1) {
+          let text = smsModel.Text;
+          const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
+          const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
+          let originUrl = originalLink[0];
+          let newUrl = originUrl.trim();
+          newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
+          text = smsModel.Text.replace(originUrl, newUrl);
+          setSmsModel((currentState) => {
+            currentState.Text = text;
+            return currentState;
+          });
+        }
+        if (!isLinksStatistics) {
+          setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
+        }
+        else {
+          callbackFunc();
+        }
+      }
+      else {
+        callbackFunc();
+      }
+    }
+  }
 
   const onSave = async (isSave, returnToAutomation = false) => {
     linkCalculation();
