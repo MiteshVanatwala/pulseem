@@ -1,41 +1,10 @@
 import clsx from 'clsx';
 import { Box, Button, Grid, TextField, Typography } from '@material-ui/core';
 import { DateField } from '../../../../components/managment';
-import moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
 
-
-const OfflineProperties = ({ classes, data, onUpdate }: any) => {
+const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) => {
     const { t: translator } = useTranslation();
-    const [errors, setErrors] = useState({
-        formName: '',
-        formLanguage: '',
-        shortURL: '',
-        pageTitle: '',
-        answerMessage: '',
-        paymentURL: '',
-        paymentAPIUsername: '',
-        paymentTerminalNumber: '',
-        OfflineUrl: '',
-        group: '',
-        pageDescription: '',
-        googleAnalytics: '',
-        googleConvertion: '',
-        googleTagManager: '',
-        facebookPixel: '',
-        cssStyle: '',
-        previewTitle: '',
-        previewIcon: '',
-        previewDescription: '',
-        seoPageTitle: '',
-        seoKeywords: '',
-        seoDescription: '',
-        reportLeadsToEmails: '',
-        updateExistingRecipients: '',
-        limitSubscribers: '',
-        emailId: '',
-    });
 
     return <Grid container spacing={3} className={clsx(classes.p15)}>
         <Grid item md={2}>
@@ -104,6 +73,9 @@ const OfflineProperties = ({ classes, data, onUpdate }: any) => {
                     title={data.OfflineUrl}
                 />
                 <Box className='textBoxWrapper'>
+                    <Typography className={clsx(classes.f16)}>
+                        Example: https://www.redirectURL.com
+                    </Typography>
                     <Typography className={clsx(errors.OfflineUrl ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
                         {errors.OfflineUrl ?? errors.OfflineUrl}
                     </Typography>

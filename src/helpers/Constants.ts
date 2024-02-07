@@ -232,5 +232,5 @@ export const PlaceHolders = {
 
 export const BEE_EDITOR_TYPES = {
     CAMPAIGN: 'Campaign',
-    LANDING_PAGE: 'LandingPage'
+    LANDING_PAGE: 'LandingPages'
 }

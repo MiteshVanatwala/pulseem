@@ -6,7 +6,7 @@ import { PlaceHolders } from "../../../../helpers/Constants";
 const DevelopmentSettings = ({ classes, data, onUpdate }: any) => {
     const { t: translator } = useTranslation();
 
-    return (<Grid container spacing={3} className={clsx(classes.p15, classes.pt2rem)}>
+    return (<Grid container spacing={3} className={clsx(classes.p15)}>
         <Grid item md={12}>
             <Box>
                 <Typography title={translator("landingPages.CSSDesign")} className={classes.alignDir}>
@@ -17,7 +17,6 @@ const DevelopmentSettings = ({ classes, data, onUpdate }: any) => {
                     maxLength={1000}
                     id="yourMessage"
                     className={clsx(classes.textarea, classes.sidebar)}
-                    style={{ textAlign: 'left' }}
                     onChange={(e: any) => onUpdate({ ...data, ClientCssStyle: e.target.value })}
                     value={data.ClientCssStyle}
                 ></textarea>

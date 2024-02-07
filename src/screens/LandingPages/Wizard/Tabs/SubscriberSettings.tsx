@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Box, Checkbox, Divider, FormControl, FormControlLabel, Grid, MenuItem, TextField, Typography } from '@material-ui/core';
+import { Box, Checkbox, FormControl, FormControlLabel, Grid, MenuItem, TextField, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -11,41 +11,13 @@ import Groups from '../../../../components/Groups/GroupsHandler/Groups';
 import { Group } from '../../../../Models/Groups/Group';
 import { coreProps } from '../../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 
-const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, onShowTestGroups }: any) => {
+const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, onShowTestGroups, errors }: any) => {
     const { t: translator } = useTranslation();
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
     const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
     );
-    const [errors, setErrors] = useState({
-        formName: '',
-        formLanguage: '',
-        shortURL: '',
-        pageTitle: '',
-        answerMessage: '',
-        paymentURL: '',
-        paymentAPIUsername: '',
-        paymentTerminalNumber: '',
-        offlineURL: '',
-        group: '',
-        pageDescription: '',
-        googleAnalytics: '',
-        googleConvertion: '',
-        googleTagManager: '',
-        facebookPixel: '',
-        cssStyle: '',
-        previewTitle: '',
-        previewIcon: '',
-        previewDescription: '',
-        seoPageTitle: '',
-        seoKeywords: '',
-        seoDescription: '',
-        EmailsToReport: '',
-        updateExistingRecipients: '',
-        limitSubscribers: '',
-        emailId: '',
-    });
     const [showTestGroups, setShowTestGroups] = useState(false);
     const [selectedGroups, setSelectedGroups] = useState<any>([]);
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
@@ -87,9 +59,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
             const selected = data.SelectedGroupList.map((x: any) => { return subAccountAllGroups.find((s: any) => s.GroupID === parseInt(x.trim())) })
             setSelectedGroups(selected);
         }
-    }, [])
-
-
+    }, []);
 
     return (
         <Grid container spacing={3} className={clsx(classes.p15)}>

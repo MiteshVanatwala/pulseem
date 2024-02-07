@@ -35,6 +35,8 @@ import DevelopmentSettings from './Tabs/DevelopmentSettings';
 import LinkPreviewSettings from './Tabs/LinkPreviewSettings';
 import { LandingPageModel } from '../../../Models/LandingPage/LandingPage';
 import { PulseemResponse } from '../../../Models/APIResponse';
+import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import Toast from '../../../components/Toast/Toast.component';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -50,6 +52,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	} | null>(null);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { accountFeatures } = useSelector((state: any) => state.common);
+	const [ toastMessage, setToastMessage ] = useState(null);
 	const [errors, setErrors] = useState({
 		PageName: '',
 		formLanguage: '',
@@ -158,9 +161,47 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		// @ts-ignore
 		const res = await dispatch(getById(id));
 		const response = res.payload as PulseemResponse;
-
 		if (response.StatusCode === 201) {
-			setLandingPageModel(response.Data);
+			setLandingPageModel({
+				...response.Data,
+				EmailsToReport: response.Data?.EmailsToReport?.length > 0 ? response.Data?.EmailsToReport?.split(',') : [],
+				CmbSelection: response.Data?.CmbSelection || '',
+				HtmlFileName: response.Data?.HtmlFileName || '',
+				ButtonText: response.Data?.ButtonText || '',
+				PageName: response.Data?.PageName || '',
+				AnswerOption: response.Data?.AnswerOption || '',
+				AnswerData: response.Data?.AnswerData || '',
+				ConfirmationText: response.Data?.ConfirmationText || '',
+				PageHtml: response.Data?.PageHtml || '',
+				PrefunImage: response.Data?.PrefunImage || '',
+				PageUrl: response.Data?.PageUrl || '',
+				DownloadUrl: response.Data?.DownloadUrl || '',
+				OfflineDate: response.Data?.OfflineDate || '',
+				OfflineUrl: response.Data?.OfflineUrl || '',
+				HtmlToEdit: response.Data?.HtmlToEdit || '',
+				HtmlFile: response.Data?.HtmlFile || '',
+				TerminalNumber: response.Data?.TerminalNumber || '',
+				APIUserName: response.Data?.APIUserName || '',
+				LinkPreviewTitle: response.Data?.LinkPreviewTitle || '',
+				LinkPreviewIconName: response.Data?.LinkPreviewIconName || '',
+				LinkPreviewDescription: response.Data?.LinkPreviewDescription || '',
+				LinkPreviewIconExtrnalURL: response.Data?.LinkPreviewIconExtrnalURL || '',
+				Systems: response.Data?.Systems || '',
+				FacebookPageID: response.Data?.FacebookPageID || '',
+				FacebookPrefunImage: response.Data?.FacebookPrefunImage || '',
+				ClientJavaScript: response.Data?.ClientJavaScript || '',
+				ClientBodyScript: response.Data?.ClientBodyScript || '',
+				ClientHtmlCode: response.Data?.ClientHtmlCode || '',
+				ClientCssStyle: response.Data?.ClientCssStyle || '',
+				PageTitle: response.Data?.PageTitle || '',
+				MetaDescription: response.Data?.MetaDescription || '',
+				MetaKeywords: response.Data?.MetaKeywords || '',
+				GoogleAnalyticsCode: response.Data?.GoogleAnalyticsCode || '',
+				GoogleConvertionCode: response.Data?.GoogleConvertionCode || '',
+				GoogleTagManagerCode: response.Data?.GoogleTagManagerCode || '',
+				FacebookPixelCode: response.Data?.FacebookPixelCode || '',
+				GroupIDs: response.Data?.GroupIDs || []
+			});
 		}
 
 		if (subAccountAllGroups.length === 0) {
@@ -461,8 +502,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			paymentTerminalNumber: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
 			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? translator('landingPages.terminalNumberRequired') : '',
-			offlineURL: landingPageModel.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? translator('landingPages.invalidRedirectURLWhenOffline') : '',
-			group: landingPageModel.GroupIDs.length === 0 ? translator('landingPages.selectAtleastOneGroup') : ''
+			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? translator('landingPages.invalidRedirectURLWhenOffline') : '',
+			group: landingPageModel?.GroupIDs?.length === 0 ? translator('landingPages.selectAtleastOneGroup') : ''
 		};
 		setErrors(errorDump);
 		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
@@ -470,10 +511,43 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			const req = { ...landingPageModel, SelectedGroupList: null, EmailsToReport: landingPageModel?.EmailsToReport?.join(',') };
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
+			handleSaveResponse(response?.payload);
 			setIsLoader(false);
 			return true;
 		} else {
 			setDialogType({ type : 'validationDialog' })
+		}
+	}
+
+	const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
+
+	const handleSaveResponse = (response: any) => {
+		switch (response.StatusCode) {
+				case 201: {
+					navigate(`${sitePrefix}${BEE_EDITOR_TYPES.LANDING_PAGE}`);
+					break;
+				}
+				case 400: {
+					showErrorToast(translator('common.Error'));
+					break;
+				}
+				case 401: {
+					logout();
+					break;
+				}
+				case 402: {
+					showErrorToast(translator('common.Error'));
+					break;
+				}
+				case 404: {
+					showErrorToast(translator('common.Error'));
+					break;
+				}
+				case 500:
+				default: {
+					showErrorToast(translator('common.Error'));
+					break;
+				}
 		}
 	}
 
@@ -571,6 +645,13 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		);
 	}
 
+	const renderToast = () => {
+		setTimeout(() => {
+			setToastMessage(null);
+		}, 4000);
+		return <Toast customData={toastMessage} data={null} />;
+	};
+
 	return (
 		<DefaultScreen
 			currentPage="landingPages"
@@ -665,10 +746,23 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				</Tabs>
 				<TabContext value={`${tabValue}`}>
 					<TabPanel value='1'>
-						<FormProperties classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} onSetDialog={setDialogType} />
+						<FormProperties
+							classes={classes}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
+							onSetDialog={setDialogType}
+							errors={errors}
+							setErrors={setErrors}
+						/>
 					</TabPanel>
 					<TabPanel value='2'>
-						<OfflineProperties classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
+						<OfflineProperties
+							classes={classes}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
+							errors={errors}
+							setErrors={setErrors}
+						/>
 					</TabPanel>
 					<TabPanel value='3'>
 						<SubscriberSettings
@@ -677,10 +771,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							onUpdate={setLandingPageModel}
 							onSetDialog={setDialogType}
 							removeEmailId={removeEmailId}
+							errors={errors}
 						/>
 					</TabPanel>
 					<TabPanel value='4'>
-						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
+						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
 					</TabPanel>
 					<TabPanel value='5'>
 						<DevelopmentSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
@@ -692,7 +787,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							onUpdate={setLandingPageModel}
 							filesProperties={filesProperties}
 							onSetDialog={setDialogType}
-							removeAttachmentFile={removeAttachmentFile} />
+							removeAttachmentFile={removeAttachmentFile}
+							errors={errors}
+						/>
 					</TabPanel>
 
 				</TabContext>
@@ -713,6 +810,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				<Loader isOpen={isLoader} />
 			</Box>
 			{renderDialog()}
+			{toastMessage && renderToast()}
 		</DefaultScreen>
 	);
 };

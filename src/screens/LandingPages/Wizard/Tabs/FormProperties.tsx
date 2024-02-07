@@ -3,49 +3,16 @@ import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { BsInfoCircle } from "react-icons/bs";
 import { IoIosArrowDown } from "react-icons/io";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { LandingPagesAnswerType } from "../../../../helpers/Constants";
-import { useState } from "react";
 import { coreProps } from "../../../Whatsapp/Campaign/Types/WhatsappCampaign.types";
 
 
-const FormProperties = ({ classes, data, onUpdate, onSetDialog }: any) => {
-    const dispatch: any = useDispatch();
+const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors }: any) => {
     const { t: translator } = useTranslation();
     const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
     );
-
-    console.log(data);
-
-    const [errors, setErrors] = useState({
-        PageName: '',
-        formLanguage: '',
-        shortURL: '',
-        pageTitle: '',
-        AnswerData: '',
-        PageUrl: '',
-        APIUserName: '',
-        TerminalNumber: '',
-        offlineURL: '',
-        group: '',
-        pageDescription: '',
-        googleAnalytics: '',
-        googleConvertion: '',
-        googleTagManager: '',
-        facebookPixel: '',
-        cssStyle: '',
-        previewTitle: '',
-        previewIcon: '',
-        previewDescription: '',
-        seoPageTitle: '',
-        seoKeywords: '',
-        seoDescription: '',
-        reportLeadsToEmails: '',
-        updateExistingRecipients: '',
-        limitSubscribers: '',
-        emailId: '',
-    });
 
     return <Grid container spacing={3} className={clsx(classes.p15)}>
         <Grid item md={4}>

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { Box, Chip, Grid, TextField, Typography } from '@material-ui/core';
@@ -6,37 +5,9 @@ import { Autocomplete } from '@mui/material';
 import { PlaceHolders } from '../../../../helpers/Constants';
 
 
-const SeoSettings = ({ classes, data, onUpdate }: any) => {
+const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
     const { t: translator } = useTranslation();
-    const [errors, setErrors] = useState({
-        formName: '',
-        formLanguage: '',
-        shortURL: '',
-        pageTitle: '',
-        answerMessage: '',
-        paymentURL: '',
-        paymentAPIUsername: '',
-        paymentTerminalNumber: '',
-        offlineURL: '',
-        group: '',
-        MetaDescription: '',
-        googleAnalytics: '',
-        googleConvertion: '',
-        googleTagManager: '',
-        facebookPixel: '',
-        cssStyle: '',
-        previewTitle: '',
-        previewIcon: '',
-        previewDescription: '',
-        PageTitle: '',
-        MetaKeywords: '',
-        seoDescription: '',
-        reportLeadsToEmails: '',
-        updateExistingRecipients: '',
-        limitSubscribers: '',
-        emailId: '',
-    });
-
+    
     return (<Grid container spacing={3} className={clsx(classes.p15)}>
         <Grid item md={12}>
             <Box>
@@ -69,12 +40,13 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
                     freeSolo
                     multiple
                     key={data.MetaKeywords}
-                    value={data?.MetaKeywords}
+                    value={data?.MetaKeywords || ''}
                     onChange={(event: any, value: any, reason: any) => {
                         if (reason === 'createOption') {
+                            console.log(data?.MetaKeywords?.length)
                             onUpdate({
                                 ...data,
-                                MetaKeywords: `${data.MetaKeywords}, ${value[0]}`
+                                MetaKeywords: data?.MetaKeywords === null ? `${value[0]}` : `${data.MetaKeywords}, ${value[0]}`
                             })
                         }
                     }}
@@ -89,7 +61,7 @@ const SeoSettings = ({ classes, data, onUpdate }: any) => {
                             }} />
                         ))
                     }
-                    renderInput={(params: any) => <TextField {...params} className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.formName })} />}
+                    renderInput={(params: any) => <TextField {...params} className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.MetaKeywords })} />}
                 />
             </Box>
         </Grid>

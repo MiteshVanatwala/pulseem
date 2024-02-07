@@ -1,44 +1,13 @@
-import { Box, Grid, IconButton, TextField, Tooltip, Typography } from "@material-ui/core";
+import { Box, Grid, TextField, Typography } from "@material-ui/core";
 import clsx from "clsx";
-import { BsInfoCircle } from "react-icons/bs";
 import PulseemTags from "../../../../components/Tags/PulseemTags";
 import { BiUpload } from "react-icons/bi";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 
-const LinkPreviewSettings = ({ classes, data, onUpdate, filesProperties, removeAttachmentFile, onSetDialog }: any) => {
+const LinkPreviewSettings = ({ classes, data, onUpdate, filesProperties, removeAttachmentFile, onSetDialog, errors }: any) => {
     const { t: translator } = useTranslation();
 
-    const [errors, setErrors] = useState({
-        formName: '',
-        formLanguage: '',
-        shortURL: '',
-        pageTitle: '',
-        answerMessage: '',
-        paymentURL: '',
-        paymentAPIUsername: '',
-        paymentTerminalNumber: '',
-        offlineURL: '',
-        group: '',
-        pageDescription: '',
-        googleAnalytics: '',
-        googleConvertion: '',
-        googleTagManager: '',
-        facebookPixel: '',
-        cssStyle: '',
-        previewTitle: '',
-        previewIcon: '',
-        previewDescription: '',
-        seoPageTitle: '',
-        seoKeywords: '',
-        seoDescription: '',
-        reportLeadsToEmails: '',
-        updateExistingRecipients: '',
-        limitSubscribers: '',
-        emailId: '',
-    });
-
-    return (<Grid container spacing={3} className={clsx(classes.p15, classes.pt2rem)}>
+    return (<Grid container spacing={3} className={clsx(classes.p15)}>
         <Grid item md={4}>
             <Box>
                 <Typography title={translator("landingPages.previewTitle")} className={classes.alignDir}>
