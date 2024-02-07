@@ -15,7 +15,7 @@ const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => 
     const navigate = useNavigate();
     const handleShowDomainCookie = () => {
         const cookie = getCookie("popup_hide_domain_verification");
-        setCookie("popup_hide_domain_verification", cookie !== 'true' ? 'true' : 'false');
+        setCookie("popup_hide_domain_verification", cookie !== 'true' ? 'true' : 'false', { maxAge: 2147483647 });
     }
     return <BaseDialog
         title={t('common.domainVerification.verifyDomain')}
