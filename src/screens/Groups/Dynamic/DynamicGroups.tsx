@@ -7,7 +7,7 @@ import {
     Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox, GridSize
 } from '@material-ui/core'
-import { PreviewIcon, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon, EditIcon } from '../../../assets/images/managment/index'
+import { PreviewIcon, SettingIcon, DeleteIcon, EditIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
@@ -52,12 +52,10 @@ import {
 import { GroupData } from '../../../Models/Groups/Group';
 // import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
-import useRedirect from '../../../helpers/Routes/Redirect';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
     const { t } = useTranslation();
-    const Redirect = useRedirect();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
     const { extraData } = useSelector((state: any) => state.sms);
     const { accountFeatures } = useSelector((state: any) => state.common);
@@ -205,10 +203,6 @@ const DynamicGroups = ({ classes }: any) => {
 
     useEffect(() => {
         getData();
-    }, []);
-
-    useEffect(() => {
-        getData();
     }, [serachData])
 
     const reSearch = () => {
@@ -351,19 +345,6 @@ const DynamicGroups = ({ classes }: any) => {
                         {t("group.new")}
                     </Button>
                 </Grid>
-                {windowSize !== "xs" && (
-                    <Grid item>
-                        <Button
-                            className={clsx(classes.btn, classes.btnRounded)}
-                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                            onClick={() => {
-                                selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
-                            }}
-                        >
-                            {t("group.delete")}
-                        </Button>
-                    </Grid>
-                )}
                 {
                     accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
