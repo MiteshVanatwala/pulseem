@@ -20,7 +20,7 @@ import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { VoidFunction } from '../../../helpers/Types/common';
-import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import { SetPageState, GetPageNyName, ClearPageState } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
@@ -157,7 +157,7 @@ const SmsReport = ({ classes }) => {
           SerachTxt: pageStateProperty.SearchData?.SerachTxt ?? '',
           From: pageStateProperty.SearchData?.From ?? null,
           To: pageStateProperty.SearchData?.To ?? null,
-          ShowTestCampaigns: smsQuery.ShowTestCampaigns ? smsQuery.ShowTestCampaigns : pageStateProperty.SearchData?.ShowTestCampaigns,
+          ShowTestCampaigns: pageStateProperty.SearchData?.ShowTestCampaigns ? pageStateProperty.SearchData?.ShowTestCampaigns : smsQuery.ShowTestCampaigns,
           CampaignID: pageStateProperty.SearchData?.CampaignID ?? null,
         }
         setSearching(true);
@@ -264,6 +264,7 @@ const SmsReport = ({ classes }) => {
       "PageNumber": page,
       "SearchData": resetSmsQuery
     });
+    ClearPageState('reports/SMSMainReport');
   }
 
   const handleDownloadCsv = async (formatType) => {
@@ -405,7 +406,13 @@ const SmsReport = ({ classes }) => {
                 height={15}
                 width={40}
                 className={clsx({ [classes.rtlSwitch]: isRTL })}
-                onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
+                onChange={() => {
+                  const p = GetPageNyName('reports/SMSMainReport');
+                  if (p.SearchData) {
+                    ClearPageState('reports/SMSMainReport');
+                  }
+                  setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns })
+                }}
               />
             }
             label={t('mainReport.locShowTestCampaigns.Text')}

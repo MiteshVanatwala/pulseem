@@ -338,10 +338,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Reports/ProductsReport`}
         element={<ProductsReport classes={classes} />}
       />
-      <Route
+      {/* <Route
         path={`/AbTestsReport`}
         component={transferUrl('/Pulseem/AbTestsReport.aspx')}
-      />
+      /> */}
       <Route
         path={`/AccountReport`}
         component={transferUrl('/Pulseem/AccountReport.aspx')}
