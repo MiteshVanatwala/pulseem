@@ -207,6 +207,8 @@ const ApiSettings = ({ classes }: any) => {
         }
         finally {
             setShowLoader(false);
+            setExportFileTypeDialog(false);
+            setExportData(null);
         }
     }
 
