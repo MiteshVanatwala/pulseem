@@ -777,5 +777,7 @@
   "domainVerificationDashboardPopupText": "<p><h3>Dear customers,</h3><br/><br/>Are you prepared for the mandatory requirements that Gmail has announced regarding the verification of the EMAIL addresses from which your campaigns originate?<br/><br/><b><u>As of 1/29/24</u>, we are aligning with Gmail's strict requirements and will not allow sending newsletters from UnVerified domains.</b><br/><br/>To perform a test that examines whether the domains you have are verified, click on the button below.<br/>For complete information detailing the reasons for the changes, the reasons for the required adjustments, the execution of the verification process, etc., click on 'More information'.",
   "refresh": "Refresh",
   "dnsRecordsGuide": "How to add dns records",
-  "noAutomationsToRestore": "No Automations for restore"
+  "noAutomationsToRestore": "No Automations for restore",
+  "smsDirectRemovalTitle": "SMS Direct Removals (Cellphones)",
+  "emailDirectRemovalTitle": "Email Direct Removals (Email Address)"
 }

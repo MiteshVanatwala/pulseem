@@ -48,15 +48,15 @@ const LatestReports = ({ classes, t, isRTL }) => {
 
   useEffect(() => {
     (async () => {
-			const { payload: phoneNumberData } = await dispatch(userPhoneNumbers());
-			if (!(
-				phoneNumberData?.Status === apiStatus.SUCCESS &&
-				phoneNumberData?.Data &&
-				phoneNumberData?.Data?.length > 0
-			)) {
-				setIsWhatsappAccountSetup(false);
-			}
-		})();
+      const { payload: phoneNumberData } = await dispatch(userPhoneNumbers());
+      if (!(
+        phoneNumberData?.Status === apiStatus.SUCCESS &&
+        phoneNumberData?.Data &&
+        phoneNumberData?.Data?.length > 0
+      )) {
+        setIsWhatsappAccountSetup(false);
+      }
+    })();
   }, []);
 
   const barOptions = {
@@ -233,7 +233,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
     }
 
     const showGraphs = !!(innerData && (innerData.length > 0));
-    
+
     return (
       <TabPanel value={tabValue} index={index} key={`newsletterTabPanel_${tabType}`}>
         <Box className={clsx(!showGraphs ? classes.tabPanel : null, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexJustifyCenter, classes.flexWrap)}>
@@ -242,7 +242,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
               <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1)}>
                 {
                   showGraphs ? (innerData.map((c, index) => {
-                    const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
+                    const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${sitePrefix}reports/SMSMainReport?name=${c.CampaignName}`;
                     return (
                       <Box key={index} className={classes.w100}>
                         {index === 0 && <Divider />}
@@ -290,15 +290,15 @@ const LatestReports = ({ classes, t, isRTL }) => {
             <Grid>
               <Box className={classes.w100}>
                 {
-                  tabType === 'whatsapp' && !isWhatsappAccountSetup ? 
+                  tabType === 'whatsapp' && !isWhatsappAccountSetup ?
                     <NoSetup classes={classes} isCompact={true} />
-                   :
-                  <ButtonWithTitle
-                    classes={classes}
-                    title={NoDataObject[tabType].title}
-                    buttonText={NoDataObject[tabType].buttonText}
-                    redirect={NoDataObject[tabType].redirect}
-                  />
+                    :
+                    <ButtonWithTitle
+                      classes={classes}
+                      title={NoDataObject[tabType].title}
+                      buttonText={NoDataObject[tabType].buttonText}
+                      redirect={NoDataObject[tabType].redirect}
+                    />
                 }
               </Box>
             </Grid>

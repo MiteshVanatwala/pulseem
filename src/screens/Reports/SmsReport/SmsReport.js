@@ -5,7 +5,7 @@ import {
   Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControlLabel, Tooltip, Checkbox
 } from '@material-ui/core'
 import {
-  TablePagination, DateField, SearchField
+  TablePagination, DateField
 } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +31,7 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import queryString from 'query-string';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -58,6 +59,7 @@ const SmsReport = ({ classes }) => {
   const [hasRevenue, setHasRevenue] = useState(false);
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
+  const qs = (window.location.search && queryString.parse(window.location.search)) || state;
 
   moment.locale(language)
 
@@ -148,7 +150,7 @@ const SmsReport = ({ classes }) => {
   useEffect(() => {
     const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
     const pageStateProperty = GetPageNyName('reports/SMSMainReport');
-    let searchData = smsQuery;
+    let searchData = { ...smsQuery, SerachTxt: qs !== null && qs?.name ? qs?.name : smsQuery.SerachTxt, From: qs !== null && qs?.name ? null : priorDate };
     if (queryState && pageStateProperty) {
       if (pageStateProperty.SearchData) {
         searchData = {
