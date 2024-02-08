@@ -497,7 +497,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       dispatch(getUserblocks());
-      await setRow(blockRequest?.Data);
     });
   }
   const onEditBlock = (blockRequest) => {
@@ -505,7 +504,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       dispatch(getUserblocks());
-      await setRow(JSON.stringify(blockRequest?.Json));
     });
   }
   const handleDeleteBlock = (e, row_id) => {
