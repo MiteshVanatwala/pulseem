@@ -496,7 +496,7 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}reports/recipient`}
         element={<RecipientReport classes={classes} />}
       />
-      <Route
+      {/* <Route
         exact
         path={`${sitePrefix}Groups/Dynamic`}
         element={<DynamicGroups classes={classes} />}
@@ -505,7 +505,7 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}groups/dynamic/edit/:id`}
         element={<DynamicGroupsContainer classes={classes} />}
-      />
+      /> */}
     </Routes>
   )
 }
