@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
+import { Box, Button, Divider, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import { ClassesType } from '../../Classes.types';
@@ -25,7 +25,6 @@ import { sitePrefix } from '../../../config';
 import { useNavigate, useParams } from 'react-router-dom';
 // import Templates from '../../HtmlCampaign/modals/Templates';
 import Templates from '../../BeeEditorPage/modals/Templates';
-import { getCookie } from '../../../helpers/Functions/cookies';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import FormProperties from './Tabs/FormProperties';
 import OfflineProperties from './Tabs/OfflineProperties';
@@ -483,7 +482,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		}
 	}
 
-	const save = async () => {
+	const save = async (redirectToNewEditor: boolean) => {
 		const errorDump = {
 			...errors,
 			PageName: !landingPageModel.PageName?.trim() ? translator('landingPages.formNameRequired') : '',
@@ -511,7 +510,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			const req = { ...landingPageModel, SelectedGroupList: null, EmailsToReport: landingPageModel?.EmailsToReport?.join(',') };
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
-			handleSaveResponse(response?.payload);
+			handleSaveResponse(response?.payload, redirectToNewEditor);
 			setIsLoader(false);
 			return true;
 		} else {
@@ -521,10 +520,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
 
-	const handleSaveResponse = (response: any) => {
+	const handleSaveResponse = (response: any, redirectToNewEditor: boolean) => {
 		switch (response.StatusCode) {
 				case 201: {
-					navigate(`${sitePrefix}${BEE_EDITOR_TYPES.LANDING_PAGE}`);
+					handleContinueToEditor(redirectToNewEditor, response.Data.ID);
 					break;
 				}
 				case 400: {
@@ -552,20 +551,22 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	}
 
 	const saveAndContinueToOldEditor = async () => {
-		const response = await save();
-		console.log(response);
+		const response = await save(false);
 	}
 
 	const saveAndContinueToNewEditor = async () => {
-		const response = await save();
-		console.log(response);
-		navigate(`${sitePrefix}BeeEditor/${BEE_EDITOR_TYPES.LANDING_PAGE}/1`);
+		const response = await save(true);
+	}
+
+	const handleContinueToEditor = (isNewEditor = false, id: number) => {
+		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
+		let redirectUrl = isBeeEditor ? `${sitePrefix}BeeEditor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${id}` : `/Pulseem/NewWebForm/NewFormEdit/${id}?fromreact=true`;
+		if (isNewEditor) navigate(redirectUrl);
+		else window.location.href = redirectUrl;
 	}
 
 	const renderButtons = () => {
 		const wizardButtons = [];
-		const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
-		const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
 		if (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
 			wizardButtons.push(
 				<>
@@ -597,52 +598,38 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			);
 		}
 		else {
-			if (id !== null && landingPageModel?.IsNewEditor === true) {
-				wizardButtons.push(
-					<Button
-						onClick={saveAndContinueToNewEditor}
-						className={clsx(
-							classes.btn,
-							classes.btnRounded,
-							classes.backButton
-						)}
-						style={{ margin: '8px' }}
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-						key='newEditor'
-					>
-						{translator('master.continueToNewEditor')}
-					</Button>
-				);
-			} else {
-				wizardButtons.push(
-					<Button
-						onClick={saveAndContinueToOldEditor}
-						className={clsx(
-							classes.btn,
-							classes.btnRounded,
-							classes.backButton
-						)}
-						style={{ margin: '8px' }}
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-					>
-						{translator('common.saveAndContinue')}
-					</Button>
-				);
-			}
+			wizardButtons.push(
+				<Button
+					onClick={saveAndContinueToOldEditor}
+					className={clsx(
+						classes.btn,
+						classes.btnRounded,
+						classes.backButton
+					)}
+					style={{ margin: '8px' }}
+					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+				>
+					{translator('common.saveAndContinue')}
+				</Button>
+			);
+
+			wizardButtons.push(
+				<Button
+					onClick={saveAndContinueToNewEditor}
+					className={clsx(
+						classes.btn,
+						classes.btnRounded,
+						classes.backButton
+					)}
+					style={{ margin: '8px' }}
+					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					key='newEditor'
+				>
+					{translator('master.continueToNewEditor')}
+				</Button>
+			);
 		}
 		return wizardButtons.map((b) => b);
-	}
-
-	const renderTemplateButtons = () => {
-		return (
-			<Button
-				onClick={() => setDialogType({ type: 'template' })}
-				className={clsx(classes.btn, classes.btnRounded)}
-				style={{ margin: '8px' }}
-			>
-				{translator('common.templates')}
-			</Button>
-		);
 	}
 
 	const renderToast = () => {
@@ -677,46 +664,16 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						value='1'
 					/>
 					<Tab
-						label={<>
-							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 18, fontWeight: 500 }}>
-								{translator("landingPages.formOfflineProperties")}
-								<Tooltip
-									disableFocusListener
-									title={translator('landingPages.formOfflineDateTooltip')}
-									classes={{
-										tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-										arrow: classes.fBlack
-									}}
-									enterTouchDelay={50}
-									placement={"top"}
-								>
-									<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
-										<BsInfoCircle />
-									</IconButton>
-								</Tooltip>
-							</Typography>
-						</>}
+						label={translator('landingPages.SEOSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='2'
 					/>
 					<Tab
-						label={translator('landingPages.subscriberSettings')}
-						classes={{ root: classes.tabText, selected: classes.activeTab }}
-						className={clsx(classes.iconTab, classes.f18)}
-						value='3'
-					/>
-					<Tab
-						label={translator('landingPages.SEOSettings')}
-						classes={{ root: classes.tabText, selected: classes.activeTab }}
-						className={clsx(classes.iconTab, classes.f18)}
-						value='4'
-					/>
-					<Tab
 						label={translator('landingPages.developmentSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
-						value='5'
+						value='3'
 					/>
 					<Tab
 						style={{ overflow: 'unset' }}
@@ -741,11 +698,15 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						</>}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
-						value='6'
+						value='4'
 					/>
 				</Tabs>
 				<TabContext value={`${tabValue}`}>
 					<TabPanel value='1'>
+						<Typography title={translator("campaigns.camapignName")} className={clsx(classes.bold)}>
+							{translator("landingPages.formName")}
+						</Typography>
+						<Divider className={clsx(classes.mt2, classes.mb2)} />
 						<FormProperties
 							classes={classes}
 							data={landingPageModel}
@@ -754,8 +715,47 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							errors={errors}
 							setErrors={setErrors}
 						/>
+
+						<Typography className={clsx(classes.bold, classes.mt6)}>
+							{translator("landingPages.formOfflineProperties")}
+							<Tooltip
+								disableFocusListener
+								title={translator('landingPages.formOfflineDateTooltip')}
+								classes={{
+									tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+									arrow: classes.fBlack
+								}}
+								enterTouchDelay={50}
+								placement={"top"}
+							>
+								<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+									<BsInfoCircle />
+								</IconButton>
+							</Tooltip>
+						</Typography>
+						<Divider className={clsx(classes.mt2, classes.mb2)} />
+						<OfflineProperties
+							classes={classes}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
+							errors={errors}
+							setErrors={setErrors}
+						/>
+
+						<Typography title={translator("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.mt6)}>
+							{translator("landingPages.subscriberSettings")}
+						</Typography>
+						<Divider className={clsx(classes.mt2, classes.mb2)} />
+						<SubscriberSettings
+							classes={classes}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
+							onSetDialog={setDialogType}
+							removeEmailId={removeEmailId}
+							errors={errors}
+						/>
 					</TabPanel>
-					<TabPanel value='2'>
+					{/* <TabPanel value='2'>
 						<OfflineProperties
 							classes={classes}
 							data={landingPageModel}
@@ -773,14 +773,14 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							removeEmailId={removeEmailId}
 							errors={errors}
 						/>
-					</TabPanel>
-					<TabPanel value='4'>
+					</TabPanel> */}
+					<TabPanel value='2'>
 						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
 					</TabPanel>
-					<TabPanel value='5'>
+					<TabPanel value='3'>
 						<DevelopmentSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
 					</TabPanel>
-					<TabPanel value='6'>
+					<TabPanel value='4'>
 						<LinkPreviewSettings
 							classes={classes}
 							data={landingPageModel}
@@ -791,7 +791,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							errors={errors}
 						/>
 					</TabPanel>
-
 				</TabContext>
 
 				<Box className={classes.flex}>
@@ -803,8 +802,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						}}
 						// @ts-ignore
 						additionalButtons={renderButtons()}
-						// @ts-ignore
-						additionalButtonsOnStart={renderTemplateButtons()}
 					/>
 				</Box>
 				<Loader isOpen={isLoader} />

@@ -14,7 +14,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         (state: { core: coreProps }) => state.core
     );
 
-    return <Grid container spacing={3} className={clsx(classes.p15)}>
+    return <Grid container spacing={3} className={clsx(classes.p15, classes.mb4)}>
         <Grid item md={4}>
             <Box>
                 <Typography title={translator("campaigns.camapignName")} className={classes.alignDir}>

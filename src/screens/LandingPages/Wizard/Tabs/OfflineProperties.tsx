@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) => {
     const { t: translator } = useTranslation();
 
-    return <Grid container spacing={3} className={clsx(classes.p15)}>
+    return <Grid container spacing={3} className={clsx(classes.p15, classes.mb4)}>
         <Grid item md={2}>
             <Box>
                 <Typography title={translator("landingPages.formOfflineDate")} className={classes.alignDir}>
