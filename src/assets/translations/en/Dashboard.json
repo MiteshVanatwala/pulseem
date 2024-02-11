@@ -43,6 +43,6 @@
     "purchaseSms": "Purchase sms packages",
     "changePassword": "<b>Please notice!</b><br/>The password of this user was not changed in the last Six months<br/>In case you will not change the password in the next ##days## <b>days</b>, your account will be locked until you change it through password reset email",
     "welcomeNewDesignTitle": "Cograts, We have renewed",
-    "welcomeNewDesignDesc": "<b>New design, new experience</b><br/><p>We are excited to share with you the new and modern design of our system, which will give you a comfortable and friendly user experience. <br/>We hope you enjoy the change and continue to send high-quality and effective campaigns. <br/>If you have any questions or comments, please contact us at any time.<br/></p>",
+    "welcomeNewDesignDesc": "<label><p></p><h3>New design, new experience</h3><br>We are excited to share with you the new and modern design of our system, which will give you a comfortable and friendly user experience. We hope you enjoy the change and continue sending campaigns quality and efficient.<br><br>If you have questions or comments, please contact us at any time by phone <a href='tel:03-5240290'>03-5240290</a> or by email <a href='mailto :support@pulseem.com'>support@pulseem.com</a></label>",
     "contact": "Phone <a href='tel:03-5240290'>03-5240290</a> Or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
   }

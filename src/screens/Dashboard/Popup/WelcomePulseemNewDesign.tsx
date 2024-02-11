@@ -22,7 +22,6 @@ const WelcomePulseemNewDesign = ({ classes, isOpen, onClose }: any) => {
         title={t('dashboard.welcomeNewDesignTitle')}
         children={<>
             {RenderHtml(t("dashboard.welcomeNewDesignDesc"))}
-            {RenderHtml(t("dashboard.contact"))}
             <FormControlLabel
                 style={{ marginTop: 15 }}
                 control={
