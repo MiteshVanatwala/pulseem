@@ -249,7 +249,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                         <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex)} key={`${c.CampaignName}_${index}`}>
                           <Box className={clsx(classes.flex2, classes.paddingSides5, classes.textCenter)}>
                             <BootstrapTooltip title={c.CampaignName} placement="top">
-                              <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f14, classes.ellipsisText, classes.graphCampaignName)}>
+                              <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f14, classes.ellipsisText, classes.graphCampaignName)} style={{ maxWidth: '80%' }}>
                                 {c.CampaignName}
                               </Link>
                             </BootstrapTooltip>
@@ -263,7 +263,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                           </Box>
                           }
                           <Box className={classes.flex1}>
-                            <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                            <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '80%' }}>
                               {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
                             </Typography>
                           </Box>
@@ -304,7 +304,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
             </Grid>
           )}
         </Box>
-      </TabPanel>
+      </TabPanel >
     );
   }
 
