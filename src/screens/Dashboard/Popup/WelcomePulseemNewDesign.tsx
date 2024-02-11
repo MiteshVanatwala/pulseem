@@ -1,17 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
-import { Box, Button, Checkbox, FormControlLabel, Grid, Typography } from "@material-ui/core";
+import { Button, Checkbox, FormControlLabel, Grid} from "@material-ui/core";
 import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 import clsx from "clsx";
 import { MdCelebration } from "react-icons/md";
-import { StateType } from "../../../Models/StateTypes";
-import { useSelector } from "react-redux";
-
 
 const WelcomePulseemNewDesign = ({ classes, isOpen, onClose }: any) => {
     const { t } = useTranslation();
-    const { isRTL } = useSelector((state: StateType) => state.core);
+
     const handleShowDomainCookie = () => {
         const cookie = getCookie("popup_hide_NewDesign");
         setCookie("popup_hide_NewDesign", cookie !== 'true' ? 'true' : 'false', { maxAge: 2147483647 });
