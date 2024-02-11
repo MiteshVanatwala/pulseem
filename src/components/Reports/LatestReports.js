@@ -249,7 +249,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                         <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex)} key={`${c.CampaignName}_${index}`}>
                           <Box className={clsx(classes.flex2, classes.paddingSides5, classes.textCenter)}>
                             <BootstrapTooltip title={c.CampaignName} placement="top">
-                              <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f14, classes.ellipsisText, classes.graphCampaignName)} style={{ maxWidth: '80%' }}>
+                              <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f14, classes.ellipsisText, classes.graphCampaignName)} style={{ maxWidth: windowSize === 'xs' ? '80%' : 'revert-layer' }}>
                                 {c.CampaignName}
                               </Link>
                             </BootstrapTooltip>
