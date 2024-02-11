@@ -224,7 +224,7 @@ const BulkStatus = ({ classes }) => {
               </Typography>
             </Grid>
 
-            <Grid item md={3} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
+            <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
               {
                 isAllowNewsletter() && (
                   <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })}>
@@ -253,7 +253,7 @@ const BulkStatus = ({ classes }) => {
                   <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
                   </Grid>
 
-                  <Grid item md={4}>
+                  <Grid item md={1}>
                     <Typography
                       className={clsx(classes.bold)}
                       title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
