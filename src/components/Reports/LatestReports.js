@@ -250,7 +250,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                           <Box className={clsx(classes.flex2, classes.paddingSides5, classes.textCenter)}>
                             <BootstrapTooltip title={c.CampaignName} placement="top">
                               <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f14, classes.ellipsisText, classes.graphCampaignName)} style={{ maxWidth: windowSize === 'xs' ? '80%' : 'revert-layer' }}>
-                                {c.CampaignName}
+                                {c.CampaignName?.substring(0, 25)} {c.CampaignName?.length > 25 ? '...' : null}
                               </Link>
                             </BootstrapTooltip>
                           </Box>
