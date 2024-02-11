@@ -93,8 +93,8 @@ export const getRoutes = (
         {
           key: "dynamicGroups",
           title: t("master.RadMenuItemResourceDynamicGroups.Text"),
-          href: `${rootDomain}/DynamicGroups.aspx?fromreact=true`,
-          // href: `${sitePrefix}Groups/Dynamic`,
+          //href: `${rootDomain}/DynamicGroups.aspx?fromreact=true`,
+          href: `${sitePrefix}Groups/Dynamic`,
           isShow: true,
         },
         {

@@ -13,8 +13,8 @@ export const DASHBOARD_SHORTCUT = {
       },
       {
         title: 'appBar.groups.dynamicGroups',
-        // link: '/react/Groups/Dynamic'
-        link: '/Pulseem/DynamicGroups.aspx?fromreact=true'
+        link: '/react/Groups/Dynamic'
+        //link: '/Pulseem/DynamicGroups.aspx?fromreact=true'
       },
       {
         title: 'appBar.groups.search',
