@@ -245,7 +245,7 @@ const SmsReport = ({ classes }) => {
     "UniqueClicksCount": t('common.ClicksUnique'),
     "RealClicks": t('mainReport.verifiedCount'),
     "TotalSendPlan": t('mainReport.totalSendPlan'),
-    "CreditsPerSms": t('mainReport.postCredits'),
+    "CreditsPerSms": `${t('report.Credits')} ${t('mainReport.postCredits')}`,
     "IsResponse": t('mainReport.isResponse'),
     "totalSent": t('report.TotalSent'),
     "success": t('report.success'),
@@ -291,7 +291,7 @@ const SmsReport = ({ classes }) => {
     try {
       const result = await HandleExportData(orderList, exportOptions);
       delete fields["Status"];
-      
+
       ExportFile({
         data: result,
         fileName: 'smsReport',
