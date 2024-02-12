@@ -648,7 +648,7 @@ const DirectWhatsappReportTab = ({
         {renderTablePagination()}
         {directWhatsappReport && <TotalSection classes={classes} TotalObject={{
             "TotalSent": directWhatsappReport?.Message?.TotalMessages,
-            "WhatsappBalance": `${directWhatsappReport?.Message?.WhatsappBalance} ${t("common.NIS")}`
+            "WhatsappBalance": `${directWhatsappReport?.Message?.WhatsappBalance || 0} ${t("common.NIS")}`
         }} callerType="whatsapp" />}
         <WhatsappTemplatePreview classes={classes} templateID={templateID} openPreview={openTemplatePreview} closeModel={() => setTemplatePreview(false)} />
         <Loader isOpen={showLoader} />

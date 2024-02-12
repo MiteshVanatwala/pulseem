@@ -198,11 +198,11 @@ export const getRoutes = (
           href: `${rootDomain}/SMSSmartResponses.aspx?fromreact=true`,
           isShow: true,
         },
-        {
-          title: t("master.linkSMSResponsesReport.Text"),
-          href: `${sitePrefix}reports/Inbound`,
-          isShow: true,
-        },
+        // {
+        //   title: t("master.linkSMSResponsesReport.Text"),
+        //   href: `${sitePrefix}reports/Inbound`,
+        //   isShow: true,
+        // },
         {
           title: t("master.NewMMSCampaign.Text"),
           href: `${rootDomain}/MmsCampaignEdit.aspx?fromreact=true`,
