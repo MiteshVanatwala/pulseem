@@ -613,21 +613,21 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				</Button>
 			);
 
-			wizardButtons.push(
-				<Button
-					onClick={saveAndContinueToNewEditor}
-					className={clsx(
-						classes.btn,
-						classes.btnRounded,
-						classes.backButton
-					)}
-					style={{ margin: '8px' }}
-					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-					key='newEditor'
-				>
-					{translator('master.continueToNewEditor')}
-				</Button>
-			);
+			// wizardButtons.push(
+			// 	<Button
+			// 		onClick={saveAndContinueToNewEditor}
+			// 		className={clsx(
+			// 			classes.btn,
+			// 			classes.btnRounded,
+			// 			classes.backButton
+			// 		)}
+			// 		style={{ margin: '8px' }}
+			// 		endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+			// 		key='newEditor'
+			// 	>
+			// 		{translator('master.continueToNewEditor')}
+			// 	</Button>
+			// );
 		}
 		return wizardButtons.map((b) => b);
 	}
