@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Box, Checkbox, Paper, TextField } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
 import clsx from 'clsx';
 import { Autocomplete } from '@material-ui/lab';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 
@@ -16,20 +16,19 @@ const GroupTags = ({ classes,
     onRemoveGroup = () => null,
     style = null,
     dropDownProps = {
-        groups: null,
-        selectedGroups: [],
-        onChange: () => false
+        groups: {},
+        selectedGroups: {},
+        onChange: {}
     },
     error = '',
     helperText = '',
+    containerStyle = {},
     ...props
 }) => {
     const { t } = useTranslation();
-    const [groups, setGroups] = useState([]);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
-    const dispatch = useDispatch();
     const groupsToShow = dropDownProps?.groups !== null && dropDownProps?.groups?.length > 0 ? dropDownProps.groups : subAccountAllGroups;
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
@@ -41,7 +40,7 @@ const GroupTags = ({ classes,
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
             <Box
-                style={{ minHeight: 40, maxHeight: 40 }}
+                style={{ minHeight: 40, maxHeight: 40, ...containerStyle }}
                 className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
                 onClick={() => onShowModal()}
             >
@@ -65,25 +64,6 @@ const GroupTags = ({ classes,
                         })}
                     </Box>
                 ) : null}
-                {/* {selectedGroups && selectedGroups.length > 0 ? (
-                    <Box className={classes.mappedGroup} style={{ maxWidth: '100%' }}>
-                        {selectedGroups.map((item, index) => {
-                            return (
-                                <Box key={index} className={clsx(classes.selectedGroupsDiv)}>
-                                    <span className={clsx(classes.ellipsisText, classes.nameGroup)}>
-                                        {item.GroupName}
-                                    </span>
-                                    <RiCloseFill
-                                        className={classes.groupCloseicn}
-                                        onClick={(event) => {
-                                            handleRemoveGroup(event, item.GroupID);
-                                        }}
-                                    />
-                                </Box>
-                            );
-                        })}
-                    </Box>
-                ) : null} */}
             </Box>
         </Box>
     )

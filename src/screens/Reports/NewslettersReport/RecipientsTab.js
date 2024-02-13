@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import {
   Button,
   Grid,
@@ -14,11 +14,10 @@ import {
   InputAdornment,
   Input,
   Checkbox,
+  MenuItem,
 } from "@material-ui/core";
 
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
-import { setCookie } from "../../../helpers/cookies";
-import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -33,6 +32,7 @@ import {
   GroupsIcon,
 } from "../../../assets/images/managment/index";
 import clsx from "clsx";
+import { IoIosArrowDown } from "react-icons/io";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -57,11 +57,10 @@ const RecipientsTab = ({ classes }) => {
 
   const styles = useStyles();
 
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector(
+  const { windowSize, rowsPerPage, isRTL } = useSelector(
     (state) => state.core
   );
 
-  const { t } = useTranslation();
   const [selectintial, setselectintial] = useState("1");
   const rowsOptions = [6, 12, 18];
   const [page, setPage] = useState(1);
@@ -146,21 +145,30 @@ const RecipientsTab = ({ classes }) => {
   const renderRecipients = () => {
     return (
       <div style={{ width: "200px" }}>
-        <FormControl className={styles.formControl}>
+        <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
           <Select
-            native
+            variant="standard"
             onChange={(e) => {
               handleChange(e);
             }}
             className={styles.selectEmpty}
             inputProps={{ "aria-label": "Without label" }}
             value={selectintial}
+            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+            MenuProps={{
+                PaperProps: {
+                    style: {
+                    maxHeight: 200,
+                    direction: isRTL ? 'rtl' : 'ltr'
+                    },
+                },
+            }}
           >
-            <option value={1}>All Receipts in Campaign</option>
-            <option value={2}>Openess</option>
-            <option value={3}>Wrong</option>
-            <option value={4}>Unique Clicks</option>
-            <option value={5}>Removals</option>
+            <MenuItem value={1}>All Receipts in Campaign</MenuItem>
+            <MenuItem value={2}>Openess</MenuItem>
+            <MenuItem value={3}>Wrong</MenuItem>
+            <MenuItem value={4}>Unique Clicks</MenuItem>
+            <MenuItem value={5}>Removals</MenuItem>
           </Select>
         </FormControl>
       </div>
@@ -514,7 +522,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={EditIcon}
           lable="Edited"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
           classes={classes}
@@ -522,7 +530,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Delete from Group"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
           classes={classes}
@@ -530,7 +538,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Remove email"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
           classes={classes}
@@ -538,7 +546,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Remove phone"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
       </Box>
     );

@@ -6,55 +6,61 @@ import clsx from 'clsx';
 const IOSSwitch = styled((props) => (
     <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
 ))(({ theme }) => ({
-    width: 47,
-    height: 24,
+    width: 34,
+    height: 30,
     padding: 0,
+    display: 'flex',
+    overflow: 'unset',
+    '&.MuiSwitch-root': {
+        width:43,
+        margin: '0px 8px',
+    },
+    '&:active': {
+        '& .MuiSwitch-thumb': {
+            width: 15,
+        },
+        '& .MuiSwitch-switchBase.Mui-checked': {
+            transform: 'translateX(11px)',
+        },
+    },
     '& .MuiSwitch-switchBase': {
-        padding: 0,
-        margin: 3,
-        transitionDuration: '300ms',
+        padding: 2,
         '&.Mui-checked': {
-            transform: 'translateX(22px)',
+            transform: 'translateX(13px)',
             color: '#fff',
             '& + .MuiSwitch-track': {
-                backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
                 opacity: 1,
-                border: 0,
+                background: theme.palette.mode === 'dark' ? '#177ddc' : 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+                border: '1px solid #fff'
             },
-            '&.Mui-disabled + .MuiSwitch-track': {
-                opacity: 0.5,
+            '& .MuiSwitch-thumb': {
+                background: '#fff',
             },
-        },
-        '&.Mui-focusVisible .MuiSwitch-thumb': {
-            color: '#33cf4d',
-            border: '6px solid #fff',
-        },
-        '&.Mui-disabled .MuiSwitch-thumb': {
-            color:
-                theme.palette.mode === 'light'
-                    ? theme.palette.grey[100]
-                    : theme.palette.grey[600],
-        },
-        '&.Mui-disabled + .MuiSwitch-track': {
-            opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
         },
     },
     '& .MuiSwitch-thumb': {
-        boxSizing: 'border-box',
-        width: 17,
-        height: 17,
+        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+        width: 24,
+        height: 24,
+        margin: 1,
+        borderRadius: 50,
+        background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+        transition: theme.transitions.create(['width'], {
+            duration: 200,
+        }),
     },
     '& .MuiSwitch-track': {
-        borderRadius: 26 / 2,
-        backgroundColor: theme.palette.mode === 'light' ? '#8b8b8b' : '#28a745',
+        borderRadius: 20,
+        height: 30,
         opacity: 1,
-        transition: theme.transitions.create(['background-color'], {
-            duration: 500,
-        }),
+        backgroundColor:
+            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : '#fff',
+        boxSizing: 'border-box',
+        border: '1px solid #FF0076'
     },
 }));
 
-const PulseemSwitch = ({ classes, id, switchType, props, margin = 1, onChange, checked = true, isRTL = true }) => {
+const PulseemSwitch = ({ classes, id, switchType, margin = 1, onChange = (par) => { }, checked = true, isRTL = true, ...props }) => {
     switch (switchType) {
         case "ios": {
             return (<IOSSwitch sx={{ m: margin }} checked={checked} onChange={onChange} {...props} />)
@@ -68,19 +74,14 @@ const PulseemSwitch = ({ classes, id, switchType, props, margin = 1, onChange, c
                 }
                 checked={checked}
                 onChange={onChange}
-                onColor="#28a745"
                 checkedIcon={false}
                 uncheckedIcon={false}
-                handleDiameter={30}
-                height={20}
-                width={48}
-                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={40}
+                width={70}
                 id={id}
             />)
         }
     }
-    return <></>
 }
 
 export default PulseemSwitch;

@@ -23,18 +23,18 @@ const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message
       </div>}
       showDivider={false}
       onClose={onClose}
+      onCancel={onClose}
       onConfirm={onClose}
       confirmText="common.Ok"
       showDefaultButtons={false}
-      paperStyle={classes.width_min_content}
       renderButtons={() => {
         return <Button
           variant='contained'
           style={{ margin: '0 auto' }}
           onClick={onClose}
           className={clsx(
-            classes.dialogButton,
-            classes.dialogConfirmButton
+            classes.btn,
+            classes.btnRounded
           )}>
           {t('common.confirm')}
         </Button>
@@ -50,19 +50,19 @@ const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message
             <Typography className={classes.f28}>{t("recipient.summary.commonSummary")}</Typography>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.totalValidUploadedRecords")}</Typography></Grid>
-              <Grid item xs={3}>{summary.TotalValidUploadedRecords}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.TotalValidUploadedRecords}</Grid>
             </Grid>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.totalInvalidOrEmptyAddresses")}</Typography></Grid>
-              <Grid item xs={3}>{summary.TotalInvalidOrEmptyAddresses}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.TotalInvalidOrEmptyAddresses}</Grid>
             </Grid>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.totalDuplicates")}</Typography></Grid>
-              <Grid item xs={3}>{summary.TotalDuplicates}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.TotalDuplicates}</Grid>
             </Grid>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.totalRecords")}</Typography></Grid>
-              <Grid item xs={3}>{summary.TotalRecords}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.TotalRecords}</Grid>
             </Grid>
           </Grid>
 
@@ -70,15 +70,15 @@ const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message
             <Typography className={classes.f28}>{t("recipient.summary.emailSummary")}</Typography>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.invalidOrEmptyEmailAddresses")}</Typography></Grid>
-              <Grid item xs={3}>{summary.InvalidOrEmptyEmails}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.InvalidOrEmptyEmails}</Grid>
             </Grid>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.duplicateEmailAddressesInFile")}</Typography></Grid>
-              <Grid item xs={3}>{summary.DuplicateEmails}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.DuplicateEmails}</Grid>
             </Grid>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.totalEmailExistingInAccount")}</Typography></Grid>
-              <Grid item xs={3}>{summary.ExistingEmails}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.ExistingEmails}</Grid>
             </Grid>
           </Grid>
 
@@ -86,15 +86,15 @@ const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message
             <Typography className={classes.f28}>{t("recipient.summary.smsSummary")}</Typography>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.invalidOrEmptyCellphones")}</Typography></Grid>
-              <Grid item xs={3}>{summary.InvalidOrEmptyCellphones}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.InvalidOrEmptyCellphones}</Grid>
             </Grid>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.duplicateCellphoneInFile")}</Typography></Grid>
-              <Grid item xs={3}>{summary.DuplicateCellphones}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.DuplicateCellphones}</Grid>
             </Grid>
             <Grid container>
               <Grid item xs={9}><Typography className={classes.bold}>{t("recipient.summary.totalCellularExistingInAccount")}</Typography></Grid>
-              <Grid item xs={3}>{summary.ExistingCellphones}</Grid>
+              <Grid item xs={3} className={clsx(classes.textRight, classes.paddingSides5)}>{summary.ExistingCellphones}</Grid>
             </Grid>
           </Grid>
         </Grid>}

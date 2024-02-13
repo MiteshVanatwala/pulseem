@@ -1,3 +1,4 @@
+import { sitePrefix } from "../../../config";
 export const PushService = async (apiToken) => {
     let swRegistration = null;
     Date.prototype.addDays = function (days) {
@@ -81,7 +82,7 @@ export const PushService = async (apiToken) => {
             if ("serviceWorker" in navigator) {
 
                 navigator.serviceWorker
-                    .register(process.env.PUBLIC_URL + "/sw.js", { scope: '/react/notification' })
+                    .register(process.env.PUBLIC_URL + "/sw.js", { scope: `${sitePrefix}notification` })
                     .then(function (registration) {
                         resolve(registration);
                     })

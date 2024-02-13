@@ -1,34 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box
 } from '@material-ui/core'
 import {
-  DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon, GroupsIcon, PreviewIcon
+  DeleteIcon, DuplicateIcon, EditIcon, GroupsIcon, PreviewIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, SearchField, RestorDialogContent
+  TablePagination, ManagmentIcon, DateField, SearchField, RestorDialogContent
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { getMmsData, restoreMms, deleteMms, duplicteMms, getMMSByID } from '../../../redux/reducers/mmsSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { pulseemNewTab } from '../../../helpers/functions'
-import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const MmsManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { mmsData, mmsDataError, mmsDeletedData } = useSelector(state => state.mms)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { mmsData, mmsDeletedData } = useSelector(state => state.mms)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
@@ -43,7 +42,6 @@ const MmsManagnentScreen = ({ classes }) => {
   const [restoreArray, setRestoreArray] = useState([])
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const [showLoader, setLoader] = useState(true);
-  const history = useCtrlHistory()
   const dispatch = useDispatch()
   moment.locale(language)
 
@@ -56,17 +54,6 @@ const MmsManagnentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('mms.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setCampaineNameSearch('')
@@ -101,8 +88,8 @@ const MmsManagnentScreen = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(LastUpdate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -156,7 +143,7 @@ const MmsManagnentScreen = ({ classes }) => {
     }
 
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -196,21 +183,19 @@ const MmsManagnentScreen = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('mms.locSearchCampaignResource1.Text')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -223,24 +208,17 @@ const MmsManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             href='/Pulseem/MmsCampaignEdit.aspx?fromreact=true'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('mms.create')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({
               type: 'restore',
               data: mmsDeletedData
@@ -277,16 +255,16 @@ const MmsManagnentScreen = ({ classes }) => {
     const iconsMap = [
       {
         key: 'send',
-        icon: SendGreenIcon,
+        uIcon: SendIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
         remove: windowSize === 'xs' || Status !== 1,
-        rootClass: classes.sendIcon,
+        rootClass: clsx(classes.sendIcon, 'sendIcon'),
         textClass: classes.sendIconText,
         href: `/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=${ID}&fromreact=true`
       },
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -300,7 +278,7 @@ const MmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         disable: Status !== 1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
@@ -309,7 +287,7 @@ const MmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -321,7 +299,7 @@ const MmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'groups',
-        icon: GroupsIcon,
+        uIcon: GroupsIcon,
         disable: GroupNames.length === 0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
         remove: windowSize === 'xs',
@@ -335,7 +313,7 @@ const MmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
         rootClass: classes.paddingIcon,
@@ -354,12 +332,13 @@ const MmsManagnentScreen = ({ classes }) => {
         justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
-            className={icon.disable && classes.disabledCursor}
+            className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
             key={icon.key}
             item >
             <ManagmentIcon
               classes={classes}
               {...icon}
+              uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
             />
           </Grid>
         ))}
@@ -523,10 +502,12 @@ const MmsManagnentScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {sortData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {sortData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -627,17 +608,18 @@ const MmsManagnentScreen = ({ classes }) => {
             })}
         </Box>
       ),
-      renderButtons: () => (
+      renderButtons: () => (<Box className={clsx(classes.dFlex, classes.flexCenter)}>
         <Button
           variant='contained'
           size='small'
           onClick={handleClose}
           className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded
           )}>
-          {t('common.Ok')}
+          {t('common.close')}
         </Button>
+      </Box>
       )
     }
   }
@@ -680,6 +662,7 @@ const MmsManagnentScreen = ({ classes }) => {
       childrenPadding: false,
       contentStyle: classes.pt2rem,
       isMMS: true,
+      title: `${t('notifications.preview')} - ${t('common.campaignID')}: ${data.MmsCampaignID}`,
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -691,25 +674,25 @@ const MmsManagnentScreen = ({ classes }) => {
           <Preview classes={classes}
             mobileFullsize={true}
             model={data}
-            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText !== ''}
             showTitle={false}
             showID={true}
             isMMS={true}
           />
         </Box>
       ),
-      renderButtons: () => (
+      renderButtons: () => (<Box className={clsx(classes.dFlex, classes.flexCenter)}>
         <Button
           variant='contained'
           size='small'
           onClick={handleClose}
           className={clsx(
-            classes.confirmButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded
           )}>
-          {t('common.confirm')}
+          {t('common.close')}
         </Button>
-      )
+      </Box>)
     };
   }
 
@@ -740,25 +723,31 @@ const MmsManagnentScreen = ({ classes }) => {
         currentDialog = getPreviewDialog(data);
         break;
       }
+      default: {
+        return null;
+      }
     }
 
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (
     <DefaultScreen
-      currentPage='mms'
+      currentPage='sms'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      {renderHeader()}
-      {renderSearchLine()}
+      <Box className={'topSection'}>
+        <Title Text={t('mms.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

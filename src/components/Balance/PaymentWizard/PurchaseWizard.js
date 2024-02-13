@@ -19,7 +19,7 @@ const PurchaseWizard = ({ classes,
     const [data, setData] = useState(null);
     const [newsletterBulkData, setNewsletterBulkData] = useState(null);
     const [smsBulkData, setSmsBulkData] = useState(null);
-    const [notificationsBulkData, setNotificationsBulkData] = useState(null);
+    // const [notificationsBulkData, setNotificationsBulkData] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [packageId, setPackageId] = useState(null);
     const [step, setStep] = useState(1);
@@ -48,12 +48,14 @@ const PurchaseWizard = ({ classes,
         }
 
         initData();
+
     }, []);
 
     useEffect(() => {
         if (packageId) {
             dispatch(getPaymentURL({ PackageId: packageId, Culture: isRTL ? 'il' : 'us' }));
         }
+
     }, [packageId])
 
     const selectPackage = (packageId) => {
@@ -78,10 +80,11 @@ const PurchaseWizard = ({ classes,
     }
 
     const purchaseWizard = () => {
+        var dialogElement = null;
         switch (step) {
             case 1:
             default:
-                var dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
+                dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
                 if (dialogElement) {
                     dialogElement.style = "max-width: 1050px";
                 }
@@ -93,7 +96,7 @@ const PurchaseWizard = ({ classes,
                     newsletterBulkData={newsletterBulkData}
                 />
             case 2: {
-                var dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
+                dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
                 dialogElement.style = "max-width: 750px";
                 return <TranzilaIframe
                     data={data}
@@ -103,7 +106,6 @@ const PurchaseWizard = ({ classes,
                     onComplete={onPaymentResult}
                     paymentUrl={paymentUrl}
                     onStepBack={onStepBack}
-                    t={t}
                 />
             }
             case 3: {

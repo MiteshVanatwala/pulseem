@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getPackagesDetails = createAsyncThunk(
   'dashboard/GetPackagesDetails', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`dashboard/GetPackagesDetails`);
+      const response = await PulseemReactInstance.get(`dashboard/GetPackagesDetails`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -14,7 +14,7 @@ export const getPackagesDetails = createAsyncThunk(
 export const getLastCampaignReport = createAsyncThunk(
   'dashboard/GetLastCampaignReport', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`dashboard/GetLastCampaignReport`);
+      const response = await PulseemReactInstance.get(`dashboard/GetLastCampaignReport`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -24,7 +24,7 @@ export const getLastCampaignReport = createAsyncThunk(
 export const getTips = createAsyncThunk(
   'dashboard/GetTips', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`dashboard/GetTips`);
+      const response = await PulseemReactInstance.get(`dashboard/GetTips`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -34,7 +34,7 @@ export const getTips = createAsyncThunk(
 export const deleteShortcuts = createAsyncThunk(
   'dashboard/DeleteShortcut', async (id, thunkAPI) => {
     try {
-      const response = await instence.delete(`dashboard/DeleteShortcut/${id}`);
+      const response = await PulseemReactInstance.delete(`dashboard/DeleteShortcut/${id}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -44,7 +44,7 @@ export const deleteShortcuts = createAsyncThunk(
 export const getPurchaseLog = createAsyncThunk(
   'dashboard/GetPurchaseLog', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`dashboard/GetPurchaseLog`);
+      const response = await PulseemReactInstance.get(`dashboard/GetPurchaseLog`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

@@ -1,0 +1,37 @@
+﻿export interface BillingLog {
+    ID: number;
+    DateTime: Date | string;
+    Project: string;
+    timestamp: Date | string;
+    RecordType: string;
+    AccountID: number;
+    SubAccountID: number;
+    iCountClientName: string;
+    pgAndFuncCalling: string;
+    ClassName: string;
+    iCountClientVatId: string;
+    icountClientMail: string;
+    iCountCmd: string;
+    iCountDoctype: string;
+    numOps: number;
+    OperationID: number;
+    InvoiceID: number;
+    PayType: string;
+    PayAmount: number;
+    PayRefund: number;
+    PayRefundRemained: number;
+    PayIsTokenDeal: boolean;
+    NPays: number;
+    PayAmountFinal: number;
+    Caller: string;
+    IcounRequest: string;
+    IcountResponse: string;
+    IcountErrReason: string;
+    IcountCreatedDocNum: number;
+    IcountCreatedDocUrl: string;
+    MsgDescription: string;
+    MsgShort: string;
+    MsgLong: string;
+    Report: string;
+    Username: string;
+}

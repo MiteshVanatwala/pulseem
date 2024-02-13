@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { Link } from "@material-ui/core";
 import { Box, Grid, Button } from "@material-ui/core";
-import MobilePreview from '../../../components/MobilePreive/Mobile'
+import MobilePreview from '../../../components/MobilePreivew/MobilePreivew'
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux'
 import clsx from "clsx";
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 
 const SmsSummary = ({ classes,
@@ -28,6 +28,13 @@ const SmsSummary = ({ classes,
   const { isRTL } = useSelector(state => state.core)
 
   const { t } = useTranslation();
+  let totalFiletered = groups?.length > 0 && groups.reduce(function (a, b) {
+    return parseInt(a) + parseInt(b['Recipients']);
+  }, 0) - summaryPayload.FinalCount;
+
+  if (!totalFiletered || isNaN(totalFiletered)) {
+    totalFiletered = 0;
+  }
 
   const handleSmsSettings = () => {
     props.handleCallback()
@@ -35,15 +42,16 @@ const SmsSummary = ({ classes,
 
   return (
     <Box>
-      {open && <Dialog
+      {open && <BaseDialog
         style={{ paddingBottom: 20 }}
         title={`${t("sms.smsSummaryDialogTitle")} '${campaignName}'`}
-        showDivider={true}
+        showDivider={false}
         classes={classes}
         open={open}
         onClose={() => { handleSmsSettings() }}
+        onCancel={() => { handleSmsSettings() }}
         showDefaultButtons={false}
-        icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
+        icon={<FaMobileAlt />}
       >
         <Box style={{ fontSize: "22px", marginTop: "5px" }}>
           <Box className={classes.baseSum}>
@@ -61,7 +69,7 @@ const SmsSummary = ({ classes,
               {props.pulseTrue || props.toggleRandom ? <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("mainReport.pulseSend")}</span>
                 {props.pulseTrue ? <span className={classes.smsSummaryText}>  {t("smsReport.packetSend")} - {props.pulseInput1} {props.pulsePer === "" || props.pulsePer === "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-                  {t("sms.every")} {props.pulseInput2} {props.hourName === "" ? t("common.minutes") : t("common.hours")}</span> : null}
+                  {t("sms.every")} {props.pulseInput2} {props?.pulseType === 1 ? t("common.minutes") : t("common.hours")}</span> : null}
                 {props.toggleRandom ? <span className={classes.smsSummaryText}>{t("smsReport.randomSend")} - {props.random} {t("smsReport.randomRecipients")}</span> : null}
                 {props.pulseTrue ? <span className={classes.smsSummaryText}>{t("sms.estimatedDelivery")}: <span style={{ color: "#1D82B3" }}>{props.estimationDate}</span></span> : null}
               </Box>
@@ -70,7 +78,7 @@ const SmsSummary = ({ classes,
                 <span className={classes.spanSum}>{t("sms.smsDialogFor")}:</span>
                 <span className={classes.bodySum}>
                   {t("sms.smsSummaryDialogTotalRecipients")}:
-                  <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
+                  <span className={classes.bodySum}> {summaryPayload.FinalCount?.toLocaleString()}</span>
                 </span>
                 <Link onClick={() => { setdetailsHide(!detailsHide) }}
                   style={{
@@ -120,9 +128,7 @@ const SmsSummary = ({ classes,
               onClick={() => { setsubRecipients(!subRecipientsDetails) }}
             >
               <Link onClick={() => { setsubRecipients(!subRecipientsDetails) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
-                {t("sms.smsSummaryRecipientsFilter")} ({(groups.reduce(function (a, b) {
-                  return a + b['Recipients'];
-                }, 0).toLocaleString() - summaryPayload.FinalCount)})
+                {t("sms.smsSummaryRecipientsFilter")} ({totalFiletered?.toLocaleString()})
                 {subRecipientsDetails ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
               </Link>
             </li>
@@ -149,7 +155,7 @@ const SmsSummary = ({ classes,
               {t("sms.removedRecipients")} :
               <span className={classes.summaryDetailsSpanBold}
               >
-                {summaryPayload.Removed}
+                {summaryPayload.Removed?.toLocaleString()}
               </span>
             </span>}
             {summaryPayload.EmptyCellphoneCount === 0 ? null : <span
@@ -204,16 +210,15 @@ const SmsSummary = ({ classes,
         </Box> : null}
         <Grid
           container
-          spacing={4}
+          // spacing={4}
           className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
           <Grid item>
             <Button
-              variant='contained'
-              size='small'
               onClick={onConfirm}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton,
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
                 summaryPayload.FinalCount <= 0 ? classes.disabled : null
               )}>
               {t("sms.sendDialog")}
@@ -221,18 +226,17 @@ const SmsSummary = ({ classes,
           </Grid>
           <Grid item>
             <Button
-              variant='contained'
-              size='small'
               onClick={() => { handleSmsSettings() }}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogCancelButton
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
               )}>
               {t("sms.cancelDialog")}
             </Button>
           </Grid>
         </Grid>
-      </Dialog>}
+      </BaseDialog>}
     </Box>
   )
 }

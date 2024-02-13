@@ -6,20 +6,24 @@ import landingPagesReducer from './reducers/landingPagesSlice';
 import mmsReducer from './reducers/mmsSlice';
 import automationsReducer from './reducers/automationsSlice';
 import notificationReducer from './reducers/notificationSlice';
+import notificationUpdateSlice from './reducers/notificationUpdateSlice';
 import smsReducer from './reducers/smsSlice';
 import dashboardReducer from './reducers/dashboardSlice';
 import recipientReportsReducer from './reducers/recipientsReportSlice';
 import shortcutReducer from './reducers/shortcutSlice';
 import paymentReducer from './reducers/paymentSlice';
 import commonReducer from './reducers/commonSlice';
-import siteTrackingReducer from './reducers/siteTrackingSlice'
+import siteTrackingReducer from './reducers/siteTrackingSlice';
 import clientReducer from './reducers/clientSlice';
 import campaignReducer from './reducers/campaignEditorSlice';
 import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
+import ConnectorsSlice from './reducers/ConnectorsSlice';
 import galleryReducer from './reducers/gallerySlice'
 import whatsappReducer from './reducers/whatsappSlice'
 import AccountSettingsSlice from './reducers/AccountSettingsSlice';
+import DynamicGroupsSlice from './reducers/DynamicGroupsSlice';
+import DomainVerificationSlice from './reducers/DomainVerificationSlice';
 
 export default configureStore({
   reducer: {
@@ -30,6 +34,7 @@ export default configureStore({
     mms: mmsReducer,
     automations: automationsReducer,
     notification: notificationReducer,
+    notificationUpdate: notificationUpdateSlice,
     sms: smsReducer,
     dashboard: dashboardReducer,
     recipientReports: recipientReportsReducer,
@@ -42,7 +47,10 @@ export default configureStore({
     group: groupSlice,
     report: reportSlice,
     gallery: galleryReducer,
+    connectors: ConnectorsSlice,
     whatsapp: whatsappReducer,
-    accountSettings: AccountSettingsSlice
+    accountSettings: AccountSettingsSlice,
+    dynamicGroups: DynamicGroupsSlice,
+    domainVerification: DomainVerificationSlice
   },
 });

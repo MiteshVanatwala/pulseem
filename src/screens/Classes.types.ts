@@ -1,3 +1,3 @@
 export type ClassesType = {
-    classes: { [key: string]: string };
+  classes: { [key: string]: string };
 };

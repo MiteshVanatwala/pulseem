@@ -1,15 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api'
 import { PulseemResponse } from '../../Models/APIResponse';
 import { AccountSettings } from '../../Models/Account/AccountSettings';
 import { LoginPassword } from '../../Models/Account/Password';
 import { TwoFactorAuthAllowed } from '../../Models/Auth/TwoFactorAuth';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getAccountSettings = createAsyncThunk(
     'AccountSettings/Get',
     async (_, thunkAPI) => {
         try {
-            const response = await instence.get(`AccountSettings/Get`);
+            const response = await PulseemReactInstance.get(`AccountSettings/Get`);
             return response.data
         } catch (error) {
             return console.log(error);
@@ -20,7 +20,7 @@ export const updateDetails = createAsyncThunk(
     'AccountSettings/UpdateDetails',
     async (settings: AccountSettings, thunkAPI) => {
         try {
-            const response = await instence.post(`AccountSettings/UpdateDetails`, settings);
+            const response = await PulseemReactInstance.post(`AccountSettings/UpdateDetails`, settings);
             return response.data
         } catch (error) {
             return console.log(error);
@@ -31,7 +31,7 @@ export const updateSettings = createAsyncThunk(
     'AccountSettings/UpdateSettings',
     async (settings: AccountSettings, thunkAPI) => {
         try {
-            const response = await instence.post(`AccountSettings/UpdateSettings`, settings);
+            const response = await PulseemReactInstance.post(`AccountSettings/UpdateSettings`, settings);
             return response.data
         } catch (error) {
             return console.log(error);
@@ -42,7 +42,7 @@ export const update2FASettings = createAsyncThunk(
     'AccountSettings/Update2FASettings',
     async (settings: AccountSettings, thunkAPI) => {
         try {
-            const response = await instence.put(`AccountSettings/Update2FASettings`, settings)
+            const response = await PulseemReactInstance.put(`AccountSettings/Update2FASettings`, settings)
             return response.data;
         } catch (error) {
             return console.log(error);
@@ -52,7 +52,7 @@ export const update2FASettings = createAsyncThunk(
 export const changePassword = createAsyncThunk('AccountSettings/ChangePassword',
     async (passLogin: LoginPassword, thunkAPI) => {
         try {
-            const response = await instence.post(`AccountSettings/ChangePassword`, passLogin)
+            const response = await PulseemReactInstance.post(`AccountSettings/ChangePassword`, passLogin)
             return response.data;
         } catch (error) {
             return console.log(error);
@@ -63,7 +63,7 @@ export const changePassword = createAsyncThunk('AccountSettings/ChangePassword',
 export const addTwoFactorAuthValues = createAsyncThunk(
     'AddTwoFactorAuthValue', async (authObject: TwoFactorAuthAllowed, thunkAPI) => {
         try {
-            const response = await instence.post(`authorization/AddTwoFactorAuthValue`, authObject);
+            const response = await PulseemReactInstance.post(`authorization/AddTwoFactorAuthValue`, authObject);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -73,7 +73,7 @@ export const addTwoFactorAuthValues = createAsyncThunk(
 export const deleteAuthorizationValue = createAsyncThunk(
     'DeleteAuthorizationValue', async (authObject: TwoFactorAuthAllowed, thunkAPI) => {
         try {
-            const response = await instence.post(`authorization/DeleteAuthorizationValue`, authObject);
+            const response = await PulseemReactInstance.post(`authorization/DeleteAuthorizationValue`, authObject);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -83,7 +83,7 @@ export const deleteAuthorizationValue = createAsyncThunk(
 export const checkEmailAuthorization = createAsyncThunk(
     'CheckEmailAuthorization', async (emailAuth: AuthorizationValues, thunkAPI) => {
         try {
-            const response = await instence.get(`authorization/CheckEmailAuthorization/${emailAuth.value}/${emailAuth.isTwoFa}`);
+            const response = await PulseemReactInstance.get(`authorization/CheckEmailAuthorization/${emailAuth.value}/${emailAuth.isTwoFa}`);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -93,7 +93,7 @@ export const checkEmailAuthorization = createAsyncThunk(
 export const deleteAuthorization2FA = createAsyncThunk(
     'DeleteAuthorization2FA', async (value: string, thunkAPI) => {
         try {
-            const response = await instence.get(`authorization/DeleteAuthorization2FA/${value}`);
+            const response = await PulseemReactInstance.get(`authorization/DeleteAuthorization2FA/${value}`);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -102,7 +102,7 @@ export const deleteAuthorization2FA = createAsyncThunk(
 export const checkCellphoneAuthorization = createAsyncThunk(
     'CheckCellphoneAuthorization', async (cellphoneAuth: AuthorizationValues, thunkAPI) => {
         try {
-            const response = await instence.get(`authorization/CheckCellphoneAuthorization/${cellphoneAuth.value}/${cellphoneAuth.isTwoFa}`);
+            const response = await PulseemReactInstance.get(`authorization/CheckCellphoneAuthorization/${cellphoneAuth.value}/${cellphoneAuth.isTwoFa}`);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -117,7 +117,7 @@ interface AuthorizationValues {
 const AccountSettingsSlice = createSlice({
     name: 'AccountSettings',
     initialState: {
-        accountSettings: {
+        account: {
             StatusCode: 200,
             Message: '',
             Data: {} as AccountSettings,
@@ -132,6 +132,8 @@ const AccountSettingsSlice = createSlice({
             INVALID_CELLPHONE: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.invalidMobile', showAnimtionCheck: false },
             VERIFY_EMAIL: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.verifyEmail', showAnimtionCheck: false },
             VERIFY_CELLPHONE: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.verifyPhone', showAnimtionCheck: false },
+            WHATSAPP_TIER_SAVED: { severity: 'success', color: 'success', message: 'settings.accountSettings.whatsAppTier.tierUpdatedSuccessfully', showAnimtionCheck: false },
+            WHATSAPP_TIER_NOT_SAVED: { severity: 'error', color: 'error', message: 'settings.accountSettings.whatsAppTier.tierUpdatedFailed', showAnimtionCheck: false },
             CHANGE_PASSWORD: {
                 201: { severity: 'success', color: 'success', message: 'settings.changePassword.responses.201', showAnimtionCheck: false },
                 403: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.403', showAnimtionCheck: false },
@@ -154,11 +156,11 @@ const AccountSettingsSlice = createSlice({
                 Message: '',
                 Data: ''
             } as PulseemResponse
-        },
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getAccountSettings.fulfilled, (state, action) => {
-            state.accountSettings = action.payload;
+            state.account = action.payload;
         })
         builder.addCase(update2FASettings.fulfilled, (state, action) => {
             state.twoFAUpdated = action.payload;

@@ -3,18 +3,23 @@ import { Grid, Box, Typography, Divider, Link } from '@material-ui/core';
 import PurchaseSummary from './PurchaseSummary'
 import { Loader } from '../../../Loader/Loader';
 import { useEffect } from 'react';
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const TranzilaIframe = ({
-    t,
     classes,
     data,
     isRTL,
     packageId,
-    windowSize,
     paymentUrl = null,
     onStepBack = () => null,
     onComplete = () => null
 }) => {
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+    const { windowSize } = useSelector(state => state.core);
+
     useEffect(() => {
         window.addEventListener('message', (e) => {
             if (e.data) {
@@ -25,15 +30,21 @@ const TranzilaIframe = ({
                     }
                 }
                 catch (e) {
+                    // dispatch(sendToTeamChannel({
+                    //     MethodName: 'UseEffect',
+                    //     ComponentName: 'TranzilaIframe',
+                    //     Message: e
+                    // }));
                     return false;
                 }
             }
         })
+
     }, []);
 
     return <Grid container>
         <Grid item xs={12}>
-            <Box className={classes.justifyBetween} style={{alignItems: 'center'}}>
+            <Box className={classes.justifyBetween} style={{ alignItems: 'center' }}>
                 <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t("payment.updateCreditCard")}</Typography>
                 <Link onClick={onStepBack} style={{ cursor: 'pointer' }}>{t("smsReport.back")}</Link>
             </Box>

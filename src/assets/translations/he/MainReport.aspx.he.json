@@ -459,7 +459,7 @@
   "campaignQuality": "איכות הקמפיין",
   "campaignQualitySummary": "נקבע על פי נתוני הפתיחות וההקלקות ורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית גולר מונפרר סוברט לורם שבצק יהול, לכנוץ בעריר גק ליץ, ושבעגט ליבם סולגק",
   "billingCredits": "קרדיטים לחיוב",
-  "postCredits": "קרדיטים להודעה",
+  "postCredits": "להודעה",
   "smsCampaign" : "יצירת קמפיין SMS",
   "sendSetting" : "הגדרות שליחה",
   "whomTosend" : "למי שולחים?",
@@ -477,6 +477,10 @@
   "days"  :"ימים",
   "birthday"  :"יום הולדת",
   "creationDay": "תאריך יצירה",
+  "dateOfJoining": "תאריך הצטרפות",
+  "dateOfFirstCampaign": "Date Of First Campaign",
+  "dateOfSomething1": "Date Of Something 1",
+  "dateOfSomething2": "Date Of Something 2",
   "recipientFilter" : "סינון",
   "createContent":"יצירת תוכן",
   "campName":"שם הקמפיין",
@@ -544,5 +548,11 @@
   "summaryModalTitle": "סיכום קמפיין",
   "feedback": "משובים",
   "isResponse": "משוב",
-  "statusName": "שם סטאטוס"
+  "statusName": "שם סטאטוס",
+  "verifiedCount": "מאומתות",
+  "verifiedTooltip": "ללא הקלקות \"תצוגה מקדימה\" של קישורים",
+  "SMSReportNote1": "דייקנו את נתוני ההקלקות שלכם!",
+  "SMSReportNote2": "בטלפונים נידיים רבים, תצוגה מקדימה של קישורים המצורפים לסמס נספרת כהקלקה<br />הוספנו את עמודת ”הקלקות מאומתות“ כדי שתדעו מי באמת נכנס לקישורים שלכם!",
+  "clickCountTooltip": "סך כל ההקלקות, כולל כפילויות",
+  "uniqueClickCountTooltip": "סך ההקלקות ללא כפילויות"
 }

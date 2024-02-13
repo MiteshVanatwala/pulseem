@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence, uploaderInstance } from '../../helpers/api';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { uploaderInstance } from '../../helpers/Api/UploaderAPI'
 
 export const getGroupsBySubAccountId = createAsyncThunk(
     'Group/GetGroupsBySubAccountId', async (_, thunkAPI) => {
         try {
-            const response = await instence.get(`Group/GetGroupsBySubAccountId`);
+            const response = await PulseemReactInstance.get(`Group/GetGroupsBySubAccountId`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -14,7 +15,7 @@ export const getGroupsBySubAccountId = createAsyncThunk(
 export const getGroups = createAsyncThunk(
     'Group/Get', async (data, thunkAPI) => {
         try {
-            const response = await instence.post(`Group/Get`, data);
+            const response = await PulseemReactInstance.post(`Group/Get`, data);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -24,7 +25,7 @@ export const getGroups = createAsyncThunk(
 export const createGroup = createAsyncThunk(
     'Group/Create', async (payload, thunkAPI) => {
         try {
-            const response = await instence.put(`Group/Create`, payload);
+            const response = await PulseemReactInstance.put(`Group/Create`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -34,7 +35,7 @@ export const createGroup = createAsyncThunk(
 export const editGroup = createAsyncThunk(
     'Group/UpdateSettings', async (payload, thunkAPI) => {
         try {
-            const response = await instence.put(`Group/UpdateSettings`, payload);
+            const response = await PulseemReactInstance.put(`Group/UpdateSettings`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -44,7 +45,7 @@ export const editGroup = createAsyncThunk(
 export const deleteGroups = createAsyncThunk(
     'Group/Delete', async (payload, thunkAPI) => {
         try {
-            const response = await instence.put(`Group/Delete`, payload);
+            const response = await PulseemReactInstance.put(`Group/Delete`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -53,7 +54,7 @@ export const deleteGroups = createAsyncThunk(
 export const resetGroups = createAsyncThunk(
     'Group/ClearGroupRecipientData', async (payload, thunkAPI) => {
         try {
-            const response = await instence.put(`Group/ClearGroupRecipientData`, payload);
+            const response = await PulseemReactInstance.put(`Group/ClearGroupRecipientData`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -63,7 +64,7 @@ export const resetGroups = createAsyncThunk(
 export const addRecipient = createAsyncThunk(
     'client/AddClients', async (payload, thunkAPI) => {
         try {
-            const response = await instence.post(`client/AddClients`, payload);
+            const response = await PulseemReactInstance.post(`client/AddClients`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -92,7 +93,7 @@ export const addRecipients = createAsyncThunk(
 export const unsubRecipients = createAsyncThunk(
     'Client/UnsubscribeRecipients', async (payload, thunkAPI) => {
         try {
-            const response = await instence.delete(`Client/UnsubscribeRecipients`, { data: payload });
+            const response = await PulseemReactInstance.delete(`Client/UnsubscribeRecipients`, { data: payload });
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -101,7 +102,7 @@ export const unsubRecipients = createAsyncThunk(
 export const deleteRecipients = createAsyncThunk(
     'Client/DeleteRecipientsFromGroups', async (payload, thunkAPI) => {
         try {
-            const response = await instence.delete(`Client/DeleteRecipientsFromGroups`, { data: payload });
+            const response = await PulseemReactInstance.delete(`Client/DeleteRecipientsFromGroups`, { data: payload });
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -110,7 +111,7 @@ export const deleteRecipients = createAsyncThunk(
 export const getGroupsForSimplyClub = createAsyncThunk(
     'Group/GetExternalGroups', async (payload, thunkAPI) => {
         try {
-            const response = await instence.post(`Group/GetExternalGroups`, { ...payload });
+            const response = await PulseemReactInstance.post(`Group/GetExternalGroups`, { ...payload });
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -119,7 +120,26 @@ export const getGroupsForSimplyClub = createAsyncThunk(
 export const getExternalClientsByGroups = createAsyncThunk(
     'Group/GetExternalClientsByGroups', async (payload, thunkAPI) => {
         try {
-            const response = await instence.post(`Group/GetExternalClientsByGroups`, { ...payload });
+            const response = await PulseemReactInstance.post(`Group/GetExternalClientsByGroups`, { ...payload });
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+export const combinedGroup = createAsyncThunk(
+    'group/CreateCombinedGroup', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`group/CreateCombinedGroup`, data);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+export const createAndGetGroupIdForManualSend = createAsyncThunk(
+    'Group/CreateAndGetGroupIdForManualSend', async (campaignType, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`Group/CreateAndGetGroupIdForManualSend/${campaignType}`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -129,6 +149,7 @@ export const getExternalClientsByGroups = createAsyncThunk(
 export const groupSlice = createSlice({
     name: 'group',
     initialState: {
+        defaultGroupId: -1,
         selectedGroups: [],
         subAccountAllGroups: [],
         groupData: null,
@@ -182,6 +203,12 @@ export const groupSlice = createSlice({
         })
         builder.addCase(getGroups.fulfilled, (state, { payload }) => {
             state.groupData = payload;
+        })
+        builder.addCase(combinedGroup.fulfilled, (state, action) => {
+            state.subAccountAllGroups.push(action.payload);
+        })
+        builder.addCase(createAndGetGroupIdForManualSend.fulfilled, (state, { payload }) => {
+            state.defaultGroupId = payload;
         })
         builder.addCase(createGroup.rejected, (state, { error }) => {
             state.error = error.message;

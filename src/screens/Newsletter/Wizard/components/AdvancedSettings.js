@@ -1,13 +1,14 @@
 import {
     Box,
     Grid,
-    Select,
     Checkbox,
     TextField,
     Typography,
     FormControl,
-    OutlinedInput
+    MenuItem,
+    FormHelperText
 } from '@material-ui/core'
+import Select from '@mui/material/Select';
 import clsx from "clsx";
 import { FaGoogle } from 'react-icons/fa';
 import { BiUpload } from 'react-icons/bi';
@@ -16,6 +17,8 @@ import { useTranslation } from 'react-i18next'
 import { LangugeCode, MobileSupport, PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
 import PulseemTags from '../../../../components/Tags/PulseemTags'
+import { IoIosArrowDown } from 'react-icons/io';
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 
 export const AdvancedSettings = ({
     classes,
@@ -26,100 +29,111 @@ export const AdvancedSettings = ({
     removeAttachmentFile,
 }) => {
     const { t } = useTranslation();
-    const { accountFeatures } = useSelector((state) => state.core);
+    const { isRTL } = useSelector((state) => state.core);
+    const { accountFeatures } = useSelector((state) => state.common);
     return <Box pt={3}>
         <Typography className={localClasses.suHeading}>{t("common.AdvancedSettings")}</Typography>
         <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} className='selectWrapper'>
                 <Typography title={t("campaigns.newsLetterEditor.mobileSupport")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.mobileSupport")}</Typography>
-                <FormControl className={localClasses.select}>
+                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
-                        native
+                        variant="standard"
                         displayEmpty
-                        value={campaingnValues?.IsResponsive ? '1' : '0'}
+                        className={classes.pbt5}
+                        value={campaingnValues?.IsResponsive ? 1 : 0}
                         onChange={(event) => {
                             setCampaingnValues({
                                 ...campaingnValues,
                                 IsResponsive: Number(event.target.value) === 1 ? true : false
                             })
                         }}
-                        input={<OutlinedInput />}
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         renderValue={(selected) => {
                             const lc = MobileSupport.find(e => { return e.value === selected });
-                            return t(lc.label);
+                            return t(lc?.label);
                         }}
                         MenuProps={{
                             PaperProps: {
                                 style: {
                                     maxHeight: 48 * 4.5 + 8,
                                     width: 250,
+                                    direction: isRTL ? 'rtl' : 'ltr'
                                 },
                             },
                         }}
                         inputProps={{ 'aria-label': 'Without label' }}
                     >
                         {MobileSupport.map((item) => (
-                            <option
+                            <MenuItem
                                 key={item.value}
                                 value={item.value}
+                                name={item.value}
                             >
                                 {t(item.label)}
-                            </option>
+                            </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
+                {!campaingnValues?.IsResponsive && <FormHelperText className={clsx(classes.f14, classes.red)}>{RenderHtml(t('campaigns.newsLetterEditor.helpTexts.cellularSupportCaution'))}</FormHelperText>}
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} className='selectWrapper'>
                 <Typography title={t("campaigns.newsLetterEditor.pre_text")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.pre_text")}</Typography>
                 <TextField
                     id="previewText"
                     label=""
                     variant="outlined"
-                    // name="PreviewText"
+                    name="PreviewText"
                     value={campaingnValues.PreviewText}
-                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
+                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth')}
                     autoComplete="off"
                     onChange={(e) => {
                         setCampaingnValues({ ...campaingnValues, PreviewText: e.target.value });
                     }}
                     title={campaingnValues.PreviewText}
-                    helperText={t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')}
+                // helperText={t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')}
                 />
+                <Typography className={clsx('MuiFormHelperText-root', classes.f14)}>
+                    {t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')}
+                </Typography>
             </Grid>
         </Grid>
         <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} className={clsx('selectWrapper', classes.middle)} >
                 <Typography title={t("campaigns.newsLetterEditor.language")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.language")}</Typography>
-                <FormControl className={localClasses.select}>
+                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
-                        native
+                        variant="standard"
                         displayEmpty
                         value={campaingnValues.LanguageCode}
+                        className={classes.pbt5}
                         onChange={(event) => {
                             setCampaingnValues({ ...campaingnValues, LanguageCode: event.target.value })
                         }}
-                        input={<OutlinedInput />}
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         renderValue={(selected) => {
                             const lc = LangugeCode.find(e => { return e.value === selected });
-                            return t(lc.label);
+                            return t(lc?.label);
                         }}
                         MenuProps={{
                             PaperProps: {
                                 style: {
                                     maxHeight: 48 * 4.5 + 8,
                                     width: 250,
+                                    direction: isRTL ? 'rtl' : 'ltr'
                                 },
                             },
                         }}
                         inputProps={{ 'aria-label': 'Without label' }}
                     >
                         {LangugeCode.map((item) => (
-                            <option
+                            <MenuItem
                                 key={item.value}
                                 value={item.value}
+                                name={item.value}
                             >
                                 {t(item.label)}
-                            </option>
+                            </MenuItem>
                         ))}
                     </Select>
                 </FormControl>

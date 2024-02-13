@@ -1,11 +1,12 @@
 {
   "logPageHeaderResource1": {
-    "Text": "Groups Management"
+    "Text": "Groups Management",
+    "Dynamic": "Dynamic Groups Management"
   },
   "deleteRecipient": "Delete Recipients",
   "unsubscribe": "Unsubscribe Recipient",
   "emails": "Emails",
-  "sms/mms": "Sms/Mms",
+  "sms/mms": "SMS / WhatsApp",
   "totalRecipients": "Recipients",
   "Active": "Active",
   "Removed": "Removed",
@@ -101,7 +102,7 @@
     "succeeded": "The recipients successfully unsubscribed from the selected groups",
     "inProgress": "Please notice<br/>You asked to remove a large amount of recipients<br/>The system is will finish removing the recipients in the background<br/>##notifyEmailPlaceHolder##",
     "inProgressNotifyOnDone":"Email will be sent to ##notifyEmail## when the process will be done.",
-    "notifyEmail": "In the end of the Unsubscribe process, Send Email to "
+    "notifyEmail": "In the end of the Unsubscribe process,<br/>Send Email to "
   },
   "exportGroups": {
     "inProgress": "Please notice<br/>You asked to export a large amount of recipients<br/>The system is will prepare the file in the background<br/>##notifyEmailPlaceHolder##",
@@ -130,5 +131,9 @@
   "uploadLimitation": "You are able to upload up to 600,000 recipients at once",
   "maximumRecordLimitation": "You can unsubscribe/delete up to 1,000 recipients per request.",
   "unsubSetting1Tooltip": "Example: When typing a cellphone number, this setting will also unsubscribe the email address linked to it",
-  "unsubSettings": "Unsubscribe settings"
+  "unsubSettings": "Unsubscribe settings",
+  "newsletterCampaign": "Newsletter Campaign",
+  "smsCampaign": "SMS Campaign",
+  "maxUploadLimitation": "You are able to upload up to 5,000 recipients at once",
+  "whatsappCampaign": "Whatsapp Campaign"
 }

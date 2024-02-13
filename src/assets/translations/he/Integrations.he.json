@@ -1,0 +1,58 @@
+{
+  "title": "אינטגרציות",
+  "purchase": "רכישה",
+  "cartAbandonment": "נטישת עגלה",
+  "authResponses": {
+    "201": "החנות אומתה בהצלחה",
+    "400": "שם החנות שייך לחשבון אחר",
+    "403": "מפתח API או מפתח גישה שגוי",
+    "404": "החיבור נכשל!"
+  },
+  "resetConfirmation": "אתם בטוחים שברצונכם לאפס את החיבור?",
+  "selectGroup": "בחר קבוצה",
+  "formSubmitResponses": {
+    "201": "קבוצה נשמרה"
+  },
+  "connectStore": "חבר חנות",
+  "disconnectStore": "נתק חנות",
+  "apiKey": "מפתח API",
+  "shopify": {
+    "title": "Shopify",
+    "authentication": "חיבור",
+    "apiAccessToken": "הזן API Token",
+    "shopifyURL": "שם חנות",
+    "siteSignUp": "הרשמה",
+    "settingsSaved": "הגדרות נשמרו בהצלחה",
+    "connectionFail": "לא ניתן להתחבר לאפליקציה, אנא וודאו שהפרטים שהזנתם נכונים",
+    "insertClientToGroup": "הכנס לקוחות לקבוצות:",
+    "insertToken": "הזינו את הטוקן החד-פעמי אותו קיבלתם ביצירת האפליקציה",
+    "insertAPIKey": "הזינו את המפתח אותו קיבלתם ביצירת האפליקציה",
+    "insertShopifyURL": "הכניסו את שם / מזהה החנות שלכם",
+    "authenticate": "התחבר",
+    "enterShopifyUrl": "יש להכניס URL תקין",
+    "enterAPIKey": "API הזינו מפתח",
+    "enterAccessToken": "API Token הזינו",
+    "enterAPIVersion": "API Version הזינו",
+    "reset": "אפס",
+    "showCredentials": "הצג פרטי התחברות",
+    "hideCredentials": "הסתר פרטי התחברות",
+    "apiVersion": "גרסת וובהוק",
+    "apiVersionDesc": "בדקו את גרסאת הוובהוק בעמוד \"Configuration\""
+  },
+  "wooCommerce": {
+    "title": "WooCommerce",
+    "description": "על מנת לחבר את חנות הווקומרס שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
+    "connectStore": "חברו חנות WooCommerce"
+  },
+  "cashCow": {
+    "title": "CashCow",
+    "description": "על מנת לחבר את החנות שלכם בקאשקאו לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
+    "connectStore": "חברו חנות CashCow"
+  },
+  "Istores": {
+    "title": "Istores",
+    "subTitle": "הכניסו את מפתח ה-API שקיבלתם מ-Istores",
+    "storeID": "מספר מזהה חנות",
+    "storeIDDesc": "הכנס מספר מזהה חנות"
+  }
+}

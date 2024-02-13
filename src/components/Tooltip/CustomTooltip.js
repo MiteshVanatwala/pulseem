@@ -1,5 +1,4 @@
 import React from 'react';
-import clsx from 'clsx';
 import { Typography, Tooltip, IconButton } from '@material-ui/core'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { BsInfoCircleFill } from 'react-icons/bs';
@@ -7,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 const HtmlTooltip = withStyles(({ style }) => ({
   tooltip: {
-    maxWidth: 220,
+    maxWidth: 440,
     backgroundColor: '#000',
     ...style
   },
@@ -37,7 +36,7 @@ const CustomTooltip = ({ children, classes, text, title, placement = 'top', arro
     <BootstrapTooltip
       style={{ color: '#000', ...style }}
       title={text}
-      placement={"top"}>
+      placement={placement}>
       <IconButton aria-label={text}>
         {icon ? icon : <BsInfoCircleFill />}
       </IconButton>

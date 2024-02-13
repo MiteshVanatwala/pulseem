@@ -2,32 +2,35 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box
 } from '@material-ui/core'
-import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon, ReportsIcon } from '../../../assets/images/managment/index'
-import { TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField } from '../../../components/managment/index'
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { DuplicateIcon, PreviewIcon } from '../../../assets/images/managment/index'
+import { TablePagination, ManagmentIcon, DateField, SearchField } from '../../../components/managment/index'
 import { getArchiveCampaigns, cloneArchiveCampaign } from '../../../redux/reducers/newsletterSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { pulseemNewTab } from '../../../helpers/functions';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { EmailStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { Title } from '../../../components/managment/Title';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { sitePrefix } from '../../../config';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const ArchiveManagementScreen = ({ classes }) => {
-  const { accountFeatures, language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { newsletterArchiveData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -60,17 +63,6 @@ const ArchiveManagementScreen = ({ classes }) => {
     getData();
     handleDefaultDates();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('campaigns.logPageHeaderArchive.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -109,8 +101,8 @@ const ArchiveManagementScreen = ({ classes }) => {
             const lastUpdate = SendDate ?
               moment(SendDate, dateFormat).valueOf()
               : moment(UpdatedDate, dateFormat).valueOf()
-            const startFromDate = values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf() || null
-            const endToDate = values.toDate && moment(values.toDate).hour(23).minute(59).valueOf() || null
+            const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ?? null
+            const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ?? null
 
             if (!values)
               return true
@@ -133,6 +125,11 @@ const ArchiveManagementScreen = ({ classes }) => {
         setPage(1);
       } catch (error) {
         console.log(error);
+        dispatch(sendToTeamChannel({
+          MethodName: 'handleSearch',
+          ComponentName: 'ArchiveManagement.js',
+          Text: error
+        }));
       }
     }
 
@@ -148,21 +145,8 @@ const ArchiveManagementScreen = ({ classes }) => {
       setCampaineNameSearch(event.target.value)
     }
 
-    if (windowSize === 'xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
-          onClick={handleSearch}
-          onKeyPress={handleKeyPress}
-          placeholder={t('common.CampaignName')}
-        />
-      )
-    }
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -180,8 +164,8 @@ const ArchiveManagementScreen = ({ classes }) => {
             size='large'
             variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
@@ -190,8 +174,8 @@ const ArchiveManagementScreen = ({ classes }) => {
             size='large'
             variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -250,36 +234,53 @@ const ArchiveManagementScreen = ({ classes }) => {
       "StatusName": t('mainReport.statusName'),
     }
 
-    let orderList = [];
+    const list = searchResults ?? newsletterArchiveData;
 
-    const list = searchResults || newsletterArchiveData;
-    orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
-    orderList = await statusNumberToString(t, orderList, EmailStatus);
-    orderList = await formatDateTime(orderList, t);
-    orderList = await deletePropertyFromArrayObject(orderList, "Status");
-    exportFile({
-      data: orderList,
-      fileName: 'emailReport',
-      exportType: formatType,
-      fields: exportColumnHeader
-    });
-    setLoader(false);
+    const fields = {...exportColumnHeader};
+
+    const exportOptions = {
+      OrderItems: true,
+      FormatDate: true,
+      ConvertStatusToString: true,
+      Statuses: EmailStatus,
+      Order: Object.keys(fields),
+      DeleteProperties: ["Status"]
+    };
+
+    try {
+      const result = await HandleExportData(list, exportOptions);
+
+      delete fields["Status"];
+      
+      ExportFile({
+        data: result,
+        fileName: 'emailReport',
+        exportType: formatType,
+        fields: fields
+      });
+    } catch (e) {
+      console.log(e);
+      dispatch(sendToTeamChannel({
+        MethodName: 'handleDownloadCsv',
+        ComponentName: 'ArchiveManagement.js',
+        Text: e
+      }));
+    }
+    finally {
+      setLoader(false);
+    }
   }
 
   const renderManagmentLine = () => {
     return (
-      <Grid container spacing={2} className={classes.linePadding}>
-        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
-              newsletterArchiveData.length > 0 ? null : classes.disabled
-            )}
             onClick={() => setDialogType("exportFormat")}
-            startIcon={<ExportIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
         </Grid>}
@@ -311,7 +312,7 @@ const ArchiveManagementScreen = ({ classes }) => {
     const iconsMap = [[
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -321,7 +322,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -347,12 +348,13 @@ const ArchiveManagementScreen = ({ classes }) => {
               container>
               {map.map(icon => (
                 <Grid
-                  className={clsx(icon.disable && classes.disabledCursor)}
+                  className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
                   key={icon.key}
                   item >
                   <ManagmentIcon
                     classes={classes}
                     {...icon}
+                    uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                   />
                 </Grid>
               ))}
@@ -503,10 +505,15 @@ const ArchiveManagementScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {sortData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {!sortData || sortData.length === 0 ?
+            <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+              <Typography>{t("common.NoDataTryFilter")}</Typography>
+            </Box> :
+            sortData.map((obj, idx) => windowSize === "xs" ? renderPhoneRow(obj) : renderRow(obj))}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -547,11 +554,6 @@ const ArchiveManagementScreen = ({ classes }) => {
   const getDuplicateDialog = (data = '') => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{ fontSize: 18 }}>
         {t('campaigns.dialogDuplicateContent')}
@@ -563,7 +565,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       setPage(1)
       const newCampaignId = await dispatch(cloneArchiveCampaign(data))
       if (newCampaignId.payload > 0) {
-        window.open('/react/Campaigns');
+        window.open(`${sitePrefix}Campaigns`);
       }
     }
   })
@@ -579,13 +581,14 @@ const ArchiveManagementScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
 
@@ -594,25 +597,29 @@ const ArchiveManagementScreen = ({ classes }) => {
       currentPage="newsletter"
       subPage='archiveManagement'
       classes={classes}
-      containerClass={clsx(classes.managmentNarrow, classes.mb50)}>
-      {renderHeader()}
-      {renderSearchLine()}
-      {renderManagmentLine()}
-      {renderTable()}
-      {renderTablePagination()}
-      {renderDialog()}
-      <ConfirmRadioDialog
-        classes={classes}
-        isOpen={dialogType === 'exportFormat'}
-        title={t('campaigns.exportFile')}
-        radioTitle={t('common.SelectFormat')}
-        onConfirm={(e) => handleDownloadCsv(e)}
-        onCancel={() => setDialogType(null)}
-        cookieName={'exportFormat'}
-        defaultValue="xls"
-        options={ExportFileTypes}
-      />
-      <Loader isOpen={showLoader} />
+      containerClass={clsx(classes.management, classes.mb50)}>
+      <Box className={classes.mb50}>
+        <Box className={'topSection'}>
+          <Title Text={t('campaigns.logPageHeaderArchive.Text')} classes={classes} />
+          {renderSearchLine()}
+        </Box>
+        {renderManagmentLine()}
+        {renderTable()}
+        {renderTablePagination()}
+        {renderDialog()}
+        <Loader isOpen={showLoader} />
+        <ConfirmRadioDialog
+          classes={classes}
+          isOpen={dialogType === 'exportFormat'}
+          title={t('campaigns.exportFile')}
+          radioTitle={t('common.SelectFormat')}
+          onConfirm={(e) => handleDownloadCsv(e)}
+          onCancel={() => setDialogType(null)}
+          cookieName={'exportFormat'}
+          defaultValue="xlsx"
+          options={ExportFileTypes}
+        />
+      </Box>
     </DefaultScreen>
   )
 }

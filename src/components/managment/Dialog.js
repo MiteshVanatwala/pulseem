@@ -1,18 +1,16 @@
-import React from 'react';
+
 import clsx from 'clsx';
 import {
   Typography, Divider, Grid, Button, Dialog as BaseDialog, Paper, Box
 } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { AlertIcon } from '../icons/index'
 
 export const Dialog = ({
-  childrenPadding = true,
   classes,
+  childrenPadding = true,
   open = false,
   title = '',
-  icon = null,
   children,
   showDivider = false,
   onClose = () => null,
@@ -29,6 +27,9 @@ export const Dialog = ({
   confirmText = 'common.Ok',
   showDefaultButtons = true,
   style = null,
+  reduceTitle = false,
+  ChildrenStyle = null,
+  ContentStyle = null,
   ...props
 }) => {
   const direction = {
@@ -53,13 +54,10 @@ export const Dialog = ({
       <>
         {props.exit ? props.exit : <Box
           onClick={onExit}
-          className={clsx(
-            classes.dialogExitButton,
-            classes.btnBgExitDialog,
-            {
-              [classes.dialogExitButtonRTL]: isRTL,
-              [classes.dialogExitButtonLTR]: !isRTL
-            }
+          className={clsx(classes.dialogExitButton, {
+            [classes.dialogExitButtonRTL]: isRTL,
+            [classes.dialogExitButtonLTR]: !isRTL,
+          }
           )}>
           x
         </Box>}  </>
@@ -70,7 +68,14 @@ export const Dialog = ({
   const renderTitleDefault = () => {
     return (
       <>
-        <Typography className={clsx(props.reduceTitle ? classes.reducedTitle : '', classes.dialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)}>
+        <Typography className={clsx(
+          reduceTitle ? classes.reducedTitle : "",
+          classes.dialogTitle,
+          windowSize !== "xs" && windowSize !== "sm"
+            ? classes.ellipsisText
+            : null
+        )}
+        >
           {title}
         </Typography>
         {showDivider && <Divider />}
@@ -83,7 +88,11 @@ export const Dialog = ({
       showDefaultButtons && <Grid
         container
         spacing={4}
-        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+        className={clsx(
+          classes.dialogButtonsContainer,
+          isRTL ? classes.rowReverse : null
+        )}
+      >
         <Grid item>
           <Button
             name="btnConfirm"
@@ -104,7 +113,7 @@ export const Dialog = ({
             onClick={onClose}
             className={clsx(
               classes.dialogButton,
-              classes.dialogCancelButton
+              classes.dialogConfirmButton
             )}>
             {t(cancelText)}
           </Button>
@@ -113,28 +122,10 @@ export const Dialog = ({
     )
   }
 
-  const renderIcon = () => {
-    if (icon === false)
-      return <></>
-    const alertIcon = <AlertIcon classes={classes} />
-    return (
-      <Box
-        className={clsx(
-          classes.dialogIconContainer,
-          {
-            [classes.dialogIconContainerRTL]: isRTL,
-            [classes.dialogIconContainerLTR]: !isRTL
-          }
-        )}>
-        {icon || alertIcon}
-      </Box>
-    )
-  }
-
   const renderChildren = () => {
     return (
       <Box
-        className={clsx(classes.dialogChildren, childrenStyle)}
+        className={clsx(classes.dialogChildren, ChildrenStyle)}
         style={{ maxHeight: props.maxHeight ? props.maxHeight : windowSize !== 'sm' && windowSize !== 'xs' ? 'calc(65vh)' : 'calc(45vh)', minWidth: windowSize !== 'xs' && windowSize !== 'sm' ? 330 : null }}>
         {children}
       </Box>)
@@ -144,7 +135,7 @@ export const Dialog = ({
     return (
       <Box
         dir={direction[isRTL]}
-        className={clsx(classes.dialogContent, contentStyle)}>
+        className={clsx(classes.dialogContent, ContentStyle)}>
         {renderTitle ? renderTitle() : renderTitleDefault()}
         {renderChildren()}
         {renderButtons ? renderButtons() : renderButtonsDefault()}
@@ -154,9 +145,11 @@ export const Dialog = ({
 
   return (
     <BaseDialog
+      classes={classes}
       style={style ?? null}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
+      onCancel={onClose}
       onClose={(event, reason) => {
         if (reason !== 'backdropClick' || !disableBackdropClick) {
           onClose();
@@ -166,7 +159,6 @@ export const Dialog = ({
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
         {renderExitButton()}
         {renderContent()}
-        {icon !== 'NONE' && renderIcon()}
       </Paper>
     </BaseDialog>
   )

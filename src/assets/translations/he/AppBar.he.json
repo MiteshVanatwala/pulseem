@@ -15,8 +15,14 @@
   "sms": {
     "title": "SMS"
   },
+  "whatsapp": {
+    "title": "Whatsapp"
+  },
   "mms": {
     "title": "MMS"
+  },
+  "whatsapp": {
+    "title": "WhatsApp"
   },
   "landingPages": {
     "title": "דפי נחיתה"

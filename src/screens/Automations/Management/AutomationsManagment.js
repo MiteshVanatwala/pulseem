@@ -1,35 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box
 } from '@material-ui/core'
 import {
-  DeleteIcon, DuplicateIcon, EditIcon, ReportsIcon, SearchIcon, PreviewIcon
+  DeleteIcon, EditIcon, ReportsIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, Switch, SearchField
+  TablePagination, ManagmentIcon, DateField, RestorDialogContent, Switch, SearchField
 } from '../../../components/managment/index'
 import {
   getAutomationsData, deleteAutomations, duplicateAutomations, restoreAutomations, activateAutomation
 } from '../../../redux/reducers/automationsSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { pulseemNewTab } from '../../../helpers/functions';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { automationsData, automationsDataError, automationsDeletedData } = useSelector(state => state.automations)
+  const Redirect = useNavigate();
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
@@ -46,9 +49,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch()
-  const history = useCtrlHistory()
   moment.locale(language)
-
 
   const getData = async () => {
     await dispatch(getAutomationsData())
@@ -58,18 +59,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
   useEffect(() => {
     setLoader(true);
     getData();
-  }, [dispatch])
 
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('automations.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
+  }, [dispatch])
 
   const clearSearch = () => {
     setCampaineNameSearch('')
@@ -99,8 +90,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
           const lastUpdate = ActivatedOn ?
             moment(ActivatedOn, dateFormat).valueOf()
             : moment(ModifiedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -143,19 +134,21 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
     if (windowSize === 'xs') {
       return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          onKeyPress={handleKeyPress}
-          placeholder={t('automations.labelAutomationName')}
-        />
+        <Grid container className={'searchLine'}>
+          <SearchField
+            classes={classes}
+            value={campaineNameSearch}
+            onChange={handleCampainNameChange}
+            onClick={handleSearch}
+            onKeyPress={handleKeyPress}
+            placeholder={t('automations.labelAutomationName')}
+          />
+        </Grid>
       )
     }
 
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -195,21 +188,17 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('mms.locSearchCampaignResource1.Text')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -222,24 +211,16 @@ const AutomationsManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            href='/Pulseem/CreateAutomations.aspx?fromreact=true'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+            href={`/Pulseem/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('automations.createResource.Text')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({
               type: 'restore',
               data: automationsDeletedData
@@ -276,20 +257,20 @@ const AutomationsManagnentScreen = ({ classes }) => {
     const iconsMap = [
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}`)
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
         }
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true` : '',
+        href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : '',
         rootClass: classes.paddingIcon,
         onClick: () => {
           if (IsActive) {
@@ -302,7 +283,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       },
       //{
       //  key: 'duplicate',
-      //  icon: DuplicateIcon,
+      //  uIcon: DuplicateIcon,
       //  lable: t('campaigns.lnkEditResource1.ToolTip'),
       //  rootClass: classes.paddingIcon,
       //  onClick: () => {
@@ -314,7 +295,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       //},
       {
         key: 'reports',
-        icon: ReportsIcon,
+        uIcon: ReportsIcon,
         lable: t('campaigns.Reports'),
         remove: windowSize === 'xs',
         href: `/Pulseem/automationreport.aspx?AutomationID=${ID}&fromreact=true`,
@@ -322,7 +303,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
         rootClass: classes.paddingIcon,
@@ -342,10 +323,14 @@ const AutomationsManagnentScreen = ({ classes }) => {
         {iconsMap.map(icon => (
           <Grid
             key={icon.key}
-            item >
+            item
+            className={'rowIconContainer'}
+          >
             <ManagmentIcon
               classes={classes}
+              className={'rowIconContainer'}
               {...icon}
+              uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
             />
           </Grid>
         ))}
@@ -428,10 +413,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
         <CustomTooltip
           arrow
           isSimpleTooltip={false}
-          title={row.Name}
           classes={classes}
           interactive={true}
-          arrow={true}
           placement={'top'}
           title={<Typography noWrap={false}>{row.Name}</Typography>}
           text={row.Name}
@@ -504,7 +487,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
+        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.tabelCellPadding) }}>
           <Box className={classes.inlineGrid}>
             {renderNameCell(row)}
           </Box>
@@ -534,10 +517,12 @@ const AutomationsManagnentScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {rowData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {rowData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -573,8 +558,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
   }
 
   const handleChange = (ID) => () => {
-    const found = restoreArray.includes(ID)
-    console.log('restore', ID, 'found:', found)
+    const found = restoreArray.indexOf(ID) > -1;
+
     if (found) {
       setRestoreArray(restoreArray.filter(restore => restore !== ID))
     } else {
@@ -597,13 +582,17 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
       getData()
       if (isEdit)
-        window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
+        Redirect({ url: `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`, openNewTab: true })
     } catch (err) {
-      console.log('AutomationManagment.ChangeStatus', err)
       setDialogType({
         type: "statusError",
         data: data.ID
       })
+      dispatch(sendToTeamChannel({
+        MethodName: 'handleActiveChange',
+        ComponentName: 'AutomationsManagement.js',
+        Text: err
+      }));
     }
     handleClose()
   }
@@ -620,6 +609,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       ),
       content: (
         <RestorDialogContent
+          title={'common.noAutomationsToRestore'}
           classes={classes}
           data={data}
           currentChecked={restoreArray}
@@ -794,13 +784,14 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (
@@ -808,8 +799,10 @@ const AutomationsManagnentScreen = ({ classes }) => {
       currentPage='automations'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      {renderHeader()}
-      {renderSearchLine()}
+      <Box className={'topSection'}>
+        <Title Text={t('automations.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePadington()}

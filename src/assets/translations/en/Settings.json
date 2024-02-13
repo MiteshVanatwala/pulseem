@@ -1,127 +1,170 @@
 {
-    "accountSettings": {
-        "title": "Account Settings",
-        "fixedComDetails": {
-            "title": "Company Details",
-            "fields": {
-                "compName": "Company Name",
-                "contactName": "Contact Name",
-                "mobile": "Cellphone",
-                "enableTwoFactorAuth": "Enable two factor authentication",
-                "sendMeCode": "Send me a code"
-            },
-            "errors": {
-                "invalidEmail": "Invalid Email",
-                "reqEmail": "Email is required",
-                "invalidMobile": "Invalid Cellphone",
-                "reqMobile": "Cellphone is required",
-                "reqCompName": "Company name is required",
-                "reqContctName": "Contact name is required",
-                "verifyEmail": "Please verify the typed Email",
-                "verifyPhone": "Please verify the typed Phone Number"
-            },
-            "securitySettings": "Security Settings",
-            "btnChangePwd": "Change Password",
-            "btnUpdate": "Update Settings",
-            "btnVerifyEmail": "Verification of email to send",
-            "btnVerifyNumber": "Verification of number to send"
-        },
-        "actDetails": {
-            "title": "Account Details",
-            "fields": {
-                "fromPhoneNumber": "From Phone Number",
-                "unsubSettings": "Unsubscribe Settings",
-                "smsUnsubLink": "Sms Unsubscribe link",
-                "unsubByEmailOrCell": "Unsubscribe by email or cellphone",
-                "unsubByEmailAndCell": "Unsubscribe both, email and cellphone",
-                "regSmsUnsubLink": "Regular sms unsubscribe link",
-                "imdSmsUnsubLink": "sms immediate unsubscribe link (no validation)"
-            },
-            "btnUpdate": "Update Account Details"
-        },
-        "auth": {
-            "everyDay": "Every Day",
-            "everyTwoWeeks": "Every Two Weeks",
-            "activatedSuccessfuly": "Two factor authentication activated!",
-            "inActivetedSuccessfuly": "Two factor authentication inactivated!",
-            "notSaved": "Two factor authentication was not saved. Please contact support."
-        },
-        "savedSuccessfuly": "Settings successfuly saved!",
-        "2fa": {
-            "addEmail": "Add 2FA Email",
-            "addNumber": "Add 2FA Number",
-            "addToFromEmailToSend": "Do you wish to verify this Email for sending campaigns as well?",
-            "addToFromNumberToSend": "Do you wish to verify this Cellphone number for sending campaigns as well? ",
-            "deleteValueTitle":"Remove Confirmation",
-            "deleteValueDescription": "Are you sure you want to remove this value from Two Factor Authentication's list?",
-            "email": {
-                "firstSlide": {
-                    "title": "Verification of Email for Two Factor Authentication",
-                    "descirption": "For security reason, we are obliged to make sure that the Email you entered for Two Factor Authentication, is owned by you. This is a one-time process for each submission number."
-                },
-                "successSlide": {
-                    "title": ""
-                }
-            },
-            "cellphone": {
-                "firstSlide": {
-                    "title": "Verification of Cellphone for Two Factor Authentication",
-                    "descirption": "For security reason, we are obliged to make sure that the Cellphone Number you entered for Two Factor Authentication, is owned by you. This is a one-time process for each submission number."
-                },
-                "successSlide": {
-                    "title": ""
-                }
-            }
-        }
-    },
-    "billingSettings": {
-        "title": "Billing settings",
-        "titleBillingInfo": "Billing Information",
-        "fields": {
-            "compRegNumber": "Company register number",
-            "invoiceEmail": "Email for invoices",
-            "invoiceLang": "Invoice language",
-            "cardNumber": "Card Number",
-            "expMonth": "Exp Month",
-            "expYear": "Exp Year",
-            "secCode": "Security code",
-            "id": "ID"
-        },
-        "errors": {
-            "invalidCardNum": "Invalid card number",
-            "invalidMonth": "Invalid validity",
-            "invalidYear": "Invalid validity",
-            "invalidCvv": "Invalid CVV",
-            "invalidId": "Invalid ID number"
-        },
-        "btnUpdate": "Update billing",
-        "btnAddCard": "Add credit card"
-    },
-    "changePassword": {
-        "title": "Change Password",
-        "subTitle": "Type the old password, then type the new one",
-        "oldPassword": "Old Password",
-        "newPassword": "New Password",
-        "confirmPassword": "Connfirm Password",
-        "error": {
-            "required": "Required field",
-            "notMatch": "Password confirmation doesnt match"
-        },
-        "responses": {
-            "201": "Password has been changed successfuly!",
-            "403": "Incorrect password",
-            "406": "Password cannot be empty!",
-            "407": "Confirmation password is not matched",
-            "408": "The new password must follow the rules",
-            "409": "The new password must be different then the old one!"
-        },
-        "passwordHint": {
-            "title": "The password must contain",
-            "length": "At least 8 characters",
-            "specialChar": "Special character",
-            "upperChar": "Uppercase letter (En)",
-            "lowerChar": "Lowercase letter (En)",
-            "number": "Number"
-        }
-    }
+	"accountSettings": {
+		"title": "Account Settings",
+		"fixedComDetails": {
+			"title": "Company Details",
+			"fields": {
+				"compName": "Company Name",
+				"contactName": "Contact Name",
+				"mobile": "Cellphone",
+				"enableTwoFactorAuth": "Enable two factor authentication",
+				"sendMeCode": "Send me a code"
+			},
+			"errors": {
+				"invalidEmail": "Invalid Email",
+				"reqEmail": "Email is required",
+				"invalidMobile": "Invalid Cellphone",
+				"reqMobile": "Cellphone is required",
+				"reqCompName": "Company name is required",
+				"reqContctName": "Contact name is required",
+				"verifyEmail": "Please verify the typed Email",
+				"verifyPhone": "Please verify the typed Phone Number"
+			},
+			"securitySettings": "Security Settings",
+			"btnChangePwd": "Change Password",
+			"btnUpdate": "Update Settings",
+			"btnVerifyEmail": "Verification of email to send",
+			"btnVerifyNumber": "Verification of number to send"
+		},
+		"actDetails": {
+			"title": "Account Details",
+			"fields": {
+				"fromPhoneNumber": "From Phone Number",
+				"unsubSettings": "Unsubscribe Settings",
+				"smsUnsubLink": "Sms Unsubscribe link",
+				"unsubByEmailOrCell": "Unsubscribe by email or cellphone",
+				"unsubByEmailAndCell": "Unsubscribe both, email and cellphone",
+				"regSmsUnsubLink": "Regular sms unsubscribe link",
+				"imdSmsUnsubLink": "sms immediate unsubscribe link (no validation)",
+				"setupWhatsappTier": "Set Up WhatsApp Tier",
+				"checkTier": "Check Your Tier",
+				"tier": "Tier",
+				"tier1": "1,000 messages in 24h",
+				"tier2": "10,000 messages in 24h",
+				"tier3": "100,000 messages in 24h",
+				"tier4": "Unlimited",
+				"exceedLimitMessage": "This campaign is exceeding daily rate limit",
+				"exceedLimitNumberMessage": "Messages left for today: ",
+				"sendRandomlyTo": "Send Randomly to -",
+				"insert": "Insert",
+				"recipientsOutOfTotal": "Recipients out of total",
+				"sendingTier": "Sending Tier:",
+				"exceedLimitMpdalMessage": "You have exceeded your daily rate limit according to your tier",
+				"exceedLimitMpdalTimeMessage": "You will be able to send WhatsApp messages again in",
+				"doYouWantToProceed": "Do you want to proceed ?",
+				"stopSending": "In case the campaign will exceed the daily send limit in the selected date, the system will stop the sending according to the sending tier set in “Account Settings”",
+				"yourResponsibility": "It is your responsibility to validate that the tier is updated in the selected date",
+				"recipientsRequired": "The campaign is exceeding the daily rate limit, please enter a number of random recipients within the limits of your daily rate",
+				"messageLeftToday": "messages left for today.",
+				"messageLeft": "messages left.",
+				"youHave": "you have",
+				"recipientsRangeError": "Please enter a number of random recipients within the limits of your daily rate",
+				"oneMessageLeft": "Only 1 message is left for today"
+			},
+			"btnUpdate": "Update Account Details"
+		},
+		"auth": {
+			"everyDay": "Every Day",
+			"everyTwoWeeks": "Every Two Weeks",
+			"activatedSuccessfuly": "Two factor authentication activated!",
+			"inActivetedSuccessfuly": "Two factor authentication inactivated!",
+			"notSaved": "Two factor authentication was not saved. Please contact support."
+		},
+		"savedSuccessfuly": "Settings successfuly saved!",
+		"2fa": {
+			"addEmail": "Add 2FA Email",
+			"addNumber": "Add 2FA Number",
+			"addToFromEmailToSend": "Do you wish to verify this Email for sending campaigns as well?",
+			"addToFromNumberToSend": "Do you wish to verify this Cellphone number for sending campaigns as well? ",
+			"deleteValueTitle": "Remove Confirmation",
+			"deleteValueDescription": "Are you sure you want to remove this value from Two Factor Authentication's list?",
+			"email": {
+				"firstSlide": {
+					"title": "Verification of Email for Two Factor Authentication",
+					"descirption": "For security reason, we are obliged to make sure that the Email you entered for Two Factor Authentication, is owned by you. This is a one-time process for each submission number."
+				},
+				"successSlide": {
+					"title": ""
+				}
+			},
+			"cellphone": {
+				"firstSlide": {
+					"title": "Verification of Cellphone for Two Factor Authentication",
+					"descirption": "For security reason, we are obliged to make sure that the Cellphone Number you entered for Two Factor Authentication, is owned by you. This is a one-time process for each submission number."
+				},
+				"successSlide": {
+					"title": ""
+				}
+			}
+		},
+		"whatsAppTier": {
+			"tierUpdatedSuccessfully": "Tier saved successfully",
+			"tierUpdatedFailed": "Tier was not saved. Please contact support."
+		}
+	},
+	"billingSettings": {
+		"title": "Billing settings",
+		"titleBillingInfo": "Billing Information",
+		"fields": {
+			"compRegNumber": "Company register number",
+			"invoiceEmail": "Email for invoices",
+			"invoiceLang": "Invoice language",
+			"cardNumber": "Card Number",
+			"expMonth": "Exp Month",
+			"expYear": "Exp Year",
+			"secCode": "Security code",
+			"id": "ID"
+		},
+		"errors": {
+			"invalidCardNum": "Invalid card number",
+			"invalidMonth": "Invalid validity",
+			"invalidYear": "Invalid validity",
+			"invalidCvv": "Invalid CVV",
+			"invalidId": "Invalid ID number"
+		},
+		"btnUpdate": "Update billing",
+		"btnAddCard": "Add credit card"
+	},
+	"changePassword": {
+		"title": "Change Password",
+		"subTitle": "Type the old password, then type the new one",
+		"oldPassword": "Old Password",
+		"newPassword": "New Password",
+		"confirmPassword": "Confirm Password",
+		"error": {
+			"required": "Required field",
+			"notMatch": "Password confirmation doesnt match"
+		},
+		"responses": {
+			"201": "Password has been changed successfuly!",
+			"403": "Incorrect password",
+			"406": "Password cannot be empty!",
+			"407": "Confirmation password is not matched",
+			"408": "The new password must follow the rules",
+			"409": "The new password must be different then the old one!"
+		},
+		"passwordHint": {
+			"title": "The password must contain",
+			"length": "At least 8 characters",
+			"specialChar": "Special character",
+			"upperChar": "Uppercase letter (En)",
+			"lowerChar": "Lowercase letter (En)",
+			"number": "Number"
+		}
+	},
+	"apiSettings": {
+		"title": "API Settings",
+		"exportDirectRemovals": "Export Direct Removals",
+		"mainApiDesc": "<b>Main API</b> - Provides ability to add an email campaign, to manage subscribers and groups from your system.",
+		"directSendApiDesc": "<b>Direct Send API</b> - Direct send provides ability to send email like SMTP server. Most effective for CRM & ERP systems. All reports available only thru API.",
+		"mainApiExplainTitle": "<b><u>Using Web Service to connect to Pulseem:</u></b>",
+		"mainApiExplainDesc": "<p>Allows applications to communicate over the Internet without dependence on operating systems, software or hardware.</p><p style='margin-top: 20px'><b>NEW!</b><span> We have upgraded our API system to be more user-friendly and efficient to use.</span><span> To view the methods and instructions for our new system, follow this</span> <a href='https://ui-api.pulseem.com/swagger/index.html' class='direct-send-link' target='_blank'>link.</a> </p><p style='margin-top: 20px'>If you have any questions, please contact our support team at <a href='tel:03-5240290'>03-5240290</a> or at <a href='mailto:support@pulseem.com'>support@pulseem.com</a>.</p><p style='margin-top: 20px'>*Please note that reports made with the new API will only show the data on campaigns sent through the new system.</p>",
+		"apiAddress": "API Address: ",
+		"reGenerateConfirm": "Creating a new API key will revoke the previous key.<br/>Are you sure you want to create a new API key?",
+		"createNewApiKey": "Regenerate Api Key",
+		"showApiKey": "<p style='direction: ltr'>Show/Hide API Key</p>",
+		"mainApi": "Main API URL Address",
+		"directApi": "Direct Send API URL Address",
+		"noAPIKeyAccess": "In order to start using our API, please contact our support team on <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
+	}
 }

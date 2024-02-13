@@ -3,11 +3,10 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer, Link,
-  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem, InputLabel
+  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, MenuItem
 } from '@material-ui/core';
+import Select from '@mui/material/Select';
 import { TablePagination, DateField } from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
-import ClearIcon from '@material-ui/icons/Clear';
 import ControlPointIcon from '@material-ui/icons/ControlPoint';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import VisibilityIcon from '@material-ui/icons/Visibility';
@@ -16,13 +15,14 @@ import { getNewsletterDirectReport, getArchiveDirectReport } from '../../../redu
 import { reactivateEmail } from '../../../redux/reducers/clientSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { emailStatusToString, emailStatusColor } from '../../../helpers/functions';
+import { EmailStatus } from '../../../helpers/Constants';
+import { ConvertColorStatus, ConvertEmailStatusText, EllipsisText, SourceType } from '../../../helpers/UI/TableText';
 import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
-import { shortStr } from '../../../helpers/StringHelper';
+import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const RenderRow = ({
   classes,
@@ -45,9 +45,9 @@ const RenderRow = ({
       text = `${text.format('DD/MM/YYYY')} ${text.format('LT')}`
     }
     if (dataType === 'status') {
-      text = t(emailStatusToString(data))
+      text = t(ConvertEmailStatusText(`${data}`))
       return (
-        <Typography style={{ color: emailStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+        <Typography style={{ color: ConvertColorStatus(data, SourceType.EMAIL), fontWeight: 600 }}>{text}</Typography>
       )
     }
 
@@ -60,6 +60,7 @@ const RenderRow = ({
     return (
       <TableRow
         key={`expand_${row.ID}`}
+        classes={rowStyle}
         className={clsx(classes.tableRowCollapse, 'directEmailRowCollapse')}>
         <TableCell className={clsx(classes.noPadding, classes.dFlex, classes.fullWidth)}>
           <Collapse in={open} timeout="auto" unmountOnExit className={classes.fullWidth}>
@@ -79,7 +80,7 @@ const RenderRow = ({
                       <Box className={clsx(classes.txtCenter, classes.directPreview)} onClick={() => {
                         window.open(`${actionURL}DirectEmailPreview.aspx?id=${row.SendID}`, '_blank')
                       }}>
-                        <IconButton>
+                        <IconButton style={{paddingTop: 5}}>
                           <VisibilityIcon className={classes.black} />
                         </IconButton>
                         <Typography display='block' align='center' className={classes.mtNeg15}>{t('common.Preview')}</Typography>
@@ -94,7 +95,7 @@ const RenderRow = ({
                   <TableCell align="center" className={clsx(classes.flex1)}>{row.ClickCount}</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1, classes.ellipsisText)}
                     title={row.ExternalRef ? row.ExternalRef : t('report.None')}>
-                    {row.ExternalRef ? shortStr(row.ExternalRef, 25) : t('report.None')
+                    {row.ExternalRef ? EllipsisText(row.ExternalRef, 25) : t('report.None')
                     }</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>
                     {row.Attachments ? row.Attachments.split('##').map((link, index) => {
@@ -205,6 +206,7 @@ const RenderRow = ({
 
 const DirectEmailReportTab = ({
   classes,
+  title,
   dispatch,
   windowSize,
   handleSearchInput = () => null,
@@ -245,7 +247,7 @@ const DirectEmailReportTab = ({
       PageSize: rowsPerPage
     }
     let searchObjects = {};
-    Object.keys(param).map(item => {
+    Object.keys(param).forEach(item => {
       if (param[item]) {
         searchObjects[item] = param[item];
       }
@@ -347,7 +349,7 @@ const DirectEmailReportTab = ({
 
   const renderAdvanceSearch = () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', Recipient = '', Reference = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', Reference = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
 
     return (
       <>
@@ -431,21 +433,25 @@ const DirectEmailReportTab = ({
           />
         </Grid>
         <Grid item>
-          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+          <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
             <Select
+              variant="standard"
               autoWidth
               displayEmpty
-              className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
               value={Status}
-              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
+              IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200,
+                    direction: isRTL ? 'rtl' : 'ltr'
+                  },
+                },
+              }}
             >
-              <MenuItem value="" className={classes.dropDownItem}>
-                {t("common.Status")}
-              </MenuItem>
-              {EmailStatus.map(so => {
-                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
-              })}
+              <MenuItem value="">{t("common.Status")}</MenuItem>
+              {EmailStatus.map(so => <MenuItem key={so.id} value={so.id}>{t(so.value)}</MenuItem>)}
             </Select>
           </FormControl>
         </Grid>
@@ -457,15 +463,13 @@ const DirectEmailReportTab = ({
   const renderSearchLine = () => {
     const { email = false } = isSearching || {};
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
           <Link
@@ -480,13 +484,11 @@ const DirectEmailReportTab = ({
 
         {email ? <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => {
               clearSearch('email');
             }}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid> : null}
@@ -588,7 +590,6 @@ const DirectEmailReportTab = ({
       FromEmail,
       Status
     } = row
-
     return (
       <TableRow
         key={row.ID}
@@ -600,8 +601,8 @@ const DirectEmailReportTab = ({
               {renderNameCell({ SendID, Name, SendDate, UpdateDate, Status, CreatedDate })}
             </Box>
             <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-              <Typography style={{ color: emailStatusColor(Status) }}>
-                {t(emailStatusToString(Status))}
+              <Typography style={{ color: ConvertColorStatus(Status, SourceType.EMAIL) }}>
+                {t(ConvertEmailStatusText(`${Status}`))}
               </Typography>
             </Box>
           </Box>
@@ -638,27 +639,29 @@ const DirectEmailReportTab = ({
     let sortData = directEmailReport && directEmailReport.DirectReport ? directEmailReport.DirectReport : null;
 
     return (
-      <TableBody className={classes.tableDirectRow}>
-        {!sortData || sortData.length === 0 ?
-          <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
-            <Typography>{t("common.NoDataTryFilter")}</Typography>
-          </Box> :
-          sortData.map(row =>
-            windowSize === 'xs' ? renderPhoneRow(row) :
-              <RenderRow
-                windowSize={windowSize}
-                classes={classes}
-                row={row}
-                noborderCell={noborderCell}
-                cellStyle={cellStyle}
-                rowStyle={rowStyle}
-                t={t}
-                isArchive={isArchive}
-                dispatch={dispatch}
-                onRefresh={handleSearch} />
-          )
-        }
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody className={classes.tableDirectRow}>
+          {!sortData || sortData.length === 0 ?
+            <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+              <Typography>{t("common.NoDataTryFilter")}</Typography>
+            </Box> :
+            sortData.map(row =>
+              windowSize === 'xs' ? renderPhoneRow(row) :
+                <RenderRow
+                  windowSize={windowSize}
+                  classes={classes}
+                  row={row}
+                  noborderCell={noborderCell}
+                  cellStyle={cellStyle}
+                  rowStyle={rowStyle}
+                  t={t}
+                  isArchive={isArchive}
+                  dispatch={dispatch}
+                  onRefresh={handleSearch} />
+            )
+          }
+        </TableBody>
+      </Box>
     )
   }
 
@@ -672,8 +675,8 @@ const DirectEmailReportTab = ({
             </Typography>
           </Grid>
         </Grid>
-        <TableContainer className={clsx(classes.borderAround, classes.mt10)}>
-          <Table className={clsx(classes.tableContainer, classes.noborder)} aria-label="collapsible table">
+        <TableContainer className={clsx(classes.tableStyle, classes.mt10)}>
+          <Table className={clsx(classes.tableContainer)} aria-label="collapsible table">
             {windowSize !== 'xs' && renderTableHead()}
             {renderTableBody()}
           </Table>
@@ -686,7 +689,6 @@ const DirectEmailReportTab = ({
     const emailData = (directEmailReport && directEmailReport.TotalRecords) || 1;
     return (
       <TablePagination
-        style={{ flexWrap: 'nowrap' }}
         classes={classes}
         rows={emailData}
         rowsPerPage={rowsPerPage}
@@ -701,7 +703,10 @@ const DirectEmailReportTab = ({
 
   return (
     <>
-      {renderSearchLine()}
+      <Box className={clsx('topSection', classes.mt10)}>
+        <Title Text={title} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderTable()}
       {renderTablePagination()}
       {<TotalSection classes={classes} TotalObject={directEmailReport} callerType="email" />}

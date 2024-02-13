@@ -2,32 +2,36 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControlLabel, Tooltip, Checkbox
 } from '@material-ui/core'
-import Switch from "react-switch";
 import {
-  SearchIcon, ExportIcon
-} from '../../../assets/images/managment/index'
-import {
-  TablePagination, DateField, SearchField
+  TablePagination, DateField
 } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { smsReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { SizeOptionsOfHandHeldDevices, smsReportStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { voidFunction } from '../../../helpers/utils';
-import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import { VoidFunction } from '../../../helpers/Types/common';
+import { SetPageState, GetPageNyName, ClearPageState } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { Title } from '../../../components/managment/Title';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import queryString from 'query-string';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -35,7 +39,8 @@ const SmsReport = ({ classes }) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const from = state?.from || "/";
-  const { language, windowSize, isRTL, accountFeatures } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
+  const { language, windowSize, isRTL } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
   const rowsOptions = [6, 10, 20, 50]
@@ -43,7 +48,7 @@ const SmsReport = ({ classes }) => {
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
   const dispatch = useDispatch()
-  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
+  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
@@ -52,7 +57,9 @@ const SmsReport = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const [smsQuery, setSmsQuery] = useState({ SerachTxt: '', From: priorDate, To: null, ShowTestCampaigns: false, SmsCampaignID: null })
   const [hasRevenue, setHasRevenue] = useState(false);
+  const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
+  const qs = (window.location.search && queryString.parse(window.location.search)) || state;
 
   moment.locale(language)
 
@@ -69,10 +76,15 @@ const SmsReport = ({ classes }) => {
     ClickCountUnique: {
       title: t('common.Unique'),
       href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      onClick: () => window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=unique&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+    },
+    VerifiedCount: {
+      title: t('mainReport.verifiedCount'),
+      href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=verified&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     ClickCount: {
-      title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? t('common.Total') : t('common.Clicks'),
       href: null,
       onClick: null
     },
@@ -82,7 +94,7 @@ const SmsReport = ({ classes }) => {
       onClick: () => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Failed: {
-      title: windowSize === 'xs' ? '' : t("common.failedStatus"),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("common.failedStatus"),
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -92,7 +104,7 @@ const SmsReport = ({ classes }) => {
       })
     },
     Removed: {
-      title: windowSize === 'xs' ? '' : t('mainReport.removed'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.removed'),
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
@@ -106,7 +118,7 @@ const SmsReport = ({ classes }) => {
       onClick: () => window.location = `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
-      title: windowSize === 'xs' ? '' : t('common.DLR'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -117,7 +129,7 @@ const SmsReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      // href: `/react/ClientSearchResult/${id}`,
+      href: `${sitePrefix}ClientSearchResult/${id}`,
       isRevenueCol: true,
       onClick: () => {
         navigate(`${CLIENT_CONSTANTS.BASEURL}/${id}`, {
@@ -138,14 +150,14 @@ const SmsReport = ({ classes }) => {
   useEffect(() => {
     const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
     const pageStateProperty = GetPageNyName('reports/SMSMainReport');
-    let searchData = smsQuery;
+    let searchData = { ...smsQuery, SerachTxt: qs !== null && qs?.name ? qs?.name : smsQuery.SerachTxt, From: qs !== null && qs?.name ? null : priorDate };
     if (queryState && pageStateProperty) {
       if (pageStateProperty.SearchData) {
         searchData = {
           SerachTxt: pageStateProperty.SearchData?.SerachTxt ?? '',
           From: pageStateProperty.SearchData?.From ?? null,
           To: pageStateProperty.SearchData?.To ?? null,
-          ShowTestCampaigns: smsQuery.ShowTestCampaigns ? smsQuery.ShowTestCampaigns : pageStateProperty.SearchData?.ShowTestCampaigns,
+          ShowTestCampaigns: pageStateProperty.SearchData?.ShowTestCampaigns ? pageStateProperty.SearchData?.ShowTestCampaigns : smsQuery.ShowTestCampaigns,
           CampaignID: pageStateProperty.SearchData?.CampaignID ?? null,
         }
         setSearching(true);
@@ -190,7 +202,7 @@ const SmsReport = ({ classes }) => {
   }, [dispatch, smsQuery.ShowTestCampaigns, isSearching]);
 
   useEffect(() => {
-    if (accountFeatures && accountFeatures.includes('42')) {
+    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.REVENUE) > -1) {
       setHasRevenue(true);
     }
   }, [accountFeatures])
@@ -202,6 +214,12 @@ const SmsReport = ({ classes }) => {
     }
     if (!smsGraph)
       getGraph();
+
+    if (!getCookie('SMSReportNotice')) {
+      setDialogType({
+        type: 'featureNotice'
+      })
+    }
   }, [])
 
   const exportColumnHeader = {
@@ -212,9 +230,11 @@ const SmsReport = ({ classes }) => {
     "UpdateDate": t('common.UpdateDate'),
     "SendDate": t('common.SendDate'),
     "ClicksCount": t('mainReport.clickCount'),
+    "VerifiedCount": t('mainReport.verifiedCount'),
     "UniqueClicksCount": t('common.ClicksUnique'),
+    "RealClicks": t('mainReport.verifiedCount'),
     "TotalSendPlan": t('mainReport.totalSendPlan'),
-    "CreditsPerSms": t('mainReport.postCredits'),
+    "CreditsPerSms": `${t('report.Credits')} ${t('mainReport.postCredits')}`,
     "IsResponse": t('mainReport.isResponse'),
     "totalSent": t('report.TotalSent'),
     "success": t('report.success'),
@@ -223,17 +243,7 @@ const SmsReport = ({ classes }) => {
     "replies": t('common.Comments'),
     "futureSends": t('campaigns.FutureSend'),
     "StatusName": t('mainReport.statusName'),
-  }
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('common.SMSReports')}
-        </Typography>
-        <Divider />
-      </>
-    )
+    "Revenue": t('common.revenue')
   }
 
   const clearSearch = () => {
@@ -254,27 +264,54 @@ const SmsReport = ({ classes }) => {
       "PageNumber": page,
       "SearchData": resetSmsQuery
     });
+    ClearPageState('reports/SMSMainReport');
   }
 
   const handleDownloadCsv = async (formatType) => {
     setDialogType(null);
     setLoader(true);
+
     if (hasRevenue)
       exportColumnHeader["Revenue"] = t("common.revenue");
 
-    let orderList = preferredOrder(smsReport, Object.keys(exportColumnHeader));
-    orderList = await statusNumberToString(t, orderList, smsReportStatus);
-    orderList = await formatDateTime(orderList, t);
-    orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-    orderList = await deletePropertyFromArrayObject(orderList, "Status");
-    exportFile({
-      data: orderList,
-      fileName: 'smsReport',
-      exportType: formatType,
-      fields: exportColumnHeader
-    });
-    setLoader(false);
+    const fields = { ...exportColumnHeader };
+
+    const exportOptions = {
+      OrderItems: true,
+      FormatDate: true,
+      ConvertStatusToString: true,
+      IsBoolean: true,
+      BooleanToNumber: true,
+      PropertyToReplace: 'IsResponse',
+      PropertyDefaultReplaceValue: t('common.No'),
+      Statuses: smsReportStatus,
+      Order: Object.keys(fields),
+      DeleteProperties: ["Status"]
+    };
+
+    try {
+      const result = await HandleExportData([...smsReport], exportOptions);
+      delete fields["Status"];
+
+      ExportFile({
+        data: result,
+        fileName: 'smsReport',
+        exportType: formatType,
+        fields: fields
+      });
+    } catch (e) {
+      console.log(e);
+      // dispatch(sendToTeamChannel({
+      //   MethodName: 'handleDownloadCsv',
+      //   ComponentName: 'ArchiveManagement.js',
+      //   Text: e
+      // }));
+    }
+    finally {
+      setLoader(false);
+    }
   }
+
 
   const handleSearch = () => {
     if (smsQuery.SerachTxt === '' && !smsQuery.From && !smsQuery.To) {
@@ -298,28 +335,11 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderSearchSection = () => {
-    if (windowSize === 'xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={smsQuery.SerachTxt}
-          onChange={(e) => {
-            setSmsQuery({
-              ...smsQuery,
-              SerachTxt: e.target.value
-            })
-          }}
-          onClick={() => handleSearch()}
-          placeholder={t('common.CampaignName')}
-        />
-      )
-    }
-
     return (
       <Grid
         container
         spacing={2}
-        className={classes.lineTopMarging}>
+        className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -337,7 +357,7 @@ const SmsReport = ({ classes }) => {
           />
         </Grid>
 
-        {windowSize !== 'xs' ?
+        {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ?
           <Grid item>
             <DateField
               toolbarDisabled={false}
@@ -354,7 +374,7 @@ const SmsReport = ({ classes }) => {
           </Grid>
           : null}
 
-        {windowSize !== 'xs' ?
+        {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ?
           <Grid item>
             <DateField
               toolbarDisabled={false}
@@ -373,7 +393,31 @@ const SmsReport = ({ classes }) => {
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Switch
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+                switchType='ios'
+                classes={classes}
+                checked={smsQuery.ShowTestCampaigns}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx({ [classes.rtlSwitch]: isRTL })}
+                onChange={() => {
+                  const p = GetPageNyName('reports/SMSMainReport');
+                  if (p.SearchData) {
+                    ClearPageState('reports/SMSMainReport');
+                  }
+                  setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns })
+                }}
+              />
+            }
+            label={t('mainReport.locShowTestCampaigns.Text')}
+          />
+          {/* <Switch
             checked={smsQuery.ShowTestCampaigns}
             onColor="#0371ad"
             handleDiameter={20}
@@ -385,28 +429,21 @@ const SmsReport = ({ classes }) => {
             width={40}
             className={clsx({ [classes.rtlSwitch]: isRTL })}
             onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
-          />
-          <Typography style={{ marginInlineStart: 8 }}>
-            {t('mainReport.locShowTestCampaigns.Text')}
-          </Typography>
+          /> */}
         </Grid>
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => handleSearch()}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => clearSearch()}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -417,18 +454,15 @@ const SmsReport = ({ classes }) => {
   const renderManagmentLine = () => {
     const dataLength = smsReport.length;
     return (
-      <Grid container spacing={2} className={classes.linePadding} >
-        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
+              classes.btn, classes.btnRounded,
               smsReport.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialogType('exportFormat')}
-            startIcon={<ExportIcon />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
         </Grid>}
@@ -448,11 +482,11 @@ const SmsReport = ({ classes }) => {
           <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t('campaigns.camapignName')}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.locTotalSendPlan.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.ToalSent")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("common.Clicks")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex3} align='center'>{t("common.Clicks")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.feedback")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("smsReport.credits")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("smsReport.credits")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.DLR")}</TableCell>
           {hasRevenue && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
@@ -461,7 +495,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderNameCell = (row) => {
-    const { CampaignID, Name, SendDate, UpdateDate, Status } = row
+    const { Name, SendDate, UpdateDate, Status } = row
 
     const date = SendDate ? moment(SendDate) : ''
     const udate = UpdateDate ? moment(UpdateDate) : '';
@@ -503,11 +537,11 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}) => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
+    const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
     const isLink = value > 0 && !!onClick;
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
-        onClick={isLink ? onClick : voidFunction}>
+        onClick={isLink ? onClick : VoidFunction}>
         <Typography
           component={'a'}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
@@ -547,6 +581,7 @@ const SmsReport = ({ classes }) => {
       success,
       ClicksCount,
       UniqueClicksCount,
+      RealClicks = 0,
       removed,
       replies,
       CreditsPerSms,
@@ -581,13 +616,37 @@ const SmsReport = ({ classes }) => {
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex2}>
+          className={classes.flex3}>
           <Grid container direction={'row'} className={classes.justifyEvenly}>
             <Grid item className={classes.plr10}>
-              {renderIntData(ClicksCount, 'blue', hrefs.ClickCount)}
+              <Tooltip
+                title={t('mainReport.clickCountTooltip')}
+                arrow
+                placement={'top'}
+                classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black }}
+              >
+                {renderIntData(ClicksCount, 'blue', hrefs.ClickCount)}
+              </Tooltip>
             </Grid>
             <Grid item className={classes.plr10}>
-              {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique)}
+              <Tooltip
+                title={t('mainReport.uniqueClickCountTooltip')}
+                arrow
+                placement={'top'}
+                classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black }}
+              >
+                {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique)}
+              </Tooltip>
+            </Grid>
+            <Grid item className={classes.plr10}>
+              <Tooltip
+                title={t('mainReport.verifiedTooltip')}
+                arrow
+                placement={'top'}
+                classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black }}
+              >
+                {renderIntData(RealClicks, 'blue', hrefs.VerifiedCount)}
+              </Tooltip>
             </Grid>
           </Grid>
         </TableCell>
@@ -612,13 +671,13 @@ const SmsReport = ({ classes }) => {
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex3}>
-          <Grid container direction={'row'} className={classes.justifyEvenly}>
+          className={classes.flex2}>
+          <Grid container direction={'row'} className={classes.justifyEvenly} style={{ flexWrap: 'initial' }}>
             <Grid item className={classes.plr10}>
               {renderIntData(CreditsPerSms, '', { title: t("mainReport.postCredits") })}
             </Grid>
             <Grid item className={clsx(classes.plr10)}>
-              {renderIntData((totalSent * CreditsPerSms), '', { title: t("report.TotalCredits") })}
+              {renderIntData((totalSent * CreditsPerSms), '', { title: t("common.Total") })}
             </Grid>
           </Grid>
         </TableCell>
@@ -646,6 +705,7 @@ const SmsReport = ({ classes }) => {
       UpdateDate,
       ClicksCount,
       UniqueClicksCount,
+      RealClicks = 0,
       removed,
       failure,
       totalSent,
@@ -675,6 +735,9 @@ const SmsReport = ({ classes }) => {
             </Grid>
             <Grid item xs={3}>
               {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique, false)}
+            </Grid>
+            <Grid item xs={3}>
+              {renderIntData(RealClicks, 'blue', hrefs.VerifiedCount, false)}
             </Grid>
           </Grid>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
@@ -740,10 +803,12 @@ const SmsReport = ({ classes }) => {
     if (rowData.length > 0) {
       rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
       return (
-        <TableBody>
-          {rowData
-            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-        </TableBody>
+        <Box className='tableBodyContainer'>
+          <TableBody>
+            {rowData
+              .map(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
+          </TableBody>
+        </Box>
       )
     }
     return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
@@ -756,7 +821,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {windowSize !== 'xs' && renderTableHead()}
+          {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>
@@ -767,7 +832,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={smsReport.length}
+        rows={isSearching && smsReport.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -790,14 +855,72 @@ const SmsReport = ({ classes }) => {
     )
   }
 
+  const getFeatureNoticeDialog = () => {
+    return {
+      title: t("mainReport.SMSReportNote1"),
+      showDivider: true,
+      exitButton: false,
+      content: (
+        <>
+          <Typography className={classes.f18}>
+            {RenderHtml(t("mainReport.SMSReportNote2"))}
+          </Typography>
+          <FormControlLabel
+            label={t("common.doNotShow")}
+            className={classes.pt10}
+            control={
+              <Checkbox
+                color="primary"
+                checked={showNoticeDialog}
+                onClick={() => {
+                  setShowNoticeDialog(!showNoticeDialog)
+                }}
+              />
+            }
+          />
+        </>
+
+      ),
+      onClose: () => { setDialogType(null) },
+      onConfirm: async () => {
+        setDialogType(null);
+        if (showNoticeDialog) {
+          setCookie('SMSReportNotice', showNoticeDialog);
+        }
+      }
+    }
+  }
+  const renderDialog = () => {
+    const { type } = dialogType || {}
+    const dialogContent = {
+      featureNotice: getFeatureNoticeDialog(),
+    }
+    if (dialogContent[type]) {
+      const currentDialog = dialogContent[type] || {}
+      return (
+        dialogType && <BaseDialog
+          classes={classes}
+          open={dialogType}
+          onClose={() => setDialogType(null)}
+          onCancel={() => setDialogType(null)}
+          {...currentDialog}
+        >
+          {currentDialog.content}
+        </BaseDialog>
+      )
+    }
+  }
+
   return (
     <DefaultScreen
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
       currentPage="reports"
       subPage="SmsReport">
-      {renderHeader()}
-      {renderSearchSection()}
+      <Box className={'topSection'}>
+        <Title Text={t('common.SMSReports')} classes={classes} />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
@@ -809,11 +932,13 @@ const SmsReport = ({ classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialogType(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
+      {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={true} />
+      {renderDialog()}
     </DefaultScreen>
   )
 }

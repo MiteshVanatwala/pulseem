@@ -535,7 +535,7 @@
   "columnAdjustment": "Column Adjustment",
   "totalRecipients": "Total Recipients",
   "adjustTitle": "Adjust Title",
-  "reset_manual_upload_notice": "<b>Are you sure you want to cancel?</b> <br/> Clicking \"ok\" will delete the recipients you have entered to the Manual Upload box.",
+  "reset_manual_upload_notice": "<b>Are you sure you want to cancel?</b> <br/> Clicking \"Yes\" will delete the recipients you have entered to the Manual Upload box.",
   "groupNameExists": "Group with the name '#groupName#' already exist.",
   "every": "Every",
   "percent": "Percent",
@@ -577,5 +577,7 @@
   "showTestGroups": "Show Test Groups",
   "smsUnsubscribeMessage": "To unsubscribe click: ##SmsUnsubscribeURL##",
   "englishLetterNotApprovedTitle": "This user is not approved for using English characters for 'Campaign from'.",
-  "englishLetterNotApprovedDescription": "In order to open this option, you must go through a video verification process with our customer support<br/>please contact by phone <a href='tel:03-524-0290'>03-524-0290</a><br/>Or email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+  "englishLetterNotApprovedDescription": "In order to open this option, you must go through a video verification process with our customer support<br/>please contact by phone <a href='tel:03-524-0290'>03-524-0290</a><br/>Or email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+  "hour": "Hour",
+  "hours": "Hours"
 }

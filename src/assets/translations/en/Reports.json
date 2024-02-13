@@ -103,7 +103,16 @@
     "abandoned": "Abandoned",
     "revenueFrmProd": "Revenue From Product",
     "productId": "Product Id",
-    "registrationGuide": "Connect your store to your Pulseem by using our API or using our plugins for Wix / WooCommerce<br/>For support: <a href='tel:035240290'>035240290</a> / <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+    "registrationGuide": "Connect your store to your Pulseem by using our API or using our plugins for Wix / WooCommerce<br/>"
+  },
+  "ResponsesReports": {
+    "title": "Responses Report",
+    "clientFrom": "Client Name (From)",
+    "toNumber": "To Number",
+    "smsStatus": "Sms Status",
+    "replyDate": "Reply Date",
+    "messageContent": "Message Content",
+    "responseId": "Response Id"
   },
   "ArchiveDirectSendReport": "DirectSend Report Archive",
   "Reactivate": "Reactivate / Cancel removal",
@@ -112,10 +121,13 @@
   "filterSearch": "Apply filter",
   "closeFilterSearch": "Close filter",
   "virtualNumber": "Virtual Number",
+  "errorReason": "Error reason",
   "fileName": "File Name",
   "action": "Action",
   "ReadyForDownload": "Ready For Download",
   "InProcess": "In Process",
   "Failed": "Failed",
-  "Completed": "completed" 
+  "Completed": "completed" ,
+  "smsReplies": "SMS Incoming report",
+  "WhatsappBalance": "Whatsapp Balance"
 }

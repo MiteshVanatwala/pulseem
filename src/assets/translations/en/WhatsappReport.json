@@ -1,0 +1,17 @@
+{
+	"report": "WhatsApp Report",
+	"fromDate": "From Date",
+	"toDate": "To Date",
+	"export": "Export File",
+	"campaigns": "Campaigns",
+	"read": "Read",
+	"failed": "Failed",
+	"toSend": "To Send",
+	"sent": "Sent",
+	"clicks": "Clicks",
+	"unique": "Unique",
+	"feedback": "Feedback",
+	"revenue": "Revenue",
+	"WhatsAppCampaign": "WhatsApp Campaign",
+	"cost": "Cost"
+}

@@ -528,7 +528,7 @@
   "columnAdjustment": "התאמת עמודות",
   "totalRecipients": "סה\"כ נמענים",
   "adjustTitle": "התאם כותרת",
-  "reset_manual_upload_notice": "לחיצה על \"אישור\" תמחק את רשימת הנמענים שהזנת לתיבת הנמענים.<br/><b>האם אתה בטוח?</b>",
+  "reset_manual_upload_notice": "<b>בטוחים שברצונכם לבטל את הפעולה?</b><br/>לחיצה על \"כן\" תמחק את הנמענים שהעליתם לתיבת ההעלאה הידנית",
   "groupNameExists": "קבוצה עם השם '#groupName#' כבר קיימת.",
   "every": "כל",
   "percent": "אחוז",
@@ -570,5 +570,7 @@
   "showTestGroups": "הצג קבוצות ניסיון",
   "smsUnsubscribeMessage": "להסרה לחצו: ##SmsUnsubscribeURL##",
   "englishLetterNotApprovedTitle": "חשבון זה אינו מאושר לשימוש בתווים באנגלית ב-'קמפיין מאת'",
-  "englishLetterNotApprovedDescription": "כדי לפתוח אפשרות זו עליך לעבור תהליך אימות בוידאו עם שירות הלקוחות שלנו<br/>אנא פנה אלינו בטלפון <a href='tel:03-524-0290'>03-524-0290</a><br/>או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+  "englishLetterNotApprovedDescription": "כדי לפתוח אפשרות זו עליך לעבור תהליך אימות בוידאו עם שירות הלקוחות שלנו<br/>אנא פנה אלינו בטלפון <a href='tel:03-524-0290'>03-524-0290</a><br/>או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+  "hour": "שעה",
+  "hours": "שעות"
 }

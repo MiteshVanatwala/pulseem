@@ -43,7 +43,7 @@
     "optin": "Optin",
     "approved": "Approved",
     "failed": "Failed",
-    "pending": "Pending" 
+    "pending": "Pending"
   },
   "validation": {
     "notificationName": "Notification Name - Required",
@@ -98,7 +98,7 @@
   "ph_body": "Type text here",
   "ph_chooseImage": "Select Image...",
   "ph_chooseIcon": "Select Icon...",
-  "preview": "Preview:",
+  "preview": "Preview",
   "cancel": "Cancel",
   "back": "Back",
   "saveAndContinue": "Save and Continue",
@@ -149,9 +149,19 @@
   "assigningRecipientsToGroupMessage": "Assigning recipients to a group is done by sending a specific link to the recipients you would like to have in your group. This is done by creating a group name and then adding it to your URL. For example, if your URL is",
   "thenYouWillAdd": "then you will add at the end ?g= and then the name of the group you are creating. The final result will look as follows:",
   "onceYouHaveCreatedTheUrl": "Once you have created this URL, send it to the desired recipients for this group, and once they have agreed to receive notifications, they will be assigned to the specified group.",
-  "sampleUrl": "https://www.pulseem.com?g=GroupName",  
+  "sampleUrl": "https://www.pulseem.com?g=GroupName",
   "duplicatedRecipients": "Duplicated Recipients",
   "activeSubscribers": "Active Subscribers:",
   "arrived": "Arrived",
-  "arrivedTootltip": "The number of Notifications that arrived to your recipients' browsers"
+  "arrivedTootltip": "The number of Notifications that arrived to your recipients' browsers",
+  "fileReadyForDownload": "File <b>\"##FileName##\"</b> is ready for download!",
+  "downloadHere": "Download Here",
+  "recipientsRemoved": "Recipients were successfully removed from <b>\"##Name##\"</b>",
+  "recipientsUploaded": "Recipients were successfully uploaded to <b>\"##Name##\"</b>",
+  "notifyCenterTitle": "Notifications",
+  "noNewNotify": "There are no new notifications",
+  "domainValidation": {
+    "syntaxError": "Domain verification (“##DoaminAddress##”) failed due to mismatch in settings",
+    "mailHeaderError": "The domain verification (“##DoaminAddress##”) failed to verify with the GMAIL servers"
+  }
 }

@@ -1,31 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer,
-  TableCell, Link, FormControl, Select, MenuItem,
-  TableHead, TableRow, TextField, Typography, TableBody, InputLabel
+  TableCell, Link, FormControl, MenuItem,
+  TableHead, TableRow, TextField, Typography, TableBody, FormControlLabel
 } from '@material-ui/core';
+import Select from '@mui/material/Select';
 import {
   TablePagination, DateField
 } from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
-import ClearIcon from '@material-ui/icons/Clear';
-import Switch from "react-switch";
 import moment from 'moment';
 import { getSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/reducers/smsSlice';
 import { reactivateSms } from '../../../redux/reducers/clientSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { SmsStatus } from '../../../helpers/PulseemArrays';
-import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
+import { SmsStatus } from '../../../helpers/Constants';
+import { ConvertSmsStatusText, ConvertColorStatus, SourceType } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import { useSelector } from 'react-redux';
+import { Title } from '../../../components/managment/Title';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const DirectSMSReportTab = ({
   classes,
+  title,
   dispatch,
   windowSize,
   isRTL,
@@ -53,7 +55,7 @@ const DirectSMSReportTab = ({
   const handleSearch = async () => {
     setLoader(true);
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null, ShowContent = false } = sms || {};
+    const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null } = sms || {};
     const param = {
       FromDate,
       ToDate,
@@ -68,7 +70,7 @@ const DirectSMSReportTab = ({
       ShowContent: sms.ShowContent ?? showContent
     }
     let searchObjects = {};
-    Object.keys(param).map(item => {
+    Object.keys(param).forEach(item => {
       if (param[item]) {
         searchObjects[item] = param[item];
       }
@@ -109,9 +111,9 @@ const DirectSMSReportTab = ({
       text = `${text.format('DD/MM/YYYY HH:mm')}`
     }
     if (dataType === 'status') {
-      text = t(smsStatusToString(text));
+      text = t(ConvertSmsStatusText(`${text}`));
       return (
-        <Typography style={{ color: smsStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+        <Typography style={{ color: ConvertColorStatus(data, SourceType.SMS), fontWeight: 600 }}>{text}</Typography>
       )
     }
 
@@ -271,32 +273,25 @@ const DirectSMSReportTab = ({
           />
         </Grid>
         <Grid item>
-          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+          <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
             <Select
+              variant="standard"
               autoWidth
               displayEmpty
-              className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
               value={Status}
-              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'sms')}
+              IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
               MenuProps={{
-                anchorOrigin: {
-                  vertical: "bottom",
-                  horizontal: "left"
+                PaperProps: {
+                  style: {
+                    maxHeight: 200,
+                    direction: isRTL ? 'rtl' : 'ltr'
+                  },
                 },
-                transformOrigin: {
-                  vertical: "top",
-                  horizontal: "left"
-                },
-                getContentAnchorEl: null
               }}
             >
-              <MenuItem value="" className={classes.dropDownItem}>
-                {t("common.Status")}
-              </MenuItem>
-              {SmsStatus.map(so => {
-                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
-              })}
+              <MenuItem value="">{t("common.Status")}</MenuItem>
+              {SmsStatus.map(so => <MenuItem key={so.id} value={so.id}>{t(so.value)}</MenuItem>)}
             </Select>
           </FormControl>
         </Grid>
@@ -307,15 +302,13 @@ const DirectSMSReportTab = ({
   const renderSearchLine = () => {
     const { sms = false } = isSearching || {};
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
           {windowSize !== 'xs' && <Link
@@ -331,13 +324,11 @@ const DirectSMSReportTab = ({
 
         {sms ? <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => {
               clearSearch('sms');
             }}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid> : null}
@@ -345,29 +336,33 @@ const DirectSMSReportTab = ({
     )
   }
 
-  const handleShowContent = async (e) => {
-    await dispatch(setShowContent(e));
-    handleSearchInput(e, 'ShowContent', 'sms');
+  const handleShowContent = async (toggleValue) => {
+    await dispatch(setShowContent(toggleValue));
+    handleSearchInput(toggleValue, 'ShowContent', 'sms');
     handleSearch();
   }
 
   const renderToggleContent = () => {
     return (
-      <Box className={clsx(classes.dFlex, classes.alignItemsCenter, classes.mb20)}>
-        <Switch
-          checked={showContent}
-          onColor="#0371ad"
-          handleDiameter={20}
-          uncheckedIcon={false}
-          checkedIcon={false}
-          boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-          activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-          height={15}
-          width={40}
-          className={clsx({ [classes.rtlSwitch]: isRTL })}
-          onChange={(e) => handleShowContent(e)}
+      <Box className={clsx(classes.dFlex, classes.alignItemsCenter, classes.mb20, classes.mt20)}>
+        <FormControlLabel
+          control={
+            <PulseemSwitch
+              switchType='ios'
+              classes={classes}
+              checked={showContent}
+              onColor="#0371ad"
+              handleDiameter={20}
+              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+              height={15}
+              width={40}
+              className={clsx({ [classes.rtlSwitch]: isRTL })}
+              onChange={(e) => handleShowContent(!showContent)}
+            />
+          }
+          label={t('report.ShowContent')}
         />
-        <Typography>{t('report.ShowContent')}</Typography>
       </Box>
     );
   }
@@ -564,8 +559,8 @@ const DirectSMSReportTab = ({
               {renderNameCell({ PID, DATE, FROM, TO, STATUS })}
             </Box>
             <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-              <Typography style={{ color: smsStatusColor(STATUS) }}>
-                {t(smsStatusToString(STATUS))}
+              <Typography style={{ color: ConvertColorStatus(STATUS, SourceType.SMS) }}>
+                {t(ConvertSmsStatusText(`${STATUS}`))}
               </Typography>
             </Box>
           </Box>
@@ -602,13 +597,15 @@ const DirectSMSReportTab = ({
     let sortData = directSmsReport && directSmsReport.DirectReport ? directSmsReport.DirectReport : null;
 
     return (
-      <TableBody>
-        {!sortData || sortData.length === 0 ? <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
-          <Typography>{t("common.NoDataTryFilter")}</Typography>
-        </Box> :
-          sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)
-        }
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {!sortData || sortData.length === 0 ? <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+            <Typography>{t("common.NoDataTryFilter")}</Typography>
+          </Box> :
+            sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)
+          }
+        </TableBody>
+      </Box>
     )
   }
 
@@ -616,7 +613,7 @@ const DirectSMSReportTab = ({
     return (
       <>
         <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
-          <Grid item className={windowSize === 'xs' ? classes.mt15 : null} style={{ textAlign: isRTL ? 'left' : 'right' }}>
+          <Grid item className={windowSize === 'xs' ? classes.mt15 : null} style={{ textAlign: isRTL ? 'right' : 'left' }}>
             <Typography className={clsx(classes.groupsLable, classes.mb5)}>
               {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
             </Typography>
@@ -625,8 +622,8 @@ const DirectSMSReportTab = ({
             </Typography>
           </Grid>
         </Grid>
-        <TableContainer className={clsx(classes.borderAround, classes.mt10)}>
-          <Table className={clsx(classes.tableContainer, classes.noborder)}>
+        <TableContainer className={clsx(classes.tableStyle, classes.mt10)}>
+          <Table className={clsx(classes.tableContainer)}>
             {windowSize !== 'xs' && renderTableHead()}
             {renderTableBody()}
           </Table>
@@ -653,7 +650,10 @@ const DirectSMSReportTab = ({
 
   return (
     <>
-      {renderSearchLine()}
+      <Box className={clsx('topSection', classes.mt10)}>
+        <Title Text={title} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {windowSize !== 'xs' && renderToggleContent()}
       {renderTable()}
       {renderTablePagination()}

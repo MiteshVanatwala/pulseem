@@ -292,7 +292,8 @@
   },
   "imgSendResource1": {
     "AlternateText": "",
-    "ToolTip": "Send"
+    "ToolTip": "Send",
+    "nonVerifiedDomain": "From Email Domain address is not verified (Adding a new Record in your Domain Management System)"
   },
   "imgSettingsResource1": {
     "AlternateText": "",
@@ -488,7 +489,8 @@
   "newsletters": "Newsletters",
   "newsLetterEditor": {
     "fromName": "From Name",
-    "fromEmail": "From Email",
+    "fromEmail": "<b>From</b> Email",
+    "replyTo": "<b>Reply To</b> Email",
     "campaignSubject": "Campaign Subject",
     "personalization": "Personalization",
     "dontSee_clickHere_mail": "If you do not see this email, click here",
@@ -505,25 +507,106 @@
     "helpTexts": {
       "Name": "Used to identify the campaign in the system. Recipients will not see this name",
       "FromName": "This field is mandatory",
-      "FromEmail": "Only verified emails are allowed,",
+      "FromEmail": "Only verified emails are allowed",
+      "ReplyEmail": "Only verified emails are allowed",
       "clickToVerify": "Click here to verify",
       "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
-      "upload": "The file will appear as an attached file in your mail"
+      "upload": "The file will appear as an attached file in your mail",
+      "newAddress": "new Email",
+      "cellularSupportCaution": "<b>Attention:</b> Adaptive is not supported by all devices & apps",
+      "useFromEmailAsReply": "Use same as From Email"
     },
     "errors": {
+      "campaignWasNotSent": "The campaign was not sent!",
       "invaliApiKey": "Invalid or missing API KEY",
       "fileExtNotAlwd": "File extension not allowed",
       "fileCanNotNull": "File cannot be null",
-      "generalError": "Error Occured",
+      "generalError": "Error Occured, Please contact our costumer support:",
       "campaignName": "Please fill in campaign name",
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",
+      "ReplyEmail": "Please fill Reply To Email",
       "campaignSubject": "Please fill in a campaign subject",
-      "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
-      "CampaignNotFound": "Campaign not found or deleted"
+      "invalidCampaignId": "Invalid campaign ID / not belong to the account",
+      "CampaignNotFound": "Campaign not found or deleted",
+      "missingSendingDate": "Campaign was not saved! Missing Sending Date",
+      "campaignAlreadySent": "The current campaign already sent",
+      "LOCK_SENDING": "This User is locked for sending email campaigns<br/>For further support please contact us ",
+      "UNAUTHORIZED_FROM_EMAIL": "This Email address is not authorized for sending email campaigns<br/>For further support please contact us ",
+      "NO_RECIPIENTS": "You did not select any recipients<br/>Please select recipients and try again",
+      "MONTHLY_RESTRICTIONS": "You have passed your monthly sending restriction<br/>For further support please contact us ",
+      "FIRST_CAMPAIGN_RESTRICTIONS": "Congratulations for sending your first campaign!<br/>Since it’s your first campaign, our team will have to approve it first.<br/>After the approval process is done, the campaign will be sent immediately.",
+      "BULK_ENDED": "Your bulk has ended!<br/>To purchase a new bulk enter your dashboard<br/>Or contact our costumer support:",
+      "MONTHLY_BULK_ENDED": "You monthly bulk has ended!<br/>To purchase a new bulk enter your dashboard",
+      "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+      "FUTURE_DATE_PASSED": "The campaign sending date is passed, Please select future sending date.",
+      "INVALID_CAMPAIGN_ID": "Invalid Campaign ID",
+      "ACCOUNT_RESTRICTED": "This account is restricted<br/>Please contact our sales team to arrange your payments",
+      "SMS_BULK_ENDED_PURCHASE_OPTION": "Your bulk has ended!<br/>You can buy a new SMS package or discard SMS Total Marketing campaign."
     },
-    "success": "Campaign successfully saved"
+    "success": "Campaign successfully saved",
+    "sendSettings": {
+      "optimalSending": "Optimal Sending",
+      "optimalSendingFrom": "Optimal send will start in",
+      "optimalSendCBDesc": "Send the campaign at the optimal time for each customer",
+      "optimalSendCBTooltip": "this process may take up to 24 hours",
+      "segmentation": "Segmentation",
+      "segmCriteria": "Segmentation Criteria",
+      "segmCritCb1": "Send to recipients that opened the Email",
+      "segmCritCb2": "Send to recipients that did not open the Email",
+      "segmCritCb3": "Send to recipients that clicked on links",
+      "segmCritCb4": "Send to recipients that did not click on links",
+      "summarySegmCritCb1": "Recipients that opened the Email",
+      "summarySegmCritCb2": "Recipients that did not open the Email",
+      "summarySegmCritCb3": "Recipients that clicked on links",
+      "summarySegmCritCb4": "Recipients that did not click on links",
+      "summarySegmCritCb5": "Recipients that did not open the Email and did not click on links",
+      "filterInputText": "Don't send to recipients that got Newsletter in last previous days",
+      "insertCampaginName": "Which send settings would you want to duplicate from ##campaignName##?",
+      "emailFilterInput": "Don't send to recipients that received an Email in last previous days",
+      "pendingClients": "Pending clients for approval",
+      "restrictedClients": "Restricted clients",
+      "duplicatedClients": "Duplicated clients",
+      "invalidRecipients": "Invalid email addresses",
+      "specialDateMissing": "Special date missing",
+      "filters": "Filters",
+      "segmentations": "Segmentations",
+      "totalNotToSend": "Total filtered",
+      "DidNotClicked": "Did not open or clicked",
+      "smsMarketing": {
+        "title": "SMS Marketing",
+        "sendTo": "Send To",
+        "everyone": "Everyone",
+        "opened": "Opened",
+        "unOpened": "Unopened",
+        "clicked": "Clicked",
+        "invalid": "Invalid",
+        "fromNumber": "From Number",
+        "sendingDate": "Sending Date",
+        "sendingTime": "Sending Time",
+        "smsMarketingSubTitle": "Send SMS to recipients in selected criteria that received email campaign for complete overall marketing.",
+        "addLinkToCampaign": "Add link to this Email campaign",
+        "addLinkToUpdate": "Add link to update contact"
+      },
+      "errors": {
+        "reqFromNumber": "From Number is required",
+        "reqText": "Text is required",
+        "reqDate": "Date is required",
+        "reqTime": "Time is required",
+        "reqSendTo": "Send to is required",
+        "invalidDate": "Invalid date",
+        "invalidTime": "Invalid time",
+        "enterVerifiedNumber": "Please enter the verified phone number",
+        "selectFutureDate": "Supplementary marketing cannot be sent before the campaign send date. Please select a future date."
+      },
+      "deleted": "Campaign deleted successfully",
+      "send": "Send",
+      "doNotSend": "Do not send",
+      "smsComplementary": "Complementary SMS Marketing",
+      "optimalPulseConflictMessage": "Choosing \"Optimal Send\" will cancel the Pulse send you already set.<br/>Do you wish to proceed?"
+    },
+    "domainVerificationTooltip": "Sending mailings will only be possible from a verified domain.<br/>After setting up the verified domain, you can choose an email address to reply to in the next field."
   },
   "newsLetterMgmt": {
     "emailVerification": {
@@ -544,7 +627,7 @@
         "error1": "Invalid Email",
         "error2": "Email is required",
         "anyProblem": "Did you encounter a problem?",
-        "contactUs": "Contact us at <a href='tel:03-524-0290'>03-524-0290</a> or at <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+        "contactUs": "Contact us at <a href='tel:03-524-0290' style='color:#FF3343'>03-524-0290</a> or at <a href='mailto:support@pulseem.com' style='color:#FF3343'>support@pulseem.com</a>",
         "placeholder": "Enter email"
       },
       "thirdSlide": {
@@ -610,6 +693,11 @@
   "kb": "KB",
   "saveBlock": "Save Block",
   "savedBlocks": "Saved-blocks",
+  "weSent": "We sent!",
+  "campaignIsOnItsWay": "Your campaign is on its way",
   "newsletterSetUp": "Newsletter Set-Up",
-  "lastSaveAt": "Last save at: "
+  "lastSaveAt": "Last save at: ",
+  "skipToEditor": "Skip to Email Editor",
+  "deleteTotalMarketing": "Delete Total Marketing",
+  "deleteTotalMarketingDesc": "<b>Are you sure you want to delete the SMS Marketing campaign?</b><br/>In case you will want to restore the SMS campaign, you will have to set it again"
 }

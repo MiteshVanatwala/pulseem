@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getAccountCards = createAsyncThunk(
   'payment/GetAccountCards', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`Payment/GetAccountCards`);
+      const response = await PulseemReactInstance.get(`Payment/GetAccountCards`);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -14,7 +14,7 @@ export const getAccountCards = createAsyncThunk(
 export const getTranzillaURL = createAsyncThunk(
   'Payment/GetTranzillaURL', async (culture, thunkAPI) => {
     try {
-      const response = await instence.get(`Payment/GetTranzillaURL/${culture}`);
+      const response = await PulseemReactInstance.get(`Payment/GetTranzillaURL/${culture}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -24,7 +24,7 @@ export const getTranzillaURL = createAsyncThunk(
 export const buyPackage = createAsyncThunk(
   'Payment/BuyPackage', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`Payment/BuyPackage`, data);
+      const response = await PulseemReactInstance.post(`Payment/BuyPackage`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -34,7 +34,7 @@ export const buyPackage = createAsyncThunk(
 export const getPaymentURL = createAsyncThunk(
   'Payment/GetPaymentURL', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`Payment/GetPaymentURL`, data);
+      const response = await PulseemReactInstance.post(`Payment/GetPaymentURL`, data);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

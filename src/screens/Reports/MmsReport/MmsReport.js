@@ -1,36 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import {
-    Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
-} from '@material-ui/core'
-import Switch from "react-switch";
-import {
-    SearchIcon, ExportIcon
-} from '../../../assets/images/managment/index'
-import {
-    TablePagination, DateField, SearchField
-} from '../../../components/managment/index'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControlLabel } from '@material-ui/core'
+import { TablePagination, DateField, SearchField } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { CSVLink } from 'react-csv'
 import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { MMSReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { MMSReportStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import DataTable from '../../../components/Table/DataTable';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -40,25 +33,21 @@ const DEFAULT_FILTER = {
 
 const MmsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()
     const [filterValues, setFilterValues] = useState(DEFAULT_FILTER)
     const [filter, setFilter] = useState(false);
     const [page, setPage] = useState(1)
-
     const [filteredResults, setFilteredResults] = useState([])
     const [isDemoSend, setIsDemoSend] = useState(false)
-    const [csvData, setCsvData] = useState('')
-    const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
     const dispatch = useDispatch()
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
-    const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
-    const csvLinkRef = useRef(null)
     const [showLoader, setLoader] = useState(true);
     const [dialogType, setDialog] = useState(null);
 
@@ -76,19 +65,13 @@ const MmsReport = ({ classes }) => {
     useEffect(() => {
         const getMmsData = async () => {
             setLoader(true);
-            await dispatch(getMmsReport(isDemoSend));
+            const mmsResponse  = await dispatch(getMmsReport(isDemoSend));
+            setFilteredResults(mmsResponse?.payload);
             setLoader(false);
             await dispatch(getMmsGraph());
         }
         getMmsData();
-    }, [isDemoSend]);
-
-    useEffect(() => {
-        handleSearch(filterValues);
-    }, [mmsReport])
-
-
-
+    }, [isDemoSend, dispatch]);
 
     //  HANDLERS  //
     const getHrefs = (id) => ({
@@ -152,24 +135,36 @@ const MmsReport = ({ classes }) => {
     const handleDownloadCsv = async (formatType) => {
         setDialog(null);
         setLoader(true);
-        let orderList = preferredOrder(filteredResults, Object.keys(exportColumnHeader));
-        orderList = await statusNumberToString(t, orderList, MMSReportStatus);
-        orderList = await formatDateTime(orderList, t);
-        orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-        orderList = orderList.reduce(
-            (previousValue, currentValue) => {
-                currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
-                return [...previousValue, currentValue]
-            },
-            []
-        );
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            BooleanToNumber: true,
+            ConvertStatusToString: true,
+            PropertyToReplace: 'IsResponse',
+            IsBoolean: true,
+            Statuses: MMSReportStatus,
+            Order: Object.keys(exportColumnHeader)
+        };
+        try {
+            let result = await HandleExportData(filteredResults, exportOptions)
 
-        exportFile({
-            data: orderList,
-            fileName: 'mmsReport',
-            exportType: formatType,
-            fields: exportColumnHeader
-        });
+            result = result.reduce(
+                (previousValue, currentValue) => {
+                    currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
+                    return [...previousValue, currentValue]
+                },
+                []
+            );
+            ExportFile({
+                data: result,
+                fileName: 'mmsReport',
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        }
+        catch (e) {
+            console.error(e);
+        }
         setLoader(false);
     }
 
@@ -227,7 +222,7 @@ const MmsReport = ({ classes }) => {
                         ...filterValues,
                         campaignName: e.target.value
                     })}
-                    onClick={() => handleSearch()}
+                    onClick={() => handleSearch(filterValues)}
                     placeholder={t('common.CampaignName')}
                 />
             )
@@ -237,7 +232,7 @@ const MmsReport = ({ classes }) => {
             <Grid
                 container
                 spacing={2}
-                className={classes.lineTopMarging}>
+                className={clsx(classes.lineTopMarging, 'searchLine')}>
                 <Grid item>
                     <TextField
                         variant='outlined'
@@ -288,33 +283,32 @@ const MmsReport = ({ classes }) => {
                     : null}
 
                 <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Switch
-                        checked={isDemoSend}
-                        onColor="#0371ad"
-                        //onHandleColor="#e6f6ff"
-                        handleDiameter={20}
-                        uncheckedIcon={false}
-                        checkedIcon={false}
-                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                        height={15}
-                        width={40}
-                        className={clsx({ [classes.rtlSwitch]: isRTL })}
-                        onChange={() => { setIsDemoSend(!isDemoSend) }}
+                    <FormControlLabel
+                        control={
+                            <PulseemSwitch
+                                switchType='ios'
+                                classes={classes}
+                                checked={isDemoSend}
+                                onColor="#0371ad"
+                                handleDiameter={20}
+                                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                height={15}
+                                width={40}
+                                className={clsx({ [classes.rtlSwitch]: isRTL })}
+                                onChange={() => { setIsDemoSend(!isDemoSend) }}
+                            />
+                        }
+                        label={t('mainReport.locShowTestCampaigns.Text')}
                     />
-                    <Typography style={{ marginInlineStart: 8 }}>
-                        {t('mainReport.locShowTestCampaigns.Text')}
-                    </Typography>
                 </Grid>
                 <Grid item>
                     <Button
-                        size='large'
-                        variant='contained'
                         onClick={() => {
                             handleSearch(filterValues)
                         }}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}
+                        className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >
                         {t('notifications.buttons.search')}
                     </Button>
@@ -322,8 +316,6 @@ const MmsReport = ({ classes }) => {
                 {
                     filter && <Grid item>
                         <Button
-                            size='large'
-                            variant='contained'
                             onClick={() => {
                                 setFilterValues(DEFAULT_FILTER)
                                 if (filter) {
@@ -331,8 +323,8 @@ const MmsReport = ({ classes }) => {
                                     setFilter(false);
                                 }
                             }}
-                            className={classes.searchButton}
-                            endIcon={<ClearIcon />}>
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
                             {t('common.clear')}
                         </Button>
                     </Grid>
@@ -345,28 +337,18 @@ const MmsReport = ({ classes }) => {
         const dataLength = filteredResults.length;
         return (
             <Grid container spacing={2} className={classes.linePadding} >
-                {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+                {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
-                        variant='contained'
-                        size='medium'
                         className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonGreen,
+                            classes.btn, classes.btnRounded,
                             mmsReport.length > 0 ? null : classes.disabled
                         )}
                         onClick={() => setDialog('exportFormat')}
-                        startIcon={<ExportIcon />}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >
 
                         {t('campaigns.exportFile')}
                     </Button>
-                    <CSVLink
-                        data={csvData}
-                        filename='report.csv'
-                        className='hidden'
-                        ref={csvLinkRef}
-                        target='_blank'
-                    />
                 </Grid>}
                 <Grid item className={classes.groupsLableContainer} >
                     <Typography className={classes.groupsLable}>
@@ -431,20 +413,11 @@ const MmsReport = ({ classes }) => {
 
             </>
         )
-
-        // return <>
-        //     <Typography fullWidth className={clsx(classes.nameEllipsis, classes.fullWidth)} align={align} variant="body1">
-        //         {name}
-        //     </Typography>
-        //     <Typography className={classes.grayTextCell} align={align} variant="body1">
-        //         {date && (moment(date).format('LLL') ?? '')}
-        //     </Typography>
-        // </>
     }
 
     const renderIntData = (value, type, data = {}, clickable = true) => {
         const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick = () => null } = data
-        const innerRef = clickable ? href : '';
+        // const innerRef = clickable ? href : '';
         return (
             <Box style={{ display: 'flex', flexDirection: 'column' }} >
                 {/* <Typography component={innerRef && value > 0 ? 'a' : 'p'} */}
@@ -454,7 +427,7 @@ const MmsReport = ({ classes }) => {
                     //TODO: UnComment OnCLick, Comment Href 
                     className={clsx(classes.middleText, colorTextStyle[type] || '')}
                     target="_blank">
-                    {value && value.toLocaleString() || '0'}
+                    {(value && value.toLocaleString()) || '0'}
                 </Typography>
                 <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
                     {title}
@@ -495,16 +468,12 @@ const MmsReport = ({ classes }) => {
     const renderRow = (row) => {
         const {
             MmsCampaignID,
-            Name,
             Removed,
             Status,
             TotalCredits,
             TotalSent,
-            SendDate,
-            UpdateDate,
             Success,
             FutureSends,
-            TotalSendPlan,
             Failure,
             CreditsPerMms
         } = row
@@ -584,8 +553,6 @@ const MmsReport = ({ classes }) => {
             TotalSent,
             SendDate,
             UpdateDate,
-            FutureSends,
-            TotalSendPlan,
             Failure,
             CreditsPerMms
         } = row
@@ -648,10 +615,12 @@ const MmsReport = ({ classes }) => {
             rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
 
             return (
-                <TableBody>
-                    {rowData
-                        .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-                </TableBody>
+                <Box className='tableBodyContainer'>
+                    <TableBody>
+                        {rowData
+                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+                    </TableBody>
+                </Box>
             )
         }
         return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
@@ -666,11 +635,10 @@ const MmsReport = ({ classes }) => {
             containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="MmsReport">
-            <Typography className={classes.managementTitle}>
-                {t('common.MMSReports')}
-            </Typography>
-            <Divider />
-            {renderFilter()}
+            <Box className={'topSection'}>
+                <Title Text={t('common.MMSReports')} classes={classes} />
+                {renderFilter()}
+            </Box>
             {renderManagmentLine()}
             <DataTable
                 tableContainer={{ className: classes.tableStyle }}
@@ -697,11 +665,11 @@ const MmsReport = ({ classes }) => {
                 onConfirm={(e) => handleDownloadCsv(e)}
                 onCancel={() => setDialog(null)}
                 cookieName={'exportFormat'}
-                defaultValue="xls"
+                defaultValue="xlsx"
                 options={ExportFileTypes}
             />
             <Loader isOpen={showLoader} showBackdrop={true} />
-        </DefaultScreen>
+        </DefaultScreen >
     )
 };
 

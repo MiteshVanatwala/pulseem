@@ -1,26 +1,26 @@
-import clsx from 'clsx';
-import 'moment/locale/he';
-import moment from 'moment';
+import clsx from "clsx";
+import "moment/locale/he";
+import moment from "moment";
 import { HtmlHTMLAttributes, useEffect, useState } from "react";
-import { FormControl, Box, Link, Grid, Button, TextField, makeStyles } from '@material-ui/core'
-import { coreProps } from '../../../model/Core/corePros.types';
-import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { KeyboardDatePicker } from '@material-ui/pickers';
-import { CalendarIcon, SearchIcon } from '../../../assets/images/managment/index'
-import ClearIcon from '@material-ui/icons/Clear';
-import { Autocomplete } from '@mui/material';
+import { FormControl, Box, Link, Grid, Button, TextField, makeStyles } from "@material-ui/core"
+import { coreProps } from "../../../model/Core/corePros.types";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import { KeyboardDatePicker } from "@material-ui/pickers";
+import { CalendarIcon } from "../../../assets/images/managment/index"
+import { Autocomplete } from "@mui/material";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 
 
 const useStyles = makeStyles({
     dBlock: {
-        display: 'block',
-        paddingTop: 5
+    display: "block",
+    paddingTop: 5,
     },
     padding11: {
-        padding: 11
-    }
-})
+    padding: 11,
+  },
+});
 
 type RequestObject = {
     Text: string,
@@ -50,7 +50,7 @@ const SearchLine = ({
     onFilterRequest,
     onSetPage,
     onSetIsSearching,
-    showAutoCompleteForm
+    showAutoCompleteForm = false
 }: SearchObject) => {
     const { t } = useTranslation();
     const localClasses = useStyles();
@@ -124,7 +124,8 @@ const SearchLine = ({
                     <TextField
                         inputProps={{
                             style: {
-                                textAlign: isRTL ? 'right' : 'left'
+                                textAlign: isRTL ? 'right' : 'left',
+                                padding: '13px 0px'
                             }
                         }}
                         type="tel"
@@ -211,7 +212,7 @@ const SearchLine = ({
                         }}
                         value={searchRequest.FromNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
+                        className={clsx(classes.textField, classes.minWidth252, classes.pbt9)}
                         placeholder={t('common.FrmNumber')}
                     />
                 </Grid>
@@ -227,7 +228,7 @@ const SearchLine = ({
                         }}
                         value={searchRequest.ToNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, ToNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
+                        className={clsx(classes.textField, classes.minWidth252, classes.pbt9)}
                         placeholder={t('common.ToNumber')}
                     />
                 </Grid>
@@ -238,7 +239,7 @@ const SearchLine = ({
                         size='small'
                         value={searchRequest.TextMessage}
                         onChange={(e) => setSearchRequest({ ...searchRequest, TextMessage: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
+                        className={clsx(classes.textField, classes.minWidth252, classes.pbt9)}
                         placeholder={t('common.messageContent')}
                     />
                 </Grid>
@@ -266,7 +267,7 @@ const SearchLine = ({
     }
 
     return (
-        <Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.mb15)}>
+        <Grid container spacing={2} className={clsx(classes.mb15, classes.p20)}>
             {showAutoCompleteForm && <Grid item>
                 <FormControl variant="outlined" className={clsx(classes.formControl, classes.smsReplies)} style={{ width: '100%' }}>
                     <Autocomplete
@@ -292,6 +293,7 @@ const SearchLine = ({
                             }
                         }}
                         renderInput={(params) => {
+                            //@ts-ignore
                             return (<TextField
                                 {...params}
                                 onChange={(e: any) => {
@@ -314,7 +316,8 @@ const SearchLine = ({
                                 style={{
                                     width: 240,
                                 }}
-                                variant="outlined" />)
+                                className={clsx(classes.pbt9)}
+                            />)
                         }}
                     />
                 </FormControl>
@@ -325,10 +328,10 @@ const SearchLine = ({
                     size='large'
                     variant='contained'
                     onClick={handleSearch}
-                    className={classes.searchButton}
-                    endIcon={<SearchIcon />}>
-                    {/* @ts-ignore */}
-                    {t('campaigns.btnSearchResource1.Text')}
+          className={clsx(classes.btn, classes.btnRounded)}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+          {/* @ts-ignore */}
+          {t('campaigns.btnSearchResource1.Text')}
                 </Button>
                 {windowSize !== 'xs' && <Link
                     color='initial'
@@ -336,8 +339,7 @@ const SearchLine = ({
                     underline='none'
                     onClick={() => setAdvanceSearch(!advanceSearch)}
                     className={clsx(localClasses.dBlock, classes.dBlock, classes.mt1, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
-                    {/* @ts-ignore */}
-                    {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
+                    {t<string>(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
                 </Link>
                 }
             </Grid>
@@ -348,15 +350,15 @@ const SearchLine = ({
                     onClick={(e) => {
                         handleClearSearchForm(e);
                     }}
-                    className={classes.searchButton}
-                    endIcon={<ClearIcon />}>
-                    {/* @ts-ignore */}
-                    {t('common.clear')}
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+            {/* @ts-ignore */}
+            {t('common.clear')}
                 </Button>
             </Grid>
             }
-        </Grid>
+    </Grid >
     )
-
 }
+
 export default SearchLine;

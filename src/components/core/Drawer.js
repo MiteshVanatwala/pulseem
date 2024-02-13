@@ -7,7 +7,7 @@ import {
 import {useTranslation} from "react-i18next";
 //import {useSelector,useDispatch} from 'react-redux';
 import {ContactIcon,GuidsIcon,LogoutIcon} from '../../assets/images/drawer/index'
-import {getRoutes} from '../../helpers/routes'
+import {getRoutes} from '../../helpers/Routes/routes'
 
 const DrawerItem=({
   item,

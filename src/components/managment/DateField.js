@@ -16,15 +16,17 @@ export const DateField = ({
   onTimeChange,
   placeholder = '',
   isTimePicker = false,
-  buttons = null,
+  buttons,
   ampm = true,
-  maximumDate = undefined,
+  maximumDate,
   timePickerOpen = false,
   rootStyle = null,
-  timeActive = null,
-  dateActive = null,
+  timeActive,
+  dateActive,
   toolbarDisabled = true,
   isRoundedOnMobile = false,
+  datePickerView,
+  openTo,
   ...props
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
@@ -61,26 +63,32 @@ export const DateField = ({
       onChange={date => onTimeChange(date)}
       KeyboardButtonProps={{
         'aria-label': 'change time',
-        className: classes.datePickerButton
+        className: classes.datePickerButton,
       }}
-      cancellabel={buttons && buttons.cancel}
-      oklabel={buttons && buttons.ok}
+      cancellabel={buttons && buttons?.cancel}
+      oklabel={buttons && buttons?.ok}
       ampm={ampm}
       id="timePicker"
       disabled={timeActive}
       onClose={() => setIsTimePickerOpen(false)}
       open={isTimePickerOpen || timePickerOpen}
       onClick={() => setIsTimePickerOpen(true)}
+      helperText={props?.errorMessage}
       InputProps={{
         readOnly: true,
-        style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
+        style: { borderRadius: isRoundedOnMobile === true ? 50 : null, border: props?.errorMessage ? '1px solid #f44336' : null }
       }}
-      autoOk={false}
+      autoOk={true}
       style={{ borderRadius: isRoundedOnMobile === true ? 50 : null }}
     />
   ) :
 
     (<KeyboardDatePicker
+      DialogProps={{
+        style: { direction: isRTL ? 'rtl' : 'ltr' }
+      }}
+      views={datePickerView}
+      openTo={openTo}
       classes={{ root: rootStyle }}
       disableToolbar={toolbarDisabled}
       inputVariant="outlined"
@@ -90,7 +98,7 @@ export const DateField = ({
         { [classes.textFieldPlaceholder]: !value }
       )}
       inputProps={{
-        className: classes.datePickerInput,
+        className: classes.datePickerInput
       }}
       popoverprops={{
         dir: direction[isRTL]
@@ -104,21 +112,26 @@ export const DateField = ({
       initialFocusedDate={moment()}
       value={value}
       onChange={onChange}
+      // InputAdornmentProps={{
+      //   style: {
+      //     maxWidth: isRTL ? 10 : 'auto'
+      //   }
+      // }}
       KeyboardButtonProps={{
         'aria-label': 'change date',
         className: classes.datePickerButton
       }}
-      cancellabel={buttons && buttons.cancel}
-      oklabel={buttons && buttons.ok}
+      cancelLabel={buttons && buttons?.cancel}
+      okLabel={buttons && buttons?.ok}
       id="datePicker"
       maxDate={maximumDate}
       disabled={dateActive}
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
       onClick={() => setIsDatePickerOpen(true)}
-      invalidDateMessage={t("common.invalidDate")}
-      maxDateMessage={t("common.maximalDateRequired")}
-      minDateMessage={t("common.minimalDateRequired")}
+      invalidDateMessage={props?.hideInvalidDateMessage ? '' : t("common.invalidDate")}
+      maxDateMessage={props.errorMessage || t("common.maximalDateRequired")}
+      minDateMessage={props.errorMessage || t("common.minimalDateRequired")}
       InputProps={{
         readOnly: true,
         style: { borderRadius: isRoundedOnMobile === true ? 50 : null }

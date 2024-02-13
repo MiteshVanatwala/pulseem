@@ -1,0 +1,54 @@
+.blue {
+    color: "#1c82b2";
+    stroke: "#1c82b2 !important";
+}
+.blue path {
+    stroke: "#1c82b2 !important";
+}
+.green {
+    color: "#48a148";
+    stroke: "#48a148 !important";
+}
+.green path {
+    stroke: "#48a148 !important";
+}
+.groupText span {
+    font-size: 20px;
+    color: #555;
+    max-width: 70%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.MuiSelect-select.MuiSelect-select {
+    padding-inline-end: 12px;
+}
+
+@media screen and (max-width: 475px) {
+    .groupText {
+        font-size: 15px !important;
+    }
+    .groupText span {
+        font-size: 16px !important;
+        max-width: 60%;
+    }
+    .group-container {
+        padding-left: 10px !important;
+    }
+    .group-container .MuiListItemAvatar-root {
+        min-width: 40px;
+    }
+    .create-new-group {
+        padding-top: 15px;
+    }
+}
+/* .MuiListItemSecondaryAction-root {
+    left: auto;
+    right: 16px;
+}
+
+[dir="rtl"] .MuiListItemSecondaryAction-root {
+    right: auto !important;
+    left: 16px !important;
+} */

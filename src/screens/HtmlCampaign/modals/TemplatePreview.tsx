@@ -22,6 +22,7 @@ const TemplatePreview = ({
   }
 
   return <BaseDialog
+    classes={classes}
     customContainerStyle={classes.beeTemplate}
     contentStyle={classes.beeTemplate}
     open={isOpen}
@@ -30,13 +31,14 @@ const TemplatePreview = ({
       onClose(templateDetails);
     }}
     onClose={onClose}
+    onCancel={onClose}
     reduceTitle
     showDefaultButtons={true}
     title={t('common.Preview')}
     confirmText={t('common.loadTemplate')}
   >
     <Box className={clsx(classes.templateModal)}>
-      {renderHtml(templateDetails.Html)}      
+      {renderHtml(templateDetails.Html)}
     </Box>
   </BaseDialog>
 }

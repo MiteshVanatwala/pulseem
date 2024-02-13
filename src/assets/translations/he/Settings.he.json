@@ -1,127 +1,171 @@
 {
-  "accountSettings": {
-    "title": "הגדרות חשבון",
-    "fixedComDetails": {
-      "title": "פרטי חברה קבועים",
-      "fields": {
-        "compName": "שם החברה",
-        "contactName": "איש קשר/אשת קשר",
-        "mobile": "סלולרי",
-        "enableTwoFactorAuth": "הפעלת אימות דו שלבי",
-        "sendMeCode": "שליחת קוד"
-      },
-      "errors": {
-        "invalidEmail": "אימייל לא תקין",
-        "reqEmail": "אימייל הוא חובה",
-        "invalidMobile": "מספר נייד לא תקין",
-        "reqMobile": "נייד הוא חובה",
-        "reqCompName": "נדרש שם חברה",
-        "reqContctName": "נדרש שם איש קשר",
-        "verifyEmail": "יש לאשר את כתובת המייל שהוזנה",
-        "verifyPhone": "יש לאשר את מספר הנייד שהוזן"
-      },
-      "securitySettings": "הגדרות אבטחת חשבון",
-      "btnChangePwd": "שינוי סיסמא",
-      "btnUpdate": "שמירת הגדרות",
-      "btnVerifyEmail": "אימות כתובת אימייל לשליחה",
-      "btnVerifyNumber": "אימות מספר לשליחה"
-    },
-    "actDetails": {
-      "title": "פרטי חשבון",
-      "fields": {
-        "fromPhoneNumber": "מאת מספר טלפון",
-        "unsubSettings": "אפשרויות הסרת נמענים",
-        "smsUnsubLink": "קישור הסרה SMS",
-        "unsubByEmailOrCell": "הסרה לפי דואר אלקטרוני או סלולרי",
-        "unsubByEmailAndCell": "הסרת דואר אלקטרוני ומספר סלולרי",
-        "regSmsUnsubLink": "קישור הסרה רגיל",
-        "imdSmsUnsubLink": "קישור הסרה מיידי (ללא אימות)"
-      },
-      "btnUpdate": "שמירת פרטים"
-    },
-    "auth": {
-      "everyDay": "כל יום",
-      "everyTwoWeeks": "כל שבועיים",
-      "activatedSuccessfuly": "הפעלת אימות דו-שלבי בוצעה בהצלחה!",
-      "inActivetedSuccessfuly": "כיבוי אימות דו-שלבי בוצעה בהצלחה!",
-      "notSaved": "הפעלת אימות דו שלבי לא נשמרה. אנא פנה לתמיכה."
-    },
-    "savedSuccessfuly": "ההגדרות נשמרו בהצלחה!",
-    "2fa": {
-      "addEmail": "הוסף מייל לאימות דו שלבי",
-      "addNumber": "הוסף מספר לאימות דו שלבי",
-      "addToFromEmailToSend": "האם לאשר אימייל זה גם לשליחת דיוור?",
-      "addToFromNumberToSend": "האם לאשר מספר זה גם לשליחת דיוור?",
-      "deleteValueTitle":"אישור הסרה",
-      "deleteValueDescription": "האם אתה בטוח שברצונך להסיר ערך זה מרשימת האימות הדו שלבי?",
-      "email": {
-        "firstSlide": {
-          "title": "אימות כתובת דוא\"ל לאימות דו שלבי",
-          "descirption": "ברצוננו לוודא שהאימייל שהזנתם לאימות דו שלבי נמצא בבעלותכם. <b>זהו תהליך חד פעמי</b> עבור כל אימייל לאימות דו שלבי."
-        },
-        "successSlide": {
-          "title": "מעתה תוכלו להתחבר למערכת באימות דו שלבי דרך כתובת המייל שאושרה."
-        }
-      },
-      "cellphone": {
-        "firstSlide": {
-          "title": "אימות מספר סלולרי לאימות דו שלבי",
-          "descirption": "ברצוננו לוודא שהמספר הסלולרי שהזנתם לאימות דו שלבי נמצא בבעלותכם.<br/><b>זהו תהליך חד פעמי</b> עבור כל מספר לאימות דו שלבי."
-        },
-        "successSlide": {
-          "title": "מעתה תוכלו להתחבר למערכת באימות דו שלבי דרך מספר הנייד שאושר"
-        }
-      }
-    }
-  },
-  "billingSettings": {
-    "title": "הגדרות פרטי חיוב",
-    "titleBillingInfo": "פרטי חיוב",
-    "fields": {
-      "compRegNumber": "מספר ח.פ.",
-      "invoiceEmail": "דואל לחשבוניות",
-      "invoiceLang": "שפת חשבוניות",
-      "cardNumber": "מס' כרטיס",
-      "expMonth": "תוקף חודש",
-      "expYear": "תוקף שנה",
-      "secCode": "CVV לא תקין",
-      "id": "ת.ז"
-    },
-    "errors": {
-      "invalidCardNum": "מספר כרטיס אשראי לא תקין",
-      "invalidMonth": "תוקף לא תקין",
-      "invalidYear": "תוקף לא תקין",
-      "invalidCvv": "CVV לא תקין",
-      "invalidId": "מספר תעודת זהות לא תקין בצע"
-    },
-    "btnUpdate": "עדכן פרטי חיוב",
-    "btnAddCard": "הוסף כרטיס אשראי"
-  },
-  "changePassword": {
-    "title": "שנה סיסמא",
-    "subTitle": "הזן את הסיסמא הישנה והקלד את הסיסמא החדשה",
-    "oldPassword": "סיסמא ישנה",
-    "newPassword": "סיסמא חדשה",
-    "confirmPassword": "אימות סיסמא",
-    "error": {
-      "required": "שדה חובה",
-      "notMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה"
-    },
-    "responses": {
-      "201": "הסיסמא שונתה בהצלחה!",
-      "403": "סיסמא שגויה",
-      "406": "כל השדות הם שדות חובה!",
-      "407": "סיסמת האימות אינה תואמת לסיסמא החדשה!",
-      "408": "הסיסמא החדשה לא עומדת בכללים הנדרשים!",
-      "409": "הסיסמא החדשה חייבת להיות שונה מהסיסמא הישנה!"
-    },
-    "passwordHint": {
-      "title": "על הסיסמא להכיל",
-      "length": "לפחות 8 תווים",
-      "specialChar": "תו מיוחד",
-      "upperChar": "אות גדולה באנגלית",
-      "lowerChar": "אות קטנה באנגלית",
-      "number": "מספר"
-    }
-  }
+	"accountSettings": {
+		"title": "הגדרות חשבון",
+		"fixedComDetails": {
+			"title": "פרטי חברה קבועים",
+			"fields": {
+				"compName": "שם החברה",
+				"contactName": "איש קשר/אשת קשר",
+				"mobile": "סלולרי",
+				"enableTwoFactorAuth": "הפעלת אימות דו שלבי",
+				"sendMeCode": "שליחת קוד"
+			},
+			"errors": {
+				"invalidEmail": "אימייל לא תקין",
+				"reqEmail": "אימייל הוא חובה",
+				"invalidMobile": "מספר נייד לא תקין",
+				"reqMobile": "נייד הוא חובה",
+				"reqCompName": "נדרש שם חברה",
+				"reqContctName": "נדרש שם איש קשר",
+				"verifyEmail": "יש לאשר את כתובת המייל שהוזנה",
+				"verifyPhone": "יש לאשר את מספר הנייד שהוזן"
+			},
+			"securitySettings": "הגדרות אבטחת חשבון",
+			"btnChangePwd": "שינוי סיסמא",
+			"btnUpdate": "שמירת הגדרות",
+			"btnVerifyEmail": "אימות מייל לשליחה",
+			"btnVerifyNumber": "אימות מספר לשליחה"
+		},
+		"actDetails": {
+			"title": "פרטי חשבון",
+			"fields": {
+				"fromPhoneNumber": "מאת מספר טלפון",
+				"unsubSettings": "אפשרויות הסרת נמענים",
+				"smsUnsubLink": "קישור הסרה SMS",
+				"unsubByEmailOrCell": "הסרה לפי דואר אלקטרוני או סלולרי",
+				"unsubByEmailAndCell": "הסרת דואר אלקטרוני ומספר סלולרי",
+				"regSmsUnsubLink": "קישור הסרה רגיל",
+				"imdSmsUnsubLink": "קישור הסרה מיידי (ללא אימות)",
+				"setupWhatsappTier": "הגדר מדרגת שליחה לוואטסאפ",
+				"checkTier": "בדקו את מגבלת השליחה שלכם",
+				"tier": "מגבלת שליחה",
+				"tier1": "1,000 הודעות ב-24 שעות",
+				"tier2": "10,000 הודעות ב-24 שעות",
+				"tier3": "100,000 הודעות ב-24 שעות",
+				"tier4": "ללא הגבלה",
+				"exceedLimitMessage": "קמפיין זה חורג ממגבלת השליחה היומית",
+				"exceedLimitNumberMessage": "הודעות שנשארו להיום: ",
+				"sendRandomlyTo": "שלח רנדולמית ל-",
+				"insert": "הכנס",
+				"recipientsOutOfTotal": "נמענים מהסך הכולל",
+				"sendingTier": "מדרגת שליחה:",
+				"exceedLimitMpdalMessage": "עברתם את כמות השליחה היומית",
+				"exceedLimitMpdalTimeMessage": "תוכלו לשלוח הודעות וואטסאפ מחדש ב - ",
+				"doYouWantToProceed": "האם ברצונכם להמשיך?",
+				"stopSending": "במידה ותוזהה חריגה מהמגבלה היומית בתאריך השליחה, המערכת תעצור את השליחה בהתאם למדרגת השליחה המוגדרת ב-”הגדרות חשבון”",
+				"yourResponsibility": "באחריותכם לוודא שמדרגת השליחה העדכנית מוגדרת במערכת ביום השליחה",
+				"recipientsRequired": "קמפיין זה חורג ממגבלת השליחה היומית, אנא בחרו מספר של נמענים אקראיים מתוך הקמפיין לפי כמות ההודעות שנשארה לכם",
+				"messageLeftToday": "הודעות להיום",
+				"messageLeft": "הודעות להיום",
+				"youHave": "נשארו לכם",
+				"recipientsRangeError": "אנא בחרו מספר של נמענים אקראיים לפי כמות ההודעות שנשארה לכם",
+				"oneMessageLeft": "רק הודעה אחת נשארה להיום"
+			},
+			"btnUpdate": "שמירת פרטים"
+		},
+		"auth": {
+			"everyDay": "כל יום",
+			"everyTwoWeeks": "כל שבועיים",
+			"activatedSuccessfuly": "הפעלת אימות דו-שלבי בוצעה בהצלחה!",
+			"inActivetedSuccessfuly": "כיבוי אימות דו-שלבי בוצעה בהצלחה!",
+			"notSaved": "הפעלת אימות דו שלבי לא נשמרה. אנא פנה לתמיכה."
+		},
+		"savedSuccessfuly": "ההגדרות נשמרו בהצלחה!",
+		"2fa": {
+			"addEmail": "הוסף מייל לאימות דו שלבי",
+			"addNumber": "הוסף מספר לאימות דו שלבי",
+			"addToFromEmailToSend": "האם לאשר אימייל זה גם לשליחת דיוור?",
+			"addToFromNumberToSend": "האם לאשר מספר זה גם לשליחת דיוור?",
+			"deleteValueTitle": "אישור הסרה",
+			"deleteValueDescription": "האם אתה בטוח שברצונך להסיר ערך זה מרשימת האימות הדו שלבי?",
+			"email": {
+				"firstSlide": {
+					"title": "אימות כתובת דוא\"ל לאימות דו שלבי",
+					"descirption": "ברצוננו לוודא שהאימייל שהזנתם לאימות דו שלבי נמצא בבעלותכם. <b>זהו תהליך חד פעמי</b> עבור כל אימייל לאימות דו שלבי."
+				},
+				"successSlide": {
+					"title": "מעתה תוכלו להתחבר למערכת באימות דו שלבי דרך כתובת המייל שאושרה."
+				}
+			},
+			"cellphone": {
+				"firstSlide": {
+					"title": "אימות מספר סלולרי לאימות דו שלבי",
+					"descirption": "ברצוננו לוודא שהמספר הסלולרי שהזנתם לאימות דו שלבי נמצא בבעלותכם.<br/><b>זהו תהליך חד פעמי</b> עבור כל מספר לאימות דו שלבי."
+				},
+				"successSlide": {
+					"title": "מעתה תוכלו להתחבר למערכת באימות דו שלבי דרך מספר הנייד שאושר"
+				}
+			}
+		},
+		"whatsAppTier": {
+			"tierUpdatedSuccessfully": "מדרגת שליחה נשמרה בהצלחה",
+			"tierUpdatedFailed": "מדרגת שמירה לא נשמרה, אנא פנו לתמיכה"
+		}
+	},
+	"billingSettings": {
+		"title": "הגדרות פרטי חיוב",
+		"titleBillingInfo": "פרטי חיוב",
+		"fields": {
+			"compRegNumber": "מספר ח.פ.",
+			"invoiceEmail": "דואל לחשבוניות",
+			"invoiceLang": "שפת חשבוניות",
+			"cardNumber": "מס' כרטיס",
+			"expMonth": "תוקף חודש",
+			"expYear": "תוקף שנה",
+			"secCode": "CVV לא תקין",
+			"id": "ת.ז"
+		},
+		"errors": {
+			"invalidCardNum": "מספר כרטיס אשראי לא תקין",
+			"invalidMonth": "תוקף לא תקין",
+			"invalidYear": "תוקף לא תקין",
+			"invalidCvv": "CVV לא תקין",
+			"invalidId": "מספר תעודת זהות לא תקין בצע"
+		},
+		"btnUpdate": "עדכן פרטי חיוב",
+		"btnAddCard": "הוסף כרטיס אשראי"
+	},
+	"changePassword": {
+		"title": "שנה סיסמא",
+		"subTitle": "הזן את הסיסמא הישנה והקלד את הסיסמא החדשה",
+		"oldPassword": "סיסמא ישנה",
+		"newPassword": "סיסמא חדשה",
+		"confirmPassword": "אימות סיסמא",
+		"error": {
+			"required": "שדה חובה",
+			"notMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה"
+		},
+		"responses": {
+			"201": "הסיסמא שונתה בהצלחה!",
+			"403": "סיסמא שגויה",
+			"406": "כל השדות הם שדות חובה!",
+			"407": "סיסמת האימות אינה תואמת לסיסמא החדשה!",
+			"408": "הסיסמא החדשה לא עומדת בכללים הנדרשים!",
+			"409": "הסיסמא החדשה חייבת להיות שונה מהסיסמא הישנה!"
+		},
+		"passwordHint": {
+			"title": "על הסיסמא להכיל",
+			"length": "לפחות 8 תווים",
+			"specialChar": "תו מיוחד",
+			"upperChar": "אות גדולה באנגלית",
+			"lowerChar": "אות קטנה באנגלית",
+			"number": "מספר"
+		}
+	},
+	"apiSettings": {
+		"title": "הגדרות API",
+		"exportDirectRemovals": "ייצא הסרות ישירות",
+		"mainApiDesc": "<b>API ראשי</b> - מאפשר להוסיף קמפיין דיוור אלקטרוני, לנהל נמענים וקבוצות מתוך המערכת שלכם.",
+		"directSendApiDesc": "<b>API שליחה ישירה</b> - שליחה ישירה מאפשרת לשלוח דיוורים כמו שרת SMTP. מתאים במיוחד למערכות CRM ו ERP. כל הדוחות מנוהלים באמצעות ה API בלבד.",
+		"mainApiExplainTitle": "<b><u>זהו החיבור שניתן להישתמש על מנת להתממשק למערכת פולסים על ידי שימוש  Web Service וה API:</u></b>",
+		"mainApiExplainDesc": "<p>חיבור זה המאפשר מעבר דו כיווני של מידע בין מערכות פנימיות (כגון: אתרי אינטרנט, קופות, מערכות CRM ועוד...) ולבין פולסים.</p><p style='margin-top: 20px'><b>חדש!</b><br/>שדרגנו את מערכת ה API שלנו כך שהיא תהיה יותר נוחה לשימוש.</span><br/><span>לעיון במתודות והפעולות Web Service במערכת החדשה שלנו, </span> <a href='https://ui-api.pulseem.com/swagger/index.html' class='direct-send-link' target='_blank'>לחצו כאן.</a> </p><p style='margin-top: 20px'>אם יש לכם שאלות, צרו קשר עם צוות התמיכה שלנו בטלפון <a href='tel:03-5240290'>03-5240290</a> או בכתובת האימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>.</p><p style='margin-top: 20px'>לידיעתך, דוחות שנעשו עם ממשק ה- API החדש יציגו את הנתונים רק על קמפיינים שנשלחו דרך המערכת החדשה.</p>",
+		"apiAddress": "כתובת הממשק: ",
+		"apiDirectAddress": "כתובת API לשליחה ישירה: ",
+		"reGenerateConfirm": "יצירת מפתח חדש תבטל את המפתח הקודם.<br/> האם אתה בטוח שברצונך ליצור מפתח חדש?",
+		"createNewApiKey": "<p style='direction: rtl'>צור מפתח API חדש</p>",
+		"showApiKey": "<p style='direction: rtl'>הצג/הסתר מפתח API</p>",
+		"mainApi": "כתובת URL API ראשי",
+		"directApi": "כתובת URL API שליחה ישירה",
+		"noAPIKeyAccess": "על מנת להשתמש ב-API שלנו, אנא פנו לצוות התמיכה שלנו ב <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
+	}
 }

@@ -1,40 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Checkbox, Tooltip
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box, Checkbox, Tooltip, FormControlLabel
 } from '@material-ui/core'
-import Switch from "react-switch";
-import { SearchIcon, ExportIcon, ReportsIcon } from '../../../assets/images/managment/index'
+import { ReportsIcon, GroupRemoval } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, SearchField
 } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { getCookie, setCookie } from '../../../helpers/cookies';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { EmailStatus, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { voidFunction } from '../../../helpers/utils';
+import { VoidFunction } from '../../../helpers/Types/common';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { Title } from '../../../components/managment/Title';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
   const { state } = useLocation();
   const from = state?.from || "/";
 
-  const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -76,7 +80,7 @@ const NewslettersReport = ({ classes }) => {
       }),
     },
     OpenCount: {
-      title: windowSize === 'xs' ? t('common.Total') : t('mainReport.GridButtonColumnResource1.HeaderText'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? t('common.Total') : t('mainReport.GridButtonColumnResource1.HeaderText'),
       href: ``,
       clickable: false
     },
@@ -96,7 +100,7 @@ const NewslettersReport = ({ classes }) => {
       clickable: true
     },
     ClickCount: {
-      title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? t('common.Total') : t('common.Clicks'),
       href: ``,
       clickable: false
     },
@@ -108,7 +112,7 @@ const NewslettersReport = ({ classes }) => {
       // onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
     },
     RemovedClients: {
-      title: windowSize === 'xs' ? '' : t('common.Removed'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('common.Removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -123,7 +127,7 @@ const NewslettersReport = ({ classes }) => {
       }),
     },
     SendError: {
-      title: windowSize === 'xs' ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
       onClick: () => { window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true` }
       // onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -155,7 +159,7 @@ const NewslettersReport = ({ classes }) => {
       clickable: false
     },
     NotOpened: {
-      title: windowSize === 'xs' ? '' : t("mainReport.GridButtonColumnResource3.HeaderText"),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("mainReport.GridButtonColumnResource3.HeaderText"),
       href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -176,7 +180,7 @@ const NewslettersReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/${id}`,
+      href: '',
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -234,7 +238,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   useEffect(() => {
-    if (accountFeatures && accountFeatures.includes('42')) {
+    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.REVENUE) > -1) {
       setHasRevenue(true);
     }
   }, [accountFeatures])
@@ -251,17 +255,6 @@ const NewslettersReport = ({ classes }) => {
     handleSearch();
   }, [newslettersReports, isSearching])
 
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('mainReport.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
-
   const clearSearch = () => {
     setNotificationNameSearch('')
     handleFromDate(null)
@@ -275,39 +268,46 @@ const NewslettersReport = ({ classes }) => {
     setDialog(null)
     if (hasRevenue)
       exportColumnHeader["Revenue"] = t("common.revenue");
-
-    let orderList = [];
+    let listToExport = null;
 
     if (toFileArray.length > 0) {
-      const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
-      orderList = await preferredOrder(fileArray, Object.keys(exportColumnHeader));
-      orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList, t);
-      orderList = await deletePropertyFromArrayObject(orderList, "Status");
-      orderList =
-        exportFile({
-          data: orderList,
-          fileName: 'emailReport',
-          exportType: formatType,
-          fields: exportColumnHeader
-        });
+      listToExport = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
     }
     else {
-      const list = searchResults || newslettersReports;
-      orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
-      orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList, t);
-      orderList = await deletePropertyFromArrayObject(orderList, "Status");
-      exportFile({
-        data: orderList,
-        fileName: 'emailReport',
-        exportType: formatType,
-        fields: exportColumnHeader
-      });
+      listToExport = searchResults || newslettersReports;
     }
 
-    setToFileArray([]);
-    setLoader(false);
+    const fields = { ...exportColumnHeader };
+
+    const exportOptions = {
+      OrderItems: true,
+      FormatDate: true,
+      ConvertStatusToString: true,
+      Statuses: EmailStatus,
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    };
+
+
+    try {
+      const result = await HandleExportData(listToExport, exportOptions);
+      delete fields["Status"];
+
+      ExportFile({
+        data: result,
+        fileName: 'emailReport',
+        exportType: formatType,
+        fields: fields
+      });
+
+      setToFileArray([]);
+      setDialog(null)
+    } catch (error) {
+      console.log(error);
+    }
+    finally {
+      setLoader(false);
+    }
   }
 
 
@@ -339,8 +339,8 @@ const NewslettersReport = ({ classes }) => {
         const lastUpdate = SendDate ?
           moment(SendDate, dateFormat).valueOf()
           : moment(LastEditDate, dateFormat).valueOf()
-        const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-        const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+        const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) || null
+        const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) || null
 
         if (!values)
           return true
@@ -383,29 +383,14 @@ const NewslettersReport = ({ classes }) => {
     }
   }
   const renderSearchSection = () => {
-
-
-    if (windowSize === 'xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={notificationNameSearch}
-          onKeyPress={handleSearchKeyPress}
-          onChange={handleNotificationNameChange}
-          onClick={handleSearch}
-          placeholder={t('common.CampaignName')}
-        />
-      )
-    }
-
     return (
       <Grid
         container
         spacing={2}
-        className={classes.lineTopMarging}>
+        className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
-            variant='outlined'
+            variant="standard"
             size='small'
             value={notificationNameSearch}
             onKeyPress={handleSearchKeyPress}
@@ -441,42 +426,55 @@ const NewslettersReport = ({ classes }) => {
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Switch
-            checked={isDemoSend}
-            onColor="#0371ad"
-            //onHandleColor="#e6f6ff"
-            handleDiameter={20}
-            uncheckedIcon={false}
-            checkedIcon={false}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-            height={15}
-            width={40}
-            className={clsx({ [classes.rtlSwitch]: isRTL })}
-            onChange={() => setIsDemoSend(!isDemoSend)}
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+                switchType='ios'
+                classes={classes}
+                checked={isDemoSend}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+                onChange={() => setIsDemoSend(!isDemoSend)}
+              />
+            }
+            label={t('mainReport.locShowTestCampaigns.Text')}
           />
-          <Typography style={{ marginInlineStart: 8 }}>
-            {t('mainReport.locShowTestCampaigns.Text')}
-          </Typography>
         </Grid>
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
+          </Button>
+        </Grid>}
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid
+          item
+          style={{
+            display: 'flex', flexDirection: 'row', alignItems: 'center', marginInlineStart: 'auto', marginInlineEnd: 45
+          }}>
+          <Button
+            className={clsx(
+              classes.btn,
+              classes.btnRounded
+            )}
+            onClick={() => setDialog('exportFormat')}
+            disabled={isSearching && !searchResults?.length}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+            {t('campaigns.exportFile')}
           </Button>
         </Grid>}
       </Grid>
@@ -486,7 +484,7 @@ const NewslettersReport = ({ classes }) => {
   const renderManagmentLine = () => {
     const dataLength = isSearching ? (searchResults?.length ?? 0) : (newslettersReports?.length ?? 0);
     return (
-      <Grid container spacing={2} className={classes.linePadding}>
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
         {/* {windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
@@ -499,20 +497,6 @@ const NewslettersReport = ({ classes }) => {
             {t('mainReport.compareCampaigns')}
           </Button>
         </Grid>} */}
-        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
-          <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
-              newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
-            )}
-            onClick={() => setDialog('exportFormat')}
-            startIcon={<ExportIcon />}>
-            {t('campaigns.exportFile')}
-          </Button>
-        </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${dataLength} ${t('mms.campaigns')}`}
@@ -526,32 +510,32 @@ const NewslettersReport = ({ classes }) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex4} align='center'>{t('campaigns.camapignName')}</TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.locTotalSendPlan.HeaderText")}</span></TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex3} align='center'></TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen)} align='center'></TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t('campaigns.camapignName')}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.locTotalSendPlan.HeaderText")}</span></TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex3, classes.f16)} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen, classes.f16)} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
-          {hasRevenue && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
+          {hasRevenue && <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.f16)} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
       </TableHead>
     )
   }
 
-  const renderCellIcons = (row) => {
-    const { CampaignID } = row
+  const renderCellIcons = (RowIcon, row, index, mgmtIconProps) => {
 
     return (
-      <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }}>
+      <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }} className={'rowIconContainer'}>
         <ManagmentIcon
           classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
-          icon={ReportsIcon}
-          lable={t('mainReport.locGraph.HeaderText')}
-          href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
+          uIcon={<RowIcon width={18} height={20} className={'rowIcon'} />}
+          // lable={t('mainReport.locGraph.HeaderText')}
+          // href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
+          {...mgmtIconProps}
         />
       </Box>
     )
@@ -567,13 +551,13 @@ const NewslettersReport = ({ classes }) => {
     const showUpdateDate = LastEditDate ? udate.format('L') : '';
     const showTimeUpdate = LastEditDate ? udate.format('LT') : '';
 
-    if (windowSize === 'xs') {
+    if (SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1) {
       return (
         <>
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {Name}
           </Typography>
-          {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
+          {Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           {SendDate !== null && SendDate !== '' ?
             (
               <Typography className={classes.grayTextCell}>
@@ -591,7 +575,7 @@ const NewslettersReport = ({ classes }) => {
     }
     return (
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-        <Grid item className={clsx(windowSize !== 'xs' && classes.w20)}>
+        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && classes.w20)}>
           {isChecked && <Checkbox
             color='primary'
             checked={toFileArray.includes(CampaignID)}
@@ -604,7 +588,7 @@ const NewslettersReport = ({ classes }) => {
             }}
           />}
         </Grid>
-        <Grid item className={clsx(windowSize !== 'xs' && classes.w80)}>
+        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? classes.w80 : '', 'rowTitle')}>
           <Tooltip
             arrow
             title={row.Name}
@@ -642,7 +626,7 @@ const NewslettersReport = ({ classes }) => {
   }
   const renderPercetangeData = (percentage = 0, type, data = {}, clickable = true) => {
     const { title = '', href = '', icon = '', onClick } = data;
-    const innerHref = clickable ? href : '';
+    // const innerHref = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }} >
         {/* <Typography component={innerHref ? 'a' : 'p'} */}
@@ -680,7 +664,7 @@ const NewslettersReport = ({ classes }) => {
         }}>
         <Box className={classes.cellText}
           style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}
-          onClick={isLink ? onClick : voidFunction}>
+          onClick={isLink ? onClick : VoidFunction}>
           <Typography
             // component={clickable && value > 0 ? 'a' : 'p'}
             component={'p'}
@@ -694,17 +678,17 @@ const NewslettersReport = ({ classes }) => {
             className={clsx(classes.middleWrapText, colorTextStyle[type])}>
             {title}
           </Typography>
-        </Box>
-      </Tooltip>
+        </Box >
+      </Tooltip >
     );
   }
 
   const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), onClick, textStyle = null, isRevenueCol = false } = data
+    const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? '' : t("notifications.tblBody.total"), onClick, textStyle = null, isRevenueCol = false } = data
     const isLink = (value > 0 && clickable) || isRevenueCol;
     return (
       <Box className={classes.cellText}
-        onClick={isLink ? onClick : voidFunction}
+        onClick={isLink ? onClick : VoidFunction}
         style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}>
         <Typography component={isLink ? 'a' : 'p'}
           style={{ textDecoration: isLink ? 'underline' : null }}
@@ -722,9 +706,9 @@ const NewslettersReport = ({ classes }) => {
 
   }
   const renderRevenueData = (value, type, data = {}) => {
-    const { href = '', textStyle = null, isRevenueCol = false, onClick = () => null } = data
+    const { textStyle = null, isRevenueCol = false, onClick = () => null } = data
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : voidFunction}>
+      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : VoidFunction}>
         <Typography
           component={'p'}
           style={{ ...textStyle, textDecoration: (value > 0 || (isRevenueCol && value > 0)) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) ? 'pointer' : null }}
@@ -747,7 +731,7 @@ const NewslettersReport = ({ classes }) => {
     )
   }
 
-  const renderRow = (row) => {
+  const renderRow = (row, index) => {
     const {
       CampaignID,
       Name,
@@ -846,26 +830,24 @@ const NewslettersReport = ({ classes }) => {
         <TableCell classes={borderCellStyle}
           align='center'
           className={clsx(classes.flex1, classes.hideOnSmallScreen)}>
-          <ManagmentIcon
-            classes={classes}
-            textClass={classes.lineHeight1point2}
-            uIcon={<div className={clsx(classes.managmentUicon, classes.f25, !RemovedClients || RemovedClients === 0 ? classes.disabled : null)}>
-              {'\uE15D'}
-            </div>}
-            lable={hrefs.RemoveReasons.title}
-            href={hrefs.RemoveReasons.href}
-            onClick={() => {
+          {renderCellIcons(GroupRemoval, row, index, {
+            lable: hrefs.RemoveReasons.title,
+            href: hrefs.RemoveReasons.href,
+            onClick: () => {
               setCookie('newsletterReportlastPage', page)
-            }}
-            disable={!RemovedClients || RemovedClients === 0}
-          />
+            },
+            disable: !RemovedClients || RemovedClients === 0,
+          })}
         </TableCell>
         <TableCell
           component="th"
           scope="row"
           classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
           className={classes.flex1}>
-          {renderCellIcons(row)}
+          {renderCellIcons(ReportsIcon, row, index, {
+            lable: t('mainReport.locGraph.HeaderText'),
+            href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`
+          })}
         </TableCell>
         {hasRevenue && <TableCell
           classes={noBorderCellStyle}
@@ -896,7 +878,7 @@ const NewslettersReport = ({ classes }) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} >
           <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
             {renderNameCell(row)}
           </Box>
@@ -976,23 +958,27 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-
     let rowData = searchResults || newslettersReports;
-    let rpp = parseInt(rowsPerPage)
-    rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
-    return (
-      <TableBody>
-        {rowData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
-    )
+    if (rowData.length > 0) {
+      let rpp = parseInt(rowsPerPage)
+      rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+      return (
+        <TableBody>
+          {rowData
+            .map(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
+        </TableBody>
+      )
+    }
+    return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+      <Typography>{t("common.NoDataTryFilter")}</Typography>
+    </Box>
   }
 
   const renderTable = () => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {windowSize !== 'xs' && renderTableHead()}
+          {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>
@@ -1033,8 +1019,10 @@ const NewslettersReport = ({ classes }) => {
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      {renderHeader()}
-      {renderSearchSection()}
+      <Box className={'topSection'}>
+        <Title Text={t('mainReport.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
@@ -1046,7 +1034,7 @@ const NewslettersReport = ({ classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <Loader isOpen={showLoader} showBackdrop={true} />

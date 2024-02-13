@@ -6,19 +6,17 @@ import {
   Grid,
   Dialog,
   Paper,
-  Divider,
 } from "@material-ui/core";
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
-import useCore from "../../helpers/hooks/Core";
 import { CgClose } from "react-icons/cg";
 import { IoAlertCircleOutline } from "react-icons/io5";
 
 export const BaseDialog = ({
+  classes,
   childrenPadding = true,
   open = true,
   title = "",
@@ -38,7 +36,7 @@ export const BaseDialog = ({
   cancelText = "common.Cancel",
   confirmText = "common.Ok",
   showDefaultButtons = true,
-  exitButton = null,
+  exitButton = true,
   style = undefined,
   maxHeight = "",
   reduceTitle = false,
@@ -50,7 +48,6 @@ export const BaseDialog = ({
     false: "ltr",
   };
 
-  const { classes } = useCore();
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector(
     (state: { core: any }) => state.core
@@ -60,26 +57,21 @@ export const BaseDialog = ({
     onCancel?.();
   };
 
-  const RenderExitButton = () =>
-    exitButton && (
-      <Stack
-        onClick={onExit}
-        className={clsx(classes.dialogExitButton, classes.f20, className, {
-          [classes.dialogExitButtonRTL]: isRTL,
-          [classes.dialogExitButtonLTR]: !isRTL,
-        })}
-        justifyContent="center"
-        alignItems="center"
-        alignSelf="center"
-      >
-        <CgClose />
-      </Stack>
-    );
-
+  const RenderExitButton = () => {
+    return <Stack
+      onClick={onExit}
+      className={clsx(classes.dialogExitButton, classes.f20, className, isRTL ? classes.dialogExitButtonRTL : classes.dialogExitButtonLTR)}
+      justifyContent="center"
+      alignItems="center"
+      alignSelf="center"
+    >
+      <CgClose />
+    </Stack>
+  }
   const RenderTitleDefault = () => (
     <>
       <Typography
-        style={{ textAlign: 'center', marginTop: 15, color: "#000" }}
+        style={{width: '100%'}}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -90,7 +82,6 @@ export const BaseDialog = ({
       >
         {title}
       </Typography>
-      {showDivider && <Divider />}
     </>
   );
 
@@ -106,14 +97,14 @@ export const BaseDialog = ({
       >
         <Grid item>
           <Button
-            variant='contained'
-            size='small'
             disabled={confirmDisabled}
-            onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
+            onClick={(e: React.MouseEvent<Element, MouseEvent>) => onConfirm(e)}
             className={clsx(
-              classes.solidDialogButton,
-              classes.dialogConfirmButton
-            )}>
+              classes.btn,
+              classes.btnRounded,
+              "saveFixedDetails"
+            )}
+          >
             <>{t(confirmText)}</>
           </Button>
         </Grid>
@@ -121,16 +112,14 @@ export const BaseDialog = ({
           <Button
             variant='contained'
             size='small'
-            onClick={(e: React.MouseEvent<HTMLElement>) => {
+            onClick={(e: React.MouseEvent<Element, MouseEvent>) => {
               if (onClose) {
                 onClose();
               }
               return false;
             }}
-            className={clsx(
-              classes.solidDialogButton,
-              classes.dialogCancelButton
-            )}>
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
             <>{t(cancelText)}</>
           </Button>
         </Grid>
@@ -144,12 +133,7 @@ export const BaseDialog = ({
     if (icon === false) return <></>;
     const alertIcon = <IoAlertCircleOutline />;
     return (
-      <Stack
-        className={clsx(classes.dialogIconContainer, {
-          [classes.dialogIconContainerRTL]: isRTL,
-          [classes.dialogIconContainerLTR]: !isRTL,
-        })}
-      >
+      <Stack>
         {icon || alertIcon}
       </Stack>
     );
@@ -158,14 +142,16 @@ export const BaseDialog = ({
   const RenderTopBar = () => {
     return (
       <Stack
-        style={{ width: '100%' }}
         className={clsx(classes.dialogTopBar)}
         direction="row"
         justifyContent={"space-between"}
       >
-        <Stack direction={"row"} style={{ width: '100%' }}>
-          {/* {RenderIcon()} */}
-          <Stack alignSelf="center" style={{ width: '100%' }}>
+        <Stack direction={isRTL ? "row-reverse" : "row"}
+          alignItems={"center"}
+          style={{ alignItems: 'center' }}
+          className={classes.w100}>
+          {RenderIcon()}
+          <Stack alignSelf="center" className="dialogTitle">
             {renderTitle ? renderTitle() : RenderTitleDefault()}
           </Stack>
         </Stack>
@@ -183,7 +169,7 @@ export const BaseDialog = ({
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
               ? "calc(70vh)"
-              : "calc(45vh)",
+              : "calc(65vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}
@@ -209,6 +195,7 @@ export const BaseDialog = ({
 
   return (
     <Dialog
+      disableEnforceFocus
       style={style}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
@@ -221,7 +208,7 @@ export const BaseDialog = ({
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar, className)}>
         {RenderTopBar()}
         {RenderContent()}
-      </Paper>
-    </Dialog>
+      </Paper >
+    </Dialog >
   );
 };

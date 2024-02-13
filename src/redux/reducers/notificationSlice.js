@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getNotificationData = createAsyncThunk(
   'notification/getNotifications', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/getNotifications`);
+      const response = await PulseemReactInstance.get(`notification/getNotifications`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -14,7 +14,7 @@ export const getNotificationData = createAsyncThunk(
 export const getDeletedNotifications = createAsyncThunk(
   'notification/getDeletedNotificationsBySubAccountId', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/getDeletedNotificationsBySubAccountId`);
+      const response = await PulseemReactInstance.get(`notification/getDeletedNotificationsBySubAccountId`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -24,7 +24,7 @@ export const getDeletedNotifications = createAsyncThunk(
 export const restoreNotifications = createAsyncThunk(
   'notification/restoreNotifications', async (IdList, thunkAPI) => {
     try {
-      const response = await instence.post(`notification/restoreNotifications`, { IdList: IdList }
+      const response = await PulseemReactInstance.post(`notification/restoreNotifications`, { IdList: IdList }
       );
       return JSON.parse(response.data)
     } catch (error) {
@@ -35,7 +35,7 @@ export const restoreNotifications = createAsyncThunk(
 export const getNotificationById = createAsyncThunk(
   'notification/getNotificationById', async (id, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/getNotificationById/${id}`);
+      const response = await PulseemReactInstance.get(`notification/getNotificationById/${id}`);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -45,7 +45,7 @@ export const getNotificationById = createAsyncThunk(
 export const getNotificationGroups = createAsyncThunk(
   'notification/getGroupsBySubAccountId/', async (id, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/getGroupsBySubAccountId`);
+      const response = await PulseemReactInstance.get(`notification/getGroupsBySubAccountId`);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -55,7 +55,7 @@ export const getNotificationGroups = createAsyncThunk(
 export const getSettings = createAsyncThunk(
   'notification/GetSettings/', async (id, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/GetSettings/${id}`);
+      const response = await PulseemReactInstance.get(`notification/GetSettings/${id}`);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -65,7 +65,7 @@ export const getSettings = createAsyncThunk(
 export const getUniqueClientsByGroups = createAsyncThunk(
   'notification/GetUniqueClientsByGroups', async (groupIds, thunkAPI) => {
     try {
-      const response = await instence.post(`notification/GetUniqueClientsByGroups`, groupIds
+      const response = await PulseemReactInstance.post(`notification/GetUniqueClientsByGroups`, groupIds
       );
       return JSON.parse(response.data)
     } catch (error) {
@@ -76,7 +76,7 @@ export const getUniqueClientsByGroups = createAsyncThunk(
 export const SendNotification = createAsyncThunk(
   'notification/InsertNotificationBeforeSend', async (model, thunkAPI) => {
     try {
-      const response = await instence.post(`notification/InsertNotificationBeforeSend`, model
+      const response = await PulseemReactInstance.post(`notification/InsertNotificationBeforeSend`, model
       );
       return JSON.parse(response.data)
     } catch (error) {
@@ -86,7 +86,7 @@ export const SendNotification = createAsyncThunk(
 export const saveNotificationSettings = createAsyncThunk(
   'notification/SaveNotificationSettings', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`notification/SaveNotificationSettings`, data);
+      const response = await PulseemReactInstance.post(`notification/SaveNotificationSettings`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -98,7 +98,7 @@ export const saveNotificationSettings = createAsyncThunk(
 export const getNotificationGroupsById = createAsyncThunk(
   'notification/getGroupsByNotificationId', async (id, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/getGroupsByNotificationId/${id}`);
+      const response = await PulseemReactInstance.get(`notification/getGroupsByNotificationId/${id}`);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -108,7 +108,7 @@ export const getNotificationGroupsById = createAsyncThunk(
 export const deleteNotification = createAsyncThunk(
   'notification/deleteNotification', async (id, thunkAPI) => {
     try {
-      const response = await instence.delete(`notification/deleteNotification?id=${id}`);
+      const response = await PulseemReactInstance.delete(`notification/deleteNotification?id=${id}`);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -118,7 +118,7 @@ export const deleteNotification = createAsyncThunk(
 export const duplicateNotification = createAsyncThunk(
   'notification/duplicate', async (id, thunkAPI) => {
     try {
-      const response = await instence.put(`notification/duplicate/${id}`);
+      const response = await PulseemReactInstance.put(`notification/duplicate/${id}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -128,7 +128,7 @@ export const duplicateNotification = createAsyncThunk(
 export const getScriptPath = createAsyncThunk(
   'notification/GetScriptPath', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/GetScriptPath`);
+      const response = await PulseemReactInstance.get(`notification/GetScriptPath`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -138,7 +138,7 @@ export const getScriptPath = createAsyncThunk(
 export const updateScriptPath = createAsyncThunk(
   'notification/SetScriptPath', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`notification/SetScriptPath`, { ScriptPath: data });
+      const response = await PulseemReactInstance.post(`notification/SetScriptPath`, { ScriptPath: data });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -148,7 +148,7 @@ export const updateScriptPath = createAsyncThunk(
 export const getNotificationPublicKey = createAsyncThunk(
   'notification/GetSubAccountPublicKey/', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/GetSubAccountPublicKey/`);
+      const response = await PulseemReactInstance.get(`notification/GetSubAccountPublicKey/`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -158,7 +158,7 @@ export const getNotificationPublicKey = createAsyncThunk(
 export const getSubAccountApiKey = createAsyncThunk(
   'notification/GetSubAccountApiKey/', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/GetSubAccountApiKey/`);
+      const response = await PulseemReactInstance.get(`notification/GetSubAccountApiKey/`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -168,7 +168,7 @@ export const getSubAccountApiKey = createAsyncThunk(
 export const updateNotification = createAsyncThunk(
   'notification/UpdateNotification/', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`notification/UpdateNotification`, data);
+      const response = await PulseemReactInstance.post(`notification/UpdateNotification`, data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -177,7 +177,7 @@ export const updateNotification = createAsyncThunk(
 export const save = createAsyncThunk(
   'notification/Save/', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`notification/Save`, data);
+      const response = await PulseemReactInstance.post(`notification/Save`, data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -187,7 +187,7 @@ export const save = createAsyncThunk(
 export const getSubAccountRegistrations = createAsyncThunk(
   'notification/GetSubAccountRegistrations/', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`notification/GetSubAccountRegistrations`);
+      const response = await PulseemReactInstance.get(`notification/GetSubAccountRegistrations`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -201,7 +201,10 @@ export const notificationSlice = createSlice({
     notificationData: [],
     notificationDeletedData: [],
     notificationDataError: '',
-    notificationById: {}
+    notificationById: {},
+    notificationGroups: null,
+    scriptPath: '',
+    subAccountApiKey: ''
   },
   reducers: {
     setScriptDialog: (state, action) => {
@@ -215,6 +218,15 @@ export const notificationSlice = createSlice({
     })
     builder.addCase(getNotificationData.rejected, (state, action) => {
       state.notificationDataError = action.error.message
+    })
+    builder.addCase(getNotificationGroups.fulfilled, (state, { payload }) => {
+      state.notificationGroups = payload;
+    })
+    builder.addCase(getScriptPath.fulfilled, (state, { payload }) => {
+      state.scriptPath = payload;
+    })
+    builder.addCase(getSubAccountApiKey.fulfilled, (state, { payload }) => {
+      state.subAccountApiKey = payload;
     })
   }
 })

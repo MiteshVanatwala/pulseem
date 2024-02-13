@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api'
-import { apiURL, actionURL, isProdMode } from '../../config/index';
-import { exportFile } from '../../helpers/exportFromJson';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { apiURL } from '../../config/index';
+import { ExportFile } from '../../helpers/Export/ExportFile';
 
 export const getLandingPagesData = createAsyncThunk(
   'landingpages/getLandingPages', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`landingpages/getLandingPages`);
+      const response = await PulseemReactInstance.get(`landingpages/getLandingPages`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -16,7 +16,7 @@ export const getLandingPagesData = createAsyncThunk(
 export const restoreLandingPages = createAsyncThunk(
   'landingpages/restoreLandingPages', async (deletedLandingPages, thunkAPI) => {
     try {
-      const response = await instence.put(`landingpages/restoreLandingPages`, deletedLandingPages);
+      const response = await PulseemReactInstance.put(`landingpages/restoreLandingPages`, deletedLandingPages);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -26,7 +26,7 @@ export const restoreLandingPages = createAsyncThunk(
 export const deleteLandingPage = createAsyncThunk(
   'landingpages/deleteLandingPage', async (id, thunkAPI) => {
     try {
-      const response = await instence.delete(`landingpages/deleteLandingPage/${id}`);
+      const response = await PulseemReactInstance.delete(`landingpages/deleteLandingPage/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -36,7 +36,7 @@ export const deleteLandingPage = createAsyncThunk(
 export const duplicteLandingPage = createAsyncThunk(
   'landingpages/cloneLandingPage', async (id, thunkAPI) => {
     try {
-      const response = await instence.put(`landingpages/cloneLandingPage/${id}`);
+      const response = await PulseemReactInstance.put(`landingpages/cloneLandingPage/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -46,12 +46,8 @@ export const duplicteLandingPage = createAsyncThunk(
 export const downloadReport = createAsyncThunk(
   'report/ExportPurchase/', async ({ ID, Name }, thunkAPI) => {
     try {
-      const response = await instence.get(`${apiURL}/report/ExportPurchase/${ID}`);
-      exportFile({
-        data: JSON.parse(response.data),
-        fileName: 'purchaseReport',
-        exportType: 'xls'
-      });
+      const response = await PulseemReactInstance.get(`${apiURL}/report/ExportPurchase/${ID}`);
+      return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -61,13 +57,8 @@ export const exportSurvey = createAsyncThunk(
   'report/ExportSurvey/', async ({ ID, Name }, thunkAPI) => {
     try {
 
-      const response = await instence.get(`${apiURL}/report/ExportSurvey/${ID}`);
-
-      exportFile({
-        data: JSON.parse(response.data),
-        fileName: 'surveyReport',
-        exportType: 'xls'
-      });
+      const response = await PulseemReactInstance.get(`${apiURL}/report/ExportSurvey/${ID}`);
+      return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

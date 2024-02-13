@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { Grid, Box, Typography, Button } from '@material-ui/core';
 import { FaExclamationCircle } from 'react-icons/fa';

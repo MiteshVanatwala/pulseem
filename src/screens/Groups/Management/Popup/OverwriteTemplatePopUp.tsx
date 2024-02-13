@@ -11,6 +11,7 @@ const OverwriteTemplatePopUp = ({ classes, isOpen = false, onClose }: any) => {
 
     return (
         <BaseDialog
+            classes={classes}
             customContainerStyle={classes}
             open={isOpen}
             title={t("common.notice")}

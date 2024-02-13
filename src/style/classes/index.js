@@ -9,6 +9,7 @@ import { getSmsStyle } from './smsStyles';
 import { getSiteTrackingStyle } from './siteTrackingStyles';
 import { getCampaignEditorStyle } from './campaignEditorStyles';
 import { getGroupStyle } from './groupStyle'
+import { getWhatsappStyle } from './whatsappStyles';
 
 export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
@@ -20,5 +21,6 @@ export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getSmsStyle(windowSize, isRTL, theme),
   ...getSiteTrackingStyle(windowSize, isRTL),
   ...getCampaignEditorStyle(windowSize, isRTL),
-  ...getGroupStyle(windowSize, isRTL, theme)
+  ...getGroupStyle(windowSize, isRTL, theme),
+  ...getWhatsappStyle(windowSize, isRTL, theme)
 }))

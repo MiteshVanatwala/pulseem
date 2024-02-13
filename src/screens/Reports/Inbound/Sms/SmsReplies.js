@@ -6,9 +6,9 @@ import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
-import { exportFile } from '../../../../helpers/exportFromJson';
-import { ClientStatus } from '../../../../helpers/PulseemArrays';
-import { EditIcon, ExportIcon } from '../../../../assets/images/managment/index';
+import { ExportFile } from '../../../../helpers/Export/ExportFile';
+import { ClientStatus } from '../../../../helpers/Constants';
+import { EditIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
 import { TablePagination, ManagmentIcon } from '../../../../components/managment/index';
@@ -16,13 +16,15 @@ import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRa
 import { getSmsReplies, getAccountExtraData, getFinishedCampaigns } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
-import { preferredOrder, formatDateTime, smsStatusNumberToString, replaceNull } from '../../../../helpers/exportHelper';
+import { HandleExportData, ReplaceNull, DeletePropertyFromArrayObject } from '../../../../helpers/Export/ExportHelper';
 import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
 import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { PulseemFeatures } from '../../../../model/PulseemFields/Fields';
 
 
-const SmsReplies = ({ classes, ...other }) => {
+const SmsReplies = ({ classes }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const [page, setPage] = useState(1);
@@ -38,7 +40,8 @@ const SmsReplies = ({ classes, ...other }) => {
     const { ToastMessages } = useSelector(state => state.client);
     const { smsReplies, extraData, finishedCampaigns } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
-    const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+    const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+    const { accountFeatures } = useSelector(state => state.common);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -101,18 +104,15 @@ const SmsReplies = ({ classes, ...other }) => {
         return (
             <>
                 {/* <Divider /> */}
-                <Grid container spacing={2} className={classes.linePadding} >
-                    {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+                <Grid container spacing={2} className={clsx(classes.p20)}>
+                    {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                         <Button
-                            variant='contained'
-                            size='medium'
                             className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonGreen,
-                                smsReplies && smsReplies?.Data?.length > 0 ? null : classes.disabled
+                                classes.btn, classes.btnRounded,
+                                smsReplies?.Data?.length > 0 ? null : classes.disabled
                             )}
                             onClick={() => setDialog('exportFormat')}
-                            startIcon={<ExportIcon />}>
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
                             {t('campaigns.exportFile')}
                         </Button>
                     </Grid>}
@@ -135,23 +135,40 @@ const SmsReplies = ({ classes, ...other }) => {
     const handleDownloadCsv = async (formatType) => {
         setDialog(null);
         setShowLoader(true);
-        let exportData = await dispatch(getSmsReplies({ ...request, IsExport: true }));
-        let orderList = exportData?.payload;
-        orderList = preferredOrder(orderList?.Data, Object.keys(exportColumnHeader));
-        orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
-        orderList = replaceNull(orderList, 'FirstName', '');
-        orderList = replaceNull(orderList, 'LastName', '');
-        orderList = replaceNull(orderList, 'CellPhone', '');
-        orderList = replaceNull(orderList, 'CampaignName', '');
+        let response = await dispatch(getSmsReplies({ ...request, IsExport: true }));
+        let finalData = response?.payload?.Data;
+        finalData = await DeletePropertyFromArrayObject(finalData, ['Status']);
 
-        orderList = await formatDateTime(orderList);
-        exportFile({
-            data: orderList,
-            fileName: `ResponsesReport${id ? '_' + id : ''}`,
-            exportType: formatType,
-            fields: exportColumnHeader
-        });
-        setShowLoader(false)
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusDescription: true,
+            Statuses: ClientStatus.Sms,
+            ReplaceClientStatus: true,
+            ReplaceNull: true,
+            Order: Object.keys(exportColumnHeader)
+        };
+
+        try {
+            let result = await HandleExportData(finalData, exportOptions);
+        
+            result = await ReplaceNull(result, 'FirstName', '');
+            result = await ReplaceNull(result, 'LastName', '');
+            result = await ReplaceNull(result, 'CellPhone', '');
+            result = await ReplaceNull(result, 'CampaignName', '');
+
+            ExportFile({
+                data: result,
+                fileName: `ResponsesReport${id ? '_' + id : ''}`,
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        } catch (e) {
+            console.log(e);
+        }
+        finally {
+            setShowLoader(false);
+        }
     }
 
     const renderTable = () => {
@@ -234,7 +251,7 @@ const SmsReplies = ({ classes, ...other }) => {
                         style={{ width: '100%' }}
                     >
                         <Box className={classes.dFlex}>
-                            <Box style={{ width: '70%', textAlign: isRTL ? 'right' : 'left' }}>
+                            <Box style={{ width: '70%' }}>
                                 <Typography className={classes.font18}>{CellPhone}</Typography>
                                 <Typography className={clsx(classes.font14, classes.ellipsisText)}
                                     title={`${FirstName} ${LastName}`}
@@ -245,7 +262,7 @@ const SmsReplies = ({ classes, ...other }) => {
                                     disableHover={true}
                                     key='edit'
                                     classes={classes}
-                                    icon={EditIcon}
+                                    uIcon={<EditIcon width={18} height={20} className={'editIcon'} />}
                                     iconClass={clsx(classes.smallIcon)}
                                     rootClass={classes.paddingIcon}
                                     onClick={async () => {
@@ -403,11 +420,13 @@ const SmsReplies = ({ classes, ...other }) => {
             case 200: {
                 actions?.S_200?.Func?.();
                 actions?.S_200?.message && setToastMessage(actions?.S_200?.message);
+                setDialog(null);
                 break;
             }
             case 201: {
                 actions?.S_201?.Func?.();
                 actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
+                setDialog(null);
                 break;
             }
             case 400: {
@@ -458,15 +477,23 @@ const SmsReplies = ({ classes, ...other }) => {
 
 
     return (
-        <Box>
-            {renderHeader()}
-            <SearchLine
-                classes={classes}
-                onSetPage={(val) => setPage(val)}
-                onFilterRequest={(val) => setRequest({ ...request, ...val })}
-                onSetIsSearching={(val) => setIsSearching(val)}
-                showAutoCompleteForm={true}
-            />
+        <Box className={classes.p20}>
+            {/* <Box className={'topSection'}> */}
+            {/* {renderHeader()} */}
+            <Grid container>
+                <Grid item>
+                    <SearchLine
+                        classes={classes}
+                        onSetPage={(val) => setPage(val)}
+                        onFilterRequest={(val) => setRequest({ ...request, ...val })}
+                        onSetIsSearching={(val) => setIsSearching(val)}
+                        showAutoCompleteForm={true}
+                    />
+                </Grid>
+                <Grid item>{renderHeader()}</Grid>
+            </Grid>
+
+            {/* </Box> */}
             {renderTable()}
             {renderTablePagination()}
             {showDialog()}
@@ -478,11 +505,11 @@ const SmsReplies = ({ classes, ...other }) => {
                 onConfirm={(e) => handleDownloadCsv(e)}
                 onCancel={() => setDialog(null)}
                 cookieName={'exportFormat'}
-                defaultValue="xls"
+                defaultValue="xlsx"
                 options={ExportFileTypes}
             />
             <Loader isOpen={showLoader} showBackdrop={true} />
-        </Box>
+        </Box >
     )
 }
 

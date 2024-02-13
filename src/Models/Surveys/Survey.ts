@@ -1,0 +1,41 @@
+﻿import { SurveysData } from './SurveysData';
+import { SurveysToGroup } from './SurveysToGroup';
+import { SurveysToClient } from './SurveysToClient';
+import { SurveysStatistic } from './SurveysStatistic';
+
+export interface Survey {
+    ID: number;
+    SubAccountID: number;
+    SurveyName: string;
+    SurveyUrl: string;
+    SurveyType: number;
+    ResultType: number;
+    ResultData: string;
+    IsResponsive: boolean;
+    OfflineDate: Date | string | null;
+    OfflineUrl: string;
+    SubmissionLimit: number | null;
+    DoubleOptin: boolean | null;
+    HtmlToEdit: string;
+    HtmlFile: string;
+    Status: number;
+    BaseLanguage: number;
+    EmailsToReport: string;
+    FacebookPageID: string;
+    FacebookPrefunPage: boolean | null;
+    FacebookPrefunImage: string;
+    FacebookComments: boolean | null;
+    ClientJavaScript: string;
+    ClientHtmlCode: string;
+    ClientCssStyle: string;
+    PageTitle: string;
+    MetaDescription: string;
+    MetaKeywords: string;
+    GoogleAnalyticsCode: string;
+    IsTemplate: boolean | null;
+    CategoryID: number | null;
+    SurveysToGroups: SurveysToGroup[];
+    SurveysToClients: SurveysToClient[];
+    SurveysStatistics: SurveysStatistic[];
+    SurveysDatas: SurveysData[];
+}

@@ -22,6 +22,7 @@ import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import Toast from '../Toast/Toast.component';
 import { GalleryImages } from './GalleryImages'
 import { GalleryDocuments } from './GalleryDocuments'
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const Gallery = ({
     classes,
@@ -29,7 +30,7 @@ const Gallery = ({
     callbackSelectFile,
     folderType = PulseemFolderType.CLIENT_IMAGES,
     multiSelect = false,
-    selected = [],
+    selected,
     forceReload = false }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -71,7 +72,7 @@ const Gallery = ({
             const tmpFolders = [];
             f.forEach((folder, index) => {
                 const folderFiles = [...gallery[folder]];
-                const folderName = index === 0 ? "main" : folder.split("\\")[1];
+                const folderName = index === 0 ? "main" : folder;
                 var files = folderFiles.sort((a, b) => {
                     return new Date(b?.CreatedDate) - new Date(a?.CreatedDate);
                 });
@@ -82,7 +83,7 @@ const Gallery = ({
     }, [gallery])
 
     useEffect(() => {
-        initGallery();
+        initGallery(true);
     }, [])
 
     const useTreeItemStyles = makeStyles((theme) => ({
@@ -129,6 +130,16 @@ const Gallery = ({
             marginRight: theme.spacing(1),
             backgroundColor: 'transparent'
         },
+        labelSubIcon: {
+            color: '#0371ad',
+            marginRight: theme.spacing(1),
+            backgroundColor: 'transparent'
+        },
+        labelLastIcon: {
+            color: '#3498DB',
+            marginRight: theme.spacing(1),
+            backgroundColor: 'transparent'
+        },
         labelText: {
             fontWeight: 'inherit',
             flexGrow: 1
@@ -153,7 +164,7 @@ const Gallery = ({
                             <StyledTreeItem
                                 title={f.FolderName === "main" ? (isRTL ? "ראשי" : "Main") : f.FolderName}
                                 key={`k_${index}`}
-                                style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                                style={{ direction: isRTL ? 'rtl' : 'ltr', paddingInlineStart: f.FolderName.split('\\').length * 7 }}
                                 nodeId={`k_${index}`}
                                 labelText={`${f.FolderName === "main" ? (isRTL ? "ראשי" : "Main") : f.FolderName} (${f.files ? f.files.length : 0})`}
                                 labelIcon={FolderIcon}
@@ -175,13 +186,13 @@ const Gallery = ({
     const handleSelectFile = (fileUrl, fileIndex) => () => {
         setSelectedFile(multiSelect ?
             (
-                selectedFile.indexOf(fileIndex) == -1 ?
+                selectedFile?.indexOf(fileIndex) === -1 ?
                     [...selectedFile, fileIndex] : selectedFile.filter(obj => obj !== fileIndex)
             )
             : fileIndex);
         setSelectedFileURL(multiSelect ?
             (
-                selectedFileURL.indexOf(fileUrl) == -1 ?
+                selectedFileURL?.indexOf(fileUrl) === -1 ?
                     [...selectedFileURL, fileUrl] : selectedFileURL.filter(obj => obj !== fileUrl)
             )
             : fileUrl);
@@ -192,6 +203,7 @@ const Gallery = ({
             // callbackSelectFile(encodeURI(selectedFileURL));
             callbackSelectFile(multiSelect ? selectedFileURL.join(',') : selectedFileURL);
         }
+
     }, [isConfirm])
 
     const [referenceNode, setReferenceNode] = useState();
@@ -225,7 +237,7 @@ const Gallery = ({
             <TreeItem
                 label={
                     <div className={classes.labelRoot}>
-                        <LabelIcon color="inherit" className={classes.labelIcon} />
+                        <LabelIcon className={other?.title.split('\\').length > 2 ? classes.labelLastIcon : other?.title.split('\\').length === 2 ? classes.labelSubIcon : classes.labelIcon} />
                         <Typography variant="body2" className={classes.labelText}>
                             {labelText}
                         </Typography>
@@ -254,6 +266,7 @@ const Gallery = ({
         bgColor: PropTypes.string,
         color: PropTypes.string,
         labelIcon: PropTypes.elementType.isRequired,
+        labelSubIcon: PropTypes.elementType.isRequired,
         labelInfo: PropTypes.string,
         labelText: PropTypes.string.isRequired,
     };
@@ -281,13 +294,11 @@ const Gallery = ({
         return (
             <Box>
                 {!folderCreationState && <Button
-                    variant='contained'
-                    size='medium'
                     className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightBlue,
-                        classes.backButton
+                        classes.btn,
+                        classes.btnRounded
                     )}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     color="primary"
                     onClick={handleCreateFolderRow}>
                     {t('common.createFolder')}

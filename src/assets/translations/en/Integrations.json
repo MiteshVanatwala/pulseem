@@ -1,0 +1,58 @@
+{
+  "title": "Integrations",
+  "purchase": "Purchase",
+  "cartAbandonment": "Cart Abandonment",
+  "authResponses": {
+    "201": "Authentication Success",
+    "400": "The store is related to another account",
+    "403": "Invalid API key or access token (unrecognized login or wrong password)",
+    "404": "Authentication Failed!"
+  },
+  "resetConfirmation": "Are you sure you want to reset authentication?",
+  "selectGroup": "Select any group",
+  "formSubmitResponses": {
+    "201": "Group has been saved."
+  },
+  "connectStore": "Connect Store",
+  "disconnectStore": "Disconnect Store",
+  "apiKey": "API key",
+  "shopify": {
+    "title": "Shopify",
+    "authentication": "Authentication",
+    "apiAccessToken": "API Access Token",
+    "shopifyURL": "Store Name",
+    "siteSignUp": "Site Sign Up",
+    "settingsSaved": "Settings saved",
+    "connectionFail": "Can not connect with Shopify, please verify all the details are correct.",
+    "insertClientToGroup": "Insert client to groups",
+    "insertToken": "Insert the one-time API token you received when creating the application",
+    "insertAPIKey": "Insert the API key you received after creating the application",
+    "insertShopifyURL": "Insert your store Name / ID",
+    "authenticate": "Authenticate",
+    "enterShopifyUrl": "Enter valid Shopify URL",
+    "enterAPIKey": "Enter API Key",
+    "enterAPIVersion": "Enter API Version",
+    "enterAccessToken": "Enter Access Token",
+    "reset": "Reset",
+    "showCredentials": "Show Credentials",
+    "hideCredentials": "Hide Credentials",
+    "apiVersion": "Webhook Verison",
+    "apiVersionDesc": "Check your Webhook version in \"Configuration\" tab"
+  },
+  "wooCommerce": {
+    "title": "WooCommerce",
+    "description": "In order to integrate your WooCommerce store to your Pulseem account please read the following guide:",
+    "connectStore": "Connect your WooCommerce Store"
+  },
+  "cashCow": {
+    "title": "CashCow",
+    "description": "In order to integrate your Cashcow store to your Pulseem account please read the following guide:",
+    "connectStore": "Connect your CashCow Store"
+  },
+  "Istores": {
+    "title": "Istores",
+    "subTitle": "Insert your Istores API key",
+    "storeID": "Store ID",
+    "storeIDDesc": "Insert store ID"
+  }
+}

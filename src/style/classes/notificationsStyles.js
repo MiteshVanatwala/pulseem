@@ -189,7 +189,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
             width: '100%'
         },
         '& .MuiDialog-paperWidthSm': {
-            width: '100%'
+            width: '100%',
+            maxWidth: '960px !important'
         },
         '& [role="tabpanel"]': {
             width: mobileNotificationSize[windowSize],
@@ -206,14 +207,11 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         alignContent: 'center'
     },
     dashed: {
-        border: '1px dashed #64a1bd'
+        border: '1px dashed #ff3343'
     },
     notificationTop: {
         justifyItems: 'flex-start',
         boxSizing: 'border-box'
-    },
-    textField: {
-        width: '100%'
     },
     flex: {
         width: '100%',
@@ -303,7 +301,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         }
     },
     notificationTitle: {
-
+        width: 'auto !important',
+        background: '#F0F5FF',
+        padding: `5px`,
+        fontFamily: 'Assistant'
     },
     notificationText: {
         marginTop: '5px',
@@ -327,9 +328,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginBottom: '0px'
     },
     deviceSelectorPanel: {
-        maxWidth: '200px',
+        maxWidth: 'calc(100% - 10px)',
         backgroundColor: 'transparent',
-        boxShadow: 'none'
+        boxShadow: 'none !important'
     },
     deviceSelector: {
         minWidth: 'unset !important'
@@ -368,7 +369,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         minHeight: windowSize !== 'xs' ? 415 : 305,
         position: 'relative',
         maxWidth: 450,
-        width: 450
+        // width: 450
+        width: '100%'
     },
     mobileFullBG: {
         backgroundImage: `url(${mobileFullBg})!important`,
@@ -398,12 +400,13 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     bubblePaper: {
         overflowX: 'unset!important',
         textAlign: isRTL ? 'right' : 'left',
-        borderRadius: 20,
+        borderRadius: '20px !important',
         height: '100%',
         padding: '10px 15px',
         position: 'relative',
         width: bubble.paper.width[windowSize],
-        backgroundColor: '#63bbfa',
+        boxShadow: 'none !important',
+        backgroundColor: '#63bbfa !important',
         '&::after': {
             content: `''`,
             position: 'absolute',
@@ -493,7 +496,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         overflow: 'hidden'
     },
     searchInput: {
-        width: '100%',
+        width: '95%',
         paddingRight: 15,
         paddingLeft: 15,
         minHeight: 45,
@@ -519,19 +522,28 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     transparentBg: {
         backgroundColor: 'transparent'
     },
+    redBg: {
+        background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)'
+    },
     blue: {
-        color: '#1c82b2',
+        color: '#FF0054',
         stroke: '#1c82b2 !important'
     },
     green: {
         color: '#48a148',
         stroke: '#48a148 !important'
     },
+    borderPrimary: {
+        border: '1px solid #ff3343',
+    },
     borderBlue: {
         border: '1px solid #1c82b2',
     },
     borderGreen: {
         border: '1px solid #48a148',
+    },
+    borderRed: {
+        border: '1px solid #FF0076',
     },
     listIcon: {
         width: 30,
@@ -553,18 +565,19 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     dropDown: {
         marginLeft: 5,
         alignSelf: 'flex-end',
-        border: '1px solid #1c82b2',
+        border: '1px solid #ff3343',
+        color: '#ff3343',
         borderRadius: '.2rem',
         padding: 3,
         height: 28,
         '& .MuiSelect-selectMenu': {
-            color: '#1c82b2 !important',
+            color: '#ff3343 !important',
             '&:focus': {
                 // backgroundColor: '#fff'
             }
         },
         '& .MuiSelect-icon': {
-            color: '#1c82b2 !important'
+            color: '#ff3343 !important'
         }
     },
     groupFilterRow: {
@@ -587,7 +600,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: 36,
         fontSize: 24,
         '& .MuiButton-label': {
-            color: '#1c82b2'
+            color: '#ff3343'
         }
     },
     padding10: {
@@ -673,6 +686,54 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
             color: '#0371ad',
             textAlign: 'center'
         }
+    },
+    notificationBell: {
+        cursor: 'pointer'
+    },
+    notificationUpdateContainerPopper: {
+        left: isRTL ? '100px !important' : '-50px !important',
+        zIndex: 999,
+    },
+    notificationUpdateContainer: {
+        direction: isRTL ? 'rtl' : 'ltr',
+        background: '#fff',
+        marginTop: '12px',
+        minWidth: '400px',
+        maxHeight: '300px',
+        overflow: 'auto',
+        boxShadow: '0px 0px 6px #ababab',
+        borderBottom: 'solid 5px #ff3343',
+        color: 'initial',
+        borderBottomLeftRadius: '10px',
+        borderBottomRightRadius: '10px',
+    },
+    notificationItem: {
+        borderBottom: '0.5px solid #ababab',
+        paddingInline: 10,
+        '&:last-child': {
+            borderBottom: 'none',
+        },
+        '& label': {
+            whiteSpace: 'pre-line'
+        },
+        '& a:last-child': {
+            paddingRight: isRTL ? '' : '10px',
+            paddingLeft: isRTL ? '10px' : ''
+        }
+    },
+    bell: {
+        '& .MuiBadge-badge': {
+            background: 'red'
+        }
+    },
+    notifyIcon: {
+        marginInlineEnd: 10,
+        fontSize: 22,
+        color: '#FF0054'
+    },
+    notifyIconWhite: {
+        marginInlineEnd: 10,
+        fontSize: 22,
+        color: '#FFF'
     }
-
 })
