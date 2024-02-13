@@ -12,7 +12,7 @@ import {
   testSend,
   saveUserBlock,
   deleteUserBlock,
-  saveTemplateToAccount,
+  // saveTemplateToAccount,
   // getTemplateById,
   // getPublicTemplates,
   // getAllTemplatesBySubaccountId
@@ -31,12 +31,11 @@ import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
+import { IoMdImages } from 'react-icons/io';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
-import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
-
 // User input controls
 import { EditRow } from './components/ContentDialogs'
 
@@ -44,20 +43,24 @@ import { EditRow } from './components/ContentDialogs'
 import useModals from './hooks/useModals'
 import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
-import { useParams } from 'react-router-dom';
-import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-// import Templates from './modals/Templates.tsx';
-// import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
-// import SaveTemplate from './modals/SaveTemplate';
+// // import Templates from './modals/Templates.tsx';
+// // import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
+// // import SaveTemplate from './modals/SaveTemplate';
+/* END Bee */
+import { sitePrefix } from '../../config';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
-/* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
   const { t } = useTranslation();
   const dispatch = useDispatch()
+  const navigate = useNavigate();
   const params = useParams();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
@@ -149,21 +152,25 @@ const CampaignEditor = ({ classes, ...props }) => {
         return true;
       })
     }
+
   }, [dataReady]);
   //#endregion
   useEffect(() => {
     if (editorRef && editorRef.current) {
       initBeeEditor();
     }
+
   }, [isRTL]);
   // Get data by campaign id
   useEffect(() => {
     if (params?.id > 0) {
-      if (localStorage.getItem('reloadBeeEditor') == '1') {
+      if (localStorage.getItem('reloadBeeEditor') === '1') {
         localStorage.removeItem('reloadBeeEditor');
         window.location.reload(true);
       } else getData();
     }
+    // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    // dispatch(getAllTemplatesBySubaccountId());
     // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
     // dispatch(getAllTemplatesBySubaccountId());
   }, []);
@@ -177,6 +184,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     else {
       initOptions();
     }
+
   }, [language, userBlocks]);
 
   //#region Check session token -> tokenAlive
@@ -195,6 +203,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (alertLogout === true) {
       onLogoutAlert();
     }
+
   }, [alertLogout]);
 
   document.addEventListener('setAlert', () => {
@@ -212,9 +221,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         size='small'
         variant='contained'
         className={clsx(
-          classes.confirmButton,
-          classes.dialogConfirmButton,
-          classes.dialogButtonCenter
+          classes.btn,
+          classes.btnRounded,
+          classes.middle
         )}
         onClick={() => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' }}
       >
@@ -236,6 +245,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups());
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
+    await dispatch(getAuthorizedEmails());
     setDataReady(true);
     const initBeeToken = () => {
       dispatch(getBeeToken());
@@ -247,7 +257,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     const subAccountEmails = verifiedEmails?.filter((ve) => { return ve?.Number === campaign.FromEmail })[0];
     setEmailProps(subAccountEmails);
   }
-
   useEffect(() => {
     if (campaign && campaign.CampaignID && verifiedEmails?.length > 0) {
       initRestrictions();
@@ -292,14 +301,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       // if (templateId !== null) {
       //   const templateResponse = await dispatch(getTemplateById(templateId));
 
-      //   if (templateResponse?.payload?.StatusCode === 201) {
-      //     const responseData = templateResponse?.payload?.Data;
-      //     setNewTemplate(responseData)
-      //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
-      //   } else {
-      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
-      //   }
-      // }
+      // //   if (templateResponse?.payload?.StatusCode === 201) {
+      // //     const responseData = templateResponse?.payload?.Data;
+      // //     setNewTemplate(responseData)
+      // //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+      // //   } else {
+      // //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+      // //   }
+      // // }
 
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
@@ -320,14 +329,14 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           else {
             const beeTest = new BeePlugin(beeObject);
-            let template = null;
+            let template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
 
-            if (forceTemplate !== null) {
-              template = forceTemplate;
-            }
-            else {
-              template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
-            }
+            // if (forceTemplate !== null) {
+            //   template = forceTemplate;
+            // }
+            // else {
+            //   template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
+            // }
 
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
@@ -362,6 +371,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (beeToken) {
       initBeeEditor();
     }
+
   }, [beeToken]);
 
   const initOptions = async () => {
@@ -397,12 +407,20 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
+          const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
           localStorage.setItem('reloadBeeEditor', 1);
-          window.location = saveRef.current?.redirectUrl ?? `/react/Campaigns/SendSettings/${args.campaignId}`;
+
+          if (isAutoResponder) {
+            window.location.href = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
+          }
+          else {
+            navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`);
+          }
           return false;
         }
         else if (saveRef.current?.showAnimation) {
-          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+          // setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+          setToastMessage(ToastMessages.CAMPAIGN_SAVED);
         }
 
         if (reInit) {
@@ -451,7 +469,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const deleteNewsletter = async () => {
     setDialog(null);
     await dispatch(deleteCampaign(campaignId));
-    window.location = `/react/Campaigns`;
+    window.location = `${sitePrefix}Campaigns`;
   }
   const onDelete = () => {
     setIsResponseModal(false);
@@ -467,13 +485,14 @@ const CampaignEditor = ({ classes, ...props }) => {
   const handleExitCampaign = (saveBeforeExit = true) => {
     setDialog(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
-    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : '/react/Campaigns';
+    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
 
     if (saveBeforeExit) {
       saveDesign(true, redirectLink, false);
     }
     else {
-      window.location.href = redirectLink;
+      if (isAutoResponder) window.location.href = redirectLink;
+      else navigate(redirectLink);
     }
   }
   const onExit = () => {
@@ -488,10 +507,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const onBack = () => {
     if (isFromAutomation) {
-      saveDesign(true, `/react/Campaigns/Create/${campaignId}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+      saveDesign(true, `${sitePrefix}Campaigns/Create/${campaignId}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
     }
     else {
-      saveDesign(true, `/react/Campaigns/Create/${campaignId}`)
+      saveDesign(true, `${sitePrefix}Campaigns/Create/${campaignId}`)
     }
   }
   const onTestSendSubmit = async (sendRequest) => {
@@ -601,7 +620,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       setShowDomainVerification(true)
     }
     else {
-
       saveDesign(false, null, false).then(async (r) => {
         setIsResponseModal(false);
         editorRef.current.send();
@@ -651,6 +669,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (showGallery) {
       let dialog = {
         showDivider: false,
+        icon: (
+          <IoMdImages />
+        ),
         title: t("common.imageGallery"),
         content: (
           <Gallery
@@ -754,11 +775,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button
           onClick={() =>
             saveDesign(false, null, true)}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
           style={{ margin: '8px' }}
@@ -767,6 +786,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         >{t("common.save")}
         </Button>
         {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
+          saveDesign(false, null, false);
           const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
           if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
             const domainErrorObj = {
@@ -795,10 +815,11 @@ const CampaignEditor = ({ classes, ...props }) => {
           variant='contained'
           size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightGreen,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
         >{t('common.continue')}</Button>
@@ -810,13 +831,12 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button
           onClick={() =>
             saveDesign(false, null, true)}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
           startIcon={<BiSave />}
           color="primary"
@@ -825,13 +845,12 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button onClick={() => {
           saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`, false);
         }}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightGreen,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
         >{t('common.backToAutomation')}</Button>
@@ -896,7 +915,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       <WizardActions
         disabled={buttonDisabled}
         campaignId={campaignId}
-        innerStyle={{ paddingInline: 15 }}
+        ignorePaddingBottom={true}
+        innerStyle={{ paddingInline: 15, marginBottom: 40 }}
         classes={classes}
         onExit={!isFromAutomation && onExit}
         onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
@@ -913,6 +933,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         // additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
+      {/* <OverwriteTemplatePopUp
       {/* <OverwriteTemplatePopUp
         classes={classes}
         onClose={(resp) => {

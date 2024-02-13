@@ -1,8 +1,8 @@
-import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText, Box, FormGroup, TextField, Link } from '@material-ui/core'
+import { Button, FormControl, Grid, Typography, MenuItem, FormHelperText, Box, FormGroup, TextField, Link, InputAdornment } from '@material-ui/core'
+import Select from '@mui/material/Select';
 import Switch from "react-switch";
 import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next';
-import LabeledTextField from '../../../../components/core/LabeledTextField';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { DateField } from '../../../../components/managment';
@@ -14,6 +14,9 @@ import { Loader } from '../../../../components/Loader/Loader';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import Toast from '../../../../components/Toast/Toast.component';
 import { logout } from '../../../../helpers/Api/PulseemReactAPI';
+import { CreditType } from '../../../../Models/Payments/NoCreditPopUp';
+import NoCreditDialog from '../Popups/NoCreditDialog'
+import { IoIosArrowDown } from 'react-icons/io';
 
 const SmsMarketingDialog = ({
     classes,
@@ -38,25 +41,34 @@ const SmsMarketingDialog = ({
     const [linkToUpdateEnabled, setLinkToUpdateEnabled] = useState(true);
     const [linkToCampaignEnabled, setLinkToCampaignEnabled] = useState(true);
     const [newSmsVerification, setNewSmsVerification] = useState(false);
+    const [noCreditLeft, setNoCreditLeft] = useState(false);
     const [showLoader, setLoader] = useState(false);
     const [numberVerified, setNumberVerified] = useState(true);
     const [errors, setErrors] = useState({});
     const [isLinksStatistics, setIsLinksStatistics] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
+    const fromNumberRef = useRef('');
     const toggleLinkStatistics = () => {
         setIsLinksStatistics(!isLinksStatistics);
     };
 
     useEffect(() => {
         setIsLinksStatistics(smsMarketingModel.IsLinksStatistics ?? true);
-        setNumberVerified(isFromNumberVerified());
+        fromNumberRef.current = smsModel.FromNumber;
     }, []);
+
+    useEffect(() => {
+        setNumberVerified(isFromNumberVerified());
+    }, [verifiedNumbers, fromNumberRef]);
+
+
+
 
     const isFromNumberVerified = () => {
         const isVerified = verifiedNumbers.find((number) => {
-            return number?.Number === smsModel.FromNumber && number?.IsOptIn === true;
+            return number?.Number === fromNumberRef.current && number?.IsOptIn === true;
         });
-        return isVerified?.length > 0;
+        return isVerified?.length > 0 || fromNumberRef.current === '' || fromNumberRef.current === accountSettings?.DefaultCellNumber;
     }
 
     const sendToOptions = [
@@ -115,15 +127,13 @@ const SmsMarketingDialog = ({
         if (!value) {
             return;
         }
+        fromNumberRef.current = value;
         setSmsModel({ ...smsModel, FromNumber: value });
         if (value === accountSettings?.DefaultCellNumber) {
             setNumberVerified(true);
         }
         else {
             if (value.length > 8) {
-                // const isVerified = verifiedNumbers.find((number) => {
-                //     return number?.Number === value && number?.IsOptIn === true;
-                // });
                 setNumberVerified(isFromNumberVerified());
             }
         }
@@ -159,19 +169,19 @@ const SmsMarketingDialog = ({
                 const smsCampaignPayload = {
                     Type: 0,
                     SendDate: newVal,
-                    Name: smsModel.Name,
+                    Name: smsModel.Name ?? '',
                     Text: textRef.current.value,
                     IsTestCampaign: false,
                     SendSmsTo: smsModel.SendSmsTo,
                     FromNumber: smsModel.FromNumber,
-                    SmsBulkCost: smsModel.SmsBulkCost,
+                    SmsBulkCost: smsModel.Credits,
                     IsLinksStatistics: isLinksStatistics,
                     CreditsPerSms: smsModel.CreditsPerSms,
                     EmailCampaignID: totalMarketing?.CampaignID,
-                    GroupIds: selectedGroups.map((g) => g.GroupID)
+                    GroupIds: selectedGroups.map((g) => g.GroupID).join(',')
                 };
 
-                const r = await dispatch(setSmsMarketing(smsCampaignPayload));
+                const r = await dispatch(setSmsMarketing({ ...smsCampaignPayload }));
                 handleTotalMarketingResponse(r.payload);
             }
         }
@@ -191,21 +201,25 @@ const SmsMarketingDialog = ({
             }
             case 200:
             case 500: {
+                setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.generalError'), showAnimtionCheck: false });
                 break;
             }
+            // Payment Required
             // no credit left 
+            case 402:
             case 405: {
-                setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.BULK_ENDED'), showAnimtionCheck: false });
+                // Show dialog with option to purchase a new SMS package
+                setNoCreditLeft(true);
                 break
             }
             default: {
                 setToastMessage({ severity: 'success', color: 'success', message: response?.Message, showAnimtionCheck: true });
             }
         }
-
+        
         setLoader(false);
         setTimeout(() => {
-            response?.StatusCode !== 405 && onConfirm();
+            response?.StatusCode !== 405 && response?.StatusCode !== 402 && onConfirm();
         }, 3000);
     }
     const handleValidation = () => {
@@ -254,20 +268,25 @@ const SmsMarketingDialog = ({
                     </Typography>
                     <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%' }} error={!!errors.SendSmsTo}>
                         <Select
-                            style={{
-                                height: 40
-                            }}
+                            variant="standard"
                             placeholder={t('campaigns.newsLetterEditor.sendSettings.sendTo')}
-                            className={classes.select}
-                            labelId="sendToSelect"
                             id="sendToSelect"
                             value={smsModel.SendSmsTo}
                             onChange={(e) => setSmsModel({ ...smsModel, SendSmsTo: e.target.value })}
+                            style={{ height: 40 }}
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                            MenuProps={{
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 300,
+                                        direction: isRTL ? 'rtl' : 'ltr'
+                                    },
+                                },
+                            }}
                         >
                             {
                                 sendToOptions.map((obj, idx) => <MenuItem
                                     key={idx}
-                                    style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
                                     disabled={obj.value === -1}
                                     value={obj.value}>{t(obj.text)}</MenuItem>
                                 )
@@ -303,6 +322,7 @@ const SmsMarketingDialog = ({
                             className={classes.NoPaddingtextField}
                             helperText={!!errors.FromNumber && errors.FromNumber}
                             error={!!errors.FromNumber}
+                            ref={fromNumberRef}
                             onLoadedData={(e) => {
                                 handleFromNumber(e.target.value);
                             }}
@@ -358,15 +378,14 @@ const SmsMarketingDialog = ({
                     <Typography className={clsx(classes.f20, classes.bold)}>
                         {t("mainReport.yourMessage")}
                     </Typography>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} className={classes.pt10}>
                         <Grid item>
                             <Button
                                 variant='contained'
                                 size='medium'
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightBlue,
-                                    classes.backButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 disabled={!linkToCampaignEnabled}
                                 onClick={onAddLinkToCampaign}
@@ -377,9 +396,8 @@ const SmsMarketingDialog = ({
                                 variant='contained'
                                 size='medium'
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightBlue,
-                                    classes.backButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 disabled={!linkToUpdateEnabled}
                                 onClick={onAddLinkToUpdate}
@@ -399,7 +417,7 @@ const SmsMarketingDialog = ({
                                             toggleLinkStatistics(!isLinksStatistics);
                                             setSmsModel({ ...smsModel, IsLinksStatistics: !isLinksStatistics });
                                         }}
-                                        onColor="#28a745"
+                                        onColor="#ff3343"
                                         checkedIcon={false}
                                         uncheckedIcon={false}
                                         handleDiameter={30}
@@ -442,8 +460,19 @@ const SmsMarketingDialog = ({
                     variant='sms'
                     onClose={() => setNewSmsVerification(false)}
                     step={1}
-                    value={smsModel.FromNumber}
+                    value={fromNumberRef.current}
                 />}
+                {noCreditLeft && <NoCreditDialog
+                    classes={classes}
+                    isOpen={noCreditLeft}
+                    popUpType={CreditType.SMS}
+                    onClose={() => setNoCreditLeft(false)}
+                    onCancel={() => setNoCreditLeft(false)}
+                    key={'123'}
+
+                />
+
+                }
                 <Loader isOpen={showLoader} />
             </Grid>
         ),
@@ -452,7 +481,7 @@ const SmsMarketingDialog = ({
         cancelText: t("common.Cancel"),
         onClose: onClose,
         onCancel: onCancel,
-        onConfirm: handleConfirm
+        onConfirm: (e) => { handleConfirm(e) }
     }
 
     return (

@@ -9,7 +9,7 @@ import WhatsappMobilePreview from "../../screens/Whatsapp/Editor/Components/What
 import { Loader } from "../Loader/Loader";
 import Toast from "../Toast/Toast.component";
 import { Box } from "@material-ui/core";
-import AlertModal from "../../screens/Whatsapp/Editor/Popups/AlertModal";
+import { BaseDialog } from '../DialogTemplates/BaseDialog';
 
 export class Props {
   classes: any;
@@ -285,25 +285,24 @@ export const WhatsappTemplatePreview = ({
 
   return (
     <>
-      <AlertModal
+      <BaseDialog
+				title={`${t('whatsapp.alertModal.templateId')}: ${templateID}`}
         classes={classes}
-        isOpen={openPreview}
-        onClose={() => closeModel(false)}
-        title={`${t('whatsapp.alertModal.templateId')}: ${templateID}`}
-        titleFontSize={'18px'}
-        subtitle={''}
-        onConfirmOrYes={() => closeModel(false)}
-        type='alert'
+        open={openPreview}
+        onConfirm={() => closeModel(false)}
+				onClose={() => closeModel(false)}
+        onCancel={() => closeModel(false)}
+				showDefaultButtons={false}
       >
-        <Box className={classes.alertModalContentMobile}>
-          <WhatsappMobilePreview
-            classes={classes}
-            templateData={templateData}
-            buttonType={buttonType}
-            fileData={fileData}
-          />
-        </Box>
-      </AlertModal>
+				<Box className={classes.alertModalContentMobile}>
+					<WhatsappMobilePreview
+						classes={classes}
+						templateData={templateData}
+						buttonType={buttonType}
+						fileData={fileData}
+					/>
+				</Box>
+    	</BaseDialog>;
       <Loader isOpen={isLoader} showBackdrop={true} zIndex={99999} />
       {renderToast()}
     </>

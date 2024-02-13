@@ -2,6 +2,8 @@ export type PageProperty = {
     PageName: string;
     PageNumber: number;
     SearchData: any;
+    SearchTerm: any;
+    IsDynamic: boolean;
 }
 
 export const SetPageState = (page: PageProperty) => {
@@ -17,6 +19,7 @@ export const SetPageState = (page: PageProperty) => {
                 if (p.PageName === page.PageName) {
                     p.PageNumber = page.PageNumber;
                     p.SearchData = page.SearchData;
+                    p.IsDynamic = page.IsDynamic;
                 }
                 return p;
             });

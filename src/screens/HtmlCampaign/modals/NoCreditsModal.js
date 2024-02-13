@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import { FaExclamationCircle } from 'react-icons/fa'
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 const renderHtml = (html) => {
   function createMarkup() {
@@ -26,6 +27,9 @@ const NoCreditsModal = ({
         classes={classes}
         customContainerStyle={classes.dialogZindex}
         open={isOpen}
+        icon={<AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />}
         disableBackdropClick={true}
         showDivider={false}
         onClose={onClose}
@@ -41,12 +45,11 @@ const NoCreditsModal = ({
           <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
-              variant='contained'
-              size='small'
               onClick={() => onClose()}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
               )}>
               {t("common.Ok")}
             </Button>

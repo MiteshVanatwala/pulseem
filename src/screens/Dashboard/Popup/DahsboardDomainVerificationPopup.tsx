@@ -5,17 +5,20 @@ import { Button, Checkbox, FormControlLabel, Grid } from "@material-ui/core";
 import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 import clsx from "clsx";
 import { useNavigate } from "react-router";
-
+import { RxOpenInNewWindow } from "react-icons/rx";
+import { useSelector } from "react-redux";
+import { StateType } from "../../../Models/StateTypes";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => {
     const { t } = useTranslation();
+    const { isRTL } = useSelector((state: StateType) => state.core);
     const navigate = useNavigate();
-
     const handleShowDomainCookie = () => {
         const cookie = getCookie("popup_hide_domain_verification");
-        setCookie("popup_hide_domain_verification", cookie !== 'true' ? 'true' : 'false');
+        setCookie("popup_hide_domain_verification", cookie !== 'true' ? 'true' : 'false', { maxAge: 2147483647 });
     }
-
     return <BaseDialog
+        title={t('common.domainVerification.verifyDomain')}
         children={<>
             {RenderHtml(t("common.domainVerificationDashboardPopupText"))}
             <FormControlLabel
@@ -34,6 +37,7 @@ const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => 
         onClose={onClose}
         onConfirm={onClose}
         showDefaultButtons={false}
+        renderTitle={null}
         renderButtons={() => {
             return <>
                 <Grid container spacing={2} className={classes.linePadding} style={{ justifyContent: 'flex-end' }}>
@@ -44,9 +48,12 @@ const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => 
                             component="a"
                             onClick={() => window.open('https://site.pulseem.co.il/new-requirements-for-bulk-email-senders-to-gmail/')}
                             className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonLightGreen
-                            )}>
+                                classes.btn,
+                                classes.btnRounded,
+                                classes.middle
+                            )}
+                            endIcon={<RxOpenInNewWindow style={{ transform: isRTL ? 'rotateY(180deg)' : '' }} />}
+                        >
                             {t('common.moreDetails')}
                         </Button>
                     </Grid>
@@ -55,9 +62,11 @@ const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => 
                             variant='contained'
                             size='medium'
                             className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonLightBlue
+                                classes.btn,
+                                classes.btnRounded,
+                                classes.backButton
                             )}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             onClick={() => navigate('/react/AccountSettings?sdv=true')}
                         >
                             {t('common.testVerificationDomain')}
@@ -68,5 +77,4 @@ const DahsboardDomainVerificationPopup = ({ classes, isOpen, onClose }: any) => 
         }}
     />
 }
-
 export default DahsboardDomainVerificationPopup;

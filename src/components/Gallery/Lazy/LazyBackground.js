@@ -28,7 +28,7 @@ const LazyBackground = (props) => {
     }
 
     return imageLoaded ? (
-        <Box className="responsive-bg" style={bgObject}>{children}</Box>
+        <Box title={props?.title} className="responsive-bg" style={bgObject}>{children}</Box>
     ) : (<Skeleton variant="rect" width="100%" height={130} />);
 }
 

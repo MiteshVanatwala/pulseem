@@ -42,5 +42,6 @@ const DomainVerificationSlice = createSlice({
         // })
     },
 })
-// export const { resetTwoFA } = DomainVerificationSlice.actions
+
+// export const { reduceExample } = DomainVerificationSlice.actions
 export default DomainVerificationSlice.reducer

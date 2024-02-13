@@ -63,7 +63,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 // Log({
                 //     MethodName: 'HandleExportData',
                 //     ComponentName: 'ExportHelper.ts',
-                //     Text: error as string
+                //     Text: 'OrderItems'
                 // })
                 console.error('OrderItems');
                 // reject(error);
@@ -71,12 +71,12 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
         }
         if (options.ReplaceNull === true) {
             try {
-                finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue);
+                finalExportData = await ReplaceNull(finalExportData, options?.PropertyToReplace, options?.PropertyDefaultReplaceValue) as unknown as ExportData;
             } catch (error) {
                 // Log({
                 //     MethodName: 'ReplaceNull',
                 //     ComponentName: 'ExportHelper.ts',
-                //     Text: error as string
+                //     Text: 'ReplaceNull'
                 // })
                 console.error('ReplaceNull');
                 // reject(error);
@@ -89,7 +89,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 // Log({
                 //     MethodName: 'SwitchStatus',
                 //     ComponentName: 'ExportHelper.ts',
-                //     Text: error as string
+                //     Text: 'SwitchStatus'
                 // })
                 console.error('ConvertStatusDescription');
                 // reject(error);
@@ -97,12 +97,12 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
         }
         if (options.BooleanToNumber === true) {
             try {
-                finalExportData = await BooleanToNumber(finalExportData, options.PropertyToReplace, options.IsBoolean);
+                finalExportData = await BooleanToNumber(finalExportData, options.PropertyToReplace, options.IsBoolean) as ExportData;
             } catch (error) {
                 // Log({
                 //     MethodName: 'BooleanToNumber',
                 //     ComponentName: 'ExportHelper.ts',
-                //     Text: error as string
+                //     Text: 'BooleanToNumber'
                 // })
                 console.error('BooleanToNumber');
                 // reject(error);
@@ -138,7 +138,7 @@ export async function OrderItems(data: ExportData | any, order: any, options: Ex
 }
 export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[], options: ExportOption) {
     const retValData: any = [];
-    data.forEach((o: Status) => {
+    data?.forEach((o: Status) => {
         const tempData = { ...o } as Status;
         if (options.ConvertStatusDescription === true) {
             if (o.STATUS || o.STATUS === 0) {
@@ -184,34 +184,41 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
     return retValData as ExportData;
 }
 export async function ReplaceNull(obj: ExportData | any, property: string, val: string = '') {
-    obj.forEach((o: { [x: string]: string; }) => {
-        if (!property || property === '') {
-            Object.keys(o).forEach((key: any) => {
-                const currentValue = o[key];
-                if (currentValue === null || currentValue === undefined) {
-                    o[key] = '';
-                }
-            });
-        }
-        else {
-            if (o[property] === null || o[property] === '') {
-                o[property] = val;
+    return new Promise((resolve) => {
+        obj?.forEach((o: { [x: string]: string; }) => {
+            if (!property || property === '') {
+                Object.keys(o).forEach((key: any) => {
+                    const currentValue = o[key];
+                    if (currentValue === null || currentValue === undefined || currentValue === 'null') {
+                        o[key] = '';
+                    }
+                });
             }
-        }
-
+            else {
+                if (o[property] === null || o[property] === '' || o[property] === 'null') {
+                    o[property] = val;
+                }
+            }
+        });
+        resolve(obj);
     });
-    return obj as ExportData;
 }
 export async function BooleanToNumber(obj: ExportData | any, property: string, isBoolean: boolean = false) {
-    obj.forEach((o: any) => {
-        if (!o[property]) {
-            o[property] = isBoolean ? i18n.t('common.No') : 0;
-        }
-        else {
-            o[property] = isBoolean ? i18n.t('common.Yes') : 1;
-        }
-    });
-    return obj as ExportData;
+    return new Promise((resolve) => {
+        const newObject: any = [];
+        obj.forEach((o: any) => {
+            Object.freeze(o);
+            let item = { ...o };
+            if (!item[property]) {
+                item[property] = isBoolean ? i18n.t('common.No') : 0;
+            }
+            else {
+                item[property] = isBoolean ? i18n.t('common.Yes') : 1;
+            }
+            newObject.push(item);
+        });
+        resolve(newObject);
+    })
 }
 export const FormatDate = (date: string, preventText: boolean = false) => {
     if (date === '' || !date) {
@@ -303,25 +310,13 @@ export const StringToArrayBuffer = (str: string) => {
         }
     })
 }
-export const ReplaceExtraFieldHeader = (obj: any, accountExtraFields: AccountExtraFields) => {
-    Object.entries(accountExtraFields).forEach((ef: any) => {
-        const key = ef[0];
-        const val = ef[1];
-        if (val && val !== '') {
-            obj[key] = val;
-        }
-        else {
-            delete obj[key];
-        }
-    });
-    return obj;
-}
-export const FlatObject = (obj: any = {}) => Object.keys(obj || {}).reduce((acc: any, cur: any) => {
+export const FlatObject = (obj: any = {}) => Object.keys(obj || {}).reduce((o: any, cur) => {
     if (typeof obj[cur] === 'object') {
-        acc = { ...acc, ...FlatObject(obj[cur]) }
-    } else { acc[cur] = obj[cur] }
-    return acc
+        o = { ...o, ...FlatObject(obj[cur]) }
+    } else { o[cur] = obj[cur] }
+    return o
 }, {})
+
 export async function SwitchStatusByCondition(data: ExportData | any, statuses: KeyValue[], isEmail: boolean) {
     const retValData: any = [];
     data.forEach((o: Status) => {

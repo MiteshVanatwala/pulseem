@@ -1,29 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css"
-    />
 
-    <!--
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Web site created using create-react-app" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css" />
+
+  <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <meta name="version" content="0.0.3" />
-    <meta http-equiv="cache-control" content="no-cache" />
-    <meta http-equiv="expires" content="0" />
-    <meta http-equiv="pragma" content="no-cache" />
-    <!--
+  <meta name="version" content="0.0.3" />
+  <meta http-equiv="cache-control" content="no-cache" />
+  <meta http-equiv="expires" content="0" />
+  <meta http-equiv="pragma" content="no-cache" />
+  <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -32,16 +28,17 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Pulseem</title>
+  <title>Pulseem</title>
 
-    <!-- Live -->
-    <script type="text/javascript"> (function(c,l,a,r,i,t,y){ c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)}; t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i; y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y); })(window, document, "clarity", "script", "i5sac0rfsl"); </script>
-  </head>
+  <!-- Live -->
+  <script
+    type="text/javascript"> (function (c, l, a, r, i, t, y) { c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) }; t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i; y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y); })(window, document, "clarity", "script", "i5sac0rfsl"); </script>
+</head>
 
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
 
@@ -51,5 +48,45 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-  </body>
+  <script>
+    window.interdeal = {
+      "sitekey": "8452ee317ba7c7c9a640a613dc6d06c3",
+      "Position": "Left",
+      "Menulang": "HE",
+      "domains": {
+        "js": "https://js.nagich.co.il/",
+        "acc": "https://access.nagich.co.il/"
+      },
+      "btnStyle": {
+        "vPosition": [
+          "80%",
+          null
+        ],
+        "scale": [
+          "0.6",
+          "0.6"
+        ],
+        "color": {
+          "main": "#FF3343",
+          "second": ""
+        },
+        "icon": {
+          "type": 11,
+          "shape": "circle",
+          "outline": false
+        }
+      }
+    };
+    (function (doc, head, body) {
+      var coreCall = doc.createElement('script');
+      coreCall.src = interdeal.domains.js + 'core/4.6.1/accessibility.js';
+      coreCall.defer = true;
+      coreCall.integrity = 'sha512-aAp5m6pQO8f6HIIF3V/7pXeoo9/VWZTij6e6vH0KoI8PJCEN4EVKvslxF8elAIMTd1znMDg0qwrelAJfDOu6KA==';
+      coreCall.crossOrigin = 'anonymous';
+      coreCall.setAttribute('data-cfasync', true);
+      body ? body.appendChild(coreCall) : head.appendChild(coreCall);
+    })(document, document.head, document.body);
+  </script>
+</body>
+
 </html>

@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {
 	Button,
 	Box,
-	IconButton,
-	Dialog,
 	DialogActions,
 	Grid,
 } from '@material-ui/core';
-import { useMediaQuery, Stack } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import { Close } from '@material-ui/icons';
+import clsx from 'clsx';
+import { Stack } from '@mui/material';
 import {
 	dynamicButtonProps,
 	dynamicModalProps,
@@ -24,7 +21,6 @@ import { RemoveNewLineAndConsecutiveSpaces } from '../../../../helpers/Utils/Tex
 
 const DynamicModal = ({
 	classes,
-	isDynamcFieldModal,
 	onDynamcFieldModalClose,
 	onDynamcFieldModalSave,
 	personalFields,
@@ -36,9 +32,7 @@ const DynamicModal = ({
 	savedTemplate,
 	templateCategory = 0,
 }: dynamicModalProps) => {
-	const theme = useTheme();
 	const { campaignID } = useParams();
-	const fullScreen = useMediaQuery(theme.breakpoints.down('lg'));
 	const { t: translator } = useTranslation();
 
 	const [navApp, setNavApp] = React.useState<string>('Google Maps');
@@ -253,120 +247,88 @@ const DynamicModal = ({
 
 	return (
 		<>
-			<Dialog
-				fullScreen={fullScreen}
-				open={isDynamcFieldModal}
-				onClose={onClose}
-				aria-labelledby='responsive-dialog-title'>
-				<div className={classes.whatsappCampaignDynamicFieldTitle}>
-					<>{translator('whatsappCampaign.dfieldTitle')}</>
-				</div>
-				<Box className={classes.whatsappCampaignDynamicFieldClose}>
-					<IconButton onClick={onClose}>
-						<Close />
-					</IconButton>
-				</Box>
-				<Box style={{ height: '203px' }}>
+			<Box>
+				<Grid
+					container
+					className={classes.whatsappCampaignDynamicFieldContent}>
 					<Grid
 						container
-						className={classes.whatsappCampaignDynamicFieldContent}>
-						<Grid
-							container
-							className={classes.whatsappCampaignDynamicFieldContentText}>
-							<Stack direction='row' spacing={0}>
-								{templateCategory !== 3 && dynamicButtons.map(
-									(button: dynamicButtonProps, index: number) => (
-										<Button
-											key={index}
-											variant='outlined'
-											color='primary'
-											size='small'
-											style={{
-												margin: '0px 6px 6px 0px',
-												padding: '3px 9px',
-												borderRadius: '20px',
-											}}
-											className={
-												button.buttonTitle === activeDynamicButton
-													? classes.whatsappCampaignDynamicFieldButtonActive
-													: classes.whatsappCampaignDynamicFieldButton
-											}
-											onClick={() =>
-												setActiveDynamicButton(button.buttonTitle)
-											}>
-											<>{translator(button.buttonTitle)}</>
-										</Button>
-									)
-								)}
-							</Stack>
-						</Grid>
-						<DynamicModalFields
-							classes={classes}
-							activeDynamicButton={activeDynamicButton}
-							personalField={getFieldValueByID(fieldIDs['personalField'])}
-							textInput={getFieldValueByID(fieldIDs['text'])}
-							linkInput={getFieldValueByID(fieldIDs['link'])}
-							navApp={navApp}
-							landPage={getFieldValueByID(fieldIDs['landingPage'])}
-							navAddress={getFieldValueByID(fieldIDs['navigation'])}
-							setTextInput={(value: string) =>
-								updateDynamicVariables('text', value)
-							}
-							setPersonalField={(value: string) =>
-								updateDynamicVariables('personalField', value)
-							}
-							onAddRemovalLink={(isTrackLink) => onAddRemovalLink(isTrackLink)}
-							setLinkInput={(value, isTrackLink) =>
-								updateDynamicVariables('link', value, isTrackLink)
-							}
-							setLandPage={(value: string) =>
-								updateDynamicVariables('landingPage', value)
-							}
-							setNavApp={setNavApp}
-							setNavAddress={(value: string) =>
-								updateDynamicVariables('navigation', value)
-							}
-							personalFields={personalFields}
-							landingPageData={landingPageData}
-							isTrackLink={isTrackLink}
-						/>
+						className={classes.whatsappCampaignDynamicFieldContentText}>
+						<Stack direction='row' spacing={0} className={classes.dBlock}>
+							{templateCategory !== 3 && dynamicButtons.map(
+								(button: dynamicButtonProps, index: number) => (
+									<Button
+										key={index}
+										variant='outlined'
+										color='primary'
+										size='small'
+										style={{
+											margin: '0px 6px 6px 0px',
+											padding: '3px 9px',
+											borderRadius: '20px',
+										}}
+										className={
+											button.buttonTitle === activeDynamicButton
+												? classes.whatsappCampaignDynamicFieldButtonActive
+												: classes.whatsappCampaignDynamicFieldButton
+										}
+										onClick={() =>
+											setActiveDynamicButton(button.buttonTitle)
+										}>
+										<>{translator(button.buttonTitle)}</>
+									</Button>
+								)
+							)}
+						</Stack>
 					</Grid>
-				</Box>
-				<DialogActions>
-					<Button
-						onClick={() => onClose()}
-						variant='contained'
-						style={{
-							margin: '6px',
-							padding: '3px 9px',
-							borderRadius: '20px',
-							backgroundColor: '#d63511',
-							color: 'white',
-						}}>
-						<>{translator('whatsappCampaign.exit')}</>
-					</Button>
-					<Button
-						onClick={() => onSave()}
-						variant='contained'
-						style={{
-							margin: '6px',
-							padding: '3px 9px',
-							borderRadius: '20px',
-							backgroundColor: '#1e8a22',
-							color: 'white',
-						}}>
-						<>{translator('whatsappCampaign.save')}</>
-					</Button>
-				</DialogActions>
-			</Dialog>
-
-			<ValidationAlert
-				classes={classes}
-				isOpen={isValidationAlert}
-				onClose={() => setIsValidationAlert(false)}
-				title={translator('whatsappCampaign.sendValidation')}
-				requiredFields={validationErrors}
-			/>
+					<DynamicModalFields
+						classes={classes}
+						activeDynamicButton={activeDynamicButton}
+						personalField={getFieldValueByID(fieldIDs['personalField'])}
+						textInput={getFieldValueByID(fieldIDs['text'])}
+						linkInput={getFieldValueByID(fieldIDs['link'])}
+						navApp={navApp}
+						landPage={getFieldValueByID(fieldIDs['landingPage'])}
+						navAddress={getFieldValueByID(fieldIDs['navigation'])}
+						setTextInput={(value: string) =>
+							updateDynamicVariables('text', value)
+						}
+						setPersonalField={(value: string) =>
+							updateDynamicVariables('personalField', value)
+						}
+						onAddRemovalLink={(isTrackLink) => onAddRemovalLink(isTrackLink)}
+						setLinkInput={(value, isTrackLink) =>
+							updateDynamicVariables('link', value, isTrackLink)
+						}
+						setLandPage={(value: string) =>
+							updateDynamicVariables('landingPage', value)
+						}
+						setNavApp={setNavApp}
+						setNavAddress={(value: string) =>
+							updateDynamicVariables('navigation', value)
+						}
+						personalFields={personalFields}
+						landingPageData={landingPageData}
+						isTrackLink={isTrackLink}
+					/>
+				</Grid>
+			</Box>
+			<DialogActions className={classes.pt25}>
+				<Button
+					onClick={() => onClose()}
+					variant='contained'
+					className={clsx(classes.btn, classes.btnRounded, classes.mlr10)}
+				>
+					<>{translator('whatsappCampaign.exit')}</>
+				</Button>
+				<Button
+					onClick={() => onSave()}
+					variant='contained'
+					className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
+				>
+					<>{translator('whatsappCampaign.save')}</>
+				</Button>
+			</DialogActions>
 		</>
 	);
 };

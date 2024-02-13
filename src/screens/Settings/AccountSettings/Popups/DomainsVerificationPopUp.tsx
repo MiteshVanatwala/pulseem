@@ -19,7 +19,6 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
     const [showLoader, setShowLoader] = useState<boolean>(true);
     const { verifiedEmails } = useSelector((state: StateType) => state.common);
     const { isRTL } = useSelector((state: StateType) => state.core);
-
     const [showVerificationResponse, setShowVerificationResponse] = useState<boolean>(false);
     const [domainResponse, setDomainResponse] = useState<any>(null);
     const [selectedDomain, setSelectedDomain] = useState<string>('');
@@ -71,7 +70,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         }
     }
     const filteredDomains = () => {
-        return verifiedEmails.filter((obj: VerifiedEmail, index: number) => {
+        return verifiedEmails?.filter((obj: VerifiedEmail, index: number) => {
             return (index === verifiedEmails.findIndex((o: any) => domainFromEmail(obj.Number) === domainFromEmail(o.Number)) && !obj.IsRestricted);
         }).sort((a: VerifiedEmail, b: VerifiedEmail) => {
             if (a.IsVerified && !b.IsVerified) {
@@ -101,7 +100,6 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
     }
     const VerificationResult = () => {
         const [showInnerLoader, setShowInnerLoader] = useState<boolean>(false);
-
         return <BaseDialog
             disableBackdropClick={false}
             classes={classes}
@@ -188,7 +186,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         title={t("common.domainVerification.verifyDomain")}
         children={<Box className={clsx(classes.fullWidth)}>
             <Box className='selectWrapper'>
-                <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
+                <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }}>
                     <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} className={classes.pb15}>
                         <Typography className={clsx(classes.bold)} variant='h6'>{t('common.domainVerification.settingPopUp.selectDomain')} </Typography>
                         <Link

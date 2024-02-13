@@ -40,13 +40,13 @@ const ColumnAdjustmentDialog = ({
     const { extraData } = useSelector((state) => state.sms);
     const styles = useStyles();
     const [groupNameInput, setgroupNameInput] = useState("");
-
-    // const [selectArray, setselectArray] = useState([]);
     const [groupTextError, setGroupTextError] = useState(false);
+
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);
     const [dropIndex, setdropIndex] = useState(-1);
     const [selectOptions, setSelectOptions] = useState([]);
+
 
     const headersOrder = [
         t("common.email"),
@@ -176,7 +176,7 @@ const ColumnAdjustmentDialog = ({
             icon={<div className={classes.dialogIconContent}>
                 {'\u0056'}
             </div>}
-            showDivider={true}
+            showDivider={false}
         >
 
             {data.length > 0 ?

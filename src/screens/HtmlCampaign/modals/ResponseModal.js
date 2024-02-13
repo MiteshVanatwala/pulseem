@@ -5,8 +5,9 @@ import "moment/locale/he";
 import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
-import { useSelector } from "react-redux";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
+import { RiSendPlaneFill } from "react-icons/ri";
 
 const ResponseModal = ({
   classes,
@@ -16,7 +17,6 @@ const ResponseModal = ({
   onConfirm = () => null
 }) => {
   const { t } = useTranslation();
-  const { windowSize, isRTL } = useSelector(state => state.core);
 
   return !isOpen ? (<></>) :
     (
@@ -25,8 +25,18 @@ const ResponseModal = ({
         customContainerStyle={classes.dialogZindex}
         open={isOpen}
         title={message !== 'campaigns.successSent' ? t('common.ErrorOccured') : null}
+        icon={<div className={classes.dialogIconContent}>
+          {message !== 'campaigns.successSent' ? (
+            <AiOutlineExclamationCircle
+              style={{ fontSize: 30, color: "#fff" }} />
+          )
+            :
+            (<RiSendPlaneFill />)
+          }
+        </div>}
         showDivider={message !== 'campaigns.successSent'}
         onClose={onClose}
+        onCancel={onClose}
         onConfirm={onClose}
         onCancel={onClose}
         contentStyle={classes.testSendDialog}
@@ -47,11 +57,10 @@ const ResponseModal = ({
         }
         <Box className={classes.mb25} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.dialogButton,
-              classes.dialogConfirmButton
+              classes.btn,
+              classes.btnRounded,
+              classes.middle,
             )}
             onClick={() => { onConfirm() }}>
             {t("common.Ok")}

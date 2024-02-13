@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
-import { setVerificationDomain } from "../../redux/reducers/newsletterSlice";
 import { StateType } from "../../Models/StateTypes";
-import { MdDomain, MdOutlineVerified } from "react-icons/md";
+import { MdArrowBackIos, MdArrowForwardIos, MdDomain, MdOutlineVerified } from "react-icons/md";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { useTranslation } from "react-i18next";
 import { Grid, Box, Accordion, AccordionSummary, makeStyles, AccordionDetails, Typography, Button, TextField, InputAdornment, FormControl, Select, MenuItem, ListItemIcon } from '@material-ui/core'
@@ -19,7 +18,6 @@ interface ButtonOptions {
     text: string,
     onCallback?: Function | never
 }
-
 interface DomainVerificationObj {
     classes: any,
     domain: {
@@ -36,7 +34,6 @@ interface DomainVerificationObj {
     forceShow: boolean,
     onClose?: Function | never,
 }
-
 const useStyles = makeStyles({
     accordionIcons: {
         position: 'absolute',
@@ -66,10 +63,8 @@ const useStyles = makeStyles({
     displayBlock: {},
     plusIcon: {
         width: 30,
-
     }
 });
-
 const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerificationObj) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -88,11 +83,9 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
         ReplyTo: null,
         FromEmail: null,
         Skip: null
-
     } as any;
-    const resetDomainObj = { domain: '', display: false };
-    const DOMAIN_EMAIL_SUFFIX = '@pulseem.co';
 
+    const DOMAIN_EMAIL_SUFFIX = '@pulseem.co';
     const handleCopyRecord = () => {
         const elem = document.getElementById("copyStatusIcon");
         const records = document.getElementById("dkimRecord");
@@ -104,9 +97,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
             }, 4000);
         }
     }
-
     document.getElementById("copyLabel")?.addEventListener("click", handleCopyRecord);
-
     useEffect(() => {
         if (accountSettings && accountSettings?.SubAccountSettings) {
             setSharedDomain(accountSettings?.SubAccountSettings?.SharedEmailDomain?.replace(DOMAIN_EMAIL_SUFFIX, ''));
@@ -115,12 +106,9 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
             setReplyTo(domain.replyTo || (verifiedEmails && verifiedEmails[0]?.Number));
         }
     }, [accountSettings, verifiedEmails]);
-
     const saveSharedDomain = async () => {
-
         if (replyTo && replyTo !== '' && replyTo !== '-1' && sharedDomain && sharedDomain !== '' && sharedDomain !== '-1') {
             const response = await dispatch(SetSharedDomain(sharedDomain + DOMAIN_EMAIL_SUFFIX));
-
             // @ts-ignore
             switch (response?.payload?.StatusCode) {
                 case 201: {
@@ -144,13 +132,10 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
             alert('please fill required field');
         }
         // save shared domain on subaccountsettings table
-
     }
-
     const handleSkip = () => {
         domain?.verifySharedCallback && domain?.verifySharedCallback({ ...callbackResponse, Skip: true })
     }
-
     return (domain?.display === true || forceShow === true) ? (<BaseDialog
         disableBackdropClick={false}
         classes={classes}
@@ -224,7 +209,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                     </Grid>
                 </AccordionDetails>
             </Accordion>}
-            {accountFeatures?.indexOf(PulseemFeatures.HideSharedDomain) === -1 && domain?.verifySharedCallback !== null && domain?.verifySharedCallback !== undefined && <Accordion
+            {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && domain?.verifySharedCallback !== null && domain?.verifySharedCallback !== undefined && <Accordion
                 expanded={activeAccordion === 3}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
                 key={3}
@@ -244,15 +229,15 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container>
-
                         <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
                         <Box className={clsx(classes.dFlex)} style={{ marginBlock: 15, alignContent: 'center', justifyContent: 'flex-start', gap: 15 }}>
                             <Box style={{ maxWidth: 200 }}>
-                                <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>','')} className={clsx(classes.alignDir)}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')} className={clsx(classes.alignDir)}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
                                 <TextField
                                     inputMode="url"
                                     dir="ltr"
                                     className={clsx(classes.textField, classes.textFieldWithTemplate)}
+                                    style={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #D6D1E6', marginTop: 7 }}
                                     InputProps={{
                                         style: { maxWidth: '100px !important', width: '100px !important' },
                                         endAdornment: <InputAdornment position="end">{DOMAIN_EMAIL_SUFFIX}</InputAdornment>
@@ -264,7 +249,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                     onChange={(event: any) => setSharedDomain(event.target.value.replace('@', ''))}
                                 />
                             </Box>
-                            <Box className='selectWrapper' style={{ maxWidth: 200 }}>
+                            <Box className='selectWrapper' style={{ minWidth: 300 }}>
                                 <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>', '').replace('</b>', '')} className={clsx(classes.alignDir)}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -301,7 +286,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                                 {t(item.Number)}
                                             </MenuItem>
                                         })}
-                                        {accountFeatures?.indexOf(PulseemFeatures.HideSharedDomain) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
+                                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
                                             key={verifiedEmails.length + 1}
                                             value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                             // @ts-ignore
@@ -318,9 +303,12 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                             <Box style={{ alignSelf: 'flex-end' }}>
                                 <Button
                                     style={{ marginBlock: 0, marginInline: 15, maxHeight: 40, marginBottom: 5 }}
-                                    className={clsx(classes.actionButton,
-                                        classes.actionButtonLightGreen,
-                                        classes.backButton)}
+                                    className={clsx(
+                                        classes.btn,
+                                        classes.btnRounded,
+                                        classes.backButton
+                                    )}
+                                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                                     onClick={saveSharedDomain}
                                 >{t('common.saveAndContinue')}</Button>
                             </Box>
@@ -330,23 +318,29 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
             </Accordion>}
             {domain?.options && <Box className={clsx(classes.dFlex, classes.justifyContentEnd)}>
                 {domain?.options.map((option: ButtonOptions) => {
-                    return <Button className={clsx(classes.actionButton,
-                        classes.actionButtonLightGreen,
-                        classes.backButton)}
+                    return <Button
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded,
+                            classes.backButton
+                        )}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         style={{ marginInlineEnd: 15 }}
                         onClick={() => option?.onCallback && option?.onCallback()}>{option.text}</Button>
                 })}
             </Box>}
             {domain?.showSkip && <Box className={classes.dFlex} style={{ justifyContent: 'flex-end' }}>
                 <Button
-                    className={clsx(classes.actionButton,
-                        classes.actionButtonLightGreen,
-                        classes.backButton)}
+                    className={clsx(
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.backButton
+                    )}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     style={{ justifySelf: 'flex-end' }}
                     onClick={handleSkip}>{t('common.skip')}</Button>
             </Box>}
         </Box>}
     />) : (<></>)
 }
-
 export default DomainVerification;

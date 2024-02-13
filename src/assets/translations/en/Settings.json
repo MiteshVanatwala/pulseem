@@ -130,7 +130,7 @@
 		"subTitle": "Type the old password, then type the new one",
 		"oldPassword": "Old Password",
 		"newPassword": "New Password",
-		"confirmPassword": "Connfirm Password",
+		"confirmPassword": "Confirm Password",
 		"error": {
 			"required": "Required field",
 			"notMatch": "Password confirmation doesnt match"
@@ -151,5 +151,20 @@
 			"lowerChar": "Lowercase letter (En)",
 			"number": "Number"
 		}
+	},
+	"apiSettings": {
+		"title": "API Settings",
+		"exportDirectRemovals": "Export Direct Removals",
+		"mainApiDesc": "<b>Main API</b> - Provides ability to add an email campaign, to manage subscribers and groups from your system.",
+		"directSendApiDesc": "<b>Direct Send API</b> - Direct send provides ability to send email like SMTP server. Most effective for CRM & ERP systems. All reports available only thru API.",
+		"mainApiExplainTitle": "<b><u>Using Web Service to connect to Pulseem:</u></b>",
+		"mainApiExplainDesc": "<p>Allows applications to communicate over the Internet without dependence on operating systems, software or hardware.</p><p style='margin-top: 20px'><b>NEW!</b><span> We have upgraded our API system to be more user-friendly and efficient to use.</span><span> To view the methods and instructions for our new system, follow this</span> <a href='https://ui-api.pulseem.com/swagger/index.html' class='direct-send-link' target='_blank'>link.</a> </p><p style='margin-top: 20px'>If you have any questions, please contact our support team at <a href='tel:03-5240290'>03-5240290</a> or at <a href='mailto:support@pulseem.com'>support@pulseem.com</a>.</p><p style='margin-top: 20px'>*Please note that reports made with the new API will only show the data on campaigns sent through the new system.</p>",
+		"apiAddress": "API Address: ",
+		"reGenerateConfirm": "Creating a new API key will revoke the previous key.<br/>Are you sure you want to create a new API key?",
+		"createNewApiKey": "Regenerate Api Key",
+		"showApiKey": "<p style='direction: ltr'>Show/Hide API Key</p>",
+		"mainApi": "Main API URL Address",
+		"directApi": "Direct Send API URL Address",
+		"noAPIKeyAccess": "In order to start using our API, please contact our support team on <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
 	}
 }

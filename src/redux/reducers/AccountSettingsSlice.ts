@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { PulseemResponse } from '../../Models/APIResponse';
 import { AccountSettings } from '../../Models/Account/AccountSettings';
 import { LoginPassword } from '../../Models/Account/Password';
 import { TwoFactorAuthAllowed } from '../../Models/Auth/TwoFactorAuth';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getAccountSettings = createAsyncThunk(
     'AccountSettings/Get',
@@ -156,7 +156,7 @@ const AccountSettingsSlice = createSlice({
                 Message: '',
                 Data: ''
             } as PulseemResponse
-        },
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(getAccountSettings.fulfilled, (state, action) => {

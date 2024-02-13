@@ -39,6 +39,7 @@ export const SolidDialog = ({
 
   const { t } = useTranslation()
   const { isRTL, windowSize } = useSelector(state => state.core)
+  const { exit = null, maxHeight = null } = props;
 
   const onExit = () => {
     if (onCancel !== null) {
@@ -138,7 +139,7 @@ export const SolidDialog = ({
 
   return (
     <BaseDialog
-      classes
+      classes={classes}
       style={style ?? null}
       open={!!open}
       className={clsx(classes.solidDialogContainer, customContainerStyle)}

@@ -51,9 +51,8 @@ const DynamicConfirmDialog = ({
                         size='small'
                         onClick={() => { onConfirm() }}
                         className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightBlue,
-                            classes.backButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {confirmButtonText !== '' ? confirmButtonText : t('common.confirm')}
                     </Button>
@@ -64,8 +63,8 @@ const DynamicConfirmDialog = ({
                         size='small'
                         onClick={() => { onCancel() }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogCancelButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.cancel')}
                     </Button>

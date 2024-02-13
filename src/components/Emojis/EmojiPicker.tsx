@@ -15,6 +15,12 @@ const useStyles = makeStyles({
 	noMaxWidth: {
 		maxWidth: 'none',
 	},
+	root: {
+		'& .emoji-picker-react': {
+			top: 0
+		}
+
+	}
 });
 
 export type PickerObject = {
@@ -68,7 +74,6 @@ const EmojiPicker = ({ classes, boxStyles, OnSelectEmoji }: PickerObject) => {
 						alt='emoji picker'
 						src={Emoj}
 						style={{
-							marginInlineEnd: '8px',
 							width: 36,
 							height: 29,
 						}}

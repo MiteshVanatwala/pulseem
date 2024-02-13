@@ -1,9 +1,11 @@
 import {
 	Box,
 	Button,
+	FormControl,
 	Grid,
 	MenuItem,
 	Table,
+	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
@@ -11,16 +13,18 @@ import {
 	TextField,
 	Typography,
 } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
+import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	DeleteIcon,
 	DuplicateIcon,
 	EditIcon,
-	SendGreenIcon,
-	SearchIcon,
 	PreviewIcon,
+	SearchIcon,
+	SendIcon
 } from '../../../assets/images/managment/index';
 import ManagmentIcon from './Component/ManagmentIcon';
 import { Title } from '../../../components/managment/Title';
@@ -46,13 +50,10 @@ import {
 	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
-import clsx from 'clsx';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import Pagination from './Component/Pagination';
 import { AllTemplateReq, ManagmentIconProps } from './Types/Management.types';
-import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
 	deleteTemplate,
@@ -79,27 +80,23 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import NoSetup from '../NoSetup/NoSetup';
 import { getApiErrorResponseMessage } from '../Common';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { IoIosArrowDown } from 'react-icons/io';
+import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
+import { sitePrefix } from '../../../config';
+import { TablePagination } from '../../../components/managment';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { windowSize, rowsPerPage } = useSelector(
+	const { windowSize, rowsPerPage, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const ToastMessages = useSelector(
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const [isSubmitTemplateOpen, setIsSubmitTemplateOpen] =
-		useState<boolean>(false);
-	const [isPreviewTemplateOpen, setIsPreviewTemplateOpen] =
-		useState<boolean>(false);
-	const [isDeleteTemplateOpen, setIsDeleteTemplateOpen] =
-		useState<boolean>(false);
-	const [isDuplicateTemplateOpen, setIsDuplicateTemplateOpen] =
-		useState<boolean>(false);
-	const [isStatusResonModal, setIsStatusResonModal] = useState<boolean>(false);
 	const [failedTemplateReason, setFailedTemplateReason] = useState<string>('');
 	const [templateNameSearch, setTemplateNameSearch] = useState<string>('');
 	const [templateStatusSearch, setTemplateStatusSearch] = useState<string>('');
@@ -120,12 +117,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		fileLink: '',
 		fileType: '',
 	});
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
+	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [templateListData, setTemplateListData] = useState<
 		templateListItemsProps[]
 	>([]);
 	const [activeRowId, setActiveRowId] = useState<string>('');
+	const [dialogType, setDialogType] = useState<any>({});
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -169,6 +167,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						pageSize: Number(rowsPerPage),
 					});
 				}
+				setIsAccountSetup(true);
 			} else {
 				setIsLoader(false);
 				setIsAccountSetup(false);
@@ -236,7 +235,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		} else {
 			setFailedTemplateReason('common');
 		}
-		setIsStatusResonModal(true);
+		setDialogType({
+			type: 'errorDialog',
+			data: ''
+		});
 	};
 
 	const renderNameCell = (row: templateListItemsProps) => {
@@ -276,81 +278,56 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const renderStatusCell = (row: templateListItemsProps) => {
-		const { Status, RejectionReason } = row;
+		const { Status } = row;
 		return (
-			<>
-				<Typography
-					className={clsx(classes.middleText, classes.whatsappTemplatesStatus, {
-						[classes.whatsappTemplateStatusCreated]: Status === 'Created',
-						[classes.whatsappTemplateStatusApproved]: Status === 'Approved',
-						[classes.whatsappTemplateStatusPending]: Status === 'Pending',
-						[classes.whatsappTemplateStatusReceived]: Status === 'Received',
-						[classes.whatsappTemplateStatusRejected]: Status === 'Rejected',
-					})}>
-					<>
-						<CustomTooltip
-							isSimpleTooltip={false}
-							interactive={true}
-							classes={{
-								tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-								arrow: classes.fBlack,
-							}}
-							arrow={true}
-							placement={'top'}
-							title={translator(statusesByName[Status] || Status)}
-							text={translator(statusesByName[Status] || Status)}
-							icon={undefined}
-							style={undefined}
-							titleStyle={undefined}>
-							<span>
-								{statusesByName[Status]
-									? translator(statusesByName[Status])
-									: Status}
-							</span>
-						</CustomTooltip>
-					</>
-					{Status === 'Rejected' && (
-						// <CustomTooltip
-						// 	isSimpleTooltip={false}
-						// 	interactive={true}
-						// 	classes={{
-						// 		tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-						// 		arrow: classes.fBlack,
-						// 	}}
-						// 	arrow={true}
-						// 	placement={'top'}
-						// 	title={RejectionReason}
-						// 	text={RejectionReason}
-						// 	icon={undefined}
-						// 	style={undefined}>
-						// 	<Typography
-						// 		onClick={() => onStatusResonClick(row)}
-						// 		style={{ cursor: 'pointer', fontSize: '16px' }}
-						// 		className={classes.whatsappTemplateStatusRejectedReason}>
-						// 		{translator('whatsapp.displayError')}
-						// 	</Typography>
-						// </CustomTooltip>
-						<Typography
-							onClick={() => onStatusResonClick(row)}
-							style={{ cursor: 'pointer', fontSize: '16px' }}
-							className={classes.whatsappTemplateStatusRejectedReason}>
-							{translator('whatsapp.displayError')}
-						</Typography>
-					)}
-				</Typography>
-			</>
+			<Typography
+				className={clsx(classes.middleText, classes.whatsappTemplatesStatus, {
+					[classes.whatsappTemplateStatusCreated]: Status === 'Created',
+					[classes.whatsappTemplateStatusApproved]: Status === 'Approved',
+					[classes.whatsappTemplateStatusPending]: Status === 'Pending',
+					[classes.whatsappTemplateStatusReceived]: Status === 'Received',
+					[classes.whatsappTemplateStatusRejected]: Status === 'Rejected',
+				})}
+			>
+				<CustomTooltip
+					isSimpleTooltip={false}
+					interactive={true}
+					classes={{
+						tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+						arrow: classes.fBlack,
+					}}
+					arrow={true}
+					placement={'top'}
+					title={translator(statusesByName[Status] || Status)}
+					text={translator(statusesByName[Status] || Status)}
+					icon={undefined}
+					style={undefined}
+					titleStyle={undefined}>
+					<span>
+						{statusesByName[Status]
+							? translator(statusesByName[Status])
+							: Status}
+					</span>
+				</CustomTooltip>
+				{Status === 'Rejected' && (
+					<Typography
+						onClick={() => onStatusResonClick(row)}
+						style={{ cursor: 'pointer', fontSize: '16px' }}
+						className={classes.whatsappTemplateStatusRejectedReason}>
+						{translator('whatsapp.displayError')}
+					</Typography>
+				)}
+			</Typography>
 		);
 	};
 
 	const renderCategoryCell = (categoryId: number) => {
 		return (
-			<>
-				<Typography
-					className={clsx(classes.middleText)}
-					style={{ textTransform: 'capitalize' }}>
-					{translator(`whatsapp.${categoryName[categoryId || 1]}`)}
-				</Typography>
-			</>
+			<Typography
+				className={clsx(classes.middleText)}
+				style={{ textTransform: 'capitalize' }}>
+				{translator(`whatsapp.${categoryName[categoryId || 1]}`)}
+			</Typography>
 		);
 	};
 
@@ -514,7 +491,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			} else {
 				onSavedTemplateChange(templateData?.Data);
 			}
-			setIsPreviewTemplateOpen(true);
+			setDialogType({
+				type: 'preview',
+				data: ''
+			});
 		}
 	};
 
@@ -528,7 +508,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			} else {
 				onSavedTemplateChange(templateData?.Data);
 			}
-			setIsSubmitTemplateOpen(true);
+			setDialogType({
+				type: 'submitTemplate',
+				data: ''
+			});
 		} else {
 			setToastMessage(ToastMessages.ERROR);
 		}
@@ -568,10 +551,16 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				onPreview(Id);
 				break;
 			case 'duplicate':
-				setIsDuplicateTemplateOpen(true);
+				setDialogType({
+					type: 'duplicate',
+					data: ''
+				});
 				break;
 			case 'delete':
-				setIsDeleteTemplateOpen(true);
+				setDialogType({
+					type: 'delete',
+					data: ''
+				});
 				break;
 
 			default:
@@ -582,21 +571,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const renderCellIcons = (row: templateListItemsProps) => {
 		const iconsMap: ManagmentIconProps[] = [
 			{
-				key: 'send',
-				buttonKey: 'send',
-				icon: SendGreenIcon,
-				lable: translator('whatsappManagement.submit'),
-				remove: row.StatusId !== templateStatusIdsByStatusName.Created,
-				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
-				classes: classes,
-				rootClass: classes.sendIcon,
-				textClass: classes.sendIconText,
-				id: row.Id.toString(),
-			},
-			{
 				key: 'preview',
 				buttonKey: 'preview',
-				icon: PreviewIcon,
+				uIcon: PreviewIcon,
 				lable: translator('whatsappManagement.preview'),
 				remove: windowSize === 'xs',
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
@@ -607,19 +584,19 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'edit',
 				buttonKey: 'edit',
-				icon: EditIcon,
+				uIcon: EditIcon,
 				disable: !row?.IsAllowEdit,
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				href: `/react/whatsapp/template/edit/${row?.Id?.toString()}`,
+				href: `${sitePrefix}whatsapp/template/edit/${row?.Id?.toString()}`,
 				id: row.Id.toString(),
 			},
 			{
 				key: 'duplicate',
 				buttonKey: 'duplicate',
-				icon: DuplicateIcon,
+				uIcon: DuplicateIcon,
 				lable: translator('campaigns.lnkEditResource1.ToolTip'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
@@ -629,12 +606,24 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'delete',
 				buttonKey: 'delete',
-				icon: DeleteIcon,
+				uIcon: DeleteIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.paddingIcon,
 				id: row.Id?.toString(),
+			},
+			{
+				key: 'send',
+				buttonKey: 'send',
+				uIcon: SendIcon,
+				lable: translator('whatsappManagement.submit'),
+				remove: row.StatusId !== templateStatusIdsByStatusName.Created,
+				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
+				classes: classes,
+				rootClass: clsx(classes.sendIcon, 'sendIcon'),
+				textClass: classes.sendIconText,
+				id: row.Id.toString(),
 			},
 		];
 		return (
@@ -647,11 +636,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					<Grid
 						className={clsx(
 							icon?.disable ? classes.disabledCursor : '',
-							icon.key === 'send' ? classes.greenTextColor : ''
 						)}
 						key={icon.key}
 						item>
-						<ManagmentIcon {...icon} />
+						<ManagmentIcon
+							{...icon}
+							uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
+						/>
 					</Grid>
 				))}
 			</Grid>
@@ -659,25 +650,25 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onSubmitTemplate = async () => {
+		setDialogType({});
 		const submitData: commonAPIResponseProps = await dispatch<any>(
 			submitTemplateDirect({ id: activeRowId })
 		);
-		setIsSubmitTemplateOpen(false);
 		if (submitData?.payload?.Status === apiStatus.SUCCESS) {
 			setToastMessage(ToastMessages.SUBMIT_CAMPAIGN_SUCCESS);
 			setApiTemplateData();
 		} else {
 			submitData?.payload?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: submitData?.payload?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: submitData?.payload?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
 
 	const onDeleteTemplate = async () => {
-		setIsDeleteTemplateOpen(false);
+		setDialogType({});
 		setIsLoader(true);
 		const deleteData: deleteTemplateAPIProps = await dispatch<any>(
 			deleteTemplate(activeRowId)
@@ -689,15 +680,15 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		} else {
 			deleteData?.payload?.Error
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: deleteData?.payload?.Error,
-				  })
+					...ToastMessages.ERROR,
+					message: deleteData?.payload?.Error,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
 
 	const onDuplicaTemplate = async () => {
-		setIsDuplicateTemplateOpen(false);
+		setDialogType({});
 		setIsLoader(true);
 		const duplicateData: deleteTemplateAPIProps = await dispatch<any>(
 			duplicateTemplate(activeRowId)
@@ -709,9 +700,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		} else {
 			duplicateData?.payload?.Error
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: duplicateData?.payload?.Error,
-				  })
+					...ToastMessages.ERROR,
+					message: duplicateData?.payload?.Error,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -770,12 +761,271 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		}
 	};
 
-	const getTemplateId = () => {
-		return (
-			templateListData?.find((template) => Number(activeRowId) === template?.Id)
-				?.TemplateId || ''
-		);
-	};
+	const getDuplicateDialog = () => ({
+    title: translator('whatsappManagement.duplicate'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }}>
+        {translator('whatsappManagement.duplicateDesc')}
+      </Typography>
+    ),
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDuplicaTemplate()}
+			onCancel={() => setDialogType({})}
+		/>
+  })
+
+	const getDisplayErrorDialog = () => ({
+    title: '',
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator(getApiErrorResponseMessage('templateError', failedTemplateReason))}
+      </Typography>
+    ),
+    renderButtons: () => (
+			<Grid
+				container
+				spacing={4}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						variant='contained'
+						size='small'
+						onClick={() => { setDialogType(null) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded
+						)}>
+						{translator('common.Ok')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+  })
+
+	const getDeleteDialog = () => ({
+    title: translator('whatsappManagement.deleteTemplate'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {translator('whatsapp.alertModal.DeleteTemplateTitle')}
+      </Typography>
+    ),
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onDeleteTemplate()}
+			onCancel={() => setDialogType({})}
+		/>
+  })
+
+	const getPreviewDialog = () => ({
+    title: translator('whatsappManagement.preview'),
+    showDivider: false,
+    content: (
+      <Box className={classes.alertModalContentMobile}>
+				<WhatsappMobilePreview
+					classes={classes}
+					templateData={templateData}
+					buttonType={buttonType}
+					fileData={fileData}
+				/>
+			</Box>
+    ),
+		renderButtons: () => (
+			<Grid
+				container
+				spacing={4}
+				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+			>
+				<Grid item>
+					<Button
+						variant='contained'
+						size='small'
+						onClick={() => { setDialogType(null) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded
+						)}>
+						{translator('common.Ok')}
+					</Button>
+				</Grid>
+			</Grid>
+		)
+  })
+
+	const getSubmitTemplateDialog = () => ({
+    title: translator('whatsapp.alertModal.ConfirmText'),
+    showDivider: false,
+    content: (
+			<>
+				<div className={clsx(classes.pb25)}>{translator('whatsapp.alertModal.ConfirmTitle')}</div>
+				<Box className={classes.alertModalContentMobile}>
+					<WhatsappMobilePreview
+						classes={classes}
+						templateData={templateData}
+						buttonType={buttonType}
+						fileData={fileData}
+					/>
+				</Box>
+			</>
+    ),
+		renderButtons: () => <ConfirmationButtons
+			classes={classes}
+			onConfirm={() => onSubmitTemplate()}
+			onCancel={() => setDialogType({})}
+		/>
+  })
+
+  const renderDialog = () => {
+    const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'duplicate') {
+    	currentDialog = getDuplicateDialog();
+		} else if (type === 'errorDialog') {
+    	currentDialog = getDisplayErrorDialog();
+		} else if (type === 'delete') {
+			currentDialog = getDeleteDialog();
+		} else if (type === 'preview') {
+			currentDialog = getPreviewDialog();
+		} else if (type === 'submitTemplate') {
+			currentDialog = getSubmitTemplateDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
+
+	const renderTableHead = () => {
+    return (
+      <TableHead>
+				<TableRow classes={rowStyle}>
+					<TableCell classes={cellStyle} className={classes.flex3} align='center'>{translator('whatsapp.templateName')}</TableCell>
+					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{translator('sms.StatusResource1.HeaderText')}</TableCell>
+					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{translator('report.ProductsReport.category')}</TableCell>
+					<TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex5}></TableCell>
+				</TableRow>
+			</TableHead>
+    )
+  }
+
+	const renderRow = (row: templateListItemsProps, index: number) => {
+    return (
+      <TableRow
+				key={`templateMaganement_${row.Id}_${index}`}
+				classes={rowStyle}>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex3,
+						classes.tableCellBody
+					)}>
+					{renderNameCell(row)}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex2,
+						classes.tableCellBody
+					)}>
+					{renderStatusCell(row)}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.flex2,
+						classes.tableCellBody
+					)}>
+					{renderCategoryCell(row.CategoryId)}
+				</TableCell>
+				<TableCell
+					component='th'
+					scope='row'
+					className={clsx(
+						classes.flex5,
+						classes.tableCellRoot
+					)}>
+					{renderCellIcons(row)}
+				</TableCell>
+			</TableRow>
+    )
+  }
+
+  const renderPhoneRow = (row: templateListItemsProps, index: number) => {
+    return (
+			<TableRow
+			key={`templateMaganement_${row.Id}_${index}`}
+        component='div'
+        classes={rowStyle}>
+        <TableCell style={{ flex: 2 }} classes={{ root: classes.tableCellRoot }}
+          className={classes.p20}>
+          <Box className={classes.justifyBetween}>
+            <Box className={classes.inlineGrid}>
+							{renderNameCell(row)}
+            </Box>
+            <Box className={classes.inlineGrid}>
+							{renderStatusCell(row)}
+            </Box>
+          </Box>
+					<Box className={classes.pt5}>
+						<Typography
+							className={clsx(classes.middleText)}
+							style={{ textTransform: 'capitalize' }}
+						>
+							{translator('report.ProductsReport.category')}: {translator(`whatsapp.${categoryName[row.CategoryId || 1]}`)}
+						</Typography>
+					</Box>
+					<Box className={classes.pt10}>
+						{renderCellIcons(row)}
+					</Box>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
+	const renderTableBody = () => {
+		if (templateListData?.length === 0) {
+			return (
+				<Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }} >
+					<Typography>{translator('common.NoDataTryFilter')}</Typography>
+				</Box>
+			)
+		}
+    return (
+			<TableBody>
+				{ templateListData?.map(windowSize === 'xs' ? renderPhoneRow : renderRow) }
+			</TableBody>
+    )
+  }
+
+	const renderTable = () => {
+    return (
+      <TableContainer className={clsx(classes.tableStyle, windowSize === 'xs' ? classes.mt20 : '')}>
+        <Table className={classes.tableContainer}>
+					<>
+						{windowSize !== 'xs' && renderTableHead()}
+						{renderTableBody()}
+					</>
+        </Table>
+      </TableContainer>
+    )
+  }
 
 	return (
 		<DefaultScreen
@@ -783,59 +1033,73 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={false}
-			containerClass={clsx(classes.management, classes.mb50)}>
+			containerClass={clsx(classes.management, classes.mb50, classes.whatsapp)}>
 			{isAccountSetup ? (
 				<>
 					{renderToast()}
-					<Title
-						Text={translator('whatsappManagement.templateManagement')}
-						Classes={classes}
-						ContainerStyle={{}}
-						Element={null}
-					/>
+					<Box className={clsx('topSection', classes.mb15)}>
+						<Title
+							Text={translator('whatsappManagement.templateManagement')}
+							classes={classes}
+							ContainerStyle={{}}
+							Element={null}
+						/>
 
-					<div className={classes.manageWhatsappTemplates}>
-						<Grid container spacing={2} className={classes.lineTopMarging}>
-							<Grid item xs={6} lg={2}>
+						<Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.paddingSides25)}>
+							<Grid item xs={12} md={6} lg={2}>
 								<TextField
 									variant='outlined'
 									size='small'
+									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth')}
 									value={templateNameSearch}
 									onChange={handleCampainNameChange}
 									onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
 										onTemplateKeyDown(e)
 									}
-									className={clsx(classes.textField, classes.minWidth252)}
 									placeholder={translator('whatsapp.templateNamePlaceholder')}
 								/>
 							</Grid>
 
 							<Grid
 								item
-								xs={6}
+								xs={12}
+								md={6}
 								lg={2}
-								className={classes.whatsappManagementbuttonFieldFlexWrapper}>
-								<TextField
-									select
-									type='text'
-									label={
-										templateStatusSearch?.length > 0 ? (
-											''
-										) : (
-											<>{translator('whatsappManagement.status')}</>
-										)
-									}
-									className={classes.whatsappManagementbuttonField}
-									onChange={(e: BaseSyntheticEvent) =>
-										setTemplateStatusSearch(e.target.value)
-									}
-									value={templateStatusSearch}>
-									{Object.keys(statusesByName)?.map((status: string) => (
-										<MenuItem key={'no-data-template' + status} value={status}>
-											<>{translator(statusesByName[status])}</>
-										</MenuItem>
-									))}
-								</TextField>
+							>
+								<Box className='selectWrapper'>
+									<FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+										<Select
+											variant="standard"
+											displayEmpty
+											value={templateStatusSearch}
+											defaultValue={templateStatusSearch}
+											onChange={(event: SelectChangeEvent) => setTemplateStatusSearch(event.target.value)}
+											IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+											MenuProps={{
+												PaperProps: {
+													style: {
+														maxHeight: 300,
+														direction: isRTL ? 'rtl' : 'ltr'
+													},
+												},
+											}}
+										>
+											<MenuItem key="" value="" disabled>
+												{translator("common.select")}
+											</MenuItem>
+											{
+												Object.keys(statusesByName)?.map((item: any, index: any) => {
+													return <MenuItem
+														key={index}
+														value={item}
+													>
+														{translator(statusesByName[item])}
+													</MenuItem>
+												})
+											}
+										</Select>
+									</FormControl>	
+								</Box>
 							</Grid>
 
 							<Grid item>
@@ -843,9 +1107,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 									size='large'
 									variant='contained'
 									onClick={onSearch}
-									className={classes.searchButton}
-									endIcon={<SearchIcon />}>
-									<>{translator('campaigns.btnSearchResource1.Text')}</>
+									className={clsx(
+										classes.btn,
+										classes.btnRounded
+									)}
+									endIcon={<SearchIcon />}
+								>
+									{translator('campaigns.btnSearchResource1.Text')}
 								</Button>
 							</Grid>
 							{isSearching && (
@@ -854,126 +1122,44 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 										size='large'
 										variant='contained'
 										onClick={clearSearch}
-										className={classes.searchButton}
-										endIcon={<ClearIcon />}>
-										<>{translator('common.clear')}</>
+										className={clsx(
+											classes.btn,
+											classes.btnRounded
+										)}
+										endIcon={<ClearIcon />}
+									>
+										{translator('common.clear')}
 									</Button>
 								</Grid>
 							)}
 						</Grid>
+					</Box>
 
+					<div className={classes.manageWhatsappTemplates}>
 						<Grid
 							container
 							spacing={2}
 							className={classes.manageTemplatesHeaderButtons}>
 							<div className={classes.manageTemplatesCreate}>
-								<Button className={'green'} onClick={onCreateTemplate}>
-									<>{translator('whatsappManagement.createTemplate')}</>
+								<Button onClick={onCreateTemplate} className={clsx(classes.btn, classes.btnRounded)}>
+									{translator('whatsappManagement.createTemplate')}
 								</Button>
 							</div>
 
 							<span className={classes.manageTemplatesCampaignCount}>
 								{totalRecord || 0}{' '}
-								<>{translator('whatsappManagement.templates')}</>
+								{translator('whatsappManagement.templates')}
 							</span>
 						</Grid>
 
 						<Grid
 							container
 							spacing={2}
-							className={clsx(classes.manageTemplatesTableWrapper)}>
-							<TableContainer>
-								<Table className={classes.tableContainer}>
-									{windowSize !== 'xs' && (
-										<TableHead>
-											<TableRow classes={rowStyle}>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex3}
-													align='center'>
-													<>{translator('whatsapp.templateName')}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex2}
-													align='center'>
-													<>{translator('sms.StatusResource1.HeaderText')}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex2}
-													align='center'>
-													<>{translator('report.ProductsReport.category')}</>
-												</TableCell>
-												<TableCell
-													classes={{ root: classes.tableCellRoot }}
-													className={classes.flex5}></TableCell>
-											</TableRow>
-										</TableHead>
-									)}
-									{templateListData?.length === 0 ? (
-										<Box
-											className={clsx(
-												classes.flex,
-												classes.justifyCenterOfCenter,
-												classes.noDataRow
-											)}>
-											<Typography>
-												<>{translator('common.NoDataTryFilter')}</>
-											</Typography>
-										</Box>
-									) : (
-										<>
-											{templateListData?.map(
-												(row: templateListItemsProps, index) => (
-													<TableRow
-														key={`templateMaganement_${row.Id}_${index}`}
-														classes={rowStyle}>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.flex3,
-																classes.tableCellBody
-															)}>
-															{renderNameCell(row)}
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.flex2,
-																classes.tableCellBody
-															)}>
-															{renderStatusCell(row)}
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.flex2,
-																classes.tableCellBody
-															)}>
-															{renderCategoryCell(row.CategoryId)}
-														</TableCell>
-														<TableCell
-															component='th'
-															scope='row'
-															className={clsx(
-																classes.flex5,
-																classes.tableCellRoot
-															)}>
-															{renderCellIcons(row)}
-														</TableCell>
-													</TableRow>
-												)
-											)}
-										</>
-									)}
-								</Table>
-							</TableContainer>
+							className={windowSize !== 'xs' ? classes.manageTemplatesTableWrapper : ''}
+						>
+							{renderTable()}
 						</Grid>
-						<Pagination
+						<TablePagination
 							classes={classes}
 							rows={totalRecord}
 							rowsPerPage={paginationSetting?.pageSize}
@@ -989,89 +1175,12 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							returnPageOne={false}
 						/>
 					</div>
-
-					<AlertModal
-						classes={classes}
-						isOpen={isSubmitTemplateOpen}
-						onClose={() => setIsSubmitTemplateOpen(false)}
-						// @ts-config
-						title={translator('whatsapp.alertModal.ConfirmText')}
-						subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
-						onConfirmOrYes={() => onSubmitTemplate()}
-						type='submit'>
-						<Box className={classes.alertModalContentMobile}>
-							<WhatsappMobilePreview
-								classes={classes}
-								templateData={templateData}
-								buttonType={buttonType}
-								fileData={fileData}
-							/>
-						</Box>
-					</AlertModal>
-
-					<AlertModal
-						classes={classes}
-						isOpen={isPreviewTemplateOpen}
-						onClose={() => setIsPreviewTemplateOpen(false)}
-						// title={translator('whatsappManagement.preview')}
-						title={
-							getTemplateId()?.length > 0
-								? `${translator(
-										'whatsapp.alertModal.templateId'
-								  )}: ${getTemplateId()}`
-								: translator('whatsappManagement.preview')
-						}
-						subtitle={''}
-						titleFontSize={getTemplateId()?.length > 0 ? '18px' : undefined}
-						onConfirmOrYes={() => setIsPreviewTemplateOpen(false)}
-						type='alert'>
-						<Box className={classes.alertModalContentMobile}>
-							<WhatsappMobilePreview
-								classes={classes}
-								templateData={templateData}
-								buttonType={buttonType}
-								fileData={fileData}
-							/>
-						</Box>
-					</AlertModal>
-
-					<AlertModal
-						classes={classes}
-						isOpen={isDeleteTemplateOpen}
-						onClose={() => setIsDeleteTemplateOpen(false)}
-						title={translator('whatsappManagement.deleteTemplate')}
-						subtitle={translator('whatsapp.alertModal.DeleteTemplateTitle')}
-						type='delete'
-						onConfirmOrYes={() => onDeleteTemplate()}
-					/>
-
-					<AlertModal
-						classes={classes}
-						isOpen={isDuplicateTemplateOpen}
-						onClose={() => setIsDuplicateTemplateOpen(false)}
-						title={translator('whatsappManagement.duplicate')}
-						subtitle={translator('whatsappManagement.duplicateDesc')}
-						type='delete'
-						onConfirmOrYes={() => onDuplicaTemplate()}
-					/>
-
-					<AlertModal
-						classes={classes}
-						isOpen={isStatusResonModal}
-						onClose={() => setIsStatusResonModal(false)}
-						title={''}
-						subtitle={translator(
-							getApiErrorResponseMessage('templateError', failedTemplateReason)
-						)}
-						type='alert'
-						onConfirmOrYes={() => onDuplicaTemplate()}
-						direction='ltr'
-					/>
 				</>
 			) : (
 				!isLoader && <NoSetup classes={classes} />
 			)}
 
+			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);

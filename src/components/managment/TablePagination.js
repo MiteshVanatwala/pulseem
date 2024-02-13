@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { Typography, Grid, TextField, IconButton } from '@material-ui/core'
-import { PageArrowIcon } from '../../assets/images/managment/index'
-
+import { createRef, useState } from 'react';
+import { Typography, Grid, TextField, IconButton, Select } from '@material-ui/core'
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
+import { IoIosArrowDown } from 'react-icons/io';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { useSelector } from 'react-redux';
 
 export const TablePagination = ({
   classes,
@@ -10,16 +12,18 @@ export const TablePagination = ({
   page = 1,
   rowsPerPageOptions = [],
   rowsPerPage,
-  onRowsPerPageChange = (value) => {},
-  onPageChange = (value) => {},
+  onRowsPerPageChange = (val) => { },
+  onPageChange = (val) => { },
   returnPageOne = true,
   style = null
 }) => {
-
   const { t } = useTranslation()
+  const { windowSize } = useSelector(state => state.core);
   const pages = Math.ceil(rows / rowsPerPage)
   const [innerPage, setPage] = useState('');
   const [isTyping, setTyping] = useState(false);
+  const [rppIsOpen, setRppIsOpen] = useState(false);
+  const rppSelectRef = createRef();
 
   const handleKeyPress = event => {
     var isNumber = /^[0-9]*$/;
@@ -52,17 +56,38 @@ export const TablePagination = ({
   }
 
   const renderRowNumbers = () => {
-    return (
-      <Grid item className={classes.tablePadingtonGridItem}>
+    return rowsPerPageOptions.length > 0 ? (
+      <Grid item className={clsx(classes.tablePadingtonGridItem, classes.tablePadington)}>
         <Typography>
           {t('common.rowNumber')}
         </Typography>
-        <TextField
+        <Select
+          open={rppIsOpen}
+          native
+          className={classes.tablePaginationSelect}
+          variant='standard'
+          ref={rppSelectRef}
+          IconComponent={() => <IoIosArrowDown className='MuiSelect-icon' onClick={() => { setRppIsOpen(!rppIsOpen) }} />}
+          value={rowsPerPage}
+          onFocus={() => setRppIsOpen(!rppIsOpen)}
+          onChange={handleRowsPerPageChange}>
+          {rowsPerPageOptions.map(option => (
+            <option
+              key={option.toString()}
+              value={option}>
+              {option}
+            </option>
+          ))}
+        </Select>
+        {/* <TextField
           select
+
           className={classes.tablePaginationSelect}
           variant='standard'
           SelectProps={{
+            itemRef: rppSelectRef,
             native: true,
+            IconComponent: () => <IoIosArrowDown className='MuiSelect-icon' onClick={() => { rppSelectRef.current?.focus() }} />
           }}
           value={rowsPerPage}
           onChange={handleRowsPerPageChange}>
@@ -73,9 +98,9 @@ export const TablePagination = ({
               {option}
             </option>
           ))}
-        </TextField>
-      </Grid>
-    )
+        </TextField> */}
+      </Grid >
+    ) : (<></>)
   }
 
   const renderPageNumbers = () => {
@@ -83,7 +108,8 @@ export const TablePagination = ({
     return (
       <Grid
         item
-        className={classes.tablePadingtonGridItem}>
+        className={clsx(classes.tablePadingtonGridItem)}
+      >
         {page > 1 &&
           <IconButton
             onClick={() => {
@@ -92,7 +118,7 @@ export const TablePagination = ({
             }}
             size='small'
             className={classes.tablePadingtonArrowOppisite}>
-            <PageArrowIcon />
+            <MdArrowBackIos />
           </IconButton>}
         <Typography>
           {t('common.page')}
@@ -121,7 +147,7 @@ export const TablePagination = ({
             }}
             size='small'
             className={classes.tablePadingtonArrow}>
-            <PageArrowIcon />
+            <MdArrowBackIos />
           </IconButton>}
       </Grid>
     )
@@ -131,7 +157,7 @@ export const TablePagination = ({
       container
       justifyContent='space-between'
       className={classes.tablePadingtonGridContainer} style={style} >
-      {renderRowNumbers()}
+      {rowsPerPageOptions.length > 0 && renderRowNumbers()}
       {renderPageNumbers()}
     </Grid>
   )

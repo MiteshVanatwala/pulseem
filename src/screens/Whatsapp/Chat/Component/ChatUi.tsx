@@ -6,7 +6,8 @@ import {
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
 } from '../Types/WhatsappChat.type';
-import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
+import { Box, IconButton, makeStyles, MenuItem } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import { apiStatus } from '../../Constant';
@@ -18,6 +19,7 @@ import ChatFooterContent from './ChatFooterContent';
 import clsx from 'clsx';
 import ChatHeaderContent from './ChatHeaderContent';
 import { useTranslation } from 'react-i18next';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 const ChatUi = ({
 	classes,
@@ -56,26 +58,16 @@ const ChatUi = ({
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
-
+	const [dialogType, setDialogType] = useState<{
+		type: string;
+	} | null>(null);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
-	const useStyles = makeStyles(() => ({
-		selectRoot: {
-			fontSize: '18px',
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
-		selectSection: {
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
-	}));
-	const muiclasses = useStyles();
 
 	useEffect(() => {
-		const chatDiv = document.getElementById('chat-messages');
-		chatDiv?.scroll({ top: chatDiv?.scrollHeight, behavior: 'auto' });
+		setTimeout(() => {
+			const chatDiv = document.getElementById('chat-messages');
+			chatDiv?.scroll({ top: chatDiv?.scrollHeight, behavior: 'auto' });
+		}, 1500)
 	}, [allWhatsappChat]);
 
 	useEffect(() => {
@@ -124,9 +116,8 @@ const ChatUi = ({
 	const chatHeader = () => {
 		return (
 			<header
-				className={`${classes.whatsappChat} header chat__header ${
-					isMobileSideBar && 'mobile-side-bar-open'
-				}`}>
+				className={`${classes.whatsappChat} header chat__header ${isMobileSideBar && 'mobile-side-bar-open'
+					}`}>
 				<IconButton
 					className={classes.whatsappChatBarButton}
 					onClick={setIsMobileSideBar}>
@@ -145,56 +136,57 @@ const ChatUi = ({
 					<h2 className={`${classes.whatsappChat} chat__contact-name`}>
 						{' '}
 						{chatContacts.UserName || chatContacts.PhoneNumber || 'Pulseem'}
-						<span className={classes.whatsappChatUiStatusPadding}>
-							<Select
-								classes={{ root: muiclasses.selectSection }}
-								className={clsx(
-									classes.whatsappChatStatusSelect,
-									getStatusClass(chatContacts.ConversationStatusId)
-								)}
-								autoWidth
-								value={chatContacts.ConversationStatusId || ''}
-								variant='standard'
-								style={
-									chatContacts.ConversationStatusId
-										? {
-												fontSize: '12px',
-												padding: '8px 0px 8px 8px',
-												position: 'absolute',
-												borderRadius: '10px',
-												textAlign: 'center',
-												marginTop: '-6px',
-										  }
-										: {
-												display: 'none',
-										  }
-								}
-								onChange={(e) => handleUserStatus(e, chatContacts.PhoneNumber)}>
-								<MenuItem value={1}>
-									<>{translator('whatsappChat.open')}</>
-								</MenuItem>
-								<MenuItem value={2}>
-									{translator('whatsappChat.pending')}
-								</MenuItem>
-								<MenuItem value={3}>
-									{translator('whatsappChat.solved')}
-								</MenuItem>
-							</Select>
-						</span>
 					</h2>
+
 					<p className={`${classes.whatsappChat} chat__contact-desc`}></p>
 				</div>
 
-				{whatsappChatSession?.IsIn24Window &&
-					Number(whatsappChatSession.Hour) > 0 &&
-					Number(whatsappChatSession.Minute) > 0 &&
-					Number(whatsappChatSession.Second) > 0 && (
-						<ChatHeaderContent
-							classes={classes}
-							whatsappChatSession={whatsappChatSession}
-							setWhatsappChatSession={setWhatsappChatSession}
-						/>
-					)}
+				<Box className={clsx(classes.spaceBetween, 'mobileColumn')}>
+
+					<Box className={classes.whatsappChatUiStatusPadding}>
+						<Select
+							className={clsx(
+								classes.whatsappChatStatusSelect,
+								getStatusClass(chatContacts.ConversationStatusId),
+								classes.f12
+							)}
+							autoWidth
+							value={`${chatContacts?.ConversationStatusId || ''}`}
+							variant='standard'
+							style={
+								chatContacts.ConversationStatusId
+									? {
+										padding: '8px 0px 8px 8px',
+										// position: 'absolute',
+										borderRadius: '10px',
+										textAlign: 'center',
+										// marginTop: '-6px',
+									}
+									: {
+										display: 'none',
+									}
+							}
+							onChange={(e: SelectChangeEvent) => handleUserStatus(e, chatContacts.PhoneNumber)}
+						>
+							<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
+							<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
+							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
+						</Select>
+					</Box>
+					<Box className='clock-font-size'>
+						{whatsappChatSession?.IsIn24Window &&
+							Number(whatsappChatSession.Hour) > 0 &&
+							Number(whatsappChatSession.Minute) > 0 &&
+							Number(whatsappChatSession.Second) > 0 && (
+								<ChatHeaderContent
+									classes={classes}
+									whatsappChatSession={whatsappChatSession}
+									setWhatsappChatSession={setWhatsappChatSession}
+								/>
+							)}
+					</Box>
+				</Box>
+
 			</header>
 		);
 	};
@@ -214,7 +206,7 @@ const ChatUi = ({
 					setIsDynamcFieldModal={setIsDynamcFieldModal}
 					newMessage={newMessage}
 					setNewMessage={setNewMessage}
-					setIsTemplateModal={setIsTemplateModal}
+					setIsTemplateModal={() => setDialogType({ type: 'chatTemplate' })}
 					savedTemplate={savedTemplate}
 					dynamicVariable={dynamicVariable}
 					whatsappChatSession={whatsappChatSession}
@@ -281,6 +273,47 @@ const ChatUi = ({
 		);
 	};
 
+	const getChatTemplateDialog = () => {
+		return {
+			title: translator('whatsappChat.chooseTemplate'),
+			showDivider: true,
+			showDefaultButtons: false,
+			content: (
+				<ChatTemplateModal
+					classes={classes}
+					onClose={() => setDialogType(null)}
+					savedTemplateList={savedTemplateList}
+					onChoose={(template, templateText) => {
+						onChoose(template, templateText);
+						setDialogType(null);
+					}}
+				/>
+			)
+		}
+	}
+
+	const renderDialog = () => {
+		const { type } = dialogType || {}
+
+		if (type) {
+			const dialogContent: { [key: string]: {} } = {
+				chatTemplate: getChatTemplateDialog(),
+			}
+			const currentDialog: any = (type && dialogContent[type]) || {};
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					childrenStyle={classes.mb25}
+					onClose={() => setDialogType(null)}
+					onCancel={() => setDialogType(null)}
+					{...currentDialog}>
+					{currentDialog.content}
+				</BaseDialog>
+			)
+		}
+	}
+
 	return (
 		<>
 			<div className={`${classes.whatsappChat} chat`}>
@@ -296,15 +329,7 @@ const ChatUi = ({
 					{/* Footer */}
 					{chatFooter()}
 				</div>
-				<ChatTemplateModal
-					classes={classes}
-					isOpen={isTemplateModal}
-					onClose={() => setIsTemplateModal(false)}
-					savedTemplateList={savedTemplateList}
-					onChoose={(template, templateText) =>
-						onChoose(template, templateText)
-					}
-				/>
+				{renderDialog()}
 				<Loader isOpen={isLoader} showBackdrop={true} />
 			</div>
 		</>

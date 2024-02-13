@@ -1,3 +1,4 @@
+import { sitePrefix } from '../../config';
 import { toastProps } from './Editor/Types/WhatsappCreator.types';
 import {
 	AllCampaignReq,
@@ -11,21 +12,21 @@ import {
 	statusByNameProps,
 	statusProps,
 	TemplatesStatusIdByStatusName,
-	TierSetting,
+	TierSetting
 } from './management/Types/Management.types';
 
 export const whatsappRoutes = {
-	CREATE_TEMPLATE: '/react/whatsapp/template/create',
-	CREATE_CAMPAIGN_PAGE1: '/react/whatsapp/campaign/create/page1',
-	CREATE_CAMPAIGN_PAGE2: '/react/whatsapp/campaign/create/page2',
-	TEMPLATE_MANAGEMENT: '/react/whatsapp/templatemanagement',
-	REPORTS: '/react/reports/whatsappreports',
-	CAMPAIGN_MANAGEMENT: '/react/whatsapp/campaignmanagement',
-	EDIT_TEMPLATE: '/react/whatsapp/template/edit/:templateID',
-	EDIT_CAMPAIGN_PAGE1: '/react/whatsapp/campaign/edit/page1/:campaignID',
-	EDIT_CAMPAIGN_PAGE2: '/react/whatsapp/campaign/edit/page2/:campaignID',
-	CHAT: '/react/whatsapp/chat',
-	CHAT_CONVERSATION: '/react/whatsapp/chat/:contactID',
+	CREATE_TEMPLATE: `${sitePrefix}whatsapp/template/create`,
+	CREATE_CAMPAIGN_PAGE1: `${sitePrefix}whatsapp/campaign/create/page1`,
+	CREATE_CAMPAIGN_PAGE2: `${sitePrefix}whatsapp/campaign/create/page2`,
+	TEMPLATE_MANAGEMENT: `${sitePrefix}whatsapp/templatemanagement`,
+	REPORTS: `${sitePrefix}reports/whatsappreports`,
+	CAMPAIGN_MANAGEMENT: `${sitePrefix}whatsapp/campaignmanagement`,
+	EDIT_TEMPLATE: `${sitePrefix}whatsapp/template/edit/:templateID`,
+	EDIT_CAMPAIGN_PAGE1: `${sitePrefix}whatsapp/campaign/edit/page1/:campaignID`,
+	EDIT_CAMPAIGN_PAGE2: `${sitePrefix}whatsapp/campaign/edit/page2/:campaignID`,
+	CHAT: `${sitePrefix}whatsapp/chat`,
+	CHAT_CONVERSATION: `${sitePrefix}whatsapp/chat/:contactID`,
 };
 
 export const apiStatus = {

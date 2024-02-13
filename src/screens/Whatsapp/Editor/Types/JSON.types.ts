@@ -47,7 +47,6 @@ export type authenticationClass = {
 	code_expiration_minutes?: number;
 	actions: authenticationCopyButtonClass[];
 };
-
 export type authenticationCopyButtonClass = {
 	type: string;
 	copy_code_text: string;
@@ -62,6 +61,7 @@ export type QuickReply = {
 	types: QuickReplyTypes;
 	isSaveOnly?: boolean;
 	id?: number;
+	codeExpirationTime?: number;
 };
 
 export type QuickReplyTypes = {
