@@ -394,7 +394,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			confirmText: "common.Yes",
 			cancelText: "common.No",
 			onConfirm: async () => {
-				const response = await save();
+				const response = await save(true);
 				navigate(`${sitePrefix}LandingPages`);
 			},
 			onClose: () => {
@@ -426,7 +426,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				/>
 			),
 			onConfirm: async () => {
-				const response = await save();
+				const response = await save(true);
 				navigate(`${sitePrefix}LandingPages`);
 			},
 		};
