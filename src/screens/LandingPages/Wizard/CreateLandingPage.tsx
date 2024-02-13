@@ -51,7 +51,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	} | null>(null);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { accountFeatures } = useSelector((state: any) => state.common);
-	const [ toastMessage, setToastMessage ] = useState(null);
+	const [toastMessage, setToastMessage] = useState(null);
 	const [errors, setErrors] = useState({
 		PageName: '',
 		formLanguage: '',
@@ -519,7 +519,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			setIsLoader(false);
 			return true;
 		} else {
-			setDialogType({ type : 'validationDialog' })
+			setDialogType({ type: 'validationDialog' })
 		}
 	}
 
@@ -527,31 +527,31 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	const handleSaveResponse = (response: any, redirectToNewEditor: boolean) => {
 		switch (response.StatusCode) {
-				case 201: {
-					handleContinueToEditor(redirectToNewEditor, response.Data.ID);
-					break;
-				}
-				case 400: {
-					showErrorToast(translator('common.Error'));
-					break;
-				}
-				case 401: {
-					logout();
-					break;
-				}
-				case 402: {
-					showErrorToast(translator('common.Error'));
-					break;
-				}
-				case 404: {
-					showErrorToast(translator('common.Error'));
-					break;
-				}
-				case 500:
-				default: {
-					showErrorToast(translator('common.Error'));
-					break;
-				}
+			case 201: {
+				handleContinueToEditor(redirectToNewEditor, response.Data.ID);
+				break;
+			}
+			case 400: {
+				showErrorToast(translator('common.Error'));
+				break;
+			}
+			case 401: {
+				logout();
+				break;
+			}
+			case 402: {
+				showErrorToast(translator('common.Error'));
+				break;
+			}
+			case 404: {
+				showErrorToast(translator('common.Error'));
+				break;
+			}
+			case 500:
+			default: {
+				showErrorToast(translator('common.Error'));
+				break;
+			}
 		}
 	}
 
@@ -603,24 +603,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			);
 		}
 		else {
-			wizardButtons.push(
-				<Button
-					onClick={saveAndContinueToOldEditor}
-					className={clsx(
-						classes.btn,
-						classes.btnRounded,
-						classes.backButton
-					)}
-					style={{ margin: '8px' }}
-					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-				>
-					{translator('common.saveAndContinue')}
-				</Button>
-			);
-
 			// wizardButtons.push(
 			// 	<Button
-			// 		onClick={saveAndContinueToNewEditor}
+			// 		onClick={saveAndContinueToOldEditor}
 			// 		className={clsx(
 			// 			classes.btn,
 			// 			classes.btnRounded,
@@ -628,11 +613,26 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			// 		)}
 			// 		style={{ margin: '8px' }}
 			// 		endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-			// 		key='newEditor'
 			// 	>
-			// 		{translator('master.continueToNewEditor')}
+			// 		<>{translator('common.saveAndContinue')}</>
 			// 	</Button>
 			// );
+
+			wizardButtons.push(
+				<Button
+					onClick={saveAndContinueToNewEditor}
+					className={clsx(
+						classes.btn,
+						classes.btnRounded,
+						classes.backButton
+					)}
+					style={{ margin: '8px' }}
+					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					key='newEditor'
+				>
+					{translator('master.continueToNewEditor')}
+				</Button>
+			);
 		}
 		return wizardButtons.map((b) => b);
 	}

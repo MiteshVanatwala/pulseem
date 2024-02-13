@@ -3,9 +3,10 @@ import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { BsInfoCircle } from "react-icons/bs";
 import { IoIosArrowDown } from "react-icons/io";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LandingPagesAnswerType } from "../../../../helpers/Constants";
 import { coreProps } from "../../../Whatsapp/Campaign/Types/WhatsappCampaign.types";
+import { isShortUrlExist } from "../../../../redux/reducers/landingPagesSlice";
 
 
 const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors }: any) => {
@@ -13,6 +14,19 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
     const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
     );
+    const dispatch = useDispatch();
+
+    const handleFromName = async (event: any) => {
+        const shortUrl = event.target.value.replace(/ /g, '_')
+        //@ts-ignore
+        const isExistRes: any = await dispatch(isShortUrlExist(shortUrl));
+        console.log(isExistRes?.payload);
+
+        if (isExistRes?.payload?.Data === true) {
+            // TODO: @mitesh
+            // show error class on ShortURL and prevent continue.
+        }
+    }
 
     return <Grid container spacing={3} className={clsx(classes.p15, classes.mb4)}>
         <Grid item md={4}>
@@ -28,9 +42,10 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     value={data.PageName}
                     className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.PageName })}
                     autoComplete="off"
-                    onChange={(e: any) => onUpdate({ ...data, PageName: e.target.value })}
+                    onChange={(e: any) => onUpdate({ ...data, PageName: e.target.value, PageUrl: e.target.value.replace(/ /g, '_') })}
                     error={!!errors.PageName}
                     title={data.PageName}
+                    onBlur={handleFromName}
                 />
                 <Box className='textBoxWrapper'>
                     <Typography className={clsx(errors.PageName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

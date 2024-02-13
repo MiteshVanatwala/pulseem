@@ -176,6 +176,18 @@ export const getById = createAsyncThunk(
     }
   });
 
+export const isShortUrlExist = createAsyncThunk(
+  '/landingpages/IsShortUrlExist/', async (shortUrl, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`/landingpages/IsShortUrlExist/${shortUrl}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+
+
 
 export const landingPagesSlice = createSlice({
   name: 'newsletter',
