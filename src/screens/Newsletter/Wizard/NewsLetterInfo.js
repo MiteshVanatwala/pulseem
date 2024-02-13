@@ -548,11 +548,11 @@ const NewsLetterInfo = ({ classes }) => {
                 verifySharedCallback: async (obj) => {
                     setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
                     setShowDomainVerification(false);
-                    const response = await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo }));
-                    if (response && response.payload && (!id || id <= 0)) {
-                        const saveInfo = JSON.parse(response.payload?.Message);
-                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
-                    }
+                    // const response = await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo }));
+                    // if (response && response.payload && (!id || id <= 0)) {
+                    //     const saveInfo = JSON.parse(response.payload?.Message);
+                    //     navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
+                    // }
                 },
                 isFullDescription: true,
                 preText: t(emailObj[fromEmailProperty?.IsRestricted ? 'Restricted' : 'NonVerified']),
