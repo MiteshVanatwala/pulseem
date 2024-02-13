@@ -43,32 +43,36 @@ const Integrations = ({ classes }: any) => {
           classes={{ indicator: classes.hideIndicator }}
         >
           <Tab
+            // @ts-ignore
             label={t('integrations.shopify.title')}
-            icon={<img src={ShopifyIcon} />}
+            icon={<img src={ShopifyIcon} alt="" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
             className={classes.iconTab}
             value='0'
           />
 
           <Tab
+            // @ts-ignore
             label={t('integrations.wooCommerce.title')}
-            icon={<img src={WooCommerceIcon} />}
+            icon={<img src={WooCommerceIcon} alt="" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
             className={classes.iconTab}
             value='1'
           />
 
           <Tab
+            // @ts-ignore
             label={t('integrations.cashCow.title')}
-            icon={<img src={CashCowIcon} />}
+            icon={<img src={CashCowIcon} alt="" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
             className={classes.iconTab}
             value='2'
           />
 
           <Tab
+            // @ts-ignore
             label={t('integrations.Istores.title')}
-            icon={<img src={IsraCardIcon} />}
+            icon={<img src={IsraCardIcon} alt="" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
             className={classes.iconTab}
             value='3'
