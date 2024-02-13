@@ -55,11 +55,11 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
     }
 
     useEffect(() => {
-        if (data && data?.SelectedGroupList?.length > 0) {
+        if (data && data?.SelectedGroupList?.length > 0 && subAccountAllGroups.length > 0) {
             const selected = data.SelectedGroupList.map((x: any) => { return subAccountAllGroups.find((s: any) => s.GroupID === parseInt(x.trim())) })
             setSelectedGroups(selected);
         }
-    }, []);
+    }, [data, subAccountAllGroups]);
 
     return (
         <Grid container spacing={3} className={clsx(classes.p15)}>

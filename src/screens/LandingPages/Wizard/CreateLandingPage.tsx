@@ -199,7 +199,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				GoogleConvertionCode: response.Data?.GoogleConvertionCode || '',
 				GoogleTagManagerCode: response.Data?.GoogleTagManagerCode || '',
 				FacebookPixelCode: response.Data?.FacebookPixelCode || '',
-				GroupIDs: response.Data?.GroupIDs || []
+				GroupIDs: response.Data?.GroupIDs?.split(',') || []
 			});
 		}
 
@@ -507,7 +507,12 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		setErrors(errorDump);
 		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
 			setIsLoader(true);
-			const req = { ...landingPageModel, SelectedGroupList: null, EmailsToReport: landingPageModel?.EmailsToReport?.join(',') };
+			const req = {
+				...landingPageModel,
+				SelectedGroupList: null,
+				EmailsToReport: landingPageModel?.EmailsToReport?.join(','),
+				GroupIDs: landingPageModel?.GroupIDs.join(',')
+			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
 			handleSaveResponse(response?.payload, redirectToNewEditor);
