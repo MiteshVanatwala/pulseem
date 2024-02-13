@@ -163,7 +163,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                         <MenuItem value={LandingPagesAnswerType.POPUP_MESSAGE}>{translator("landingPages.popupMessage")}</MenuItem>
                         <MenuItem value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</MenuItem>
                         <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</MenuItem>
+                        {/* <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</MenuItem> */}
                         <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem>
                     </Select>
                 </FormControl>
@@ -174,7 +174,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             [LandingPagesAnswerType.POPUP_MESSAGE,
             LandingPagesAnswerType.REDIRECT_URL,
             LandingPagesAnswerType.DOWNLOAD_FILE
-            ].indexOf(data.answerType) > -1 && (
+            ].indexOf(data.AnswerType) > -1 && (
                 <Grid item md={4}>
                     <Box>
                         <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
@@ -199,9 +199,9 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </Grid>
             )
         }
-
+        {/* 
         {
-            data.answerType === LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE && (
+            data.AnswerType === LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE && (
                 <>
                     <Grid item md={3}>
                         <Box>
@@ -273,7 +273,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     </Grid>
                 </>
             )
-        }
+        } */}
     </Grid>
 
 }
