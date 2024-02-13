@@ -109,27 +109,6 @@ export const checkCellphoneAuthorization = createAsyncThunk(
         }
     })
 
-export const getApiKey = createAsyncThunk(
-    'GetKey', async (_, thunkAPI) => {
-        try {
-            const response = await PulseemReactInstance.get(`ApiSettings/GetKey`);
-            return response.data as PulseemResponse
-        } catch (error: any) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    })
-
-export const generateApiKey = createAsyncThunk(
-    'GenerateNewApiKey', async (_, thunkAPI) => {
-        try {
-            const response = await PulseemReactInstance.put(`ApiSettings/GenerateNewApiKey`);
-            return response.data as PulseemResponse
-        } catch (error: any) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    })
-
-
 interface AuthorizationValues {
     value: string,
     isTwoFa: boolean

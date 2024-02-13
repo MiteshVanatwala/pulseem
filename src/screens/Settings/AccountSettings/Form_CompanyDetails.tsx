@@ -254,7 +254,7 @@ const FORM_COMPANY_DETAILS = ({
           }}
         />
         <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-          { windowSize !== 'xs' && <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> }
+          {windowSize !== 'xs' && <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} />}
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
@@ -477,12 +477,15 @@ const FORM_COMPANY_DETAILS = ({
                     classes.btn,
                     classes.btnRounded,
                     classes.mr15,
-                    windowSize === 'xs' ? classes.mb10 : ''
+                    {
+                      [classes.mt10]: windowSize === 'xs',
+                      [classes.f12]: windowSize === 'xs',
+                    }
                   )}
                   onClick={() => {
                     onShowTwoFactorAuth('smsTFA');
                   }}
-                  startIcon={<MdMobileFriendly />}
+                  startIcon={<MdMobileFriendly className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
                   <>
@@ -494,12 +497,16 @@ const FORM_COMPANY_DETAILS = ({
                 <Button
                   className={clsx(
                     classes.btn,
-                    classes.btnRounded
+                    classes.btnRounded,
+                    {
+                      [classes.mt10]: windowSize === 'xs',
+                      [classes.f12]: windowSize === 'xs',
+                    }
                   )}
                   onClick={() => {
                     onShowTwoFactorAuth('emailTFA');
                   }}
-                  startIcon={<MdOutlineMarkEmailRead />}
+                  startIcon={<MdOutlineMarkEmailRead className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
                   <>

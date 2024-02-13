@@ -558,8 +558,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
   }
 
   const handleChange = (ID) => () => {
-    const found = restoreArray.includes(ID)
-    console.log('restore', ID, 'found:', found)
+    const found = restoreArray.indexOf(ID) > -1;
+
     if (found) {
       setRestoreArray(restoreArray.filter(restore => restore !== ID))
     } else {
@@ -609,6 +609,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       ),
       content: (
         <RestorDialogContent
+          title={'common.noAutomationsToRestore'}
           classes={classes}
           data={data}
           currentChecked={restoreArray}

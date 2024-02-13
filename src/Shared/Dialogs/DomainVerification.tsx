@@ -12,6 +12,8 @@ import { SetSharedDomain } from "../../redux/reducers/DomainVerificationSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { IoIosArrowDown } from "react-icons/io";
+import { PulseemFeatures } from "../../model/PulseemFields/Fields";
+
 interface ButtonOptions {
     text: string,
     onCallback?: Function | never
@@ -67,8 +69,8 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const localClasses = useStyles();
-    const { isRTL } = useSelector((state: StateType) => state.core)
-    const { accountSettings, verifiedEmails } = useSelector((state: StateType) => state.common)
+    const { isRTL } = useSelector((state: StateType) => state.core);
+    const { accountSettings, verifiedEmails, accountFeatures } = useSelector((state: StateType) => state.common)
     const { domainVerificationPopUp } = useSelector((state: StateType) => state.newsletter);
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
     const [sharedDomain, setSharedDomain] = useState<string>('');
@@ -207,7 +209,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                     </Grid>
                 </AccordionDetails>
             </Accordion>}
-            {domain?.verifySharedCallback !== null && domain?.verifySharedCallback !== undefined && <Accordion
+            {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && domain?.verifySharedCallback !== null && domain?.verifySharedCallback !== undefined && <Accordion
                 expanded={activeAccordion === 3}
                 className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
                 key={3}
@@ -230,12 +232,12 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                         <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.sendFromSharedDomain.text"))}</Box>
                         <Box className={clsx(classes.dFlex)} style={{ marginBlock: 15, alignContent: 'center', justifyContent: 'flex-start', gap: 15 }}>
                             <Box style={{ maxWidth: 200 }}>
-                                <Typography title={t("campaigns.newsLetterEditor.fromEmail")} className={clsx(classes.alignDir, classes.bold)}>{t("campaigns.newsLetterEditor.fromEmail")}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.fromEmail").replace('<b>', '').replace('</b>', '')} className={clsx(classes.alignDir)}>{RenderHtml(t("campaigns.newsLetterEditor.fromEmail"))}</Typography>
                                 <TextField
                                     inputMode="url"
                                     dir="ltr"
                                     className={clsx(classes.textField, classes.textFieldWithTemplate)}
-                                    style={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #D6D1E6', marginTop: 7}}
+                                    style={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #D6D1E6', marginTop: 7 }}
                                     InputProps={{
                                         style: { maxWidth: '100px !important', width: '100px !important' },
                                         endAdornment: <InputAdornment position="end">{DOMAIN_EMAIL_SUFFIX}</InputAdornment>
@@ -247,8 +249,8 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                     onChange={(event: any) => setSharedDomain(event.target.value.replace('@', ''))}
                                 />
                             </Box>
-                            <Box className='selectWrapper' style={{ maxWidth: 200 }}>
-                                <Typography title={t("campaigns.newsLetterEditor.replyTo")} className={clsx(classes.alignDir, classes.bold)}>{t("campaigns.newsLetterEditor.replyTo")}</Typography>
+                            <Box className='selectWrapper' style={{ minWidth: 300 }}>
+                                <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>', '').replace('</b>', '')} className={clsx(classes.alignDir)}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
@@ -284,7 +286,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                                 {t(item.Number)}
                                             </MenuItem>
                                         })}
-                                        {accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
+                                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem
                                             key={verifiedEmails.length + 1}
                                             value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
                                             // @ts-ignore

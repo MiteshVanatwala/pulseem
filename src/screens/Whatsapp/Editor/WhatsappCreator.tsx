@@ -1287,7 +1287,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		showDivider: false,
 		showDefaultButtons: false,
 		contentStyle: classes.noPadding,
-		paperStyle: classes.callToAction,
 		content: (
 			<QuickReply
 				classes={classes}

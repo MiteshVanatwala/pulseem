@@ -93,7 +93,8 @@ export const getRoutes = (
         {
           key: "dynamicGroups",
           title: t("master.RadMenuItemResourceDynamicGroups.Text"),
-          href: `${sitePrefix}Groups/Dynamic`,
+          href: `${rootDomain}/DynamicGroups.aspx?fromreact=true`,
+          // href: `${sitePrefix}Groups/Dynamic`,
           isShow: true,
         },
         {
@@ -135,11 +136,11 @@ export const getRoutes = (
           href: `${rootDomain}/CampaignsByResults.aspx?fromreact=true`,
           isShow: false,
         },
-        {
-          title: t("master.linkAbTestingsResource1.Text"),
-          href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
-          isShow: false,
-        },
+        // {
+        //   title: t("master.linkAbTestingsResource1.Text"),
+        //   href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
+        //   isShow: false,
+        // },
         {
           title: t("master.RadMenuItemResource9a.Text"),
           href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
@@ -198,11 +199,11 @@ export const getRoutes = (
           href: `${rootDomain}/SMSSmartResponses.aspx?fromreact=true`,
           isShow: true,
         },
-        {
-          title: t("master.linkSMSResponsesReport.Text"),
-          href: `${sitePrefix}reports/Inbound`,
-          isShow: true,
-        },
+        // {
+        //   title: t("master.linkSMSResponsesReport.Text"),
+        //   href: `${sitePrefix}reports/Inbound`,
+        //   isShow: true,
+        // },
         {
           title: t("master.NewMMSCampaign.Text"),
           href: `${rootDomain}/MmsCampaignEdit.aspx?fromreact=true`,
@@ -343,7 +344,7 @@ export const getRoutes = (
         { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: `${sitePrefix}reports/SMSMainReport`, isShow: true },
         { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: `${sitePrefix}Reports/MMSMainReport`, isShow: true },
         { key: 'whatsappReports', title: t('whatsapp.ReportsWhatsapp'), href: whatsappRoutes.REPORTS, isShow: true },
-        { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: true },
+        // { title: t('master.AbTestsReport.Text'), href: `${rootDomain}/AbTestsReport.aspx?fromreact=true`, isShow: true },
         { title: t('master.RadMenuItemResource15.Text'), href: `${rootDomain}/AccountReport.aspx?fromreact=true`, isShow: true },
         { title: t('master.RadMenuItemResource16.Text'), href: `${rootDomain}/CampaignComparison.aspx?fromreact=true`, isShow: false },
         { key: 'recipientReport', title: t('master.RadMenuItemResource18.Text'), href: `${sitePrefix}Reports/Recipient`, isShow: true },

@@ -68,9 +68,9 @@
 	vertical-align: middle;
 }
 
-.accordion > input[type='checkbox']:checked ~ .handle label:before {
+/* .accordion > input[type='checkbox']:checked ~ .handle label:before {
 	content: '\f078';
-}
+} */
 
 /*
    Demo purposes only

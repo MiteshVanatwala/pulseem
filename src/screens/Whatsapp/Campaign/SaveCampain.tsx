@@ -559,7 +559,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const highlightText = (tagData: tagDataProps) => {
-		let updatedVariables = getDynamicFields(tagData?.children);
+		let updatedVariables = getDynamicFields(tagData?.children, true);
 		const highlightVariables = (
 			<>
 				{updatedVariables?.map((variable, index) => (
@@ -622,7 +622,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setButtonType(templatePreviewData?.buttonType);
 			setTemplateData(templatePreviewData?.templateData);
 			setDynamicVariable(
-				getDynamicFields(templatePreviewData?.templateData.templateText)
+				getDynamicFields(templatePreviewData?.templateData.templateText, true)
 			);
 			if (templatePreviewData?.buttonType === 'quickReply') {
 				setQuickReplyButtons(templatePreviewData?.templateData.templateButtons);
@@ -662,7 +662,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			templateButtons: buttons,
 		});
 		setDynamicVariable(
-			getDynamicFields(template)
+			getDynamicFields(template, true)
 		);
 		setQuickReplyButtons(buttons);
 		setFileData({
@@ -946,7 +946,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onSaveCampaign = async (
 		from: string = '',
 		showSuccess: boolean = true,
-		isNavigate: boolean = true
+		isNavigate: boolean = true,
+		isExit: boolean = false
 	) => {
 		setDialogType(null);
 		if (validateSaveCampaign(true)) {
@@ -967,6 +968,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					} else {
 						window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
 					}
+				} else if (isExit) {
+					onExitCampaign();
 				}
 				return data?.Data;
 			} else {
@@ -1051,17 +1054,17 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		),
 		renderButtons: () => <ConfirmationButtons
 			classes={classes}
-			onConfirm={() => onSaveCampaign('save', true, true)}
+			onConfirm={() => onSaveCampaign('save', true, false, true)}
 			onCancel={() => onExitCampaign()}
 		/>
 	})
 
 	const getDeleteDialog = () => ({
-		title: translator('whatsapp.alertModal.DeleteText'),
+		title: translator('whatsappManagement.deleteCampaign'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				{translator('whatsapp.alertModal.DeleteTitle')}
+				{translator('whatsappManagement.deleteCampaignDesc')}
 			</Typography>
 		),
 		renderButtons: () => <ConfirmationButtons

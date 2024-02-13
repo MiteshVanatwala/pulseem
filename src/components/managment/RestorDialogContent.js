@@ -9,14 +9,15 @@ export const RestorDialogContent = ({
   currentChecked = [],
   dataIdVar = 'ID',
   dataLabeleVar = 'Name',
-  onChange
+  onChange,
+  title = 'common.noCampaignToRestore'
 }) => {
   const { t } = useTranslation()
 
   if (!Array.isArray(data) || !data || data?.length === 0)
     return <Box
       style={{ minHeight: 200 }}
-      className={classes.restorDialogContent}>{t('common.noCampaignToRestore')}</Box>
+      className={classes.restorDialogContent}>{t(title)}</Box>
 
   return (
     <Box

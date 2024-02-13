@@ -48,15 +48,15 @@ const LatestReports = ({ classes, t, isRTL }) => {
 
   useEffect(() => {
     (async () => {
-			const { payload: phoneNumberData } = await dispatch(userPhoneNumbers());
-			if (!(
-				phoneNumberData?.Status === apiStatus.SUCCESS &&
-				phoneNumberData?.Data &&
-				phoneNumberData?.Data?.length > 0
-			)) {
-				setIsWhatsappAccountSetup(false);
-			}
-		})();
+      const { payload: phoneNumberData } = await dispatch(userPhoneNumbers());
+      if (!(
+        phoneNumberData?.Status === apiStatus.SUCCESS &&
+        phoneNumberData?.Data &&
+        phoneNumberData?.Data?.length > 0
+      )) {
+        setIsWhatsappAccountSetup(false);
+      }
+    })();
   }, []);
 
   const barOptions = {
@@ -233,7 +233,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
     }
 
     const showGraphs = !!(innerData && (innerData.length > 0));
-    
+
     return (
       <TabPanel value={tabValue} index={index} key={`newsletterTabPanel_${tabType}`}>
         <Box className={clsx(!showGraphs ? classes.tabPanel : null, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexJustifyCenter, classes.flexWrap)}>
@@ -242,15 +242,15 @@ const LatestReports = ({ classes, t, isRTL }) => {
               <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1)}>
                 {
                   showGraphs ? (innerData.map((c, index) => {
-                    const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
+                    const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${sitePrefix}reports/SMSMainReport?name=${c.CampaignName}`;
                     return (
                       <Box key={index} className={classes.w100}>
                         {index === 0 && <Divider />}
                         <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex)} key={`${c.CampaignName}_${index}`}>
                           <Box className={clsx(classes.flex2, classes.paddingSides5, classes.textCenter)}>
                             <BootstrapTooltip title={c.CampaignName} placement="top">
-                              <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f14, classes.ellipsisText, classes.graphCampaignName)}>
-                                {c.CampaignName}
+                              <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f14, classes.ellipsisText, classes.graphCampaignName)} style={{ maxWidth: windowSize === 'xs' ? '80%' : 'revert-layer' }}>
+                                {c.CampaignName?.substring(0, 25)} {c.CampaignName?.length > 25 ? '...' : null}
                               </Link>
                             </BootstrapTooltip>
                           </Box>
@@ -263,7 +263,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                           </Box>
                           }
                           <Box className={classes.flex1}>
-                            <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                            <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '80%' }}>
                               {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
                             </Typography>
                           </Box>
@@ -290,21 +290,21 @@ const LatestReports = ({ classes, t, isRTL }) => {
             <Grid>
               <Box className={classes.w100}>
                 {
-                  tabType === 'whatsapp' && !isWhatsappAccountSetup ? 
+                  tabType === 'whatsapp' && !isWhatsappAccountSetup ?
                     <NoSetup classes={classes} isCompact={true} />
-                   :
-                  <ButtonWithTitle
-                    classes={classes}
-                    title={NoDataObject[tabType].title}
-                    buttonText={NoDataObject[tabType].buttonText}
-                    redirect={NoDataObject[tabType].redirect}
-                  />
+                    :
+                    <ButtonWithTitle
+                      classes={classes}
+                      title={NoDataObject[tabType].title}
+                      buttonText={NoDataObject[tabType].buttonText}
+                      redirect={NoDataObject[tabType].redirect}
+                    />
                 }
               </Box>
             </Grid>
           )}
         </Box>
-      </TabPanel>
+      </TabPanel >
     );
   }
 

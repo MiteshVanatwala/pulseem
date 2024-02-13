@@ -5,7 +5,7 @@ import {
   Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControlLabel, Tooltip, Checkbox
 } from '@material-ui/core'
 import {
-  TablePagination, DateField, SearchField
+  TablePagination, DateField
 } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,7 @@ import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { VoidFunction } from '../../../helpers/Types/common';
-import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import { SetPageState, GetPageNyName, ClearPageState } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
@@ -31,6 +31,7 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import queryString from 'query-string';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -47,7 +48,7 @@ const SmsReport = ({ classes }) => {
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
   const dispatch = useDispatch()
-  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
+  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
@@ -58,6 +59,7 @@ const SmsReport = ({ classes }) => {
   const [hasRevenue, setHasRevenue] = useState(false);
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
+  const qs = (window.location.search && queryString.parse(window.location.search)) || state;
 
   moment.locale(language)
 
@@ -148,14 +150,14 @@ const SmsReport = ({ classes }) => {
   useEffect(() => {
     const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
     const pageStateProperty = GetPageNyName('reports/SMSMainReport');
-    let searchData = smsQuery;
+    let searchData = { ...smsQuery, SerachTxt: qs !== null && qs?.name ? qs?.name : smsQuery.SerachTxt, From: qs !== null && qs?.name ? null : priorDate };
     if (queryState && pageStateProperty) {
       if (pageStateProperty.SearchData) {
         searchData = {
           SerachTxt: pageStateProperty.SearchData?.SerachTxt ?? '',
           From: pageStateProperty.SearchData?.From ?? null,
           To: pageStateProperty.SearchData?.To ?? null,
-          ShowTestCampaigns: smsQuery.ShowTestCampaigns ? smsQuery.ShowTestCampaigns : pageStateProperty.SearchData?.ShowTestCampaigns,
+          ShowTestCampaigns: pageStateProperty.SearchData?.ShowTestCampaigns ? pageStateProperty.SearchData?.ShowTestCampaigns : smsQuery.ShowTestCampaigns,
           CampaignID: pageStateProperty.SearchData?.CampaignID ?? null,
         }
         setSearching(true);
@@ -232,7 +234,7 @@ const SmsReport = ({ classes }) => {
     "UniqueClicksCount": t('common.ClicksUnique'),
     "RealClicks": t('mainReport.verifiedCount'),
     "TotalSendPlan": t('mainReport.totalSendPlan'),
-    "CreditsPerSms": t('mainReport.postCredits'),
+    "CreditsPerSms": `${t('report.Credits')} ${t('mainReport.postCredits')}`,
     "IsResponse": t('mainReport.isResponse'),
     "totalSent": t('report.TotalSent'),
     "success": t('report.success'),
@@ -262,6 +264,7 @@ const SmsReport = ({ classes }) => {
       "PageNumber": page,
       "SearchData": resetSmsQuery
     });
+    ClearPageState('reports/SMSMainReport');
   }
 
   const handleDownloadCsv = async (formatType) => {
@@ -403,7 +406,13 @@ const SmsReport = ({ classes }) => {
                 height={15}
                 width={40}
                 className={clsx({ [classes.rtlSwitch]: isRTL })}
-                onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
+                onChange={() => {
+                  const p = GetPageNyName('reports/SMSMainReport');
+                  if (p.SearchData) {
+                    ClearPageState('reports/SMSMainReport');
+                  }
+                  setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns })
+                }}
               />
             }
             label={t('mainReport.locShowTestCampaigns.Text')}

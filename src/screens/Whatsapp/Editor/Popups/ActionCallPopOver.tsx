@@ -246,6 +246,7 @@ const ActionCallPopOver = ({
 	const getValidationDialog = () => ({
 		title: translator('whatsappCampaign.sendValidation'),
 		showDivider: false,
+		showDefaultButtons: false,
 		content: (
 			<ul className={clsx(classes.noMargin, classes.mb20)}>
 				{validationErrors?.map((requiredField: string, index: number) => (
@@ -255,12 +256,20 @@ const ActionCallPopOver = ({
 				))}
 			</ul>
 		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
-		}
+		renderButtons: () => (
+			<Box className={classes.textCenter}>
+				<Button
+					name="btnConfirm"
+					variant='contained'
+					size='medium'
+					onClick={() => setDialogType({ type: '',data: '' })}
+					className={clsx(
+							classes.btn, classes.btnRounded,
+							classes.ml5
+					)}>
+					{translator('common.Ok')}
+			</Button>
+		</Box>)
 	})
 
 	const getLimitDialog = () => ({

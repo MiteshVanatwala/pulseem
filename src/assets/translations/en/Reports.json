@@ -128,5 +128,6 @@
   "InProcess": "In Process",
   "Failed": "Failed",
   "Completed": "completed" ,
-  "smsReplies": "SMS Incoming report"
+  "smsReplies": "SMS Incoming report",
+  "WhatsappBalance": "Whatsapp Balance"
 }

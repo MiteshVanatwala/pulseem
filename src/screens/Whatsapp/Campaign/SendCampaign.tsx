@@ -779,7 +779,10 @@ const SendCampaign = ({
 				await onCampaignSave(true, true, true);
 				onExitCampaign();
 			}}
-			onCancel={() => setDialogType({ type: '', data: '' })}
+			onCancel={() => {
+				setDialogType({ type: '', data: '' });
+				onExitCampaign();
+			}}
 		/>
 	})
 
