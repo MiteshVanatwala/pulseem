@@ -32,6 +32,7 @@ import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
 import { Stack } from '@mui/material';
+import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -48,63 +49,6 @@ function BootstrapTooltip(props) {
   return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
 
-// const DashedInput = withStyles({
-//   root: {
-//     border: 'none',
-//     borderRadius: 0,
-//     "& .MuiOutlinedInput-multiline": {
-//       padding: 0,
-//       minHeight: 55,
-//       paddingTop: 0,
-//       '& textarea + fieldset': {
-//         border: '1px dashed #64a1bd',
-//         borderRadius: 0,
-//         borderWidth: 1
-//       },
-//       '& textarea:invalid:focus + fieldset': {
-//         borderStyle: 'dashed',
-//         borderWidth: 1,
-//         borderColor: 'red'
-//       },
-//       '& textarea:valid:focus + fieldset': {
-//         borderStyle: 'dashed',
-//         borderWidth: 1
-//       },
-//       '& textarea + fieldset:hover': {
-//         color: 'rgba(0, 0, 0, 0.87)',
-//         border: '1px dashed #000',
-//       },
-//       '& textarea.error': {
-//         border: '1px dashed red'
-//       }
-//     },
-//     '& input': {
-//       height: 0,
-//     },
-//     '& input + fieldset': {
-//       borderStyle: 'dashed',
-//       borderColor: '#64a1bd',
-//       borderRadius: 0
-//     },
-//     '& input:invalid:focus + fieldset': {
-//       borderColor: 'red',
-//       borderWidth: 1
-//     },
-//     '& input:valid:focus + fieldset': {
-//       borderStyle: 'dashed',
-//       borderWidth: 1,
-//       borderColor: '#64a1bd'
-//     },
-//     '& input:hover + fieldset': {
-//       color: 'rgba(0, 0, 0, 0.87)',
-//       border: '1px dashed rgba(0, 0, 0, 0.87)',
-//     },
-//     '& input.error': {
-//       border: '1px dashed red'
-//     }
-//   },
-
-// })(TextField);
 
 const NotificationEdit = ({ classes }) => {
   const Redirect = useRedirect();
@@ -160,7 +104,6 @@ const NotificationEdit = ({ classes }) => {
   const [notificationPublicKey, setPublicKey] = useState(0);
   const [inputFocus, setFocusOnInput] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
-  const [isEmojiShown, setShowEmoji] = useState(false);
   const [validationErrorList, setValidationError] = useState(null);
   // Send Type settings
   const [notificationHover, setHovered] = useState(false);
@@ -298,14 +241,8 @@ const NotificationEdit = ({ classes }) => {
   const handleDirection = (event) => {
     setModel({ ...model, Direction: parseInt(event.target.value) })
   }
-  const showEmoji = () => {
-    setShowEmoji(!isEmojiShown);
-  }
-  const handleClickOutsideEmoji = (event) => {
-    if (event.target.id !== 'emohiToggle')
-      setShowEmoji(false);
-  }
-  const onEmojiClick = (event, emojiObject) => {
+
+  const onEmojiClick = (emoji) => {
     const el = document.querySelector(`#${inputFocus}`);
     if (el) {
       let finalStr = '';
@@ -314,10 +251,10 @@ const NotificationEdit = ({ classes }) => {
       const valToReplace = el.value.substring(el.selectionStart, el.selectionEnd);
 
       if (valToReplace !== '') {
-        finalStr = el.value.replace(valToReplace, emojiObject.emoji);
+        finalStr = el.value.replace(valToReplace, emoji);
       }
       else {
-        finalStr = `${textBefore}${emojiObject.emoji}${textAfter}`;
+        finalStr = `${textBefore}${emoji}${textAfter}`;
       }
 
       if (inputFocus === 'notificationTitle') {
@@ -577,16 +514,13 @@ const NotificationEdit = ({ classes }) => {
                   />}
                 />
               </RadioGroup>
-              <button className={classes.emojiIcon} onClick={showEmoji} id="emohiToggle"></button>
-              <ClickAwayListener onClickAway={handleClickOutsideEmoji}>
-                <div>
-                  {isEmojiShown && <Picker onEmojiClick={onEmojiClick}
-                    disableSearchBar={true}
-                    disableSkinTonePicker={true}
-                    pickerStyle={{ backgroundColor: '#fff', zIndex: '99999', textAlign: 'left' }}
-                    groupVisibility={{ recently_used: false }} />}
-                </div>
-              </ClickAwayListener>
+              <EmojiPicker
+                classes={classes}
+                OnSelectEmoji={(emoji) => {
+                  onEmojiClick(emoji);
+                }}
+                boxStyles={{ alignItems: 'center', marginTop: 5 }}
+              />
             </FormControl>
           </Box>
         </Grid>

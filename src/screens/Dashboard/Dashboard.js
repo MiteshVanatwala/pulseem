@@ -15,6 +15,7 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import DahsboardDomainVerificationPopup from './Popup/DahsboardDomainVerificationPopup';
+import WelcomePulseemNewDesign from './Popup/WelcomePulseemNewDesign';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
@@ -22,7 +23,7 @@ const DashboardScreen = ({ classes }) => {
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [showDomainVerificationMessage, setShowDomainVerificationMessage] = useState(true);
+  const [showWelcomePulseemNewDesign, setShowWelcomePulseemNewDesign] = useState(true);
   const [member, setMember] = useState(null);
 
   useEffect(() => {
@@ -107,10 +108,10 @@ const DashboardScreen = ({ classes }) => {
         OnClose={() => setShowChangePassword(false)}
         Text={renderPasswordText()}
       />}
-      <DahsboardDomainVerificationPopup
+      <WelcomePulseemNewDesign
         classes={classes}
-        isOpen={showDomainVerificationMessage}
-        onClose={() => setShowDomainVerificationMessage(false)} />
+        isOpen={showWelcomePulseemNewDesign}
+        onClose={() => setShowWelcomePulseemNewDesign(false)} />
     </DefaultScreen>
   )
 }

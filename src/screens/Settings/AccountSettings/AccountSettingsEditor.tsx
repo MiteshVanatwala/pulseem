@@ -28,7 +28,7 @@ import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampai
 import { updateWhatsappTier } from '../../../redux/reducers/whatsappSlice';
 import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.types';
 import { apiStatus } from '../../Whatsapp/Constant';
-import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
+import { getCommonFeatures, updateDefaultFromEmail } from '../../../redux/reducers/commonSlice';
 import { ListIcon } from '../../../assets/images/managment';
 import DomainsVerificationPopUp from './Popups/DomainsVerificationPopUp';
 import queryString from 'query-string';
@@ -151,6 +151,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		switch (response?.StatusCode || response?.payload?.StatusCode) {
 			case 201: {
 				setToastMessage(ToastMessages.SETTINGS_SAVED);
+				dispatch(updateDefaultFromEmail(updatedObject.DefaultFromMail));
 				break;
 			}
 			case 401: {
@@ -328,9 +329,10 @@ const AccountSettingsEditor = ({ classes }: any) => {
 											{
 												[classes.dFlex]: windowSize === 'xs',
 												[classes.mt10]: windowSize === 'xs',
+												[classes.f12]: windowSize === 'xs',
 											}
 										)}
-										startIcon={<MdOutlineVerified />}
+										startIcon={<MdOutlineVerified className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />}
 										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 										onClick={() => setShowVerificationDomains(!showVerificationDomains)}
 									>

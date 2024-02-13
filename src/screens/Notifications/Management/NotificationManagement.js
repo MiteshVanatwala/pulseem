@@ -46,7 +46,7 @@ const NotificationManagement = ({ classes }) => {
   const [notificationNameSearch, setNotificationNameSearch] = useState('');
   const [scriptDirectory, setScriptDirectory] = useState(0);
   const [copyStatus, setCopyStatus] = useState(false);
-  const [scriptPath, setScriptPath] = useState(0);
+  const [scriptPath, setScriptPath] = useState('');
   const rowsOptions = [6, 10, 20, 50]
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
@@ -68,16 +68,18 @@ const NotificationManagement = ({ classes }) => {
   const [forceShowImplementation, setForceShowImplementation] = useState(false);
   const refScriptCode = useRef(null);
   moment.locale(language)
+  const [pathError, setPathError] = useState(false);
 
-  useEffect(() => {
-    const handleScriptPath = async () => {
-      if (!scriptPath || scriptPath === '') {
-        await dispatch(getScriptPath())
-      }
-      if (scriptPath !== '') {
+  const handleScriptPath = async () => {
+    if (!scriptPath || scriptPath === '') {
+      const scrPathResponse = await dispatch(getScriptPath())
+      if (scrPathResponse?.payload && scrPathResponse?.payload !== '') {
+        setScriptPath(scrPathResponse?.payload);
         setScriptDirectory(1);
       }
     }
+  }
+  useEffect(() => {
     const handleApiKey = async () => {
       if (!subAccountApiKey || subAccountApiKey === "") {
         await dispatch(getSubAccountApiKey());
@@ -92,18 +94,18 @@ const NotificationManagement = ({ classes }) => {
     handleScriptPath();
     handleApiKey();
     getData();
-  }, [dispatch, scriptPath, subAccountApiKey]);
+  }, [dispatch, subAccountApiKey]);
 
 
 
 
 
-  const handleScriptDirectory = async (event) => {
+  const handleScriptDirectory = (event) => {
     const value = parseInt(event.target.value);
     setScriptDirectory(value);
-    if (value === 0) {
-      setScriptPath(null);
-    }
+    // if (value === 0) {
+    //   setScriptPath('');
+    // }
   }
 
   const handleCopyScript = () => {
@@ -185,11 +187,11 @@ const NotificationManagement = ({ classes }) => {
     }
   }
 
-  const handleImplementScript = (value) => {
-    if (value && !forceShowImplementation) {
+  const handleImplementScript = () => {
+    if (!forceShowImplementation) {
       setCookie('scriptDialog', scriptDialog, { maxAge: 2147483647 });
-      dispatch(updateScriptPath(scriptPath));
     }
+    dispatch(updateScriptPath(scriptPath));
     setShowScriptDialog(false)
   }
 
@@ -1127,7 +1129,8 @@ const NotificationManagement = ({ classes }) => {
                 variant="outlined"
                 size="small"
                 fullWidth
-                className={clsx(classes.textField, classes.maxWidth400)}
+                placeholder={pathError && t('common.requiredField')}
+                className={clsx(classes.textField, classes.maxWidth400, pathError && classes.error)}
                 onChange={handleScriptPathChange}
                 value={scriptPath}
               />
@@ -1192,7 +1195,15 @@ const NotificationManagement = ({ classes }) => {
             <Button
               variant='contained'
               size='small'
-              onClick={() => setShowScriptDialog(false)}
+              onClick={() => {
+                if (scriptDirectory === 1 && scriptPath === '') {
+                  setPathError(true);
+                  return false;
+                }
+
+                handleImplementScript();
+                setShowScriptDialog(false)
+              }}
               className={clsx(
                 classes.btn,
                 classes.btnRounded

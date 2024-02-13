@@ -3228,7 +3228,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     //#region emoji
     "& .emoji-group": {
       "&::before": {
-        direction: "ltr",
+        direction: isRTL ? "rtl" : "ltr",
       },
     },
     "& .emoji-search": {

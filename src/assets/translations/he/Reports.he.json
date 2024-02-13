@@ -128,5 +128,6 @@
   "Completed": "הושלמה",
   "errorReason": "סיבת השגיאה",
   "smsReplies": "דו\"ח SMS נכנסים",
-  "virtualNumber": "מספר וירטואלי"
+  "virtualNumber": "מספר וירטואלי",
+  "WhatsappBalance": "יתרת וואטסאפפ"
 }

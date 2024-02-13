@@ -943,7 +943,11 @@ export const whatsappSlice = createSlice({
 			state.userPhoneNumbers = payload;
 		});
 		builder.addCase(getDirectReport.fulfilled, (state, { payload }) => {
-			if (!payload.IsExport) state.directWhatsappReport = payload;
+			if (!payload.IsExport) {
+				const jsonMessage = JSON.parse(payload?.Message);
+				state.directWhatsappReport = { ...payload, Message: jsonMessage };
+
+			}
 		});
 		builder.addCase(getInboundReport.fulfilled, (state, { payload }) => {
 			if (!payload.IsExport) state.inboundWhatsappReport = payload;

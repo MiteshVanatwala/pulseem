@@ -249,7 +249,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                     onChange={(event: any) => setSharedDomain(event.target.value.replace('@', ''))}
                                 />
                             </Box>
-                            <Box className='selectWrapper' style={{ maxWidth: 200 }}>
+                            <Box className='selectWrapper' style={{ minWidth: 300 }}>
                                 <Typography title={t("campaigns.newsLetterEditor.replyTo").replace('<b>', '').replace('</b>', '')} className={clsx(classes.alignDir)}>{RenderHtml(t("campaigns.newsLetterEditor.replyTo"))}</Typography>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}

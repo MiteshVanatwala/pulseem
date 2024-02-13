@@ -13,7 +13,8 @@ export const DASHBOARD_SHORTCUT = {
       },
       {
         title: 'appBar.groups.dynamicGroups',
-        link: '/react/Groups/Dynamic'
+        // link: '/react/Groups/Dynamic'
+        link: '/Pulseem/DynamicGroups.aspx?fromreact=true'
       },
       {
         title: 'appBar.groups.search',
@@ -48,10 +49,10 @@ export const DASHBOARD_SHORTCUT = {
         title: 'dashboard.createABTest',
         link: '/Pulseem/CampaignsByResults.aspx'
       },
-      {
-        title: 'master.linkAbTestingsResource1.Text',
-        link: '/Pulseem/CampaignsAbTestings.aspx'
-      },
+      // {
+      //   title: 'master.linkAbTestingsResource1.Text',
+      //   link: '/Pulseem/CampaignsAbTestings.aspx'
+      // },
       {
         title: 'master.RadMenuItemResource9a.Text',
         link: '/Pulseem/AutoSendPlans.aspx'
@@ -132,10 +133,10 @@ export const DASHBOARD_SHORTCUT = {
         title: 'master.MmsMainReport.Text',
         link: '/react/reports/MMSMainReport'
       },
-      {
-        title: 'master.AbTestsReport.Text',
-        link: '/Pulseem/AbTestsReport.aspx'
-      },
+      // {
+      //   title: 'master.AbTestsReport.Text',
+      //   link: '/Pulseem/AbTestsReport.aspx'
+      // },
       {
         title: 'master.RadMenuItemResource15.Text',
         link: '/Pulseem/AccountReport.aspx'

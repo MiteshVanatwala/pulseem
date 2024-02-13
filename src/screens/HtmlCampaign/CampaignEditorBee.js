@@ -407,8 +407,15 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
+          const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
           localStorage.setItem('reloadBeeEditor', 1);
-          navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`);
+
+          if (isAutoResponder) {
+            window.location.href = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
+          }
+          else {
+            navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`);
+          }
           return false;
         }
         else if (saveRef.current?.showAnimation) {
@@ -779,7 +786,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         >{t("common.save")}
         </Button>
         {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={() => {
-           saveDesign(false, null, false);
+          saveDesign(false, null, false);
           const isSharedDomain = campaign.FromEmail.split("@").pop() === SharedEmailDomain;
           if (!isSharedDomain && (!emailProps?.IsVerified || emailProps?.IsRestricted)) {
             const domainErrorObj = {

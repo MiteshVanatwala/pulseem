@@ -179,12 +179,12 @@ const BulkStatus = ({ classes }) => {
             className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
             justifyContent='space-between'
           >
-            <Grid item md={5} xs={6}>
+            <Grid item md={5} xs={4}>
               <SmsIcon className={classes.shoppingCartIcon} />
               <Typography className={clsx(classes.bulkTitle)}>{t('appBar.sms.title')}</Typography>
             </Grid>
 
-            <Grid item md={3} xs={6} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+            <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
               <Typography className={clsx(classes.bold)}
                 title={`${getBillingTypeText(Sms)} ${t('report.Credits')}`}
                 aria-label={`${getBillingTypeText(Sms)} ${t('report.Credits')}`}>
@@ -192,7 +192,7 @@ const BulkStatus = ({ classes }) => {
               </Typography>
             </Grid>
 
-            <Grid item md={4} xs={12} className={isRTL ? classes.textLeft : classes.textRight}>
+            <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
               {
                 isAllowSms() && (
                   <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') })}>
@@ -210,12 +210,12 @@ const BulkStatus = ({ classes }) => {
             className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
             justifyContent='space-between'
           >
-            <Grid item md={5} xs={6}>
+            <Grid item md={5} xs={4}>
               <NewsletterIcon className={classes.shoppingCartIcon} />
               <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             </Grid>
 
-            <Grid item md={3} xs={6} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+            <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
               <Typography
                 className={clsx(classes.bold)}
                 title={`${getBillingTypeText(Newsletters)} ${t('report.Credits')}`}
@@ -224,7 +224,7 @@ const BulkStatus = ({ classes }) => {
               </Typography>
             </Grid>
 
-            <Grid item md={4} className={isRTL ? classes.textLeft : classes.textRight}>
+            <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
               {
                 isAllowNewsletter() && (
                   <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })}>
@@ -245,21 +245,23 @@ const BulkStatus = ({ classes }) => {
                   className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
                   justifyContent='space-between'
                 >
-                  <Grid item md={5} xs={6}>
+                  <Grid item md={5} xs={4}>
                     <SmsIcon className={classes.shoppingCartIcon} />
                     <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
                   </Grid>
 
-                  <Grid item md={3} xs={6} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                  <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                  </Grid>
+
+                  <Grid item md={1}>
                     <Typography
                       className={clsx(classes.bold)}
                       title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
                       aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
                       {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
                     </Typography>
-                  </Grid>
 
-                  <Grid item md={4}></Grid>
+                  </Grid>
                 </Grid>
                 <Divider />
               </>
@@ -273,12 +275,12 @@ const BulkStatus = ({ classes }) => {
                 className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
                 justifyContent='space-between'
               >
-                <Grid item md={5} xs={12}>
+                <Grid item md={5} xs={4}>
                   <BellIcon className={classes.shoppingCartIcon} />
                   <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
                 </Grid>
 
-                <Grid item md={7} xs={12} className={isRTL ? classes.textLeft : classes.textRight}>
+                <Grid item md={7} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
                   <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => Redirect({ url: `${sitePrefix}Notifications` })}>
                     {t('dashboard.freeTrial')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -296,18 +298,18 @@ const BulkStatus = ({ classes }) => {
                 className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
                 justifyContent='space-between'
               >
-                <Grid item md={5} xs={6}>
+                <Grid item md={5} xs={4}>
                   <WhatsappIcon className={classes.shoppingCartIcon} />
                   <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
                 </Grid>
 
-                <Grid item md={3} xs={6} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
                   <Typography className={clsx(classes.bold, classes.elipsis, classes.noWrap)} style={{ whiteSpace: 'normal' }}>
                     {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(Whatsapp)} ${t('common.NIS')}`}
                   </Typography>
                 </Grid>
 
-                <Grid item md={4} xs={12} className={isRTL ? classes.textLeft : classes.textRight}>
+                <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
                   <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType(4)}>
                     {t('dashboard.purchase')}
                     {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}

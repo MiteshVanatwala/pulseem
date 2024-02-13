@@ -15,6 +15,12 @@ const useStyles = makeStyles({
 	noMaxWidth: {
 		maxWidth: 'none',
 	},
+	root: {
+		'& .emoji-picker-react': {
+			top: 0
+		}
+
+	}
 });
 
 export type PickerObject = {

@@ -14,7 +14,7 @@ import {
     MdOutlineMarkEmailRead,
 } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
-import { getApiKey, generateApiKey } from '../../../redux/reducers/AccountSettingsSlice';
+import { getApiKey, generateApiKey } from '../../../redux/reducers/ApiSettingsSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
@@ -29,6 +29,11 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import PulseemRadio from '../../../components/Controlls/PulseemRadio';
 import InputMask from 'react-input-mask';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { getDirectRemovals } from '../../../redux/reducers/ApiSettingsSlice';
+import { ExportData, ExportOption, HandleExportData } from '../../../helpers/Export/ExportHelper';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 const useStyles = makeStyles({
     pwdEveButton: {
@@ -68,13 +73,15 @@ const ApiSettings = ({ classes }: any) => {
     const [tfaEmailVerification, setTfaEmailVerification] = useState(false);
     const [tfaSmsVerification, setTfaSmsVerification] = useState(false);
     const [verificationStep, setVerificationStep] = useState(0);
-    const [cellphoneToVerify, setCellphoneToVerify] = useState<string>('');
     const [apiKey, setApiKey] = useState<string>('');
     const [showApiKey, setShowApiKey] = useState<boolean>(false);
     const [copyStatus, setCopyStatus] = useState<boolean>(false);
     const [showRegenerate, setShowRegenerate] = useState<boolean>(false);
     const [isMainApi, setIsMainApi] = useState<boolean>(true);
     const [APIKeyRestrictionDialog, setAPIKeyRestrictionDialog] = useState<boolean>(false);
+    const [exportFileTypeDialog, setExportFileTypeDialog] = useState<boolean>(false);
+    const [exportData, setExportData] = useState<any>(null);
+
 
     const localClasses = useStyles();
 
@@ -161,6 +168,50 @@ const ApiSettings = ({ classes }: any) => {
         setIsMainApi(e.target.value === '1')
     }
 
+    const handleExportRemovals = async () => {
+        const response = await dispatch(getDirectRemovals()) as any;
+        setExportData(response?.payload?.Data);
+        setExportFileTypeDialog(true);
+    }
+
+    const exportColumnHeader = {
+        "Sms": t('common.smsDirectRemovalTitle'),
+        "Email": t('common.emailDirectRemovalTitle')
+    }
+
+    const handleDownload = async (formatType: any) => {
+        setShowLoader(true);
+
+        const exportOptions = {
+            OrderItems: false,
+            FormatDate: false,
+            Order: Object.keys(exportColumnHeader)
+        } as ExportOption;
+
+        try {
+            const result = await HandleExportData(exportData, exportOptions) as ExportData;
+
+            ExportFile({
+                data: result,
+                fileName: 'DirectRemovalReport',
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        } catch (e) {
+            console.log(e);
+            // dispatch(sendToTeamChannel({
+            //     MethodName: 'handleDownloadCsv',
+            //     ComponentName: 'ArchiveManagement.js',
+            //     Text: e
+            // }));
+        }
+        finally {
+            setShowLoader(false);
+            setExportFileTypeDialog(false);
+            setExportData(null);
+        }
+    }
+
     const radios = [
         {
             value: "1",
@@ -239,7 +290,7 @@ const ApiSettings = ({ classes }: any) => {
                                         classes.btnRounded,
                                     )}
                                     onClick={() =>
-                                        window.open('/Pulseem/ExportRemovals.aspx')
+                                        handleExportRemovals()
                                     }
                                     startIcon={<BiExport />}
                                     endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -419,82 +470,105 @@ const ApiSettings = ({ classes }: any) => {
                     </Box>
                 </Box>
             </Box>
-            {showRegenerate && <BaseDialog
+            {
+                showRegenerate && <BaseDialog
+                    classes={classes}
+                    open={showRegenerate}
+                    onClose={() => {
+                        setShowRegenerate(false)
+                    }}
+                    onCancel={() => {
+                        setShowRegenerate(false)
+                    }}
+                    onConfirm={() => {
+                        reGenerateApiKey()
+                    }}
+                    showDefaultButtons={true}
+                    title={t('integrations.apiKey')}
+                >
+                    {RenderHtml(t('settings.apiSettings.reGenerateConfirm'))}
+                </BaseDialog>
+            }
+            {
+                APIKeyRestrictionDialog && <BaseDialog
+                    classes={classes}
+                    open={APIKeyRestrictionDialog}
+                    onClose={() => setAPIKeyRestrictionDialog(false)}
+                    onCancel={() => setAPIKeyRestrictionDialog(false)}
+                    onConfirm={() => setAPIKeyRestrictionDialog(false)}
+                    showDefaultButtons={false}
+                    title={t('common.Notice')}
+                >
+                    {RenderHtml(t('settings.apiSettings.noAPIKeyAccess'))}
+                </BaseDialog>
+            }
+            {
+                tfaEmailVerification && <VerificationDialog
+                    variant="emailTFA"
+                    textButtonOnSuccess={t('common.close')}
+                    classes={classes}
+                    isOpen={tfaEmailVerification}
+                    step={verificationStep}
+                    value={null}
+                    onClose={() => {
+                        setTfaEmailVerification(false);
+                        setVerificationStep(0);
+                    }}
+                />
+            }
+            {
+                emailVerificationPopup && <VerificationDialog
+                    textButtonOnSuccess={t('common.close')}
+                    classes={classes}
+                    variant="email"
+                    isOpen={emailVerificationPopup}
+                    step={verificationStep}
+                    value={null}
+                    onClose={() => {
+                        setEmailVerificationPopup(false);
+                        setVerificationStep(0);
+                    }} />
+            }
+            {
+                tfaSmsVerification && <VerificationDialog
+                    variant="smsTFA"
+                    textButtonOnSuccess={t('common.close')}
+                    classes={classes}
+                    isOpen={tfaSmsVerification}
+                    step={verificationStep}
+                    value={null}
+                    onClose={() => {
+                        setTfaSmsVerification(false);
+                        setVerificationStep(0);
+                    }}
+                />
+            }
+            {
+                smsVerificationPopup && <VerificationDialog
+                    textButtonOnSuccess={t('common.close')}
+                    classes={classes}
+                    variant="sms"
+                    step={verificationStep}
+                    value={null}
+                    isOpen={smsVerificationPopup}
+                    onClose={() => {
+                        setSmsVerificationPopup(false);
+                        setVerificationStep(0);
+                    }} />
+            }
+            <ConfirmRadioDialog
                 classes={classes}
-                open={showRegenerate}
-                onClose={() => {
-                    setShowRegenerate(false)
-                }}
-                onCancel={() => {
-                    setShowRegenerate(false)
-                }}
-                onConfirm={() => {
-                    reGenerateApiKey()
-                }}
-                showDefaultButtons={true}
-                title={t('integrations.apiKey')}
-            >
-                {RenderHtml(t('settings.apiSettings.reGenerateConfirm'))}
-            </BaseDialog>}
-            {APIKeyRestrictionDialog && <BaseDialog
-                classes={classes}
-                open={APIKeyRestrictionDialog}
-                onClose={() => setAPIKeyRestrictionDialog(false)}
-                onCancel={() => setAPIKeyRestrictionDialog(false)}
-                onConfirm={() => setAPIKeyRestrictionDialog(false)}
-                showDefaultButtons={false}
-                title={t('common.Notice')}
-            >
-                {RenderHtml(t('settings.apiSettings.noAPIKeyAccess'))}
-            </BaseDialog>}
-            {tfaEmailVerification && <VerificationDialog
-                variant="emailTFA"
-                textButtonOnSuccess={t('common.close')}
-                classes={classes}
-                isOpen={tfaEmailVerification}
-                step={verificationStep}
-                value={null}
-                onClose={() => {
-                    setTfaEmailVerification(false);
-                    setVerificationStep(0);
-                }}
-            />}
-            {emailVerificationPopup && <VerificationDialog
-                textButtonOnSuccess={t('common.close')}
-                classes={classes}
-                variant="email"
-                isOpen={emailVerificationPopup}
-                step={verificationStep}
-                value={null}
-                onClose={() => {
-                    setEmailVerificationPopup(false);
-                    setVerificationStep(0);
-                }} />}
-            {tfaSmsVerification && <VerificationDialog
-                variant="smsTFA"
-                textButtonOnSuccess={t('common.close')}
-                classes={classes}
-                isOpen={tfaSmsVerification}
-                step={verificationStep}
-                value={null}
-                onClose={() => {
-                    setTfaSmsVerification(false);
-                    setVerificationStep(0);
-                }}
-            />}
-            {smsVerificationPopup && <VerificationDialog
-                textButtonOnSuccess={t('common.close')}
-                classes={classes}
-                variant="sms"
-                step={verificationStep}
-                value={null}
-                isOpen={smsVerificationPopup}
-                onClose={() => {
-                    setSmsVerificationPopup(false);
-                    setVerificationStep(0);
-                }} />}
+                isOpen={exportFileTypeDialog}
+                title={t('campaigns.exportFile')}
+                radioTitle={t('common.SelectFormat')}
+                onConfirm={(e: any) => handleDownload(e)}
+                onCancel={() => setExportFileTypeDialog(false)}
+                cookieName={'exportFormat'}
+                defaultValue="xlsx"
+                options={ExportFileTypes}
+            />
             <Loader isOpen={showLoader} showBackdrop={true} />
-        </DefaultScreen>
+        </DefaultScreen >
     );
 };
 

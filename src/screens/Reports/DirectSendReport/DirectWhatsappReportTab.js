@@ -22,6 +22,7 @@ import { ConvertColorStatus, ConvertWhatsappStatusText, SourceType } from '../..
 import { IoIosArrowDown } from 'react-icons/io';
 import { Title } from '../../../components/managment/Title';
 import { WhatsappTemplatePreview } from '../../../components/WhatsappTemplatePreview/WhatsappTemplatePreview';
+import TotalSection from '../../../components/managment/TotalSection';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -102,7 +103,7 @@ const DirectWhatsappReportTab = ({
         setPage(1);
     }
 
-    const renderCell = (data, dataType, cutOff) => {
+    const renderCell = (data, dataType, isBalanceCol) => {
         let text = data;
         if (dataType === 'date') {
             text = moment(text);
@@ -116,7 +117,7 @@ const DirectWhatsappReportTab = ({
         }
 
         return (
-            <Typography style={{ wordBreak: dataType === 'content' ? 'break-word' : null }}>{text}</Typography>
+            <Typography style={{ fontWeight: isBalanceCol ? 900 : null, wordBreak: dataType === 'content' ? 'break-word' : null }}>{text} {isBalanceCol && t("common.NIS")}</Typography>
         );
     }
 
@@ -382,6 +383,12 @@ const DirectWhatsappReportTab = ({
                     </TableCell>
                     <TableCell
                         classes={cellStyle}
+                        className={classes.flex1}
+                        align='center'>
+                        <>{t('whatsappReport.cost')}</>
+                    </TableCell>
+                    <TableCell
+                        classes={cellStyle}
                         align='center'
                         className={classes.flex1}>
                         {t('report.failure')}
@@ -413,7 +420,7 @@ const DirectWhatsappReportTab = ({
     // }
 
     const renderRow = (row) => {
-        const { Schedule, FromNumber, ToNumber, Status, Text, ErrorMessage, ReferenceId } = row;
+        const { Schedule, FromNumber, ToNumber, Status, Text, ErrorMessage, ReferenceId, Cost } = row;
         return (
             <TableRow
                 classes={rowStyle}>
@@ -447,6 +454,12 @@ const DirectWhatsappReportTab = ({
                     align='center'
                     className={classes.flex3}>
                     {renderCell(Text, 'content')}
+                </TableCell>
+                <TableCell
+                    classes={cellStyle}
+                    align='center'
+                    className={classes.flex1}>
+                    {renderCell(Cost, null, true)}
                 </TableCell>
                 <TableCell
                     classes={cellStyle}
@@ -491,7 +504,7 @@ const DirectWhatsappReportTab = ({
                             >
                                 {ReferenceId && ReferenceId !== '' && <>
                                     <ManagmentIcon
-                                        icon={PreviewIcon}
+                                        uIcon={<PreviewIcon width={18} height={20} className={'PreviewIcon'} />}
                                         lable={t('campaigns.Image1Resource1.ToolTip')}
                                         onClick={() => {
                                             setTemplateID(ReferenceId);
@@ -596,7 +609,7 @@ const DirectWhatsappReportTab = ({
                 <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
                     <Grid item className={windowSize === 'xs' ? classes.mt15 : null} style={{ textAlign: isRTL ? 'left' : 'right' }}>
                         <Typography className={clsx(classes.groupsLable, classes.mb5)}>
-                            {t('common.Total')} {directWhatsappReport?.Message ?? 0} {t('report.Messages')}
+                            {t('common.Total')} {directWhatsappReport?.Message?.TotalMessages ?? 0} {t('report.Messages')}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -611,7 +624,7 @@ const DirectWhatsappReportTab = ({
     }
 
     const renderTablePagination = () => {
-        const data = (directWhatsappReport && directWhatsappReport.Message) || 0;
+        const data = (directWhatsappReport && directWhatsappReport.Message?.TotalMessages) || 0;
         return (
             <TablePagination
                 classes={classes}
@@ -633,6 +646,10 @@ const DirectWhatsappReportTab = ({
         </Box>
         {renderTable()}
         {renderTablePagination()}
+        {directWhatsappReport && <TotalSection classes={classes} TotalObject={{
+            "TotalSent": directWhatsappReport?.Message?.TotalMessages,
+            "WhatsappBalance": `${directWhatsappReport?.Message?.WhatsappBalance || 0} ${t("common.NIS")}`
+        }} callerType="whatsapp" />}
         <WhatsappTemplatePreview classes={classes} templateID={templateID} openPreview={openTemplatePreview} closeModel={() => setTemplatePreview(false)} />
         <Loader isOpen={showLoader} />
     </>
