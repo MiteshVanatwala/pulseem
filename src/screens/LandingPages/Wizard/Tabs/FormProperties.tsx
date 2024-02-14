@@ -16,16 +16,14 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
     );
     const dispatch = useDispatch();
 
-    const handleFromName = async (event: any) => {
+    const checkShortURLExist = async (event: any) => {
         const shortUrl = event.target.value.replace(/ /g, '_')
         //@ts-ignore
         const isExistRes: any = await dispatch(isShortUrlExist(shortUrl));
-        console.log(isExistRes?.payload);
-
-        if (isExistRes?.payload?.Data === true) {
-            // TODO: @mitesh
-            // show error class on ShortURL and prevent continue.
-        }
+        setErrors({
+            ...errors,
+            shortURL: isExistRes?.payload?.Data === true ? translator('landingPages.shortURLExist') : ''
+        })
     }
 
     return <Grid container spacing={3} className={clsx(classes.p15, classes.mb4)}>
@@ -45,7 +43,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     onChange={(e: any) => onUpdate({ ...data, PageName: e.target.value, PageUrl: e.target.value.replace(/ /g, '_') })}
                     error={!!errors.PageName}
                     title={data.PageName}
-                    onBlur={handleFromName}
+                    // onBlur={handleFromName}
                 />
                 <Box className='textBoxWrapper'>
                     <Typography className={clsx(errors.PageName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -122,6 +120,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     onChange={(e: any) => onUpdate({ ...data, PageUrl: e.target.value })}
                     error={!!errors.shortURL}
                     title={data.PageUrl}
+                    onBlur={checkShortURLExist}
                 />
                 <Box className='textBoxWrapper'>
                     <Typography className={clsx(classes.f16)}>
@@ -145,10 +144,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                         name="AnswerType"
                         value={data.AnswerType}
                         className={classes.pbt5}
-                        onChange={(event, val) => {
-                            onUpdate({ ...data, AnswerType: event.target.value });
-                            if (event.target.value === LandingPagesAnswerType.SEND_WEBHOOK) onSetDialog({ type: 'sendWebhook' })
-                        }}
+                        onChange={(event, val) => onUpdate({ ...data, AnswerType: event.target.value })}
                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         MenuProps={{
                             PaperProps: {
@@ -163,8 +159,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                         <MenuItem value={LandingPagesAnswerType.POPUP_MESSAGE}>{translator("landingPages.popupMessage")}</MenuItem>
                         <MenuItem value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</MenuItem>
                         <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</MenuItem>
-                        {/* <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</MenuItem> */}
-                        <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem>
+                        <MenuItem value={LandingPagesAnswerType.WITHOUT_ANSWER}>{translator("landingPages.withoutAnswer")}</MenuItem>
                     </Select>
                 </FormControl>
             </Box>
@@ -178,7 +173,15 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 <Grid item md={4}>
                     <Box>
                         <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
-                            {translator("landingPages.answerMessage")}
+                            {translator(
+                                data.AnswerType === LandingPagesAnswerType.DOWNLOAD_FILE 
+                                ? "landingPages.downloadFileUrl"
+                                : (
+                                    data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
+                                    ? "landingPages.redirectUrl"
+                                    : "landingPages.answerMessage"
+                                )
+                            )}
                         </Typography>
                         <TextField
                             label=""

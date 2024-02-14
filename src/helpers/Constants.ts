@@ -219,7 +219,8 @@ export const LandingPagesAnswerType = {
     REDIRECT_URL: 3,
     DOWNLOAD_FILE: 4,
     TRANSFER_TO_PAYMENT_PAGE: 5,
-    SEND_WEBHOOK: 6
+    WITHOUT_ANSWER: 6,
+    SEND_WEBHOOK: 7,
 }
 
 export const PlaceHolders = {
