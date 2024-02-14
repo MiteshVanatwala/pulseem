@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { LandingPagesAnswerType } from "../../../../helpers/Constants";
 import { coreProps } from "../../../Whatsapp/Campaign/Types/WhatsappCampaign.types";
 import { isShortUrlExist } from "../../../../redux/reducers/landingPagesSlice";
+import { LangugeCode } from "../../../../model/PulseemFields/Fields";
 
 
 const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors }: any) => {
@@ -78,8 +79,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                             },
                         }}
                     >
-                        <MenuItem value={0}>{translator("languages.langCodes.hebrew")}</MenuItem>
-                        <MenuItem value={1}>{translator("languages.langCodes.english")}</MenuItem>
+                        {LangugeCode.map((item) => <MenuItem key={item.value} value={item.value}>{translator(item.label)}</MenuItem>)}
                     </Select>
                 </FormControl>
                 <Box className='textBoxWrapper'>
@@ -133,37 +133,41 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             </Box>
         </Grid>
 
-        <Grid item md={4}>
-            <Box>
-                <Typography title={translator("landingPages.answerType")} className={classes.alignDir}>
-                    {translator("landingPages.answerType")}
-                </Typography>
-                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
-                    <Select
-                        variant="standard"
-                        name="AnswerType"
-                        value={data.AnswerType}
-                        className={classes.pbt5}
-                        onChange={(event, val) => onUpdate({ ...data, AnswerType: event.target.value })}
-                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                        MenuProps={{
-                            PaperProps: {
-                                style: {
-                                    maxHeight: 300,
-                                    direction: isRTL ? 'rtl' : 'ltr'
-                                }
-                            },
-                        }}
-                    >
-                        <MenuItem value={LandingPagesAnswerType.SYSTEM_DEFAULT_MESSAGE}>{translator("landingPages.systemDefaultMessage")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.POPUP_MESSAGE}>{translator("landingPages.popupMessage")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</MenuItem>
-                        <MenuItem value={LandingPagesAnswerType.WITHOUT_ANSWER}>{translator("landingPages.withoutAnswer")}</MenuItem>
-                    </Select>
-                </FormControl>
-            </Box>
-        </Grid>
+        {
+            data.PageType !== 2 && (
+                <Grid item md={4}>
+                    <Box>
+                        <Typography title={translator("landingPages.answerType")} className={classes.alignDir}>
+                            {translator("landingPages.answerType")}
+                        </Typography>
+                        <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+                            <Select
+                                variant="standard"
+                                name="AnswerType"
+                                value={data.AnswerType}
+                                className={classes.pbt5}
+                                onChange={(event, val) => onUpdate({ ...data, AnswerType: event.target.value })}
+                                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                MenuProps={{
+                                    PaperProps: {
+                                        style: {
+                                            maxHeight: 300,
+                                            direction: isRTL ? 'rtl' : 'ltr'
+                                        }
+                                    },
+                                }}
+                            >
+                                <MenuItem value={LandingPagesAnswerType.SYSTEM_DEFAULT_MESSAGE}>{translator("landingPages.systemDefaultMessage")}</MenuItem>
+                                <MenuItem value={LandingPagesAnswerType.POPUP_MESSAGE}>{translator("landingPages.popupMessage")}</MenuItem>
+                                <MenuItem value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</MenuItem>
+                                <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</MenuItem>
+                                <MenuItem value={LandingPagesAnswerType.WITHOUT_ANSWER}>{translator("landingPages.withoutAnswer")}</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
+                </Grid>
+            )
+        }
 
         {
             [LandingPagesAnswerType.POPUP_MESSAGE,
