@@ -287,6 +287,7 @@
   "CreateNewResource": {
     "Text": "יצירת דף נחיתה"
   },
+  "CreateLandingPageNew": "Create a Landing Page (New)",
   "DeleteBody": "האם ברצונך למחוק דף זה?",
   "DeleteResource1": {
     "HeaderText": "מחק"

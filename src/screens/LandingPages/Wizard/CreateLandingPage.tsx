@@ -603,24 +603,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			);
 		}
 		else {
-			// wizardButtons.push(
-			// 	<Button
-			// 		onClick={saveAndContinueToOldEditor}
-			// 		className={clsx(
-			// 			classes.btn,
-			// 			classes.btnRounded,
-			// 			classes.backButton
-			// 		)}
-			// 		style={{ margin: '8px' }}
-			// 		endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-			// 	>
-			// 		<>{translator('common.saveAndContinue')}</>
-			// 	</Button>
-			// );
-
 			wizardButtons.push(
 				<Button
-					onClick={saveAndContinueToNewEditor}
+					onClick={saveAndContinueToOldEditor}
 					className={clsx(
 						classes.btn,
 						classes.btnRounded,
@@ -628,11 +613,26 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					)}
 					style={{ margin: '8px' }}
 					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-					key='newEditor'
 				>
-					{translator('master.continueToNewEditor')}
+					<>{translator('common.saveAndContinue')}</>
 				</Button>
 			);
+
+			// wizardButtons.push(
+			// 	<Button
+			// 		onClick={saveAndContinueToNewEditor}
+			// 		className={clsx(
+			// 			classes.btn,
+			// 			classes.btnRounded,
+			// 			classes.backButton
+			// 		)}
+			// 		style={{ margin: '8px' }}
+			// 		endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+			// 		key='newEditor'
+			// 	>
+			// 		{translator('master.continueToNewEditor')}
+			// 	</Button>
+			// );
 		}
 		return wizardButtons.map((b) => b);
 	}

@@ -1,4 +1,5 @@
 import { sitePrefix } from "../../config";
+import { rootDomain } from "../../helpers/Routes/routes";
 export const DASHBOARD_SHORTCUT = {
   'appBar.groups.title': {
     title: 'appBar.groups.title',
@@ -110,6 +111,10 @@ export const DASHBOARD_SHORTCUT = {
     pages: [
       {
         title: 'landingPages.CreateNewResource.Text',
+        link: `${rootDomain}/LandingPageWizard.aspx?fromreact=true`
+      },
+      {
+        title: 'landingPages.CreateLandingPageNew',
         link: '/react/LandingPages/Create'
       },
       {

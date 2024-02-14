@@ -287,6 +287,7 @@
   "CreateNewResource": {
     "Text": "Create Landing Page"
   },
+  "CreateLandingPageNew": "Create a Landing Page (New)",
   "DeleteBody": "Are you sure want to delete this page?",
   "DeleteResource1": {
     "HeaderText": "Delete"
