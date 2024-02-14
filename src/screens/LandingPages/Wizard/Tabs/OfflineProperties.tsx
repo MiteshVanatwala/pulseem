@@ -55,7 +55,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
             </Box>
         </Grid>
 
-        <Grid item md={4}>
+        <Grid item md={3}>
             <Box>
                 <Typography title={translator("landingPages.redirectURLWhenOffline")} className={classes.alignDir}>
                     {translator("landingPages.redirectURLWhenOffline")}

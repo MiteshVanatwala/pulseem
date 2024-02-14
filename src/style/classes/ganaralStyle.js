@@ -2756,7 +2756,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .textBoxWrapper': {
         // paddingTop: 30,
         '& .MuiTypography-body1': {
-          color: '#979797'
+          color: '#979797',
+          wordBreak: 'break-all',
         },
         '& .MuiTextField-root': {
           paddingBottom: 8,
@@ -2872,7 +2873,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             }
           },
           '& .MuiTypography-body1': {
-            color: '#979797'
+            color: '#979797',
           },
           '& .link': {
             fontSize: 15,
@@ -2886,7 +2887,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .textBoxWrapper': {
         paddingTop: 30,
         '& .MuiTypography-body1': {
-          color: '#979797'
+          color: '#979797',
         },
         '& .MuiTextField-root': {
           paddingBottom: 2,

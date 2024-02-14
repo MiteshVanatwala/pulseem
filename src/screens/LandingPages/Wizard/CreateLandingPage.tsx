@@ -709,10 +709,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				</Tabs>
 				<TabContext value={`${tabValue}`}>
 					<TabPanel value='1'>
-						<Typography title={translator("campaigns.camapignName")} className={clsx(classes.bold)}>
-							{translator("landingPages.formName")}
-						</Typography>
-						<Divider className={clsx(classes.mt2, classes.mb2)} />
 						<FormProperties
 							classes={classes}
 							data={landingPageModel}

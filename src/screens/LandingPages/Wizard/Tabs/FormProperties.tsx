@@ -27,8 +27,8 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         })
     }
 
-    return <Grid container spacing={3} className={clsx(classes.p15, classes.mb4)}>
-        <Grid item md={4}>
+    return <Grid container spacing={2} className={clsx(classes.p15, classes.mb4)}>
+        <Grid item md={3}>
             <Box>
                 <Typography title={translator("campaigns.camapignName")} className={classes.alignDir}>
                     {translator("landingPages.formName")}
@@ -54,7 +54,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             </Box>
         </Grid>
 
-        <Grid item md={4}>
+        <Grid item md={3}>
             <Box>
                 <Typography title={translator("landingPages.formLanguage")} className={classes.alignDir}>
                     {translator("landingPages.formLanguage")}
@@ -90,7 +90,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             </Box>
         </Grid>
 
-        <Grid item md={4}>
+        <Grid item md={3}>
             <Box>
                 <Typography title={translator("landingPages.shortURL")} className={classes.alignDir}>
                     {translator("landingPages.shortURL")}
@@ -135,7 +135,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
 
         {
             data.PageType !== 2 && (
-                <Grid item md={4}>
+                <Grid item md={3}>
                     <Box>
                         <Typography title={translator("landingPages.answerType")} className={classes.alignDir}>
                             {translator("landingPages.answerType")}
@@ -175,7 +175,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             LandingPagesAnswerType.REDIRECT_URL,
             LandingPagesAnswerType.DOWNLOAD_FILE
             ].indexOf(data.AnswerType) > -1 && (
-                <Grid item md={4}>
+                <Grid item md={3}>
                     <Box>
                         <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
                             {translator(

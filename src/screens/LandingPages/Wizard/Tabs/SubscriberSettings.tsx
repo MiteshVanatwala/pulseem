@@ -94,7 +94,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 </Box>
             </Grid>
 
-            <Grid item md={4}>
+            <Grid item md={3}>
                 <Box>
                     <Typography title={translator("landingPages.updateExistingRecipients")} className={classes.alignDir}>
                         {translator("landingPages.updateExistingRecipients")}
@@ -123,7 +123,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 </Box>
             </Grid>
 
-            <Grid item md={4}>
+            <Grid item md={3}>
                 <Box>
                     <Typography title={translator("landingPages.limitNumberOfSubscribers")} className={classes.alignDir}>
                         {translator("landingPages.limitNumberOfSubscribers")}
@@ -143,7 +143,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 </Box>
             </Grid>
 
-            <Grid item md={12}>
+            <Grid item md={2}>
                 <FormControlLabel
                     control={
                         <Checkbox
