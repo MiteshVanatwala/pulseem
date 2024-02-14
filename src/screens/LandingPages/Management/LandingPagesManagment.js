@@ -246,6 +246,8 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     }
 
     const copyData = copyDataObject[Type]
+    const embedData = copyDataObject[3]
+
     const renderCopyToClipoard = (
       showCopied === ID ?
         <PopMassage
@@ -340,6 +342,24 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         rootClass: classes.minWidth95,
         text: (copyData && copyData.copy) || '',
         disable: !PageLink,
+        remove: !PageLink,
+        type: 'copy',
+        onClick: (e) => {
+          setCopyRef(e.current)
+          setShowCopied(ID)
+          setTimeout(() => {
+            setShowCopied(null)
+          }, 1000)
+        }
+      },
+      {
+        key: 'embed',
+        uIcon: CopyIcon,
+        lable: (embedData && embedData.lable) || '',
+        rootClass: classes.minWidth95,
+        text: (embedData && embedData.copy) || '',
+        disable: !PageLink,
+        remove: !PageLink,
         type: 'copy',
         onClick: (e) => {
           setCopyRef(e.current)
