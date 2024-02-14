@@ -18,12 +18,12 @@ const LinkPreviewSettings = ({ classes, data, onUpdate, filesProperties, removeA
                     label=""
                     variant="outlined"
                     name="Name"
-                    value={data.previewTitle}
-                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.previewTitle })}
+                    value={data.LinkPreviewTitle}
+                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.LinkPreviewTitle })}
                     autoComplete="off"
-                    onChange={(e: any) => onUpdate({ ...data, previewTitle: e.target.value })}
-                    error={!!errors.previewTitle}
-                    title={data.previewTitle}
+                    onChange={(e: any) => onUpdate({ ...data, LinkPreviewTitle: e.target.value })}
+                    error={!!errors.LinkPreviewTitle}
+                    title={data.LinkPreviewTitle}
                 />
                 <Box className='textBoxWrapper'>
                     <Typography className={clsx(errors.previewTitle ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

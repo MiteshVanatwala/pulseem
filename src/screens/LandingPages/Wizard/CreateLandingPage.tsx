@@ -556,11 +556,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	}
 
 	const saveAndContinueToOldEditor = async () => {
-		const response = await save(false);
+		await save(false);
 	}
 
 	const saveAndContinueToNewEditor = async () => {
-		const response = await save(true);
+		await save(true);
 	}
 
 	const handleContinueToEditor = (isNewEditor = false, id: number) => {

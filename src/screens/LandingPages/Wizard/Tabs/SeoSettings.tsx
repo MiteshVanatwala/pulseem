@@ -141,11 +141,11 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                 <textarea
                     placeholder={PlaceHolders.FACEBOOK_PIXEL}
                     maxLength={1000}
-                    id="facebookPixel"
+                    id="FacebookPixelCode"
                     className={clsx(classes.textarea, classes.sidebar)}
                     style={{ textAlign: 'left', direction: 'ltr' }}
-                    onChange={(e: any) => onUpdate({ ...data, facebookPixel: e.target.value })}
-                    value={data.facebookPixel}
+                    onChange={(e: any) => onUpdate({ ...data, FacebookPixelCode: e.target.value })}
+                    value={data.FacebookPixelCode}
                 ></textarea>
             </Box>
         </Grid>
