@@ -44,7 +44,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     onChange={(e: any) => onUpdate({ ...data, PageName: e.target.value, PageUrl: e.target.value.replace(/ /g, '_') })}
                     error={!!errors.PageName}
                     title={data.PageName}
-                    // onBlur={handleFromName}
+                // onBlur={handleFromName}
                 />
                 <Box className='textBoxWrapper'>
                     <Typography className={clsx(errors.PageName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -162,6 +162,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                                 <MenuItem value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</MenuItem>
                                 <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</MenuItem>
                                 <MenuItem value={LandingPagesAnswerType.WITHOUT_ANSWER}>{translator("landingPages.withoutAnswer")}</MenuItem>
+                                <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -178,13 +179,13 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     <Box>
                         <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
                             {translator(
-                                data.AnswerType === LandingPagesAnswerType.DOWNLOAD_FILE 
-                                ? "landingPages.downloadFileUrl"
-                                : (
-                                    data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
-                                    ? "landingPages.redirectUrl"
-                                    : "landingPages.answerMessage"
-                                )
+                                data.AnswerType === LandingPagesAnswerType.DOWNLOAD_FILE
+                                    ? "landingPages.downloadFileUrl"
+                                    : (
+                                        data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
+                                            ? "landingPages.redirectUrl"
+                                            : "landingPages.answerMessage"
+                                    )
                             )}
                         </Typography>
                         <TextField
@@ -206,7 +207,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </Grid>
             )
         }
-        {/* 
+
         {
             data.AnswerType === LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE && (
                 <>
@@ -218,16 +219,16 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                             <TextField
                                 label=""
                                 variant="outlined"
-                                value={data.PageUrl}
-                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.PageUrl })}
+                                value={data.AnswerData}
+                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.AnswerData })}
                                 autoComplete="off"
-                                onChange={(e: any) => onUpdate({ ...data, PageUrl: e.target.value })}
-                                error={!!errors.PageUrl}
-                                title={data.PageUrl}
+                                onChange={(e: any) => onUpdate({ ...data, AnswerData: e.target.value })}
+                                error={!!errors.AnswerData}
+                                title={data.AnswerData}
                             />
                             <Box className='textBoxWrapper'>
-                                <Typography className={clsx(errors.PageUrl ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                    {errors.PageUrl ?? errors.PageUrl}
+                                <Typography className={clsx(errors.AnswerData ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                    {errors.AnswerData ?? errors.AnswerData}
                                 </Typography>
                             </Box>
                         </Box>
@@ -280,7 +281,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     </Grid>
                 </>
             )
-        } */}
+        }
     </Grid>
 
 }

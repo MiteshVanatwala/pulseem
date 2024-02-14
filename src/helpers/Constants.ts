@@ -218,9 +218,9 @@ export const LandingPagesAnswerType = {
     POPUP_MESSAGE: 2,
     REDIRECT_URL: 3,
     DOWNLOAD_FILE: 4,
-    TRANSFER_TO_PAYMENT_PAGE: 5,
-    WITHOUT_ANSWER: 6,
-    SEND_WEBHOOK: 7,
+    WITHOUT_ANSWER: 5,
+    TRANSFER_TO_PAYMENT_PAGE: 6
+    // SEND_WEBHOOK: 6,
 }
 
 export const PlaceHolders = {

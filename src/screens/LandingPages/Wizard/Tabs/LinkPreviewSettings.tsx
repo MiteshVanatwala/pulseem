@@ -39,7 +39,7 @@ const LinkPreviewSettings = ({ classes, data, onUpdate, filesProperties, removeA
                     {translator("landingPages.previewIcon")}
                 </Typography>
                 <PulseemTags
-                    title={""}
+                    title={data?.LinkPreviewIconName}
                     style={null}
                     classes={classes}
                     tagStyle={{ maxWidth: 150 }}
@@ -71,16 +71,16 @@ const LinkPreviewSettings = ({ classes, data, onUpdate, filesProperties, removeA
                     {translator("landingPages.previewDescription")}
                 </Typography>
                 <TextField
-                    id="previewDescription"
+                    id="LinkPreviewDescription"
                     label=""
                     variant="outlined"
                     name="Name"
-                    value={data.previewDescription}
+                    value={data.LinkPreviewDescription}
                     className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.previewDescription })}
                     autoComplete="off"
-                    onChange={(e: any) => onUpdate({ ...data, previewDescription: e.target.value })}
+                    onChange={(e: any) => onUpdate({ ...data, LinkPreviewDescription: e.target.value })}
                     error={!!errors.previewDescription}
-                    title={data.previewDescription}
+                    title={data.LinkPreviewDescription}
                 />
                 <Box className='textBoxWrapper'>
                     <Typography className={clsx(errors.previewDescription ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
