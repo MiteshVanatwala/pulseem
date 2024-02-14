@@ -103,7 +103,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		PrefunImage: '',
 		HasComments: false,
 		PageUrl: '',
-		PageType: 0,
+		PageType: 2,
 		AnswerType: 0,
 		IsResponsive: false,
 		DownloadUrl: '',

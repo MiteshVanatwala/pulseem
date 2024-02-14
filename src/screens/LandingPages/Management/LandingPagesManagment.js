@@ -147,19 +147,11 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            href={`${rootDomain}/LandingPageWizard.aspx?fromreact=true`}
+            onClick={() => navigate(`${sitePrefix}LandingPages/Create`)}
             className={clsx(classes.btn, classes.btnRounded)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t('landingPages.CreateNewResource.Text')}
-          </Button>
-
-          <Button
-            className={clsx(classes.btn, classes.btnRounded, classes.marginInlineStart10, classes.marginInlineEnd10)}
-            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-            onClick={() => navigate(`${sitePrefix}LandingPages/Create`)}
-          >
-            {t('landingPages.CreateLandingPageNew')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
