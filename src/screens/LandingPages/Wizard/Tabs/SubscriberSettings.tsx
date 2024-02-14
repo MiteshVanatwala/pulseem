@@ -55,8 +55,8 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
     }
 
     useEffect(() => {
-        if (data && data?.SelectedGroupList?.length > 0 && subAccountAllGroups.length > 0) {
-            const selected = data.SelectedGroupList.map((x: any) => { return subAccountAllGroups.find((s: any) => s.GroupID === parseInt(x.trim())) })
+        if (data && data?.GroupIDs?.length > 0 && subAccountAllGroups.length > 0) {
+            const selected = data.GroupIDs.map((x: any) => { return subAccountAllGroups.find((s: any) => s.GroupID === parseInt(x.trim())) })
             setSelectedGroups(selected);
         }
     }, [data, subAccountAllGroups]);
