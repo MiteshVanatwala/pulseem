@@ -348,6 +348,7 @@
   "shortURL": "Short URL",
   "shortURLTooltip": "User friendly URL for human eyes and for SEO",
   "shortURLRequired": "Short URL is required",
+  "shortURLExist": "Short URL already exist. Please choose different name.",
   "answerType": "Answer Type",
   "answerMessage": "Answer Message",
   "answerMessageRequired": "Answer Message is required",
@@ -397,5 +398,7 @@
   "confirmExit": "Would you like to save the landing page before exit?",
   "handleExitTitle": "Leave Landing Page",
   "landingPageNotFound": "Landing Page not found",
-  "landingPageSaved": "Landing Page Saved"
+  "landingPageSaved": "Landing Page Saved",
+  "redirectUrl": "Redirect URL",
+  "downloadFileUrl": "Download File URL"
 }

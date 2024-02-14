@@ -348,6 +348,7 @@
   "shortURL": "קישור מקוצר",
   "shortURLTooltip": "כתובת ידידותית לדף אשר תגדיל את הקידום במנועי חיפוש ויהיה קריא על ידי בני האדם",
   "shortURLRequired": "קישור מקוצר - שדה חובה",
+  "shortURLExist": "Short URL already exist. Please choose different name.",
   "answerType": "סוג תשובה",
   "answerMessage": "טקסט הודעה",
   "answerMessageRequired": "טקסט הודעה - שדה חובה",
@@ -397,5 +398,7 @@
   "confirmExit": "האם תרצה לשמור את דף הנחיתה לפני היציאה?",
   "handleExitTitle": "יציאה מעריכת דף נחיתה",
   "landingPageNotFound": "דף הנחיתה לא נמצא",
-  "landingPageSaved": "דף הנחיתה נשמר"
+  "landingPageSaved": "דף הנחיתה נשמר",
+  "redirectUrl": "Redirect URL",
+  "downloadFileUrl": "Download File URL"
 }
