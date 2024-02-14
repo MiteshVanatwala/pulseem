@@ -605,6 +605,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		else {
 			wizardButtons.push(
 				<Button
+					// onClick={saveAndContinueToNewEditor}
 					onClick={saveAndContinueToOldEditor}
 					className={clsx(
 						classes.btn,

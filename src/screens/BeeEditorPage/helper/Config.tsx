@@ -26,6 +26,7 @@ export interface ConfigOptions {
     handleEditRow: Function;
     // HandleAutoSave: Function,
     t: any;
+    forms: any;
 }
 
 export const BeeConfig = (Options: ConfigOptions) => {
@@ -47,7 +48,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         // HandleAutoSave,
         handleDeleteRow,
         PulseemEditBlock,
-        t
+        t,
+        forms
     } = Options;
     return {
         uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
@@ -72,48 +74,12 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 title: 'Form title',
                 description: "A BEE test form",
                 fields: {
-                    firstName: { type: 'text', label: 'First Name', canBeRemovedFromLayout: true },
-                    lastName: { type: 'text', label: 'Last Name', canBeRemovedFromLayout: true },
-                    email: { type: 'email', label: 'Email', canBeRemovedFromLayout: true },
-                    telephone: { type: 'tel', label: 'Telephone', canBeRemovedFromLayout: true },
-                    cellphone: { type: 'tel', label: 'Cellphone', canBeRemovedFromLayout: true, attributes: { pattern: "[0-9]{3}-[0-9]{3}-[0-9]{4}" } },
-                    address: { type: 'text', label: 'Address', canBeRemovedFromLayout: true },
-                    city: { type: 'text', label: 'City', canBeRemovedFromLayout: true },
-                    company: { type: 'text', label: 'Company', canBeRemovedFromLayout: true },
-                    birthDate: { type: 'text', label: 'Birth Date', canBeRemovedFromLayout: true },
-                    zip: { type: 'text', label: 'Zip', canBeRemovedFromLayout: true },
-                    country: { type: 'text', label: 'Country', canBeRemovedFromLayout: true },
-                    gender: {
-                        type: "select",
-                        label: "Gender",
-                        options: [{
-                                type: "option",
-                                label: "Male",
-                                value: "M"
-                            },
-                            {
-                                type: "option",
-                                label: "Female",
-                                value: "F"
-                            },
-                            {
-                                type: "option",
-                                label: "Not telling",
-                                value: "-"
-                            }
-                        ]
-                    },
+                    ...forms,
                     confirmation: { type: 'checkbox', label: 'Confirmation', canBeRemovedFromLayout: false },
-                    submit: { type: 'submit', label: '', canBeRemovedFromLayout: false, attributes: { value: 'Submit', name: "submit_button" }},
+                    submit: { type: 'submit', label: '', canBeRemovedFromLayout: false, attributes: { value: 'Submit', name: "submit_button" } },
                 },
                 layout: [
-                    ['firstName', 'lastName'],
-                    ['email'],
-                    ['telephone', 'cellphone'],
-                    ['address', 'zip'],
-                    ['city', 'country'],
-                    ['company'],
-                    ['birthDate'],
+                    Object.keys(forms),
                     ['confirmation'],
                     ['submit'],
                 ],
@@ -217,11 +183,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
             },
             manageForm: {
                 label: 'Edit form',
-                handler: async (resolve: any, reject: any, args: any) => { 
-                //   const structure = await onHandleManageForm(args)
-                //   structure ? resolve(structure) : reject()
+                handler: async (resolve: any, reject: any, args: any) => {
+                    //   const structure = await onHandleManageForm(args)
+                    //   structure ? resolve(structure) : reject()
                     reject()
-                } 
+                }
             },
         },
         //#region Methods

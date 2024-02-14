@@ -12,7 +12,7 @@ import Toast from '../../components/Toast/Toast.component';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
 import { deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveLandingPage } from '../../redux/reducers/landingPagesSlice';
-import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
+import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import { IoMdImages } from 'react-icons/io';
 import Gallery from '../../components/Gallery/Gallery.component';
@@ -40,6 +40,8 @@ import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplat
 import { SMSStoreProps } from '../../model/Sms/Sms.types';
 import { FileGallery } from '../../Models/Files/FileGallery';
 import { DemoModal } from '../HtmlCampaign/components/DemoModal';
+import { ClientForm } from '../../Models/BeeModels/BeeModel';
+import { getAccountExtraData } from '../../redux/reducers/smsSlice';
 
 const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -51,7 +53,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   const saveRef = useRef(null);
   const moduleId = params?.id || 0;
   const moduleType = params?.type;
-  
+
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
   const { language, isRTL } = useSelector((state: StateType) => state.core);
   const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
@@ -60,9 +62,9 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   const [showLoader, setLoader] = useState(true);
   const [dataReady, setDataReady] = useState(false);
   const [dialogType, setDialogType] = useState<{
-		type: string;
+    type: string;
     data?: any;
-	} | null>(null);
+  } | null>(null);
   const [mergeData, setPulseemMergeData] = useState({});
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
@@ -89,13 +91,26 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
     templateName: '',
     categoryName: '',
   });
+
+  const [clientForm, setClientForm] = useState<ClientForm>({});
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
-  const initFields = () => {
-    initExtraDataField(extraData, t).then((exData) => {
-      setPulseemMergeData(exData);
+  const loadAccountExtraData = () => {
+    return new Promise(async (resolve: any) => {
+      const res: any = await dispatch(getAccountExtraData());
+      resolve(res?.payload);
     })
+  }
+  const initFields = () => {
+    loadAccountExtraData().then((ed: any) => {
+      initExtraDataField(extraData, t).then((exData) => {
+        setPulseemMergeData(exData);
+        initClientForm(ed, t, isRTL).then((res) => {
+          setClientForm(res);
+        })
+      })
+    });
   }
 
   const initSpecialLinks = () => {
@@ -140,7 +155,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
     }
 
   }, [dataReady]);
-  
+
   //#endregion
   useEffect(() => {
     if (editorRef && editorRef.current) {
@@ -148,7 +163,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
     }
 
   }, [isRTL]);
-  
+
   useEffect(() => {
     if (!includes(BEE_EDITOR_TYPES, moduleType)) {
       navigateToLandingPageManagement();
@@ -163,7 +178,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
 
     //@ts-ignore
     if (!publicTemplates.length) dispatch(getLPPublicTemplates(isRTL));
-		if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
+    if (!templatesBySubAccount.length) dispatch(getAllLPTemplatesBySubaccountId());
   }, []);
 
   //@ts-ignore
@@ -258,83 +273,83 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
     }
   }
   const initLPBeeEditor = (templateId: number | null = null) => {
-      initSpecialLinks().then(async (specialLinksFiles) => {
-        const isRtlLang = landingPage?.LanguageCode === 0 || landingPage?.LanguageCode === 8 ? true : false;
-        let forceTemplate = null;
-        let defaultContent = DefaultContent(isRtlLang);
-        // if (templateId !== null) {
-        //   const templateResponse = await dispatch(getLPTemplateById(templateId));
-  
-        //   if (templateResponse?.payload?.StatusCode === 201) {
-        //     const responseData = templateResponse?.payload?.Data;
-        //     setNewTemplate(responseData)
-        //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
-        //   } else {
-        //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
-        //   }
-        // }
-        // config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
-        // config.mergeTags = mergeData;
-        // config.specialLinks = specialLinksFiles;
-        // config.titleDefaultStyles = defaultContent.titleDefaultStyles;
-        // config.contentDefaults = defaultContent.contentDefaults;
-        // if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
-        //   config.workspace.type = 'mixed';
-        // }
-  
-        // initTags();
-        switch (LPBeeToken?.StatusCode) {
-          case 201: {
-            if (LPBeeToken.Message === "null" || LPBeeToken.Message === null) {
-              setDialogType({
-                type: DialogType.GENERIC,
-                data: t(DialogType.MISSING_API_KEY)
-              });
-            }
-            else {
-              const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
-              const template = forceTemplate !== null ? forceTemplate : landingPage?.JsonData ? JSON.parse(landingPage?.JsonData) : defaultContent.defaultTemplate;
-  
-              //@ts-ignore
-              beeTest.start(config, template).then((instance) => {
-                //@ts-ignore
-                editorRef.current = instance;
-                //@ts-ignore
-                if ((!landingPage || !landingPage.HtmlData) && (!params?.id || params?.id === 0)) {
-                  saveDesign(false, null, false);
-                }
-                setTimeout(() => {
-                  setButtonDisabled(false);
-                }, 2000);
-              });
-            }
-            break;
-          }
-          case 401: {
+    initSpecialLinks().then(async (specialLinksFiles) => {
+      const isRtlLang = landingPage?.LanguageCode === 0 || landingPage?.LanguageCode === 8 ? true : false;
+      let forceTemplate = null;
+      let defaultContent = DefaultContent(isRtlLang);
+      // if (templateId !== null) {
+      //   const templateResponse = await dispatch(getLPTemplateById(templateId));
+
+      //   if (templateResponse?.payload?.StatusCode === 201) {
+      //     const responseData = templateResponse?.payload?.Data;
+      //     setNewTemplate(responseData)
+      //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+      //   } else {
+      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+      //   }
+      // }
+      // config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
+      // config.mergeTags = mergeData;
+      // config.specialLinks = specialLinksFiles;
+      // config.titleDefaultStyles = defaultContent.titleDefaultStyles;
+      // config.contentDefaults = defaultContent.contentDefaults;
+      // if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
+      //   config.workspace.type = 'mixed';
+      // }
+
+      // initTags();
+      switch (LPBeeToken?.StatusCode) {
+        case 201: {
+          if (LPBeeToken.Message === "null" || LPBeeToken.Message === null) {
             setDialogType({
               type: DialogType.GENERIC,
               data: t(DialogType.MISSING_API_KEY)
             });
-            break;
           }
-          case 404: {
-            setDialogType({
-              type: DialogType.GENERIC,
-              data: t(DialogType.CAMPAIGN_NOT_FOUND)
+          else {
+            const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
+            const template = forceTemplate !== null ? forceTemplate : landingPage?.JsonData ? JSON.parse(landingPage?.JsonData) : defaultContent.defaultTemplate;
+
+            //@ts-ignore
+            beeTest.start(config, template).then((instance) => {
+              //@ts-ignore
+              editorRef.current = instance;
+              //@ts-ignore
+              if ((!landingPage || !landingPage.HtmlData) && (!params?.id || params?.id === 0)) {
+                saveDesign(false, null, false);
+              }
+              setTimeout(() => {
+                setButtonDisabled(false);
+              }, 2000);
             });
-            break;
           }
-          case 500:
-          default: {
-            setDialogType({
-              type: DialogType.GENERIC,
-              data: t(DialogType.ERROR_OCCURED)
-            });
-            break;
-          }
+          break;
         }
-        setLoader(false);
-      })
+        case 401: {
+          setDialogType({
+            type: DialogType.GENERIC,
+            data: t(DialogType.MISSING_API_KEY)
+          });
+          break;
+        }
+        case 404: {
+          setDialogType({
+            type: DialogType.GENERIC,
+            data: t(DialogType.CAMPAIGN_NOT_FOUND)
+          });
+          break;
+        }
+        case 500:
+        default: {
+          setDialogType({
+            type: DialogType.GENERIC,
+            data: t(DialogType.ERROR_OCCURED)
+          });
+          break;
+        }
+      }
+      setLoader(false);
+    })
   }
 
   useEffect(() => {
@@ -456,7 +471,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
       type: DialogType.DELETE
     })
   }
-  
+
   const handleExitLandingPage = (saveBeforeExit = true) => {
     setDialogType(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
@@ -471,7 +486,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   }
 
   const onExit = () => setDialogType({ type: DialogType.EXIT })
-  
+
   const onBack = () => saveDesign(true, `${sitePrefix}LandingPages/Create/${moduleId}`);
 
   const renderToast = () => {
@@ -543,7 +558,8 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
       getRows,
       handleEditRow,
       handleDeleteRow,
-      t: t
+      t: t,
+      forms: clientForm
     });
   }
   const config = getConfig();
@@ -734,7 +750,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
               </>
             )
           }
-      </>)
+        </>)
     }
     else {
       wizardButtons.push(<>
@@ -781,41 +797,41 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   }
 
   const renderTemplateDialog = () => {
-		return {
-			showDivider: false,
-			title: t("common.SelectTemplate"),
-			showDefaultButtons: false,
-			content: (
-				<Templates
-					isCreateLandingPage={true}
-					classes={classes}
-					onClose={async (template: LandingPageTemplate) => {
+    return {
+      showDivider: false,
+      title: t("common.SelectTemplate"),
+      showDefaultButtons: false,
+      content: (
+        <Templates
+          isCreateLandingPage={true}
+          classes={classes}
+          onClose={async (template: LandingPageTemplate) => {
             if (template !== undefined) {
               //@ts-ignore
-							if (template !== undefined) {
+              if (template !== undefined) {
                 setDialogType({ type: DialogType.RENDER_TEMPLATE_CONFIRMATION, data: template });
               }
-						} else {
+            } else {
               setDialogType(null);
             }
-					}}
-				/>
-			),
-			onConfirm: async () => {
-			},
-		};
-	}
+          }}
+        />
+      ),
+      onConfirm: async () => {
+      },
+    };
+  }
 
   const renderSaveTemplateDialog = () => {
-		return {
-			showDivider: false,
-			title: t("common.saveTemplate"),
-			showDefaultButtons: true,
+    return {
+      showDivider: false,
+      title: t("common.saveTemplate"),
+      showDefaultButtons: true,
       cancelText: 'common.cancel',
       confirmText: 'common.save',
       icon: false,
-			content: (
-				<>
+      content: (
+        <>
           <Box className={clsx(classes.mt15, classes.mb15)}>
             <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.templateName')}</Typography>
             <TextField
@@ -850,14 +866,14 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
             />
           </Box>
         </>
-			),
-			onConfirm: async () => {
+      ),
+      onConfirm: async () => {
         if (!saveTemplateDetails.templateName.trim()) setErrors({ ...errors, templateName: t('common.templateNameIsRequired') });
         else {
           setErrors({ ...errors, templateName: '' });
           saveTemplate();
         }
-			},
+      },
       onClose: () => {
         setErrors({ ...errors, templateName: '' });
         setDialogType(null);
@@ -866,20 +882,20 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
         setErrors({ ...errors, templateName: '' });
         setDialogType(null);
       },
-		};
-	}
+    };
+  }
 
   const logoutDialog = () => {
-		return {
-			showDivider: false,
-			title: t("common.systemNotice"),
-			showDefaultButtons: false,
-			content: (
+    return {
+      showDivider: false,
+      title: t("common.systemNotice"),
+      showDefaultButtons: false,
+      content: (
         <Typography>
           {RenderHtml(t('common.autoLogoutMessage'))}
         </Typography>
-			),
-			renderButtons: () => (
+      ),
+      renderButtons: () => (
         <Button
           size='small'
           variant='contained'
@@ -895,70 +911,70 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
       ),
       onClose: () => window.location.href = loginURL,
       onCancel: () => window.location.href = loginURL,
-		};
-	}
+    };
+  }
 
   const exitDialog = () => {
-		return {
-			showDivider: false,
-			title: t('landingPages.handleExitTitle'),
+    return {
+      showDivider: false,
+      title: t('landingPages.handleExitTitle'),
       cancelText: 'common.No',
       confirmText: 'common.Yes',
-			content: (
+      content: (
         <Typography>
           {RenderHtml(t("landingPages.confirmExit"))}
         </Typography>
-			),
+      ),
       onConfirm: () => handleExitLandingPage(true),
       onClose: () => handleExitLandingPage(false)
-		};
-	}
+    };
+  }
 
   const deleteDialog = () => {
-		return {
-			showDivider: false,
-			title: t('landingPages.DeleteTitle'),
+    return {
+      showDivider: false,
+      title: t('landingPages.DeleteTitle'),
       confirmText: t('common.Yes'),
       cancelText: t('common.No'),
-			content: (
+      content: (
         <Typography>
           {RenderHtml(t("landingPages.DeleteBody"))}
         </Typography>
-			),
+      ),
       onConfirm: () => deleteCurrentLandingPage(),
       onClose: () => navigateToLandingPageManagement(),
-		};
-	}
+    };
+  }
 
   const renderTemplateConfirmationDialog = (newTemplate: LandingPageTemplate) => {
-		return {
-			showDivider: false,
-			title: t('common.doYouWantToProceed'),
+    return {
+      showDivider: false,
+      title: t('common.doYouWantToProceed'),
       confirmText: t('common.Yes'),
       cancelText: t('common.No'),
-			content: (
+      content: (
         <Typography>
           {RenderHtml(t("common.overwriteTemplate"))}
         </Typography>
-			),
+      ),
       onConfirm: () => {
         setDialogType(null);
         initLPBeeEditor(newTemplate.ID);
       }
-		};
-	}
+    };
+  }
 
   const renderNoCreditLeftDialog = () => {
-		return {
-			showDivider: false,
-			title: t('common.ErrorTitle'),
+    return {
+      showDivider: false,
+      title: t('common.ErrorTitle'),
       showDefaultButtons: false,
       content: (
         <Box style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
         </Box>
-			),
+      ),
       renderButtons: () => (
         <Button
           size='small'
@@ -973,22 +989,22 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
           {t("common.Ok")}
         </Button>
       ),
-		};
-	}
+    };
+  }
 
   const renderGenericDialog = (message: string) => {
-		return {
-			showDivider: false,
-			title: t('common.Notice'),
+    return {
+      showDivider: false,
+      title: t('common.Notice'),
       showDefaultButtons: false,
       content: <Typography>{RenderHtml(message)}</Typography>
-		};
-	}
+    };
+  }
 
   const renderEditRowDialog = (message: string) => {
-		return {
-			showDivider: false,
-			title: t('common.Notice'),
+    return {
+      showDivider: false,
+      title: t('common.Notice'),
       showDefaultButtons: false,
       content: (
         <EditRow
@@ -997,20 +1013,20 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
             console.log(resp);
             setDialogType(null);
           }}
-          save={() => {}}
+          save={() => { }}
           args={{}}
         />
       )
-		};
-	}
-  
+    };
+  }
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
 
     let currentDialog = {};
-		if (type === DialogType.Templates) {
-			currentDialog = renderTemplateDialog();
-		} else if (type === DialogType.SAVE_TEMPLATE) {
+    if (type === DialogType.Templates) {
+      currentDialog = renderTemplateDialog();
+    } else if (type === DialogType.SAVE_TEMPLATE) {
       currentDialog = renderSaveTemplateDialog();
     } else if (type === DialogType.LOGOUT) {
       currentDialog = logoutDialog();
@@ -1074,7 +1090,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
         disabled={buttonDisabled}
         campaignId={moduleId}
         ignorePaddingBottom={true}
-        innerStyle={{ paddingInline: 15}}
+        innerStyle={{ paddingInline: 15 }}
         classes={classes}
         //@ts-ignore
         onExit={!isFromAutomation && onExit}
