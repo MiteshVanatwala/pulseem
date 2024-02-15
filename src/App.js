@@ -71,8 +71,8 @@ import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
-// import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
-// import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
+import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
+import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 
 const renderRoutes = (classes, redirect) => {
