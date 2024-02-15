@@ -439,10 +439,10 @@ const renderRoutes = (classes, redirect) => {
         path={`/AccountUsersReport`}
         component={transferUrl('/Pulseem/AccountUsersReport.aspx')}
       />
-      {/* <Route
+      <Route
         path={`/ExtraFieldsDefinition`}
         component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
-      /> */}
+      />
       <Route
         path={`${sitePrefix}ApiSettings`}
         element={<ApiSettings classes={classes} />}
