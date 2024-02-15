@@ -96,7 +96,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 </Box>
             </Grid>
 
-            <Grid item md={6} className={classes.flexColumnCenter}>
+            <Grid item md={6} className={clsx(classes.dFlex)}>
                 <FormControlLabel
                     control={
                         <Checkbox

@@ -73,7 +73,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
                     title={data.OfflineUrl}
                 />
                 <Box className='textBoxWrapper'>
-                    <Typography className={clsx(classes.f16)}>
+                    <Typography className={clsx(classes.f14)}>
                         Example: https://www.redirectURL.com
                     </Typography>
                     <Typography className={clsx(errors.OfflineUrl ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
