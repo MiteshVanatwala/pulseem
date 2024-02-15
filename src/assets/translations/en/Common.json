@@ -782,5 +782,6 @@
   "dnsRecordsGuide": "How to add dns records",
   "noAutomationsToRestore": "No Automations for restore",
   "smsDirectRemovalTitle": "SMS Direct Removals (Cellphones)",
-  "emailDirectRemovalTitle": "Email Direct Removals (Email Address)"
+  "emailDirectRemovalTitle": "Email Direct Removals (Email Address)",
+  "duplicatedValue": "Duplicated / System Value"
 }

@@ -2,7 +2,7 @@ import { useState, memo, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Box, Button, Grid, InputLabel, TextField
+  Box, Button, FormHelperText, Grid, InputLabel, TextField
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next';
 import 'moment/locale/he';
@@ -49,6 +49,24 @@ const ExtraFields = ({ classes }: any) => {
     ExtraDate4: extraData.ExtraDate4 || ''
   });
 
+  const [preventedValues, setPreventedValues] = useState<any>([
+    'Email',
+    'FirstName',
+    'LastName',
+    'Telephone',
+    'Cellphone',
+    'Address',
+    'City',
+    'State',
+    'Country',
+    'Zip',
+    'Company',
+    'BirthDate',
+    'ReminderDate'
+  ]);
+  const [errorFields, setErrorField] = useState<any>([]);
+
+
   useEffect(() => {
     if (!extraData || extraData.length === 0) {
       dispatch(getAccountExtraData());
@@ -78,25 +96,74 @@ const ExtraFields = ({ classes }: any) => {
       ExtraDate3: extraData.ExtraDate3 || '',
       ExtraDate4: extraData.ExtraDate4 || ''
     })
+    // if (extraData && Object.values(extraData).length > 0) {
+    //   setPreventedValues([...preventedValues, ...Object.values(extraData).filter(e => e !== '')]);
+    // }
+
   }, [extraData]);
 
   const saveExtraFieldData = async () => {
-    setLoader(true);
+    if (validateForm()) {
+      setLoader(true);
 
-    const request = {
-      ...ExtraFieldList,
-      ...ExtraDateFieldList
-    } as ExtraFieldsPayload;
+      const request = {
+        ...ExtraFieldList,
+        ...ExtraDateFieldList
+      } as ExtraFieldsPayload;
 
 
-    for (let [key, value] of Object.entries(request)) {
-      request[key] = value.trim() === '' ? '' : value;
+      for (let [key, value] of Object.entries(request)) {
+        request[key] = value.trim() === '' ? '' : value;
+      }
+
+
+      const response = await dispatch(SetExtraFields(request as ExtraFieldsPayload));
+      setLoader(false);
+      handleResponse(response?.payload);
+    }
+  }
+
+  const validateForm = () => {
+    function checkIfDuplicateExists(arr: any) {
+      return new Set(arr).size !== arr.length
     }
 
+    let isValid = true;
+    setErrorField([]);
 
-    const response = await dispatch(SetExtraFields(request as ExtraFieldsPayload));
-    setLoader(false);
-    handleResponse(response?.payload);
+    const bothExtraFields = { ...ExtraFieldList, ...ExtraDateFieldList };
+
+    const hasDuplicated = checkIfDuplicateExists([...preventedValues, ...Object.values(bothExtraFields)]);
+
+    if (hasDuplicated) {
+      const keys: any = [];
+
+      preventedValues.filter((z: any) => z !== '').forEach((str: string | any) => {
+        const exists = Object.keys(bothExtraFields).filter((x: any) => {
+          return bothExtraFields[x]?.toLowerCase() !== '' && bothExtraFields[x]?.toLowerCase() === str.toLowerCase()
+        });
+        if (exists.filter((x) => x !== '')?.length > 0) {
+          keys.push(...exists);
+        }
+      });
+
+      Object.values(bothExtraFields).filter((z: any) => z !== '').forEach((str: string | any) => {
+        const exists = Object.keys(bothExtraFields).filter((x: any) => {
+          return bothExtraFields[x]?.toLowerCase() !== '' && bothExtraFields[x]?.toLowerCase() === str.toLowerCase()
+        });
+        if (exists.filter((x) => x !== '')?.length > 1) {
+          keys.push(...exists);
+        }
+      });
+
+      if (keys && keys?.length > 0) {
+        setErrorField(keys);
+        isValid = false;
+      }
+
+    }
+
+    return isValid;
   }
 
   const renderToast = () => {
@@ -131,6 +198,15 @@ const ExtraFields = ({ classes }: any) => {
     }
   }
 
+  const onExtraFieldChange = (event: any, field: string) => {
+    const inputVal = event.target.value;
+
+    setExtraFieldList({
+      ...ExtraFieldList,
+      [field]: inputVal
+    });
+  }
+
   return (
     <DefaultScreen
       currentPage="settings"
@@ -148,7 +224,7 @@ const ExtraFields = ({ classes }: any) => {
             <div className={clsx(classes.f20, classes.semibold, classes.p10, classes.greyBackground, classes.mb20)}>{t('common.SharedSubAccountFields')}</div>
             <Grid container className={classes.pb25} spacing={4}>
               {
-                Object.keys(ExtraFieldList).map((field: string) => {
+                Object.keys(ExtraFieldList).map((field: string, idx: number) => {
                   return (
                     <Grid item xs={3} sm={3} md={3}>
                       <InputLabel className={classes.fBlack}>{t(`common.${field}`)}</InputLabel>
@@ -156,12 +232,14 @@ const ExtraFields = ({ classes }: any) => {
                         variant='outlined'
                         size='small'
                         value={ExtraFieldList[field]}
-                        onChange={(event: any) => setExtraFieldList({
-                          ...ExtraFieldList,
-                          [field]: event.target.value
-                        })}
+                        onChange={(event: any) => onExtraFieldChange(event, field)}
                         className={clsx(classes.w100, classes.textField, classes.mt25)}
                       />
+                      {
+                        errorFields.indexOf(field) > -1 && <FormHelperText className={clsx(classes.f14, classes.red)} key={idx}>
+                          {t('common.duplicatedValue')}
+                        </FormHelperText>
+                      }
                     </Grid>
                   );
                 })

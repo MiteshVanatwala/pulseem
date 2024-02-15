@@ -775,5 +775,6 @@
   "dnsRecordsGuide": "מדריך להוספת רשומות dns",
   "noAutomationsToRestore": "אין אוטומציות לשחזור",
   "smsDirectRemovalTitle": "הסרות ישירות ב- SMS (טלפון סלולרי)",
-  "emailDirectRemovalTitle": "הסרות ישירות בדוא\"ל (דוא\"ל)"
+  "emailDirectRemovalTitle": "הסרות ישירות בדוא\"ל (דוא\"ל)",
+  "duplicatedValue": "ערך משוכפל / שמור"
 }
