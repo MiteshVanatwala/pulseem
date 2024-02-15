@@ -37,7 +37,8 @@
     "showCredentials": "Show Credentials",
     "hideCredentials": "Hide Credentials",
     "apiVersion": "Webhook Verison",
-    "apiVersionDesc": "Check your Webhook version in \"Configuration\" tab"
+    "apiVersionDesc": "Check your Webhook version in \"Configuration\" tab",
+    "connectStore": "Learn how to connect Shopify"
   },
   "wooCommerce": {
     "title": "WooCommerce",
@@ -53,6 +54,7 @@
     "title": "Istores",
     "subTitle": "Insert your Istores API key",
     "storeID": "Store ID",
-    "storeIDDesc": "Insert store ID"
+    "storeIDDesc": "Insert store ID",
+    "connectStore": "Learn how to connect Istores"
   }
 }
