@@ -12,7 +12,7 @@ import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import GroupTags from "../../components/Groups/GroupTags";
-import { URLS, URL_HELPER } from "../../helpers/Links/ExternalLink";
+import { URL_HELPER } from "../../helpers/Links/ExternalLink";
 const Istores = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();

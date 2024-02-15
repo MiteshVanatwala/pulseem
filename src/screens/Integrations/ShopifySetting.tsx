@@ -15,7 +15,7 @@ import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import GroupTags from "../../components/Groups/GroupTags";
 import InputMask from 'react-input-mask';
 import { BiSave } from "react-icons/bi";
-import { URLS, URL_HELPER } from "../../helpers/Links/ExternalLink";
+import { URL_HELPER } from "../../helpers/Links/ExternalLink";
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
