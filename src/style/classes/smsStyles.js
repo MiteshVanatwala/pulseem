@@ -702,8 +702,8 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     contactGroupDiv:
     {
         width: "100%",
-        padding: "8px",
-        borderBottom: "1px solid #bbb",
+        padding: "7px",
+        borderBottom: "1px solid #d6d1e6",
         color: "#bbb",
         maxHeight: 75,
         overflow: 'auto',

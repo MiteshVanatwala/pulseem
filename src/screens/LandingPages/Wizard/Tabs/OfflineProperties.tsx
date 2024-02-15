@@ -7,7 +7,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
     const { t: translator } = useTranslation();
 
     return <Grid container spacing={3} className={clsx(classes.p15, classes.mb4)}>
-        <Grid item md={2}>
+        <Grid item md={6}>
             <Box>
                 <Typography title={translator("landingPages.formOfflineDate")} className={classes.alignDir}>
                     {translator("landingPages.formOfflineDate")}
@@ -55,7 +55,7 @@ const OfflineProperties = ({ classes, data, onUpdate, errors, setErrors }: any) 
             </Box>
         </Grid>
 
-        <Grid item md={3}>
+        <Grid item md={6}>
             <Box>
                 <Typography title={translator("landingPages.redirectURLWhenOffline")} className={classes.alignDir}>
                     {translator("landingPages.redirectURLWhenOffline")}

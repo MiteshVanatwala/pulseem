@@ -43,11 +43,12 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                     value={data?.MetaKeywords || ''}
                     onChange={(event: any, value: any, reason: any) => {
                         if (reason === 'createOption') {
-                            console.log(data?.MetaKeywords?.length)
-                            onUpdate({
-                                ...data,
-                                MetaKeywords: data?.MetaKeywords === null ? `${value[0]}` : `${data.MetaKeywords}, ${value[0]}`
-                            })
+                            if (value[0].trim() !== '') {
+                                onUpdate({
+                                    ...data,
+                                    MetaKeywords: (data?.MetaKeywords === null || data?.MetaKeywords === '') ? `${value[0]}` : `${data.MetaKeywords}, ${value[0]}`
+                                })
+                            }
                         }
                     }}
                     renderTags={(value: any, props: any) =>

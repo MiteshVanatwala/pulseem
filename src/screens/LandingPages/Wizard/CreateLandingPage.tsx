@@ -36,6 +36,7 @@ import { LandingPageModel } from '../../../Models/LandingPage/LandingPage';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
+import SubscriberGroup from './Tabs/SubscriberGroup';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -718,37 +719,52 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							setErrors={setErrors}
 						/>
 
-						<Typography className={clsx(classes.bold, classes.mt6)}>
-							{translator("landingPages.formOfflineProperties")}
-							<Tooltip
-								disableFocusListener
-								title={translator('landingPages.formOfflineDateTooltip')}
-								classes={{
-									tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-									arrow: classes.fBlack
-								}}
-								enterTouchDelay={50}
-								placement={"top"}
-							>
-								<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
-									<BsInfoCircle />
-								</IconButton>
-							</Tooltip>
-						</Typography>
-						<Divider className={clsx(classes.mt2, classes.mb2)} />
-						<OfflineProperties
-							classes={classes}
-							data={landingPageModel}
-							onUpdate={setLandingPageModel}
-							errors={errors}
-							setErrors={setErrors}
-						/>
+						<Grid container className={clsx(classes.pb25)} spacing={3}>
+							<Grid item md={6}>
+								<Typography title={translator("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.mt6)}>
+									{translator("landingPages.subscriberSettings")}
+								</Typography>
+								<Divider className={clsx(classes.mt2, classes.mb2)} />
+								<SubscriberSettings
+									classes={classes}
+									data={landingPageModel}
+									onUpdate={setLandingPageModel}
+									onSetDialog={setDialogType}
+									removeEmailId={removeEmailId}
+									errors={errors}
+								/>
+							</Grid>
+							<Grid item md={6}>
+								<Typography className={clsx(classes.bold, classes.mt6)}>
+									{translator("landingPages.formOfflineProperties")}
+									<Tooltip
+										disableFocusListener
+										title={translator('landingPages.formOfflineDateTooltip')}
+										classes={{
+											tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+											arrow: classes.fBlack
+										}}
+										enterTouchDelay={50}
+										placement={"top"}
+									>
+										<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+											<BsInfoCircle />
+										</IconButton>
+									</Tooltip>
+								</Typography>
 
-						<Typography title={translator("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.mt6)}>
-							{translator("landingPages.subscriberSettings")}
-						</Typography>
-						<Divider className={clsx(classes.mt2, classes.mb2)} />
-						<SubscriberSettings
+								<Divider className={clsx(classes.mt2, classes.mb2)} />
+								<OfflineProperties
+									classes={classes}
+									data={landingPageModel}
+									onUpdate={setLandingPageModel}
+									errors={errors}
+									setErrors={setErrors}
+								/>
+							</Grid>
+						</Grid>
+
+						<SubscriberGroup
 							classes={classes}
 							data={landingPageModel}
 							onUpdate={setLandingPageModel}
@@ -757,25 +773,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							errors={errors}
 						/>
 					</TabPanel>
-					{/* <TabPanel value='2'>
-						<OfflineProperties
-							classes={classes}
-							data={landingPageModel}
-							onUpdate={setLandingPageModel}
-							errors={errors}
-							setErrors={setErrors}
-						/>
-					</TabPanel>
-					<TabPanel value='3'>
-						<SubscriberSettings
-							classes={classes}
-							data={landingPageModel}
-							onUpdate={setLandingPageModel}
-							onSetDialog={setDialogType}
-							removeEmailId={removeEmailId}
-							errors={errors}
-						/>
-					</TabPanel> */}
 					<TabPanel value='2'>
 						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
 					</TabPanel>
