@@ -1,0 +1,25 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
+import { PulseemResponse } from "../../Models/APIResponse";
+import { ExtraFieldsPayload } from "../../Models/ExtraFields";
+
+export const SetExtraFields = createAsyncThunk(
+  'Account/SetExtraFields',
+  async (extraFields: ExtraFieldsPayload, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`Account/SetExtraFields`, extraFields);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const ExtraFieldsSlice = createSlice({
+  name: "extraFields",
+  initialState: {},
+  reducers: {},
+  extraReducers: (builder) => { },
+});
+
+export default ExtraFieldsSlice.reducer;
