@@ -3368,9 +3368,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       }
     },
-    [theme.breakpoints.down('xs')]: {
-      width: 'auto !important'
-    },
+    // [theme.breakpoints.down('xs')]: {
+    //   width: 'auto !important'
+    // },
   },
 
   textFieldError: {

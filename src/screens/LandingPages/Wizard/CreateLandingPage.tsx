@@ -43,7 +43,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { isRTL } = useSelector(
+	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
@@ -659,6 +659,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			</Box>
 			<Box className={"containerBody"}>
 				<Tabs
+					variant='scrollable'
+					scrollButtons="auto"
 					value={tabValue}
 					onChange={(e, value) => setTabValue(value)}
 					className={clsx(classes.mr15, classes.ml15)}
@@ -709,7 +711,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					/>
 				</Tabs>
 				<TabContext value={`${tabValue}`}>
-					<TabPanel value='1'>
+					<TabPanel value='1' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
 						<FormProperties
 							classes={classes}
 							data={landingPageModel}
@@ -773,13 +775,13 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							errors={errors}
 						/>
 					</TabPanel>
-					<TabPanel value='2'>
+					<TabPanel value='2' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
 						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
 					</TabPanel>
-					<TabPanel value='3'>
+					<TabPanel value='3' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
 						<DevelopmentSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
 					</TabPanel>
-					<TabPanel value='4'>
+					<TabPanel value='4' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
 						<LinkPreviewSettings
 							classes={classes}
 							data={landingPageModel}
@@ -792,7 +794,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					</TabPanel>
 				</TabContext>
 
-				<Box className={classes.flex}>
+				<Box>
 					<WizardActions
 						classes={classes}
 						// @ts-ignore

@@ -55,7 +55,7 @@ const SubscriberGroup = ({ classes, data, onUpdate, onShowTestGroups, errors }: 
 
     return (
         <Grid container spacing={3} className={clsx(classes.p15)}>
-            <Grid item md={12}>
+            <Grid item md={12} xs={12}>
                 <Box>
                     <Typography title={translator("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold)}>
                         {translator("landingPages.addSubscribersToGroups")}
