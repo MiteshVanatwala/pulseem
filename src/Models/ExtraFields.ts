@@ -15,6 +15,6 @@ export interface ExtraFields {
   ExtraDate1: string;
   ExtraDate2: string;
   ExtraDate3: string;
-  ExtraDate4: String;
+  ExtraDate4: string;
   [key: string]: string;
 }
