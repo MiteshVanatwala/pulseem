@@ -1,4 +1,4 @@
-export interface ExtraFieldList {
+export interface ExtraFields {
   ExtraField1: string;
   ExtraField2: string;
   ExtraField3: string;
@@ -12,16 +12,9 @@ export interface ExtraFieldList {
   ExtraField11: string;
   ExtraField12: string;
   ExtraField13: string;
+  ExtraDate1: string;
+  ExtraDate2: string;
+  ExtraDate3: string;
+  ExtraDate4: String;
   [key: string]: string;
-}
-
-export interface ExtraDateFieldList {
-  ExtraDate1: string | null;
-  ExtraDate2: string | null;
-  ExtraDate3: string | null;
-  ExtraDate4: string | null;
-  [key: string]: string | null;
-}
-
-export interface ExtraFieldsPayload extends ExtraFieldList, ExtraDateFieldList {
 }

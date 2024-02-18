@@ -15,6 +15,20 @@ export const SetExtraFields = createAsyncThunk(
   }
 );
 
+export const GetExtraFields = createAsyncThunk(
+  'Account/GetExtraFields',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`Account/GetExtraFields`);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+
+
 export const ExtraFieldsSlice = createSlice({
   name: "extraFields",
   initialState: {},

@@ -12,21 +12,22 @@ import { BiSave } from 'react-icons/bi';
 import { useDispatch, useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Loader } from '../../../components/Loader/Loader';
-import { SetExtraFields } from '../../../redux/reducers/ExtraFieldsSlice';
-import { ExtraDateFieldList, ExtraFieldList, ExtraFieldsPayload } from '../../../Models/ExtraFields';
+import { GetExtraFields, SetExtraFields } from '../../../redux/reducers/ExtraFieldsSlice';
+import { ExtraFields } from '../../../Models/ExtraFields';
 import { StateType } from '../../../Models/StateTypes';
-import { getAccountExtraData } from '../../../redux/reducers/smsSlice';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import { getCommonFeatures } from '../../../redux/reducers/commonSlice'
 
-const ExtraFields = ({ classes }: any) => {
+const ExtraFieldsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch: any = useDispatch();
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { extraData } = useSelector((state: any) => state.sms);
   const [toastMessage, setToastMessage] = useState<any | never>(null);
-  const [showLoader, setLoader] = useState(false);
-  const [ExtraFieldList, setExtraFieldList] = useState<ExtraFieldList>({
+  const { subAccount } = useSelector((state: any) => state.common)
+  const [showLoader, setLoader] = useState(true);
+  const [ExtraFieldList, setExtraFieldList] = useState<ExtraFields>({
     ExtraField1: extraData.ExtraField1 || '',
     ExtraField2: extraData.ExtraField2 || '',
     ExtraField3: extraData.ExtraField3 || '',
@@ -40,9 +41,6 @@ const ExtraFields = ({ classes }: any) => {
     ExtraField11: extraData.ExtraField11 || '',
     ExtraField12: extraData.ExtraField12 || '',
     ExtraField13: extraData.ExtraField13 || '',
-  });
-
-  const [ExtraDateFieldList, setExtraDateFieldList] = useState<ExtraDateFieldList>({
     ExtraDate1: extraData.ExtraDate1 || '',
     ExtraDate2: extraData.ExtraDate2 || '',
     ExtraDate3: extraData.ExtraDate3 || '',
@@ -68,9 +66,36 @@ const ExtraFields = ({ classes }: any) => {
 
 
   useEffect(() => {
-    if (!extraData || extraData.length === 0) {
-      dispatch(getAccountExtraData());
+    if (subAccount?.length === 0) {
+      // @ts-ignore
+      dispatch(getCommonFeatures({ forceRequest: true }))
     }
+    const getAccountExtraFields = async () => {
+      const response = await dispatch(GetExtraFields()) as any;
+      switch (response.payload?.StatusCode) {
+        case 201: {
+          setExtraFieldList(response.payload?.Data);
+          setLoader(false);
+          break;
+        }
+        case 403: {
+          setLoader(false);
+          alert('no premission');
+          window.history.back();
+          break;
+        }
+        case 500: {
+          setLoader(false);
+          alert('error occured');
+          break;
+        }
+        case 401: {
+          logout();
+        }
+      }
+    }
+
+    getAccountExtraFields();
   }, []);
 
   useEffect(() => {
@@ -88,17 +113,11 @@ const ExtraFields = ({ classes }: any) => {
       ExtraField11: extraData.ExtraField11 || '',
       ExtraField12: extraData.ExtraField12 || '',
       ExtraField13: extraData.ExtraField13 || '',
-    });
-
-    setExtraDateFieldList({
       ExtraDate1: extraData.ExtraDate1 || '',
       ExtraDate2: extraData.ExtraDate2 || '',
       ExtraDate3: extraData.ExtraDate3 || '',
       ExtraDate4: extraData.ExtraDate4 || ''
-    })
-    // if (extraData && Object.values(extraData).length > 0) {
-    //   setPreventedValues([...preventedValues, ...Object.values(extraData).filter(e => e !== '')]);
-    // }
+    });
 
   }, [extraData]);
 
@@ -107,9 +126,8 @@ const ExtraFields = ({ classes }: any) => {
       setLoader(true);
 
       const request = {
-        ...ExtraFieldList,
-        ...ExtraDateFieldList
-      } as ExtraFieldsPayload;
+        ...ExtraFieldList
+      } as ExtraFields;
 
 
       for (let [key, value] of Object.entries(request)) {
@@ -117,7 +135,7 @@ const ExtraFields = ({ classes }: any) => {
       }
 
 
-      const response = await dispatch(SetExtraFields(request as ExtraFieldsPayload));
+      const response = await dispatch(SetExtraFields(request as ExtraFields));
       setLoader(false);
       handleResponse(response?.payload);
     }
@@ -131,25 +149,23 @@ const ExtraFields = ({ classes }: any) => {
     let isValid = true;
     setErrorField([]);
 
-    const bothExtraFields = { ...ExtraFieldList, ...ExtraDateFieldList };
-
-    const hasDuplicated = checkIfDuplicateExists([...preventedValues, ...Object.values(bothExtraFields)]);
+    const hasDuplicated = checkIfDuplicateExists([...preventedValues, ...Object.values(ExtraFieldList)]);
 
     if (hasDuplicated) {
       const keys: any = [];
 
       preventedValues.filter((z: any) => z !== '').forEach((str: string | any) => {
-        const exists = Object.keys(bothExtraFields).filter((x: any) => {
-          return bothExtraFields[x]?.toLowerCase() !== '' && bothExtraFields[x]?.toLowerCase() === str.toLowerCase()
+        const exists = Object.keys(ExtraFieldList).filter((x: any) => {
+          return ExtraFieldList[x]?.toLowerCase() !== '' && ExtraFieldList[x]?.toLowerCase() === str.toLowerCase()
         });
         if (exists.filter((x) => x !== '')?.length > 0) {
           keys.push(...exists);
         }
       });
 
-      Object.values(bothExtraFields).filter((z: any) => z !== '').forEach((str: string | any) => {
-        const exists = Object.keys(bothExtraFields).filter((x: any) => {
-          return bothExtraFields[x]?.toLowerCase() !== '' && bothExtraFields[x]?.toLowerCase() === str.toLowerCase()
+      Object.values(ExtraFieldList).filter((z: any) => z !== '').forEach((str: string | any) => {
+        const exists = Object.keys(ExtraFieldList).filter((x: any) => {
+          return ExtraFieldList[x]?.toLowerCase() !== '' && ExtraFieldList[x]?.toLowerCase() === str.toLowerCase()
         });
         if (exists.filter((x) => x !== '')?.length > 1) {
           keys.push(...exists);
@@ -224,7 +240,7 @@ const ExtraFields = ({ classes }: any) => {
             <div className={clsx(classes.f20, classes.semibold, classes.p10, classes.greyBackground, classes.mb20)}>{t('common.SharedSubAccountFields')}</div>
             <Grid container className={classes.pb25} spacing={4}>
               {
-                Object.keys(ExtraFieldList).map((field: string, idx: number) => {
+                Object.keys(ExtraFieldList).filter((x: string) => { return x.toLocaleLowerCase().indexOf('extrafield') > -1 }).map((field: string, idx: number) => {
                   return (
                     <Grid item xs={3} sm={3} md={3}>
                       <InputLabel className={classes.fBlack}>{t(`common.${field}`)}</InputLabel>
@@ -249,16 +265,16 @@ const ExtraFields = ({ classes }: any) => {
             <div className={clsx(classes.f20, classes.semibold, classes.p10, classes.greyBackground, classes.mb20, classes.mt20)}>{t('common.SharedSubAccountDateFields')}</div>
             <Grid container className={classes.pb25} spacing={4}>
               {
-                Object.keys(ExtraDateFieldList).map((field: string) => {
+                Object.keys(ExtraFieldList).filter((x: string) => { return x.toLocaleLowerCase().indexOf('extradate') > -1 }).map((field: string) => {
                   return (
                     <Grid item xs={3} sm={3} md={3}>
                       <InputLabel className={classes.fBlack}>{t(`common.${field}`)}</InputLabel>
                       <TextField
                         variant='outlined'
                         size='small'
-                        value={ExtraDateFieldList[field]}
-                        onChange={(event: any) => setExtraDateFieldList({
-                          ...ExtraDateFieldList,
+                        value={ExtraFieldList[field]}
+                        onChange={(event: any) => setExtraFieldList({
+                          ...ExtraFieldList,
                           [field]: event.target.value
                         })}
                         className={clsx(classes.w100, classes.textField, classes.mt25)}
@@ -270,7 +286,7 @@ const ExtraFields = ({ classes }: any) => {
             </Grid>
 
             <Box className={clsx(classes.flex, classes.pt25)} style={{ justifyContent: 'end', marginTop: 15 }}>
-              <Button
+              {subAccount && subAccount?.CompanyAdmin === true && <Button
                 className={clsx(
                   classes.btn,
                   classes.btnRounded
@@ -281,10 +297,9 @@ const ExtraFields = ({ classes }: any) => {
                 onClick={saveExtraFieldData}
               >
                 {t("common.save")}
-              </Button>
+              </Button>}
             </Box>
           </Box>
-
         </Box>
       </Box>
       <Loader isOpen={showLoader} />
@@ -292,4 +307,4 @@ const ExtraFields = ({ classes }: any) => {
   )
 }
 
-export default memo(ExtraFields);
+export default memo(ExtraFieldsEditor);
