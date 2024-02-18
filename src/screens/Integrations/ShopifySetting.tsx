@@ -15,6 +15,7 @@ import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import GroupTags from "../../components/Groups/GroupTags";
 import InputMask from 'react-input-mask';
 import { BiSave } from "react-icons/bi";
+import { URL_HELPER } from "../../helpers/Links/ExternalLink";
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -246,7 +247,7 @@ const Shopify = ({ classes }: any) => {
           UpdateDate: '',
           IntegrationSource: 2
         });
-    
+
         setAuthenticated(false);
         setIsShowCredentials(false);
         break;
@@ -329,10 +330,21 @@ const Shopify = ({ classes }: any) => {
       {toastMessage && renderToast()}
       {
         !isPageLoading && (
-          <Box className={clsx(classes.containerBody, classes.pt30)}>
-            <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15, classes.bold)}>
-              {t('integrations.shopify.authenticate')}
-            </Typography>
+          <Box className={clsx(classes.containerBody,)}>
+            <Button
+              onClick={() => window.open(URL_HELPER.Integrations.Shopify.guide, '_blank')}
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.btn,
+                classes.btnRounded,
+                classes.mb20,
+                classes.mt20
+              )}
+              color="primary"
+            >
+              {t(`integrations.shopify.connectStore`)}
+            </Button>
             <Box className={clsx(classes.dblock, classes.pb15)}>
               <Typography className={clsx(classes.bold)}>
                 {t("integrations.shopify.shopifyURL")}
@@ -381,52 +393,52 @@ const Shopify = ({ classes }: any) => {
                     )}
                   </Box>
 
-                <Box className={clsx(classes.dblock, classes.pb15)}>
-                  <Typography className={clsx(classes.bold)}>
-                    {t("integrations.shopify.apiAccessToken")}
-                    <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-                  </Typography>
-                  <Typography className={clsx(classes.mb5)}>
-                    {t("integrations.shopify.insertToken")}
-                  </Typography>
-                  <TextField
-                    size="small"
-                    name="DefaultFromName"
-                    value={settings.api_access_token}
-                    onChange={(event) => setSettings({ ...settings, api_access_token: event.target.value })}
-                    className={clsx(classes.dBlock, classes.shopifySettingTextBox)}
-                    disabled={isAuthenticated}
-                  />
-                  {!!errors.api_access_token && (
-                    <Typography className={clsx(classes.errorText, classes.f14)}>
-                      {errors.api_access_token}
+                  <Box className={clsx(classes.dblock, classes.pb15)}>
+                    <Typography className={clsx(classes.bold)}>
+                      {t("integrations.shopify.apiAccessToken")}
+                      <label className={clsx(classes.ml10, classes.textRed)}>*</label>
                     </Typography>
-                  )}
-                </Box>
-                <Box className={clsx(classes.dblock, classes.pb15)}>
-                  <Typography className={clsx(classes.bold)}>
-                    {t("integrations.shopify.apiVersion")}
-                    <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-                  </Typography>
-                  <Typography className={clsx(classes.mb5)}>
-                    {t("integrations.shopify.apiVersionDesc")}
-                  </Typography>
-                  <InputMask
-                    name="apiVersion"
-                    className={clsx(classes.InputMaskTextField, classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-                    mask="9999-99"
-                    maskPlaceholder="____-__"
-                    placeholder="____-__"
-                    onChange={(event: any) => setSettings({ ...settings, api_version: event.target.value })}
-                    value={settings.api_version}
-                    disabled={isAuthenticated}
-                  />
-                  {!!errors.api_version && (
-                    <Typography className={clsx(classes.errorText, classes.f14)}>
-                      {errors.api_version}
+                    <Typography className={clsx(classes.mb5)}>
+                      {t("integrations.shopify.insertToken")}
                     </Typography>
-                  )}
-                </Box>
+                    <TextField
+                      size="small"
+                      name="DefaultFromName"
+                      value={settings.api_access_token}
+                      onChange={(event) => setSettings({ ...settings, api_access_token: event.target.value })}
+                      className={clsx(classes.dBlock, classes.shopifySettingTextBox)}
+                      disabled={isAuthenticated}
+                    />
+                    {!!errors.api_access_token && (
+                      <Typography className={clsx(classes.errorText, classes.f14)}>
+                        {errors.api_access_token}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Box className={clsx(classes.dblock, classes.pb15)}>
+                    <Typography className={clsx(classes.bold)}>
+                      {t("integrations.shopify.apiVersion")}
+                      <label className={clsx(classes.ml10, classes.textRed)}>*</label>
+                    </Typography>
+                    <Typography className={clsx(classes.mb5)}>
+                      {t("integrations.shopify.apiVersionDesc")}
+                    </Typography>
+                    <InputMask
+                      name="apiVersion"
+                      className={clsx(classes.InputMaskTextField, classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                      mask="9999-99"
+                      maskPlaceholder="____-__"
+                      placeholder="____-__"
+                      onChange={(event: any) => setSettings({ ...settings, api_version: event.target.value })}
+                      value={settings.api_version}
+                      disabled={isAuthenticated}
+                    />
+                    {!!errors.api_version && (
+                      <Typography className={clsx(classes.errorText, classes.f14)}>
+                        {errors.api_version}
+                      </Typography>
+                    )}
+                  </Box>
 
                   {!!errors.authentication_message && (
                     <Box className={clsx(classes.flex, classes.pbt15)}>
