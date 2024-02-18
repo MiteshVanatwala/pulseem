@@ -27,6 +27,7 @@ const ExtraFieldsEditor = ({ classes }: any) => {
   const [toastMessage, setToastMessage] = useState<any | never>(null);
   const { subAccount } = useSelector((state: any) => state.common)
   const [showLoader, setLoader] = useState(true);
+  const [formDisabled, setFormDisabled] = useState<boolean>(true);
   const [ExtraFieldList, setExtraFieldList] = useState<ExtraFields>({
     ExtraField1: extraData.ExtraField1 || '',
     ExtraField2: extraData.ExtraField2 || '',
@@ -80,16 +81,17 @@ const ExtraFieldsEditor = ({ classes }: any) => {
         }
         case 403: {
           setLoader(false);
-          alert('no premission');
-          window.history.back();
+          setFormDisabled(true);
           break;
         }
         case 500: {
           setLoader(false);
+          setFormDisabled(true);
           alert('error occured');
           break;
         }
         case 401: {
+          setFormDisabled(true);
           logout();
         }
       }
@@ -118,6 +120,10 @@ const ExtraFieldsEditor = ({ classes }: any) => {
       ExtraDate3: extraData.ExtraDate3 || '',
       ExtraDate4: extraData.ExtraDate4 || ''
     });
+
+    if (subAccount && subAccount?.CompanyAdmin === true) {
+      setFormDisabled(false);
+    }
 
   }, [extraData]);
 
@@ -249,7 +255,7 @@ const ExtraFieldsEditor = ({ classes }: any) => {
                         size='small'
                         value={ExtraFieldList[field]}
                         onChange={(event: any) => onExtraFieldChange(event, field)}
-                        className={clsx(classes.w100, classes.textField, classes.mt25)}
+                        className={clsx(classes.w100, classes.textField, classes.mt25, formDisabled ? classes.disabled : null)}
                       />
                       {
                         errorFields.indexOf(field) > -1 && <FormHelperText className={clsx(classes.f14, classes.red)} key={idx}>
@@ -277,7 +283,7 @@ const ExtraFieldsEditor = ({ classes }: any) => {
                           ...ExtraFieldList,
                           [field]: event.target.value
                         })}
-                        className={clsx(classes.w100, classes.textField, classes.mt25)}
+                        className={clsx(classes.w100, classes.textField, classes.mt25, formDisabled ? classes.disabled : null)}
                       />
                     </Grid>
                   );
