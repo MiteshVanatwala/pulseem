@@ -1,4 +1,5 @@
-﻿
+﻿import { WebformsToReportLeadByApi } from "./WebformsToReportLeadByApi";
+
 export interface LandingPageManagement {
     ID: number;
     Name: string;
@@ -77,6 +78,7 @@ export interface LandingPageModel {
     GoogleTagManagerCode: string;
     FacebookPixelCode: string;
     IsNewEditor: boolean | any | never;
+    WebformsToReportLeadByApi: WebformsToReportLeadByApi[] | any | never;
 }
 
 export interface BeeEditorModel {

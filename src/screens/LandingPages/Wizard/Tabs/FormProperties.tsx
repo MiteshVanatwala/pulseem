@@ -8,6 +8,7 @@ import { LandingPagesAnswerType } from "../../../../helpers/Constants";
 import { coreProps } from "../../../Whatsapp/Campaign/Types/WhatsappCampaign.types";
 import { isShortUrlExist } from "../../../../redux/reducers/landingPagesSlice";
 import { LangugeCode } from "../../../../model/PulseemFields/Fields";
+import { WebformsToReportLeadByApi } from "../../../../Models/LandingPage/WebformsToReportLeadByApi";
 
 
 const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors }: any) => {
@@ -156,8 +157,37 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                             <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</MenuItem>
                             <MenuItem value={LandingPagesAnswerType.WITHOUT_ANSWER}>{translator("landingPages.withoutAnswer")}</MenuItem>
                             <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</MenuItem>
+                            <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem>
                         </Select>
                     </FormControl>
+                    {data.AnswerType === LandingPagesAnswerType.SEND_WEBHOOK && <>
+                        <Typography title={translator("common.SelectSystems")} className={clsx(classes.alignDir, classes.mt20)}>
+                            {translator("common.SelectSystems")}
+                        </Typography>
+                        <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+                            <Select
+                                variant="standard"
+                                name="Systems"
+                                value={data.Systems}
+                                className={classes.pbt5}
+                                onChange={(event, val) => onUpdate({ ...data, Systems: event.target.value })}
+                                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                MenuProps={{
+                                    PaperProps: {
+                                        style: {
+                                            maxHeight: 300,
+                                            direction: isRTL ? 'rtl' : 'ltr'
+                                        }
+                                    },
+                                }}
+                            >
+                                {data?.WebformsToReportLeadByApi?.map((item: WebformsToReportLeadByApi) => {
+                                    return (<MenuItem value={item.ID}>{item.Name}</MenuItem>)
+                                })}
+                            </Select>
+                        </FormControl>
+                    </>
+                    }
                 </Grid>
             )
         }
@@ -266,7 +296,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </>
             )
         }
-    </Grid>
+    </Grid >
 
 }
 export default FormProperties;

@@ -15,6 +15,7 @@ const DevelopmentSettings = ({ classes, data, onUpdate }: any) => {
                 placeholder={PlaceHolders.CSS_STYLE}
                 maxLength={1000}
                 id="yourMessage"
+                style={{ direction: 'ltr' }}
                 className={clsx(classes.textarea, classes.sidebar)}
                 onChange={(e: any) => onUpdate({ ...data, ClientCssStyle: e.target.value })}
                 value={data.ClientCssStyle}
