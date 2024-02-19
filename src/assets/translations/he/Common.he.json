@@ -542,6 +542,9 @@
   "ExtraField11": "שדה נוסף 11",
   "ExtraField12": "שדה נוסף 12",
   "ExtraField13": "שדה נוסף 13",
+  "SharedSubAccountFields": "שדות כלליים לחשבון",
+  "SharedSubAccountDateFields": "שדות תאריך לחשבון",
+  "ExtraFieldSaved": "השדות הנוספים נשמרו בהצלחה!",
   "ReplyDate": "תאריך משוב",
   "ReplyText": "טקסט המשוב",
   "statusActive": "פעיל",
@@ -772,5 +775,6 @@
   "dnsRecordsGuide": "מדריך להוספת רשומות dns",
   "noAutomationsToRestore": "אין אוטומציות לשחזור",
   "smsDirectRemovalTitle": "הסרות ישירות ב- SMS (טלפון סלולרי)",
-  "emailDirectRemovalTitle": "הסרות ישירות בדוא\"ל (דוא\"ל)"
+  "emailDirectRemovalTitle": "הסרות ישירות בדוא\"ל (דוא\"ל)",
+  "duplicatedValue": "ערך משוכפל / שמור"
 }
