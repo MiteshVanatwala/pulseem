@@ -546,6 +546,9 @@
   "ExtraField11": "Extra Field 11",
   "ExtraField12": "Extra Field 12",
   "ExtraField13": "Extra Field 13",
+  "SharedSubAccountFields": "Shared Sub Account Fields",
+  "SharedSubAccountDateFields": "Shared Sub Account Date Fields",
+  "ExtraFieldSaved": "Extra Fields Saved Successfully.",
   "ReplyDate": "Reply Date",
   "ReplyText": "Reply Text",
   "statusActive": "Active",
@@ -785,5 +788,6 @@
   "lastSaveAt": "Last save at: ",
   "missingApi": "Missing api key",
   "publish": "Publish",
-  "finish": "Finish"
+  "finish": "Finish",
+  "duplicatedValue": "Duplicated / System Value"
 }

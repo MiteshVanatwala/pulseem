@@ -543,6 +543,9 @@
   "ExtraField11": "שדה נוסף 11",
   "ExtraField12": "שדה נוסף 12",
   "ExtraField13": "שדה נוסף 13",
+  "SharedSubAccountFields": "שדות כלליים לחשבון",
+  "SharedSubAccountDateFields": "שדות תאריך לחשבון",
+  "ExtraFieldSaved": "השדות הנוספים נשמרו בהצלחה!",
   "ReplyDate": "תאריך משוב",
   "ReplyText": "טקסט המשוב",
   "statusActive": "פעיל",
@@ -779,5 +782,6 @@
   "lastSaveAt": "שמירה אחרונה ב: ",
   "missingApi": "מפתח API לא נכון או לא תקין",
   "publish": "פרסם",
-  "finish": "סיום"
+  "finish": "סיום",
+  "duplicatedValue": "ערך משוכפל / שמור"
 }
