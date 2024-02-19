@@ -300,7 +300,7 @@ const ExtraFieldsEditor = ({ classes }: any) => {
                 style={{ margin: '8px' }}
                 startIcon={<BiSave />}
                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                onClick={saveExtraFieldData}
+                onClick={() => saveExtraFieldData()}
               >
                 {t("common.save")}
               </Button>}
