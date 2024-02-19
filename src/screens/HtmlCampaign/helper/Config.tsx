@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translations/BeeEditor/Languages';
 import { FONTS } from '../../../helpers/Fonts/Init';
+import ProductCatalog from '../../../model/ProductCatalog/ProductCatalog';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
@@ -59,6 +60,16 @@ export const BeeConfig = (Options: ConfigOptions) => {
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
+            // externalContentURLs: [{
+            //     name: "Saved Rows",
+            //     value: "saved-rows",
+            //     handle: 'saved-rows',
+            //     isLocal: true,
+            //     behaviors: {
+            //       canEdit: true,
+            //       canDelete: true,
+            //     },
+            // }]
         },
         editorFonts: FONTS(),
         workspace: {
@@ -95,6 +106,22 @@ export const BeeConfig = (Options: ConfigOptions) => {
             }
         },
         contentDialog: {
+            externalContentURLs: {
+                label: 'Add Product Block',
+                handler: async function(resolve: any, reject: any) {
+                    const results = await openModal(ProductCatalog, {}, classes);
+                    let newRow = results.row;
+                    if (newRow === '') reject();
+                    else {
+                        newRow['uuid'] = uuidv4();
+                        newRow['metadata']['uuid'] = uuidv4();
+                        newRow['metadata']['name'] = 'Product Catalog';
+                        newRow['metadata']['tags'] = 'product-catalog';
+                        await onSaveUserBlock(JSON.stringify(newRow), newRow)
+                        resolve();
+                    }
+                }
+            },
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
                     const results = await openModal(EditRow, args, classes);
@@ -173,8 +200,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         onError: (errorMessage: any) => {
             // console.log('onError ', errorMessage)
         },
-        onLoad: (jsonFile: any) => {
-            // console.log(jsonFile);
+        onLoad: async (jsonFile: any) => {
+            console.log(jsonFile);
         },
         onAutoSave: () => AutoSaveCampaign(),
         onChange: () => DesignChange()

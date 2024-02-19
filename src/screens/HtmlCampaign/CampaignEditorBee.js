@@ -150,7 +150,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (dataReady) {
       Promise.all([initFields()]).then(() => {
         return true;
-      })
+      });
     }
 
   }, [dataReady]);
@@ -583,14 +583,13 @@ const CampaignEditor = ({ classes, ...props }) => {
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       dispatch(getUserblocks());
-      await setRow(json);
     });
   }
   const onEditBlock = (blockRequest) => {
     setLoader(true);
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
-      await setRow(JSON.stringify(blockRequest?.Json));
+      dispatch(getUserblocks());
     });
   }
   const handleDeleteBlock = (e, row_id) => {

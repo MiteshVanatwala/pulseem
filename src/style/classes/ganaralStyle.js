@@ -231,6 +231,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingRight: 5,
     paddingLeft: 5,
   },
+  pl10: {
+    paddingLeft: 10,
+  },
+  pl30: {
+    paddingLeft: 30,
+  },
   paddingSides10: {
     paddingRight: 10,
     paddingLeft: 10,
@@ -464,6 +470,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pb0: {
     paddingBottom: 0
   },
+  pb5: {
+    paddingBottom: 5,
+  },
   pb10: {
     paddingBottom: 10,
   },
@@ -608,6 +617,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   bgLightGray: {
     backgroundColor: "rgba(242, 242, 242, 1)",
+  },
+  borderRadius30: {
+    borderRadius: "30px",
   },
   justifyBetween: {
     display: "flex",
@@ -826,6 +838,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   w70: {
     width: '70%'
+  },
+  directionRTL: {
+    direction: 'rtl',
+  },
+  wAuto: {
+    width: 'auto'
   },
   w100: {
     width: '100%'
@@ -2269,6 +2287,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   graphCampaignName: {
     fontWeight: "bold",
     maxWidth: graphTextWidth[windowSize],
+  },
+  greyButtonWithRoundCorder: {
+    background: '#535353',
+    color: '#fff',
+    borderRadius: '20px'
   },
   mt24: {
     marginTop: 24,
@@ -3997,5 +4020,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center !important',
     paddingInline: '15px !important',
     paddingBlock: '10px !important'
-  }
+  },
+  productCatalogDialog: {
+    '& .MuiPaper-root': {
+      maxWidth: '70% !important',
+      width: '70% !important',
+      padding: '10px !important'
+    }
+  },
 });
