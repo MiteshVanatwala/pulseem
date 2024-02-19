@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Box, Checkbox, FormControl, FormControlLabel, Grid, Input, ListItemText, MenuItem, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Input, ListItemText, MenuItem, TextField, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -8,12 +8,16 @@ import PulseemTags from '../../../../components/Tags/PulseemTags';
 import { BiPlus } from 'react-icons/bi';
 import { coreProps } from '../../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { WebformsToReportLeadByApi } from '../../../../Models/LandingPage/WebformsToReportLeadByApi';
+import RegistrationToApiForm from '../Popups/RegistrationToApiForm';
+import { useState } from 'react';
 
 const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, errors }: any) => {
     const { t: translator } = useTranslation();
     const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
     );
+    const [createApiIntegrations, setCreateApiIntegrations] = useState<boolean>(false);
+    const [editApiIntegrations, setEditApiIntegrations] = useState<boolean>(false);
 
     const handleChangeMultiple = (event: any) => {
         //const { value } = event.target;
@@ -24,7 +28,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
         //     }
         // }
 
-        onUpdate({ ...data, Systems: event.target.value })
+
     };
 
     return (
@@ -128,7 +132,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                             return selected;
                         }}
                         className={classes.pbt5}
-                        onChange={(event, val) => handleChangeMultiple(event)}
+                        onChange={(event, val) => onUpdate({ ...data, Systems: event.target.value })}
                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         MenuProps={{
                             PaperProps: {
@@ -147,6 +151,10 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         })}
                     </Select>
                 </FormControl>}
+                <Box className={clsx(classes.dFlex, classes.spaceBetween)}>
+                    <Button onClick={() => setCreateApiIntegrations(!createApiIntegrations)}>add new</Button>
+                    <Button onClick={() => setEditApiIntegrations(!editApiIntegrations)} >edit exists</Button>
+                </Box>
             </Grid>
 
             <Grid item md={6} className={clsx(classes.dFlex)}>
@@ -165,6 +173,19 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                     label={translator("landingPages.duplicateEmailConfirmation")}
                 />
             </Grid>
+            <RegistrationToApiForm
+                classes={classes}
+                webformsToReportLeadByApi={data?.WebformsToReportLeadByApi}
+                isOpen={createApiIntegrations || editApiIntegrations}
+                isNew={createApiIntegrations}
+                onClose={() => {
+                    setEditApiIntegrations(false);
+                    setCreateApiIntegrations(false);
+                }} אני
+                onConfirm={(d: any) => {
+                    console.log(d)
+                }}
+            />
         </Grid>
     )
 }

@@ -401,5 +401,23 @@
   "landingPageSaved": "דף הנחיתה נשמר",
   "redirectUrl": "Redirect URL",
   "downloadFileUrl": "Download File URL",
-  "sendRegistrationToExternalApi": "העברת הנרשמים למערכת חיצונית"
+  "sendRegistrationToExternalApi": "העברת הנרשמים למערכת חיצונית",
+  "registrationApi": {
+    "title":" הוסף/ערוך מערכת חיצונית להעברת המידע",
+    "subTitle": "בדף זה ניתן להגדיר פרמטרים להעברת מידע למערכת חיצונית מדף המידע שלך",
+    "systemName": "שם המערכת",
+    "methodType": "סוג מתודה",
+    "get": "Get",
+    "post": "Post",
+    "put": "Put",
+    "requestUrl": "כתובת API (URL)",
+    "getExampleTitle":"כתובת בקשת ה get",
+    "getExample": "https://www.example.com?email=##Email##&from=pulseem",
+    "postExampleTitle":"כתובת בקשת ה post",
+    "postExampleParamTitle": "פרמטרים עבור בקשת ה post",
+    "postExample": "https://www.example.com",
+    "postParamsExample": "email=##Email##&from=pulseem",
+    "availableParameters": "פרמטרים זמינים בחשבונך",
+    "isOptIn": "האם לשלוח נתונים לאחר optin ?"
+  }
 }
