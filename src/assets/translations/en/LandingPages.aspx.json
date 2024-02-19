@@ -400,5 +400,6 @@
   "landingPageNotFound": "Landing Page not found",
   "landingPageSaved": "Landing Page Saved",
   "redirectUrl": "Redirect URL",
-  "downloadFileUrl": "Download File URL"
+  "downloadFileUrl": "Download File URL",
+  "sendRegistrationToExternalApi": "Transfer subscribers to external system"
 }

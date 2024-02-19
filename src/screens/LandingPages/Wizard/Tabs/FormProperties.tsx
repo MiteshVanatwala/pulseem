@@ -160,34 +160,6 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                             <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem>
                         </Select>
                     </FormControl>
-                    {data.AnswerType === LandingPagesAnswerType.SEND_WEBHOOK && <>
-                        <Typography title={translator("common.SelectSystems")} className={clsx(classes.alignDir, classes.mt20)}>
-                            {translator("common.SelectSystems")}
-                        </Typography>
-                        <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
-                            <Select
-                                variant="standard"
-                                name="Systems"
-                                value={data.Systems}
-                                className={classes.pbt5}
-                                onChange={(event, val) => onUpdate({ ...data, Systems: event.target.value })}
-                                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                                MenuProps={{
-                                    PaperProps: {
-                                        style: {
-                                            maxHeight: 300,
-                                            direction: isRTL ? 'rtl' : 'ltr'
-                                        }
-                                    },
-                                }}
-                            >
-                                {data?.WebformsToReportLeadByApi?.map((item: WebformsToReportLeadByApi) => {
-                                    return (<MenuItem value={item.ID}>{item.Name}</MenuItem>)
-                                })}
-                            </Select>
-                        </FormControl>
-                    </>
-                    }
                 </Grid>
             )
         }

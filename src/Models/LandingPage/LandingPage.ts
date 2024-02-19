@@ -61,7 +61,7 @@ export interface LandingPageModel {
     SplitRegistrations: boolean;
     DoubleOptin: boolean;
     SubscriptionsLimit: number | null;
-    Systems: string;
+    Systems: string[] | null | any;
     FacebookPageID: string;
     FacebookPrefunPage: boolean;
     FacebookPrefunImage: string;

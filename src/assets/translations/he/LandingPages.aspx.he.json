@@ -400,5 +400,6 @@
   "landingPageNotFound": "דף הנחיתה לא נמצא",
   "landingPageSaved": "דף הנחיתה נשמר",
   "redirectUrl": "Redirect URL",
-  "downloadFileUrl": "Download File URL"
+  "downloadFileUrl": "Download File URL",
+  "sendRegistrationToExternalApi": "העברת הנרשמים למערכת חיצונית"
 }
