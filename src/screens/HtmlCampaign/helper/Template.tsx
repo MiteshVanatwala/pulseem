@@ -1,5 +1,3 @@
-import Image from '../../../assets/images/no-image-preview.jpg'
-
 export const PulImage = {
   "uuid": "",
   "type": "mailup-bee-newsletter-modules-image",
@@ -30,6 +28,42 @@ export const PulImage = {
     "mobileStyle": {}
   },
   "align": "left"
+}
+
+export const PulProductImage = {
+  "type": "mailup-bee-newsletter-modules-paragraph",
+  "descriptor": {
+    "paragraph": {
+      "html": "",
+      "style": {
+        "color": "#000000",
+        "font-size": "14px",
+        "font-family": "inherit",
+        "font-weight": "400",
+        "line-height": "120%",
+        "text-align": "left",
+        "letter-spacing": "0px"
+      },
+      "computedStyle": {
+        "linkColor": "#0068a5",
+        "paragraphSpacing": "16px"
+      }
+    },
+    "style": {
+      "padding-top": "10px",
+      "padding-right": "10px",
+      "padding-bottom": "10px",
+      "padding-left": "10px"
+    },
+    "mobileStyle": {},
+    "computedStyle": {
+      "hideContentOnAmp": false,
+      "hideContentOnHtml": false,
+      "hideContentOnDesktop": false,
+      "hideContentOnMobile": false
+    }
+  },
+  "uuid": ""
 }
 
 export const PulHead = {
@@ -261,3 +295,36 @@ export const PulRow = {
   },
   "uuid": ""
 };
+
+export const PulProductContainerStart = {
+  "type": "mailup-bee-newsletter-modules-html",
+  "descriptor": {
+    "paragraph": {
+      "html": "<!-- productcontainer start -->",
+    },
+  },
+  "uuid": ""
+}
+
+export const PulProductContainerEnd = {
+  "type": "mailup-bee-newsletter-modules-html",
+  "descriptor": {
+    "paragraph": {
+      "html": "<!-- productcontainer end -->",
+    },
+  },
+  "uuid": ""
+}
+
+export const PulDynamicProductDetail = {
+  "type": "mailup-bee-newsletter-modules-paragraph",
+  "descriptor": {
+    "paragraph": {
+      "html": "",
+      "style": {
+        "display": "none"
+      },
+    },
+  },
+  "uuid": ""
+}

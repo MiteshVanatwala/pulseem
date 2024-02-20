@@ -39,7 +39,7 @@ const useMockAPI = () => {
       let items = ref.current;
       if (ref?.current.length > 0) {
         items = ref?.current.filter((row) => {
-          return row.metadata.tags.split(',').find((tag) => {
+          return row.metadata?.tags.split(',').find((tag) => {
             return tag.trim() === handle
           });
         });

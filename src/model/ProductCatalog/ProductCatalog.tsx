@@ -53,24 +53,15 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
     dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['content']['style']['direction'] = direction;
     var productJSON: any = getProductJSON();
-
     if (uptoProducts > 0) {
       if (productOrder === Structure.Horizontal) {
         for (let ind=0; ind<uptoProducts; ind++) {
           dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
         }
       } else if (productOrder === Structure.Vertical) {
-        var modules: any = [];
         for (let ind=0; ind<uptoProducts; ind++) {
-          for (let indJ=0; indJ<productJSON.length; indJ++) {
-            modules = modules.concat(productJSON[indJ]['modules']);
-          }
-          if (ind < uptoProducts-1) modules = modules.concat(PulDivider);
-        }
-
-        if (structure === Structure.Vertical) {
-          productJSON[0]['modules'] = modules;
           dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
+          dynamicRow['columns'] = dynamicRow['columns'].concat(PulDivider as any);
         }
       }
     } else dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
@@ -136,6 +127,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
     } else {
       let productCol: any = Object.assign({}, PulColItem);
       productCol['uuid'] = uuidv4();
+      productCol['grid-columns'] = 12;
       let moduleItems = [];
       if (isImageVisible) {
         let image = PulImage;
@@ -445,10 +437,10 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                             isDescriptionVisible={isDescriptionVisible}
                             isPriceVisible={isPriceVisible}
                             isButtonVisible={isButtonVisible}
-                            imageURL='#ImageURL#'
-                            name='#Name#'
-                            description='#Description#'
-                            price='#Price#'
+                            imageURL='#productsrc#'
+                            name='#name#'
+                            description='#description#'
+                            price='#price#'
                             buttonText={buttonText}
                             structure={structure}
                             direction={direction}
@@ -466,9 +458,8 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                   variant='contained'
                   size='medium'
                   className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightBlue,
-                    classes.backButton
+                    classes.btn,
+                    classes.btnRounded
                   )}
                   color="primary"
                 >
@@ -478,7 +469,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                   onClick={onHandleCancel}
                   variant='contained'
                   size='medium'
-                  className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue, classes.ml10)}
+                  className={clsx(classes.btn, classes.btnRounded, classes.ml10)}
                 >
                   {t('common.cancel')}
                 </Button>

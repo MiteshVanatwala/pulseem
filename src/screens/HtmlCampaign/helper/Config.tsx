@@ -114,9 +114,15 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     if (newRow === '') reject();
                     else {
                         newRow['uuid'] = uuidv4();
-                        newRow['metadata']['uuid'] = uuidv4();
-                        newRow['metadata']['name'] = 'Product Catalog';
-                        newRow['metadata']['tags'] = 'product-catalog';
+                        newRow['metadata'] = {
+                            'uuid': uuidv4(),
+                            'name': 'Product Catalog',
+                            'tags': 'product-catalog'
+                        }
+                        // newRow['metadata']['uuid'] = uuidv4();
+                        // newRow['metadata']['name'] = 'Product Catalog';
+                        // newRow['metadata']['tags'] = 'product-catalog';
+                        console.log(newRow);
                         await onSaveUserBlock(JSON.stringify(newRow), newRow)
                         resolve();
                     }
