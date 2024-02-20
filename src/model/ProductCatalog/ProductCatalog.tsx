@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core'
 import clsx from 'clsx';
 import { range } from 'lodash';
-import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulPrice, PulRow } from '../../screens/HtmlCampaign/helper/Template';
+import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulPrice, PulProductImage, PulRow } from '../../screens/HtmlCampaign/helper/Template';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { ProductCatalogTypes } from './Types';
@@ -78,9 +78,10 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       var productCol: any = JSON.parse(JSON.stringify(PulColItem));
       productCol['uuid'] = uuidv4();
       if (isImageVisible) {
-        let image = PulImage;
+        let image = Object.assign({}, PulProductImage);
         image['uuid'] = uuidv4();
-        image['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        image['descriptor']['paragraph']['html'] = '#productsrc#';
+        image['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         productCol['modules'].push(image);
         productCol['grid-columns'] = 4;
         productJSON.push(productCol);
@@ -92,7 +93,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       if (isNameVisible) {
         let head = Object.assign({}, PulHead);
         head['uuid'] = uuidv4();
-        head['descriptor']['heading']['text'] = '#Name#';
+        head['descriptor']['heading']['text'] = '#name#';
         head['descriptor']['heading']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(head);
       }
@@ -100,7 +101,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       if (isDescriptionVisible) {
         let desc = Object.assign({}, PulPara);
         desc['uuid'] = uuidv4();
-        desc['descriptor']['paragraph']['html'] = '#Description#';
+        desc['descriptor']['paragraph']['html'] = '#description#';
         desc['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(desc);
       }
@@ -108,7 +109,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       if (isPriceVisible) {
         let price = Object.assign({}, PulPrice);
         price['uuid'] = uuidv4();
-        price['descriptor']['paragraph']['html'] = '#Price#';
+        price['descriptor']['paragraph']['html'] = '#price#';
         price['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(price);
       }
@@ -130,16 +131,17 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       productCol['grid-columns'] = 12;
       let moduleItems = [];
       if (isImageVisible) {
-        let image = PulImage;
-        image['descriptor']['image']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        let image = Object.assign({}, PulProductImage);
         image['uuid'] = uuidv4();
+        image['descriptor']['paragraph']['html'] = '#productsrc#';
+        image['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(image);
       }
 
       if (isNameVisible) {
         let head = Object.assign({}, PulHead);
         head['uuid'] = uuidv4();
-        head['descriptor']['heading']['text'] = '#Name#';
+        head['descriptor']['heading']['text'] = '#name#';
         head['descriptor']['heading']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(head);
       }
@@ -147,7 +149,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       if (isDescriptionVisible) {
         let desc = Object.assign({}, PulPara);
         desc['uuid'] = uuidv4();
-        desc['descriptor']['paragraph']['html'] = '#Description#';
+        desc['descriptor']['paragraph']['html'] = '#description#';
         desc['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(desc);
       }
@@ -155,7 +157,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       if (isPriceVisible) {
         let price = Object.assign({}, PulPrice);
         price['uuid'] = uuidv4();
-        price['descriptor']['paragraph']['html'] = '#Price#';
+        price['descriptor']['paragraph']['html'] = '#price#';
         price['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(price);
       }
