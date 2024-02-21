@@ -246,7 +246,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                     type="text"
                                     variant="standard"
                                     value={sharedDomain}
-                                    onChange={(event: any) => setSharedDomain(event.target.value.replace('@', ''))}
+                                    onChange={(event: any) => setSharedDomain(event.target.value.replace('@', '').trim())}
                                 />
                             </Box>
                             <Box className='selectWrapper' style={{ minWidth: 300 }}>
