@@ -22,6 +22,7 @@
 }
 
 .MuiSelect-select.MuiSelect-select {
+    padding-inline-start: 12px;
     padding-inline-end: 12px;
 }
 

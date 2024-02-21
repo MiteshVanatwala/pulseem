@@ -15,7 +15,7 @@ export interface PreviewTypes {
     structure: string,
     direction: string,
     eventType: string,
-    category: string,
+    category: number,
 }
 
 export interface ProductCatalogTypes {

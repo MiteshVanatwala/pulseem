@@ -15,8 +15,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { ProductCatalogTypes } from './Types';
 import { Category, Direction, EventTypes, Items, Structure } from '../../config/enum';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCategories } from '../../redux/reducers/productSlice';
+import { StateType } from '../../Models/StateTypes';
 
-const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => {
+const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) => {
   const { t } = useTranslation();
   const [isSingleOrMultiple, setSingleOrMultiple] = useState(Items.Single);
   const [uptoProducts, setUptoProducts] = useState(1);
@@ -31,9 +34,13 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
   const [structure, setStructure] = useState(Structure.Horizontal);
   const [direction, setDirection] = useState(Direction.LeftToRight);
   const [eventType, setEventType] = useState(EventTypes.Purchase);
-  const [category, setCategory] = useState(Category.Page);
+  const [category, setCategory] = useState(0);
   const [maxProducts, setMaxProducts] = useState(4);
   const [productOrder, setProductOrder] = useState(Structure.Horizontal);
+  const { isRTL } = useSelector((state: StateType) => state.core);
+  const { productCategories } = useSelector((state: StateType) => state.product);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (productOrder === 'vertical') {
@@ -46,6 +53,13 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
 
   useEffect(() => {
     setButtonText(t('campaigns.buyNow'));
+
+    const getProductCategories = async () => {
+      await dispatch(getCategories());
+    }
+    if (productCategories?.length <= 0) {
+      getProductCategories();
+    }
   }, []);
 
   const onHandleSave = () => {
@@ -58,23 +72,23 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
     var productJSON: any = getProductJSON();
     if (uptoProducts > 0) {
       if (productOrder === Structure.Horizontal) {
-        for (let ind=0; ind<uptoProducts; ind++) {
+        for (let ind = 0; ind < uptoProducts; ind++) {
           dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
         }
       } else if (productOrder === Structure.Vertical) {
         var modules: any = [];
-        for (let ind=0; ind<uptoProducts; ind++) {
-          for (let indJ=0; indJ<productJSON.length; indJ++) {
+        for (let ind = 0; ind < uptoProducts; ind++) {
+          for (let indJ = 0; indJ < productJSON.length; indJ++) {
             modules = modules.concat(productJSON[indJ]['modules']);
           }
-          if (ind < uptoProducts-1) modules = modules.concat(PulDivider);
+          if (ind < uptoProducts - 1) modules = modules.concat(PulDivider);
         }
 
         if (structure === Structure.Vertical) {
           productJSON[0]['modules'] = modules;
           dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
         } else {
-          for (let ind=0; ind<uptoProducts; ind++) {
+          for (let ind = 0; ind < uptoProducts; ind++) {
             dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
             dynamicRow['columns'] = dynamicRow['columns'].concat(PulDivider as any);
           }
@@ -87,7 +101,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       row: dynamicRow,
     })
   };
-  
+
   const getProductJSON = () => {
     const productJSON = [];
     if (structure === Structure.Horizontal) {
@@ -201,14 +215,15 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
   }, []);
 
   const getProductNumbers = () => {
-    return range(1, maxProducts+1).map((item: number) => <MenuItem key={`${item}`} value={`${item}`}>{item}</MenuItem>)
+    return range(1, maxProducts + 1).map((item: number) => <MenuItem key={`${item}`} value={`${item}`}>{item}</MenuItem>)
   }
+
   return (
     <BaseDialog
       open={isOpen}
       className={clsx(classes.dialogContainers)}
     >
-      <div className='product-block'>
+      <div className='product-block' style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
         <Box>
           <Grid container spacing={5}>
             <Grid item md={5}>
@@ -225,7 +240,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                       setUptoProducts(1);
                     }}
                     value={Items.Single}
-                    />
+                  />
                   }
                   label={t('campaigns.singleProduct')}
                 />
@@ -248,7 +263,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                   <div className={clsx(classes.pl30, classes.pt5)}>
                     <label className={clsx(classes.pe15)}>{t('campaigns.upto')}</label>
                     <Select
-                      className={clsx(classes.borderAround, classes.txtCenter, classes.pl10)}
+                      className={clsx(classes.borderAround, classes.txtCenter, classes.pl10, classes.pr10)}
                       value={uptoProducts}
                       onChange={(event: any) => setUptoProducts(event.target.value)}
                     >
@@ -302,8 +317,10 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                     value={category}
                     onChange={(event: any) => setCategory(event.target.value)}
                   >
-                    <MenuItem key='all' value={Category.All}>{t('campaigns.allCategories')}</MenuItem>
-                    <MenuItem key='page' value={Category.Page}>{t('campaigns.pageView')}</MenuItem>
+                    <option key='0' value={0}>{t("common.select")}</option>
+                    {productCategories?.map((item: any) => {
+                      return (<option key={item.CategoryId} value={item.CategoryId}>{item.CategoryName}</option>)
+                    })};
                   </Select>
                 </div>
               </div>
@@ -323,7 +340,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                     label={t('campaigns.image')}
                   />
                 </div>
-                
+
                 <div className={clsx(classes.dInlineBlock, classes.pb10)}>
                   <FormControlLabel
                     control={
@@ -338,7 +355,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                     label={t('campaigns.name')}
                   />
                 </div>
-                
+
                 <div className={clsx(classes.dInlineBlock, classes.pb10)}>
                   <FormControlLabel
                     control={
@@ -389,14 +406,14 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                 {t('campaigns.buttonText')}
               </div>
               <Input
-                className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
+                className={clsx(classes.dBlock, classes.borderAround, classes.pl10, classes.pr10)}
                 placeholder={t('campaigns.buyNow')}
                 defaultValue={buttonText}
                 onChange={(event: any) => setButtonText(event.target.value)}
               ></Input>
             </Grid>
             <Grid item md={7}>
-            <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.productStructure')}:</h4>
+              <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.productStructure')}:</h4>
               <Grid container spacing={5}>
                 <Grid item md={4}>
                   <Select
@@ -420,7 +437,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                   </Select>
                 </Grid>
               </Grid>
-                
+
               {
                 isSingleOrMultiple === Items.Multiple && (
                   <>
@@ -440,36 +457,36 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                   </>
                 )
               }
-              
+
               <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.preview')}:</h4>
               <div className='preview' style={{ display: productOrder === Structure.Horizontal ? 'flex' : 'block' }}>
-                  {
-                    [
-                      times(uptoProducts, (i) => {
-                        return (
-                          <Preview
-                            classes={classes}
-                            width={productOrder === Structure.Horizontal ? 100/uptoProducts : 100}
-                            key={i}
-                            isImageVisible={isImageVisible}
-                            isNameVisible={isNameVisible}
-                            isDescriptionVisible={isDescriptionVisible}
-                            isPriceVisible={isPriceVisible}
-                            isButtonVisible={isButtonVisible}
-                            imageURL='#productsrc#'
-                            name='#name#'
-                            description='#description#'
-                            price='#price#'
-                            buttonText={buttonText}
-                            structure={structure}
-                            direction={direction}
-                            eventType={isFilterByEventType ? eventType : ''}
-                            category={isFilterIsByProductCategory ? category : ''}
-                          />
-                        )
-                      }
+                {
+                  [
+                    times(uptoProducts, (i) => {
+                      return (
+                        <Preview
+                          classes={classes}
+                          width={productOrder === Structure.Horizontal ? 100 / uptoProducts : 100}
+                          key={i}
+                          isImageVisible={isImageVisible}
+                          isNameVisible={isNameVisible}
+                          isDescriptionVisible={isDescriptionVisible}
+                          isPriceVisible={isPriceVisible}
+                          isButtonVisible={isButtonVisible}
+                          imageURL='#productsrc#'
+                          name='#name#'
+                          description='#description#'
+                          price='#price#'
+                          buttonText={buttonText}
+                          structure={structure}
+                          direction={direction}
+                          eventType={isFilterByEventType ? eventType : ''}
+                          category={isFilterIsByProductCategory ? category : 0}
+                        />
+                      )
+                    }
                     )]
-                  }
+                }
               </div>
               <div className={clsx(classes.textCenter, classes.mt25)}>
                 <Button

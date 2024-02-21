@@ -20,6 +20,12 @@ const Preview = ({
   eventType,
   category,
 }: PreviewTypes) => {
+  const renderCategory = () => {
+    if (category !== 0) {
+      return (<div className={clsx(classes.bodyStyle)}>#{category}#</div>)
+    }
+    return <></>
+  }
   return (
     <div
       className={
@@ -29,22 +35,22 @@ const Preview = ({
       {
         isImageVisible && (
           <div
-            className={clsx(classes.imageBlock, structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, structure === Structure.Vertical ? classes.w100 : '' )}
+            className={clsx(classes.imageBlock, structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, structure === Structure.Vertical ? classes.w100 : '')}
           >
-            <img src={noImagePreview} className={clsx(structure === Structure.Vertical ? classes.wAuto : classes.w100)} />
+            <img src={noImagePreview} className={clsx(structure === Structure.Vertical ? classes.wAuto : classes.w100)} alt='' />
           </div>
         )
       }
       <div
         className={
-          clsx(classes.contentBlock, structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, structure === Structure.Vertical ? classes.w100 : '' )
+          clsx(classes.contentBlock, structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, structure === Structure.Vertical ? classes.w100 : '')
         }
       >
         {isNameVisible && <div className={clsx(classes.nameStyle)}>{name}</div>}
         {isDescriptionVisible && <div className={clsx(classes.bodyStyle)}>{description}</div>}
         {isPriceVisible && <div className={clsx(classes.bodyStyle)}>{price}</div>}
         {eventType && <div className={clsx(classes.bodyStyle)}>#{eventType}#</div>}
-        {category && <div className={clsx(classes.bodyStyle)}>#{category}#</div>}
+        {renderCategory()}
         {isButtonVisible && <input type='button' value={buttonText} className={clsx(classes.buttonStyle)} />}
       </div>
     </div>
