@@ -10,11 +10,11 @@ import {
 } from '@material-ui/core'
 import clsx from 'clsx';
 import { range } from 'lodash';
-import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulPrice, PulProductImage, PulRow } from '../../screens/HtmlCampaign/helper/Template';
+import { PulButton, PulColItem, PulDivider, PulHead, PulPara, PulPrice, PulProductImage, PulRow } from '../../screens/HtmlCampaign/helper/Template';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { ProductCatalogTypes } from './Types';
-import { Direction, Items, Structure } from '../../config/enum';
+import { Category, Direction, EventTypes, Items, Structure } from '../../config/enum';
 
 const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => {
   const { t } = useTranslation();
@@ -29,9 +29,9 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
   const [isButtonVisible, setButtonVisibility] = useState(true);
   const [buttonText, setButtonText] = useState('');
   const [structure, setStructure] = useState(Structure.Horizontal);
-  const [direction, setDirection] = useState('ltr');
-  const [eventType, setEventType] = useState('purchase');
-  const [category, setCategory] = useState('page');
+  const [direction, setDirection] = useState(Direction.LeftToRight);
+  const [eventType, setEventType] = useState(EventTypes.Purchase);
+  const [category, setCategory] = useState(Category.Page);
   const [maxProducts, setMaxProducts] = useState(4);
   const [productOrder, setProductOrder] = useState(Structure.Horizontal);
 
@@ -52,6 +52,9 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
     let dynamicRow = Object.assign({}, PulRow);
     dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['content']['style']['direction'] = direction;
+    dynamicRow['metadata']["EventType"] = eventType;
+    dynamicRow['metadata']["ProductCategory"] = category;
+    dynamicRow['metadata']["NumOfProdcuts"] = uptoProducts;
     var productJSON: any = getProductJSON();
     if (uptoProducts > 0) {
       if (productOrder === Structure.Horizontal) {
@@ -59,9 +62,22 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
           dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
         }
       } else if (productOrder === Structure.Vertical) {
+        var modules: any = [];
         for (let ind=0; ind<uptoProducts; ind++) {
+          for (let indJ=0; indJ<productJSON.length; indJ++) {
+            modules = modules.concat(productJSON[indJ]['modules']);
+          }
+          if (ind < uptoProducts-1) modules = modules.concat(PulDivider);
+        }
+
+        if (structure === Structure.Vertical) {
+          productJSON[0]['modules'] = modules;
           dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
-          dynamicRow['columns'] = dynamicRow['columns'].concat(PulDivider as any);
+        } else {
+          for (let ind=0; ind<uptoProducts; ind++) {
+            dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
+            dynamicRow['columns'] = dynamicRow['columns'].concat(PulDivider as any);
+          }
         }
       }
     } else dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
@@ -130,6 +146,7 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
       productCol['uuid'] = uuidv4();
       productCol['grid-columns'] = 12;
       let moduleItems = [];
+      // moduleItems.push(PulProductContainerStart);
       if (isImageVisible) {
         let image = Object.assign({}, PulProductImage);
         image['uuid'] = uuidv4();
@@ -169,10 +186,10 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
         button['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(button);
       }
+      // moduleItems.push(PulProductContainerEnd);
       productCol['modules'] = moduleItems;
       productJSON.push(productCol);
     }
-
     return productJSON;
   }
 
@@ -261,10 +278,10 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                     value={eventType}
                     onChange={(event: any) => setEventType(event.target.value)}
                   >
-                    <MenuItem key='all' value='all'>{t('campaigns.allEvents')}</MenuItem>
-                    <MenuItem key='page' value='page'>{t('campaigns.pageView')}</MenuItem>
-                    <MenuItem key='purchase' value='purchase'>{t('campaigns.purchase')}</MenuItem>
-                    <MenuItem key='cart_abandon' value='cart_abandon'>{t('campaigns.cartAbandonment')}</MenuItem>
+                    <MenuItem key='all' value={EventTypes.All}>{t('campaigns.allEvents')}</MenuItem>
+                    <MenuItem key='page' value={EventTypes.Page}>{t('campaigns.pageView')}</MenuItem>
+                    <MenuItem key='purchase' value={EventTypes.Purchase}>{t('campaigns.purchase')}</MenuItem>
+                    <MenuItem key='cart_abandon' value={EventTypes.CartAbandon}>{t('campaigns.cartAbandonment')}</MenuItem>
                   </Select>
                 </div>
 
@@ -285,8 +302,8 @@ const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => 
                     value={category}
                     onChange={(event: any) => setCategory(event.target.value)}
                   >
-                    <MenuItem key='all' value='all'>{t('campaigns.allCategories')}</MenuItem>
-                    <MenuItem key='page' value='page'>{t('campaigns.pageView')}</MenuItem>
+                    <MenuItem key='all' value={Category.All}>{t('campaigns.allCategories')}</MenuItem>
+                    <MenuItem key='page' value={Category.Page}>{t('campaigns.pageView')}</MenuItem>
                   </Select>
                 </div>
               </div>

@@ -27,7 +27,8 @@ export const PulImage = {
     },
     "mobileStyle": {}
   },
-  "align": "left"
+  "align": "left",
+  "locked": false
 }
 
 export const PulProductImage = {
@@ -63,7 +64,8 @@ export const PulProductImage = {
       "hideContentOnMobile": false
     }
   },
-  "uuid": ""
+  "uuid": "",
+  "locked": false
 }
 
 export const PulHead = {
@@ -99,7 +101,8 @@ export const PulHead = {
       "height": 42
     }
   },
-  "align": "left"
+  "align": "left",
+  "locked": false
 };
 
 export const PulPara = {
@@ -135,7 +138,8 @@ export const PulPara = {
       "hideContentOnMobile": false
     }
   },
-  "uuid": ""
+  "uuid": "",
+  "locked": false
 };
 
 export const PulPrice = {
@@ -172,7 +176,8 @@ export const PulPrice = {
       "hideContentOnMobile": false
     }
   },
-  "uuid": ""
+  "uuid": "",
+  "locked": false
 };
 
 export const PulDivider = {
@@ -206,6 +211,7 @@ export const PulButton = {
     "button": {
       "label": "",
       "href": "",
+      "pul_id": "1",
       "style": {
         "font-family": "inherit",
         "font-size": "16px",
@@ -240,26 +246,30 @@ export const PulButton = {
       "hideContentOnMobile": false
     }
   },
-  "align": "left"
+  "align": "left",
+  "locked": false
 };
 
 export const PulColItem = {
   "uuid": "",
   "style": {},
   "modules": [],
-  "grid-columns": 12
+  "grid-columns": 12,
+  "locked": false
 }
 
 export const PulRow = {
   "columns": [],
   "type": "product-catalog",
   "name": "Product Catalog",
-  "locked": false,
   "synced": false,
   "metadata": {
     "name": "Product Catalog",
     "tags": "Product Catalog",
-    "uuid": ""
+    "uuid": "",
+    "EventType": "",
+    "ProductCategory": "",
+    "NumOfProdcuts": 0
   },
   "container": {
     "style": {
@@ -293,27 +303,38 @@ export const PulRow = {
       "hideContentOnDesktop": false
     }
   },
-  "uuid": ""
+  "uuid": "",
+  "locked": false
 };
 
 export const PulProductContainerStart = {
   "type": "mailup-bee-newsletter-modules-html",
   "descriptor": {
-    "paragraph": {
+    "html": {
       "html": "<!-- productcontainer start -->",
     },
+    "style": {
+      "width": "100%",
+      "display": "none"
+    }
   },
-  "uuid": ""
+  "uuid": "",
+  "locked": false
 }
 
 export const PulProductContainerEnd = {
   "type": "mailup-bee-newsletter-modules-html",
   "descriptor": {
-    "paragraph": {
+    "html": {
       "html": "<!-- productcontainer end -->",
     },
+    "style": {
+      "width": "100%",
+      "display": "none"
+    }
   },
-  "uuid": ""
+  "uuid": "",
+  "locked": false
 }
 
 export const PulDynamicProductDetail = {
@@ -326,5 +347,6 @@ export const PulDynamicProductDetail = {
       },
     },
   },
-  "uuid": ""
+  "uuid": "",
+  "locked": false
 }

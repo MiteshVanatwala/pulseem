@@ -12,3 +12,15 @@ export enum Items {
   Single = 'single',
   Multiple = 'multiple'
 }
+
+export enum EventTypes {
+  All = 'all',
+  Page = 'page',
+  Purchase = 'purchase',
+  CartAbandon = 'cart_abandon',
+}
+
+export enum Category {
+  All = 'all',
+  Page = 'page'
+}
