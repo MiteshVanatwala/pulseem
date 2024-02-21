@@ -98,8 +98,9 @@ export const AdditionalText = ({
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                     name='UnsubscribeLocation'
-                    checked={!!selectedCheck.UnsubscribeLocation}
+                    checked={true}
                     onClick={handleChangeCheckbox}
+                    disabled={true}
                 />
             </Grid>
             <Grid xs={10} sm={4}>
