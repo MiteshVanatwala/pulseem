@@ -214,6 +214,20 @@ const SummaryDialog = ({ classes,
             </ul>
         </Box>;
     }
+
+    const renderExceptionalCampaigns = (property, list) => {
+        return <Box>
+            <span style={{ display: 'flex', paddingTop: 10, paddingInline: 10 }}>{property} <span className={classes.summaryDetailsSpanBold}>({t("common.Total")}: {ExceptionalCampaignsClientsCount})</span></span>
+            <ul>
+                {list.map((l) => {
+                    return <li>
+                        <span className={classes.summaryDetailsSpanBold}>{l}</span>
+                    </li>
+                })
+                }
+            </ul>
+        </Box>;
+    }
     const renderFilterDetails = () => {
         let exceptionalClientsCountText = '';
 
@@ -245,9 +259,9 @@ const SummaryDialog = ({ classes,
             {DuplicateClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.duplicatedClients"), DuplicateClients?.toLocaleString())}
             {RestrictedClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.restrictedClients"), RestrictedClients?.toLocaleString())}
             {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}
-            {ExceptionalCampaigns !== '' && ExceptionalCampaignsClientsCount > 0 && renderDetailsLine(t('smsReport.campaignInfo'), `${ExceptionalCampaigns.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalCampaignsClientsCount})`)}
             {ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(exceptionalClientsCountText, ExceptionalOpensClicksClientsCount?.toLocaleString())}
-            {ExceptionalGroups !== '' && ExceptionalGroups?.split(',').length > 0 && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
+            {ExceptionalCampaigns !== '' && renderExceptionalCampaigns(t('smsReport.campaignInfo'), ExceptionalCampaigns?.split(','))}
+            {ExceptionalGroups !== '' && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
             {TotalNotToSend >= 0 && renderDetailsLine(`<b>${t('campaigns.newsLetterEditor.sendSettings.totalNotToSend')}</b>`, TotalNotToSend?.toLocaleString())}
         </Box>)
     }
