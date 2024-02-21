@@ -30,9 +30,17 @@ export const GetExtraFields = createAsyncThunk(
 
 export const ExtraFieldsSlice = createSlice({
   name: "extraFields",
-  initialState: {},
-  reducers: {},
-  extraReducers: (builder) => { },
+  initialState: {
+    AccountExtraFields: null as any
+  },
+  reducers: {
+
+  },
+  extraReducers: (builder) => {
+    builder.addCase(GetExtraFields.fulfilled, (state, action) => {
+      state.AccountExtraFields = action.payload;
+    })
+  }
 });
 
 export default ExtraFieldsSlice.reducer;

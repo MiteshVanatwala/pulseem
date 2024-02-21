@@ -2,23 +2,21 @@ import { MdDomain } from "react-icons/md";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
-import { Box, Checkbox, Divider, FormControl, FormControlLabel, Grid, Input, Link, ListItemText, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
+import { Box, Button, Checkbox, Divider, FormControl, FormControlLabel, Grid, Select, TextField, Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../../../Models/StateTypes";
 import { useEffect, useState } from "react";
-import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
 import { logout } from "../../../../helpers/Api/PulseemReactAPI";
 import { Loader } from "../../../../components/Loader/Loader";
-import { AiOutlineStop } from "react-icons/ai";
-import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
-import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
-import PulseemTags from "../../../../components/Tags/PulseemTags";
-import { BiPlus } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 import { WebformsToReportLeadByApi } from "../../../../Models/LandingPage/WebformsToReportLeadByApi";
+import { GetExtraFields } from "../../../../redux/reducers/ExtraFieldsSlice";
+import { deleteApiIntegration, setApiIntegration } from "../../../../redux/reducers/landingPagesSlice";
+
 const RegistrationToApiForm = ({
     classes,
     webformsToReportLeadByApi,
+    webFormId = 0,
     isNew = false,
     isOpen = false,
     onClose,
@@ -26,6 +24,8 @@ const RegistrationToApiForm = ({
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState<boolean>(true);
     const { isRTL } = useSelector((state: StateType) => state.core);
+    const { AccountExtraFields } = useSelector((state: StateType) => state.extraFields);
+
     const dispatch = useDispatch();
     const [regModel, setRegModel] = useState<WebformsToReportLeadByApi>({
         ID: 0,
@@ -35,10 +35,43 @@ const RegistrationToApiForm = ({
         IsOptinSend: false
     });
     const [requestType, setRequestType] = useState<any>('Get');
+    const [apiAvailableParams, setApiAvailableParams] = useState<any>({
+        'Email': t(`common.email`),
+        'FirstName': t(`smsReport.firstName`),
+        'LastName': t(`smsReport.lastName`),
+        'Telephone': t(`common.telephone`),
+        'Cellphone': t(`common.cellphone`),
+        'Address': t(`common.address`),
+        'City': t(`common.city`),
+        'State': t(`common.state`),
+        'Country': t(`common.country`),
+        'Zip': t(`common.zip`),
+        'Company': t(`common.company`),
+        'BirthDate': t(`common.birthDate`),
+        'ReminderDate': t(`recipient.reminderDate`),
+    });
+    const [dynamicParams, setDynamicParams] = useState<any>({});
+    const [finalParams, setFinalParams] = useState<string>('');
+    const [showWizard, setShowWizard] = useState<boolean>(false);
+
+
+    const getExtraFields = async () => {
+        if (!AccountExtraFields?.data) {
+            await dispatch(GetExtraFields());
+        }
+    }
 
     useEffect(() => {
+        getExtraFields();
         setShowLoader(false)
     }, []);
+
+    useEffect(() => {
+        if (AccountExtraFields && AccountExtraFields?.Data) {
+            const obj = AccountExtraFields?.Data;
+            setApiAvailableParams({ ...apiAvailableParams, ...obj })
+        }
+    }, [AccountExtraFields])
 
     const handleResponses = (response: any) => {
         switch (response?.StatusCode) {
@@ -58,6 +91,31 @@ const RegistrationToApiForm = ({
         }
     }
 
+    const handleParams = (e: any, item: any) => {
+        const newObj = { ...dynamicParams };
+        let finalItem = `${e.target.value}=##${item}##`
+        newObj[`##${item}##`] = finalItem;
+
+        if (e.target.value === '') {
+            delete newObj[`##${item}##`];
+        }
+
+        setDynamicParams(newObj)
+        const arr = Object.values(newObj);
+        setFinalParams(arr.length > 0 ? arr.join('&') : '');
+        setRegModel({ ...regModel, RequestPostParams: arr.length > 0 ? arr.join('&') : '' })
+    }
+
+    const onSubmit = async () => {
+        // @ts-ignore
+        await dispatch(setApiIntegration(regModel));
+        onConfirm();
+    }
+    const onDelete = async () => {
+        // @ts-ignore
+        await dispatch(deleteApiIntegration({ webFormId: webFormId, id: regModel.ID }));
+    }
+
     return <BaseDialog
         customContainerStyle={classes.summaryContainer}
         disableBackdropClick={false}
@@ -70,32 +128,31 @@ const RegistrationToApiForm = ({
             <FormControl>
                 <Grid container spacing={3} className={clsx(classes.p15)}>
                     <Grid item md={12} className={classes.w100}>
-                        <Typography title={t("landingPages.registrationApi.subTitle")} className={classes.alignDir}>
+                        <Typography title={t("landingPages.registrationApi.subTitle")} className={clsx(classes.alignDir, classes.bold)}>
                             {t("landingPages.registrationApi.subTitle")}
                         </Typography>
+                        <Divider />
                     </Grid>
-                    <Divider />
 
-                    <Grid item md={12} className={classes.w100}>
+                    <Grid item md={4} className={classes.w100}>
                         <Typography title={t("landingPages.registrationApi.systemName")} className={classes.alignDir}>
                             {t("landingPages.registrationApi.systemName")}
                         </Typography>
-                        <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
-                            <TextField
-                                id="name"
-                                label=""
-                                variant="outlined"
-                                name="Name"
-                                value={regModel?.Name}
-                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100)}
-                                autoComplete="off"
-                                onChange={(e: any) => setRegModel({ ...regModel, Name: e.target.value })}
-                                title={regModel?.Name}
-                            />
-                        </FormControl>
+                        <TextField
+                            id="name"
+                            placeholder={t("landingPages.registrationApi.systemName")}
+                            variant="outlined"
+                            name="Name"
+                            value={regModel?.Name}
+                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100)}
+                            autoComplete="off"
+                            onChange={(e: any) => setRegModel({ ...regModel, Name: e.target.value })}
+                            title={regModel?.Name}
+                        />
+
                     </Grid>
 
-                    <Grid item md={3} className={classes.w100}>
+                    <Grid item md={4} className={clsx(classes.w100)}>
                         <Typography title={t("landingPages.registrationApi.methodType")} className={classes.alignDir}>
                             {t("landingPages.registrationApi.methodType")}
                         </Typography>
@@ -104,40 +161,24 @@ const RegistrationToApiForm = ({
                             variant="standard"
                             name="requestType"
                             value={requestType}
-                            className={clsx(classes.w100, classes.mt10)}
+                            native
+                            className={clsx(classes.textField, classes.w100, classes.selectField)}
                             onChange={(event, val) => setRequestType(event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             MenuProps={{
                                 PaperProps: {
                                     style: {
                                         maxHeight: 300,
-                                        direction: isRTL ? 'rtl' : 'ltr'
+                                        direction: 'ltr'
                                     },
                                 },
                             }}
                         >
-                            <MenuItem value={'Get'}>Get</MenuItem>
-                            <MenuItem value={'Post'}>Post</MenuItem>
-                            <MenuItem value={'Put'}>Put</MenuItem>
+                            <option key='get' value={'Get'}>Get</option>
+                            <option key='post' value={'Post'}>Post</option>
+                            {/* <option value={'Put'}>Put</option> */}
                         </Select>
                     </Grid>
-                    <Grid item md={5} className={classes.w100}>
-                        <Typography title={t("landingPages.registrationApi.requestUrl")} className={classes.alignDir}>
-                            {t("landingPages.registrationApi.requestUrl")}
-                        </Typography>
-                        <TextField
-                            id="requestUrl"
-                            label=""
-                            variant="outlined"
-                            name="requestUrl"
-                            value={regModel.RequestUrl}
-                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
-                            autoComplete="off"
-                            onChange={(e: any) => setRegModel({ ...regModel, RequestUrl: e.target.value })}
-                            title={regModel.RequestUrl}
-                        />
-                    </Grid>
-
                     <Grid item md={4} className={classes.w100} style={{ display: 'flex', alignItems: 'center' }}>
                         <FormControlLabel
                             control={
@@ -151,10 +192,102 @@ const RegistrationToApiForm = ({
                             label={t('landingPages.registrationApi.isOptIn')}
                         />
                     </Grid>
+                    <Grid item md={12} className={classes.w100}>
+                        <Typography title={t("landingPages.registrationApi.requestUrl")} className={classes.alignDir}>
+                            {t("landingPages.registrationApi.requestUrl")}
+                        </Typography>
+                        <TextField
+                            id="requestUrl"
+                            placeholder={t("landingPages.registrationApi.requestUrl")}
+                            variant="outlined"
+                            name="requestUrl"
+                            style={{ direction: 'ltr' }}
+                            value={regModel.RequestUrl}
+                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+                            autoComplete="off"
+                            onChange={(e: any) => {
+                                setRegModel({ ...regModel, RequestUrl: e.target.value })
+                            }}
+                            title={regModel.RequestUrl}
+                        />
+                    </Grid>
+                    <Grid item md={12} className={classes.w100}>
+                        <Typography title={t("landingPages.registrationApi.requestUrl")} className={classes.alignDir}>
+                            פרמטרים
+                        </Typography>
+                        <textarea
+                            id="finalParams"
+                            placeholder='הזן פרמטרים או השתמש באשף'
+                            name="finalParams"
+                            style={{ direction: 'ltr', height: 80, border: '1px solid #D6D1E6' }}
+                            value={finalParams}
+                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+                            autoComplete="off"
+                            onChange={(e: any) => {
+                                setFinalParams(e.target.value);
+                            }}
+                            title={finalParams}
+                        />
+                    </Grid>
+                    <Grid item md={12} className={classes.w100} style={{ paddingTop: 0 }}>
+                        <Typography title={t("landingPages.registrationApi.requestUrl")} style={{ direction: 'ltr', fontSize: 13, margin: 0 }}>
+                            {`${regModel.RequestUrl}${finalParams !== '' ? '?' : ''}${finalParams}`}
+                        </Typography>
+                    </Grid>
+                </Grid>
+                <Grid container spacing={3} className={classes.p15}>
+                    <Grid item md={12} className={clsx(classes.w100, classes.dFlex)} style={{ alignItems: 'center' }}>
+                        <Grid item md={4}>
+                            <Box className={classes.dFlex}>
+                                <Typography title={t("landingPages.registrationApi.availableParameters")} className={clsx(classes.alignDir, classes.bold)}>
+                                    {t("landingPages.registrationApi.availableParameters")}
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        {showWizard && <Grid item md={4}>
+                            <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+                                <Typography title={t("landingPages.registrationApi.parameterInExtrnalSystem")} className={clsx(classes.alignDir, classes.bold)}>
+                                    {t("landingPages.registrationApi.parameterInExtrnalSystem")}
+                                </Typography>
+                            </Box>
+                        </Grid>}
+                        <Grid item>
+                            <Button onClick={() => setShowWizard(!showWizard)} style={{ border: 'none', background: 'white', textDecoration: 'underline' }}>{t('landingPages.registrationApi.showWizard')}</Button>
+                        </Grid>
+                    </Grid>
+                    {Object.keys(apiAvailableParams).map((item) => {
+                        return apiAvailableParams[item] !== '' && <Grid item md={12} className={classes.dFlex} style={{ alignItems: 'center', height: 50 }}>
+                            <Grid item md={4} sm={6}>{apiAvailableParams[item]} (##{item}##)</Grid>
+                            <Grid item md={4} sm={6}>
+                                {showWizard &&
+                                    <TextField
+                                        placeholder={`${t('landingPages.registrationApi.typeParamFor')} ${apiAvailableParams[item]}`}
+                                        id={item}
+                                        variant="outlined"
+                                        name={item}
+                                        value={dynamicParams[item]}
+                                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100)}
+                                        autoComplete="off"
+                                        onChange={(e: any) => {
+                                            handleParams(e, item);
+                                        }
+                                        }
+                                        title={dynamicParams[item]}>
+
+                                    </TextField>
+                                }
+                            </Grid>
+                        </Grid>
+                    })}
+                </Grid>
+                <Grid>
+                    <Button onClick={onSubmit}>save</Button>
+                    <Button onClick={onDelete}>delete</Button>
+                    <Button onClick={onClose}>cancel</Button>
                 </Grid>
             </FormControl>
             <Loader isOpen={showLoader} />
-        </Box>}
+        </Box >}
         onConfirm={() => {
             onConfirm && onConfirm();
         }}

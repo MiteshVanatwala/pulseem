@@ -11,7 +11,7 @@ import { WebformsToReportLeadByApi } from '../../../../Models/LandingPage/Webfor
 import RegistrationToApiForm from '../Popups/RegistrationToApiForm';
 import { useState } from 'react';
 
-const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, errors }: any) => {
+const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, errors, onDone }: any) => {
     const { t: translator } = useTranslation();
     const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
@@ -175,15 +175,16 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
             </Grid>
             <RegistrationToApiForm
                 classes={classes}
+                webFormId={data.ID}
                 webformsToReportLeadByApi={data?.WebformsToReportLeadByApi}
                 isOpen={createApiIntegrations || editApiIntegrations}
                 isNew={createApiIntegrations}
                 onClose={() => {
                     setEditApiIntegrations(false);
                     setCreateApiIntegrations(false);
-                }} אני
+                }}
                 onConfirm={(d: any) => {
-                    console.log(d)
+                    onDone();
                 }}
             />
         </Grid>

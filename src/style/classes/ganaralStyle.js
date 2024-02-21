@@ -4019,5 +4019,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center !important',
     paddingInline: '15px !important',
     paddingBlock: '10px !important'
+  },
+  selectField: {
+    borderBottom: '1px solid #D6D1E6',
+    height: 46
   }
 });

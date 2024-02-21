@@ -736,6 +736,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									onSetDialog={setDialogType}
 									removeEmailId={removeEmailId}
 									errors={errors}
+									onDone={getData}
 								/>
 							</Grid>
 							<Grid item md={6}>

@@ -186,6 +186,27 @@ export const isShortUrlExist = createAsyncThunk(
     }
   });
 
+export const setApiIntegration = createAsyncThunk(
+  '/landingpages/SetApiIntegration', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`/landingpages/SetApiIntegration`, data);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const deleteApiIntegration = createAsyncThunk(
+  '/landingpages/DeleteApiIntegration', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.delete(`/landingpages/DeleteApiIntegration/${data.webformId}/${data.integrationId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+
+
 
 
 
