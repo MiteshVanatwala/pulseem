@@ -107,7 +107,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         },
         contentDialog: {
             externalContentURLs: {
-                label: 'Add Product Block',
+                label: t('campaigns.addProductBlock'),
                 handler: async function(resolve: any, reject: any) {
                     const results = await openModal(ProductCatalog, {}, classes);
                     let newRow = results.row;

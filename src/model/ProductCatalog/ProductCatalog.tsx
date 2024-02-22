@@ -6,7 +6,7 @@ import {
   Grid,
   RadioGroup,
   Radio,
-  Dialog as BaseDialog, FormControlLabel, Select, MenuItem, Checkbox, Button, Input
+  Dialog as BaseDialog, FormControlLabel, MenuItem, Checkbox, Button, Input, FormControl
 } from '@material-ui/core'
 import clsx from 'clsx';
 import { range } from 'lodash';
@@ -14,10 +14,12 @@ import { PulButton, PulColItem, PulDivider, PulHead, PulPara, PulPrice, PulProdu
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { ProductCatalogTypes } from './Types';
-import { Category, Direction, EventTypes, Items, Structure } from '../../config/enum';
+import { Direction, EventTypes, Items, Structure } from '../../config/enum';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategories } from '../../redux/reducers/productSlice';
 import { StateType } from '../../Models/StateTypes';
+import Select from '@mui/material/Select';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) => {
   const { t } = useTranslation();
@@ -222,12 +224,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     <BaseDialog
       open={isOpen}
       className={clsx(classes.dialogContainers)}
+      disableEnforceFocus
     >
       <div className='product-block' style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
         <Box>
+          <h2 className={clsx(classes.mt0)}>{t('campaigns.setupDynamicProduct')}</h2>
           <Grid container spacing={5}>
             <Grid item md={5}>
-              <h2 className={clsx(classes.mt0)}>{t('campaigns.setupDynamicProduct')}</h2>
               <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1">
                 <FormControlLabel
                   value={Items.Single}
@@ -262,13 +265,29 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                 isSingleOrMultiple === Items.Multiple && (
                   <div className={clsx(classes.pl30, classes.pt5)}>
                     <label className={clsx(classes.pe15)}>{t('campaigns.upto')}</label>
-                    <Select
-                      className={clsx(classes.borderAround, classes.txtCenter, classes.pl10, classes.pr10)}
-                      value={uptoProducts}
-                      onChange={(event: any) => setUptoProducts(event.target.value)}
+                    <FormControl
+                      variant="standard"
+                      className={clsx(classes.selectInputFormControl)}
+                      style={{ verticalAlign: 'baseline' }}
                     >
-                      {getProductNumbers()}
-                    </Select>
+                      <Select
+                        variant="standard"
+                        value={uptoProducts}
+                        onChange={(event: any) => setUptoProducts(event.target.value)}
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                        style={{ width: '100%' }}
+                        MenuProps={{
+                          PaperProps: {
+                            style: {
+                              maxHeight: 300,
+                              direction: isRTL ? 'rtl' : 'ltr'
+                            },
+                          },
+                        }}
+                      >
+                        {getProductNumbers()}
+                      </Select>
+                    </FormControl>
                     <label className={clsx(classes.pl10)}>{t('campaigns.products')}</label>
                   </div>
                 )
@@ -288,16 +307,33 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     }
                     label={t('campaigns.byEventType')}
                   />
-                  <Select
-                    className={clsx(classes.dBlock, classes.borderAround, classes.ml25, classes.pl10)}
-                    value={eventType}
-                    onChange={(event: any) => setEventType(event.target.value)}
+                  <FormControl
+                    variant="standard"
+                    className={clsx(classes.dBlock, classes.selectInputFormControl, classes.ml25)}
                   >
-                    <MenuItem key='all' value={EventTypes.All}>{t('campaigns.allEvents')}</MenuItem>
-                    <MenuItem key='page' value={EventTypes.Page}>{t('campaigns.pageView')}</MenuItem>
-                    <MenuItem key='purchase' value={EventTypes.Purchase}>{t('campaigns.purchase')}</MenuItem>
-                    <MenuItem key='cart_abandon' value={EventTypes.CartAbandon}>{t('campaigns.cartAbandonment')}</MenuItem>
-                  </Select>
+                    <Select
+                      variant="standard"
+                      autoWidth
+                      displayEmpty
+                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      value={eventType}
+                      onChange={(event: any) => setEventType(event.target.value)}
+                      style={{ width: '100%' }}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                    >
+                      <MenuItem value={EventTypes.All}>{t('campaigns.allEvents')}</MenuItem>
+                      <MenuItem value={EventTypes.Page}>{t('campaigns.pageView')}</MenuItem>
+                      <MenuItem value={EventTypes.Purchase}>{t('campaigns.purchase')}</MenuItem>
+                      <MenuItem value={EventTypes.CartAbandon}>{t('campaigns.cartAbandonment')}</MenuItem>
+                    </Select>
+                  </FormControl>
                 </div>
 
                 <div className='product-type'>
@@ -312,16 +348,32 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     }
                     label={t('campaigns.byProductCategory')}
                   />
-                  <Select
-                    className={clsx(classes.dBlock, classes.borderAround, classes.ml25, classes.pl10)}
-                    value={category}
-                    onChange={(event: any) => setCategory(event.target.value)}
+                  <FormControl
+                    variant="standard"
+                    className={clsx(classes.dBlock, classes.selectInputFormControl, classes.ml25)}
                   >
-                    <option key='0' value={0}>{t("common.select")}</option>
-                    {productCategories?.map((item: any) => {
-                      return (<option key={item.CategoryId} value={item.CategoryId}>{item.CategoryName}</option>)
-                    })};
-                  </Select>
+                    <Select
+                      variant="standard"
+                      id='category'
+                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      value={category}
+                      onChange={(event: any) => setCategory(event.target.value)}
+                      style={{ width: '100%' }}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                    >
+                      <MenuItem key='0' value={0}>{t('campaigns.allCategories')}</MenuItem>
+                      {
+                        productCategories?.map((item: any) => <MenuItem key={item.CategoryId} value={item.CategoryId}>{item.CategoryName}</MenuItem>)
+                      }
+                    </Select>
+                  </FormControl>
                 </div>
               </div>
 
@@ -413,28 +465,60 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
               ></Input>
             </Grid>
             <Grid item md={7}>
-              <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.productStructure')}:</h4>
+              <h4 className={clsx(classes.bold, classes.pt5, classes.noMargin, classes.pb10)}>{t('campaigns.productStructure')}:</h4>
               <Grid container spacing={5}>
                 <Grid item md={4}>
-                  <Select
-                    className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
-                    value={structure}
-                    onChange={(event: any) => setStructure(event.target.value)}
+                  <FormControl
+                    variant="standard"
+                    className={clsx(classes.dBlock, classes.selectInputFormControl)}
                   >
-                    <MenuItem key={Structure.Horizontal} value={Structure.Horizontal}>{t('campaigns.horizontal')}</MenuItem>
-                    <MenuItem key={Structure.Vertical} value={Structure.Vertical}>{t('campaigns.vertical')}</MenuItem>
-                  </Select>
+                    <Select
+                      variant="standard"
+                      id='category'
+                      value={structure}
+                      onChange={(event: any) => setStructure(event.target.value)}
+                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      style={{ width: '100%' }}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                    >
+                      <MenuItem key={Structure.Horizontal} value={Structure.Horizontal}>{t('campaigns.horizontal')}</MenuItem>
+                      <MenuItem key={Structure.Vertical} value={Structure.Vertical}>{t('campaigns.vertical')}</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
 
                 <Grid item md={4}>
-                  <Select
-                    className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
-                    value={direction}
-                    onChange={(event: any) => setDirection(event.target.value)}
+                  <FormControl
+                    variant="standard"
+                    className={clsx(classes.dBlock, classes.selectInputFormControl)}
                   >
-                    <MenuItem key={Direction.LeftToRight} value={Direction.LeftToRight}>{t('campaigns.leftToRight')}</MenuItem>
-                    <MenuItem key={Direction.RightToLeft} value={Direction.RightToLeft}>{t('campaigns.rightToLeft')}</MenuItem>
-                  </Select>
+                    <Select
+                      variant="standard"
+                      id='direction'
+                      value={direction}
+                      onChange={(event: any) => setDirection(event.target.value)}
+                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      style={{ width: '100%' }}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                    >
+                      <MenuItem key={Direction.LeftToRight} value={Direction.LeftToRight}>{t('campaigns.leftToRight')}</MenuItem>
+                      <MenuItem key={Direction.RightToLeft} value={Direction.RightToLeft}>{t('campaigns.rightToLeft')}</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
               </Grid>
 
@@ -444,14 +528,30 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.productOrder')}:</h4>
                     <Grid container spacing={5}>
                       <Grid item md={4}>
-                        <Select
-                          className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
-                          value={productOrder}
-                          onChange={(event: any) => setProductOrder(event.target.value)}
+                        <FormControl
+                          variant="standard"
+                          className={clsx(classes.dBlock, classes.selectInputFormControl)}
                         >
-                          <MenuItem key={Structure.Horizontal} value={Structure.Horizontal}>{t('campaigns.horizontal')}</MenuItem>
-                          <MenuItem key={Structure.Vertical} value={Structure.Vertical}>{t('campaigns.vertical')}</MenuItem>
-                        </Select>
+                          <Select
+                            variant="standard"
+                            id='productOrder'
+                            value={productOrder}
+                            onChange={(event: any) => setProductOrder(event.target.value)}
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                            style={{ width: '100%' }}
+                            MenuProps={{
+                              PaperProps: {
+                                style: {
+                                  maxHeight: 300,
+                                  direction: isRTL ? 'rtl' : 'ltr'
+                                },
+                              },
+                            }}
+                          >
+                            <MenuItem key={Structure.Horizontal} value={Structure.Horizontal}>{t('campaigns.horizontal')}</MenuItem>
+                            <MenuItem key={Structure.Vertical} value={Structure.Vertical}>{t('campaigns.vertical')}</MenuItem>
+                          </Select>
+                        </FormControl>
                       </Grid>
                     </Grid>
                   </>
@@ -459,7 +559,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
               }
 
               <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.preview')}:</h4>
-              <div className='preview' style={{ display: productOrder === Structure.Horizontal ? 'flex' : 'block' }}>
+              <div className='preview' style={{ display: productOrder === Structure.Horizontal ? 'flex' : 'block', height: window.innerHeight - 400, maxHeight: window.innerHeight - 400, overflowY: 'auto', overflowX: 'hidden' }}>
                 {
                   [
                     times(uptoProducts, (i) => {

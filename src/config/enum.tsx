@@ -19,8 +19,3 @@ export enum EventTypes {
   Purchase = 'purchase',
   CartAbandon = 'cart_abandon',
 }
-
-export enum Category {
-  All = 'all',
-  Page = 'page'
-}

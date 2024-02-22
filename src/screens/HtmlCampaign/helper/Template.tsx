@@ -268,7 +268,7 @@ export const PulRow = {
     "tags": "Product Catalog",
     "uuid": "",
     "EventType": "",
-    "ProductCategory": "",
+    "ProductCategory": 0,
     "NumOfProdcuts": 0
   },
   "container": {

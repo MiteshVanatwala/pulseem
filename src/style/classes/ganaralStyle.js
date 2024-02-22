@@ -501,7 +501,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 20,
   },
   ml25: {
-    marginInlineStart: 25,
+    marginInlineStart: '25px !important',
   },
   mtNeg15: {
     marginTop: -15,

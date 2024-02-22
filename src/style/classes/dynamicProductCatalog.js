@@ -7,7 +7,7 @@ export const dynamicProductCatalog = (isRTL) => ({
         width: '35%',
         minHeight: '100px',
         height: '100%',
-        background: '#ededed',
+        // background: '#ededed',
         textAlign: 'center',
     },
     contentBlock: {
