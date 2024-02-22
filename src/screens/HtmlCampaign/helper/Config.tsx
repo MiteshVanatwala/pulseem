@@ -108,12 +108,15 @@ export const BeeConfig = (Options: ConfigOptions) => {
         contentDialog: {
             externalContentURLs: {
                 label: t('campaigns.addProductBlock'),
-                handler: async function(resolve: any, reject: any) {
+                handler: async function (resolve: any, reject: any) {
                     const results = await openModal(ProductCatalog, {}, classes);
                     let newRow = results.row;
                     if (newRow === '') reject();
                     else {
                         newRow['uuid'] = uuidv4();
+                        newRow['container']['style']['event-type'] = newRow?.metadata?.EventType;
+                        newRow['container']['style']['category'] = newRow?.metadata?.ProductCategory;
+                        newRow['container']['style']['product-count'] = newRow?.metadata?.NumOfProdcuts;
                         newRow['metadata']['uuid'] = uuidv4();
                         newRow['metadata']['name'] = 'Product Catalog';
                         newRow['metadata']['tags'] = 'product-catalog';
