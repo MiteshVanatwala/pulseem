@@ -32,4 +32,5 @@ export const convertHyphensToword = (input: any) => {
 	}, []).join(' ')
 }
 
-export const validatePhoneNumber = (phone: any) => /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phone); 
+export const validatePhoneNumber = (phone: any) => /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phone);
+export const ValidateEmailAddress = (email: any) => /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email);
