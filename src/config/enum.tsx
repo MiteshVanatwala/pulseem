@@ -14,8 +14,8 @@ export enum Items {
 }
 
 export enum EventTypes {
-  All = 'all',
-  Page = 'page',
-  Purchase = 'purchase',
-  CartAbandon = 'cart_abandon',
+  All = 0,
+  // Page = 1,
+  Purchase = 1,
+  CartAbandon = 2
 }

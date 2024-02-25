@@ -68,7 +68,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     let dynamicRow = Object.assign({}, PulRow);
     dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['content']['style']['direction'] = direction;
-    dynamicRow['metadata']["EventType"] = eventType;
+    dynamicRow['metadata']["EventType"] = eventType?.toString();
     dynamicRow['metadata']["ProductCategory"] = category;
     dynamicRow['metadata']["NumOfProdcuts"] = uptoProducts;
     var productJSON: any = getProductJSON();
@@ -329,7 +329,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                       }}
                     >
                       <MenuItem value={EventTypes.All}>{t('campaigns.allEvents')}</MenuItem>
-                      <MenuItem value={EventTypes.Page}>{t('campaigns.pageView')}</MenuItem>
+                      {/* <MenuItem value={EventTypes.Page}>{t('campaigns.pageView')}</MenuItem> */}
                       <MenuItem value={EventTypes.Purchase}>{t('campaigns.purchase')}</MenuItem>
                       <MenuItem value={EventTypes.CartAbandon}>{t('campaigns.cartAbandonment')}</MenuItem>
                     </Select>
@@ -580,7 +580,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                           buttonText={buttonText}
                           structure={structure}
                           direction={direction}
-                          eventType={isFilterByEventType ? eventType : ''}
+                          eventType={isFilterByEventType ? eventType?.toString() : ''}
                           category={isFilterIsByProductCategory ? category : 0}
                         />
                       )
