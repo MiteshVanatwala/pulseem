@@ -484,7 +484,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const onPreview = async (id: string) => {
 		const templateData = templateListData?.find(
 			(template) => template?.Id === Number(id)
-		);
+		);	
 		if (templateData) {
 			if (templateData.CategoryId === 3) {
 				renderAuthenticationPreview(templateData);
@@ -493,7 +493,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			}
 			setDialogType({
 				type: 'preview',
-				data: ''
+				data: templateData?.TemplateId
 			});
 		}
 	};
@@ -821,7 +821,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		/>
   })
 
-	const getPreviewDialog = () => ({
+	const getPreviewDialog = (templateId: string) => ({
     title: translator('whatsappManagement.preview'),
     showDivider: false,
     content: (
@@ -831,6 +831,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					templateData={templateData}
 					buttonType={buttonType}
 					fileData={fileData}
+					templateId={templateId}
 				/>
 			</Box>
     ),
@@ -880,7 +881,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
   })
 
   const renderDialog = () => {
-    const { type } = dialogType || {}
+    const { type, data } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'duplicate') {
     	currentDialog = getDuplicateDialog();
@@ -889,7 +890,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
 		} else if (type === 'preview') {
-			currentDialog = getPreviewDialog();
+			currentDialog = getPreviewDialog(data);
 		} else if (type === 'submitTemplate') {
 			currentDialog = getSubmitTemplateDialog();
 		}
