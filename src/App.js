@@ -76,6 +76,7 @@ import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
 //import EditDynamicGroups from './screens/Groups/Dynamic/EditDynamicGroups';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
+import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -521,6 +522,11 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}groups/dynamic/edit/:id`}
         element={<DynamicGroupsContainer classes={classes} />}
       /> */}
+      <Route
+        exact
+        path={`${sitePrefix}AccountSettings/ExtraFields`}
+        element={<ExtraFields classes={classes} />}
+      />
     </Routes>
   )
 }

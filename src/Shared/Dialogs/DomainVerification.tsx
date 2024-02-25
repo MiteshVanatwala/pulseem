@@ -13,6 +13,7 @@ import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { IoIosArrowDown } from "react-icons/io";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
+import { ValidateEmailAddress } from "../../helpers/Utils/common";
 
 interface ButtonOptions {
     text: string,
@@ -136,6 +137,11 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
     const handleSkip = () => {
         domain?.verifySharedCallback && domain?.verifySharedCallback({ ...callbackResponse, Skip: true })
     }
+    const handleSharedDomainValue = (event: any) => {
+        if (ValidateEmailAddress(event.target.value + DOMAIN_EMAIL_SUFFIX) || event.target.value === '') {
+            setSharedDomain(event.target.value);
+        }
+    }
     return (domain?.display === true || forceShow === true) ? (<BaseDialog
         disableBackdropClick={false}
         classes={classes}
@@ -246,7 +252,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                                     type="text"
                                     variant="standard"
                                     value={sharedDomain}
-                                    onChange={(event: any) => setSharedDomain(event.target.value.replace('@', ''))}
+                                    onChange={(event: any) => handleSharedDomainValue(event)}
                                 />
                             </Box>
                             <Box className='selectWrapper' style={{ minWidth: 300 }}>

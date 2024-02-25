@@ -9,6 +9,8 @@ import {
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
 import clsx from 'clsx';
+import { PulseemFeatures } from '../../../../model/PulseemFields/Fields';
+import { useSelector } from 'react-redux';
 
 export const AdditionalText = ({
     localClasses,
@@ -19,6 +21,8 @@ export const AdditionalText = ({
     handleSelectionRadio
 }) => {
     const { t } = useTranslation();
+    const { accountFeatures } = useSelector(state => state.common);
+
     return <Box pt={3}>
         <Typography className={localClasses.suHeading}>{t("campaigns.newsLetterEditor.textAdditions")}</Typography>
         {/* If you don't see this email */}
@@ -98,8 +102,9 @@ export const AdditionalText = ({
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                     name='UnsubscribeLocation'
-                    checked={!!selectedCheck.UnsubscribeLocation}
+                    checked={accountFeatures?.indexOf(PulseemFeatures.ALLOW_HIDDEN_UNSUBSCRIBE_LINK) === -1 ? true : selectedCheck.UnsubscribeLocation}
                     onClick={handleChangeCheckbox}
+                    disabled={accountFeatures?.indexOf(PulseemFeatures.ALLOW_HIDDEN_UNSUBSCRIBE_LINK) === -1}
                 />
             </Grid>
             <Grid xs={10} sm={4}>

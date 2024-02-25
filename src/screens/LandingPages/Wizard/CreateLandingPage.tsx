@@ -16,7 +16,7 @@ import { FileGallery } from '../../../Models/Files/FileGallery';
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { PulseemFeatures, PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { RandomID } from '../../../helpers/Functions/functions';
-import { validateEmailAddress } from '../../../helpers/Utils/common';
+import { ValidateEmailAddress } from '../../../helpers/Utils/common';
 import { isValidHttpUrl } from '../../../helpers/Utils/TextHelper';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { BsInfoCircle } from 'react-icons/bs';
@@ -282,7 +282,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	}
 
 	const addEmailId = () => {
-		let isValid = validateEmailAddress(emailId);
+		let isValid = ValidateEmailAddress(emailId);
 		setErrors({
 			...errors,
 			emailId: isValid ? '' : translator('common.invalidEmail')
