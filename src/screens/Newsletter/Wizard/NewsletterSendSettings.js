@@ -366,7 +366,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             GroupList: selectedGroups.map((g) => g.GroupID),
             ExceptionalDays: filterValues?.exceptionalDays,
             IsBestTime: campaignValues.IsBestTime,
-            IsSummaryRequest: showSummary
+            IsSummaryRequest: false
         }
         try {
             response = await dispatch(setEmailSendSettings(payload))
@@ -1532,8 +1532,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 isOpen={!domainIsAllowed}
                 title={t('campaigns.newsLetterMgmt.payAttention')}
                 text={t('common.domainVerification.sendSettings.domainNotVerified')}
-                onConfirm={() => {setDomainIsAllowed(true); navigate('/react/campaigns')}}
-                onClose={() => {setDomainIsAllowed(true); navigate('/react/campaigns')}}
+                onConfirm={() => { setDomainIsAllowed(true); navigate('/react/campaigns') }}
+                onClose={() => { setDomainIsAllowed(true); navigate('/react/campaigns') }}
                 confirmButtonText={t('common.domainVerification.sendSettings.backToCampaigns')}
             />
             <Loader isOpen={showLoader} />
