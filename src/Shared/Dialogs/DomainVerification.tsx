@@ -138,7 +138,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
         domain?.verifySharedCallback && domain?.verifySharedCallback({ ...callbackResponse, Skip: true })
     }
     const handleSharedDomainValue = (event: any) => {
-        if (ValidateEmailAddress(event.target.value + DOMAIN_EMAIL_SUFFIX)) {
+        if (ValidateEmailAddress(event.target.value + DOMAIN_EMAIL_SUFFIX) || event.target.value === '') {
             setSharedDomain(event.target.value);
         }
     }
