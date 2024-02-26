@@ -63,8 +63,14 @@ const RegistrationToApiForm = ({
 
     useEffect(() => {
         getExtraFields();
-        setShowLoader(false)
+        setShowLoader(false);
     }, []);
+
+    useEffect(() => {
+        if (webformsToReportLeadByApi && webformsToReportLeadByApi?.ID > 0) {
+            setRegModel({ ...webformsToReportLeadByApi });
+        }
+    }, [webformsToReportLeadByApi])
 
     useEffect(() => {
         if (AccountExtraFields && AccountExtraFields?.Data) {
@@ -280,14 +286,37 @@ const RegistrationToApiForm = ({
                         </Grid>
                     })}
                 </Grid>
-                <Grid>
-                    <Button onClick={onSubmit}>save</Button>
-                    <Button onClick={onDelete}>delete</Button>
-                    <Button onClick={onClose}>cancel</Button>
-                </Grid>
             </FormControl>
             <Loader isOpen={showLoader} />
         </Box >}
+        renderButtons={() => {
+            return <Grid
+                container
+                spacing={2}
+                className={classes.dialogButtonsContainer}
+            >
+                <Grid item>
+                    <Button
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}
+                        onClick={onSubmit}>save</Button>
+                    <Button
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}
+                        onClick={onDelete}>delete</Button>
+                    <Button
+                        className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                        )}
+                        onClick={onClose}>cancel</Button>
+                </Grid>
+            </Grid>
+        }}
         onConfirm={() => {
             onConfirm && onConfirm();
         }}

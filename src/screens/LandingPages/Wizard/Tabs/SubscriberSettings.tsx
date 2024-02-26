@@ -18,6 +18,13 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
     );
     const [createApiIntegrations, setCreateApiIntegrations] = useState<boolean>(false);
     const [editApiIntegrations, setEditApiIntegrations] = useState<boolean>(false);
+    const [selectedApiIntegration, setSelectedApiIntegration] = useState<WebformsToReportLeadByApi>({
+        ID: -1,
+        IsOptinSend: false,
+        Name: '',
+        RequestPostParams: '',
+        RequestUrl: ''
+    });
 
     const handleChangeMultiple = (event: any) => {
         //const { value } = event.target;
@@ -30,6 +37,13 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
 
 
     };
+
+    const onEditSystem = (id: number) => {
+        const found = data?.WebformsToReportLeadByApi.find((x: WebformsToReportLeadByApi) => { return x.ID === id });
+        setSelectedApiIntegration(found);
+
+        setEditApiIntegrations(true);
+    }
 
     return (
         <Grid container spacing={3} className={clsx(classes.p15)}>
@@ -147,6 +161,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                             return (<MenuItem key={item.ID.toString()} value={item.ID.toString()}>
                                 <Checkbox checked={data.Systems?.indexOf(item.ID.toString()) > -1} />
                                 <ListItemText primary={item.Name} />
+                                <Button onClick={(event: any) => { event.preventDefault(); event.stopPropagation(); onEditSystem(item.ID) }}>Edit</Button>
                             </MenuItem>)
                         })}
                     </Select>
@@ -176,7 +191,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
             <RegistrationToApiForm
                 classes={classes}
                 webFormId={data.ID}
-                webformsToReportLeadByApi={data?.WebformsToReportLeadByApi}
+                webformsToReportLeadByApi={selectedApiIntegration}
                 isOpen={createApiIntegrations || editApiIntegrations}
                 isNew={createApiIntegrations}
                 onClose={() => {
