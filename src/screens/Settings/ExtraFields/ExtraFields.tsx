@@ -137,7 +137,7 @@ const ExtraFieldsEditor = ({ classes }: any) => {
 
 
       for (let [key, value] of Object.entries(request)) {
-        request[key] = value.trim() === '' ? '' : value;
+        request[key] = (value === null || value?.trim() === '') ? '' : value;
       }
 
 
@@ -162,18 +162,18 @@ const ExtraFieldsEditor = ({ classes }: any) => {
 
       preventedValues.filter((z: any) => z !== '').forEach((str: string | any) => {
         const exists = Object.keys(ExtraFieldList).filter((x: any) => {
-          return ExtraFieldList[x]?.toLowerCase() !== '' && ExtraFieldList[x]?.toLowerCase() === str.toLowerCase()
+          return ExtraFieldList[x] !== null && ExtraFieldList[x] !== '' && ExtraFieldList[x]?.toLowerCase() === str?.toLowerCase()
         });
-        if (exists.filter((x) => x !== '')?.length > 0) {
+        if (exists?.length > 0) {
           keys.push(...exists);
         }
       });
 
       Object.values(ExtraFieldList).filter((z: any) => z !== '').forEach((str: string | any) => {
         const exists = Object.keys(ExtraFieldList).filter((x: any) => {
-          return ExtraFieldList[x]?.toLowerCase() !== '' && ExtraFieldList[x]?.toLowerCase() === str.toLowerCase()
+          return ExtraFieldList[x] !== null && ExtraFieldList[x] !== '' && ExtraFieldList[x]?.toLowerCase() === str?.toLowerCase()
         });
-        if (exists.filter((x) => x !== '')?.length > 1) {
+        if (exists?.length > 1) {
           keys.push(...exists);
         }
       });
