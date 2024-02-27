@@ -220,6 +220,8 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     return range(1, maxProducts + 1).map((item: number) => <MenuItem key={`${item}`} value={`${item}`}>{item}</MenuItem>)
   }
 
+  const previewContainerHeight = window.innerHeight - 400;
+
   return (
     <BaseDialog
       open={isOpen}
@@ -559,7 +561,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
               }
 
               <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.preview')}:</h4>
-              <div className='preview' style={{ display: productOrder === Structure.Horizontal ? 'flex' : 'block', height: window.innerHeight - 400, maxHeight: window.innerHeight - 400, overflowY: 'auto', overflowX: 'hidden' }}>
+              <div className='preview' style={{ display: productOrder === Structure.Horizontal ? 'flex' : 'block', height: previewContainerHeight, minHeight: previewContainerHeight, maxHeight: previewContainerHeight, overflowY: 'auto', overflowX: 'hidden' }}>
                 {
                   [
                     times(uptoProducts, (i) => {
