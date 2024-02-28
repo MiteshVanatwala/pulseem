@@ -52,6 +52,9 @@ import { ClientStatus } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
 
+// very first structure for next refactor
+// import { GetExtraFields } from '../../../redux/reducers/ExtraFieldsSlice';
+
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -60,6 +63,8 @@ const Groups = ({ classes }) => {
     const { accountFeatures } = useSelector(state => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
+    // New Logic to implement
+    // const { extraData } = useSelector(state => state.extraFields);
     const rowsOptions = [6, 10, 20, 50];
     const [selectedGroups, setSelectedGroups] = useState([]);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
@@ -190,6 +195,7 @@ const Groups = ({ classes }) => {
         await dispatch(getGroups(search));
         if (!extraData || extraData.length === 0) {
             await dispatch(getAccountExtraData());
+            // await dispatch(GetExtraFields());
         }
         setLoader(false);
         getSubAccountGroups();
