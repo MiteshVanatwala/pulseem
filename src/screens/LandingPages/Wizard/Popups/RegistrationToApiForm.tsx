@@ -15,7 +15,7 @@ import { deleteApiIntegration, setApiIntegration } from "../../../../redux/reduc
 
 const RegistrationToApiForm = ({
     classes,
-    webformsToReportLeadByApi,
+    apiIntegration,
     webFormId = 0,
     isNew = false,
     isOpen = false,
@@ -23,7 +23,7 @@ const RegistrationToApiForm = ({
     onConfirm }: any) => {
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState<boolean>(true);
-    const { isRTL } = useSelector((state: StateType) => state.core);
+    // const { isRTL } = useSelector((state: StateType) => state.core);
     const { AccountExtraFields } = useSelector((state: StateType) => state.extraFields);
 
     const dispatch = useDispatch();
@@ -51,7 +51,7 @@ const RegistrationToApiForm = ({
         'ReminderDate': t(`recipient.reminderDate`),
     });
     const [dynamicParams, setDynamicParams] = useState<any>({});
-    const [finalParams, setFinalParams] = useState<string>('');
+    // const [finalParams, setFinalParams] = useState<string>('');
     const [showWizard, setShowWizard] = useState<boolean>(false);
 
 
@@ -67,10 +67,21 @@ const RegistrationToApiForm = ({
     }, []);
 
     useEffect(() => {
-        if (webformsToReportLeadByApi && webformsToReportLeadByApi?.ID > 0) {
-            setRegModel({ ...webformsToReportLeadByApi });
+        if (regModel?.RequestUrl && regModel.RequestUrl !== '') {
+            if (regModel.RequestUrl.indexOf('?') > -1) {
+                setRequestType('Get');
+            }
+            else {
+                setRequestType('Post');
+            }
         }
-    }, [webformsToReportLeadByApi])
+    }, [regModel?.RequestUrl]);
+
+    useEffect(() => {
+        if (apiIntegration && apiIntegration?.ID > 0) {
+            setRegModel(apiIntegration);
+        }
+    }, [apiIntegration])
 
     useEffect(() => {
         if (AccountExtraFields && AccountExtraFields?.Data) {
@@ -108,7 +119,7 @@ const RegistrationToApiForm = ({
 
         setDynamicParams(newObj)
         const arr = Object.values(newObj);
-        setFinalParams(arr.length > 0 ? arr.join('&') : '');
+        // setFinalParams(arr.length > 0 ? arr.join('&') : '');
         setRegModel({ ...regModel, RequestPostParams: arr.length > 0 ? arr.join('&') : '' })
     }
 
@@ -120,6 +131,19 @@ const RegistrationToApiForm = ({
     const onDelete = async () => {
         // @ts-ignore
         await dispatch(deleteApiIntegration({ webFormId: webFormId, id: regModel.ID }));
+        onConfirm();
+        handleClose();
+    }
+
+    const handleClose = () => {
+        onClose && onClose();
+        setRegModel({
+            ID: 0,
+            Name: '',
+            RequestUrl: '',
+            RequestPostParams: '',
+            IsOptinSend: false
+        });
     }
 
     return <BaseDialog
@@ -152,7 +176,9 @@ const RegistrationToApiForm = ({
                             value={regModel?.Name}
                             className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100)}
                             autoComplete="off"
-                            onChange={(e: any) => setRegModel({ ...regModel, Name: e.target.value })}
+                            onChange={(e: any) => {
+                                setRegModel({ ...regModel, Name: e.target.value })
+                            }}
                             title={regModel?.Name}
                         />
 
@@ -226,18 +252,18 @@ const RegistrationToApiForm = ({
                             placeholder='הזן פרמטרים או השתמש באשף'
                             name="finalParams"
                             style={{ direction: 'ltr', height: 80, border: '1px solid #D6D1E6' }}
-                            value={finalParams}
+                            value={regModel.RequestPostParams}
                             className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
                             autoComplete="off"
                             onChange={(e: any) => {
-                                setFinalParams(e.target.value);
+                                setRegModel({ ...regModel, RequestPostParams: e.target.value })
                             }}
-                            title={finalParams}
+                            title={regModel.RequestPostParams}
                         />
                     </Grid>
                     <Grid item md={12} className={classes.w100} style={{ paddingTop: 0 }}>
-                        <Typography title={t("landingPages.registrationApi.requestUrl")} style={{ direction: 'ltr', fontSize: 13, margin: 0 }}>
-                            {`${regModel.RequestUrl}${finalParams !== '' ? '?' : ''}${finalParams}`}
+                        <Typography title={t("landingPages.registrationApi.requestUrl")} style={{ direction: 'ltr', fontSize: 14, margin: 0, fontWeight: 900 }}>
+                            {`${regModel.RequestUrl}${regModel.RequestPostParams !== '' ? '?' : ''}${regModel.RequestPostParams}`}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -301,19 +327,23 @@ const RegistrationToApiForm = ({
                             classes.btn,
                             classes.btnRounded
                         )}
-                        onClick={onSubmit}>save</Button>
+                        onClick={onSubmit}>{t('common.Save')}</Button>
+                </Grid>
+                {isOpen && !isNew && <Grid item>
                     <Button
                         className={clsx(
                             classes.btn,
                             classes.btnRounded
                         )}
-                        onClick={onDelete}>delete</Button>
-                    <Button
-                        className={clsx(
-                            classes.btn,
-                            classes.btnRounded
-                        )}
-                        onClick={onClose}>cancel</Button>
+                        onClick={onDelete}>{t('common.Delete')}</Button>
+                </Grid>
+                }
+                <Grid item><Button
+                    className={clsx(
+                        classes.btn,
+                        classes.btnRounded
+                    )}
+                    onClick={handleClose}>{t('common.Cancel')}</Button>
                 </Grid>
             </Grid>
         }}
@@ -321,10 +351,10 @@ const RegistrationToApiForm = ({
             onConfirm && onConfirm();
         }}
         onClose={() => {
-            onClose && onClose();
+            handleClose();
         }}
         onCancel={() => {
-            onClose && onClose();
+            handleClose();
         }}
     />
 }

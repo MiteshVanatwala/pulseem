@@ -24,7 +24,7 @@ import { getById, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, saveLan
 import { sitePrefix } from '../../../config';
 import { useNavigate, useParams } from 'react-router-dom';
 // import Templates from '../../HtmlCampaign/modals/Templates';
-import Templates from '../../BeeEditorPage/modals/Templates';
+// import Templates from '../../BeeEditorPage/modals/Templates';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import FormProperties from './Tabs/FormProperties';
 import OfflineProperties from './Tabs/OfflineProperties';
@@ -32,7 +32,7 @@ import SubscriberSettings from './Tabs/SubscriberSettings';
 import SeoSettings from './Tabs/SeoSettings';
 import DevelopmentSettings from './Tabs/DevelopmentSettings';
 import LinkPreviewSettings from './Tabs/LinkPreviewSettings';
-import { LandingPageModel } from '../../../Models/LandingPage/LandingPage';
+import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPage/LandingPage';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
@@ -42,7 +42,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
-	const { t: translator } = useTranslation();
+	const { t } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
@@ -52,6 +52,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	} | null>(null);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { accountFeatures } = useSelector((state: any) => state.common);
+	const { ToastMessages } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
 	const [toastMessage, setToastMessage] = useState(null);
 	const [errors, setErrors] = useState({
 		PageName: '',
@@ -151,7 +152,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	});
 
 	const [tabValue, setTabValue] = useState<string>('1');
-	const [template, setTemplate] = useState('');
+	// const [template, setTemplate] = useState('');
 	const { publicTemplates, templatesBySubAccount } = useSelector(
 		(state: { landingPages: any }) => state.landingPages
 	);
@@ -266,7 +267,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const renderGalleryDialog = () => {
 		return {
 			showDivider: false,
-			title: translator("common.documentGallery"),
+			title: t("common.documentGallery"),
 			content: (
 				<Gallery
 					classes={classes}
@@ -288,13 +289,13 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		let isValid = validateEmailAddress(emailId);
 		setErrors({
 			...errors,
-			emailId: isValid ? '' : translator('common.invalidEmail')
+			emailId: isValid ? '' : t('common.invalidEmail')
 		});
 
 		if (isValid && landingPageModel.EmailsToReport.indexOf(emailId) !== -1) {
 			setErrors({
 				...errors,
-				emailId: translator('common.EmailExist')
+				emailId: t('common.EmailExist')
 			});
 			isValid = false;
 		}
@@ -312,11 +313,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const renderAddEmailIdDialog = () => {
 		return {
 			showDivider: false,
-			title: translator("landingPages.addEmailAddress"),
+			title: t("landingPages.addEmailAddress"),
 			content: (
 				<Box>
-					<Typography title={translator("common.Email")} className={classes.alignDir}>
-						{translator("common.Email")}
+					<Typography title={t("common.Email")} className={classes.alignDir}>
+						{t("common.Email")}
 					</Typography>
 					<TextField
 						id="campaignName"
@@ -351,7 +352,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								classes.btnRounded
 							)}
 						>
-							{translator("mainReport.add")}
+							{t("mainReport.add")}
 						</Button>
 					</Grid>
 					<Grid item>
@@ -366,7 +367,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								classes.btnRounded
 							)}
 						>
-							{translator('common.cancel')}
+							{t('common.cancel')}
 						</Button>
 					</Grid>
 				</Grid>
@@ -377,11 +378,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const renderConfirmExitDialog = () => {
 		return {
 			showDivider: false,
-			title: translator("common.SaveExit"),
+			title: t("common.SaveExit"),
 			content: (
 				<Box>
 					<Typography variant="subtitle1">
-						{translator("landingPages.confirmExit")}
+						{t("landingPages.confirmExit")}
 					</Typography>
 				</Box>
 			),
@@ -399,7 +400,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	}
 
 	const getValidationDialog = () => ({
-		title: translator('whatsappCampaign.sendValidation'),
+		title: t('whatsappCampaign.sendValidation'),
 		showDivider: false,
 		childrenStyle: classes.noPadding,
 		showDefaultButtons: false,
@@ -417,15 +418,15 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	})
 
 	const getDeleteDialog = () => ({
-		title: translator('landingPages.DeleteTitle'),
+		title: t('landingPages.DeleteTitle'),
 		showDivider: false,
 		content: (
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				{translator('landingPages.DeleteBody')}
+				{t('landingPages.DeleteBody')}
 			</Typography>
 		),
-		cancelText: translator('common.No'),
-		confirmText: translator('common.Yes')
+		cancelText: t('common.No'),
+		confirmText: t('common.Yes')
 	})
 
 	const renderDialog = () => {
@@ -461,24 +462,24 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const save = async (redirectToNewEditor: number) => {
 		const errorDump = {
 			...errors,
-			PageName: !landingPageModel.PageName?.trim() ? translator('landingPages.formNameRequired') : '',
-			shortURL: !landingPageModel.PageUrl?.trim() ? translator('landingPages.shortURLRequired') : '',
+			PageName: !landingPageModel.PageName?.trim() ? t('landingPages.formNameRequired') : '',
+			shortURL: !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
 			answerMessage: [
 				LandingPagesAnswerType.POPUP_MESSAGE,
 				LandingPagesAnswerType.REDIRECT_URL,
 				LandingPagesAnswerType.DOWNLOAD_FILE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? translator('landingPages.answerMessageRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.answerMessageRequired') : '',
 			paymentURL: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? translator('landingPages.URLRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.URLRequired') : '',
 			paymentAPIUsername: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.APIUserName?.trim() ? translator('landingPages.APIUsernameRequired') : '',
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.APIUserName?.trim() ? t('landingPages.APIUsernameRequired') : '',
 			paymentTerminalNumber: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? translator('landingPages.terminalNumberRequired') : '',
-			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? translator('landingPages.invalidRedirectURLWhenOffline') : '',
-			group: landingPageModel?.GroupIDs?.length === 0 ? translator('landingPages.selectAtleastOneGroup') : ''
+			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? t('landingPages.terminalNumberRequired') : '',
+			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : '',
+			group: landingPageModel?.GroupIDs?.length === 0 ? t('landingPages.selectAtleastOneGroup') : ''
 		};
 		setErrors(errorDump);
 		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
@@ -504,12 +505,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const handleSaveResponse = (response: any, redirectToNewEditor: number) => {
 		switch (response.StatusCode) {
 			case 201: {
-				console.log(response)
 				handleContinueToEditor(redirectToNewEditor, response.Data.ID);
 				break;
 			}
 			case 400: {
-				showErrorToast(translator('common.Error'));
+				showErrorToast(t('common.Error'));
 				break;
 			}
 			case 401: {
@@ -517,11 +517,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				break;
 			}
 			case 402: {
-				showErrorToast(translator('common.Error'));
+				showErrorToast(t('common.Error'));
 				break;
 			}
 			case 404: {
-				showErrorToast(translator('common.Error'));
+				showErrorToast(t('common.Error'));
 				break;
 			}
 			case 405: {
@@ -530,7 +530,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			}
 			case 500:
 			default: {
-				showErrorToast(translator('common.Error'));
+				showErrorToast(t('common.Error'));
 				break;
 			}
 		}
@@ -551,7 +551,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		let redirectUrl = isBeeEditor ? `${sitePrefix}BeeEditor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${id}` : `/Pulseem/NewWebForm/NewFormEdit/${id}?fromreact=true`;
 		if (!navigateBeEditor) {
 			if (!id && savedPageID) navigate(`${sitePrefix}LandingPages/Create/${savedPageID}`)
-			return false;
+			else {
+				// @ts-ignore
+				setToastMessage(ToastMessages?.LANDING_PAGE_SAVED);
+				return false;
+			}
 		}
 		else if (navigateBeEditor === 1) navigate(redirectUrl);
 		else window.location.href = redirectUrl;
@@ -572,7 +576,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						style={{ margin: '8px' }}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
-						{translator("common.save")}
+						{t("common.save")}
 					</Button>
 					<Button
 						onClick={saveAndContinueToOldEditor}
@@ -584,7 +588,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						style={{ margin: '8px' }}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
-						{translator('common.continue')}
+						{t('common.continue')}
 					</Button>
 				</>
 			);
@@ -602,7 +606,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					endIcon={<MdSave />}
 					key="save"
 				>
-					{translator("common.save")}
+					{t("common.save")}
 				</Button>
 			);
 
@@ -618,7 +622,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					key="saveContinue"
 				>
-					<>{translator('common.saveAndContinue')}</>
+					<>{t('common.saveAndContinue')}</>
 				</Button>
 			);
 
@@ -634,7 +638,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			// 		endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 			// 		key='newEditor'
 			// 	>
-			// 		{translator('master.continueToNewEditor')}
+			// 		{t('master.continueToNewEditor')}
 			// 	</Button>
 			// );
 		}
@@ -644,8 +648,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const renderToast = () => {
 		setTimeout(() => {
 			setToastMessage(null);
-		}, 4000);
-		return <Toast customData={toastMessage} data={null} />;
+		}, 2000);
+		return <Toast customData={null} data={toastMessage} />;
 	};
 
 	return (
@@ -657,7 +661,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			containerClass={clsx(classes.mb50, classes.editorCont)}
 		>
 			<Box className="head">
-				<Title Text={translator("landingPages.createLandingPage")} classes={classes} />
+				<Title Text={t("landingPages.createLandingPage")} classes={classes} />
 			</Box>
 			<Box className={"containerBody"}>
 				<Tabs
@@ -669,19 +673,19 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					classes={{ indicator: classes.hideIndicator }}
 				>
 					<Tab
-						label={translator('landingPages.formProperties')}
+						label={t('landingPages.formProperties')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='1'
 					/>
 					<Tab
-						label={translator('landingPages.SEOSettings')}
+						label={t('landingPages.SEOSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='2'
 					/>
 					<Tab
-						label={translator('landingPages.developmentSettings')}
+						label={t('landingPages.developmentSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='3'
@@ -690,10 +694,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						style={{ overflow: 'unset' }}
 						label={<>
 							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 18, fontWeight: 500 }}>
-								{translator("landingPages.linkPreviewSettings")}
+								{t("landingPages.linkPreviewSettings")}
 								<Tooltip
 									disableFocusListener
-									title={translator('landingPages.linkPreviewTooltip')}
+									title={t('landingPages.linkPreviewTooltip')}
 									classes={{
 										tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
 										arrow: classes.fBlack
@@ -725,8 +729,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 						<Grid container className={clsx(classes.pb25)} spacing={3}>
 							<Grid item md={6}>
-								<Typography title={translator("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.mt6)}>
-									{translator("landingPages.subscriberSettings")}
+								<Typography title={t("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.mt6)}>
+									{t("landingPages.subscriberSettings")}
 								</Typography>
 								<Divider className={clsx(classes.mt2, classes.mb2)} />
 								<SubscriberSettings
@@ -741,10 +745,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							</Grid>
 							<Grid item md={6}>
 								<Typography className={clsx(classes.bold, classes.mt6)}>
-									{translator("landingPages.formOfflineProperties")}
+									{t("landingPages.formOfflineProperties")}
 									<Tooltip
 										disableFocusListener
-										title={translator('landingPages.formOfflineDateTooltip')}
+										title={t('landingPages.formOfflineDateTooltip')}
 										classes={{
 											tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
 											arrow: classes.fBlack

@@ -198,7 +198,7 @@ export const setApiIntegration = createAsyncThunk(
 export const deleteApiIntegration = createAsyncThunk(
   '/landingpages/DeleteApiIntegration', async (data, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.delete(`/landingpages/DeleteApiIntegration/${data.webformId}/${data.integrationId}`);
+      const response = await PulseemReactInstance.delete(`/landingpages/DeleteApiIntegration/${data.webFormId}/${data.id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

@@ -45,6 +45,18 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
         setEditApiIntegrations(true);
     }
 
+    const resetSelectedApiIntegration = () => {
+        setSelectedApiIntegration({
+            ID: -1,
+            IsOptinSend: false,
+            Name: '',
+            RequestPostParams: '',
+            RequestUrl: ''
+        });
+        setEditApiIntegrations(false);
+        setCreateApiIntegrations(false);
+    }
+
     return (
         <Grid container spacing={3} className={clsx(classes.p15)}>
             <Grid item md={6} className={classes.w100}>
@@ -140,13 +152,22 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                             });
 
                             if (selected && selected?.filter((elem: any) => { return elem !== null })?.length > 1) {
-                                return selected.join(',');
+                                return selected.join(',').slice(0, selected.lastIndexOf(','));
                             }
 
                             return selected;
                         }}
                         className={classes.pbt5}
-                        onChange={(event, val) => onUpdate({ ...data, Systems: event.target.value })}
+                        onChange={(event: any, val: any) => {
+                            const arr: string[] = event.target.value;
+
+                            const exists: WebformsToReportLeadByApi[] = data?.WebformsToReportLeadByApi?.filter((item: WebformsToReportLeadByApi) => {
+                                return arr.indexOf(item.ID.toString()) > -1
+                            });
+
+                            onUpdate({ ...data, Systems: exists.map((x: any) => x.ID.toString()) })
+
+                        }}
                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         MenuProps={{
                             PaperProps: {
@@ -161,14 +182,13 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                             return (<MenuItem key={item.ID.toString()} value={item.ID.toString()}>
                                 <Checkbox checked={data.Systems?.indexOf(item.ID.toString()) > -1} />
                                 <ListItemText primary={item.Name} />
-                                <Button onClick={(event: any) => { event.preventDefault(); event.stopPropagation(); onEditSystem(item.ID) }}>Edit</Button>
+                                <Button onClick={(event: any) => { event.preventDefault(); event.stopPropagation(); onEditSystem(item.ID) }}>{translator("common.edit")}</Button>
                             </MenuItem>)
                         })}
                     </Select>
                 </FormControl>}
                 <Box className={clsx(classes.dFlex, classes.spaceBetween)}>
-                    <Button onClick={() => setCreateApiIntegrations(!createApiIntegrations)}>add new</Button>
-                    <Button onClick={() => setEditApiIntegrations(!editApiIntegrations)} >edit exists</Button>
+                    <Button onClick={() => setCreateApiIntegrations(!createApiIntegrations)}>{translator('common.addNew')}</Button>
                 </Box>
             </Grid>
 
@@ -191,14 +211,15 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
             <RegistrationToApiForm
                 classes={classes}
                 webFormId={data.ID}
-                webformsToReportLeadByApi={selectedApiIntegration}
+                apiIntegration={selectedApiIntegration}
                 isOpen={createApiIntegrations || editApiIntegrations}
                 isNew={createApiIntegrations}
                 onClose={() => {
-                    setEditApiIntegrations(false);
-                    setCreateApiIntegrations(false);
+                    resetSelectedApiIntegration();
+
                 }}
                 onConfirm={(d: any) => {
+                    resetSelectedApiIntegration();
                     onDone();
                 }}
             />
