@@ -15,8 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { ProductCatalogTypes } from './Types';
 import { Direction, EventTypes, Items, Structure } from '../../config/enum';
-import { useDispatch, useSelector } from 'react-redux';
-import { getCategories } from '../../redux/reducers/productSlice';
+import { useSelector } from 'react-redux';
 import { StateType } from '../../Models/StateTypes';
 import Select from '@mui/material/Select';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -42,8 +41,6 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { productCategories } = useSelector((state: StateType) => state.product);
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
     if (productOrder === 'vertical') {
       setStructure(productOrder);
@@ -55,13 +52,6 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
 
   useEffect(() => {
     setButtonText(t('campaigns.buyNow'));
-
-    const getProductCategories = async () => {
-      await dispatch(getCategories());
-    }
-    if (productCategories?.length <= 0) {
-      getProductCategories();
-    }
   }, []);
 
   const onHandleSave = () => {

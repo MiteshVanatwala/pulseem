@@ -55,6 +55,7 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
+import { getCategories } from '../../redux/reducers/productSlice';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -72,6 +73,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
+  const { productCategories } = useSelector(state => state.product);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -246,6 +248,10 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
     await dispatch(getAuthorizedEmails());
+
+    if (productCategories?.length <= 0) {
+      getProductCategories();
+    }
     setDataReady(true);
     const initBeeToken = () => {
       dispatch(getBeeToken());
@@ -367,6 +373,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     })
   }
+
+  const getProductCategories = async () => {
+    await dispatch(getCategories());
+  }
+
   useEffect(() => {
     if (beeToken) {
       initBeeEditor();
