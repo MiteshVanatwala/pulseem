@@ -25,6 +25,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
         RequestPostParams: '',
         RequestUrl: ''
     });
+    const [systemSelectOpen, setSystemSelectOpen] = useState<boolean>(false);
 
     const handleChangeMultiple = (event: any) => {
         //const { value } = event.target;
@@ -55,6 +56,11 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
         });
         setEditApiIntegrations(false);
         setCreateApiIntegrations(false);
+    }
+
+    const handleEditSystem = (item: WebformsToReportLeadByApi) => {
+        setSystemSelectOpen(false);
+        onEditSystem(item.ID);
     }
 
     return (
@@ -144,6 +150,8 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         multiple
                         placeholder={translator('common.SelectSystems')}
                         name="Systems"
+                        onClick={() => setSystemSelectOpen(!systemSelectOpen)}
+                        open={systemSelectOpen}
                         value={data?.Systems || []}
                         input={<Input />}
                         renderValue={() => {
@@ -182,7 +190,11 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                             return (<MenuItem key={item.ID.toString()} value={item.ID.toString()}>
                                 <Checkbox checked={data.Systems?.indexOf(item.ID.toString()) > -1} />
                                 <ListItemText primary={item.Name} />
-                                <Button onClick={(event: any) => { event.preventDefault(); event.stopPropagation(); onEditSystem(item.ID) }}>{translator("common.edit")}</Button>
+                                <Button onClick={(event: any) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    handleEditSystem(item);
+                                }}>{translator("common.edit")}</Button>
                             </MenuItem>)
                         })}
                     </Select>
