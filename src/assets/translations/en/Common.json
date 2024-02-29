@@ -790,5 +790,6 @@
   "publish": "Publish",
   "finish": "Finish",
   "duplicatedValue": "Duplicated / System Value",
-  "addNew": "Add New"
+  "addNew": "Add New",
+  "parameters": "Parameters"
 }

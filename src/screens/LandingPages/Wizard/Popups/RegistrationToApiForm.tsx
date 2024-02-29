@@ -26,6 +26,12 @@ const RegistrationToApiForm = ({
     // const { isRTL } = useSelector((state: StateType) => state.core);
     const { AccountExtraFields } = useSelector((state: StateType) => state.extraFields);
 
+    const [errors, setErrors] = useState({
+        Name: "",
+        RequestUrl: "",
+        RequestPostParams: ""
+    })
+
     const dispatch = useDispatch();
     const [regModel, setRegModel] = useState<WebformsToReportLeadByApi>({
         ID: 0,
@@ -66,20 +72,30 @@ const RegistrationToApiForm = ({
         setShowLoader(false);
     }, []);
 
-    useEffect(() => {
-        if (regModel?.RequestUrl && regModel.RequestUrl !== '') {
-            if (regModel.RequestUrl.indexOf('?') > -1) {
-                setRequestType('Get');
-            }
-            else {
-                setRequestType('Post');
-            }
-        }
-    }, [regModel?.RequestUrl]);
+    // useEffect(() => {
+    //     if (regModel?.RequestUrl && regModel.RequestUrl !== '') {
+    //         if (regModel.RequestUrl.indexOf('?') > -1) {
+    //             setRequestType('Get');
+    //         }
+    //         else {
+    //             setRequestType('Post');
+    //         }
+    //     }
+    // }, [regModel?.RequestUrl]);
 
     useEffect(() => {
         if (apiIntegration && apiIntegration?.ID > 0) {
             setRegModel(apiIntegration);
+            if (apiIntegration.RequestUrl?.indexOf('?') > -1) {
+                setRequestType('Get');
+                const urlArr = apiIntegration.RequestUrl.split('?');
+                const params = urlArr[1]
+                params?.split('&')?.forEach((qs: any) => {
+                    const key = qs?.split('=')[0];
+                    const val = qs?.split('=')[1];
+                })
+                // setDynamicParams(newObj)
+            }
         }
     }, [apiIntegration])
 
@@ -90,23 +106,23 @@ const RegistrationToApiForm = ({
         }
     }, [AccountExtraFields])
 
-    const handleResponses = (response: any) => {
-        switch (response?.StatusCode) {
-            case 201: {
+    // const handleResponses = (response: any) => {
+    //     switch (response?.StatusCode) {
+    //         case 201: {
 
-                break;
-            }
-            case 401: {
-                logout();
-                break;
-            }
-            default:
-            case 500: {
-                alert('error occured');
-                break;
-            }
-        }
-    }
+    //             break;
+    //         }
+    //         case 401: {
+    //             logout();
+    //             break;
+    //         }
+    //         default:
+    //         case 500: {
+    //             alert('error occured');
+    //             break;
+    //         }
+    //     }
+    // }
 
     const handleParams = (e: any, item: any) => {
         const newObj = { ...dynamicParams };
@@ -120,13 +136,44 @@ const RegistrationToApiForm = ({
         setDynamicParams(newObj)
         const arr = Object.values(newObj);
         // setFinalParams(arr.length > 0 ? arr.join('&') : '');
-        setRegModel({ ...regModel, RequestPostParams: arr.length > 0 ? arr.join('&') : '' })
+
+        const reqUrl = requestType.toLowerCase() === 'get' ? `${regModel.RequestUrl?.split('?')[0]}?${arr.length > 0 ? arr.join('&') : ''}` : regModel.RequestUrl;
+        setRegModel({
+            ...regModel,
+            RequestPostParams: arr.length > 0 ? arr.join('&') : '',
+            RequestUrl: reqUrl
+        });
     }
 
     const onSubmit = async () => {
-        // @ts-ignore
-        await dispatch(setApiIntegration(regModel));
-        onConfirm();
+        if (formIsValdid()) {
+            // @ts-ignore
+            await dispatch(setApiIntegration(regModel));
+            onConfirm();
+        }
+    }
+    const formIsValdid = () => {
+        const err = { Name: '', RequestUrl: '', RequestPostParams: '' };
+        let isValid = true;
+        setErrors(err);
+
+        if (regModel.Name === '') {
+            err.Name = t('common.requiredField');
+            isValid = false;
+        }
+        if (regModel.RequestUrl === '') {
+            err.RequestUrl = t('common.requiredField');
+            isValid = false;
+        }
+        if (requestType.toLowerCase() === 'post' && regModel.RequestPostParams === '') {
+            err.RequestPostParams = t('common.requiredField');
+            isValid = false;
+        }
+        if (!isValid) {
+            setErrors({ ...errors, ...err });
+        }
+
+        return isValid;
     }
     const onDelete = async () => {
         // @ts-ignore
@@ -173,13 +220,21 @@ const RegistrationToApiForm = ({
                             variant="outlined"
                             name="Name"
                             value={regModel?.Name}
-                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100)}
+                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, errors.Name !== '' ? classes.error : null)}
                             autoComplete="off"
                             onChange={(e: any) => {
+                                if (e.target.value !== '') {
+                                    setErrors({ ...errors, Name: '' });
+                                }
                                 setRegModel({ ...regModel, Name: e.target.value })
                             }}
                             title={regModel?.Name}
                         />
+                        {errors.Name !== '' && <Box className='textBoxWrapper'>
+                            <Typography className={clsx(errors.Name ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                {errors.Name}
+                            </Typography>
+                        </Box>}
 
                     </Grid>
 
@@ -232,39 +287,83 @@ const RegistrationToApiForm = ({
                             placeholder={t("landingPages.registrationApi.requestUrl")}
                             variant="outlined"
                             name="requestUrl"
-                            style={{ direction: 'ltr' }}
+                            style={{ direction: regModel.RequestUrl !== '' ? 'ltr' : 'unset' }}
                             value={regModel.RequestUrl}
-                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, errors.RequestUrl !== '' ? classes.error : null)}
                             autoComplete="off"
                             onChange={(e: any) => {
+                                if (e.target.value === '') {
+                                    e.target.style.direction = null;
+                                }
+                                else {
+                                    setErrors({ ...errors, RequestUrl: '' });
+                                    e.target.style.direction = "ltr";
+                                }
                                 setRegModel({ ...regModel, RequestUrl: e.target.value })
                             }}
                             title={regModel.RequestUrl}
+                            onBlur={(e: any) => {
+                                if (e.target.value === '') {
+                                    e.target.style.direction = null;
+                                }
+                                else {
+                                    e.target.style.direction = "ltr";
+                                }
+                            }}
                         />
+                        {errors.RequestUrl !== '' && <Box className='textBoxWrapper'>
+                            <Typography className={clsx(errors.RequestUrl ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                {errors.RequestUrl}
+                            </Typography>
+                        </Box>}
+                        <Grid item md={12} className={classes.w100} style={{ paddingTop: 0 }}>
+                            <Typography title={t("landingPages.registrationApi.requestUrl")} style={{ fontSize: 14, margin: 0, fontWeight: 900 }}>
+                                {requestType.toLowerCase() === 'get' ? t('landingPages.registrationApi.getExample') : t('landingPages.registrationApi.postExample')}
+                            </Typography>
+                        </Grid>
                     </Grid>
-                    <Grid item md={12} className={classes.w100}>
+                    {requestType.toLowerCase() === 'post' && <Grid item md={12} className={classes.w100}>
                         <Typography title={t("landingPages.registrationApi.requestUrl")} className={classes.alignDir}>
-                            פרמטרים
+                            {t('common.parameters')}
                         </Typography>
                         <textarea
                             id="finalParams"
                             placeholder='הזן פרמטרים או השתמש באשף'
                             name="finalParams"
-                            style={{ direction: 'ltr', height: 80, border: '1px solid #D6D1E6' }}
+                            style={{ height: 80, border: '1px solid #D6D1E6' }}
                             value={regModel.RequestPostParams}
                             className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
                             autoComplete="off"
                             onChange={(e: any) => {
+                                if (e.target.value === '') {
+                                    e.target.style.direction = null;
+                                }
+                                else {
+                                    e.target.style.direction = "ltr";
+                                }
                                 setRegModel({ ...regModel, RequestPostParams: e.target.value })
+                            }}
+                            onBlur={(e: any) => {
+                                if (e.target.value === '') {
+                                    e.target.style.direction = null;
+                                }
+                                else {
+                                    e.target.style.direction = "ltr";
+                                }
                             }}
                             title={regModel.RequestPostParams}
                         />
-                    </Grid>
-                    <Grid item md={12} className={classes.w100} style={{ paddingTop: 0 }}>
+                        {errors.RequestPostParams !== '' && <Box className='textBoxWrapper'>
+                            <Typography className={clsx(errors.RequestPostParams ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                {errors.RequestPostParams}
+                            </Typography>
+                        </Box>}
+                    </Grid>}
+                    {/* <Grid item md={12} className={classes.w100} style={{ paddingTop: 0 }}>
                         <Typography title={t("landingPages.registrationApi.requestUrl")} style={{ direction: 'ltr', fontSize: 14, margin: 0, fontWeight: 900 }}>
-                            {`${regModel.RequestUrl}${regModel.RequestPostParams !== '' ? '?' : ''}${regModel.RequestPostParams}`}
+                            {`${ regModel.RequestUrl }${ regModel.RequestPostParams !== '' ? '?' : '' }${ regModel.RequestPostParams } `}
                         </Typography>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
                 <Grid container spacing={3} className={classes.p15}>
                     <Grid item md={12} className={clsx(classes.w100, classes.dFlex)} style={{ alignItems: 'center' }}>
@@ -287,12 +386,12 @@ const RegistrationToApiForm = ({
                         </Grid>
                     </Grid>
                     {Object.keys(apiAvailableParams).map((item) => {
-                        return apiAvailableParams[item] !== '' && <Grid item md={12} className={classes.dFlex} style={{ alignItems: 'center', height: 50 }}>
+                        return apiAvailableParams[item] !== '' && <Grid key={`key_${item} `} item md={12} className={classes.dFlex} style={{ alignItems: 'center', height: 50 }}>
                             <Grid item md={4} sm={6}>{apiAvailableParams[item]} (##{item}##)</Grid>
                             <Grid item md={4} sm={6}>
                                 {showWizard &&
                                     <TextField
-                                        placeholder={`${t('landingPages.registrationApi.typeParamFor')} ${apiAvailableParams[item]}`}
+                                        placeholder={`${t('landingPages.registrationApi.typeParamFor')} ${apiAvailableParams[item]} `}
                                         id={item}
                                         variant="outlined"
                                         name={item}
