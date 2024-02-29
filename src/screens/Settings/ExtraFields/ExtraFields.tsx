@@ -12,18 +12,19 @@ import { BiSave } from 'react-icons/bi';
 import { useDispatch, useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Loader } from '../../../components/Loader/Loader';
-import { GetExtraFields, SetExtraFields } from '../../../redux/reducers/ExtraFieldsSlice';
+import { GetExtraFields, SetExtraFields, update } from '../../../redux/reducers/ExtraFieldsSlice';
 import { ExtraFields } from '../../../Models/ExtraFields';
 import { StateType } from '../../../Models/StateTypes';
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice'
+import { getAccountExtraData } from '../../../redux/reducers/smsSlice';
 
 const ExtraFieldsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch: any = useDispatch();
   const { isRTL } = useSelector((state: StateType) => state.core);
-  const { extraData } = useSelector((state: any) => state.sms);
+  const { extraData } = useSelector((state: StateType) => state.extraFields);
   const [toastMessage, setToastMessage] = useState<any | never>(null);
   const { subAccount } = useSelector((state: any) => state.common)
   const [showLoader, setLoader] = useState(true);
@@ -137,7 +138,7 @@ const ExtraFieldsEditor = ({ classes }: any) => {
 
 
       for (let [key, value] of Object.entries(request)) {
-        request[key] = value.trim() === '' ? '' : value;
+        request[key] = (value === null || value?.trim() === '') ? '' : value;
       }
 
 
@@ -162,18 +163,18 @@ const ExtraFieldsEditor = ({ classes }: any) => {
 
       preventedValues.filter((z: any) => z !== '').forEach((str: string | any) => {
         const exists = Object.keys(ExtraFieldList).filter((x: any) => {
-          return ExtraFieldList[x]?.toLowerCase() !== '' && ExtraFieldList[x]?.toLowerCase() === str.toLowerCase()
+          return ExtraFieldList[x] !== null && ExtraFieldList[x] !== '' && ExtraFieldList[x]?.toLowerCase() === str?.toLowerCase()
         });
-        if (exists.filter((x) => x !== '')?.length > 0) {
+        if (exists?.length > 0) {
           keys.push(...exists);
         }
       });
 
       Object.values(ExtraFieldList).filter((z: any) => z !== '').forEach((str: string | any) => {
         const exists = Object.keys(ExtraFieldList).filter((x: any) => {
-          return ExtraFieldList[x]?.toLowerCase() !== '' && ExtraFieldList[x]?.toLowerCase() === str.toLowerCase()
+          return ExtraFieldList[x] !== null && ExtraFieldList[x] !== '' && ExtraFieldList[x]?.toLowerCase() === str?.toLowerCase()
         });
-        if (exists.filter((x) => x !== '')?.length > 1) {
+        if (exists?.length > 1) {
           keys.push(...exists);
         }
       });
@@ -205,6 +206,11 @@ const ExtraFieldsEditor = ({ classes }: any) => {
     switch (response.StatusCode) {
       case 201: {
         showSuccessToast(t('common.ExtraFieldSaved'));
+        // This is a patch!
+        // We should move to the new method in ExtraFieldsSlice & global store state
+        dispatch(getAccountExtraData());
+        // New logic for updating global store state
+        dispatch(update(ExtraFieldList))
         break;
       }
       case 401:
