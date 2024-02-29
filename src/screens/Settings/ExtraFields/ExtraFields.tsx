@@ -30,23 +30,23 @@ const ExtraFieldsEditor = ({ classes }: any) => {
   const [showLoader, setLoader] = useState(true);
   const [formDisabled, setFormDisabled] = useState<boolean>(true);
   const [ExtraFieldList, setExtraFieldList] = useState<ExtraFields>({
-    ExtraField1: extraData.ExtraField1 || '',
-    ExtraField2: extraData.ExtraField2 || '',
-    ExtraField3: extraData.ExtraField3 || '',
-    ExtraField4: extraData.ExtraField4 || '',
-    ExtraField5: extraData.ExtraField5 || '',
-    ExtraField6: extraData.ExtraField6 || '',
-    ExtraField7: extraData.ExtraField7 || '',
-    ExtraField8: extraData.ExtraField8 || '',
-    ExtraField9: extraData.ExtraField9 || '',
-    ExtraField10: extraData.ExtraField10 || '',
-    ExtraField11: extraData.ExtraField11 || '',
-    ExtraField12: extraData.ExtraField12 || '',
-    ExtraField13: extraData.ExtraField13 || '',
-    ExtraDate1: extraData.ExtraDate1 || '',
-    ExtraDate2: extraData.ExtraDate2 || '',
-    ExtraDate3: extraData.ExtraDate3 || '',
-    ExtraDate4: extraData.ExtraDate4 || ''
+    ExtraField1: '',
+    ExtraField2: '',
+    ExtraField3: '',
+    ExtraField4: '',
+    ExtraField5: '',
+    ExtraField6: '',
+    ExtraField7: '',
+    ExtraField8: '',
+    ExtraField9: '',
+    ExtraField10: '',
+    ExtraField11: '',
+    ExtraField12: '',
+    ExtraField13: '',
+    ExtraDate1: '',
+    ExtraDate2: '',
+    ExtraDate3: '',
+    ExtraDate4: ''
   });
 
   const [preventedValues, setPreventedValues] = useState<any>([
@@ -102,31 +102,11 @@ const ExtraFieldsEditor = ({ classes }: any) => {
   }, []);
 
   useEffect(() => {
-    setExtraFieldList({
-      ExtraField1: extraData.ExtraField1 || '',
-      ExtraField2: extraData.ExtraField2 || '',
-      ExtraField3: extraData.ExtraField3 || '',
-      ExtraField4: extraData.ExtraField4 || '',
-      ExtraField5: extraData.ExtraField5 || '',
-      ExtraField6: extraData.ExtraField6 || '',
-      ExtraField7: extraData.ExtraField7 || '',
-      ExtraField8: extraData.ExtraField8 || '',
-      ExtraField9: extraData.ExtraField9 || '',
-      ExtraField10: extraData.ExtraField10 || '',
-      ExtraField11: extraData.ExtraField11 || '',
-      ExtraField12: extraData.ExtraField12 || '',
-      ExtraField13: extraData.ExtraField13 || '',
-      ExtraDate1: extraData.ExtraDate1 || '',
-      ExtraDate2: extraData.ExtraDate2 || '',
-      ExtraDate3: extraData.ExtraDate3 || '',
-      ExtraDate4: extraData.ExtraDate4 || ''
-    });
-
     if (subAccount && subAccount?.CompanyAdmin === true) {
       setFormDisabled(false);
     }
 
-  }, [extraData]);
+  }, [subAccount]);
 
   const saveExtraFieldData = async () => {
     if (validateForm()) {
