@@ -23,7 +23,7 @@ const RegistrationToApiForm = ({
     onConfirm }: any) => {
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState<boolean>(true);
-    // const { isRTL } = useSelector((state: StateType) => state.core);
+    const { isRTL } = useSelector((state: StateType) => state.core);
     const { AccountExtraFields } = useSelector((state: StateType) => state.extraFields);
 
     const [errors, setErrors] = useState({
@@ -38,7 +38,8 @@ const RegistrationToApiForm = ({
         Name: '',
         RequestUrl: '',
         RequestPostParams: '',
-        IsOptinSend: false
+        IsOptinSend: false,
+        CountWebForms: 0
     });
     const [requestType, setRequestType] = useState<any>('Get');
     const [apiAvailableParams, setApiAvailableParams] = useState<any>({
@@ -72,30 +73,50 @@ const RegistrationToApiForm = ({
         setShowLoader(false);
     }, []);
 
-    // useEffect(() => {
-    //     if (regModel?.RequestUrl && regModel.RequestUrl !== '') {
-    //         if (regModel.RequestUrl.indexOf('?') > -1) {
-    //             setRequestType('Get');
-    //         }
-    //         else {
-    //             setRequestType('Post');
-    //         }
-    //     }
-    // }, [regModel?.RequestUrl]);
+    const updatedParamObject = (value: string, item: string) => {
+        const newObj = { ...dynamicParams };
+        let finalItem = `${value}=##${item}##`
+        newObj[`##${item}##`] = finalItem;
+
+        if (value === '') {
+            delete newObj[`##${item}##`];
+        }
+
+        return newObj;
+    }
 
     useEffect(() => {
         if (apiIntegration && apiIntegration?.ID > 0) {
             setRegModel(apiIntegration);
-            if (apiIntegration.RequestUrl?.indexOf('?') > -1) {
+            // Post
+            const updArr = {} as any;
+            if (apiIntegration.RequestPostParams !== null && apiIntegration.RequestPostParams.trim() !== '') {
+                setRequestType('Post');
+                apiIntegration.RequestPostParams?.split('&')?.forEach((qs: any) => {
+                    const val = qs?.split('=')[1];
+                    updArr[val] = qs;
+                })
+            }
+            else { //Get
                 setRequestType('Get');
                 const urlArr = apiIntegration.RequestUrl.split('?');
                 const params = urlArr[1]
                 params?.split('&')?.forEach((qs: any) => {
-                    const key = qs?.split('=')[0];
                     const val = qs?.split('=')[1];
+                    updArr[val] = qs;
                 })
-                // setDynamicParams(newObj)
             }
+
+            setDynamicParams(updArr);
+        }
+        else {
+            setRegModel({
+                ID: 0,
+                Name: '',
+                RequestUrl: '',
+                RequestPostParams: '',
+                IsOptinSend: false
+            })
         }
     }, [apiIntegration])
 
@@ -106,33 +127,8 @@ const RegistrationToApiForm = ({
         }
     }, [AccountExtraFields])
 
-    // const handleResponses = (response: any) => {
-    //     switch (response?.StatusCode) {
-    //         case 201: {
-
-    //             break;
-    //         }
-    //         case 401: {
-    //             logout();
-    //             break;
-    //         }
-    //         default:
-    //         case 500: {
-    //             alert('error occured');
-    //             break;
-    //         }
-    //     }
-    // }
-
-    const handleParams = (e: any, item: any) => {
-        const newObj = { ...dynamicParams };
-        let finalItem = `${e.target.value}=##${item}##`
-        newObj[`##${item}##`] = finalItem;
-
-        if (e.target.value === '') {
-            delete newObj[`##${item}##`];
-        }
-
+    const handleParam = (e: any, item: any) => {
+        const newObj = updatedParamObject(e.target.value, item);
         setDynamicParams(newObj)
         const arr = Object.values(newObj);
         // setFinalParams(arr.length > 0 ? arr.join('&') : '');
@@ -192,6 +188,40 @@ const RegistrationToApiForm = ({
             IsOptinSend: false
         });
     }
+
+    const renderDynamicItem = (item: any) => {
+        if (item && item !== '' && dynamicParams[`##${item}##`]) {
+            return dynamicParams[`##${item}##`]?.split('=')[0];
+        }
+        return '';
+    }
+
+    const renderRequestUrlValue = () => {
+        if (requestType.toLowerCase() === 'get') {
+            // setRegModel({ ...regModel, RequestPostParams: '' });
+            return regModel.RequestUrl;
+        }
+
+        const splittedUrl = regModel.RequestUrl?.split('?');
+        if (splittedUrl && splittedUrl?.length >= 1) {
+            // setRegModel({ ...regModel, RequestPostParams: regModel.RequestUrl?.split('?')[1] });
+        }
+        return regModel.RequestUrl?.split('?')[0]
+
+    }
+
+    useEffect(() => {
+        if (requestType.toLowerCase() === 'get') {
+            setRegModel({ ...regModel, RequestPostParams: '', RequestUrl: `${regModel.RequestUrl?.split('?')[0]}?${regModel.RequestPostParams}` });
+        }
+        else {
+            const splittedUrl = regModel.RequestUrl?.split('?');
+            if (splittedUrl && splittedUrl?.length >= 1) {
+                setRegModel({ ...regModel, RequestPostParams: regModel.RequestUrl?.split('?')[1] });
+            }
+
+        }
+    }, [requestType])
 
     return <BaseDialog
         disableBackdropClick={false}
@@ -288,7 +318,7 @@ const RegistrationToApiForm = ({
                             variant="outlined"
                             name="requestUrl"
                             style={{ direction: regModel.RequestUrl !== '' ? 'ltr' : 'unset' }}
-                            value={regModel.RequestUrl}
+                            value={renderRequestUrlValue()}
                             className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100, errors.RequestUrl !== '' ? classes.error : null)}
                             autoComplete="off"
                             onChange={(e: any) => {
@@ -330,7 +360,7 @@ const RegistrationToApiForm = ({
                             id="finalParams"
                             placeholder='הזן פרמטרים או השתמש באשף'
                             name="finalParams"
-                            style={{ height: 80, border: '1px solid #D6D1E6' }}
+                            style={{ height: 80, border: '1px solid #D6D1E6', direction: regModel?.RequestPostParams !== '' ? 'ltr' : isRTL ? 'rtl' : 'ltr' }}
                             value={regModel.RequestPostParams}
                             className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
                             autoComplete="off"
@@ -395,11 +425,11 @@ const RegistrationToApiForm = ({
                                         id={item}
                                         variant="outlined"
                                         name={item}
-                                        value={dynamicParams[item]}
+                                        value={renderDynamicItem(item)}
                                         className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100)}
                                         autoComplete="off"
                                         onChange={(e: any) => {
-                                            handleParams(e, item);
+                                            handleParam(e, item);
                                         }
                                         }
                                         title={dynamicParams[item]}>

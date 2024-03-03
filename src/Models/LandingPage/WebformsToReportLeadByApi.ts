@@ -4,4 +4,5 @@ export interface WebformsToReportLeadByApi {
     RequestUrl?: string;
     RequestPostParams?: string;
     IsOptinSend?: boolean;
+    CountWebForms?: number;
 }

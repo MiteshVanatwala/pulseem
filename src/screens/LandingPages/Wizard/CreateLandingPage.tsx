@@ -160,54 +160,60 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const getData = async () => {
 		setIsLoader(true);
 
-		if (id) {
-			// @ts-ignore
-			const res = await dispatch(getById(id));
-			const response = res.payload as PulseemResponse;
-			if (response.StatusCode === 201) {
-				setLandingPageModel({
-					...response.Data?.WebForm,
-					EmailsToReport: response.Data?.WebForm?.EmailsToReport?.length > 0 ? response.Data?.WebForm?.EmailsToReport?.split(',') : [],
-					CmbSelection: response.Data?.WebForm?.CmbSelection || '',
-					HtmlFileName: response.Data?.WebForm?.HtmlFileName || '',
-					ButtonText: response.Data?.WebForm?.ButtonText || '',
-					PageName: response.Data?.WebForm?.PageName || '',
-					AnswerOption: response.Data?.WebForm?.AnswerOption || '',
-					AnswerData: response.Data?.WebForm?.AnswerData || '',
-					ConfirmationText: response.Data?.WebForm?.ConfirmationText || '',
-					PageHtml: response.Data?.WebForm?.PageHtml || '',
-					PrefunImage: response.Data?.WebForm?.PrefunImage || '',
-					PageUrl: response.Data?.WebForm?.PageUrl || '',
-					DownloadUrl: response.Data?.WebForm?.DownloadUrl || '',
-					OfflineDate: response.Data?.WebForm?.OfflineDate || '',
-					OfflineUrl: response.Data?.WebForm?.OfflineUrl || '',
-					HtmlToEdit: response.Data?.WebForm?.HtmlToEdit || '',
-					HtmlFile: response.Data?.WebForm?.HtmlFile || '',
-					TerminalNumber: response.Data?.WebForm?.TerminalNumber || '',
-					APIUserName: response.Data?.WebForm?.APIUserName || '',
-					LinkPreviewTitle: response.Data?.WebForm?.LinkPreviewTitle || '',
-					LinkPreviewIconName: response.Data?.WebForm?.LinkPreviewIconName || '',
-					LinkPreviewDescription: response.Data?.WebForm?.LinkPreviewDescription || '',
-					LinkPreviewIconExtrnalURL: response.Data?.WebForm?.LinkPreviewIconExtrnalURL || '',
-					Systems: response.Data?.WebForm?.Systems || [],
-					FacebookPageID: response.Data?.WebForm?.FacebookPageID || '',
-					FacebookPrefunImage: response.Data?.WebForm?.FacebookPrefunImage || '',
-					ClientJavaScript: response.Data?.WebForm?.ClientJavaScript || '',
-					ClientBodyScript: response.Data?.WebForm?.ClientBodyScript || '',
-					ClientHtmlCode: response.Data?.WebForm?.ClientHtmlCode || '',
-					ClientCssStyle: response.Data?.WebForm?.ClientCssStyle || '',
-					PageTitle: response.Data?.WebForm?.PageTitle || '',
-					MetaDescription: response.Data?.WebForm?.MetaDescription || '',
-					MetaKeywords: response.Data?.WebForm?.MetaKeywords || '',
-					GoogleAnalyticsCode: response.Data?.WebForm?.GoogleAnalyticsCode || '',
-					GoogleConvertionCode: response.Data?.WebForm?.GoogleConvertionCode || '',
-					GoogleTagManagerCode: response.Data?.WebForm?.GoogleTagManagerCode || '',
-					FacebookPixelCode: response.Data?.WebForm?.FacebookPixelCode || '',
-					GroupIDs: response.Data?.WebForm?.GroupIDs?.split(',') || [],
-					WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || []
-				});
-			}
+		// @ts-ignore
+		const res = await dispatch(getById(id ?? -1));
+		const response = res.payload as PulseemResponse;
+		if (response.StatusCode === 201) {
+			setLandingPageModel({
+				...response.Data?.WebForm,
+				EmailsToReport: response.Data?.WebForm?.EmailsToReport?.length > 0 ? response.Data?.WebForm?.EmailsToReport?.split(',') : [],
+				CmbSelection: response.Data?.WebForm?.CmbSelection || '',
+				HtmlFileName: response.Data?.WebForm?.HtmlFileName || '',
+				ButtonText: response.Data?.WebForm?.ButtonText || '',
+				PageName: response.Data?.WebForm?.PageName || '',
+				AnswerOption: response.Data?.WebForm?.AnswerOption || '',
+				AnswerData: response.Data?.WebForm?.AnswerData || '',
+				ConfirmationText: response.Data?.WebForm?.ConfirmationText || '',
+				PageHtml: response.Data?.WebForm?.PageHtml || '',
+				PrefunImage: response.Data?.WebForm?.PrefunImage || '',
+				PageUrl: response.Data?.WebForm?.PageUrl || '',
+				DownloadUrl: response.Data?.WebForm?.DownloadUrl || '',
+				OfflineDate: response.Data?.WebForm?.OfflineDate || '',
+				OfflineUrl: response.Data?.WebForm?.OfflineUrl || '',
+				HtmlToEdit: response.Data?.WebForm?.HtmlToEdit || '',
+				HtmlFile: response.Data?.WebForm?.HtmlFile || '',
+				TerminalNumber: response.Data?.WebForm?.TerminalNumber || '',
+				APIUserName: response.Data?.WebForm?.APIUserName || '',
+				LinkPreviewTitle: response.Data?.WebForm?.LinkPreviewTitle || '',
+				LinkPreviewIconName: response.Data?.WebForm?.LinkPreviewIconName || '',
+				LinkPreviewDescription: response.Data?.WebForm?.LinkPreviewDescription || '',
+				LinkPreviewIconExtrnalURL: response.Data?.WebForm?.LinkPreviewIconExtrnalURL || '',
+				Systems: response.Data?.WebForm?.Systems || [],
+				FacebookPageID: response.Data?.WebForm?.FacebookPageID || '',
+				FacebookPrefunImage: response.Data?.WebForm?.FacebookPrefunImage || '',
+				ClientJavaScript: response.Data?.WebForm?.ClientJavaScript || '',
+				ClientBodyScript: response.Data?.WebForm?.ClientBodyScript || '',
+				ClientHtmlCode: response.Data?.WebForm?.ClientHtmlCode || '',
+				ClientCssStyle: response.Data?.WebForm?.ClientCssStyle || '',
+				PageTitle: response.Data?.WebForm?.PageTitle || '',
+				MetaDescription: response.Data?.WebForm?.MetaDescription || '',
+				MetaKeywords: response.Data?.WebForm?.MetaKeywords || '',
+				GoogleAnalyticsCode: response.Data?.WebForm?.GoogleAnalyticsCode || '',
+				GoogleConvertionCode: response.Data?.WebForm?.GoogleConvertionCode || '',
+				GoogleTagManagerCode: response.Data?.WebForm?.GoogleTagManagerCode || '',
+				FacebookPixelCode: response.Data?.WebForm?.FacebookPixelCode || '',
+				GroupIDs: response.Data?.WebForm?.GroupIDs?.split(',') || [],
+				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || []
+			});
 		}
+		else if(response.StatusCode === 403){
+			setLandingPageModel({
+				...response.Data?.WebForm,
+				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || []
+			});
+		}
+		// if (id) {
+		// }
 
 		if (subAccountAllGroups.length === 0) {
 			dispatch(getGroupsBySubAccountId());
