@@ -33,7 +33,8 @@ type ApiError = {
 };
 
 type ApiGetSavedTemplatesData = {
-	templateStatus: number;
+	templateStatus?: number;
+	TemplateId?: string;
 };
 
 type ApiSubmitTemplatesData =
