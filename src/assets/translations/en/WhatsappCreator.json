@@ -117,5 +117,7 @@
 	},
 	"codeExpirationTime": "Code Expiration Time",
 	"codeExpirationMessage": "Code Expiration time can range from 0 to 90 minutes",
-	"replyRemoveToUnsubscribe": "Reply “remove” to unsubscribe"
+	"replyRemoveToUnsubscribe": "Reply “remove” to unsubscribe",
+	"templateApproved": "The template <b>\"##Name##\"</b> was approved",
+	"templateDeclined": "The template <b>\"##Name##\"</b> was rejected"
 }
