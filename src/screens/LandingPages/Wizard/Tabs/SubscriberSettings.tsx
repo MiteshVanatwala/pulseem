@@ -100,8 +100,9 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 </Typography>
                 <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
+                        native
                         variant="standard"
-                        name="FromEmail"
+                        name="IsUpdate"
                         value={data.IsUpdate ? 1 : 0}
                         className={classes.pbt5}
                         onChange={(event, val) => onUpdate({ ...data, IsUpdate: event.target.value })}
@@ -115,8 +116,8 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                             },
                         }}
                     >
-                        <MenuItem value={0}>{translator("common.disabled")}</MenuItem>
-                        <MenuItem value={1}>{translator("common.enabled")}</MenuItem>
+                        <option value={0}>{translator("common.disabled")}</option>
+                        <option value={1}>{translator("common.enabled")}</option>
                     </Select>
                 </FormControl>
             </Grid>
@@ -126,6 +127,7 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                     {translator("landingPages.limitNumberOfSubscribers")}
                 </Typography>
                 <TextField
+                    style={{ marginTop: 3 }}
                     id="limitNumberOfSubscribers"
                     label=""
                     variant="outlined"

@@ -393,7 +393,7 @@
   "googleTagManager": "Google Tag Manager",
   "facebookPixel": "Facebook Pixel",
   "addEmailAddress": "Add Email Address",
-  "duplicateEmailConfirmation": "Send Double Option",
+  "duplicateEmailConfirmation": "Send Double Opt-In",
   "linkPreviewTooltip": "Choose how the preview of your landing page link will look like",
   "confirmExit": "Would you like to save the landing page before exit?",
   "handleExitTitle": "Leave Landing Page",

@@ -703,6 +703,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     {
         width: "100%",
         padding: "7px",
+        paddingBottom: 6,
         borderBottom: "1px solid #d6d1e6",
         color: "#bbb",
         maxHeight: 75,

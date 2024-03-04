@@ -735,10 +735,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 						<Grid container className={clsx(classes.pb25)} spacing={3}>
 							<Grid item md={6}>
-								<Typography title={t("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.mt6)}>
+								<Typography title={t("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.mt6, classes.font18)}>
 									{t("landingPages.subscriberSettings")}
 								</Typography>
-								<Divider className={clsx(classes.mt2, classes.mb2)} />
 								<SubscriberSettings
 									classes={classes}
 									data={landingPageModel}
@@ -750,7 +749,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								/>
 							</Grid>
 							<Grid item md={6}>
-								<Typography className={clsx(classes.bold, classes.mt6)}>
+								<Typography className={clsx(classes.bold, classes.mt6, classes.font18)}>
 									{t("landingPages.formOfflineProperties")}
 									<Tooltip
 										disableFocusListener
@@ -768,7 +767,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									</Tooltip>
 								</Typography>
 
-								<Divider className={clsx(classes.mt2, classes.mb2)} />
 								<OfflineProperties
 									classes={classes}
 									data={landingPageModel}
@@ -778,7 +776,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								/>
 							</Grid>
 						</Grid>
-
+						<Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
+							{t("landingPages.addSubscribersToGroups")}
+						</Typography>
 						<SubscriberGroup
 							classes={classes}
 							data={landingPageModel}

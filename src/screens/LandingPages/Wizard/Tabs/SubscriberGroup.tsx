@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { useTranslation } from 'react-i18next';
 import { Box, Grid, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import Groups from '../../../../components/Groups/GroupsHandler/Groups';
 import { Group } from '../../../../Models/Groups/Group';
 
 const SubscriberGroup = ({ classes, data, onUpdate, onShowTestGroups, errors }: any) => {
-    const { t: translator } = useTranslation();
     const { subAccountAllGroups } = useSelector((state: any) => state.group);
     const { testGroups } = useSelector((state: any) => state.sms);
     const [showTestGroups, setShowTestGroups] = useState(false);
@@ -57,9 +55,6 @@ const SubscriberGroup = ({ classes, data, onUpdate, onShowTestGroups, errors }: 
         <Grid container spacing={3} className={clsx(classes.p15)}>
             <Grid item md={12} xs={12}>
                 <Box>
-                    <Typography title={translator("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold)}>
-                        {translator("landingPages.addSubscribersToGroups")}
-                    </Typography>
                     <Groups
                         classes={classes}
                         list={
@@ -87,7 +82,6 @@ const SubscriberGroup = ({ classes, data, onUpdate, onShowTestGroups, errors }: 
                         noSelectionText={''}
                         //@ts-ignore
                         innerHeight={325}
-                    // isFilterSelected={false}
                     />
                     <Box className='textBoxWrapper'>
                         <Typography className={clsx(errors.group ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

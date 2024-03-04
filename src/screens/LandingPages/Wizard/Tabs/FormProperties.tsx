@@ -59,6 +59,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             </Typography>
             <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                 <Select
+                    native
                     variant="standard"
                     name="FromEmail"
                     value={data.BaseLanguage}
@@ -77,7 +78,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                         },
                     }}
                 >
-                    {LangugeCode.map((item) => <MenuItem key={item.value} value={item.value}>{translator(item.label)}</MenuItem>)}
+                    {LangugeCode.map((item) => <option key={item.value} value={item.value}>{translator(item.label)}</option>)}
                 </Select>
             </FormControl>
             <Box className='textBoxWrapper'>
@@ -136,6 +137,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     </Typography>
                     <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                         <Select
+                            native
                             variant="standard"
                             name="AnswerType"
                             value={data.AnswerType}
@@ -151,13 +153,13 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                                 },
                             }}
                         >
-                            <MenuItem value={LandingPagesAnswerType.SYSTEM_DEFAULT_MESSAGE}>{translator("landingPages.systemDefaultMessage")}</MenuItem>
-                            <MenuItem value={LandingPagesAnswerType.POPUP_MESSAGE}>{translator("landingPages.popupMessage")}</MenuItem>
-                            <MenuItem value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</MenuItem>
-                            <MenuItem value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</MenuItem>
-                            <MenuItem value={LandingPagesAnswerType.WITHOUT_ANSWER}>{translator("landingPages.withoutAnswer")}</MenuItem>
-                            <MenuItem value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</MenuItem>
-                            <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem>
+                            <option value={LandingPagesAnswerType.SYSTEM_DEFAULT_MESSAGE}>{translator("landingPages.systemDefaultMessage")}</option>
+                            <option value={LandingPagesAnswerType.POPUP_MESSAGE}>{translator("landingPages.popupMessage")}</option>
+                            <option value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</option>
+                            <option value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</option>
+                            <option value={LandingPagesAnswerType.WITHOUT_ANSWER}>{translator("landingPages.withoutAnswer")}</option>
+                            <option value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</option>
+                            {/* <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem> */}
                         </Select>
                     </FormControl>
                 </Grid>
