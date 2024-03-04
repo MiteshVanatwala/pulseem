@@ -422,5 +422,6 @@
     "parameterInExtrnalSystem": "פרמטר במערכת החיצונית",
     "typeParamFor": "הזן פרמטר לזיהוי עבור",
     "showWizard": "הדבק נתונים או השתמש באשף"
-  }
+  },
+  "noRequiredGroupSelection": "לא חובה לבחור קבוצה בדפי נחיתה ללא טופס הרשמה"
 }

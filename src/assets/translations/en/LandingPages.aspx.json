@@ -422,5 +422,6 @@
     "parameterInExtrnalSystem": "Parameter on the External System",
     "typeParamFor": "Type your API parameter for ",
     "showWizard": "Paste / use the wizard"
-  }
+  },
+  "noRequiredGroupSelection": "Not required for Pages without registration form"
 }

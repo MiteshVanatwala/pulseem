@@ -684,12 +684,12 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						className={clsx(classes.iconTab, classes.f18)}
 						value='1'
 					/>
-					<Tab
+					{landingPageModel.PageType !== 3 && <Tab
 						label={t('landingPages.SEOSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
 						className={clsx(classes.iconTab, classes.f18)}
 						value='2'
-					/>
+					/>}
 					<Tab
 						label={t('landingPages.developmentSettings')}
 						classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -734,7 +734,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						/>
 
 						<Grid container className={clsx(classes.pb25)} spacing={3}>
-							<Grid item md={6}>
+							{landingPageModel.PageType !== 2 && <Grid item md={6}>
 								<Typography title={t("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.mt6, classes.font18)}>
 									{t("landingPages.subscriberSettings")}
 								</Typography>
@@ -747,8 +747,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									errors={errors}
 									onDone={getData}
 								/>
-							</Grid>
-							<Grid item md={6}>
+							</Grid>}
+							{landingPageModel.PageType < 3 && <Grid item md={6}>
 								<Typography className={clsx(classes.bold, classes.mt6, classes.font18)}>
 									{t("landingPages.formOfflineProperties")}
 									<Tooltip
@@ -774,10 +774,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 									errors={errors}
 									setErrors={setErrors}
 								/>
-							</Grid>
+							</Grid>}
 						</Grid>
 						<Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
-							{t("landingPages.addSubscribersToGroups")}
+							{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
 						</Typography>
 						<SubscriberGroup
 							classes={classes}

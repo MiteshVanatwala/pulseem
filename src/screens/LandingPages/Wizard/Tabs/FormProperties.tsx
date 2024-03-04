@@ -1,4 +1,4 @@
-import { Box, FormControl, Grid, IconButton, MenuItem, Select, TextField, Tooltip, Typography } from "@material-ui/core";
+import { Box, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Select, TextField, Tooltip, Typography } from "@material-ui/core";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { BsInfoCircle } from "react-icons/bs";
@@ -8,12 +8,11 @@ import { LandingPagesAnswerType } from "../../../../helpers/Constants";
 import { coreProps } from "../../../Whatsapp/Campaign/Types/WhatsappCampaign.types";
 import { isShortUrlExist } from "../../../../redux/reducers/landingPagesSlice";
 import { LangugeCode } from "../../../../model/PulseemFields/Fields";
-import { WebformsToReportLeadByApi } from "../../../../Models/LandingPage/WebformsToReportLeadByApi";
 
 
 const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors }: any) => {
     const { t: translator } = useTranslation();
-    const { isRTL, windowSize } = useSelector(
+    const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
     );
     const dispatch = useDispatch();
@@ -270,6 +269,22 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </>
             )
         }
+        <Grid item md={3} xs={12} sm={12}>
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        color="primary"
+                        inputProps={{ "aria-label": "secondary checkbox" }}
+                        onClick={() => onUpdate({
+                            ...data,
+                            IsAccessibility: !data.IsAccessibility
+                        })}
+                        checked={data.IsAccessibility}
+                    />
+                }
+                label={translator("common.accessibility")}
+            />
+        </Grid>
     </Grid >
 
 }

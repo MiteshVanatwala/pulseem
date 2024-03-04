@@ -792,5 +792,6 @@
   "finish": "Finish",
   "duplicatedValue": "Duplicated / System Value",
   "addNew": "Add New",
-  "parameters": "Parameters"
+  "parameters": "Parameters",
+  "accessibility": "Accessibility"
 }
