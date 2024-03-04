@@ -133,7 +133,11 @@ const RegistrationToApiForm = ({
         const arr = Object.values(newObj);
         // setFinalParams(arr.length > 0 ? arr.join('&') : '');
 
-        const reqUrl = requestType.toLowerCase() === 'get' ? `${regModel.RequestUrl?.split('?')[0]}?${arr.length > 0 ? arr.join('&') : ''}` : regModel.RequestUrl;
+        let reqUrl = requestType.toLowerCase() === 'get' ? `${regModel.RequestUrl?.split('?')[0]}?${arr.length > 0 ? arr.join('&') : ''}` : regModel.RequestUrl;
+
+        if (reqUrl === '?') {
+            reqUrl = '';
+        }
         setRegModel({
             ...regModel,
             RequestPostParams: arr.length > 0 ? arr.join('&') : '',
@@ -198,21 +202,21 @@ const RegistrationToApiForm = ({
 
     const renderRequestUrlValue = () => {
         if (requestType.toLowerCase() === 'get') {
-            // setRegModel({ ...regModel, RequestPostParams: '' });
             return regModel.RequestUrl;
         }
 
         const splittedUrl = regModel.RequestUrl?.split('?');
         if (splittedUrl && splittedUrl?.length >= 1) {
-            // setRegModel({ ...regModel, RequestPostParams: regModel.RequestUrl?.split('?')[1] });
         }
         return regModel.RequestUrl?.split('?')[0]
-
     }
 
     useEffect(() => {
         if (requestType.toLowerCase() === 'get') {
-            setRegModel({ ...regModel, RequestPostParams: '', RequestUrl: `${regModel.RequestUrl?.split('?')[0]}?${regModel.RequestPostParams}` });
+            setRegModel({
+                ...regModel, RequestPostParams: '',
+                RequestUrl: `${regModel.RequestUrl?.split('?')[0]}${regModel?.RequestUrl !== '' ? '?' : ''}${regModel.RequestPostParams || ''}`
+            });
         }
         else {
             const splittedUrl = regModel.RequestUrl?.split('?');
