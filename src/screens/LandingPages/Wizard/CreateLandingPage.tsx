@@ -206,7 +206,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || []
 			});
 		}
-		else if(response.StatusCode === 403){
+		else if (response.StatusCode === 403) {
 			setLandingPageModel({
 				...response.Data?.WebForm,
 				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || []
@@ -281,7 +281,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					callbackSelectFile={handleSelectedImage}
 					multiSelect={false}
 					selected={[]}
-					folderType={PulseemFolderType.DOCUMENT}
+					folderType={PulseemFolderType.CLIENT_IMAGES}
 				/>
 			),
 			onConfirm: () => {
