@@ -784,5 +784,8 @@
   "missingApi": "מפתח API לא נכון או לא תקין",
   "publish": "פרסם",
   "finish": "סיום",
-  "duplicatedValue": "ערך משוכפל / שמור"
+  "duplicatedValue": "ערך משוכפל / שמור",
+  "addNew": "הוסף",
+  "parameters": "פרמטרים",
+  "accessibility": "הוסף תמיכה בנגישות"
 }

@@ -1,149 +1,212 @@
-import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Box, Checkbox, FormControl, FormControlLabel, Grid, MenuItem, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Input, ListItemText, MenuItem, TextField, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
 import PulseemTags from '../../../../components/Tags/PulseemTags';
 import { BiPlus } from 'react-icons/bi';
-import Groups from '../../../../components/Groups/GroupsHandler/Groups';
-import { Group } from '../../../../Models/Groups/Group';
 import { coreProps } from '../../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
+import { WebformsToReportLeadByApi } from '../../../../Models/LandingPage/WebformsToReportLeadByApi';
+import RegistrationToApiForm from '../Popups/RegistrationToApiForm';
+import { useState } from 'react';
 
-const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, onShowTestGroups, errors }: any) => {
+const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, errors, onDone }: any) => {
     const { t: translator } = useTranslation();
-    const { subAccountAllGroups } = useSelector((state: any) => state.group);
-    const { testGroups } = useSelector((state: any) => state.sms);
     const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
     );
-    const [showTestGroups, setShowTestGroups] = useState(false);
-    const [selectedGroups, setSelectedGroups] = useState<any>([]);
-    const [allGroupsSelected, setAllGroupsSelected] = useState(false);
+    const [createApiIntegrations, setCreateApiIntegrations] = useState<boolean>(false);
+    const [editApiIntegrations, setEditApiIntegrations] = useState<boolean>(false);
+    const [selectedApiIntegration, setSelectedApiIntegration] = useState<WebformsToReportLeadByApi>({
+        ID: -1,
+        IsOptinSend: false,
+        Name: '',
+        RequestPostParams: '',
+        RequestUrl: ''
+    });
+    const [systemSelectOpen, setSystemSelectOpen] = useState<boolean>(false);
 
-    const callbackUpdateGroups = (groups: any) => {
-        const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
-        const groupList: Group[] = found
-            ? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
-            : [...selectedGroups, groups];
-        setSelectedGroups(groupList);
-        onUpdate({ ...data, GroupIDs: groupList.map(g => g.GroupID.toString()) })
+    const handleChangeMultiple = (event: any) => {
+        //const { value } = event.target;
+        // const value = [];
+        // for (let i = 0, l = options.length; i < l; i += 1) {
+        //     if (options[i].selected) {
+        //         value.push(options[i].value);
+        //     }
+        // }
+
+
+    };
+
+    const onEditSystem = (id: number) => {
+        const found = data?.WebformsToReportLeadByApi.find((x: WebformsToReportLeadByApi) => { return x.ID === id });
+        setSelectedApiIntegration(found);
+
+        setEditApiIntegrations(true);
     }
 
-    const callbackSelectAll = () => {
-        let groupList: Group[] = [];
-        if (!allGroupsSelected) {
-            groupList = showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups];
-        } else {
-            groupList = [];
-        }
-        setSelectedGroups(groupList);
-        setAllGroupsSelected(!allGroupsSelected);
-        onUpdate({ ...data, GroupIDs: groupList.map(g => g.GroupID.toString()) })
+    const resetSelectedApiIntegration = () => {
+        setSelectedApiIntegration({
+            ID: -1,
+            IsOptinSend: false,
+            Name: '',
+            RequestPostParams: '',
+            RequestUrl: ''
+        });
+        setEditApiIntegrations(false);
+        setCreateApiIntegrations(false);
     }
 
-    const onRemoveGroup = (leftGroups: Group[]) => {
-        if (leftGroups && leftGroups?.length > 0) {
-            setSelectedGroups(leftGroups);
-            onUpdate({ ...data, GroupIDs: leftGroups.map(g => g.GroupID.toString()) })
-        }
-        else {
-            setSelectedGroups([]);
-            onUpdate({ ...data, GroupIDs: [] })
-        }
+    const handleEditSystem = (item: WebformsToReportLeadByApi) => {
+        setSystemSelectOpen(false);
+        onEditSystem(item.ID);
     }
-
-    useEffect(() => {
-        if (data && data?.SelectedGroupList?.length > 0 && subAccountAllGroups.length > 0) {
-            const selected = data.SelectedGroupList.map((x: any) => { return subAccountAllGroups.find((s: any) => s.GroupID === parseInt(x.trim())) })
-            setSelectedGroups(selected);
-        }
-    }, [data, subAccountAllGroups]);
 
     return (
         <Grid container spacing={3} className={clsx(classes.p15)}>
-            <Grid item md={4}>
-                <Box>
-                    <Typography title={translator("landingPages.reportLeadsToEmails")} className={classes.alignDir}>
-                        {translator("landingPages.reportLeadsToEmails")}
+            <Grid item md={6} className={classes.w100}>
+                <Typography title={translator("landingPages.reportLeadsToEmails")} className={classes.alignDir}>
+                    {translator("landingPages.reportLeadsToEmails")}
+                </Typography>
+                <PulseemTags
+                    title={""}
+                    style={null}
+                    classes={classes}
+                    tagStyle={{ maxWidth: 150 }}
+                    items={data?.EmailsToReport && data?.EmailsToReport.map((emailId: string) => {
+                        return {
+                            Name: emailId,
+                            ID: emailId
+                        };
+                    })}
+                    // @ts-ignore
+                    onShowModal={() => onSetDialog({ type: 'addEmailId' })}
+                    // @ts-ignore
+                    handleRemove={removeEmailId}
+                    // @ts-ignore
+                    icon={<BiPlus />}
+                />
+                <Box className='textBoxWrapper'>
+                    <Typography className={clsx(errors.EmailsToReport ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                        {errors.EmailsToReport ?? errors.EmailsToReport}
                     </Typography>
-                    <PulseemTags
-                        title={""}
-                        style={null}
-                        classes={classes}
-                        tagStyle={{ maxWidth: 150 }}
-                        items={data?.EmailsToReport && data?.EmailsToReport.map((emailId: string) => {
-                            return {
-                                Name: emailId,
-                                ID: emailId
-                            };
-                        })}
-                        // @ts-ignore
-                        onShowModal={() => onSetDialog({ type: 'addEmailId' })}
-                        // @ts-ignore
-                        handleRemove={removeEmailId}
-                        // @ts-ignore
-                        icon={<BiPlus />}
-                    />
-                    <Box className='textBoxWrapper'>
-                        <Typography className={clsx(errors.EmailsToReport ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                            {errors.EmailsToReport ?? errors.EmailsToReport}
-                        </Typography>
-                    </Box>
                 </Box>
             </Grid>
 
-            <Grid item md={4}>
-                <Box>
-                    <Typography title={translator("landingPages.updateExistingRecipients")} className={classes.alignDir}>
-                        {translator("landingPages.updateExistingRecipients")}
-                    </Typography>
-                    <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
-                        <Select
-                            variant="standard"
-                            name="FromEmail"
-                            value={data.IsUpdate ? 1 : 0}
-                            className={classes.pbt5}
-                            onChange={(event, val) => onUpdate({ ...data, IsUpdate: event.target.value })}
-                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 300,
-                                        direction: isRTL ? 'rtl' : 'ltr'
-                                    },
+            <Grid item md={6} className={classes.w100}>
+                <Typography title={translator("landingPages.updateExistingRecipients")} className={classes.alignDir}>
+                    {translator("landingPages.updateExistingRecipients")}
+                </Typography>
+                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+                    <Select
+                        native
+                        variant="standard"
+                        name="IsUpdate"
+                        value={data.IsUpdate ? 1 : 0}
+                        className={classes.pbt5}
+                        onChange={(event, val) => onUpdate({ ...data, IsUpdate: event.target.value })}
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                        MenuProps={{
+                            PaperProps: {
+                                style: {
+                                    maxHeight: 300,
+                                    direction: isRTL ? 'rtl' : 'ltr'
                                 },
-                            }}
-                        >
-                            <MenuItem value={0}>{translator("common.disabled")}</MenuItem>
-                            <MenuItem value={1}>{translator("common.enabled")}</MenuItem>
-                        </Select>
-                    </FormControl>
+                            },
+                        }}
+                    >
+                        <option value={0}>{translator("common.disabled")}</option>
+                        <option value={1}>{translator("common.enabled")}</option>
+                    </Select>
+                </FormControl>
+            </Grid>
+
+            <Grid item md={6} className={classes.w100}>
+                <Typography title={translator("landingPages.limitNumberOfSubscribers")} className={classes.alignDir}>
+                    {translator("landingPages.limitNumberOfSubscribers")}
+                </Typography>
+                <TextField
+                    style={{ marginTop: 3 }}
+                    id="limitNumberOfSubscribers"
+                    label=""
+                    variant="outlined"
+                    name="Name"
+                    value={data.SubscriptionsLimit}
+                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+                    autoComplete="off"
+                    onChange={(e: any) => onUpdate({ ...data, SubscriptionsLimit: e.target.value < 0 ? 0 : e.target.value })}
+                    title={data.SubscriptionsLimit}
+                    type='number'
+                />
+            </Grid>
+
+            <Grid item md={6} className={classes.w100}>
+                <Typography title={translator("landingPages.sendRegistrationToExternalApi")} className={clsx(classes.alignDir)}>
+                    {translator("landingPages.sendRegistrationToExternalApi")}
+                </Typography>
+                {data.Systems && <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+                    <Select
+                        labelId="demo-mutiple-checkbox-label"
+                        id="demo-mutiple-checkbox"
+                        multiple
+                        placeholder={translator('common.SelectSystems')}
+                        name="Systems"
+                        onClick={() => setSystemSelectOpen(!systemSelectOpen)}
+                        open={systemSelectOpen}
+                        value={data?.Systems || []}
+                        input={<Input />}
+                        renderValue={() => {
+                            const selected: string[] = data?.WebformsToReportLeadByApi?.map((item: WebformsToReportLeadByApi) => {
+                                return data.Systems?.indexOf(item.ID.toString()) > -1 ? item.Name : null
+                            });
+
+                            if (selected && selected?.filter((elem: any) => { return elem !== null })?.length > 1) {
+                                return selected.join(',').slice(0, selected.lastIndexOf(','));
+                            }
+
+                            return selected;
+                        }}
+                        className={classes.pbt5}
+                        onChange={(event: any, val: any) => {
+                            const arr: string[] = event.target.value;
+
+                            const exists: WebformsToReportLeadByApi[] = data?.WebformsToReportLeadByApi?.filter((item: WebformsToReportLeadByApi) => {
+                                return arr.indexOf(item.ID.toString()) > -1
+                            });
+
+                            onUpdate({ ...data, Systems: exists.map((x: any) => x.ID.toString()) })
+
+                        }}
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                        MenuProps={{
+                            PaperProps: {
+                                style: {
+                                    maxHeight: 300,
+                                    direction: isRTL ? 'rtl' : 'ltr'
+                                }
+                            },
+                        }}
+                    >
+                        {data?.WebformsToReportLeadByApi?.map((item: WebformsToReportLeadByApi) => {
+                            return (<MenuItem key={item.ID.toString()} value={item.ID.toString()}>
+                                <Checkbox checked={data.Systems?.indexOf(item.ID.toString()) > -1} />
+                                <ListItemText primary={item.Name} />
+                                <Button onClick={(event: any) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    handleEditSystem(item);
+                                }}>{translator("common.edit")}</Button>
+                            </MenuItem>)
+                        })}
+                    </Select>
+                </FormControl>}
+                <Box className={clsx(classes.dFlex, classes.spaceBetween)}>
+                    <Button onClick={() => setCreateApiIntegrations(!createApiIntegrations)}>{translator('common.addNew')}</Button>
                 </Box>
             </Grid>
 
-            <Grid item md={4}>
-                <Box>
-                    <Typography title={translator("landingPages.limitNumberOfSubscribers")} className={classes.alignDir}>
-                        {translator("landingPages.limitNumberOfSubscribers")}
-                    </Typography>
-                    <TextField
-                        id="limitNumberOfSubscribers"
-                        label=""
-                        variant="outlined"
-                        name="Name"
-                        value={data.SubscriptionsLimit}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
-                        autoComplete="off"
-                        onChange={(e: any) => onUpdate({ ...data, SubscriptionsLimit: e.target.value < 0 ? 0 : e.target.value })}
-                        title={data.SubscriptionsLimit}
-                        type='number'
-                    />
-                </Box>
-            </Grid>
-
-            <Grid item md={12}>
+            <Grid item md={6} className={clsx(classes.dFlex)}>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -159,47 +222,21 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                     label={translator("landingPages.duplicateEmailConfirmation")}
                 />
             </Grid>
-            <Grid item md={12}>
-                <Box>
-                    <Typography title={translator("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold)}>
-                        {translator("landingPages.addSubscribersToGroups")}
-                    </Typography>
-                    <Groups
-                        classes={classes}
-                        list={
-                            subAccountAllGroups
-                        }
-                        // @ts-ignore
-                        showTestGroups={false}
-                        // test={showTestGroups}
-                        selectedList={selectedGroups}
-                        //@ts-ignore
-                        callbackSelectedGroups={callbackUpdateGroups}
-                        //@ts-ignore
-                        callbackSelectAll={callbackSelectAll}
-                        //@ts-ignore
-                        callbackShowTestGroup={() => onShowTestGroups(!showTestGroups)}
-                        callbackUpdateGroups={onRemoveGroup}
-                        showSortBy={true}
-                        showFilter={false}
-                        showSelectAll={true}
-                        isFilterSelected={false}
-                        bsDot={null}
-                        isNotifications={false}
-                        isSms={false}
-                        isCampaign={false}
-                        noSelectionText={''}
-                        //@ts-ignore
-                        innerHeight={325}
-                    // isFilterSelected={false}
-                    />
-                    <Box className='textBoxWrapper'>
-                        <Typography className={clsx(errors.group ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                            {errors.group ?? errors.group}
-                        </Typography>
-                    </Box>
-                </Box>
-            </Grid>
+            <RegistrationToApiForm
+                classes={classes}
+                webFormId={data.ID}
+                apiIntegration={selectedApiIntegration}
+                isOpen={createApiIntegrations || editApiIntegrations}
+                isNew={createApiIntegrations}
+                onClose={() => {
+                    resetSelectedApiIntegration();
+
+                }}
+                onConfirm={(d: any) => {
+                    resetSelectedApiIntegration();
+                    onDone();
+                }}
+            />
         </Grid>
     )
 }

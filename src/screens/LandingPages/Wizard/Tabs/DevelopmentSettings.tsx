@@ -7,20 +7,19 @@ const DevelopmentSettings = ({ classes, data, onUpdate }: any) => {
     const { t: translator } = useTranslation();
 
     return (<Grid container spacing={3} className={clsx(classes.p15)}>
-        <Grid item md={12}>
-            <Box>
-                <Typography title={translator("landingPages.CSSDesign")} className={classes.alignDir}>
-                    {translator("landingPages.CSSDesign")}
-                </Typography>
-                <textarea
-                    placeholder={PlaceHolders.CSS_STYLE}
-                    maxLength={1000}
-                    id="yourMessage"
-                    className={clsx(classes.textarea, classes.sidebar)}
-                    onChange={(e: any) => onUpdate({ ...data, ClientCssStyle: e.target.value })}
-                    value={data.ClientCssStyle}
-                ></textarea>
-            </Box>
+        <Grid item md={12} className={classes.w100}>
+            <Typography title={translator("landingPages.CSSDesign")} className={classes.alignDir}>
+                {translator("landingPages.CSSDesign")}
+            </Typography>
+            <textarea
+                placeholder={PlaceHolders.CSS_STYLE}
+                maxLength={1000}
+                id="yourMessage"
+                style={{ direction: 'ltr' }}
+                className={clsx(classes.textarea, classes.sidebar)}
+                onChange={(e: any) => onUpdate({ ...data, ClientCssStyle: e.target.value })}
+                value={data.ClientCssStyle}
+            ></textarea>
         </Grid>
     </Grid>)
 }

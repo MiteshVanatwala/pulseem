@@ -20,7 +20,7 @@ const PulseemTags = ({
     const { isRTL } = useSelector(state => state.core);
     return <Box className={classes.rightForm} style={{ ...style, position: 'relative' }}>
         <Box
-            style={{ minHeight: 30, maxHeight: 40, position: 'relative' }}
+            style={{ minHeight: 30, maxHeight: 30, position: 'relative' }}
             className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
             onClick={() => onShowModal()}
         >

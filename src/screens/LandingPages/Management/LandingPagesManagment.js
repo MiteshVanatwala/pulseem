@@ -147,19 +147,11 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            href={`${rootDomain}/LandingPageWizard.aspx?fromreact=true`}
+            onClick={() => navigate(`${sitePrefix}LandingPages/Create`)}
             className={clsx(classes.btn, classes.btnRounded)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t('landingPages.CreateNewResource.Text')}
-          </Button>
-
-          <Button
-            className={clsx(classes.btn, classes.btnRounded, classes.marginInlineStart10, classes.marginInlineEnd10)}
-            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-            onClick={() => navigate(`${sitePrefix}LandingPages/Create`)}
-          >
-            {t('landingPages.CreateLandingPageNew')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
@@ -246,6 +238,8 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     }
 
     const copyData = copyDataObject[Type]
+    const embedData = copyDataObject[3]
+
     const renderCopyToClipoard = (
       showCopied === ID ?
         <PopMassage
@@ -340,6 +334,24 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         rootClass: classes.minWidth95,
         text: (copyData && copyData.copy) || '',
         disable: !PageLink,
+        remove: !PageLink,
+        type: 'copy',
+        onClick: (e) => {
+          setCopyRef(e.current)
+          setShowCopied(ID)
+          setTimeout(() => {
+            setShowCopied(null)
+          }, 1000)
+        }
+      },
+      {
+        key: 'embed',
+        uIcon: CopyIcon,
+        lable: (embedData && embedData.lable) || '',
+        rootClass: classes.minWidth95,
+        text: (embedData && embedData.copy) || '',
+        disable: !PageLink,
+        remove: !PageLink,
         type: 'copy',
         onClick: (e) => {
           setCopyRef(e.current)

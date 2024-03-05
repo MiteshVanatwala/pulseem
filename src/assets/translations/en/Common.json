@@ -790,5 +790,8 @@
   "missingApi": "Missing api key",
   "publish": "Publish",
   "finish": "Finish",
-  "duplicatedValue": "Duplicated / System Value"
+  "duplicatedValue": "Duplicated / System Value",
+  "addNew": "Add New",
+  "parameters": "Parameters",
+  "accessibility": "Add accessibility support"
 }
