@@ -486,7 +486,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginTop: 20,
   },
   mt25: {
-    marginTop: 20,
+    marginTop: 25,
   },
   mb20: {
     marginBottom: 20,

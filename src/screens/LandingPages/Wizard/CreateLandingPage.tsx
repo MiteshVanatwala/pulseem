@@ -36,7 +36,7 @@ import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPa
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
-import SubscriberGroup from './Tabs/SubscriberGroup';
+// import SubscriberGroup from './Tabs/SubscriberGroup';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -64,7 +64,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		paymentAPIUsername: '',
 		paymentTerminalNumber: '',
 		offlineURL: '',
-		group: '',
 		pageDescription: '',
 		googleAnalytics: '',
 		googleConvertion: '',
@@ -105,7 +104,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		PrefunImage: '',
 		HasComments: false,
 		PageUrl: '',
-		PageType: 2,
+		PageType: 1,
 		AnswerType: 0,
 		IsResponsive: false,
 		DownloadUrl: '',
@@ -215,7 +214,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		// if (id) {
 		// }
 
-		if (subAccountAllGroups.length === 0) {
+		if (subAccountAllGroups?.length === 0) {
 			dispatch(getGroupsBySubAccountId());
 		}
 
@@ -494,7 +493,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				...landingPageModel,
 				SelectedGroupList: null,
 				EmailsToReport: landingPageModel?.EmailsToReport?.join(','),
-				GroupIDs: landingPageModel?.GroupIDs.join(',')
+				GroupIDs: landingPageModel?.GroupIDs?.join(',')
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
@@ -733,9 +732,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							setErrors={setErrors}
 						/>
 
-						<Grid container className={clsx(classes.pb25)} spacing={3}>
+						<Grid container spacing={3}>
 							{landingPageModel.PageType !== 2 && <Grid item md={6}>
-								<Typography title={t("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.mt6, classes.font18)}>
+								<Typography title={t("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.font18)}>
 									{t("landingPages.subscriberSettings")}
 								</Typography>
 								<SubscriberSettings
@@ -749,7 +748,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								/>
 							</Grid>}
 							{landingPageModel.PageType < 3 && <Grid item md={6}>
-								<Typography className={clsx(classes.bold, classes.mt6, classes.font18)}>
+								<Typography className={clsx(classes.bold, classes.font18)}>
 									{t("landingPages.formOfflineProperties")}
 									<Tooltip
 										disableFocusListener
@@ -776,7 +775,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								/>
 							</Grid>}
 						</Grid>
-						<Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
+						{/* <Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
 							{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
 						</Typography>
 						<SubscriberGroup
@@ -786,7 +785,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							onSetDialog={setDialogType}
 							removeEmailId={removeEmailId}
 							errors={errors}
-						/>
+						/> */}
 					</TabPanel>
 					<TabPanel value='2' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
 						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />

@@ -127,6 +127,22 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </Typography>
             </Box>
         </Grid>
+        <Grid item md={3} xs={12} sm={12} className={classes.mt25}>
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        color="primary"
+                        inputProps={{ "aria-label": "secondary checkbox" }}
+                        onClick={() => onUpdate({
+                            ...data,
+                            IsAccessibility: !data.IsAccessibility
+                        })}
+                        checked={data.IsAccessibility}
+                    />
+                }
+                label={translator("common.accessibility")}
+            />
+        </Grid>
 
         {
             data.PageType !== 2 && (
@@ -269,22 +285,6 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </>
             )
         }
-        <Grid item md={3} xs={12} sm={12}>
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        color="primary"
-                        inputProps={{ "aria-label": "secondary checkbox" }}
-                        onClick={() => onUpdate({
-                            ...data,
-                            IsAccessibility: !data.IsAccessibility
-                        })}
-                        checked={data.IsAccessibility}
-                    />
-                }
-                label={translator("common.accessibility")}
-            />
-        </Grid>
     </Grid >
 
 }
