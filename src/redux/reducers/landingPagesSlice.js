@@ -8,7 +8,7 @@ export const getLandingPagesData = createAsyncThunk(
   'landingpages/getLandingPages', async (_, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`landingpages/getLandingPages`);
-      return JSON.parse(response.data)
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -251,6 +251,9 @@ export const landingPagesSlice = createSlice({
     })
     builder.addCase(getLPBeeToken.fulfilled, (state, { payload }) => {
       state.LPBeeToken = payload;
+    })
+    builder.addCase(getById.fulfilled, (state, { payload }) => {
+      state.landingPage = payload;
     })
     builder.addCase(downloadReport.fulfilled, () => console.log('api downloadReport success'))
     builder.addCase(duplicteLandingPage.fulfilled, () => console.log('api duplicteLandingPage success'))

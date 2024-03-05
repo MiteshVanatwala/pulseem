@@ -33,6 +33,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 import { sitePrefix } from '../../../config';
 import { rootDomain } from '../../../helpers/Routes/routes';
+import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
 
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
@@ -213,7 +214,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   }
 
   const renderCellIcons = (row) => {
-    const { ID, IsPayment, PageLink, SurveyCount, Type, PageUrl, IsSurvey } = row
+    const { ID, IsPayment, PageLink, SurveyCount, Type, PageUrl, IsSurvey, IsNewEditor } = row
     const copyDataObject = {
       1: {
         icon: CopyIcon,
@@ -312,7 +313,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         uIcon: EditIcon,
         lable: t('landingPages.EditResource1.HeaderText'),
         remove: windowSize === 'xs',
-        href: `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
+        href: IsNewEditor ? `${sitePrefix}BeeEditor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${ID}` : `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {

@@ -6,6 +6,8 @@ import { BiSave } from 'react-icons/bi'
 import { useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md'
 import { GrGallery } from 'react-icons/gr';
+import { GiExitDoor } from "react-icons/gi";
+
 
 const WizardActions = ({
     classes,
@@ -102,7 +104,7 @@ const WizardActions = ({
                                     classes.backButton
                                 )}
                                 style={{ margin: '8px' }}
-                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                endIcon={<GiExitDoor />}
                             >{t("common.exit")}
                             </Button>
                         }

@@ -11,7 +11,7 @@ import ResponseModal from './modals/ResponseModal'
 import Toast from '../../components/Toast/Toast.component';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
-import { deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveLandingPage } from '../../redux/reducers/landingPagesSlice';
+import { deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getById, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveLandingPage } from '../../redux/reducers/landingPagesSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import { IoMdImages } from 'react-icons/io';
@@ -42,6 +42,7 @@ import { FileGallery } from '../../Models/Files/FileGallery';
 import { DemoModal } from '../HtmlCampaign/components/DemoModal';
 import { ClientForm } from '../../Models/BeeModels/BeeModel';
 import { getAccountExtraData } from '../../redux/reducers/smsSlice';
+import SubscriberGroup from '../LandingPages/Wizard/Tabs/SubscriberGroup';
 
 const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -93,6 +94,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
   });
 
   const [clientForm, setClientForm] = useState<ClientForm>({});
+  const [showGroups, setShowGroups] = useState<boolean>(false);
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -170,7 +172,7 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
     }
 
     if (Number(moduleId) > 0) {
-      if (localStorage.getItem('reloadLPBeeEditor') == '1') {
+      if (localStorage.getItem('reloadLPBeeEditor') === '1') {
         localStorage.removeItem('reloadLPBeeEditor');
         window.location.reload();
       } else getData();
@@ -236,6 +238,8 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
       dispatch(getLPBeeToken());
     }
     initBeeToken();
+    // @ts-ignore
+    const response = await dispatch(getById(moduleId));
     setDataReady(true);
   }
   //#region Init Bee Token & Configuration
@@ -1114,6 +1118,17 @@ const BeeEditorPage = ({ classes }: BeeEditorModel) => {
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       {renderDialog()}
+      <BaseDialog
+        classes={classes}
+        //@ts-ignore
+        open={showGroups}
+        childrenStyle={classes.mb25}
+        onClose={() => setDialogType(null)}
+        onCancel={() => setDialogType(null)}>
+        <SubscriberGroup
+        />
+
+      </BaseDialog>
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
   )
