@@ -272,7 +272,7 @@ export const getRoutes = (
         },
         {
           title: t("master.RadMenuItemLandingManagement.Text"),
-          href: `${sitePrefix}LandingPages`,
+          href: `${sitePrefix}EditRegistrationPage`,
           isShow: true,
         },
         {
