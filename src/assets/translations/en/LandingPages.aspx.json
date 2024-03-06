@@ -363,6 +363,7 @@
   "APIUsernameRequired": "API Username Required",
   "terminalNumber": "Terminal Number",
   "terminalNumberRequired": "Terminal Number Required",
+  "departmentNumber": "Department No.",
   "withoutAnswer": "Without Answer",
   "sendWebhook": "Send webhook",
   "formOfflineProperties": "Form Offline Properties",

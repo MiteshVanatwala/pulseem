@@ -16,6 +16,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         (state: { core: coreProps }) => state.core
     );
     const dispatch = useDispatch();
+    const PAYMENT_URL = 'https://pulseem.co.il/Pulseem/Home/PaymentPage';
 
     const checkShortURLExist = async (event: any) => {
         const shortUrl = event.target.value.replace(/ /g, '_')
@@ -25,6 +26,72 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             ...errors,
             shortURL: isExistRes?.payload?.Data === true ? translator('landingPages.shortURLExist') : ''
         })
+    }
+
+    const renderPaymentFields = () => {
+        return <>
+            <Grid item md={2} className={classes.w100}>
+                <Typography title={translator("landingPages.APIUsername")} className={classes.alignDir}>
+                    {translator("landingPages.APIUsername")}
+                </Typography>
+                <TextField
+                    label=""
+                    variant="outlined"
+                    value={data.APIUserName}
+                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.APIUserName })}
+                    autoComplete="off"
+                    onChange={(e: any) => onUpdate({ ...data, APIUserName: e.target.value })}
+                    error={!!errors.APIUserName}
+                    title={data.APIUserName}
+                />
+                <Box className='textBoxWrapper'>
+                    <Typography className={clsx(errors.APIUserName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                        {errors.APIUserName ?? errors.APIUserName}
+                    </Typography>
+                </Box>
+            </Grid>
+
+            <Grid item md={1} className={classes.w100}>
+                <Typography title={translator("landingPages.terminalNumber")} className={classes.alignDir}>
+                    {translator("landingPages.terminalNumber")}
+                </Typography>
+                <TextField
+                    label=""
+                    variant="outlined"
+                    value={data.TerminalNumber}
+                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.TerminalNumber })}
+                    autoComplete="off"
+                    onChange={(e: any) => onUpdate({ ...data, TerminalNumber: e.target.value })}
+                    error={!!errors.TerminalNumber}
+                    title={data.TerminalNumber}
+                />
+                <Box className='textBoxWrapper'>
+                    <Typography className={clsx(errors.TerminalNumber ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                        {errors.TerminalNumber ?? errors.TerminalNumber}
+                    </Typography>
+                </Box>
+            </Grid>
+            <Grid item md={1} className={classes.w100}>
+                <Typography title={translator("landingPages.departmentNumber")} className={classes.alignDir}>
+                    {translator("landingPages.departmentNumber")}
+                </Typography>
+                <TextField
+                    label=""
+                    variant="outlined"
+                    value={data.DepartmentId}
+                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.DepartmentId })}
+                    autoComplete="off"
+                    onChange={(e: any) => onUpdate({ ...data, DepartmentId: e.target.value })}
+                    error={!!errors.DepartmentId}
+                    title={data.DepartmentId}
+                />
+                <Box className='textBoxWrapper'>
+                    <Typography className={clsx(errors.DepartmentId ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                        {errors.DepartmentId ?? errors.DepartmentId}
+                    </Typography>
+                </Box>
+            </Grid>
+        </>
     }
 
     return <Grid container spacing={2} className={clsx(classes.p15, classes.mb4)}>
@@ -156,9 +223,21 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                             native
                             variant="standard"
                             name="AnswerType"
-                            value={data.AnswerType}
+                            value={
+                                data.AnswerType === LandingPagesAnswerType.REDIRECT_URL && data.AnswerData.toLowerCase().indexOf('home/paymentpage') > -1
+                                    ? LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+                                    : data.AnswerType}
                             className={classes.pbt5}
-                            onChange={(event, val) => onUpdate({ ...data, AnswerType: event.target.value })}
+                            onChange={(event: any, val: any) => {
+                                const selection = parseInt(event.target.value);
+
+                                if (selection === LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE) {
+                                    onUpdate({ ...data, AnswerType: selection, AnswerData: PAYMENT_URL });
+                                }
+                                else {
+                                    onUpdate({ ...data, AnswerType: selection, AnswerData: '' })
+                                }
+                            }}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             MenuProps={{
                                 PaperProps: {
@@ -187,43 +266,18 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             LandingPagesAnswerType.REDIRECT_URL,
             LandingPagesAnswerType.DOWNLOAD_FILE
             ].indexOf(data.AnswerType) > -1 && (
-                <Grid item md={3} className={classes.w100}>
-                    <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
-                        {translator(
-                            data.AnswerType === LandingPagesAnswerType.DOWNLOAD_FILE
-                                ? "landingPages.downloadFileUrl"
-                                : (
-                                    data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
-                                        ? "landingPages.redirectUrl"
-                                        : "landingPages.answerMessage"
-                                )
-                        )}
-                    </Typography>
-                    <TextField
-                        label=""
-                        variant="outlined"
-                        value={data.AnswerData}
-                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.AnswerData })}
-                        autoComplete="off"
-                        onChange={(e: any) => onUpdate({ ...data, AnswerData: e.target.value })}
-                        error={!!errors.AnswerData}
-                        title={data.AnswerData}
-                    />
-                    <Box className='textBoxWrapper'>
-                        <Typography className={clsx(errors.AnswerData ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                            {errors.AnswerData ?? errors.AnswerData}
-                        </Typography>
-                    </Box>
-                </Grid>
-            )
-        }
-
-        {
-            data.AnswerType === LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE && (
                 <>
                     <Grid item md={3} className={classes.w100}>
-                        <Typography title={translator("landingPages.URL")} className={classes.alignDir}>
-                            {translator("landingPages.URL")}
+                        <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
+                            {translator(
+                                data.AnswerType === LandingPagesAnswerType.DOWNLOAD_FILE
+                                    ? "landingPages.downloadFileUrl"
+                                    : (
+                                        data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
+                                            ? "landingPages.redirectUrl"
+                                            : "landingPages.answerMessage"
+                                    )
+                            )}
                         </Typography>
                         <TextField
                             label=""
@@ -241,48 +295,36 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                             </Typography>
                         </Box>
                     </Grid>
+                    {data.AnswerData.toLowerCase().indexOf('home/paymentpage') > -1 && renderPaymentFields()}
+                </>
+            )
+        }
 
+        {
+            data.AnswerType === LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE && (
+                <>
                     <Grid item md={3} className={classes.w100}>
-                        <Typography title={translator("landingPages.APIUsername")} className={classes.alignDir}>
-                            {translator("landingPages.APIUsername")}
+                        <Typography title={translator("landingPages.URL")} className={classes.alignDir}>
+                            {translator("landingPages.URL")}
                         </Typography>
                         <TextField
                             label=""
                             variant="outlined"
-                            value={data.APIUserName}
-                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.APIUserName })}
+                            value={data.AnswerData}
+                            style={{ direction: 'ltr' }}
+                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.AnswerData })}
                             autoComplete="off"
-                            onChange={(e: any) => onUpdate({ ...data, APIUserName: e.target.value })}
-                            error={!!errors.APIUserName}
-                            title={data.APIUserName}
+                            onChange={(e: any) => onUpdate({ ...data, AnswerData: e.target.value })}
+                            error={!!errors.AnswerData}
+                            title={data.AnswerData}
                         />
                         <Box className='textBoxWrapper'>
-                            <Typography className={clsx(errors.APIUserName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                {errors.APIUserName ?? errors.APIUserName}
+                            <Typography className={clsx(errors.AnswerData ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                {errors.AnswerData ?? errors.AnswerData}
                             </Typography>
                         </Box>
                     </Grid>
-
-                    <Grid item md={2} className={classes.w100}>
-                        <Typography title={translator("landingPages.terminalNumber")} className={classes.alignDir}>
-                            {translator("landingPages.terminalNumber")}
-                        </Typography>
-                        <TextField
-                            label=""
-                            variant="outlined"
-                            value={data.TerminalNumber}
-                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.TerminalNumber })}
-                            autoComplete="off"
-                            onChange={(e: any) => onUpdate({ ...data, TerminalNumber: e.target.value })}
-                            error={!!errors.TerminalNumber}
-                            title={data.TerminalNumber}
-                        />
-                        <Box className='textBoxWrapper'>
-                            <Typography className={clsx(errors.TerminalNumber ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                {errors.TerminalNumber ?? errors.TerminalNumber}
-                            </Typography>
-                        </Box>
-                    </Grid>
+                    {renderPaymentFields()}
                 </>
             )
         }

@@ -363,6 +363,7 @@
   "APIUsernameRequired": "שם משתמש API - שדה חובה",
   "terminalNumber": "מספר מסוף",
   "terminalNumberRequired": "מספר מסוף - שדה חובה",
+  "departmentNumber": "מספר מחלקה",
   "withoutAnswer": "ללא תשובה",
   "sendWebhook": "שלח Webhook",
   "formOfflineProperties": "הגדרות סיום טופס",
@@ -399,8 +400,8 @@
   "handleExitTitle": "יציאה מעריכת דף נחיתה",
   "landingPageNotFound": "דף הנחיתה לא נמצא",
   "landingPageSaved": "דף הנחיתה נשמר",
-  "redirectUrl": "Redirect URL",
-  "downloadFileUrl": "Download File URL",
+  "redirectUrl": "כתובת העברה",
+  "downloadFileUrl": "כתובת קובץ להורדה",
   "sendRegistrationToExternalApi": "העברת הנרשמים למערכת חיצונית",
   "registrationApi": {
     "title": " הוסף/ערוך מערכת חיצונית להעברת המידע",

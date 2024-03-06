@@ -79,6 +79,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		updateExistingRecipients: '',
 		limitSubscribers: '',
 		emailId: '',
+		DepartmentId: ''
 	});
 	const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
 	const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -203,10 +204,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				FacebookPixelCode: response.Data?.WebForm?.FacebookPixelCode || '',
 				GroupIDs: response.Data?.WebForm?.GroupIDs?.split(',') || [],
 				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || [],
-				IsAccessibility: (lpId && lpId > 0) ? response.Data?.IsAccessibility : true,
-				AnswerType: (lpId && lpId > 0) ? response.Data?.AnswerType : 1,
-				IsResponsive: (lpId && lpId > 0) ? response.Data?.IsResponsive : true,
-				IsTemplate: (lpId && lpId > 0) ? response.Data?.IsTemplate : false
+				IsAccessibility: (lpId && lpId > 0) ? response.Data?.WebForm?.IsAccessibility : true,
+				AnswerType: (lpId && lpId > 0) ? response.Data?.WebForm?.AnswerType : 1,
+				IsResponsive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsResponsive : true,
+				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false
 			});
 		}
 		else if (response.StatusCode === 403) {
