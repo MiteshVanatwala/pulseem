@@ -36,7 +36,6 @@ import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPa
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
-// import SubscriberGroup from './Tabs/SubscriberGroup';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -483,11 +482,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			paymentTerminalNumber: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
 			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? t('landingPages.terminalNumberRequired') : '',
-			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : '',
-			group: landingPageModel?.GroupIDs?.length === 0 ? t('landingPages.selectAtleastOneGroup') : ''
+			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : ''
 		};
 		setErrors(errorDump);
-		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
+		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL) {
 			setIsLoader(true);
 			const req = {
 				...landingPageModel,
@@ -775,17 +773,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								/>
 							</Grid>}
 						</Grid>
-						{/* <Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
-							{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
-						</Typography>
-						<SubscriberGroup
-							classes={classes}
-							data={landingPageModel}
-							onUpdate={setLandingPageModel}
-							onSetDialog={setDialogType}
-							removeEmailId={removeEmailId}
-							errors={errors}
-						/> */}
 					</TabPanel>
 					<TabPanel value='2' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
 						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
