@@ -1,50 +1,80 @@
 import clsx from 'clsx';
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { Button, Grid, Typography } from "@material-ui/core";
 import { getApiErrorResponseMessage } from '../../screens/Whatsapp/Common';
-import { coreProps } from '../../model/Core/corePros.types';
 
 export class Props {
   classes: any;
   failedTemplateResponse: string = '';
-	setDialogType: any
+	setDialogType: any;
+	translator: any;
+	isRTL: any;
 }
 
 export const TemplateErrorDialog = ({
   classes,
   failedTemplateResponse,
-	setDialogType
+	setDialogType,
+	translator,
+	isRTL
 }: Props) => {
-  const { t: translator } = useTranslation();
-	const { isRTL } = useSelector(
-		(state: { core: coreProps }) => state.core
-	);
-	const [failedTemplateReason, setFailedTemplateReason] = useState<string>('');
+  let failedTemplateReason = '';
+	let failedTemplateTitle = translator('common.ErrorTitle');
 
-	useEffect(() => {
-		if (failedTemplateResponse?.includes('BODY is missing expected field')) {
-			setFailedTemplateReason('invalidTemplateName');
-		} else if (
-			failedTemplateResponse?.includes('FOOTER is missing expected field')
-		) {
-			setFailedTemplateReason('noFooter');
-		} else if (failedTemplateResponse?.includes('is not a valid phone number')) {
-			setFailedTemplateReason('invalidPhone');
-		} else if (
-			failedTemplateResponse?.includes(
-				'Character Limit Exceeded. The Body (or Content) field '
-			)
-		) {
-			setFailedTemplateReason('characterExceeded');
-		} else {
-			setFailedTemplateReason('common');
-		}
-	}, [ failedTemplateResponse ])
+	if (failedTemplateResponse?.includes('component of type FOOTER is missing expected field(s) (text)')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'footerIsMissingExpectedField';
+	} else if (failedTemplateResponse?.includes('#common-rejection-reasons for more information')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'invalidFormat';
+	} else if (failedTemplateResponse?.includes('INCORRECT_CATEGORY')) {
+		failedTemplateTitle = 'incorrectCategory';
+		failedTemplateReason = 'categoryNotMatched';
+	} else if (failedTemplateResponse?.includes('SCAM')) {
+		failedTemplateTitle = 'suspectedScam';
+		failedTemplateReason = 'suspectedScam';
+	} else if (failedTemplateResponse?.includes('component of type BODY is missing expected field')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'bodyIsMissingExpectedField';
+	} else if (failedTemplateResponse === 'INVALID_FORMAT') {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'invalidFormat';
+	} else if (failedTemplateResponse?.includes('is not a valid phone number.')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'invalidPhoneNumber';
+	} else if (failedTemplateResponse?.includes('Character Limit Exceeded')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'moreCharacters';
+	} else if (failedTemplateResponse?.includes('ABUSIVE_CONTENT')) {
+		failedTemplateTitle = 'abusiveContent';
+		failedTemplateReason = 'abusiveContentsInTemplate';
+	} else if (failedTemplateResponse?.includes('BUTTONS is missing expected field')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'buttonIsMissingExpectedField';
+	} else if (failedTemplateResponse?.includes('more than 1,024 characters.')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'moreThan1024Characters';
+	} else if (failedTemplateResponse?.includes('variables, newlines, emojis, or formatting characters.')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'invalidButtonFormat';
+	} else if (failedTemplateResponse?.includes('No elements passed in the last 10000000000 nanoseconds.')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'noElementPassed';
+	} else if (failedTemplateResponse?.includes('more than two consecutive newline characters.')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'twoNewLineCharactersNotAllowed';
+	} else if (failedTemplateResponse?.includes('404 Not Found')) {
+		failedTemplateTitle = '404NotFound';
+		failedTemplateReason = 'unableToReadFromURL';
+	} else if (failedTemplateResponse?.includes('AUTHENTICATION category')) {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'noImageAuthentication';
+	} else {
+		failedTemplateTitle = 'invalidFormat';
+		failedTemplateReason = 'invalidFormat';
+	}
 
   return ({
-    title: translator('common.ErrorTitle'),
+    title: translator(getApiErrorResponseMessage('templateError', failedTemplateTitle)),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
