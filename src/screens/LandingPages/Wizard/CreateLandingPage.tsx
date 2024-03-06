@@ -553,7 +553,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	// 0 - Don't redirect, 1 - New Editor, 2 - Old Editor
 	const handleContinueToEditor = (navigateBeEditor = 0, savedPageID: number) => {
 		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && !navigateBeEditor);
-		let redirectUrl = isBeeEditor ? `${sitePrefix}BeeEditor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${id}` : `/Pulseem/NewWebForm/NewFormEdit/${id}?fromreact=true`;
+		let redirectUrl = isBeeEditor ? `${sitePrefix}BeeEditor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${id || savedPageID}` : `/Pulseem/NewWebForm/NewFormEdit/${id || savedPageID}?fromreact=true`;
 		if (!navigateBeEditor) {
 			if (!id && savedPageID) navigate(`${sitePrefix}LandingPages/Create/${savedPageID}`)
 			else {
