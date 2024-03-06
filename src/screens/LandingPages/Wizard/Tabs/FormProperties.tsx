@@ -138,6 +138,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                             IsAccessibility: !data.IsAccessibility
                         })}
                         checked={data.IsAccessibility}
+                        value={data.IsAccessibility}
                     />
                 }
                 label={translator("common.accessibility")}

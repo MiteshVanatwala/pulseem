@@ -104,18 +104,18 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		HasComments: false,
 		PageUrl: '',
 		PageType: 1,
-		AnswerType: 0,
-		IsResponsive: false,
+		AnswerType: 1,
+		IsResponsive: true,
 		DownloadUrl: '',
 		OfflineDate: '',
 		OfflineUrl: '',
 		HtmlToEdit: '',
 		HtmlFile: '',
 		BaseLanguage: 0,
-		IsTemplate: null,
+		IsTemplate: false,
 		CategoryID: null,
 		IsUpdate: false,
-		IsAccessibility: false,
+		IsAccessibility: true,
 		TerminalNumber: '',
 		APIUserName: '',
 		DepartmentId: null,
@@ -158,8 +158,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 	const getData = async () => {
 		setIsLoader(true);
 
+		const lpId: number | any = id || -1;
 		// @ts-ignore
-		const res = await dispatch(getById(id ?? -1));
+		const res = await dispatch(getById(lpId));
 		const response = res.payload as PulseemResponse;
 		if (response.StatusCode === 201) {
 			setLandingPageModel({
@@ -201,13 +202,24 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				GoogleTagManagerCode: response.Data?.WebForm?.GoogleTagManagerCode || '',
 				FacebookPixelCode: response.Data?.WebForm?.FacebookPixelCode || '',
 				GroupIDs: response.Data?.WebForm?.GroupIDs?.split(',') || [],
-				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || []
+				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || [],
+				IsAccessibility: (lpId && lpId > 0) ? response.Data?.IsAccessibility : true,
+				AnswerType: (lpId && lpId > 0) ? response.Data?.AnswerType : 1,
+				IsResponsive: (lpId && lpId > 0) ? response.Data?.IsResponsive : true,
+				IsTemplate: (lpId && lpId > 0) ? response.Data?.IsTemplate : false
 			});
 		}
 		else if (response.StatusCode === 403) {
 			setLandingPageModel({
 				...response.Data?.WebForm,
-				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || []
+				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || [],
+				IsAccessibility: true,
+				AnswerType: 1,
+				IsResponsive: true,
+				IsTemplate: false,
+				PageType: 1,
+				DownloadUrl: '',
+				Status: 1
 			});
 		}
 		// if (id) {
@@ -579,40 +591,12 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						style={{ margin: '8px' }}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
-						{t("common.save")}
-					</Button>
-					<Button
-						onClick={saveAndContinueToOldEditor}
-						className={clsx(
-							classes.btn,
-							classes.btnRounded,
-							classes.backButton
-						)}
-						style={{ margin: '8px' }}
-						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-					>
 						{t('common.continue')}
 					</Button>
 				</>
 			);
 		}
 		else {
-			wizardButtons.push(
-				<Button
-					onClick={() => save(0)}
-					className={clsx(
-						classes.btn,
-						classes.btnRounded,
-						classes.backButton
-					)}
-					style={{ margin: '8px' }}
-					endIcon={<MdSave />}
-					key="save"
-				>
-					{t("common.save")}
-				</Button>
-			);
-
 			wizardButtons.push(
 				<Button
 					onClick={saveAndContinueToOldEditor}
@@ -628,22 +612,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					<>{t('common.saveAndContinue')}</>
 				</Button>
 			);
-
-			// wizardButtons.push(
-			// 	<Button
-			// 		onClick={saveAndContinueToNewEditor}
-			// 		className={clsx(
-			// 			classes.btn,
-			// 			classes.btnRounded,
-			// 			classes.backButton
-			// 		)}
-			// 		style={{ margin: '8px' }}
-			// 		endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-			// 		key='newEditor'
-			// 	>
-			// 		{t('master.continueToNewEditor')}
-			// 	</Button>
-			// );
 		}
 		return wizardButtons.map((b) => b);
 	}
