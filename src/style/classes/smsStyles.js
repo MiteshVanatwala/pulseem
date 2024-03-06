@@ -264,8 +264,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         fontSize: "16px",
         fontWeight: "700",
         marginBottom: "2px",
-        cursor: "pointer",
-        color: "#0371ad",
+        color: "#000",
         paddingBottom: "5px",
     },
     summaryFilterItem: {
@@ -292,7 +291,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     summaryDetailsSpan: {
         padding: "5px 20px",
         fontSize: 18,
-        color: "#1c82b2"
+        color: "#ff3343"
     },
     summaryDetailsSpanBold: {
         marginLeft: 5,
