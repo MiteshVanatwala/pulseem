@@ -205,6 +205,15 @@ export const deleteApiIntegration = createAsyncThunk(
     }
   });
 
+export const getPageHeight = createAsyncThunk(
+  '/landingpages/GetPageHeight/', async (id, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`/landingpages/GetPageHeight/${id}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 
 

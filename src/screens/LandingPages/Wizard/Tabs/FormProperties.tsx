@@ -8,6 +8,7 @@ import { LandingPagesAnswerType } from "../../../../helpers/Constants";
 import { coreProps } from "../../../Whatsapp/Campaign/Types/WhatsappCampaign.types";
 import { isShortUrlExist } from "../../../../redux/reducers/landingPagesSlice";
 import { LangugeCode } from "../../../../model/PulseemFields/Fields";
+import { useState } from "react";
 
 
 const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setErrors }: any) => {
@@ -17,6 +18,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
     );
     const dispatch = useDispatch();
     const PAYMENT_URL = 'https://pulseem.co.il/Pulseem/Home/PaymentPage';
+    const [urlLocked, setUrlLoceked] = useState<boolean>(false);
 
     const checkShortURLExist = async (event: any) => {
         const shortUrl = event.target.value.replace(/ /g, '_')
@@ -94,6 +96,16 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         </>
     }
 
+    const handlePageName = (e: any) => {
+        if (urlLocked || data.ID > 0) {
+            onUpdate({ ...data, PageName: e.target.value })
+        }
+        else {
+            onUpdate({ ...data, PageName: e.target.value, PageUrl: e.target.value.replace(/ /g, '_') })
+        }
+
+    }
+
     return <Grid container spacing={2} className={clsx(classes.p15, classes.mb4)}>
         <Grid item md={3} xs={12} sm={12}>
             <Typography title={translator("campaigns.camapignName")} className={classes.alignDir}>
@@ -107,7 +119,8 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 value={data.PageName}
                 className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.PageName })}
                 autoComplete="off"
-                onChange={(e: any) => onUpdate({ ...data, PageName: e.target.value, PageUrl: e.target.value.replace(/ /g, '_') })}
+                onBlur={() => { setUrlLoceked(true) }}
+                onChange={(e: any) => { handlePageName(e) }}
                 error={!!errors.PageName}
                 title={data.PageName}
             // onBlur={handleFromName}
@@ -154,7 +167,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             </Box>
         </Grid>
 
-        <Grid item md={3} className={classes.w100}>
+        {data.PageType < 3 && <Grid item md={3} className={classes.w100}>
             <Typography title={translator("landingPages.shortURL")} className={classes.alignDir}>
                 {translator("landingPages.shortURL")}
                 <Tooltip
@@ -186,15 +199,15 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 onBlur={checkShortURLExist}
             />
             <Box className='textBoxWrapper'>
-                <Typography className={clsx(classes.f16)}>
-                    https://testpul.site/{data.PageUrl}
+                <Typography className={clsx(classes.f13)} style={{ direction: 'ltr' }}>
+                    https://l-p.site/clientpages/{data.PageUrl}
                 </Typography>
                 <Typography className={clsx(classes.errorText, classes.f14)}>
                     {errors.shortURL ?? errors.shortURL}
                 </Typography>
             </Box>
-        </Grid>
-        <Grid item md={3} xs={12} sm={12} className={classes.mt25}>
+        </Grid>}
+        <Grid item md={data.PageType < 3 ? 3 : 6} xs={12} sm={12} className={classes.mt25}>
             <FormControlLabel
                 control={
                     <Checkbox
