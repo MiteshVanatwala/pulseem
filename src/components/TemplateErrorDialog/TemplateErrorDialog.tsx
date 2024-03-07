@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import { Button, Grid, Typography } from "@material-ui/core";
 import { getApiErrorResponseMessage } from '../../screens/Whatsapp/Common';
+import { templateErrors } from '../../screens/Whatsapp/Constant';
+import { WhatsappTemplateError } from '../../screens/Whatsapp/Editor/Types/WhatsappCreator.types';
 
 export class Props {
   classes: any;
@@ -17,60 +19,18 @@ export const TemplateErrorDialog = ({
 	translator,
 	isRTL
 }: Props) => {
-  let failedTemplateReason = '';
-	let failedTemplateTitle = translator('common.ErrorTitle');
+  let failedTemplateReason: string = 'invalidFormat';
+	let failedTemplateTitle: string = 'common.ErrorTitle';
 
-	if (failedTemplateResponse?.includes('component of type FOOTER is missing expected field(s) (text)')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'footerIsMissingExpectedField';
-	} else if (failedTemplateResponse?.includes('#common-rejection-reasons for more information')) {
+	if (failedTemplateResponse === undefined) return {};
+	else if (failedTemplateResponse === 'INVALID_FORMAT') {
 		failedTemplateTitle = 'invalidFormat';
 		failedTemplateReason = 'invalidFormat';
-	} else if (failedTemplateResponse?.includes('INCORRECT_CATEGORY')) {
-		failedTemplateTitle = 'incorrectCategory';
-		failedTemplateReason = 'categoryNotMatched';
-	} else if (failedTemplateResponse?.includes('SCAM')) {
-		failedTemplateTitle = 'suspectedScam';
-		failedTemplateReason = 'suspectedScam';
-	} else if (failedTemplateResponse?.includes('component of type BODY is missing expected field')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'bodyIsMissingExpectedField';
-	} else if (failedTemplateResponse === 'INVALID_FORMAT') {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'invalidFormat';
-	} else if (failedTemplateResponse?.includes('is not a valid phone number.')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'invalidPhoneNumber';
-	} else if (failedTemplateResponse?.includes('Character Limit Exceeded')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'moreCharacters';
-	} else if (failedTemplateResponse?.includes('ABUSIVE_CONTENT')) {
-		failedTemplateTitle = 'abusiveContent';
-		failedTemplateReason = 'abusiveContentsInTemplate';
-	} else if (failedTemplateResponse?.includes('BUTTONS is missing expected field')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'buttonIsMissingExpectedField';
-	} else if (failedTemplateResponse?.includes('more than 1,024 characters.')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'moreThan1024Characters';
-	} else if (failedTemplateResponse?.includes('variables, newlines, emojis, or formatting characters.')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'invalidButtonFormat';
-	} else if (failedTemplateResponse?.includes('No elements passed in the last 10000000000 nanoseconds.')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'noElementPassed';
-	} else if (failedTemplateResponse?.includes('more than two consecutive newline characters.')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'twoNewLineCharactersNotAllowed';
-	} else if (failedTemplateResponse?.includes('404 Not Found')) {
-		failedTemplateTitle = '404NotFound';
-		failedTemplateReason = 'unableToReadFromURL';
-	} else if (failedTemplateResponse?.includes('AUTHENTICATION category')) {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'noImageAuthentication';
 	} else {
-		failedTemplateTitle = 'invalidFormat';
-		failedTemplateReason = 'invalidFormat';
+		// @ts-ignore
+		const error = templateErrors.find((sr: WhatsappTemplateError) => failedTemplateResponse.contains(sr.key));
+		failedTemplateTitle = error?.title || 'invalidFormat';
+		failedTemplateReason = error?.reason || 'common.ErrorTitle';
 	}
 
   return ({
