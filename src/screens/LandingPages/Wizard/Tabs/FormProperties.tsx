@@ -31,7 +31,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
     }
 
     // Stage
-    const domain = ' https://testpul.site/clientpages/';
+    const domain = 'https://testpul.site/clientpages/';
     // Prod
     //const domain = ' https://l-p.site/clientpages/';
 
