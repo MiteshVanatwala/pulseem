@@ -30,6 +30,12 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
         })
     }
 
+    // Stage
+    const domain = ' https://testpul.site/clientpages/';
+    // Prod
+    //const domain = ' https://l-p.site/clientpages/';
+
+
     const renderPaymentFields = () => {
         return <>
             <Grid item md={2} className={classes.w100}>
@@ -200,7 +206,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             />
             <Box className='textBoxWrapper'>
                 <Typography className={clsx(classes.f13)} style={{ direction: 'ltr' }}>
-                    https://l-p.site/clientpages/{data.PageUrl}
+                    {domain}{data.PageUrl}
                 </Typography>
                 <Typography className={clsx(classes.errorText, classes.f14)}>
                     {errors.shortURL ?? errors.shortURL}
