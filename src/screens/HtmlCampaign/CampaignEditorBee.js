@@ -178,6 +178,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, []);
   useEffect(() => {
     if (userBlocks) {
+      if (localStorage.getItem('reloadBeeEditor') === '1') {
+        localStorage.removeItem('reloadBeeEditor');
+        initBeeEditor();
+      }
       return new Promise((resolve) => {
         userBlocks.forEach(x => setRow(x.data));
         resolve();
@@ -594,6 +598,11 @@ const CampaignEditor = ({ classes, ...props }) => {
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       dispatch(getUserblocks());
+      let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
+      var tags = [].concat.apply([], tempTags);
+      if (tags && tags?.length > 0 && tags.indexOf('product-catalog') === -1) {
+        localStorage.setItem('reloadBeeEditor', 1);
+      }
     });
   }
   const onEditBlock = (blockRequest) => {

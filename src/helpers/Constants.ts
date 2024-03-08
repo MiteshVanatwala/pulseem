@@ -212,3 +212,12 @@ export const FBBusiness = 'https://business.facebook.com/wa/manage/';
 
 export const SizeOptionsOfHandHeldDevices = ['xs', 'sm', 'md'];
 export const SizeOptions_XS_SM = ['xs', 'sm'];
+
+export const DynamicProductGrid: any = {
+    Item_1: { image: 4, content: 8 },
+    Item_2: { image: 2, content: 4 },
+    Item_3: { image: 2, content: 2 },
+    Item_4: { image: 1, content: 2 },
+    Item_5: { image: 1, content: 1 },
+    Item_6: { image: 1, content: 1 },
+}

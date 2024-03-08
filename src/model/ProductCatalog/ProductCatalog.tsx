@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import { StateType } from '../../Models/StateTypes';
 import Select from '@mui/material/Select';
 import { IoIosArrowDown } from 'react-icons/io';
+import { DynamicProductGrid } from '../../helpers/Constants';
 
 const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) => {
   const { t } = useTranslation();
@@ -97,6 +98,8 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const getProductJSON = () => {
     const productJSON = [];
     if (structure === Structure.Horizontal) {
+      const imageCol = DynamicProductGrid[`Item_${uptoProducts}`].image;
+      const contentCol = DynamicProductGrid[`Item_${uptoProducts}`].content;
       var productCol: any = JSON.parse(JSON.stringify(PulColItem));
       productCol['uuid'] = uuidv4();
       if (isImageVisible) {
@@ -105,7 +108,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['paragraph']['html'] = '#productsrc#';
         image['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         productCol['modules'].push(image);
-        productCol['grid-columns'] = 4;
+        productCol['grid-columns'] = imageCol;
         productJSON.push(productCol);
       }
 
@@ -144,13 +147,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         moduleItems.push(button);
       }
 
-      if (isImageVisible) productCol['grid-columns'] = 8;
+      if (isImageVisible) productCol['grid-columns'] = contentCol;
       productCol['modules'] = moduleItems;
       productJSON.push(productCol);
     } else {
       let productCol: any = Object.assign({}, PulColItem);
       productCol['uuid'] = uuidv4();
-      productCol['grid-columns'] = 12;
+      productCol['grid-columns'] = 12 / uptoProducts;
       let moduleItems = [];
       // moduleItems.push(PulProductContainerStart);
       if (isImageVisible) {
