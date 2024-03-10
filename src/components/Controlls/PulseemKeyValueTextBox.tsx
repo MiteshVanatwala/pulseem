@@ -1,5 +1,5 @@
 
-const PulseemKeyValueTextBox = ({data}) => {
+const PulseemKeyValueTextBox = ({ data }: any) => {
 
     return <></>
 }
