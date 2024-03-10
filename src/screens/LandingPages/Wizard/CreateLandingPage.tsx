@@ -216,6 +216,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				IsResponsive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsResponsive : true,
 				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false
 			});
+			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
+				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
+			}
 		}
 		else if (response.StatusCode === 403) {
 			setLandingPageModel({
@@ -247,7 +250,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		getData();
 	}, []);
 
-	const handleSelectedImage = async (file: string) => {
+	const handleSelectedImage = async (file: string, preventUpdateModel: boolean) => {
 		if (!file || file[0] === '') {
 			setIsFileSelected(false);
 			return;
@@ -260,12 +263,16 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 		if (!existFile) {
 			let fileName = file.split('/')[file.split('/').length - 1];
+			let iconName = `${file?.split('/')[file?.split('/')?.length - 2]}/${file.split('/')[file.split('/').length - 1]}`;
 			const newFile = {
 				Name: fileName,
 				FileName: fileName,
 				FolderType: PulseemFolderType.CLIENT_IMAGES,
 				FileURL: file,
 				ID: RandomID()
+			}
+			if (!preventUpdateModel) {
+				setLandingPageModel({ ...landingPageModel, LinkPreviewIconName: iconName })
 			}
 			existsFiles.push(newFile as any);
 		}
@@ -489,7 +496,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			result = ClientScriptsWrapper.Google_Analytics.replace('##code##', landingPageModel.GoogleAnalyticsCode);
 		}
 		if (landingPageModel.GoogleTagManagerCode !== '') {
-			result += ClientScriptsWrapper.Google_Tag_Manager.replace('##code##', landingPageModel.GoogleTagManagerCode);
+			const headTagManager = landingPageModel.GoogleTagManagerCode.split('</script>')[0] + '</script>';
+			result += ClientScriptsWrapper.Google_Tag_Manager.replace('##code##', headTagManager);
 		}
 		if (landingPageModel.FacebookPixelCode !== '') {
 			result += ClientScriptsWrapper.Facebook_Pixel.replace('##code##', landingPageModel.FacebookPixelCode);
@@ -503,7 +511,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		if (landingPageModel.GoogleConvertionCode !== '') {
 			result += ClientScriptsWrapper.Google_Conversion.replace('##code##', landingPageModel.GoogleConvertionCode);
 		}
-
+		if (landingPageModel.GoogleTagManagerCode !== '') {
+			const bodyTagManager = '<noscript>' + landingPageModel.GoogleTagManagerCode.split('<noscript>')[1];
+			result += ClientScriptsWrapper.Google_Tag_Manager.replace('##code##', bodyTagManager);
+		}
+		
 		return result as string;
 	}
 
