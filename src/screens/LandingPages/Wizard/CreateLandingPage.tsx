@@ -230,7 +230,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				IsTemplate: false,
 				PageType: 1,
 				DownloadUrl: '',
-				Status: 1
+				Status: 1,
+				GoogleAnalyticsCode: '',
+				GoogleConvertionCode: '',
+				GoogleTagManagerCode: '',
+				FacebookPixelCode: '',
 			});
 		}
 		// if (id) {
@@ -515,7 +519,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			const bodyTagManager = '<noscript>' + landingPageModel.GoogleTagManagerCode.split('<noscript>')[1];
 			result += ClientScriptsWrapper.Google_Tag_Manager.replace('##code##', bodyTagManager);
 		}
-		
+
 		return result as string;
 	}
 
