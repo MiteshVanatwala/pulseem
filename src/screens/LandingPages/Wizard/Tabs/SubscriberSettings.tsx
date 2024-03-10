@@ -103,9 +103,10 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                         native
                         variant="standard"
                         name="IsUpdate"
-                        value={data.IsUpdate ? 1 : 0}
+                        // value={data.IsUpdate ? 1 : 0}
                         className={classes.pbt5}
-                        onChange={(event, val) => onUpdate({ ...data, IsUpdate: event.target.value })}
+                        renderValue={data.IsUpdate}
+                        onChange={(event, val) => onUpdate({ ...data, IsUpdate: event.target.value === 1 })}
                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         MenuProps={{
                             PaperProps: {

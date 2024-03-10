@@ -7,7 +7,7 @@ import { PlaceHolders } from '../../../../helpers/Constants';
 
 const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
     const { t: translator } = useTranslation();
-    
+
     return (<Grid container spacing={3} className={clsx(classes.p15)}>
         <Grid item md={12} className={classes.w100}>
             <Typography title={translator("landingPages.pageTitle")} className={classes.alignDir}>
@@ -38,6 +38,15 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                 multiple
                 key={data.MetaKeywords}
                 value={data?.MetaKeywords || ''}
+                // @ts-ignore
+                onBlur={(event: any) => {
+                    if (event.target.value !== '' && event.target.value.trim() !== '') {
+                        onUpdate({
+                            ...data,
+                            MetaKeywords: (data?.MetaKeywords === null || data?.MetaKeywords === '') ? `${event.target.value}` : `${data.MetaKeywords}, ${event.target.value}`
+                        })
+                    }
+                }}
                 onChange={(event: any, value: any, reason: any) => {
                     if (reason === 'createOption') {
                         if (value[0].trim() !== '') {
@@ -87,8 +96,8 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                 id="yourMessage"
                 className={clsx(classes.textarea, classes.sidebar)}
                 style={{ textAlign: 'left', direction: 'ltr' }}
-                onChange={(e: any) => onUpdate({ ...data, ClientJavaScript: e.target.value })}
-                value={data.ClientJavaScript}
+                onChange={(e: any) => onUpdate({ ...data, GoogleAnalyticsCode: e.target.value })}
+                value={data.GoogleAnalyticsCode}
             ></textarea>
         </Grid>
 
@@ -102,8 +111,8 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                 id="yourMessage"
                 className={clsx(classes.textarea, classes.sidebar)}
                 style={{ textAlign: 'left', direction: 'ltr' }}
-                onChange={(e: any) => onUpdate({ ...data, ClientBodyScript: e.target.value })}
-                value={data.ClientBodyScript}
+                onChange={(e: any) => onUpdate({ ...data, GoogleConvertionCode: e.target.value })}
+                value={data.GoogleConvertionCode}
             ></textarea>
         </Grid>
 
@@ -117,8 +126,8 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                 id="yourMessage"
                 className={clsx(classes.textarea, classes.sidebar)}
                 style={{ textAlign: 'left', direction: 'ltr' }}
-                onChange={(e: any) => onUpdate({ ...data, googleTagManager: e.target.value })}
-                value={data.googleTagManager}
+                onChange={(e: any) => onUpdate({ ...data, GoogleTagManagerCode: e.target.value })}
+                value={data.GoogleTagManagerCode}
             ></textarea>
         </Grid>
 
