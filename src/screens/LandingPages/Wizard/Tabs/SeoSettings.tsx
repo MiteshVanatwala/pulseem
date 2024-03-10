@@ -97,7 +97,7 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                 className={clsx(classes.textarea, classes.sidebar)}
                 style={{ textAlign: 'left', direction: 'ltr' }}
                 onChange={(e: any) => onUpdate({ ...data, GoogleAnalyticsCode: e.target.value })}
-                value={data.GoogleAnalyticsCode}
+                value={data.GoogleAnalyticsCode || ''}
             ></textarea>
         </Grid>
 
@@ -112,7 +112,7 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                 className={clsx(classes.textarea, classes.sidebar)}
                 style={{ textAlign: 'left', direction: 'ltr' }}
                 onChange={(e: any) => onUpdate({ ...data, GoogleConvertionCode: e.target.value })}
-                value={data.GoogleConvertionCode}
+                value={data.GoogleConvertionCode || ''}
             ></textarea>
         </Grid>
 
@@ -127,7 +127,7 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                 className={clsx(classes.textarea, classes.sidebar)}
                 style={{ textAlign: 'left', direction: 'ltr' }}
                 onChange={(e: any) => onUpdate({ ...data, GoogleTagManagerCode: e.target.value })}
-                value={data.GoogleTagManagerCode}
+                value={data.GoogleTagManagerCode || ''}
             ></textarea>
         </Grid>
 
@@ -142,7 +142,7 @@ const SeoSettings = ({ classes, data, onUpdate, errors }: any) => {
                 className={clsx(classes.textarea, classes.sidebar)}
                 style={{ textAlign: 'left', direction: 'ltr' }}
                 onChange={(e: any) => onUpdate({ ...data, FacebookPixelCode: e.target.value })}
-                value={data.FacebookPixelCode}
+                value={data?.FacebookPixelCode || ''}
             ></textarea>
         </Grid>
     </Grid>)
