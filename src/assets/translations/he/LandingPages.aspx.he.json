@@ -371,6 +371,7 @@
   "formOfflineDateTooltip": "במידה וגולש מגיעה לדף שפג תוקף הפרסום שלו או מספר ההרשמות בדף הגיעה למגבלה הגולש יועבר לדף סיום פרסום או יקבל הודעת מערכת סטנדרטית",
   "redirectURLWhenOffline": "כתובת העברה לאחר סיום פרסום",
   "invalidRedirectURLWhenOffline": "הזן כתובת URL חוקית",
+  "invalidDownloadURL": "כתובת קובץ להורדה לא חוקית",
   "subscriberSettings": "הגדרות נרשמים",
   "addSubscribersToGroups": "הוסף נרשמים לקבוצות",
   "selectAtleastOneGroup": "בחר לפחות קבוצה אחת",
