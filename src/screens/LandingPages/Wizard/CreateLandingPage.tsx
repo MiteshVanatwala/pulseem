@@ -156,6 +156,13 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		(state: { landingPages: any }) => state.landingPages
 	);
 
+	const ClientScriptsWrapper = {
+		Facebook_Pixel: '<!-- Facebook Pixel Start -->##code##<!-- Facebook Pixel End -->', // Head
+		Google_Analytics: '<!-- Google Analytics Start -->##code##<!-- Google Analytics End -->', // Head
+		Google_Tag_Manager: '<!-- Google Tag Manager Start -->##code##<!-- Google Tag Manager End -->', // Head
+		Google_Conversion: '<!-- Google Convertion Start -->##code##<!-- Google Convertion End -->' // Body
+	} as any;
+
 	const getData = async () => {
 		setIsLoader(true);
 
@@ -209,6 +216,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				IsResponsive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsResponsive : true,
 				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false
 			});
+			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
+				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
+			}
 		}
 		else if (response.StatusCode === 403) {
 			setLandingPageModel({
@@ -220,7 +230,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				IsTemplate: false,
 				PageType: 1,
 				DownloadUrl: '',
-				Status: 1
+				Status: 1,
+				GoogleAnalyticsCode: '',
+				GoogleConvertionCode: '',
+				GoogleTagManagerCode: '',
+				FacebookPixelCode: '',
 			});
 		}
 		// if (id) {
@@ -240,7 +254,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		getData();
 	}, []);
 
-	const handleSelectedImage = async (file: string) => {
+	const handleSelectedImage = async (file: string, preventUpdateModel: boolean) => {
 		if (!file || file[0] === '') {
 			setIsFileSelected(false);
 			return;
@@ -253,12 +267,16 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 		if (!existFile) {
 			let fileName = file.split('/')[file.split('/').length - 1];
+			let iconName = `${file?.split('/')[file?.split('/')?.length - 2]}/${file.split('/')[file.split('/').length - 1]}`;
 			const newFile = {
 				Name: fileName,
 				FileName: fileName,
 				FolderType: PulseemFolderType.CLIENT_IMAGES,
 				FileURL: file,
 				ID: RandomID()
+			}
+			if (!preventUpdateModel) {
+				setLandingPageModel({ ...landingPageModel, LinkPreviewIconName: iconName })
 			}
 			existsFiles.push(newFile as any);
 		}
@@ -309,7 +327,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			emailId: isValid ? '' : t('common.invalidEmail')
 		});
 
-		if (isValid && landingPageModel.EmailsToReport.indexOf(emailId) !== -1) {
+		if (isValid && landingPageModel?.EmailsToReport?.length > 0 && landingPageModel?.EmailsToReport?.indexOf(emailId) > -1) {
 			setErrors({
 				...errors,
 				emailId: t('common.EmailExist')
@@ -320,7 +338,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		if (isValid) {
 			setLandingPageModel({
 				...landingPageModel,
-				EmailsToReport: [...landingPageModel.EmailsToReport, emailId]
+				EmailsToReport: [...landingPageModel?.EmailsToReport || [], emailId]
 			});
 			setDialogType(null);
 			setEmailId('');
@@ -476,6 +494,35 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		}
 	}
 
+	const prepareHeadScript = () => {
+		let result = '';
+		if (landingPageModel.GoogleAnalyticsCode !== '') {
+			result = ClientScriptsWrapper.Google_Analytics.replace('##code##', landingPageModel.GoogleAnalyticsCode);
+		}
+		if (landingPageModel.GoogleTagManagerCode !== '') {
+			const headTagManager = landingPageModel.GoogleTagManagerCode.split('</script>')[0] + '</script>';
+			result += ClientScriptsWrapper.Google_Tag_Manager.replace('##code##', headTagManager);
+		}
+		if (landingPageModel.FacebookPixelCode !== '') {
+			result += ClientScriptsWrapper.Facebook_Pixel.replace('##code##', landingPageModel.FacebookPixelCode);
+		}
+
+		return result as string;
+	}
+
+	const prepareBodyScript = () => {
+		let result = '';
+		if (landingPageModel.GoogleConvertionCode !== '') {
+			result += ClientScriptsWrapper.Google_Conversion.replace('##code##', landingPageModel.GoogleConvertionCode);
+		}
+		if (landingPageModel.GoogleTagManagerCode !== '') {
+			const bodyTagManager = '<noscript>' + landingPageModel.GoogleTagManagerCode.split('<noscript>')[1];
+			result += ClientScriptsWrapper.Google_Tag_Manager.replace('##code##', bodyTagManager);
+		}
+
+		return result as string;
+	}
+
 	const save = async (redirectToNewEditor: number) => {
 		const errorDump = {
 			...errors,
@@ -500,11 +547,18 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		setErrors(errorDump);
 		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL) {
 			setIsLoader(true);
+			let headScript, bodyScript = '';
+
+			headScript = prepareHeadScript();
+			bodyScript = prepareBodyScript();
+
 			const req = {
 				...landingPageModel,
 				SelectedGroupList: null,
 				EmailsToReport: landingPageModel?.EmailsToReport?.join(','),
-				GroupIDs: landingPageModel?.GroupIDs?.join(',')
+				GroupIDs: landingPageModel?.GroupIDs?.join(','),
+				ClientJavaScript: headScript,
+				ClientBodyScript: bodyScript
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
