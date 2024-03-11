@@ -118,7 +118,7 @@ const RegistrationToApiForm = ({
                 IsOptinSend: false
             })
         }
-    }, [apiIntegration])
+    }, [apiIntegration, isOpen])
 
     useEffect(() => {
         if (AccountExtraFields && AccountExtraFields?.Data) {
@@ -215,13 +215,13 @@ const RegistrationToApiForm = ({
         if (requestType.toLowerCase() === 'get') {
             setRegModel({
                 ...regModel, RequestPostParams: '',
-                RequestUrl: `${regModel.RequestUrl?.split('?')[0]}${regModel?.RequestUrl !== '' ? '?' : ''}${regModel.RequestPostParams || ''}`
+                RequestUrl: `${apiIntegration.RequestUrl}${apiIntegration.RequestPostParams !== '' ? ('?' + apiIntegration.RequestPostParams) : ''}`
             });
         }
         else {
-            const splittedUrl = regModel.RequestUrl?.split('?');
+            const splittedUrl = apiIntegration.RequestUrl?.split('?');
             if (splittedUrl && splittedUrl?.length >= 1) {
-                setRegModel({ ...regModel, RequestPostParams: regModel.RequestUrl?.split('?')[1] });
+                setRegModel({ ...regModel, RequestUrl: splittedUrl[0], RequestPostParams: apiIntegration.RequestPostParams || splittedUrl[1] });
             }
 
         }
