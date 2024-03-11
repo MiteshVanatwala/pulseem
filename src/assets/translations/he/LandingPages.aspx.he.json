@@ -348,7 +348,7 @@
   "shortURL": "קישור מקוצר",
   "shortURLTooltip": "כתובת ידידותית לדף אשר תגדיל את הקידום במנועי חיפוש ויהיה קריא על ידי בני האדם",
   "shortURLRequired": "קישור מקוצר - שדה חובה",
-  "shortURLExist": "Short URL already exist. Please choose different name.",
+  "shortURLExist": "קישור מקוצר קיים. יש לנסות מחרוזת שונה",
   "answerType": "סוג תשובה",
   "answerMessage": "טקסט הודעה",
   "answerMessageRequired": "טקסט הודעה - שדה חובה",
@@ -424,5 +424,6 @@
     "typeParamFor": "הזן פרמטר לזיהוי עבור",
     "showWizard": "הדבק נתונים או השתמש באשף"
   },
-  "noRequiredGroupSelection": "לא חובה לבחור קבוצה בדפי נחיתה ללא טופס הרשמה"
+  "noRequiredGroupSelection": "לא חובה לבחור קבוצה בדפי נחיתה ללא טופס הרשמה",
+  "shortUrlExist": "קישור מקוצר כבר תפוס. נסה מחרוזת אחרת לקישור מקוצר"
 }

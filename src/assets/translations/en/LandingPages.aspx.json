@@ -424,5 +424,6 @@
     "typeParamFor": "Type your API parameter for ",
     "showWizard": "Paste / use the wizard"
   },
-  "noRequiredGroupSelection": "Not required for Pages without registration form"
+  "noRequiredGroupSelection": "Not required for Pages without registration form",
+  "shortUrlExist": "Short URL is already in use, Try another srting for Short URL"
 }

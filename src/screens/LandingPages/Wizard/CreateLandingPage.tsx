@@ -595,7 +595,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				break;
 			}
 			case 405: {
-				showErrorToast(response.Message);
+				showErrorToast(t('landingPages.shortUrlExist'));
 				break;
 			}
 			case 500:

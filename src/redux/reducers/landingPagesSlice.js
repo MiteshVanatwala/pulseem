@@ -177,9 +177,10 @@ export const getById = createAsyncThunk(
   });
 
 export const isShortUrlExist = createAsyncThunk(
-  '/landingpages/IsShortUrlExist/', async (shortUrl, thunkAPI) => {
+  '/landingpages/IsShortUrlExist/', async (data, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.get(`/landingpages/IsShortUrlExist/${shortUrl}`);
+      const { WebFormID, ShortUrl } = data
+      const response = await PulseemReactInstance.get(`/landingpages/IsShortUrlExist/${WebFormID}/${ShortUrl}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

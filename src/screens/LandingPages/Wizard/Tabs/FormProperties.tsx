@@ -22,18 +22,16 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
 
     const checkShortURLExist = async (event: any) => {
         const shortUrl = event.target.value.replace(/ /g, '_')
+        const req = { WebFormID: data?.ID, ShortUrl: shortUrl };
         //@ts-ignore
-        const isExistRes: any = await dispatch(isShortUrlExist(shortUrl));
+        const isExistRes: any = await dispatch(isShortUrlExist(req));
         setErrors({
             ...errors,
             shortURL: isExistRes?.payload?.Data === true ? translator('landingPages.shortURLExist') : ''
         })
     }
 
-    // Stage
-    const domain = 'https://testpul.site/clientpages/';
-    // Prod
-    //const domain = ' https://l-p.site/clientpages/';
+    const domain = ' https://l-p.site/clientpages/';
 
 
     const renderPaymentFields = () => {
