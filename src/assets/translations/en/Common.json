@@ -793,5 +793,7 @@
   "duplicatedValue": "Duplicated / System Value",
   "addNew": "Add New",
   "parameters": "Parameters",
-  "accessibility": "Add accessibility support"
+  "accessibility": "Add accessibility support",
+  "typeKey": "Type Key",
+  "typeValue": "Type Value"
 }

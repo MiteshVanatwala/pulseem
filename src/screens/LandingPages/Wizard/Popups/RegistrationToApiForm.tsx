@@ -362,7 +362,7 @@ const RegistrationToApiForm = ({
                         </Typography>
                         <textarea
                             id="finalParams"
-                            placeholder='הזן פרמטרים או השתמש באשף'
+                            placeholder={t('landingPages.typeParameters')}
                             name="finalParams"
                             style={{ height: 80, border: '1px solid #D6D1E6', direction: regModel?.RequestPostParams !== '' ? 'ltr' : isRTL ? 'rtl' : 'ltr' }}
                             value={regModel.RequestPostParams}
@@ -392,6 +392,9 @@ const RegistrationToApiForm = ({
                                 {errors.RequestPostParams}
                             </Typography>
                         </Box>}
+                        <Typography title={t("landingPages.registrationApi.postParamsExample")} style={{ fontSize: 14, margin: 0, fontWeight: 900 }}>
+                            {t('landingPages.registrationApi.postParamsExample')}
+                        </Typography>
                     </Grid>}
                     {/* <Grid item md={12} className={classes.w100} style={{ paddingTop: 0 }}>
                         <Typography title={t("landingPages.registrationApi.requestUrl")} style={{ direction: 'ltr', fontSize: 14, margin: 0, fontWeight: 900 }}>

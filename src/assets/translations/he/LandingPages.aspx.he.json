@@ -418,7 +418,7 @@
     "postExampleTitle": "כתובת בקשת ה post",
     "postExampleParamTitle": "פרמטרים עבור בקשת ה post",
     "postExample": "לדוגמא: https://www.example.com",
-    "postParamsExample": "email=##Email##&from=pulseem",
+    "postParamsExample": "לדוגמא: email=##Email##&from=pulseem",
     "availableParameters": "פרמטרים זמינים בחשבונך",
     "isOptIn": "האם לשלוח נתונים לאחר optin ?",
     "parameterInExtrnalSystem": "פרמטר במערכת החיצונית",
@@ -426,5 +426,6 @@
     "showWizard": "הדבק נתונים או השתמש באשף"
   },
   "noRequiredGroupSelection": "לא חובה לבחור קבוצה בדפי נחיתה ללא טופס הרשמה",
-  "shortUrlExist": "קישור מקוצר כבר תפוס. נסה מחרוזת אחרת לקישור מקוצר"
+  "shortUrlExist": "קישור מקוצר כבר תפוס. נסה מחרוזת אחרת לקישור מקוצר",
+  "typeParameters": "הזן פרמטרים"
 }
