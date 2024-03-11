@@ -49,8 +49,8 @@ const Preview = ({
         {isNameVisible && <div className={clsx(classes.nameStyle)}>{name}</div>}
         {isDescriptionVisible && <div className={clsx(classes.bodyStyle)}>{description}</div>}
         {isPriceVisible && <div className={clsx(classes.bodyStyle)}>{price}</div>}
-        {eventType && <div className={clsx(classes.bodyStyle)}>#{eventType}#</div>}
-        {renderCategory()}
+        {/* {eventType && <div className={clsx(classes.bodyStyle)}>#{eventType}#</div>} */}
+        {/* {renderCategory()} */}
         {isButtonVisible && <input type='button' value={buttonText} className={clsx(classes.buttonStyle)} />}
       </div>
     </div>
