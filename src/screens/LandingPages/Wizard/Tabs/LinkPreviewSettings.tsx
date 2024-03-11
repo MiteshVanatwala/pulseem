@@ -36,7 +36,7 @@ const LinkPreviewSettings = ({ classes, data, onUpdate, filesProperties, removeA
                 {translator("landingPages.previewIcon")}
             </Typography>
             <PulseemTags
-                title={data?.LinkPreviewIconName.split('/')[data?.LinkPreviewIconName?.split('/')?.length - 1]}
+                title={data?.LinkPreviewIconName?.split('/')[data?.LinkPreviewIconName?.split('/')?.length - 1]}
                 style={null}
                 classes={classes}
                 tagStyle={{ maxWidth: 150 }}
