@@ -125,7 +125,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 value={data.PageName}
                 className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.PageName })}
                 autoComplete="off"
-                onBlur={() => { setUrlLoceked(true) }}
+                onBlur={() => { if (data.PageName !== '') setUrlLoceked(true) }}
                 onChange={(e: any) => { handlePageName(e) }}
                 error={!!errors.PageName}
                 title={data.PageName}
@@ -196,7 +196,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 label=""
                 variant="outlined"
                 name="Name"
-                value={data.PageUrl}
+                value={data.PageUrl?.replace(' ', '_').trim()}
                 className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.shortURL })}
                 autoComplete="off"
                 onChange={(e: any) => onUpdate({ ...data, PageUrl: e.target.value })}
