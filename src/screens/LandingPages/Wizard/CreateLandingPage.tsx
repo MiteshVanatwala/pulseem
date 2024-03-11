@@ -79,7 +79,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		updateExistingRecipients: '',
 		limitSubscribers: '',
 		emailId: '',
-		DepartmentId: ''
+		DepartmentId: '',
+		DownloadUrl: ''
 	});
 	const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
 	const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -530,8 +531,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			shortURL: !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
 			answerMessage: [
 				LandingPagesAnswerType.POPUP_MESSAGE,
-				LandingPagesAnswerType.REDIRECT_URL,
-				LandingPagesAnswerType.DOWNLOAD_FILE
+				LandingPagesAnswerType.REDIRECT_URL
 			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.answerMessageRequired') : '',
 			paymentURL: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
@@ -542,10 +542,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			paymentTerminalNumber: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
 			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? t('landingPages.terminalNumberRequired') : '',
-			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : ''
+			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : '',
+			DownloadUrl: [LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.DownloadUrl?.trim() ? t('landingPages.invalidDownloadURL') : ''
 		};
 		setErrors(errorDump);
-		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL) {
+		if (Object.values(errorDump).filter(x => x !== '').length <= 0) {
 			setIsLoader(true);
 			let headScript, bodyScript = '';
 
@@ -614,9 +615,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		await save(2);
 	}
 
-	const saveAndContinueToNewEditor = async () => {
-		await save(1);
-	}
+	// const saveAndContinueToNewEditor = async () => {
+	// 	await save(1);
+	// }
 
 	// navigateBeEditor
 	// 0 - Don't redirect, 1 - New Editor, 2 - Old Editor

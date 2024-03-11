@@ -280,20 +280,14 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
 
         {
             [LandingPagesAnswerType.POPUP_MESSAGE,
-            LandingPagesAnswerType.REDIRECT_URL,
-            LandingPagesAnswerType.DOWNLOAD_FILE
+            LandingPagesAnswerType.REDIRECT_URL
             ].indexOf(data.AnswerType) > -1 && (
                 <>
                     <Grid item md={3} className={classes.w100}>
                         <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
-                            {translator(
-                                data.AnswerType === LandingPagesAnswerType.DOWNLOAD_FILE
-                                    ? "landingPages.downloadFileUrl"
-                                    : (
-                                        data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
-                                            ? "landingPages.redirectUrl"
-                                            : "landingPages.answerMessage"
-                                    )
+                            {translator(data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
+                                ? "landingPages.redirectUrl"
+                                : "landingPages.answerMessage"
                             )}
                         </Typography>
                         <TextField
@@ -315,6 +309,39 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     {data.AnswerData.toLowerCase().indexOf('home/paymentpage') > -1 && renderPaymentFields()}
                 </>
             )
+        }
+        {[LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(data.AnswerType) > -1 && (
+            <>
+                <Grid item md={3} className={classes.w100}>
+                    <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
+                        {translator(
+                            data.AnswerType === LandingPagesAnswerType.DOWNLOAD_FILE
+                                ? "landingPages.downloadFileUrl"
+                                : (
+                                    data.AnswerType === LandingPagesAnswerType.REDIRECT_URL
+                                        ? "landingPages.redirectUrl"
+                                        : "landingPages.answerMessage"
+                                )
+                        )}
+                    </Typography>
+                    <TextField
+                        label=""
+                        variant="outlined"
+                        value={data.DownloadUrl}
+                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.AnswerData })}
+                        autoComplete="off"
+                        onChange={(e: any) => onUpdate({ ...data, DownloadUrl: e.target.value })}
+                        error={!!errors.DownloadUrl}
+                        title={data.DownloadUrl}
+                    />
+                    <Box className='textBoxWrapper'>
+                        <Typography className={clsx(errors.DownloadUrl ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                            {errors.DownloadUrl ?? errors.DownloadUrl}
+                        </Typography>
+                    </Box>
+                </Grid>
+                {data.AnswerData.toLowerCase().indexOf('home/paymentpage') > -1 && renderPaymentFields()}
+            </>)
         }
 
         {
