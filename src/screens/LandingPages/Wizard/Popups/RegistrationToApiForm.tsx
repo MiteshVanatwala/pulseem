@@ -118,7 +118,7 @@ const RegistrationToApiForm = ({
                 IsOptinSend: false
             })
         }
-    }, [apiIntegration])
+    }, [apiIntegration, isOpen])
 
     useEffect(() => {
         if (AccountExtraFields && AccountExtraFields?.Data) {
@@ -215,13 +215,13 @@ const RegistrationToApiForm = ({
         if (requestType.toLowerCase() === 'get') {
             setRegModel({
                 ...regModel, RequestPostParams: '',
-                RequestUrl: `${regModel.RequestUrl?.split('?')[0]}${regModel?.RequestUrl !== '' ? '?' : ''}${regModel.RequestPostParams || ''}`
+                RequestUrl: `${apiIntegration.RequestUrl}${apiIntegration.RequestPostParams !== '' ? ('?' + apiIntegration.RequestPostParams) : ''}`
             });
         }
         else {
-            const splittedUrl = regModel.RequestUrl?.split('?');
+            const splittedUrl = apiIntegration.RequestUrl?.split('?');
             if (splittedUrl && splittedUrl?.length >= 1) {
-                setRegModel({ ...regModel, RequestPostParams: regModel.RequestUrl?.split('?')[1] });
+                setRegModel({ ...regModel, RequestUrl: splittedUrl[0], RequestPostParams: apiIntegration.RequestPostParams || splittedUrl[1] });
             }
 
         }
@@ -362,7 +362,7 @@ const RegistrationToApiForm = ({
                         </Typography>
                         <textarea
                             id="finalParams"
-                            placeholder='הזן פרמטרים או השתמש באשף'
+                            placeholder={t('landingPages.typeParameters')}
                             name="finalParams"
                             style={{ height: 80, border: '1px solid #D6D1E6', direction: regModel?.RequestPostParams !== '' ? 'ltr' : isRTL ? 'rtl' : 'ltr' }}
                             value={regModel.RequestPostParams}
@@ -392,6 +392,9 @@ const RegistrationToApiForm = ({
                                 {errors.RequestPostParams}
                             </Typography>
                         </Box>}
+                        <Typography title={t("landingPages.registrationApi.postParamsExample")} style={{ fontSize: 14, margin: 0, fontWeight: 900 }}>
+                            {t('landingPages.registrationApi.postParamsExample')}
+                        </Typography>
                     </Grid>}
                     {/* <Grid item md={12} className={classes.w100} style={{ paddingTop: 0 }}>
                         <Typography title={t("landingPages.registrationApi.requestUrl")} style={{ direction: 'ltr', fontSize: 14, margin: 0, fontWeight: 900 }}>
@@ -408,7 +411,7 @@ const RegistrationToApiForm = ({
                                 </Typography>
                             </Box>
                         </Grid>
-                        {showWizard && <Grid item md={4}>
+                        {/* {showWizard && <Grid item md={4}>
                             <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                                 <Typography title={t("landingPages.registrationApi.parameterInExtrnalSystem")} className={clsx(classes.alignDir, classes.bold)}>
                                     {t("landingPages.registrationApi.parameterInExtrnalSystem")}
@@ -417,7 +420,7 @@ const RegistrationToApiForm = ({
                         </Grid>}
                         <Grid item>
                             <Button onClick={() => setShowWizard(!showWizard)} style={{ border: 'none', background: 'white', textDecoration: 'underline' }}>{t('landingPages.registrationApi.showWizard')}</Button>
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                     {Object.keys(apiAvailableParams).map((item) => {
                         return apiAvailableParams[item] !== '' && <Grid key={`key_${item} `} item md={12} className={classes.dFlex} style={{ alignItems: 'center', height: 50 }}>
