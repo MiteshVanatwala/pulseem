@@ -546,3 +546,9 @@ export type ApiErrorKey = {
 export type ApiErrorResponse = {
 	[key: string]: ApiErrorKey;
 };
+
+export type WhatsappTemplateError = {
+	key: string;
+	title: string;
+	reason: string
+}

@@ -275,7 +275,27 @@
 		"noFooter": "Footer is missing",
 		"invalidPhone": "Phone number is not a valid phone number.",
 		"characterExceeded": "Character Limit Exceeded. The Body (or Content) field can't have more than 1,024 characters",
-		"common": "INVALID_FORMAT"
+		"common": "INVALID_FORMAT",
+		"invalidFormat": "פורמט לא תקין",
+		"incorrectCategory": "קטגוריה שגויה",
+		"suspectedScam": "חשד להונאה",
+		"404NotFound": "404 Not Found",
+		"abusiveContent": "תוכן פוגעני",
+		"footerIsMissingExpectedField": "חסר טקסט ב-כותרת תחתונה (Footer)",
+		"categoryNotMatched": "תוכן ההודעה אינו תואם לקטוגריה תחתיה הוגשה התבנית",
+		"bodyIsMissingExpectedField": "חסר טקסט ב-גוף ההודעה",
+		"invalidPhoneNumber": "מספר הטלפון בכפתור אינו מספר תקין",
+		"moreCharacters": "ההודעה מכילה יותר מ-1024 תווים",
+		"invalidParameter": "פייסבוק לא הצליחו ליצור תבנית בעקבות פרמטר לא תקין",
+		"abusiveContentsInTemplate": "התבנית מכילה תוכן אותו פייסבוק מגדירים כפוגעני",
+		"buttonIsMissingExpectedField": "קומפוננטת הכפתור חסרה",
+		"301Moved": "שגיאה בקריאת ה-URL של קובץ המדיה לתבנית עקב שגיאה 301: לא ניתן לקרוא את המידע מה-URL",
+		"moreThan1024Characters": "ההודעה מכילה יותר מ-1024 תווים",
+		"invalidButtonFormat": "כפתור אינו תקין. כפתור לא יכול להכיל משתנים, שורות חדשות, אימוג'ים או תווים מעוצבים",
+		"noElementPassed": "שגיאה בקריאת ה-URL של קובץ המדיה: אלמנט לא עבר ב-10000000000 הננו-שניות האחרונות.",
+		"twoNewLineCharactersNotAllowed": "הודעה לא יכולה להכיל יותר משתי שורות רווח אחת אחרי השניה.",
+		"unableToReadFromURL": "לא ניתן לקרוא נתונים מה-URL",
+		"noImageAuthentication": "לא ניתן להוסיף תמונה לתבנית מסוג \"אימות\""
 	},
 	"twilio": {
 		"22225": {
