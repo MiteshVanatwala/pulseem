@@ -7,14 +7,14 @@ import {
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon,
-  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon
+  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon, SettingIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, RestorDialogContent, PopMassage, SearchField
 } from '../../../components/managment/index'
 import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
-  duplicteLandingPage, downloadReport, exportSurvey
+  duplicteLandingPage, downloadReport, exportSurvey, getPageHeight
 } from '../../../redux/reducers/landingPagesSlice'
 import { openInNewTab } from '../../../helpers/Functions/functions'
 import { useNavigate } from "react-router-dom";
@@ -31,6 +31,8 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 
+import { sitePrefix } from '../../../config';
+import { rootDomain } from '../../../helpers/Routes/routes';
 
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
@@ -145,9 +147,10 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            href='/Pulseem/LandingPageWizard.aspx?fromreact=true'
+            onClick={() => navigate(`${sitePrefix}LandingPages/Create`)}
             className={clsx(classes.btn, classes.btnRounded)}
-            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('landingPages.CreateNewResource.Text')}
           </Button>
         </Grid>}
@@ -225,16 +228,18 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       3: {
         icon: EmbedCodeIcon,
         lable: t('landingPages.embedCode'),
-        copy: `<iframe src='${PageLink}' frameborder='0' style='overflow: auto;' width='100%' height='386'></iframe>`
+        copy: `<iframe src='${PageLink}' frameborder='0' style='overflow: auto;' width='100%' height='##pageHeight##'></iframe>`
       },
       4: {
         icon: EmbedCodeIcon,
         lable: t('landingPages.embedCode'),
-        copy: `<div id='pulseem-parent'><img id='pulseem-close' onclick='pulseemClose()' src='https://www.pulseemdev.co.il/images/close_button.png' alt='' /><div id='pulseem-popup'><iframe src='${PageLink}' frameborder='0' width='100%' height='320px'></iframe></div></div><style>#pulseem-parent { width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: block; position: fixed; } #pulseem-popup { width: 480px; margin: auto; position: absolute; left: 0px; right: 0px; top: 100px; border-radius: 10px; box-shadow: 0px 0px 5px #888; overflow: hidden; z-index: 1024; } #pulseem-close { margin: auto; position: absolute; right: -470px; left: 0px; top: 85px; cursor: pointer; z-index: 2048; }</style><script>function pulseemClose() { var wrapper = document.getElementById('pulseem-parent'); wrapper.parentNode.removeChild(wrapper); }</script>`
+        copy: `<div id='pulseem-parent'><img id='pulseem-close' onclick='pulseemClose()' src='https://www.pulseem.co.il/images/close_button.png' alt='' /><div id='pulseem-popup'><iframe src='${PageLink}' frameborder='0' width='100%' height='##pageHeight##'></iframe></div></div><style>#pulseem-parent { width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: block; position: fixed; } #pulseem-popup { width: 480px; margin: auto; position: absolute; left: 0px; right: 0px; top: 100px; border-radius: 10px; box-shadow: 0px 0px 5px #888; overflow: hidden; z-index: 1024; } #pulseem-close { margin: auto; position: absolute; right: -470px; left: 0px; top: 85px; cursor: pointer; z-index: 2048; }</style><script>function pulseemClose() { var wrapper = document.getElementById('pulseem-parent'); wrapper.parentNode.removeChild(wrapper); }</script>`
       }
     }
 
-    const copyData = copyDataObject[Type]
+    const copyData = copyDataObject[1]
+    const embedData = copyDataObject[Type < 3 ? 3 : Type];
+
     const renderCopyToClipoard = (
       showCopied === ID ?
         <PopMassage
@@ -247,6 +252,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     )
 
     const iconsMap = [
+      {
+        key: 'settings',
+        uIcon: SettingIcon,
+        lable: t("recipient.settings"),
+        remove: windowSize === 'xs',
+        onClick: () => {
+          navigate(`${sitePrefix}LandingPages/Create/${ID}`)
+        },
+        rootClass: classes.paddingIcon,
+      },
       {
         key: 'purchase/survey',
         uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
@@ -319,6 +334,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         rootClass: classes.minWidth95,
         text: (copyData && copyData.copy) || '',
         disable: !PageLink,
+        remove: !PageLink,
         type: 'copy',
         onClick: (e) => {
           setCopyRef(e.current)
@@ -326,6 +342,33 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           setTimeout(() => {
             setShowCopied(null)
           }, 1000)
+        }
+      },
+      {
+        key: 'embed',
+        uIcon: CopyIcon,
+        lable: (embedData && embedData.lable) || '',
+        rootClass: classes.minWidth95,
+        text: (embedData && embedData.copy) || '',
+        disable: !PageLink,
+        remove: !PageLink,
+        type: 'embed',
+        onClick: async (e) => {
+          let iframe = embedData.copy;
+          const res = await dispatch(getPageHeight(ID));
+          if (res.payload?.StatusCode === 201) {
+            const height = res.payload?.Data;
+            iframe = iframe.replace('##pageHeight##', height)
+            navigator.clipboard.writeText(iframe);
+
+            setCopyRef(e.current)
+            setShowCopied(ID)
+            setTimeout(() => {
+              setShowCopied(null)
+            }, 1000)
+          }
+
+
         }
       },
       {
@@ -542,10 +585,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-
     let sortData = isSearching ? searchResults : landingPagesData;
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+    if (!sortData.length) {
+      return (
+        <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }} >
+          <Typography>{t('common.NoDataTryFilter')}</Typography>
+        </Box>
+      )
+    }
     return (
       <Box className='tableBodyContainer'>
         <TableBody>
