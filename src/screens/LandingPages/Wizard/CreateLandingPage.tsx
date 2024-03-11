@@ -596,6 +596,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			}
 			case 405: {
 				showErrorToast(t('landingPages.shortUrlExist'));
+				setErrors({
+					...errors,
+					shortURL: t('landingPages.shortURLExist')
+				})
 				break;
 			}
 			case 500:
