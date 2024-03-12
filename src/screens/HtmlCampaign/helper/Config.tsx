@@ -120,10 +120,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         newRow['metadata']['uuid'] = uuidv4();
                         newRow['metadata']['name'] = 'Product Catalog';
                         newRow['metadata']['tags'] = 'product-catalog';
-                        newRow['metadata']['event-type'] = newRow?.metadata?.EventType;
-                        newRow['metadata']['category'] = newRow?.metadata?.ProductCategory;
-                        newRow['metadata']['product-count'] = newRow?.metadata?.NumOfProdcuts;
-                        console.log(newRow);
                         await onSaveUserBlock(JSON.stringify(newRow), newRow)
                         resolve();
                     }
