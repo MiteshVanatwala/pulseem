@@ -486,7 +486,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginTop: 20,
   },
   mt25: {
-    marginTop: 20,
+    marginTop: 25,
   },
   mb20: {
     marginBottom: 20,
@@ -1151,6 +1151,25 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "16px",
     },
   },
+  textarea: {
+    resize: "none",
+    height: "200px",
+    boxSizing: "border-box",
+    fontSize: "16px",
+    fontFamily: "Sans-serif",
+    overflow: "hidden",
+    marginTop: 5,
+    overflowY: "auto",
+    width: "100%",
+    border: "1px solid #ced4da",
+    outline: "none",
+    padding: "10px !important",
+    borderRadius: ".25rem",
+    "&::placeholder": {
+      color: "rgb(170, 170, 170)",
+      fontSize: "16px",
+    },
+  },
   smallInfoDiv: {
     display: "flex",
     width: "100%",
@@ -1255,7 +1274,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minHeight: '200px',
     maxHeight: '200px',
     overflow: 'hidden',
-    transition: 'all 0.5s ease',
+    transition: 'all 0.1s ease',
     '& label': {
       zoom: '25%',
       pointerEvents: 'none'
@@ -2557,9 +2576,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBlock: 20,
   },
   MuiChipRoot: {
-    backgroundColor: "#1c82b2 !important",
+    backgroundColor: "#FF3343 !important",
+    marginRight: 5,
     "& span": {
       color: "#fff",
+      fontWeight: 500,
     },
     "& .MuiChip-deleteIcon": {
       color: "#fff",
@@ -2735,7 +2756,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .textBoxWrapper': {
         // paddingTop: 30,
         '& .MuiTypography-body1': {
-          color: '#979797'
+          color: '#979797',
+          wordBreak: 'break-all',
         },
         '& .MuiTextField-root': {
           paddingBottom: 8,
@@ -2851,7 +2873,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             }
           },
           '& .MuiTypography-body1': {
-            color: '#979797'
+            color: '#979797',
           },
           '& .link': {
             fontSize: 15,
@@ -2865,7 +2887,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .textBoxWrapper': {
         paddingTop: 30,
         '& .MuiTypography-body1': {
-          color: '#979797'
+          color: '#979797',
         },
         '& .MuiTextField-root': {
           paddingBottom: 2,
@@ -3346,9 +3368,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       }
     },
-    [theme.breakpoints.down('xs')]: {
-      width: 'auto !important'
-    },
+    // [theme.breakpoints.down('xs')]: {
+    //   width: 'auto !important'
+    // },
   },
 
   textFieldError: {
@@ -3997,5 +4019,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center !important',
     paddingInline: '15px !important',
     paddingBlock: '10px !important'
+  },
+  selectField: {
+    borderBottom: '1px solid #D6D1E6',
+    height: 46
   }
 });
