@@ -22,8 +22,7 @@
 }
 
 .MuiSelect-select.MuiSelect-select {
-    padding-inline-start: 12px;
-    padding-inline-end: 12px;
+    padding-inline: 24px;
 }
 
 /* .MuiListItemSecondaryAction-root {

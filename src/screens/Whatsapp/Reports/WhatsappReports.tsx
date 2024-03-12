@@ -181,8 +181,18 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const renderNameCell = (row: reportDataProps) => {
 		let date = null;
 		let text = '';
-		date = moment(row.UpdateDate, dateFormat);
-		text = translator('common.UpdatedOn');
+		if (!row?.SendDate) {
+			date = moment(row.UpdateDate, dateFormat);
+			text = translator('common.UpdatedOn');
+		} else {
+			date = moment(row.SendDate, dateFormat);
+			const dateMillis = date.valueOf();
+			const currentDateMillis = moment().valueOf();
+			text =
+				dateMillis > currentDateMillis
+					? translator('common.ScheduledFor')
+					: translator('common.SentOn');
+		}
 
 		return (
 			<>

@@ -56,5 +56,10 @@
     "storeID": "Store ID",
     "storeIDDesc": "Insert store ID",
     "connectStore": "Learn how to connect Istores"
+  },
+  "ecwid": {
+    "title": "Ecwid",
+    "description": "In order to integrate your Ecwid store to your Pulseem account please read the following guide:",
+    "connectStore": "Connect your Ecwid Store"
   }
 }
