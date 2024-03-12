@@ -1,5 +1,5 @@
 import { sitePrefix } from '../../config';
-import { toastProps } from './Editor/Types/WhatsappCreator.types';
+import { toastProps, WhatsappTemplateError } from './Editor/Types/WhatsappCreator.types';
 import {
 	AllCampaignReq,
 	AllReportReq,
@@ -472,3 +472,86 @@ export const authenticationMockTemplate: AuthenticationMockTemplateType = {
 		subtitle: 'תוקף הקוד הזה יפוג בעוד X דקות'
 	}
 }
+
+export const templateErrors: WhatsappTemplateError[] = [
+	{
+		key: 'component of type FOOTER is missing expected field(s) (text)',
+		title: 'invalidFormat',
+		reason: 'footerIsMissingExpectedField'
+	},
+	{
+		key: '#common-rejection-reasons for more information',
+		title: 'invalidFormat',
+		reason: 'invalidFormat'
+	},
+	{
+		key: 'INCORRECT_CATEGORY',
+		title: 'incorrectCategory',
+		reason: 'categoryNotMatched'
+	},
+	{
+		key: 'SCAM',
+		title: 'suspectedScam',
+		reason: 'suspectedScam'
+	},
+	{
+		key: 'component of type BODY is missing expected field',
+		title: 'invalidFormat',
+		reason: 'bodyIsMissingExpectedField'
+	},
+	// {
+	// 	key: 'INVALID_FORMAT',
+	// 	title: 'invalidFormat',
+	// 	reason: 'invalidFormat'
+	// },
+	{
+		key: 'is not a valid phone number.',
+		title: 'invalidFormat',
+		reason: 'invalidPhoneNumber'
+	},
+	{
+		key: 'Character Limit Exceeded',
+		title: 'invalidFormat',
+		reason: 'moreCharacters'
+	},
+	{
+		key: 'ABUSIVE_CONTENT',
+		title: 'abusiveContent',
+		reason: 'abusiveContentsInTemplate'
+	},
+	{
+		key: 'BUTTONS is missing expected field',
+		title: 'invalidFormat',
+		reason: 'buttonIsMissingExpectedField'
+	},
+	{
+		key: 'more than 1,024 characters',
+		title: 'invalidFormat',
+		reason: 'moreThan1024Characters'
+	},
+	{
+		key: 'variables, newlines, emojis, or formatting characters.',
+		title: 'invalidFormat',
+		reason: 'invalidButtonFormat'
+	},
+	{
+		key: 'No elements passed in the last 10000000000 nanoseconds.',
+		title: 'invalidFormat',
+		reason: 'noElementPassed'
+	},
+	{
+		key: 'more than two consecutive newline characters.',
+		title: 'invalidFormat',
+		reason: 'twoNewLineCharactersNotAllowed'
+	},
+	{
+		key: '404 Not Found',
+		title: '404NotFound',
+		reason: 'unableToReadFromURL'
+	},
+	{
+		key: 'AUTHENTICATION category',
+		title: 'invalidFormat',
+		reason: 'noImageAuthentication'
+	}
+]

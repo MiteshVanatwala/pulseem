@@ -363,6 +363,7 @@
   "APIUsernameRequired": "API Username Required",
   "terminalNumber": "Terminal Number",
   "terminalNumberRequired": "Terminal Number Required",
+  "departmentNumber": "Department No.",
   "withoutAnswer": "Without Answer",
   "sendWebhook": "Send webhook",
   "formOfflineProperties": "Form Offline Properties",
@@ -370,9 +371,10 @@
   "formOfflineDateTooltip": "If the user navigates to expired page or number of subscriptions is on threshold the user will be redirected to offline page or will see system default alert",
   "redirectURLWhenOffline": "Redirect URL When Offline",
   "invalidRedirectURLWhenOffline": "Enter valid Redirect URL",
+  "invalidDownloadURL": "File Download URL is not valid",
   "subscriberSettings": "Subscriber Settings",
   "addSubscribersToGroups": "Add Subscribers to Groups",
-  "selectAtleastOneGroup": "Select atleast one group",
+  "selectAtleastOneGroup": "Select at least one group",
   "reportLeadsToEmails": "Report Leads To Emails",
   "updateExistingRecipients": "Update Existing Recipients",
   "limitNumberOfSubscribers": "Limit Number Of Subscribers",
@@ -423,5 +425,7 @@
     "typeParamFor": "Type your API parameter for ",
     "showWizard": "Paste / use the wizard"
   },
-  "noRequiredGroupSelection": "Not required for Pages without registration form"
+  "noRequiredGroupSelection": "Not required for Pages without registration form",
+  "shortUrlExist": "Short URL is already in use, Try another srting for Short URL",
+  "typeParameters": "Type parameters"
 }

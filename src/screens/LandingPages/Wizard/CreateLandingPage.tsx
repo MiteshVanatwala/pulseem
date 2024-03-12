@@ -36,7 +36,6 @@ import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPa
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
-// import SubscriberGroup from './Tabs/SubscriberGroup';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -80,6 +79,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		updateExistingRecipients: '',
 		limitSubscribers: '',
 		emailId: '',
+		DepartmentId: '',
+		DownloadUrl: ''
 	});
 	const [filesProperties, setFilesProperties] = useState<FileGallery[]>([]);
 	const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -105,18 +106,18 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		HasComments: false,
 		PageUrl: '',
 		PageType: 1,
-		AnswerType: 0,
-		IsResponsive: false,
+		AnswerType: 1,
+		IsResponsive: true,
 		DownloadUrl: '',
 		OfflineDate: '',
 		OfflineUrl: '',
 		HtmlToEdit: '',
 		HtmlFile: '',
 		BaseLanguage: 0,
-		IsTemplate: null,
+		IsTemplate: false,
 		CategoryID: null,
 		IsUpdate: false,
-		IsAccessibility: false,
+		IsAccessibility: true,
 		TerminalNumber: '',
 		APIUserName: '',
 		DepartmentId: null,
@@ -161,12 +162,19 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		BEE = 1,
 		OLD = 2
 	}
+	const ClientScriptsWrapper = {
+		Facebook_Pixel: '<!-- Facebook Pixel Start -->##code##<!-- Facebook Pixel End -->', // Head
+		Google_Analytics: '<!-- Google Analytics Start -->##code##<!-- Google Analytics End -->', // Head
+		Google_Tag_Manager: '<!-- Google Tag Manager Start -->##code##<!-- Google Tag Manager End -->', // Head
+		Google_Conversion: '<!-- Google Convertion Start -->##code##<!-- Google Convertion End -->' // Body
+	} as any;
 
 	const getData = async () => {
 		setIsLoader(true);
 
+		const lpId: number | any = id || -1;
 		// @ts-ignore
-		const res = await dispatch(getById(id ?? -1));
+		const res = await dispatch(getById(lpId));
 		const response = res.payload as PulseemResponse;
 		if (response.StatusCode === 201) {
 			setLandingPageModel({
@@ -209,13 +217,31 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				FacebookPixelCode: response.Data?.WebForm?.FacebookPixelCode || '',
 				GroupIDs: response.Data?.WebForm?.GroupIDs?.split(',') || [],
 				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || [],
-				IsNewEditor: response.Data?.WebForm?.IsNewEditor
+				IsNewEditor: response.Data?.WebForm?.IsNewEditor,
+				IsAccessibility: (lpId && lpId > 0) ? response.Data?.WebForm?.IsAccessibility : true,
+				AnswerType: (lpId && lpId > 0) ? response.Data?.WebForm?.AnswerType : 1,
+				IsResponsive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsResponsive : true,
+				IsTemplate: (lpId && lpId > 0) ? response.Data?.WebForm?.IsTemplate : false
 			});
+			if (response.Data?.WebForm?.LinkPreviewIconName !== '') {
+				handleSelectedImage(response.Data?.WebForm?.LinkPreviewIconName, true);
+			}
 		}
 		else if (response.StatusCode === 403) {
 			setLandingPageModel({
 				...response.Data?.WebForm,
-				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || []
+				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || [],
+				IsAccessibility: true,
+				AnswerType: 1,
+				IsResponsive: true,
+				IsTemplate: false,
+				PageType: 1,
+				DownloadUrl: '',
+				Status: 1,
+				GoogleAnalyticsCode: '',
+				GoogleConvertionCode: '',
+				GoogleTagManagerCode: '',
+				FacebookPixelCode: '',
 			});
 		}
 		// if (id) {
@@ -235,7 +261,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		getData();
 	}, []);
 
-	const handleSelectedImage = async (file: string) => {
+	const handleSelectedImage = async (file: string, preventUpdateModel: boolean) => {
 		if (!file || file[0] === '') {
 			setIsFileSelected(false);
 			return;
@@ -248,12 +274,16 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 		if (!existFile) {
 			let fileName = file.split('/')[file.split('/').length - 1];
+			let iconName = `${file?.split('/')[file?.split('/')?.length - 2]}/${file.split('/')[file.split('/').length - 1]}`;
 			const newFile = {
 				Name: fileName,
 				FileName: fileName,
 				FolderType: PulseemFolderType.CLIENT_IMAGES,
 				FileURL: file,
 				ID: RandomID()
+			}
+			if (!preventUpdateModel) {
+				setLandingPageModel({ ...landingPageModel, LinkPreviewIconName: iconName })
 			}
 			existsFiles.push(newFile as any);
 		}
@@ -304,7 +334,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			emailId: isValid ? '' : t('common.invalidEmail')
 		});
 
-		if (isValid && (landingPageModel?.EmailsToReport && landingPageModel?.EmailsToReport?.indexOf(emailId) !== -1)) {
+		if (isValid && landingPageModel?.EmailsToReport?.length > 0 && landingPageModel?.EmailsToReport?.indexOf(emailId) > -1) {
 			setErrors({
 				...errors,
 				emailId: t('common.EmailExist')
@@ -315,7 +345,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		if (isValid) {
 			setLandingPageModel({
 				...landingPageModel,
-				EmailsToReport: [...landingPageModel.EmailsToReport || [], emailId]
+				EmailsToReport: [...landingPageModel?.EmailsToReport || [], emailId]
 			});
 			setDialogType(null);
 			setEmailId('');
@@ -402,11 +432,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			cancelText: "common.No",
 			onConfirm: async () => {
 				await save(0);
-				navigate(`${sitePrefix}LandingPages`);
+				navigate(`${sitePrefix}EditRegistrationPage`);
 			},
 			onClose: () => {
 				setDialogType(null);
-				navigate(`${sitePrefix}LandingPages`);
+				navigate(`${sitePrefix}EditRegistrationPage`);
 			},
 		};
 	}
@@ -471,6 +501,35 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		}
 	}
 
+	const prepareHeadScript = () => {
+		let result = '';
+		if (landingPageModel.GoogleAnalyticsCode !== '') {
+			result = ClientScriptsWrapper.Google_Analytics.replace('##code##', landingPageModel.GoogleAnalyticsCode);
+		}
+		if (landingPageModel.GoogleTagManagerCode !== '') {
+			const headTagManager = landingPageModel.GoogleTagManagerCode.split('</script>')[0] + '</script>';
+			result += ClientScriptsWrapper.Google_Tag_Manager.replace('##code##', headTagManager);
+		}
+		if (landingPageModel.FacebookPixelCode !== '') {
+			result += ClientScriptsWrapper.Facebook_Pixel.replace('##code##', landingPageModel.FacebookPixelCode);
+		}
+
+		return result as string;
+	}
+
+	const prepareBodyScript = () => {
+		let result = '';
+		if (landingPageModel.GoogleConvertionCode !== '') {
+			result += ClientScriptsWrapper.Google_Conversion.replace('##code##', landingPageModel.GoogleConvertionCode);
+		}
+		if (landingPageModel.GoogleTagManagerCode !== '') {
+			const bodyTagManager = '<noscript>' + landingPageModel.GoogleTagManagerCode.split('<noscript>')[1];
+			result += ClientScriptsWrapper.Google_Tag_Manager.replace('##code##', bodyTagManager);
+		}
+
+		return result as string;
+	}
+
 	const save = async (editorType: EditorType) => {
 		const errorDump = {
 			...errors,
@@ -478,8 +537,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			shortURL: !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
 			answerMessage: [
 				LandingPagesAnswerType.POPUP_MESSAGE,
-				LandingPagesAnswerType.REDIRECT_URL,
-				LandingPagesAnswerType.DOWNLOAD_FILE
+				LandingPagesAnswerType.REDIRECT_URL
 			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.answerMessageRequired') : '',
 			paymentURL: [
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
@@ -491,18 +549,25 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
 			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? t('landingPages.terminalNumberRequired') : '',
 			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : '',
-			group: landingPageModel?.GroupIDs?.length === 0 ? t('landingPages.selectAtleastOneGroup') : ''
+			DownloadUrl: [LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.DownloadUrl?.trim() ? t('landingPages.invalidDownloadURL') : ''
 		};
 		setErrors(errorDump);
-		if (!errorDump.PageName && !errorDump.shortURL && !errorDump.answerMessage && !errorDump.paymentURL && !errorDump.paymentAPIUsername && !errorDump.paymentTerminalNumber && !errorDump.offlineURL && !errorDump.group) {
+		if (Object.values(errorDump).filter(x => x !== '').length <= 0) {
 			setIsLoader(true);
+			let headScript, bodyScript = '';
+
+			headScript = prepareHeadScript();
+			bodyScript = prepareBodyScript();
+
 			const req = {
 				...landingPageModel,
 				SelectedGroupList: null,
 				EmailsToReport: landingPageModel?.EmailsToReport?.join(','),
 				GroupIDs: landingPageModel?.GroupIDs?.join(','),
 				IsNewEditor: editorType === EditorType.BEE,
-				ID: landingPageModel.ID || id
+				ID: landingPageModel.ID || id,
+				ClientJavaScript: headScript,
+				ClientBodyScript: bodyScript
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
@@ -539,7 +604,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				break;
 			}
 			case 405: {
-				showErrorToast(response.Message);
+				showErrorToast(t('landingPages.shortUrlExist'));
+				setErrors({
+					...errors,
+					shortURL: t('landingPages.shortURLExist')
+				})
 				break;
 			}
 			case 500:
@@ -795,7 +864,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							removeEmailId={removeEmailId}
 							errors={errors}
 						/> */}
-						</TabPanel>
+						</TabPanel >
 						<TabPanel value='2' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
 							<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
 						</TabPanel>
@@ -813,7 +882,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								errors={errors}
 							/>
 						</TabPanel>
-					</TabContext>
+					</TabContext >
 
 					<Box>
 						<WizardActions
@@ -831,10 +900,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						/>
 					</Box>
 					<Loader isOpen={isLoader} />
-				</Box>
+				</Box >
 				{renderDialog()}
 				{toastMessage && renderToast()}
-			</DefaultScreen>
+			</DefaultScreen >
 		);
 	};
 

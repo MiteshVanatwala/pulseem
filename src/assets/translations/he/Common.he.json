@@ -787,5 +787,7 @@
   "duplicatedValue": "ערך משוכפל / שמור",
   "addNew": "הוסף",
   "parameters": "פרמטרים",
-  "accessibility": "הוסף תמיכה בנגישות"
+  "accessibility": "הוסף תמיכה בנגישות",
+  "typeKey": "הזן משתנה",
+  "typeValue": "הזן ערך"
 }

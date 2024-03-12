@@ -8,7 +8,6 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md'
 import { GrGallery } from 'react-icons/gr';
 import { GiExitDoor } from "react-icons/gi";
 
-
 const WizardActions = ({
     classes,
     innerStyle,

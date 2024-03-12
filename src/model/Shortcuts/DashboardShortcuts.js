@@ -114,7 +114,7 @@ export const DASHBOARD_SHORTCUT = {
       },
       {
         title: 'landingPages.logPageHeaderResource1.Text',
-        link: '/react/LandingPages'
+        link: `/${sitePrefix}EditRegistrationPage`
       }
     ]
   },

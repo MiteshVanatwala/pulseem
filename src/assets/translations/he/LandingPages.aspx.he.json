@@ -348,7 +348,7 @@
   "shortURL": "קישור מקוצר",
   "shortURLTooltip": "כתובת ידידותית לדף אשר תגדיל את הקידום במנועי חיפוש ויהיה קריא על ידי בני האדם",
   "shortURLRequired": "קישור מקוצר - שדה חובה",
-  "shortURLExist": "Short URL already exist. Please choose different name.",
+  "shortURLExist": "קישור מקוצר קיים. יש לנסות מחרוזת שונה",
   "answerType": "סוג תשובה",
   "answerMessage": "טקסט הודעה",
   "answerMessageRequired": "טקסט הודעה - שדה חובה",
@@ -363,6 +363,7 @@
   "APIUsernameRequired": "שם משתמש API - שדה חובה",
   "terminalNumber": "מספר מסוף",
   "terminalNumberRequired": "מספר מסוף - שדה חובה",
+  "departmentNumber": "מספר מחלקה",
   "withoutAnswer": "ללא תשובה",
   "sendWebhook": "שלח Webhook",
   "formOfflineProperties": "הגדרות סיום טופס",
@@ -370,6 +371,7 @@
   "formOfflineDateTooltip": "במידה וגולש מגיעה לדף שפג תוקף הפרסום שלו או מספר ההרשמות בדף הגיעה למגבלה הגולש יועבר לדף סיום פרסום או יקבל הודעת מערכת סטנדרטית",
   "redirectURLWhenOffline": "כתובת העברה לאחר סיום פרסום",
   "invalidRedirectURLWhenOffline": "הזן כתובת URL חוקית",
+  "invalidDownloadURL": "כתובת קובץ להורדה לא חוקית",
   "subscriberSettings": "הגדרות נרשמים",
   "addSubscribersToGroups": "הוסף נרשמים לקבוצות",
   "selectAtleastOneGroup": "בחר לפחות קבוצה אחת",
@@ -399,8 +401,8 @@
   "handleExitTitle": "יציאה מעריכת דף נחיתה",
   "landingPageNotFound": "דף הנחיתה לא נמצא",
   "landingPageSaved": "דף הנחיתה נשמר",
-  "redirectUrl": "Redirect URL",
-  "downloadFileUrl": "Download File URL",
+  "redirectUrl": "כתובת העברה",
+  "downloadFileUrl": "כתובת קובץ להורדה",
   "sendRegistrationToExternalApi": "העברת הנרשמים למערכת חיצונית",
   "registrationApi": {
     "title": " הוסף/ערוך מערכת חיצונית להעברת המידע",
@@ -416,12 +418,14 @@
     "postExampleTitle": "כתובת בקשת ה post",
     "postExampleParamTitle": "פרמטרים עבור בקשת ה post",
     "postExample": "לדוגמא: https://www.example.com",
-    "postParamsExample": "email=##Email##&from=pulseem",
+    "postParamsExample": "לדוגמא: email=##Email##&from=pulseem",
     "availableParameters": "פרמטרים זמינים בחשבונך",
     "isOptIn": "האם לשלוח נתונים לאחר optin ?",
     "parameterInExtrnalSystem": "פרמטר במערכת החיצונית",
     "typeParamFor": "הזן פרמטר לזיהוי עבור",
     "showWizard": "הדבק נתונים או השתמש באשף"
   },
-  "noRequiredGroupSelection": "לא חובה לבחור קבוצה בדפי נחיתה ללא טופס הרשמה"
+  "noRequiredGroupSelection": "לא חובה לבחור קבוצה בדפי נחיתה ללא טופס הרשמה",
+  "shortUrlExist": "קישור מקוצר כבר תפוס. נסה מחרוזת אחרת לקישור מקוצר",
+  "typeParameters": "הזן פרמטרים"
 }

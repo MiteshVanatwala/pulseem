@@ -36,14 +36,14 @@ const LinkPreviewSettings = ({ classes, data, onUpdate, filesProperties, removeA
                 {translator("landingPages.previewIcon")}
             </Typography>
             <PulseemTags
-                title={data?.LinkPreviewIconName}
+                title={data?.LinkPreviewIconName?.split('/')[data?.LinkPreviewIconName?.split('/')?.length - 1]}
                 style={null}
                 classes={classes}
                 tagStyle={{ maxWidth: 150 }}
                 // @ts-ignore
                 items={filesProperties?.map((f) => {
                     return {
-                        Name: f.FileName,
+                        Name: f?.FileName?.split('/')[f.FileName?.split('/')?.length - 1],
                         ID: f.ID
                     };
                 })}

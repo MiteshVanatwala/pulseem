@@ -14,7 +14,7 @@ import {
 } from '../../../components/managment/index'
 import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
-  duplicteLandingPage, downloadReport, exportSurvey
+  duplicteLandingPage, downloadReport, exportSurvey, getPageHeight
 } from '../../../redux/reducers/landingPagesSlice'
 import { openInNewTab } from '../../../helpers/Functions/functions'
 import { useNavigate } from "react-router-dom";
@@ -229,17 +229,17 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       3: {
         icon: EmbedCodeIcon,
         lable: t('landingPages.embedCode'),
-        copy: `<iframe src='${PageLink}' frameborder='0' style='overflow: auto;' width='100%' height='386'></iframe>`
+        copy: `<iframe src='${PageLink}' frameborder='0' style='overflow: auto;' width='100%' height='##pageHeight##'></iframe>`
       },
       4: {
         icon: EmbedCodeIcon,
         lable: t('landingPages.embedCode'),
-        copy: `<div id='pulseem-parent'><img id='pulseem-close' onclick='pulseemClose()' src='https://www.pulseemdev.co.il/images/close_button.png' alt='' /><div id='pulseem-popup'><iframe src='${PageLink}' frameborder='0' width='100%' height='320px'></iframe></div></div><style>#pulseem-parent { width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: block; position: fixed; } #pulseem-popup { width: 480px; margin: auto; position: absolute; left: 0px; right: 0px; top: 100px; border-radius: 10px; box-shadow: 0px 0px 5px #888; overflow: hidden; z-index: 1024; } #pulseem-close { margin: auto; position: absolute; right: -470px; left: 0px; top: 85px; cursor: pointer; z-index: 2048; }</style><script>function pulseemClose() { var wrapper = document.getElementById('pulseem-parent'); wrapper.parentNode.removeChild(wrapper); }</script>`
+        copy: `<div id='pulseem-parent'><img id='pulseem-close' onclick='pulseemClose()' src='https://www.pulseem.co.il/images/close_button.png' alt='' /><div id='pulseem-popup'><iframe src='${PageLink}' frameborder='0' width='100%' height='##pageHeight##'></iframe></div></div><style>#pulseem-parent { width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: block; position: fixed; } #pulseem-popup { width: 480px; margin: auto; position: absolute; left: 0px; right: 0px; top: 100px; border-radius: 10px; box-shadow: 0px 0px 5px #888; overflow: hidden; z-index: 1024; } #pulseem-close { margin: auto; position: absolute; right: -470px; left: 0px; top: 85px; cursor: pointer; z-index: 2048; }</style><script>function pulseemClose() { var wrapper = document.getElementById('pulseem-parent'); wrapper.parentNode.removeChild(wrapper); }</script>`
       }
     }
 
-    const copyData = copyDataObject[Type]
-    const embedData = copyDataObject[3]
+    const copyData = copyDataObject[1]
+    const embedData = copyDataObject[Type < 3 ? 3 : Type];
 
     const renderCopyToClipoard = (
       showCopied === ID ?
@@ -353,13 +353,23 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         text: (embedData && embedData.copy) || '',
         disable: !PageLink,
         remove: !PageLink,
-        type: 'copy',
-        onClick: (e) => {
-          setCopyRef(e.current)
-          setShowCopied(ID)
-          setTimeout(() => {
-            setShowCopied(null)
-          }, 1000)
+        type: 'embed',
+        onClick: async (e) => {
+          let iframe = embedData.copy;
+          const res = await dispatch(getPageHeight(ID));
+          if (res.payload?.StatusCode === 201) {
+            const height = res.payload?.Data;
+            iframe = iframe.replace('##pageHeight##', height)
+            navigator.clipboard.writeText(iframe);
+
+            setCopyRef(e.current)
+            setShowCopied(ID)
+            setTimeout(() => {
+              setShowCopied(null)
+            }, 1000)
+          }
+
+
         }
       },
       {

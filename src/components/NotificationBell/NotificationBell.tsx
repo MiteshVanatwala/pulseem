@@ -173,13 +173,14 @@ const NotificationBell = ({ classes }: any) => {
     const { type, data } = dialogType || {}
 
     const dialogContent: { [key: string]: {} } = {
-      templateError: TemplateErrorDialog({classes, failedTemplateResponse: data, setDialogType}),
+      templateError: TemplateErrorDialog({classes, failedTemplateResponse: data, setDialogType, translator: t, isRTL}),
     }
 
     const currentDialog: any = (type && dialogContent[type]) || {};
     if (type) {
       return (
         dialogType && <BaseDialog
+          contentStyle={classes.maxWidth400}
           classes={classes}
           open={dialogType}
           childrenStyle={classes.mb25}
