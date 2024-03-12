@@ -437,6 +437,7 @@ export const allReportInitialPagination: AllReportReq = {
 	isPagination: true,
 	pageNo: 1,
 	pageSize: 6,
+	IsTestCampaign: false
 };
 
 export const tierSetting: TierSetting[] = [
