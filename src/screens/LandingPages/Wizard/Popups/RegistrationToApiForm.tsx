@@ -411,7 +411,7 @@ const RegistrationToApiForm = ({
                                 </Typography>
                             </Box>
                         </Grid>
-                        {/* {showWizard && <Grid item md={4}>
+                        {showWizard && <Grid item md={4}>
                             <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                                 <Typography title={t("landingPages.registrationApi.parameterInExtrnalSystem")} className={clsx(classes.alignDir, classes.bold)}>
                                     {t("landingPages.registrationApi.parameterInExtrnalSystem")}
@@ -420,7 +420,7 @@ const RegistrationToApiForm = ({
                         </Grid>}
                         <Grid item>
                             <Button onClick={() => setShowWizard(!showWizard)} style={{ border: 'none', background: 'white', textDecoration: 'underline' }}>{t('landingPages.registrationApi.showWizard')}</Button>
-                        </Grid> */}
+                        </Grid>
                     </Grid>
                     {Object.keys(apiAvailableParams).map((item) => {
                         return apiAvailableParams[item] !== '' && <Grid key={`key_${item} `} item md={12} className={classes.dFlex} style={{ alignItems: 'center', height: 50 }}>
