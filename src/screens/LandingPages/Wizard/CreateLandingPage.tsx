@@ -533,17 +533,17 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				LandingPagesAnswerType.POPUP_MESSAGE,
 				LandingPagesAnswerType.REDIRECT_URL
 			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.answerMessageRequired') : '',
-			paymentURL: [
-				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.URLRequired') : '',
-			paymentAPIUsername: [
-				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.APIUserName?.trim() ? t('landingPages.APIUsernameRequired') : '',
-			paymentTerminalNumber: [
-				LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-			].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? t('landingPages.terminalNumberRequired') : '',
-			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : '',
-			DownloadUrl: [LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.DownloadUrl?.trim() ? t('landingPages.invalidDownloadURL') : ''
+			// paymentURL: [
+			// 	LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+			// ].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.URLRequired') : '',
+			// paymentAPIUsername: [
+			// 	LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+			// ].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.APIUserName?.trim() ? t('landingPages.APIUsernameRequired') : '',
+			// paymentTerminalNumber: [
+			// 	LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+			// ].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? t('landingPages.terminalNumberRequired') : '',
+			offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : '' //,
+			// DownloadUrl: [LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.DownloadUrl?.trim() ? t('landingPages.invalidDownloadURL') : ''
 		};
 		setErrors(errorDump);
 		if (Object.values(errorDump).filter(x => x !== '').length <= 0) {
