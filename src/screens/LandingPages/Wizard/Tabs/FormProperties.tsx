@@ -194,7 +194,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 label=""
                 variant="outlined"
                 name="Name"
-                value={data.PageUrl?.replace(' ', '_').trim()}
+                value={data.PageUrl?.replaceAll(' ', '_').replaceAll('.', '_').trim()}
                 className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.shortURL })}
                 autoComplete="off"
                 onChange={(e: any) => onUpdate({ ...data, PageUrl: e.target.value })}
