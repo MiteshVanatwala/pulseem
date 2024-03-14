@@ -153,6 +153,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		}
 	}, [fromDate, toDate, campaignNameSearch]);
 
+	useEffect(() => {
+		onSearch();
+	}, [ includeTestCampaigns ])
+
 	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
 		if (toDate && value && value > toDate) {
 			handleToDate(null);
