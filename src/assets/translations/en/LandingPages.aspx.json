@@ -341,6 +341,7 @@
   "duplicationSuccessful": "Duplication successful!",
   "duplicationSuccessfulMessage": "All of the data from your landing page has been duplicated. If you would like to edit the Form Properties for your new Landing Page, click Edit below.",
   "createLandingPage": "Create Landing Page",
+  "editLandingPage": "Edit Landing Page",
   "formProperties": "Form Properties",
   "formName": "Form Name",
   "formNameRequired": "Form Name is required",

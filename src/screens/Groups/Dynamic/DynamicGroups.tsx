@@ -7,7 +7,7 @@ import {
     Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox, GridSize
 } from '@material-ui/core'
-import { PreviewIcon, SettingIcon, DeleteIcon, EditIcon } from '../../../assets/images/managment/index'
+import { PreviewIcon, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon, EditIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
@@ -35,7 +35,7 @@ import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
-import { SetPageState, GetPageNyName, PageProperty } from '../../../helpers/UI/SessionStorageManager';
+import { SetPageState, GetPageNyName, PageProperty, ClearPageState } from '../../../helpers/UI/SessionStorageManager';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
@@ -50,7 +50,7 @@ import {
     getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
 import { GroupData } from '../../../Models/Groups/Group';
-// import { sitePrefix } from '../../../config';
+import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
 
 const DynamicGroups = ({ classes }: any) => {
@@ -202,37 +202,44 @@ const DynamicGroups = ({ classes }: any) => {
     };
 
     useEffect(() => {
-        getData();
-    }, [serachData])
+        const queryState = from?.toLowerCase().indexOf('editdynamicgroup') > -1;
+        if (queryState || serachData.SearchTerm !== '') {
+            reSearch();
+        }
+        else {
+            getData();
+        }
+    }, [, dispatch, rowsPerPage, serachData.SearchTerm]);
+
+    // useEffect(() => {
+    //     getData();
+    // }, [])
 
     const reSearch = () => {
-        const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
-        pageProperty.current = GetPageNyName('groups');
+        const queryState = from?.toLowerCase().indexOf('editdynamicgroup') > -1;
+        pageProperty.current = GetPageNyName('dynamicGroups');
         let lastSearch = { ...serachData, PageSize: rowsPerPage };
         if (queryState && pageProperty.current) {
             let tempSearchData = pageProperty.current?.SearchData;
-            lastSearch = { ...serachData, ...tempSearchData };
+            lastSearch = { ...serachData, ...tempSearchData, PageIndex: pageProperty.current?.PageNumber ?? 1 };
+            ClearPageState();
         }
-        setSearchData(lastSearch);
+
         SetPageState({
-            "PageName": "groups",
-            "PageNumber": lastSearch?.PageNumber ?? 1,
+            "PageName": "dynamicGroups",
+            "PageNumber": lastSearch?.PageNumber,
             "SearchData": lastSearch,
             "SearchTerm": lastSearch.SearchTerm,
             "IsDynamic": true
         } as PageProperty);
 
-        getData(lastSearch);
         if (lastSearch?.SearchTerm) {
             setSearchStr(lastSearch?.SearchTerm ?? "");
         }
-    }
 
-    useEffect(() => {
-        if (serachData.SearchTerm !== '') {
-            reSearch();
-        }
-    }, [dispatch, serachData.SearchTerm, rowsPerPage]);
+        setSearchData(lastSearch);
+        getData(lastSearch);
+    }
 
     useEffect(() => {
         if (qs?.NewGroup === 'true') {
@@ -243,20 +250,7 @@ const DynamicGroups = ({ classes }: any) => {
     const renderSearchSection = () => {
         const handleKeyDown = (event: any) => {
             if (event.keyCode === 13 || event.code === "Enter") {
-                const searchObject = {
-                    PageIndex: 1,
-                    PageSize: rowsPerPage,
-                    SearchTerm: searchStr,
-                    IsDynamic: true
-                };
-                setSearchData(searchObject);
-                SetPageState({
-                    "PageName": "groups",
-                    "PageNumber": 1,
-                    "SearchData": searchObject,
-                    "SearchTerm": searchStr,
-                    "IsDynamic": true
-                } as PageProperty);
+                initPageState(rowsPerPage, 1);
             }
         };
 
@@ -276,20 +270,7 @@ const DynamicGroups = ({ classes }: any) => {
                 <Grid item>
                     <Button
                         onClick={() => {
-                            const searchObject = {
-                                PageIndex: 1,
-                                PageSize: rowsPerPage,
-                                SearchTerm: searchStr,
-                                IsDynamic: true
-                            };
-                            setSearchData(searchObject);
-
-                            SetPageState({
-                                "PageName": "groups",
-                                "PageNumber": 1,
-                                "SearchData": searchObject,
-                                "IsDynamic": true
-                            } as PageProperty);
+                            initPageState(rowsPerPage, 1);
                         }}
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -311,7 +292,7 @@ const DynamicGroups = ({ classes }: any) => {
                                 setSearchData(searchObject);
 
                                 SetPageState({
-                                    "PageName": "groups",
+                                    "PageName": "dynamicGroups",
                                     "PageNumber": 1,
                                     "SearchData": searchObject,
                                     "SearchTerm": "",
@@ -345,6 +326,19 @@ const DynamicGroups = ({ classes }: any) => {
                         {t("group.new")}
                     </Button>
                 </Grid>
+                {windowSize !== "xs" && (
+                    <Grid item>
+                        <Button
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                            onClick={() => {
+                                selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
+                            }}
+                        >
+                            {t("group.delete")}
+                        </Button>
+                    </Grid>
+                )}
                 {
                     accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
@@ -484,21 +478,20 @@ const DynamicGroups = ({ classes }: any) => {
                 lable: t('campaigns.Image2Resource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    window.location.href = `/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`;
-                    // navigate(`${sitePrefix}groups/dynamic/edit/${GroupID}`)
+                    navigate(`${sitePrefix}groups/dynamic/edit/${GroupID}`)
                 }
             },
-            // {
-            //     key: 'reset',
-            //     uIcon: ResetIcon,
-            //     lable: t("recipient.reset"),
-            //     remove: windowSize === 'xs',
-            //     rootClass: classes.paddingIcon,
-            //     onClick: () => {
-            //         setSelectedGroups([GroupID])
-            //         setDialog(DialogType.RESET_GROUP)
-            //     },
-            // },
+            {
+                key: 'reset',
+                uIcon: ResetIcon,
+                lable: t("recipient.reset"),
+                remove: windowSize === 'xs',
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.RESET_GROUP)
+                },
+            },
             {
                 key: 'settings',
                 uIcon: SettingIcon,
@@ -510,17 +503,17 @@ const DynamicGroups = ({ classes }: any) => {
                 },
                 rootClass: classes.paddingIcon,
             },
-            // {
-            //     key: 'automation',
-            //     uIcon: AutomationIcon,
-            //     lable: t("recipient.automation"),
-            //     disable: !AutomationID,
-            //     rootClass: classes.paddingIcon,
-            //     onClick: () => {
-            //         if (AutomationID)
-            //             window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
-            //     }
-            // },
+            {
+                key: 'automation',
+                uIcon: AutomationIcon,
+                lable: t("recipient.automation"),
+                disable: !AutomationID,
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    if (AutomationID)
+                        window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
+                }
+            },
             {
                 key: 'delete',
                 uIcon: DeleteIcon,
@@ -544,14 +537,12 @@ const DynamicGroups = ({ classes }: any) => {
             >
                 {iconsMap.map(icon => (
                     <Grid
-                        className={'rowIconContainer'}
+                        className={clsx(icon.disable && classes.disabledCursor, classes.smallActionIcons, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
                         key={icon.key}
                         item >
                         {/* @ts-ignore */}
                         <ManagmentIcon
                             classes={classes}
-                            // @ts-ignore
-                            className={'rowIconContainer'}
                             {...icon}
                             uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                         />
@@ -1516,21 +1507,34 @@ const DynamicGroups = ({ classes }: any) => {
         return <></>;
 
     }
-    const handleRowsPerPageChange = (val: Number) => {
-        dispatch(setRowsPerPage(val))
-    }
-    const handlePageChange = (val: Number) => {
+    const initPageState = (pageSize: Number, pageIndex: Number, props: any = null) => {
+        const searchObject = {
+            PageIndex: pageIndex,
+            PageSize: pageSize,
+            SearchTerm: searchStr,
+            IsDynamic: true
+        };
+        setSearchData(searchObject);
+
         SetPageState({
-            "PageName": "groups",
-            "PageNumber": val,
-            "SearchTerm": serachData.SearchTerm,
+            "PageName": "dynamicGroups",
+            "PageNumber": pageIndex,
             "SearchData": (serachData.SearchTerm !== '') ? {
                 SearchTerm: serachData.SearchTerm,
-                PageIndex: val
+                PageIndex: pageIndex
             } : null,
             "IsDynamic": true
         } as PageProperty);
-        setSearchData({ ...serachData, PageIndex: val });
+    }
+
+    const handleRowsPerPageChange = (val: Number) => {
+        initPageState(serachData.PageSize, serachData?.PageNumber);
+        dispatch(setRowsPerPage(val))
+    }
+    const handlePageChange = (val: Number) => {
+        initPageState(rowsPerPage, val);
+        const lastSearch = { ...serachData, PageIndex: val };
+        getData(lastSearch);
     }
     const renderTablePagination = () => {
         return (

@@ -96,7 +96,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -140,7 +140,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -184,7 +184,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -228,7 +228,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -272,7 +272,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -316,7 +316,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
-                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
                         <FormControl
                             variant="standard"
                             className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -381,7 +381,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                                 <DateField
                                                     toolbarDisabled={false}
                                                     classes={classes}
-                                                    value={data.dynamicData?.MyConditions[0][field]}
+                                                    value={data.dynamicData.MyConditions[0][field]}
                                                     onChange={(value: any) => onUpdate(field, moment(value).format(DateFormats.DATE_ONLY))}
                                                     placeholder={t('common.ToDate')}
                                                     timePickerOpen={false}
@@ -393,7 +393,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                                     hideInvalidDateMessage={true}
                                                 />
                                                 {
-                                                    data.dynamicData?.MyConditions[0][field] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(field, null)}>{t("recipient.reset")}</Button>
+                                                    data.dynamicData.MyConditions[0][field] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(field, null)}>{t("recipient.reset")}</Button>
                                                 }
                                             </>) : (<><Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
                                                 <InputLabel className={classes.fBlack}>{fieldName ?? field}:</InputLabel>
@@ -401,20 +401,20 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                                     placeholder={fieldName ?? field}
                                                     variant='outlined'
                                                     size='small'
-                                                    value={data?.dynamicData?.MyConditions[0][field]}
+                                                    value={data.dynamicData.MyConditions[0][field]}
                                                     onChange={(event: any) => onUpdate(field, event.target.value.trim())}
                                                     className={clsx(classes.w100, classes.textField, classes.mt25)}
                                                 />
                                             </Grid>
-                                                <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt10)}>
+                                                <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
                                                     <FormControl
                                                         variant="standard"
                                                         className={clsx(classes.selectInputFormControl, classes.w100)}
                                                     >
                                                         <Select
-                                                            disabled={!data?.dynamicData?.MyConditions[0][field] || data?.dynamicData?.MyConditions[0][field] === ''}
+                                                            disabled={!data.dynamicData.MyConditions[0][field] || data.dynamicData.MyConditions[0][field] === ''}
                                                             variant='standard'
-                                                            value={data?.dynamicData?.MyConditions[0][field + 'Cond'] ?? CondType.Undefined}
+                                                            value={data.dynamicData.MyConditions[0][field + 'Cond'] ?? CondType.Undefined}
                                                             onChange={(event: any) => onUpdate(field + 'Cond', event.target.value)}
                                                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                                                             className={clsx(classes.w100, classes.mt20)}
