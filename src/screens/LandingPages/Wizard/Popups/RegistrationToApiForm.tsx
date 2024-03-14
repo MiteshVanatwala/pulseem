@@ -260,25 +260,23 @@ const RegistrationToApiForm = ({
         const parameters = requestURL.split('?')[1]?.split('&');
         if (parameters?.length) {
             const extraParams: any = {}
-            parameters.map((para: any) => {
-                const [ key, value ] = para.split('=');
-                if (key !== '') {
-                    let keyExist = false;
-                    availableParamKeys.map((availableKey: any) => {
-                        if (availableKey?.replace(/##/g, '' ).toLowerCase() === key.toLowerCase())
-                        keyExist = true;
-                    })
-
-                    Object.values(dynamicParams).map((item: any) => {
-                        if (item.split('=')[0] === key) keyExist = true;
-                    })
-                    
-                    if (!keyExist) {
-                        extraParams[key] = value;
-                    }
-                }
-            })
-            setExtraParameters(extraParams);
+            const updArr = {} as any;
+            if (requestType.toLowerCase() === 'post') {
+                parameters.forEach((qs: any) => {
+                    const val = qs?.split('=');
+                    if (availableParamKeys.indexOf(val[1]?.replace(/##/g, '')) > -1) updArr[val[1]] = qs;
+                    else extraParams[val[0]] = val[1];
+                })
+            }
+            else { //Get
+                parameters.forEach((qs: any) => {
+                    const val = qs?.split('=');
+                    if (availableParamKeys.indexOf(val[1]?.replace(/##/g, '')) > -1) updArr[val[1]] = qs;
+                    else extraParams[val[0]] = val[1];
+                })
+            }
+            setDynamicParams(updArr);
+            setExtraParameters(extraParams)
         }
     }
 
@@ -493,7 +491,7 @@ const RegistrationToApiForm = ({
                 <Grid container spacing={3} className={classes.p15}>
                     {
                         Object.keys(extraParameters).map((item: any) => {
-                            return extraParameters[item] !== '' && <Grid key={`key_${item} `} item md={12} className={classes.dFlex} style={{ alignItems: 'center', height: 50 }}>
+                            return <Grid key={`key_${item} `} item md={12} className={classes.dFlex} style={{ alignItems: 'center', height: 50 }}>
                                 <Grid item md={4} sm={6}>{item}</Grid>
                                 <Grid item md={4} sm={6}>
                                     <TextField
