@@ -182,7 +182,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           classes={rowStyle}>
           <TableCell
             classes={cellStyle}
-            className={classes.flex3}
+            className={classes.flex2}
             align='center'>
             {t("landingPages.GridBoundColumnResource2.HeaderText")}
           </TableCell>
@@ -206,7 +206,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           </TableCell>
           <TableCell
             classes={{ root: classes.tableCellRoot }}
-            className={classes.flex5} />
+            className={classes.flex6} />
         </TableRow>
       </TableHead>
     )
@@ -253,16 +253,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
     const iconsMap = [
       {
-        key: 'settings',
-        uIcon: SettingIcon,
-        lable: t("recipient.settings"),
-        remove: windowSize === 'xs',
-        onClick: () => {
-          navigate(`${sitePrefix}LandingPages/Create/${ID}`)
-        },
-        rootClass: classes.paddingIcon,
-      },
-      {
         key: 'purchase/survey',
         uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
         lable: IsPayment ?
@@ -295,6 +285,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
             });
           }
         }
+      },
+      {
+        key: 'settings',
+        uIcon: SettingIcon,
+        lable: t("recipient.settings"),
+        remove: windowSize === 'xs',
+        onClick: () => {
+          navigate(`${sitePrefix}LandingPages/Create/${ID}`)
+        },
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'preview',
@@ -334,7 +334,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         rootClass: classes.minWidth95,
         text: (copyData && copyData.copy) || '',
         disable: !PageLink,
-        remove: !PageLink,
         type: 'copy',
         onClick: (e) => {
           setCopyRef(e.current)
@@ -351,7 +350,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         rootClass: classes.minWidth95,
         text: (embedData && embedData.copy) || '',
         disable: !PageLink,
-        remove: !PageLink,
         type: 'embed',
         onClick: async (e) => {
           let iframe = embedData.copy;
@@ -518,12 +516,13 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   const renderRow = (row) => {
     return (
       <TableRow
+        style={{ alignItems: 'center' }}
         key={row.ID}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex3}>
+          className={classes.flex2}>
           {renderNameCell(row)}
         </TableCell>
         <TableCell
@@ -548,7 +547,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           component="th"
           scope="row"
           classes={{ root: classes.tableCellRoot }}
-          className={classes.flex5}>
+          className={classes.flex6}>
           {renderCellIcons(row)}
         </TableCell>
       </TableRow>
