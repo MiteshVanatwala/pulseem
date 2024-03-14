@@ -230,6 +230,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 break;
             }
         }
+        setLoader(false);
     }
 
     const onBack = () => {

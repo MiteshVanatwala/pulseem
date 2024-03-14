@@ -82,6 +82,7 @@ const Groups = ({ classes }) => {
         PageIndex: 1,
         PageSize: rowsPerPage,
         SearchTerm: "",
+        IsDynamic: false
     });
     const navigate = useNavigate()
     moment.locale(language);

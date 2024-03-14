@@ -11,7 +11,7 @@
   "testGroupInfo": "קבוצות ניסיון מאפשרת שליחת נסיון לקבוצה ממסך יצירת קמפיין",
   "created": "הקבוצה נוצרה בהצלחה",
   "updated": "הקבוצה עודכנה בהצלחה",
-  "deleted": "Group deleted successfully",
+  "deleted": "הקבוצה נמחקה בהצלחה",
   "zeroSelected": "לא נבחרה קבוצה",
   "inputIncorrect": "אחד מהנתונים לא נכון או שם קבוצה לא סופק",
   "invalidApi": "מפתח API לא תקין",
