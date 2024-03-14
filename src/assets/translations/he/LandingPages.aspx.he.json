@@ -341,6 +341,7 @@
   "duplicationSuccessful": "דף הנחיתה שלך שוכפל בהצלחה!",
   "duplicationSuccessfulMessage": "כל הנתונים של דף הנחיתה שוכפל. על מנת לערוך את הגדרות הטופס נא לחץ על ערוך למטה.",
   "createLandingPage": "צור דף נחיתה",
+  "editLandingPage": "ערוך דף נחיתה",
   "formProperties": "הגדרות טופס",
   "formName": "שם הטופס",
   "formNameRequired": "שם הטופס - שדה חובה",

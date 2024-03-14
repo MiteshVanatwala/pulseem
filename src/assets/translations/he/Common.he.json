@@ -789,5 +789,18 @@
   "parameters": "פרמטרים",
   "accessibility": "הוסף תמיכה בנגישות",
   "typeKey": "הזן משתנה",
-  "typeValue": "הזן ערך"
+  "typeValue": "הזן ערך",
+  "clickedOnLink": "לקוחות שהקליקו על קישור ב-",
+  "notClickedOnLink": "לקוחות שלא הקליקו על קישור ב-",
+  "events": "אירועים",
+  "any": "הכל",
+  "moreThan": "גבוה מ",
+  "lessThan": "נמוך מ",
+  "range": "טווח",
+  "isPurchase": "רכש ב",
+  "isNotPurchase": "לא רכש ב",
+  "minPrice": "מחיר מינימלי",
+  "maxPrice": "מחיר מקסימלי",
+  "abandonedCart": "נטש עגלה ב",
+  "pageViewed": "צפה בעמוד ב"
 }

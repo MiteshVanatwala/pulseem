@@ -10,9 +10,9 @@ import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import Groups from '../../../components/Groups/GroupsHandler/Groups';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import { Loader } from '../../../components/Loader/Loader';
-import { ActivityGroup, ActivtyTimeInterval, CondType, Conditions, DynamicGroupModel } from '../../../Models/Groups/DynamicGroup';
+import { ActivityEvent, MyActivities, ActivtyTimeInterval, CondType, CondGroup, DynamicGroupModel } from '../../../Models/Groups/DynamicGroup';
 import PersonalDetails from './Tabs/PersonalDetails';
-// import EventsDetails from './Tabs/EventsDetails';
+import EventsDetails from './Tabs/EventsDetails';
 import DateDetails from './Tabs/DateDetails';
 import ActivityDetails from './Tabs/ActivityDetails';
 import { getById, save } from '../../../redux/reducers/DynamicGroupsSlice';
@@ -25,6 +25,8 @@ import UpdateGroup from './Tabs/UpdateGroup';
 import { Group } from '../../../Models/Groups/Group';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
+import { Title } from '../../../components/managment/Title';
+import DefaultScreen from '../../DefaultScreen';
 
 const EditDynamicGroup = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -46,6 +48,7 @@ const EditDynamicGroup = ({ classes }: any) => {
             IsDynamic: true,
             IsTestGroup: false,
             Recipients: 0,
+            SubAccountID: -1,
             UpdateDate: null
         },
         dynamicData: {
@@ -54,11 +57,58 @@ const EditDynamicGroup = ({ classes }: any) => {
                 IsNotOpenedFromDate: null,
                 IsNotOpenedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsNotOpenedToDate: null,
+
                 IsOpened: null,
                 IsOpenedFromDate: null,
                 IsOpenedInterval: ActivtyTimeInterval.Last2Weeks,
-                IsOpenedToDate: null
-            } as ActivityGroup,
+                IsOpenedToDate: null,
+
+                IsClicked: null,
+                IsClickedFromDate: null,
+                IsClickedInterval: ActivtyTimeInterval.Last2Weeks,
+                IsClickedToDate: null,
+
+                IsNotClicked: null,
+                IsNotClickedFromDate: null,
+                IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks,
+                IsNotClickedToDate: null,
+
+                IsPurchased: null,
+                IsPurchasedComparingType: ActivityEvent.Any,
+                IsPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
+                IsPurchasedMinPrice: null,
+                IsPurchasedMaxPrice: null,
+                IsPurchasedFromDate: null,
+                IsPurchasedToDate: null,
+                PurchasedPrice: null,
+
+                IsNotPurchased: null,
+                IsNotPurchasedComparingType: ActivityEvent.Any,
+                IsNotPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
+                IsNotPurchasedMinPrice: null,
+                IsNotPurchasedMaxPrice: null,
+                IsNotPurchasedFromDate: null,
+                IsNotPurchasedToDate: null,
+                NotPurchasedPrice: null,
+
+                IsAbandoned: null,
+                IsAbandonedComparingType: ActivityEvent.Any,
+                IsAbandonedInterval: ActivtyTimeInterval.Last2Weeks,
+                IsAbandonedMinPrice: null,
+                IsAbandonedMaxPrice: null,
+                IsAbandonedFromDate: null,
+                IsAbandonedToDate: null,
+                AbandonedPrice: null,
+
+                IsPageViewed: null,
+                IsPageViewedComparingType: ActivityEvent.Any,
+                IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
+                IsPageViewedMinPrice: null,
+                IsPageViewedMaxPrice: null,
+                IsPageViewedFromDate: null,
+                IsPageViewedToDate: null,
+                PageViewedPrice: null
+            } as MyActivities,
             MyConditions: [{
                 FirstName: '',
                 FirstNameCond: CondType.Undefined,
@@ -118,18 +168,15 @@ const EditDynamicGroup = ({ classes }: any) => {
                 ExtraDate3To: null,
                 ExtraDate4From: null,
                 ExtraDate4To: null
-            }] as Conditions[],
+            }] as CondGroup[],
             MyGroups: [] as number[],
-            ShowClicked: false,
-            ShowOpened: false,
-            ShowNotClicked: false,
-            ShowNotOpened: false
         } as DynamicGroupModel
     });
     const [tabValue, setTabValue] = useState('0');
     const [selectedGroups, setSelectedGroups] = useState<any>([]);
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
     const [showTestGroups, setShowTestGroups] = useState(false);
+    const [pageState, setPageState] = useState<any | never>(null);
     const { id } = useParams();
     const { isRTL } = useSelector((state: any) => state.core);
 
@@ -141,6 +188,12 @@ const EditDynamicGroup = ({ classes }: any) => {
     };
 
     const onSave = async () => {
+        // Add validations
+        // IsPurchased && Range && required min & max - SpecificDates && required min & max 
+        // IsNotPurchased && Range && required min & max - SpecificDates && required min & max 
+        // IsAbandoned && Range && required min & max - SpecificDates && required min & max 
+        // IsPageViewed && Range && required min & max - SpecificDates && required min & max 
+
         setLoader(true);
         var requestObject = { Group: dynamicGroupModel?.Group, DynamicData: dynamicGroupModel?.dynamicData } as any;
         const response = await dispatch(save(requestObject));
@@ -180,7 +233,19 @@ const EditDynamicGroup = ({ classes }: any) => {
     }
 
     const onBack = () => {
-        navigate(`${sitePrefix}Groups/Dynamic`);
+        if (pageState?.PageProperty || pageState?.PageName) {
+            navigate(`${sitePrefix}Groups/Dynamic`, {
+                state: {
+                    from: 'editDynamicGroup'
+                }
+            })
+        }
+        else {
+            sessionStorage.removeItem('PageState');
+            window.history.back()
+        }
+
+
     }
 
     const getData = async (isAfterSave?: boolean | never) => {
@@ -209,12 +274,21 @@ const EditDynamicGroup = ({ classes }: any) => {
             dispatch(getGroupsBySubAccountId());
         }
         if (isAfterSave) {
-            setToastMessage({ severity: 'success', color: 'success', message: t('group.saveDynamicGroupResponse.201').replace('{0}', Group?.Recipients), showAnimtionCheck: false } as any);
+            setToastMessage({ severity: 'success', color: 'success', message: t('group.saveDynamicGroupResponse.201').replace('{0}', Group?.Recipients?.toLocaleString()), showAnimtionCheck: false } as any);
         }
         setLoader(false);
     };
 
     useEffect(() => {
+        const sessionPageState = window.sessionStorage?.getItem('PageState');
+        if (sessionPageState) {
+            const pState = JSON.parse(sessionPageState);
+            const fromState = pState?.filter((x: any) => { return x?.PageName === 'dynamicGroups' });
+            if (fromState && fromState?.length > 0) {
+                setPageState(fromState[0]);
+            }
+        }
+
         getData();
     }, []);
 
@@ -231,20 +305,26 @@ const EditDynamicGroup = ({ classes }: any) => {
         setSelectedGroups(selectedgroupsList);
     }, [dynamicGroupModel, subAccountAllGroups])
 
-    const callbackUpdateGroups = (groups: any) => {
-        const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
-        const groupList: Group[] = found
-            ? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
-            : [...selectedGroups, groups];
-        setSelectedGroups(groupList);
+    const callbackUpdateGroups = (groups: any, event: any) => {
 
-        setDynamicGroupModel({
-            ...dynamicGroupModel,
-            dynamicData: {
-                ...dynamicGroupModel.dynamicData,
-                MyGroups: groupList.map((value: Group) => value.GroupID)
-            }
-        });
+        if (event) {
+            setSelectedGroups(groups);
+        }
+        else {
+            const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
+            const groupList: Group[] = found
+                ? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
+                : [...selectedGroups, groups];
+            setSelectedGroups(groupList);
+
+            setDynamicGroupModel({
+                ...dynamicGroupModel,
+                dynamicData: {
+                    ...dynamicGroupModel.dynamicData,
+                    MyGroups: groupList.map((value: Group) => value.GroupID)
+                }
+            });
+        }
     }
     const callbackSelectAll = () => {
         let groupList: Group[] = [];
@@ -284,15 +364,166 @@ const EditDynamicGroup = ({ classes }: any) => {
     }
 
     const updateMyActivities = (keyName: string, value: string) => {
-        setDynamicGroupModel({
-            ...dynamicGroupModel, dynamicData: {
-                ...dynamicGroupModel.dynamicData,
-                MyActivities: {
-                    ...dynamicGroupModel.dynamicData.MyActivities,
-                    [keyName]: value
+        const paramsToReset = ["IsPurchased", "IsNotPurchased", "IsAbandoned", "IsPageViewed", "IsClicked", "IsNotClicked", "IsOpened", "IsNotOpened"];
+
+        const resetValues = (keyName: string, value: string) => {
+            if (paramsToReset.filter((x: string) => { return x === keyName }).length > 0 && value.toString() === 'false') {
+                switch (keyName) {
+                    case 'IsClicked': {
+                        setDynamicGroupModel({
+                            ...dynamicGroupModel, dynamicData: {
+                                ...dynamicGroupModel.dynamicData,
+                                MyActivities: {
+                                    ...dynamicGroupModel.dynamicData.MyActivities,
+                                    IsClicked: null,
+                                    IsClickedFromDate: null,
+                                    IsClickedToDate: null,
+                                    IsClickedInterval: ActivtyTimeInterval.Last2Weeks
+                                }
+                            }
+                        });
+                        break;
+                    }
+                    case 'IsNotClicked': {
+                        setDynamicGroupModel({
+                            ...dynamicGroupModel, dynamicData: {
+                                ...dynamicGroupModel.dynamicData,
+                                MyActivities: {
+                                    ...dynamicGroupModel.dynamicData.MyActivities,
+                                    IsNotClicked: null,
+                                    IsNotClickedFromDate: null,
+                                    IsNotClickedToDate: null,
+                                    IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks
+                                }
+                            }
+                        });
+                        break;
+                    }
+                    case 'IsOpened': {
+                        setDynamicGroupModel({
+                            ...dynamicGroupModel, dynamicData: {
+                                ...dynamicGroupModel.dynamicData,
+                                MyActivities: {
+                                    ...dynamicGroupModel.dynamicData.MyActivities,
+                                    IsOpened: null,
+                                    IsOpenedFromDate: null,
+                                    IsOpenedToDate: null,
+                                    IsOpenedInterval: ActivtyTimeInterval.Last2Weeks
+                                }
+                            }
+                        });
+                        break;
+                    }
+                    case 'IsNotOpened': {
+                        setDynamicGroupModel({
+                            ...dynamicGroupModel, dynamicData: {
+                                ...dynamicGroupModel.dynamicData,
+                                MyActivities: {
+                                    ...dynamicGroupModel.dynamicData.MyActivities,
+                                    IsNotOpened: null,
+                                    IsNotOpenedFromDate: null,
+                                    IsNotOpenedToDate: null,
+                                    IsNotOpenedInterval: ActivtyTimeInterval.Last2Weeks
+                                }
+                            }
+                        });
+                        break;
+                    }
+                    case 'IsPurchased': {
+                        setDynamicGroupModel({
+                            ...dynamicGroupModel, dynamicData: {
+                                ...dynamicGroupModel.dynamicData,
+                                MyActivities: {
+                                    ...dynamicGroupModel.dynamicData.MyActivities,
+                                    IsPurchased: null,
+                                    IsPurchasedComparingType: ActivityEvent.Any,
+                                    IsPurchasedFromDate: null,
+                                    IsPurchasedToDate: null,
+                                    IsPurchasedMinPrice: null,
+                                    IsPurchasedMaxPrice: null,
+                                    IsPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
+                                    PurchasedPrice: null
+                                }
+                            }
+                        });
+                        break;
+                    }
+                    case 'IsNotPurchased': {
+                        setDynamicGroupModel({
+                            ...dynamicGroupModel, dynamicData: {
+                                ...dynamicGroupModel.dynamicData,
+                                MyActivities: {
+                                    ...dynamicGroupModel.dynamicData.MyActivities,
+                                    IsNotPurchased: null,
+                                    IsNotPurchasedComparingType: ActivityEvent.Any,
+                                    IsNotPurchasedFromDate: null,
+                                    IsNotPurchasedToDate: null,
+                                    IsNotPurchasedMinPrice: null,
+                                    IsNotPurchasedMaxPrice: null,
+                                    IsNotPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
+                                    NotPurchasedPrice: null
+                                }
+                            }
+                        });
+                        break;
+                    }
+                    case 'IsAbandoned': {
+                        setDynamicGroupModel({
+                            ...dynamicGroupModel, dynamicData: {
+                                ...dynamicGroupModel.dynamicData,
+                                MyActivities: {
+                                    ...dynamicGroupModel.dynamicData.MyActivities,
+                                    IsAbandoned: null,
+                                    IsAbandonedComparingType: ActivityEvent.Any,
+                                    IsAbandonedFromDate: null,
+                                    IsAbandonedToDate: null,
+                                    IsAbandonedMinPrice: null,
+                                    IsAbandonedMaxPrice: null,
+                                    IsAbandonedInterval: ActivtyTimeInterval.Last2Weeks,
+                                    AbandonedPrice: null
+                                }
+                            }
+                        });
+                        break;
+                    }
+                    case 'IsPageViewed': {
+                        setDynamicGroupModel({
+                            ...dynamicGroupModel, dynamicData: {
+                                ...dynamicGroupModel.dynamicData,
+                                MyActivities: {
+                                    ...dynamicGroupModel.dynamicData.MyActivities,
+                                    IsPageViewed: null,
+                                    IsPageViewedComparingType: ActivityEvent.Any,
+                                    IsPageViewedFromDate: null,
+                                    IsPageViewedToDate: null,
+                                    IsPageViewedMinPrice: null,
+                                    IsPageViewedMaxPrice: null,
+                                    IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
+                                    PageViewedPrice: null
+                                }
+                            }
+                        });
+                        break;
+                    }
                 }
             }
-        });
+        }
+
+        if (paramsToReset.filter((x: string) => { return x === keyName }).length > 0 && value.toString() === 'false') {
+            resetValues(keyName, value);
+        }
+        else {
+            setDynamicGroupModel({
+                ...dynamicGroupModel, dynamicData: {
+                    ...dynamicGroupModel.dynamicData,
+                    MyActivities: {
+                        ...dynamicGroupModel.dynamicData.MyActivities,
+                        [keyName]: value
+                    }
+                }
+            });
+        }
+
     }
 
     const updateGroup = (keyName: string, value: string) => {
@@ -305,132 +536,150 @@ const EditDynamicGroup = ({ classes }: any) => {
     }
 
     return (
-        <>
-            <Loader isOpen={showLoader} />
-            {toastMessage && renderToast()}
-            <Tabs
-                value={tabValue}
-                onChange={(e, value) => setTabValue(value)}
-                className={clsx(classes.mr15, classes.ml15)}
-                classes={{ indicator: classes.hideIndicator }}
-            >
-                <Tab
-                    label={t('common.PersonalDetails')}
-                    classes={{ root: classes.tabText, selected: classes.activeTab }}
-                    className={classes.iconTab}
-                    value='0'
-                />
-                <Tab
-                    label={t('recipient.dates')}
-                    classes={{ root: classes.tabText, selected: classes.activeTab }}
-                    className={classes.iconTab}
-                    value='1'
-                />
-                <Tab
-                    label={t('common.ActivityLevel')}
-                    classes={{ root: classes.tabText, selected: classes.activeTab }}
-                    className={classes.iconTab}
-                    value='2'
-                />
-                {/* <Tab
-                    label={t('common.events')}
-                    classes={{ root: classes.tabText, selected: classes.activeTab }}
-                    className={classes.iconTab}
-                    value='3'
-                /> */}
-                <Tab
-                    label={t('common.Groups')}
-                    classes={{ root: classes.tabText, selected: classes.activeTab }}
-                    className={classes.iconTab}
-                    value='4'
-                />
+        <DefaultScreen
+            key="groups"
+            currentPage='groups'
+            subPage='EditDynamicGroup'
+            classes={classes}
+            containerClass={clsx(classes.management, classes.mb50)}
+        >
+            <Box className={classes.mb50}>
+                <Loader isOpen={showLoader} />
+                {toastMessage && renderToast()}
+                <Box className={'topSection'}>
+                    <Title
+                        Text={dynamicGroupModel?.Group?.GroupName === '' ?
+                            `${t('recipient.logPageHeaderResource1.Edit')}` :
+                            `${t('recipient.logPageHeaderResource1.Edit')} - "${dynamicGroupModel?.Group?.GroupName}"`}
+                        classes={classes}
+                    />
+                    <Box className={clsx(classes.p20)}>
+                        <Tabs
+                            value={tabValue}
+                            onChange={(e, value) => setTabValue(value)}
+                            className={clsx(classes.mr15, classes.ml15)}
+                            classes={{ indicator: classes.hideIndicator }}
+                        >
+                            <Tab
+                                label={t('common.PersonalDetails')}
+                                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                                className={classes.iconTab}
+                                value='0'
+                            />
+                            <Tab
+                                label={t('recipient.dates')}
+                                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                                className={classes.iconTab}
+                                value='1'
+                            />
+                            <Tab
+                                label={t('common.ActivityLevel')}
+                                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                                className={classes.iconTab}
+                                value='2'
+                            />
+                            <Tab
+                                label={t('common.events')}
+                                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                                className={classes.iconTab}
+                                value='3'
+                            />
+                            <Tab
+                                label={t('common.Groups')}
+                                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                                className={classes.iconTab}
+                                value='4'
+                            />
 
-                <Tab
-                    label={t('group.updateGroup')}
-                    classes={{ root: classes.tabText, selected: classes.activeTab }}
-                    className={classes.iconTab}
-                    value='5'
-                />
-            </Tabs>
+                            <Tab
+                                label={t('group.updateGroup')}
+                                classes={{ root: classes.tabText, selected: classes.activeTab }}
+                                className={classes.iconTab}
+                                value='5'
+                            />
+                        </Tabs>
 
-            <TabContext value={`${tabValue}`}>
-                <TabPanel value='0'>
-                    <PersonalDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
-                </TabPanel>
+                        <TabContext value={`${tabValue}`}>
+                            <TabPanel value='0'>
+                                <PersonalDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
+                            </TabPanel>
 
-                <TabPanel value='1'>
-                    <DateDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
-                </TabPanel>
-                <TabPanel value='2'>
-                    <ActivityDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} />
-                </TabPanel>
-                {/* <TabPanel value='3'>
-                    <EventsDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
-                </TabPanel> */}
+                            <TabPanel value='1'>
+                                <DateDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyConditions} />
+                            </TabPanel>
+                            <TabPanel value='2'>
+                                <ActivityDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} />
+                            </TabPanel>
+                            <TabPanel value='3'>
+                                <EventsDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} />
+                            </TabPanel>
 
-                <TabPanel value='4'>
-                    <div className={clsx(classes.fullWidth, classes.pt25)}>
-                        <Groups
-                            classes={classes}
-                            list={
-                                showTestGroups
-                                    ? [...subAccountAllGroups, ...testGroups]
-                                    : [...subAccountAllGroups]
-                            }
-                            // test={showTestGroups}
-                            selectedList={selectedGroups}
-                            callbackSelectedGroups={callbackUpdateGroups}
-                            callbackUpdateGroups={() => { }} //onUpdateGroups
-                            callbackSelectAll={callbackSelectAll}
-                            callbackReciFilter={() => { }} // onReciFilter
-                            callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
-                            key={"dynuacGroups"}
-                            uniqueKey={'groups_4'}
-                            innerHeight={325}
-                            showSortBy={true}
-                            showFilter={false}
-                            showSelectAll={true}
-                            bsDot={null}
-                            isNotifications={false}
-                            isSms={true}
-                            isCampaign={false}
-                            noSelectionText={''}
-                        // isFilterSelected={false}
-                        />
-                    </div>
-                </TabPanel>
+                            <TabPanel value='4'>
+                                <div className={clsx(classes.fullWidth, classes.pt25)}>
+                                    <Groups
+                                        classes={classes}
+                                        list={
+                                            showTestGroups
+                                                ? [...subAccountAllGroups, ...testGroups]
+                                                : [...subAccountAllGroups]
+                                        }
+                                        // test={showTestGroups}
+                                        selectedList={selectedGroups}
+                                        callbackSelectedGroups={callbackUpdateGroups}
+                                        callbackUpdateGroups={callbackUpdateGroups} //onUpdateGroups
+                                        callbackSelectAll={callbackSelectAll}
+                                        callbackReciFilter={() => { }} // onReciFilter
+                                        callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+                                        key={"dynuacGroups"}
+                                        uniqueKey={'groups_4'}
+                                        innerHeight={325}
+                                        showSortBy={true}
+                                        showFilter={false}
+                                        showSelectAll={true}
+                                        bsDot={null}
+                                        isNotifications={false}
+                                        isSms={true}
+                                        isCampaign={false}
+                                        noSelectionText={''}
+                                    // isFilterSelected={false}
+                                    />
+                                </div>
+                            </TabPanel>
 
-                <TabPanel value='5'>
-                    <UpdateGroup classes={classes} data={dynamicGroupModel} onUpdate={updateGroup} />
-                </TabPanel>
-            </TabContext>
-            <Box className={clsx(classes.flex, classes.pt25)} style={{ justifyContent: 'end', marginTop: 15 }}>
-                <Button
-                    onClick={onBack}
-                    className={clsx(
-                        classes.btn,
-                        classes.btnRounded,
-                        classes.backButton
-                    )}
-                    startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                    style={{ margin: '8px' }}
-                >
-                    {t('common.back')}
-                </Button>
-                <Button
-                    className={clsx(
-                        classes.btn,
-                        classes.btnRounded
-                    )}
-                    style={{ margin: '8px' }}
-                    startIcon={<BiSave />}
-                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                    onClick={onSave}
-                >
-                    {t("common.save")}
-                </Button>
+                            <TabPanel value='5'>
+                                <UpdateGroup classes={classes} data={dynamicGroupModel} onUpdate={updateGroup} />
+                            </TabPanel>
+                        </TabContext>
+                        <Box className={clsx(classes.flex, classes.pt25)} style={{ justifyContent: 'end', marginTop: 15 }}>
+                            <Button
+                                onClick={onBack}
+                                className={clsx(
+                                    classes.btn,
+                                    classes.btnRounded,
+                                    classes.backButton
+                                )}
+                                startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                style={{ margin: '8px' }}
+                            >
+                                {t('common.back')}
+                            </Button>
+                            <Button
+                                className={clsx(
+                                    classes.btn,
+                                    classes.btnRounded
+                                )}
+                                style={{ margin: '8px' }}
+                                startIcon={<BiSave />}
+                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                onClick={onSave}
+                            >
+                                {t("common.save")}
+                            </Button>
+                        </Box>
+                    </Box>
+                </Box>
             </Box>
-        </>
+        </DefaultScreen>
     )
 }
 
