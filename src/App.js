@@ -76,6 +76,7 @@ import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import EditDynamicGroup from './screens/Groups/Dynamic/EditDynamicGroup';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
+import './helpers/global';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
