@@ -105,7 +105,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
             onUpdate({ ...data, PageName: e.target.value })
         }
         else {
-            onUpdate({ ...data, PageName: e.target.value, PageUrl: e.target.value.replace(/ /g, '_') })
+            onUpdate({ ...data, PageName: e.target.value, PageUrl: "".toValidLPName(e.target.value) });
         }
 
     }
@@ -194,17 +194,17 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 label=""
                 variant="outlined"
                 name="Name"
-                value={data.PageUrl?.replace(' ', '_').trim()}
+                value={"".toValidLPName(data.PageUrl)}
                 className={clsx(classes.NoPaddingtextField, classes.textField, classes.w100, { [classes.textFieldError]: !!errors.shortURL })}
                 autoComplete="off"
-                onChange={(e: any) => onUpdate({ ...data, PageUrl: e.target.value })}
+                onChange={(e: any) => onUpdate({ ...data, PageUrl: "".toValidLPName(e.target.value) })}
                 error={!!errors.shortURL}
-                title={data.PageUrl}
+                title={"".toValidLPName(data.PageUrl)}
                 onBlur={checkShortURLExist}
             />
             <Box className='textBoxWrapper'>
                 <Typography className={clsx(classes.f13)} style={{ direction: 'ltr' }}>
-                    {domain}{data.PageUrl}
+                    {domain}{"".toValidLPName(data.PageUrl)}
                 </Typography>
                 <Typography className={clsx(classes.errorText, classes.f14)}>
                     {errors.shortURL ?? errors.shortURL}
@@ -240,20 +240,22 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                             native
                             variant="standard"
                             name="AnswerType"
-                            value={
-                                data.AnswerType === LandingPagesAnswerType.REDIRECT_URL && data.AnswerData.toLowerCase().indexOf('home/paymentpage') > -1
-                                    ? LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-                                    : data.AnswerType}
+                            value={data.AnswerType
+                                // data.AnswerType === LandingPagesAnswerType.REDIRECT_URL && data.AnswerData.toLowerCase().indexOf('home/paymentpage') > -1
+                                //     ? LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+                                //     : data.AnswerType
+                            }
                             className={classes.pbt5}
                             onChange={(event: any, val: any) => {
                                 const selection = parseInt(event.target.value);
 
-                                if (selection === LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE) {
-                                    onUpdate({ ...data, AnswerType: selection, AnswerData: PAYMENT_URL });
-                                }
-                                else {
-                                    onUpdate({ ...data, AnswerType: selection, AnswerData: '' })
-                                }
+                                // if (selection === LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE) {
+                                //     onUpdate({ ...data, AnswerType: selection, AnswerData: PAYMENT_URL });
+                                // }
+                                // else {
+                                //     onUpdate({ ...data, AnswerType: selection, AnswerData: '' })
+                                // }
+                                onUpdate({ ...data, AnswerType: selection, AnswerData: '' })
                             }}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             MenuProps={{
@@ -268,9 +270,9 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                             <option value={LandingPagesAnswerType.SYSTEM_DEFAULT_MESSAGE}>{translator("landingPages.systemDefaultMessage")}</option>
                             <option value={LandingPagesAnswerType.POPUP_MESSAGE}>{translator("landingPages.popupMessage")}</option>
                             <option value={LandingPagesAnswerType.REDIRECT_URL}>{translator("landingPages.redirectToURL")}</option>
-                            <option value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</option>
+                            {/* <option value={LandingPagesAnswerType.DOWNLOAD_FILE}>{translator("landingPages.downloadFile")}</option> */}
                             <option value={LandingPagesAnswerType.WITHOUT_ANSWER}>{translator("landingPages.withoutAnswer")}</option>
-                            <option value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</option>
+                            {/* <option value={LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE}>{translator("landingPages.transferToPaymentPage")}</option> */}
                             {/* <MenuItem value={LandingPagesAnswerType.SEND_WEBHOOK}>{translator("landingPages.sendWebhook")}</MenuItem> */}
                         </Select>
                     </FormControl>
@@ -310,7 +312,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </>
             )
         }
-        {[LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(data.AnswerType) > -1 && (
+        {/* {[LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(data.AnswerType) > -1 && (
             <>
                 <Grid item md={3} className={classes.w100}>
                     <Typography title={translator("landingPages.answerMessage")} className={classes.alignDir}>
@@ -342,8 +344,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                 </Grid>
                 {data.AnswerData.toLowerCase().indexOf('home/paymentpage') > -1 && renderPaymentFields()}
             </>)
-        }
-
+        } 
         {
             data.AnswerType === LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE && (
                 <>
@@ -371,7 +372,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     {renderPaymentFields()}
                 </>
             )
-        }
+        } */}
     </Grid >
 
 }

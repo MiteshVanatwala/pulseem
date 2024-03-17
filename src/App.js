@@ -72,11 +72,12 @@ import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
-import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
-import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
+// import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
+// import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
 //import EditDynamicGroups from './screens/Groups/Dynamic/EditDynamicGroups';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
+import './helpers/global';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
