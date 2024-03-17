@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
+// import BeeEditorPage from './screens/BeeEditorPage/BeeEditorPage.tsx';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
@@ -71,10 +72,12 @@ import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
-import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
-import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
+// import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
+// import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
+import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
+import './helpers/global';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -165,6 +168,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Campaigns/editor/:id`}
         element={<CampaignEditorBee classes={classes} />}
       />
+      {/* <Route
+        path={`${sitePrefix}BeeEditor/:type/:id`}
+        element={<BeeEditorPage classes={classes} />}
+      /> */}
       <Route
         path={`${sitePrefix}Campaigns/SendSettings/:id`}
         element={<NewsletterSendSettings classes={classes} />}
@@ -309,6 +316,14 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}LandingPages/Create`}
+        element={<CreateLandingPage classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}LandingPages/Create/:id`}
+        element={<CreateLandingPage classes={classes} />}
       />
       <Route
         path={`/LandingPageWizard`}

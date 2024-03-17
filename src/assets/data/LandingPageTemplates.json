@@ -1,0 +1,290 @@
+{
+  "publicTemplates": [
+    {
+      "ID": 1,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "",
+      "Thumbnail": null,
+      "Category": "",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 2,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 1",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 3,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 1",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 4,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 1",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 5,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 2",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 6,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 2",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 7,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 2",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 8,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 2",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 9,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 2",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 10,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 2",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 11,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 2",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 12,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 2",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 13,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 2",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 14,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 15,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 16,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 17,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 18,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 19,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 20,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 21,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 22,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 23,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 24,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 25,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    },
+    {
+      "ID": 26,
+      "SubAccountId": 0,
+      "Name": "",
+      "JsonData": null,
+      "Html": "<h1>Hello World</h1>",
+      "Thumbnail": null,
+      "Category": "Category 3",
+      "CreationDate": "2023-08-16T12:56:30.883",
+      "IsDeleted": false
+    }
+  ]
+}

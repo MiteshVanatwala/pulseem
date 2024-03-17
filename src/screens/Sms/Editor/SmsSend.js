@@ -1071,7 +1071,7 @@ const SmsSend = ({ classes, ...props }) => {
     }
     else {
       if (filterDialogValues.selectedFilterGroups.length !== 0 || filterDialogValues.exceptionalDays !== "" || filterDialogValues.selectedFilterCampaigns.length !== 0) {
-      // if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) { // TODO: Validate condition
+        // if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) { // TODO: Validate condition
         setbsDot(true);
       }
       else {
@@ -2166,9 +2166,14 @@ const SmsSend = ({ classes, ...props }) => {
         selectedFilterGroups: filterDialogValues.selectedFilterGroups.filter((c) => c.GroupID !== group.GroupID)
       });
     } else {
+      const newGroupArr = [...filterDialogValues.selectedFilterGroups] || [];
+      newGroupArr.push(group);
+
+      setFilterGroups(newGroupArr);
+
       setFilterDialogValues({
         ...filterDialogValues,
-        selectedFilterGroups: [...filterDialogValues.selectedFilterGroups, group]
+        selectedFilterGroups: newGroupArr
       });
     }
   }
@@ -2190,9 +2195,14 @@ const SmsSend = ({ classes, ...props }) => {
         selectedFilterCampaigns: filterDialogValues.selectedFilterCampaigns.filter((c) => c.SMSCampaignID !== campaign.SMSCampaignID)
       })
     } else {
+      const newCampArr = [...filterDialogValues.selectedFilterCampaigns] || [];
+      newCampArr.push(campaign);
+
+      setFilterCampaigns(newCampArr);
+
       setFilterDialogValues({
         ...filterDialogValues,
-        selectedFilterCampaigns: [...filterDialogValues.selectedFilterCampaigns, campaign]
+        selectedFilterCampaigns: newCampArr
       })
     }
   }
@@ -2672,16 +2682,16 @@ const SmsSend = ({ classes, ...props }) => {
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               {t("sms.campaignIsOnItsWay")}
             </p>
-            <span
-              style={{
-                padding: "12px",
-                backgroundColor: "green",
-                marginTop: "10px",
-                cursor: "pointer",
-                color: "#ffffff",
-                borderRadius: "10px"
-              }}
-              onClick={() => { Redirect({ url: `${sitePrefix}SMSCampaigns` }) }}>{t("common.confirm")}</span>
+            <Button
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.btn, classes.btnRounded
+              )}
+              style={{ margin: '8px' }}
+              color="primary"
+              onClick={() => { Redirect({ url: `${sitePrefix}SMSCampaigns` }) }}
+            >{t('common.confirm')}</Button>
           </div>
         </Box>
       ),
