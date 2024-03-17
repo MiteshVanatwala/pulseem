@@ -20,7 +20,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 <FormControlLabel
                     control={
                         <Checkbox
-                            disabled={data.dynamicData?.MyActivities?.IsNotOpened === true}
+                            disabled={data.dynamicData?.MyActivities?.IsNotOpened === true && !data.dynamicData?.MyActivities?.IsOpened}
                             onChange={(event: any) => onUpdate('IsOpened', !!event.target.checked)}
                             checked={!!data.dynamicData?.MyActivities?.IsOpened}
                             name="openedinlast"
@@ -37,7 +37,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                     className={clsx(classes.selectInputFormControl, classes.w100)}
                 >
                     <SelectActivityInteval
-                        Disabled={data.dynamicData?.MyActivities?.IsNotOpened === true}
+                        Disabled={data.dynamicData?.MyActivities?.IsNotOpened === true && !data.dynamicData?.MyActivities.IsOpenedInterval}
                         OnUpdate={(event: any) => onUpdate('IsOpenedInterval', event.target.value)}
                         Value={data.dynamicData?.MyActivities.IsOpenedInterval}
                         classes={classes}
