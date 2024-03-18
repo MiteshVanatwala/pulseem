@@ -283,7 +283,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                                     variant='outlined'
                                                     size='small'
                                                     value={data.dynamicData.MyConditions[0][field]}
-                                                    onChange={(event: any) => onUpdate(field, event.target.value.trim())}
+                                                    onChange={(event: any) => onUpdate(field, event.target.value)}
                                                     className={clsx(classes.w100, classes.textField, classes.mt25)}
                                                 />
                                             </Grid>
