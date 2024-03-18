@@ -5,7 +5,7 @@ export interface DynamicGroupModel {
     MyGroups: number[];
 }
 export enum CondType {
-    Undefined,
+    Undefined = -1,
     Equal = 0,
     Like = 1,
     NotEqual = 2,
