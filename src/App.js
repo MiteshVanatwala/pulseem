@@ -77,6 +77,7 @@ import EditDynamicGroup from './screens/Groups/Dynamic/EditDynamicGroup';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 import { isSignupPage } from './helpers/Utils/common';
+import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
 
 const renderRoutes = (classes, redirect) => {
