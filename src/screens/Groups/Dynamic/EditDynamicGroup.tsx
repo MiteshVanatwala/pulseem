@@ -310,6 +310,13 @@ const EditDynamicGroup = ({ classes }: any) => {
 
         if (event) {
             setSelectedGroups(groups);
+            setDynamicGroupModel({
+                ...dynamicGroupModel,
+                dynamicData: {
+                    ...dynamicGroupModel.dynamicData,
+                    MyGroups: []
+                }
+            });
         }
         else {
             const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
