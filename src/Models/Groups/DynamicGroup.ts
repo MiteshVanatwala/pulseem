@@ -13,14 +13,14 @@ export enum CondType {
     NoValue = 4
 }
 export enum ActivtyTimeInterval {
-    LastWeek = 0,
-    Last2Weeks = 1,
-    LastMonth = 2,
-    Last3Months = 3,
-    Last6Months = 4,
-    LastYear = 5,
-    SpecificDates = 6,
-    Ever = 7
+    LastWeek = '0',
+    Last2Weeks = '1',
+    LastMonth = '2',
+    Last3Months = '3',
+    Last6Months = '4',
+    LastYear = '5',
+    SpecificDates = '6',
+    Ever = '7'
 }
 
 export enum ActivityEvent {

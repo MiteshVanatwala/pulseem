@@ -24,28 +24,31 @@ const SelectActivityInteval = (args: IntervalArgs) => {
       className={clsx(classes.selectInputFormControl, classes.w100)}
     >
       <Select
+        native
         disabled={Disabled}
         variant='standard'
-        value={Value}
+        value={Value ?? undefined}
         onChange={OnUpdate}
         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-        className={clsx(classes.w100, classes.mt10)}
+        className={clsx(classes.w100, classes.mt10, Disabled ? classes.disabled : null)}
         MenuProps={{
           PaperProps: {
             style: {
-              maxHeight: 300,
+              maxHeight: 300
             },
           },
         }}
       >
-        <MenuItem value={ActivtyTimeInterval.LastWeek}>{t('common.lastWeek')}</MenuItem>
-        <MenuItem value={ActivtyTimeInterval.Last2Weeks}>{t('common.last2Weeks')}</MenuItem>
-        <MenuItem value={ActivtyTimeInterval.LastMonth}>{t('common.lastMonth')}</MenuItem>
-        <MenuItem value={ActivtyTimeInterval.Last3Months}>{t('common.last3Months')}</MenuItem>
-        <MenuItem value={ActivtyTimeInterval.Last6Months}>{t('common.last6Months')}</MenuItem>
-        <MenuItem value={ActivtyTimeInterval.LastYear}>{t('common.lastYear')}</MenuItem>
-        <MenuItem value={ActivtyTimeInterval.SpecificDates}>{t('common.specificDates')}</MenuItem>
-        <MenuItem value={ActivtyTimeInterval.Ever}>{t('common.allTheTimes')}</MenuItem>
+        {/* @ts-ignore */}
+        <option name={t('common.select')} value={null}>{t('common.select')}</option>
+        <option value={ActivtyTimeInterval.LastWeek}>{t('common.lastWeek')}</option>
+        <option value={ActivtyTimeInterval.Last2Weeks}>{t('common.last2Weeks')}</option>
+        <option value={ActivtyTimeInterval.LastMonth}>{t('common.lastMonth')}</option>
+        <option value={ActivtyTimeInterval.Last3Months}>{t('common.last3Months')}</option>
+        <option value={ActivtyTimeInterval.Last6Months}>{t('common.last6Months')}</option>
+        <option value={ActivtyTimeInterval.LastYear}>{t('common.lastYear')}</option>
+        <option value={ActivtyTimeInterval.SpecificDates}>{t('common.specificDates')}</option>
+        <option value={ActivtyTimeInterval.Ever}>{t('common.allTheTimes')}</option>
       </Select>
     </FormControl>
   </>

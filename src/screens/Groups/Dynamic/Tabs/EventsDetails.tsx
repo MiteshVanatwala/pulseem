@@ -12,6 +12,7 @@ import SelectActivityInteval from '../Components/SelectActivityInteval';
 import { DateField } from '../../../../components/managment';
 import moment from 'moment';
 import { DateFormats } from '../../../../helpers/Constants';
+import SelectComparingType from '../Components/SelectComparingType';
 
 const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
@@ -46,7 +47,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <SelectActivityInteval
                         Disabled={!data.dynamicData?.MyActivities.IsPurchased}
                         OnUpdate={(event: any) => onUpdate('IsPurchasedInterval', event.target.value)}
-                        Value={data.dynamicData?.MyActivities.IsPurchasedInterval}
+                        Value={!data.dynamicData?.MyActivities.IsPurchased ? null : data.dynamicData?.MyActivities.IsPurchasedInterval}
                         classes={classes}
                         key={'IsPurchasedInterval'}
                     />
@@ -105,31 +106,13 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     )
                 }
                 <Grid item xs={6} sm={6} md={2}>
-                    <FormControl
-                        variant="standard"
-                        className={clsx(classes.selectInputFormControl, classes.w100)}
-                    >
-                        <Select
-                            disabled={!data.dynamicData?.MyActivities.IsPurchased}
-                            variant='standard'
-                            value={data.dynamicData?.MyActivities.IsPurchasedComparingType ?? ActivityEvent.Any}
-                            onChange={(event: any) => onUpdate('IsPurchasedComparingType', event.target.value)}
-                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                            className={clsx(classes.w100, classes.mt10)}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 300,
-                                    },
-                                },
-                            }}
-                        >
-                            <MenuItem value={ActivityEvent.Any}>{t('common.any')}</MenuItem>
-                            <MenuItem value={ActivityEvent.MoreThan}>{t('common.moreThan')}</MenuItem>
-                            <MenuItem value={ActivityEvent.LessThan}>{t('common.lessThan')}</MenuItem>
-                            <MenuItem value={ActivityEvent.Range}>{t('common.range')}</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <SelectComparingType
+                        Disabled={!data.dynamicData?.MyActivities.IsPurchased}
+                        Value={data.dynamicData?.MyActivities.IsPurchasedComparingType ?? ActivityEvent.Any}
+                        OnUpdate={(event: any) => onUpdate('IsPurchasedComparingType', event.target.value)}
+                        classes={classes}
+                        key={'IsPurchasedComparingType'}
+                    />
                 </Grid>
                 {(data.dynamicData?.MyActivities.IsPurchasedComparingType === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsPurchasedComparingType === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsPurchased && <Grid item xs={12} sm={2} md={2} className={classes.pt5}>
                     <Grid container spacing={3}>
@@ -204,7 +187,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <SelectActivityInteval
                         Disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
                         OnUpdate={(event: any) => onUpdate('IsNotPurchasedInterval', event.target.value)}
-                        Value={data.dynamicData?.MyActivities.IsNotPurchasedInterval}
+                        Value={!data.dynamicData?.MyActivities.IsNotPurchased ? null : data.dynamicData?.MyActivities.IsNotPurchasedInterval}
                         classes={classes}
                         key={'IsNotPurchasedInterval'}
                     />
@@ -263,32 +246,13 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     )
                 }
                 <Grid item xs={6} sm={6} md={2}>
-                    <FormControl
-                        variant="standard"
-                        className={clsx(classes.selectInputFormControl, classes.w100)}
-                    >
-                        <Select
-                            disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
-                            // disabled={data.dynamicData?.MyActivities?.IsPurchased === true}
-                            variant='standard'
-                            value={data.dynamicData?.MyActivities.IsNotPurchasedComparingType ?? ActivityEvent.Any}
-                            onChange={(event: any) => onUpdate('IsNotPurchasedComparingType', event.target.value)}
-                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                            className={clsx(classes.w100, classes.mt10)}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 300,
-                                    },
-                                },
-                            }}
-                        >
-                            <MenuItem value={ActivityEvent.Any}>{t('common.any')}</MenuItem>
-                            <MenuItem value={ActivityEvent.MoreThan}>{t('common.moreThan')}</MenuItem>
-                            <MenuItem value={ActivityEvent.LessThan}>{t('common.lessThan')}</MenuItem>
-                            <MenuItem value={ActivityEvent.Range}>{t('common.range')}</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <SelectComparingType
+                        Disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
+                        Value={data.dynamicData?.MyActivities.IsNotPurchasedComparingType ?? ActivityEvent.Any}
+                        OnUpdate={(event: any) => onUpdate('IsNotPurchasedComparingType', event.target.value)}
+                        classes={classes}
+                        key={'IsNotPurchasedComparingType'}
+                    />
                 </Grid>
                 {(data.dynamicData?.MyActivities.IsNotPurchasedComparingType === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsNotPurchasedComparingType === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsNotPurchased && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
                     <Grid container spacing={3}>
@@ -363,7 +327,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <SelectActivityInteval
                         Disabled={!data.dynamicData?.MyActivities.IsAbandoned}
                         OnUpdate={(event: any) => onUpdate('IsAbandonedInterval', event.target.value)}
-                        Value={data.dynamicData?.MyActivities.IsAbandonedInterval}
+                        Value={!data.dynamicData?.MyActivities.IsAbandoned ? null : data.dynamicData?.MyActivities.IsAbandonedInterval}
                         classes={classes}
                         key={'IsAbandonedInterval'}
                     />
@@ -422,31 +386,13 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     )
                 }
                 <Grid item xs={6} sm={6} md={2}>
-                    <FormControl
-                        variant="standard"
-                        className={clsx(classes.selectInputFormControl, classes.w100)}
-                    >
-                        <Select
-                            disabled={!data.dynamicData?.MyActivities.IsAbandoned}
-                            variant='standard'
-                            value={data.dynamicData?.MyActivities.IsAbandonedComparingType ?? ActivityEvent.Any}
-                            onChange={(event: any) => onUpdate('IsAbandonedComparingType', event.target.value)}
-                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                            className={clsx(classes.w100, classes.mt10)}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 300,
-                                    },
-                                },
-                            }}
-                        >
-                            <MenuItem value={ActivityEvent.Any}>{t('common.any')}</MenuItem>
-                            <MenuItem value={ActivityEvent.MoreThan}>{t('common.moreThan')}</MenuItem>
-                            <MenuItem value={ActivityEvent.LessThan}>{t('common.lessThan')}</MenuItem>
-                            <MenuItem value={ActivityEvent.Range}>{t('common.range')}</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <SelectComparingType
+                        Disabled={!data.dynamicData?.MyActivities.IsAbandoned}
+                        Value={data.dynamicData?.MyActivities.IsAbandonedComparingType ?? ActivityEvent.Any}
+                        OnUpdate={(event: any) => onUpdate('IsAbandonedComparingType', event.target.value)}
+                        classes={classes}
+                        key={'IsAbandonedComparingType'}
+                    />
                 </Grid>
                 {(data.dynamicData?.MyActivities.IsAbandonedComparingType === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsAbandonedComparingType === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsAbandoned && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
                     <Grid container spacing={3}>

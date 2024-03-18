@@ -21,6 +21,7 @@ const UpdateGroup = ({ classes, data, onUpdate }: any) => {
                     className={clsx(classes.selectInputFormControl, classes.w50)}
                 >
                     <Select
+                        native
                         variant='standard'
                         value={data.Group?.DynamicUpdatePolicy}
                         onChange={(event: any) => { onUpdate('DynamicUpdatePolicy', event.target.value) }}
@@ -34,8 +35,8 @@ const UpdateGroup = ({ classes, data, onUpdate }: any) => {
                             },
                         }}
                     >
-                        <MenuItem value={0}>{t('common.daily2AM')}</MenuItem>
-                        <MenuItem value={1}>{t('common.weekly2AM')}</MenuItem>
+                        <option value={0}>{t('common.daily2AM')}</option>
+                        <option value={1}>{t('common.weekly2AM')}</option>
                     </Select>
                 </FormControl>
             </Grid>
