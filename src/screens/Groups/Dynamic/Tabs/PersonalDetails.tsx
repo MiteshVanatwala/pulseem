@@ -93,7 +93,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data.dynamicData.MyConditions[0]?.FirstName}
-                            onChange={(event: any) => onUpdate('FirstName', event.target.value.trim())}
+                            onChange={(event: any) => onUpdate('FirstName', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -117,7 +117,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.LastName}
-                            onChange={(event: any) => onUpdate('LastName', event.target.value.trim())}
+                            onChange={(event: any) => onUpdate('LastName', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -165,7 +165,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Country}
-                            onChange={(event: any) => onUpdate('Country', event.target.value.trim())}
+                            onChange={(event: any) => onUpdate('Country', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -189,7 +189,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.City}
-                            onChange={(event: any) => onUpdate('City', event.target.value.trim())}
+                            onChange={(event: any) => onUpdate('City', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
@@ -213,7 +213,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                             variant='outlined'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Company}
-                            onChange={(event: any) => onUpdate('Company', event.target.value.trim())}
+                            onChange={(event: any) => onUpdate('Company', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
                         />
                     </Grid>
