@@ -5,12 +5,12 @@ export interface DynamicGroupModel {
     MyGroups: number[];
 }
 export enum CondType {
-    Undefined = -1,
-    Equal = 0,
-    Like = 1,
-    NotEqual = 2,
-    StartsWith = 3,
-    NoValue = 4
+    Undefined = 0,
+    Equal = 1,
+    Like = 2,
+    NotEqual = 3,
+    StartsWith = 4,
+    NoValue = 5
 }
 export enum ActivtyTimeInterval {
     LastWeek = '0',

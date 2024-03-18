@@ -101,7 +101,7 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                         <SelectConditionType
                             Disabled={data.dynamicData.MyConditions[0]?.FirstName === ''}
                             OnUpdate={(event: any) => onUpdate('FirstNameCond', event.target.value)}
-                            Value={data?.dynamicData.MyConditions[0]?.FirstNameCond ?? CondType.Undefined}
+                            Value={data?.dynamicData.MyConditions[0]?.FirstNameCond || CondType.Undefined}
                             classes={classes}
                             key={'FirstNameCond'}
                         />
