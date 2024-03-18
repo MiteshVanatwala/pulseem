@@ -1,8 +1,10 @@
 import {
 	Box,
 	Button,
+	FormControlLabel,
 	Grid,
 	Table,
+	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
@@ -12,11 +14,7 @@ import {
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-	CalendarIcon,
-	SearchIcon,
-} from '../../../assets/images/managment/index';
-import ExcelImg from '../../../assets/images/excel.png';
+import { CalendarIcon } from '../../../assets/images/managment/index';
 import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
@@ -30,7 +28,6 @@ import clsx from 'clsx';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import Pagination from '../management/Component/Pagination';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import {
@@ -59,6 +56,10 @@ import {
 } from '../management/Types/Management.types';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
+import { TablePagination } from '../../../components/managment';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { SizeOptions_XS_SM } from '../../../helpers/Constants';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -78,6 +79,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [hasRevenue, setHasRevenue] = useState<boolean>(false);
 	const [totalRecord, setTotalRecord] = useState<number>(0);
+	const [includeTestCampaigns, setIncludeTestCampaigns] = useState(false)
 
 	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
 		useState<boolean>(false);
@@ -151,6 +153,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		}
 	}, [fromDate, toDate, campaignNameSearch]);
 
+	useEffect(() => {
+		onSearch();
+	}, [ includeTestCampaigns ])
+
 	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
 		if (toDate && value && value > toDate) {
 			handleToDate(null);
@@ -167,6 +173,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		handleFromDate(null);
 		handleToDate(null);
 		setSearching(false);
+		setIncludeTestCampaigns(false);
 
 		const updatedPagination: AllReportReq = {
 			...paginationSetting,
@@ -174,6 +181,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			campaignName: '',
 			fromDate: null,
 			toDate: null,
+			IsTestCampaign: false
 		};
 		setPaginationSetting(updatedPagination);
 		setApiReportData(updatedPagination);
@@ -182,8 +190,18 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const renderNameCell = (row: reportDataProps) => {
 		let date = null;
 		let text = '';
-		date = moment(row.UpdateDate, dateFormat);
-		text = translator('common.UpdatedOn');
+		if (!row?.SendDate) {
+			date = moment(row.UpdateDate, dateFormat);
+			text = translator('common.UpdatedOn');
+		} else {
+			date = moment(row.SendDate, dateFormat);
+			const dateMillis = date.valueOf();
+			const currentDateMillis = moment().valueOf();
+			text =
+				dateMillis > currentDateMillis
+					? translator('common.ScheduledFor')
+					: translator('common.SentOn');
+		}
 
 		return (
 			<>
@@ -217,6 +235,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			campaignName: campaignNameSearch || '',
 			fromDate: fromDate || null,
 			toDate: toDate || null,
+			IsTestCampaign: includeTestCampaigns,
 		};
 		setPaginationSetting(updatedPagination);
 		setApiReportData(updatedPagination);
@@ -419,405 +438,533 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		}
 	};
 
+	const renderSearchSection = () => {
+    return (
+			<Grid container spacing={2} className={clsx(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
+				<Grid item>
+					<TextField
+						variant='outlined'
+						size='small'
+						value={campaignNameSearch}
+						onChange={handleCampainNameChange}
+						onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+							onTemplateKeyDown(e)
+						}
+						className={clsx(classes.textField, classes.minWidth252)}
+						placeholder={translator(
+							'sms.GridBoundColumnResource2.HeaderText'
+						)}
+					/>
+				</Grid>
+
+				{windowSize !== 'xs' && (
+					<Grid item>
+						<KeyboardDatePicker
+							inputVariant='outlined'
+							className={clsx(classes.textField)}
+							inputProps={{
+								className: classes.datePickerInput,
+							}}
+							variant='inline'
+							keyboardIcon={<CalendarIcon />}
+							format={'DD/MM/YYYY'}
+							placeholder={translator('whatsappReport.fromDate')}
+							initialFocusedDate={moment()}
+							value={fromDate}
+							onChange={handleFromDateChange}
+							onClose={() => setIsFromDatePickerOpen(false)}
+							open={isFromDatePickerOpen}
+							onClick={() => setIsFromDatePickerOpen(true)}
+							autoOk={true}
+						/>
+					</Grid>
+				)}
+
+				{windowSize !== 'xs' && (
+					<Grid item>
+						<KeyboardDatePicker
+							inputVariant='outlined'
+							className={clsx(classes.textField)}
+							inputProps={{
+								className: classes.datePickerInput,
+							}}
+							variant='inline'
+							keyboardIcon={<CalendarIcon />}
+							format={'DD/MM/YYYY'}
+							placeholder={translator('whatsappReport.toDate')}
+							initialFocusedDate={moment()}
+							minDate={moment(fromDate)}
+							value={toDate}
+							onChange={handleToDate}
+							onClose={() => setIsToDatePickerOpen(false)}
+							open={isToDatePickerOpen}
+							onClick={() => setIsToDatePickerOpen(true)}
+							autoOk={true}
+						/>
+					</Grid>
+				)}
+
+				<Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+								id="type"
+                switchType='ios'
+                classes={classes}
+                checked={includeTestCampaigns}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+                onChange={() => setIncludeTestCampaigns(!includeTestCampaigns)}
+              />
+            }
+            label={translator('mainReport.locShowTestCampaigns.Text')}
+          />
+        </Grid>
+
+				<Grid item>
+					<Button
+						size='large'
+						variant='contained'
+						onClick={onSearch}
+						className={clsx(classes.btn, classes.btnRounded)}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+						{translator('campaigns.btnSearchResource1.Text')}
+					</Button>
+				</Grid>
+				{isSearching && (
+					<Grid item>
+						<Button
+							size='large'
+							variant='contained'
+							onClick={clearSearch}
+							className={clsx(classes.btn, classes.btnRounded)}
+							endIcon={<ClearIcon />}
+						>
+							{translator('common.clear')}
+						</Button>
+					</Grid>
+				)}
+			</Grid>
+		)
+	};
+
+	const renderManagmentLine = () => {
+    return (
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
+				{
+					windowSize !== 'xs' && (
+						<Grid item>
+							<Button
+								className={clsx(
+									classes.btn, classes.btnRounded,
+									totalRecord > 0 ? null : classes.disabled
+								)}
+								onClick={onExport}
+								endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+								{translator('campaigns.exportFile')}
+							</Button>
+						</Grid>
+					)
+				}
+
+				<Grid item className={classes.groupsLableContainer} >
+          <Typography className={classes.groupsLable}>
+						{totalRecord || 0} {translator('whatsappReport.campaigns')}
+          </Typography>
+        </Grid>
+			</Grid>
+    )
+  }
+
+	const renderTableHead = () => {
+    return (
+      <TableHead>
+				<TableRow classes={rowStyle}>
+					<TableCell classes={cellStyle} className={classes.flex3} align='center'>{translator('sms.GridBoundColumnResource2.HeaderText')}</TableCell>
+					<TableCell classes={cellStyle} className={classes.flex2} align='center'>
+						<Grid container justifyContent='space-around'>
+							<Grid item>{translator('mainReport.locTotalSendPlan.HeaderText')}</Grid>
+							<Grid item>{translator('whatsappReport.sent')}</Grid>
+						</Grid>
+					</TableCell>
+					<TableCell classes={cellStyle} className={clsx(classes.flex1, classes.greenTextColor)} align='center'>{translator('whatsappReport.read')}</TableCell>
+					<TableCell classes={cellStyle} className={clsx(classes.flex2, classes.blueTextColor)} align='center'>{translator('whatsappReport.clicks')}</TableCell>
+					<TableCell classes={cellStyle} className={classes.flex2} align='center'></TableCell>
+					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('whatsappReport.cost')}</TableCell>
+					{hasRevenue && <TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('common.revenue')}</TableCell>}
+				</TableRow>
+      </TableHead>
+    )
+  }
+
+	const renderPhoneRow = (report: any) => {
+		return (
+			<TableRow
+        key={report.ID}
+        component='div'
+        classes={rowStyle}>
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
+          <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
+            {renderNameCell(report)}
+          </Box>
+          <Grid container spacing={2} className={classes.pr10}>
+						<Grid item xs={3}>
+							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+								{translator("whatsappReport.toSend")}
+							</Typography>
+							<Grid container spacing={2}>
+								<Grid item>
+									{getTableTypographyCells('', report.ToSend, reportCellNames.TOSEND, report)}
+								</Grid>
+							</Grid>
+						</Grid>
+
+						<Grid item xs={3}>
+							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+								{translator("whatsappReport.sent")}
+							</Typography>
+							<Grid container spacing={2}>
+								<Grid item className={`${report?.Sent >= 1 && classes.underline}`}>
+									{getTableTypographyCells('', report?.Sent, reportCellNames.SENT, report, true)}
+								</Grid>
+							</Grid>
+						</Grid>
+
+						<Grid item xs={3}>
+							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+								{translator("whatsappReport.read")}
+							</Typography>
+							<Grid container spacing={2}>
+								<Grid item className={clsx(`${report.Read >= 1 && classes.underline}`, classes.greenTextColor)}>
+									{getTableTypographyCells('', report.Read, reportCellNames.READ, report, true)}
+								</Grid>
+							</Grid>
+						</Grid>
+					</Grid>
+					<Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
+            <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {translator('whatsappReport.clicks')}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item className={clsx(`${report?.ClicksCount >= 1 && classes.underline}`, classes.blueTextColor)}>
+									{getTableTypographyCells('', report.ClicksCount, reportCellNames.CLICKS, report, true)}
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {translator('whatsappReport.unique')}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item className={clsx(`${report?.UniqueClicksCount >= 1 && classes.underline}`, classes.blueTextColor)}>
+									{ getTableTypographyCells( '', report.UniqueClicksCount, reportCellNames.UNIQUE, report, true) }
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {translator('common.Removed')}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item className={clsx(`${report?.Removed >= 1 && classes.underline}`, classes.redTextColor)}>
+									{getTableTypographyCells('', report.Removed, reportCellNames.REMOVED, report, true)}
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {translator('common.failedStatus')}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item className={clsx(`${report?.Failed >= 1 && classes.underline}`, classes.redTextColor)}>
+									{getTableTypographyCells('', report.Failed, reportCellNames.FAILED, report, true)}
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {translator('whatsappReport.cost')}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+									{getTableTypographyCells('', report?.Cost, reportCellNames.COST, report)}
+                </Grid>
+              </Grid>
+            </Grid>
+            {hasRevenue && <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {translator('common.revenue')}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item className={`${report?.Revenue >= 1 && classes.underline}`}>
+									{getTableTypographyCells('', report.Revenue, reportCellNames.REVENUE, report, true)}
+                </Grid>
+              </Grid>
+            </Grid>}
+          </Grid>
+        </TableCell>
+      </TableRow>
+		);
+	}
+
+	const renderRow = (report: any, index: any) => {
+		return (
+			<TableRow
+				key={`whatsappReport_${report.WACampaignID}_${index}`}
+				classes={rowStyle}>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.tableCellBody,
+						classes.flex3
+					)}>
+					{renderNameCell(report)}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.tableCellBody,
+						classes.flex2
+					)}>
+					<Grid container justifyContent='space-around'>
+						<Grid item>
+							{getTableTypographyCells(
+								translator('whatsappReport.toSend'),
+								report.ToSend,
+								reportCellNames.TOSEND,
+								report
+							)}
+						</Grid>
+						<Grid
+							item
+							className={`${
+								report?.Sent >= 1 && classes.underline
+							}`}>
+							{getTableTypographyCells(
+								translator('whatsappReport.sent'),
+								report.Sent,
+								reportCellNames.SENT,
+								report,
+								true
+							)}
+						</Grid>
+					</Grid>
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.tableCellBody,
+						`${report?.Read >= 1 && classes.underline}`,
+						classes.flex1,
+						classes.greenTextColor
+					)}>
+					{getTableTypographyCells(
+						translator('whatsappReport.read'),
+						report.Read,
+						reportCellNames.READ,
+						report,
+						true
+					)}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.tableCellBody,
+						classes.flex2,
+						classes.blueTextColor
+					)}>
+					<Grid container justifyContent='space-around'>
+						<Grid item>
+							{getTableTypographyCells(
+								translator('whatsappReport.clicks'),
+								report.ClicksCount,
+								reportCellNames.CLICKS,
+								report
+							)}
+						</Grid>
+						<Grid
+							item
+							className={`${
+								report?.UniqueClicksCount >= 1 &&
+								classes.underline
+							}`}>
+							{getTableTypographyCells(
+								translator('whatsappReport.unique'),
+								report.UniqueClicksCount,
+								reportCellNames.UNIQUE,
+								report,
+								true
+							)}
+						</Grid>
+					</Grid>
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.tableCellBody,
+						classes.flex2,
+						`${!hasRevenue && classes.tableCellNoBorder}`
+					)}>
+					<Grid container justifyContent='space-around'>
+						<Grid
+							item
+							className={clsx(
+								`${
+								report?.Removed >= 1 && classes.underline
+								}`,
+								classes.redTextColor
+							)}>
+							{getTableTypographyCells(
+								translator('common.Removed'),
+								report.Removed,
+								reportCellNames.REMOVED,
+								report,
+								true
+							)}
+						</Grid>
+						<Grid
+							item
+							className={clsx(
+								`${
+									report?.Failed >= 1 && classes.underline
+								}`,
+								classes.redTextColor
+							)}>
+							{getTableTypographyCells(
+								translator('common.failedStatus'),
+								report.Failed,
+								reportCellNames.FAILED,
+								report,
+								true
+							)}
+						</Grid>
+					</Grid>
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(
+						classes.tableCellBody,
+						classes.flex1,
+						classes.revenueTableCell
+					)}>
+					{getTableTypographyCells(
+						translator('whatsappReport.cost'),
+						report?.Cost,
+						reportCellNames.COST,
+						report
+					)}
+				</TableCell>
+				{hasRevenue && (
+					<TableCell
+						classes={cellStyle}
+						align='center'
+						className={clsx(
+							classes.tableCellBody,
+							classes.flex1,
+							classes.tableCellNoBorder,
+							classes.revenueTableCell,
+							`${
+								report && report?.Revenue > 0
+									? classes.revenueTableCellPointer
+									: ''
+							}`
+						)}>
+						{getTableTypographyCells(
+							translator('common.revenue'),
+							report.Revenue,
+							reportCellNames.REVENUE,
+							report,
+							true
+						)}
+					</TableCell>
+				)}
+			</TableRow>
+		);
+	}
+
+	const renderTableBody = () => {
+    let rowData = reportListData;
+    if (rowData.length > 0) {
+      return (
+        <Box className='tableBodyContainer'>
+          <TableBody>
+						{rowData.map(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
+          </TableBody>
+        </Box>
+      )
+    }
+    return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+      <Typography>{translator("common.NoDataTryFilter")}</Typography>
+    </Box>
+  }
+
+	const renderTable = () => {
+    return (
+      <TableContainer className={classes.tableStyle}>
+        <Table className={classes.tableContainer}>
+          {SizeOptions_XS_SM.indexOf(windowSize) === -1 && renderTableHead()}
+          {renderTableBody()}
+        </Table>
+      </TableContainer>
+    )
+  }
+
+  const renderTablePagination = () => {
+    return (
+      <TablePagination
+				classes={classes}
+				rows={totalRecord}
+				rowsPerPage={paginationSetting?.pageSize}
+				onRowsPerPageChange={onRowsPerPageChange}
+				rowsPerPageOptions={[6, 10, 20, 50]}
+				page={paginationSetting?.pageNo}
+				onPageChange={(pageNumber: number) =>
+					updatePaginationSetting({
+						...paginationSetting,
+						pageNo: pageNumber,
+					})
+				}
+				returnPageOne={false}
+			/>
+    )
+  }
+
 	return (
 		<DefaultScreen
 			subPage={'WhatsappReports'}
 			currentPage='reports'
 			classes={classes}
 			customPadding={false}
-			containerClass={clsx(classes.management, classes.mb50)}>
+			containerClass={clsx(classes.management, classes.mb50)}
+		>
 			{isAccountSetup ? (
 				<>
-					<Title
-						Text={translator('whatsappReport.report')}
-						Classes={classes}
-						ContainerStyle={{}}
-						Element={null}
-					/>
+					<Box className={'topSection'}>
+						<Title
+							Text={translator('whatsappReport.report')}
+							classes={classes}
+							ContainerStyle={{}}
+							Element={null}
+						/>
+						{renderSearchSection()}
+					</Box>
 
 					<div className={classes.manageWhatsappTemplates}>
-						<Grid container spacing={2} className={classes.lineTopMarging}>
-							<Grid item>
-								<TextField
-									variant='outlined'
-									size='small'
-									value={campaignNameSearch}
-									onChange={handleCampainNameChange}
-									onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
-										onTemplateKeyDown(e)
-									}
-									className={clsx(classes.textField, classes.minWidth252)}
-									placeholder={translator(
-										'sms.GridBoundColumnResource2.HeaderText'
-									)}
-								/>
-							</Grid>
-
-							{windowSize !== 'xs' && (
-								<Grid item>
-									<KeyboardDatePicker
-										inputVariant='outlined'
-										className={clsx(classes.textField)}
-										inputProps={{
-											className: classes.datePickerInput,
-										}}
-										variant='inline'
-										keyboardIcon={<CalendarIcon />}
-										format={'DD/MM/YYYY'}
-										placeholder={translator('whatsappReport.fromDate')}
-										initialFocusedDate={moment()}
-										value={fromDate}
-										onChange={handleFromDateChange}
-										onClose={() => setIsFromDatePickerOpen(false)}
-										open={isFromDatePickerOpen}
-										onClick={() => setIsFromDatePickerOpen(true)}
-										autoOk={true}
-									/>
-								</Grid>
-							)}
-
-							{windowSize !== 'xs' && (
-								<Grid item>
-									<KeyboardDatePicker
-										inputVariant='outlined'
-										className={clsx(classes.textField)}
-										inputProps={{
-											className: classes.datePickerInput,
-										}}
-										variant='inline'
-										keyboardIcon={<CalendarIcon />}
-										format={'DD/MM/YYYY'}
-										placeholder={translator('whatsappReport.toDate')}
-										initialFocusedDate={moment()}
-										minDate={moment(fromDate)}
-										value={toDate}
-										onChange={handleToDate}
-										onClose={() => setIsToDatePickerOpen(false)}
-										open={isToDatePickerOpen}
-										onClick={() => setIsToDatePickerOpen(true)}
-										autoOk={true}
-									/>
-								</Grid>
-							)}
-
-							<Grid item>
-								<Button
-									size='large'
-									variant='contained'
-									onClick={onSearch}
-									className={classes.searchButton}
-									endIcon={<SearchIcon />}>
-									<>{translator('campaigns.btnSearchResource1.Text')}</>
-								</Button>
-							</Grid>
-							{isSearching && (
-								<Grid item>
-									<Button
-										size='large'
-										variant='contained'
-										onClick={clearSearch}
-										className={classes.searchButton}
-										endIcon={<ClearIcon />}>
-										<>{translator('common.clear')}</>
-									</Button>
-								</Grid>
-							)}
-						</Grid>
-
-						<Grid
-							container
-							spacing={2}
-							className={classes.whatsappReportHeaderButtons}>
-							<div className={classes.whatsappReportHeaderExportButton}>
-								<Button onClick={onExport}>
-									<img src={ExcelImg} alt='excel-icon' />
-									<>{translator('whatsappReport.export')}</>
-								</Button>
-							</div>
-
-							<span className={classes.whatsappReportCampaignCount}>
-								<>
-									{totalRecord || 0} {translator('whatsappReport.campaigns')}
-								</>
-							</span>
-						</Grid>
-
-						<Grid
-							container
-							spacing={2}
-							className={classes.whatsappReportTableWrapper}>
-							<TableContainer>
-								<Table className={classes.tableContainer}>
-									{windowSize !== 'xs' && (
-										<TableHead>
-											<TableRow classes={rowStyle}>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex3}
-													align='center'>
-													<>
-														{translator(
-															'sms.GridBoundColumnResource2.HeaderText'
-														)}
-													</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex2}
-													align='center'>
-													<Grid container justifyContent='space-around'>
-														<Grid item>
-															<>
-																{translator(
-																	'mainReport.locTotalSendPlan.HeaderText'
-																)}
-															</>
-														</Grid>
-														<Grid item>
-															<>{translator('whatsappReport.sent')}</>
-														</Grid>
-													</Grid>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex1}
-													align='center'>
-													<>{translator('whatsappReport.read')}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex2}
-													align='center'>
-													<>{translator('whatsappReport.clicks')}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex2}
-													align='center'>
-													<>{}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
-													className={classes.flex1}
-													align='center'>
-													<>{translator('whatsappReport.cost')}</>
-												</TableCell>
-												{hasRevenue && (
-													<TableCell
-														classes={cellStyle}
-														className={classes.flex1}
-														align='center'>
-														<>{translator('common.revenue')}</>
-													</TableCell>
-												)}
-											</TableRow>
-										</TableHead>
-									)}
-									{reportListData?.length === 0 ? (
-										<Box
-											className={clsx(
-												classes.flex,
-												classes.justifyCenterOfCenter
-											)}
-											style={{ height: 50 }}>
-											<Typography>
-												<>{translator('common.NoDataTryFilter')}</>
-											</Typography>
-										</Box>
-									) : (
-										<>
-											{reportListData?.map(
-												(report: reportDataProps, index: number) => (
-													<TableRow
-														key={`whatsappReport_${report.WACampaignID}_${index}`}
-														classes={rowStyle}>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.tableCellBody,
-																classes.flex3
-															)}>
-															{renderNameCell(report)}
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.tableCellBody,
-																classes.flex2
-															)}>
-															<Grid container justifyContent='space-around'>
-																<Grid item>
-																	{getTableTypographyCells(
-																		translator('whatsappReport.toSend'),
-																		report.ToSend,
-																		reportCellNames.TOSEND,
-																		report
-																	)}
-																</Grid>
-																<Grid
-																	item
-																	className={`${
-																		report?.Sent >= 1 && 'underline'
-																	}`}>
-																	{getTableTypographyCells(
-																		translator('whatsappReport.sent'),
-																		report.Sent,
-																		reportCellNames.SENT,
-																		report,
-																		true
-																	)}
-																</Grid>
-															</Grid>
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.tableCellBody,
-																`${report?.Read >= 1 && 'underline'}`,
-																classes.flex1
-															)}>
-															{getTableTypographyCells(
-																translator('whatsappReport.read'),
-																report.Read,
-																reportCellNames.READ,
-																report,
-																true
-															)}
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.tableCellBody,
-																classes.flex2
-															)}>
-															<Grid container justifyContent='space-around'>
-																<Grid item>
-																	{getTableTypographyCells(
-																		translator('whatsappReport.clicks'),
-																		report.ClicksCount,
-																		reportCellNames.CLICKS,
-																		report
-																	)}
-																</Grid>
-																<Grid
-																	item
-																	className={`${
-																		report?.UniqueClicksCount >= 1 &&
-																		'underline'
-																	}`}>
-																	{getTableTypographyCells(
-																		translator('whatsappReport.unique'),
-																		report.UniqueClicksCount,
-																		reportCellNames.UNIQUE,
-																		report,
-																		true
-																	)}
-																</Grid>
-															</Grid>
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.tableCellBody,
-																classes.flex2,
-																`${!hasRevenue && classes.tableCellNoBorder}`
-															)}>
-															<Grid container justifyContent='space-around'>
-																<Grid
-																	item
-																	className={`${
-																		report?.Removed >= 1 && 'underline'
-																	}`}>
-																	{getTableTypographyCells(
-																		translator('common.Removed'),
-																		report.Removed,
-																		reportCellNames.REMOVED,
-																		report,
-																		true
-																	)}
-																</Grid>
-																<Grid
-																	item
-																	className={`${
-																		report?.Failed >= 1 && 'underline'
-																	}`}>
-																	{getTableTypographyCells(
-																		translator('common.failedStatus'),
-																		report.Failed,
-																		reportCellNames.FAILED,
-																		report,
-																		true
-																	)}
-																</Grid>
-															</Grid>
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.tableCellBody,
-																classes.flex1,
-																classes.revenueTableCell
-															)}>
-															{getTableTypographyCells(
-																translator('whatsappReport.cost'),
-																report?.Cost,
-																reportCellNames.COST,
-																report
-															)}
-														</TableCell>
-														{hasRevenue && (
-															<TableCell
-																classes={cellStyle}
-																align='center'
-																className={clsx(
-																	classes.tableCellBody,
-																	classes.flex1,
-																	classes.tableCellNoBorder,
-																	classes.revenueTableCell,
-																	`${
-																		report && report?.Revenue > 0
-																			? classes.revenueTableCellPointer
-																			: ''
-																	}`
-																)}>
-																{getTableTypographyCells(
-																	translator('common.revenue'),
-																	report.Revenue,
-																	reportCellNames.REVENUE,
-																	report,
-																	true
-																)}
-															</TableCell>
-														)}
-													</TableRow>
-												)
-											)}
-										</>
-									)}
-								</Table>
-							</TableContainer>
-						</Grid>
-						<Pagination
-							classes={classes}
-							rows={totalRecord}
-							rowsPerPage={paginationSetting?.pageSize}
-							onRowsPerPageChange={onRowsPerPageChange}
-							rowsPerPageOptions={[6, 10, 20, 50]}
-							page={paginationSetting?.pageNo}
-							onPageChange={(pageNumber: number) =>
-								updatePaginationSetting({
-									...paginationSetting,
-									pageNo: pageNumber,
-								})
-							}
-							returnPageOne={false}
-						/>
+						{renderManagmentLine()}
+						{renderTable()}
+      			{renderTablePagination()}
 					</div>
 				</>
 			) : (

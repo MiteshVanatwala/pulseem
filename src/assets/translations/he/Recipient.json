@@ -1,11 +1,12 @@
 {
   "logPageHeaderResource1": {
-    "Text": "ניהול קבוצות נמענים"
+    "Text": "ניהול קבוצות נמענים",
+    "Dynamic": "ניהול קבוצות דינמיות"
   },
   "deleteRecipient": "מחק מקבוצה",
   "unsubscribe": "הסר מחשבון",
   "emails": "מיילים",
-  "sms/mms": "Sms/Mms",
+  "sms/mms": "SMS / WhatsApp",
   "totalRecipients": "סה\"כ נמענים",
   "Active": "פעילים",
   "Removed": "מוסרים",
@@ -100,12 +101,12 @@
   "unsubscribed": {
     "succeeded": "הנמענים שהזנת הוסרו מהקבוצות שנבחרו בהצלחה.",
     "inProgress": "שימו לב<br/>ביקשתם להסיר כמות גדולה של נמענים<br/>המערכת מבצעת את ההסרה ברקע<br/>##notifyEmailPlaceHolder##",
-    "inProgressNotifyOnDone":"ברגע שהפעולה תסתיים, מייל ישלח לכתובת ##notifyEmail##.",
+    "inProgressNotifyOnDone": "ברגע שהפעולה תסתיים, מייל ישלח לכתובת ##notifyEmail##.",
     "notifyEmail": "בסיום ההסרה, שלח מייל עדכון לכתובת"
   },
   "exportGroups": {
     "inProgress": "שימו לב<br/>ביקשתם לייצא כמות גדולה של נמענים<br/>תהליך הכנת הקובץ ייקח מספר דקות<br/>##notifyEmailPlaceHolder##",
-    "inProgressNotifyOnDone":"ברגע שהקובץ יהיה מוכן מייל ישלח לכתובת ##notifyEmail##.",
+    "inProgressNotifyOnDone": "ברגע שהקובץ יהיה מוכן מייל ישלח לכתובת ##notifyEmail##.",
     "notifyEmail": "כשהקובץ יהיה מוכן להורדה,<br/> שלח מייל עדכון לכתובת",
     "exportLimitationErrorMessage": "מצטערים, קובץ אקסל מוגבל עד 1,048,576 רשומות.<br/>ניתן לנסות לייצא על ידי בחירת קבוצות המכילות פחות מכמות הרשומות המוגבלת",
     "downloadPageRedirect": "ניתן לצפות בסטטוס הקובץ בעמוד <a href='/react/groups/Download'>הורדת קבצים</a>"
@@ -131,5 +132,8 @@
   "maximumRecordLimitation": "שגיאה: באפשרותך לבצע הסרה/מחיקה של מקסימום 1,000 נמענים בכל בקשה",
   "unsubSetting1Tooltip": "דוגמא: במידה ומוזן בחלון רק סלולרי, הגדרה זו תסיר גם את כתובת האימייל המקושרת אליו",
   "unsubSettings": "הגדרות הסרה מחשבון",
-  "maxUploadLimitation": "באפשרותך להעלות עד 5,000 נמענים בבת אחת"
+  "newsletterCampaign": "קמפיין ניוזלטר",
+  "smsCampaign": "קמפיין SMS",
+  "maxUploadLimitation": "באפשרותך להעלות עד 5,000 נמענים בבת אחת",
+  "whatsappCampaign": "קמפיין Whatsapp"
 }

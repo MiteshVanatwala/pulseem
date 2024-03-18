@@ -1,8 +1,8 @@
 import React from 'react'
-import { BaseDialog } from '../../../../../components/DialogTemplates/BaseDialog';
 import { useTranslation } from "react-i18next";
 import { Box, TextField, Typography } from '@material-ui/core'
 import clsx from 'clsx';
+import { BaseDialog } from '../../../../../components/DialogTemplates/BaseDialog';
 
 const EditRow = ({ onClose, save, args, classes }) => {
   const { t } = useTranslation();

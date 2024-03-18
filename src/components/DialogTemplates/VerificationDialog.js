@@ -20,7 +20,13 @@ import { Loader } from '../Loader/Loader';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 
-const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email', step = 0, value, ...props }) => {
+const VerificationDialog = ({
+    classes,
+    isOpen = false,
+    onClose,
+    variant = 'email',
+    step = 0, value,
+    ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
@@ -347,9 +353,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
                         {/* <Box pb={1} className={classes.textCenter}> */}
-                        <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
+                        {/* <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
                             {t('campaigns.newsLetterMgmt.emailVerification.popupTitle')}
-                        </Typography>
+                        </Typography> */}
                         <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
                             {t('campaigns.newsLetterMgmt.emailVerification.popupDesc1')}
                         </Typography>
@@ -358,14 +364,13 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         </Typography>
                         <Divider />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
-                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
+                    <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }} >
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.pb15}>
+                            <Typography className={clsx(classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                             <Button
-                                style={{ height: 50 }}
+                                style={{ height: 35 }}
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonDarkBlue
+                                    classes.btn, classes.btnRounded
                                 )}
                                 onClick={() => {
                                     setSelectedVerificationContact('')
@@ -429,14 +434,14 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                     !!verificationError?.email && setVerificationError({ email: '' })
                                     setSelectedVerificationContact(e.target.value?.trim())
                                 }}
-                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter, classes.p10)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
                                 error={!!verificationError?.Number}
                                 style={{ direction: 'ltr' }}
                             />
                         </Box>
                         <Box mt={2}>
-                            <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
+                            <Button className={clsx(classes.btn, classes.btnRounded)}
                                 onClick={() => {
                                     if (selectedVerificationContact) {
                                         if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/)) {
@@ -474,11 +479,11 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                className={clsx(classes.textField, classes.maxWidth400)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
-                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
-                                        setVerificationCode(e.target.value)
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
+                                        setVerificationCode(e.target.value.trim())
                                     }
                                 }}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
@@ -488,7 +493,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         </Box>
                         <Box mt={2}>
                             <Button
-                                className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth, userCodeConfirmed ? classes.disabled : null)}
+                                className={clsx(classes.btn, classes.btnRounded, userCodeConfirmed ? classes.disabled : null)}
                                 onClick={() => {
                                     if (verificationCode) {
                                         handleVerifyCode();
@@ -516,7 +521,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                     <Box>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.title')}</Typography>
                         <Typography variant='body1' className={clsx(classes.mt4, classes.mb15)}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.desc')} </Typography>
-                        <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.buttonMinWidth, classes.mt6)} onClick={() => {
+                        <Button className={clsx(classes.btn, classes.btnRounded, classes.mt6)} onClick={() => {
                             handleClose()
                         }}>{props.textButtonOnSuccess && props.textButtonOnSuccess !== '' ? props.textButtonOnSuccess : t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
                     </Box>
@@ -538,27 +543,19 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
-                        <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
-                            {t('sms.verificationDialogTitle')}
-                        </Typography>
-                        <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
+                        <Typography variant="body1">
                             {t('sms.verificationBody')} <b>{t('sms.oneTimeProcess')}</b>{' '}{t('sms.foreachSubmission')}
                         </Typography>
-                        <Typography style={{ fontSize: 15, textDecoration: 'underline' }} className={classes.mt15}>
+                        <Typography style={{ textDecoration: 'underline' }} className={clsx(classes.mt15, classes.mb15)}>
                             {t('sms.verificationNote')}
                         </Typography>
                         <Divider />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
-                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
+                    <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }} >
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.mb15}>
+                            <Typography className={clsx(classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
                             <Button
-                                style={{ height: 50 }}
-                                className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonDarkBlue,
-                                    'btnVerifyNew'
-                                )}
+                                className={clsx(classes.btn, classes.btnRounded)}
                                 onClick={() => {
                                     setSelectedVerificationContact('')
                                     setVerificationError({ Number: '' })
@@ -631,7 +628,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                             />
                         </Box>
                         <Box mt={2}>
-                            <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
+                            <Button className={clsx(classes.btn, classes.btnRounded)}
                                 onClick={() => {
                                     if (selectedVerificationContact) {
                                         if (selectedVerificationContact.match(/^[0-9]+$/)) {
@@ -673,8 +670,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                 className={clsx(classes.textField, classes.maxWidth400)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
-                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
-                                        setVerificationCode(e.target.value)
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
+                                        setVerificationCode(e.target.value.trim())
                                     }
                                 }}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
@@ -684,7 +681,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         </Box>
                         <Box mt={2}>
                             <Button
-                                className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth, userCodeConfirmed ? classes.disabled : null)}
+                                className={clsx(classes.btn, classes.btnRounded, userCodeConfirmed ? classes.disabled : null)}
                                 onClick={() => {
                                     if (verificationCode) {
                                         handleVerifyCode();
@@ -712,7 +709,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                     <Box>
                         <Typography variant='h4'>{t('sms.verificationSuccessful')}</Typography>
                         <Typography variant='body1' className={classes.mt4}>{t('sms.verificationSuccessMessage')}</Typography>
-                        <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.mt15, classes.buttonMinWidth)} onClick={() => {
+                        <Button className={clsx(classes.btn, classes.btnRounded)} onClick={() => {
                             handleClose()
                         }}>{props.textButtonOnSuccess && props.textButtonOnSuccess !== '' ? props.textButtonOnSuccess : t('common.continue')}</Button>
                     </Box>
@@ -734,23 +731,17 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
-                        <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
-                            {t('settings.accountSettings.2fa.cellphone.firstSlide.title')}
-                        </Typography>
                         <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
                             {RenderHtml(t('settings.accountSettings.2fa.cellphone.firstSlide.descirption'))}
                         </Typography>
                         <Divider style={{ marginTop: 15 }} />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
-                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
+                    <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }} >
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.pb15}>
+                            <Typography className={clsx(classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
                             <Button
-                                style={{ height: 50 }}
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonDarkBlue,
-                                    'btnVerifyNew'
+                                    classes.btn, classes.btnRounded
                                 )}
                                 onClick={() => {
                                     setSelectedVerificationContact('')
@@ -824,7 +815,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                             />
                         </Box>
                         <Box mt={2}>
-                            <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
+                            <Button className={clsx(classes.btn, classes.btnRounded)}
                                 onClick={() => {
                                     if (selectedVerificationContact) {
                                         const cellphoneAuth = verifiedNumbers.find((v) => { return v?.Number === selectedVerificationContact });
@@ -873,11 +864,11 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                className={clsx(classes.textField, classes.maxWidth400)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
-                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
-                                        setVerificationCode(e.target.value)
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
+                                        setVerificationCode(e.target.value.trim())
                                     }
                                 }}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
@@ -887,7 +878,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         </Box>
                         <Box mt={2}>
                             <Button
-                                className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth, userCodeConfirmed ? classes.disabled : null)}
+                                className={clsx(classes.btn, classes.btnRounded, userCodeConfirmed ? classes.disabled : null)}
                                 onClick={() => {
                                     if (verificationCode) {
                                         handleVerifyCode();
@@ -929,7 +920,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                 }
                             />
                         </Box>
-                        <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.mt15, classes.buttonMinWidth)} onClick={() => {
+                        <Button className={clsx(classes.btn, classes.btnRounded)} onClick={() => {
                             handleClose()
                         }}>{t('common.continue')}</Button>
                     </Box>
@@ -951,22 +942,17 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
-                        <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
-                            {t('settings.accountSettings.2fa.email.firstSlide.title')}
-                        </Typography>
                         <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
                             {RenderHtml(t('settings.accountSettings.2fa.email.firstSlide.descirption'))}
                         </Typography>
                         <Divider style={{ marginTop: 15 }} />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
-                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
+                    <Box style={{ position: 'relative', height: 'calc(100% - 80px)', display: 'flex', flexDirection: 'column' }} >
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} classes={classes.pb15}>
+                            <Typography className={clsx(classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                             <Button
-                                style={{ height: 50 }}
                                 className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonDarkBlue
+                                    classes.btn, classes.btnRounded
                                 )}
                                 onClick={() => {
                                     setSelectedVerificationContact('')
@@ -1031,13 +1017,13 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                     setSelectedVerificationContact(e.target.value?.trim())
                                 }}
                                 style={{ direction: 'ltr' }}
-                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter, classes.p10)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
                                 error={!!verificationError?.Number}
                             />
                         </Box>
                         <Box mt={2}>
-                            <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
+                            <Button className={clsx(classes.btn, classes.btnRounded)}
                                 onClick={() => {
                                     if (selectedVerificationContact) {
                                         const emailAuth = verifiedEmails.find((v) => { return v?.Number === selectedVerificationContact });
@@ -1086,11 +1072,11 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                             <TextField
                                 variant='outlined'
                                 size='small'
-                                className={clsx(classes.textField, classes.maxWidth400)}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
-                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
-                                        setVerificationCode(e.target.value)
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
+                                        setVerificationCode(e.target.value.trim())
                                     }
                                 }}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
@@ -1100,7 +1086,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         </Box>
                         <Box mt={2}>
                             <Button
-                                className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth, userCodeConfirmed ? classes.disabled : null)}
+                                className={clsx(classes.btn, classes.btnRounded, userCodeConfirmed ? classes.disabled : null)}
                                 onClick={() => {
                                     if (verificationCode) {
                                         handleVerifyCode();
@@ -1142,7 +1128,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                 }
                             />
                         </Box>
-                        <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.buttonMinWidth, classes.mt6)} onClick={() => {
+                        <Button className={clsx(classes.btn, classes.btnRounded, classes.mt6)} onClick={() => {
                             handleClose()
                         }}>{t('common.continue')}</Button>
                     </Box>
@@ -1160,8 +1146,23 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         )
     }
 
+    const getTitle = () => {
+        switch (variant) {
+            case 'email':
+                return t('campaigns.newsLetterMgmt.emailVerification.popupTitle');
+            case 'sms':
+                return t('sms.verificationDialogTitle');
+            case 'emailTFA':
+                return t('settings.accountSettings.2fa.email.firstSlide.title');
+            case 'smsTFA':
+                return t('settings.accountSettings.2fa.cellphone.firstSlide.title');
+            default:
+                break;
+        }
+    }
+
     const Popup = (data = '') => ({
-        title: '',
+        title: getTitle(),
         content: (<>
             {variant === 'email' && EMAIL_MODULE()}
             {variant === 'sms' && SMS_MODULE()}
@@ -1174,13 +1175,12 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             {verificationStep < 1 && (<Button
                 name="btnConfirm"
                 variant='contained'
-                size='small'
+                size='medium'
                 onClick={() => {
                     handleClose()
                 }}
                 className={clsx(
-                    classes.dialogButton,
-                    classes.dialogConfirmButton,
+                    classes.btn, classes.btnRounded,
                     classes.ml5
                 )}>
                 {t('common.Ok')}
@@ -1189,13 +1189,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             {(verificationStep > 0 && verificationStep < 3) && <Button
                 name="btnConfirm"
                 variant='contained'
-                size='small'
+                size='medium'
                 onClick={PrevSlide}
-                className={clsx(
-                    classes.dialogButton,
-                    classes.dialogConfirmButton,
-                    classes.ml5
-                )}>
+                className={clsx(classes.btn, classes.btnRounded)}>
                 {t('notifications.back')}
             </Button>}
         </Box>)

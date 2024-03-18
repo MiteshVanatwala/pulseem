@@ -10,3 +10,16 @@ export const GetTextAreaSelection = (elementId: string) => {
 
     return sel;
 }
+
+export const RemoveNewLineAndConsecutiveSpaces = (text: string) => text.replace(/\r?\n|\r/g, ' ').replace(/\s\s+/g, ' ');
+
+export const RemoveConsecutiveSpaces = (text: string) => text.replace(/\s\s+/g, ' ');
+
+export const isValidHttpUrl = (url: string) => {
+    try {
+        const newUrl = new URL(url);
+        return newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
+    } catch (err) {
+        return false;
+    }
+}

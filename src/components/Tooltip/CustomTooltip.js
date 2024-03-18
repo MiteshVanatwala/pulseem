@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 const HtmlTooltip = withStyles(({ style }) => ({
   tooltip: {
-    maxWidth: 220,
+    maxWidth: 440,
     backgroundColor: '#000',
     ...style
   },
@@ -30,13 +30,13 @@ function BootstrapTooltip(props) {
   return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
 
-const CustomTooltip = ({ children, classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style, textAlign = null, titleStyle = {}, forceDirection = null }) => {
+const CustomTooltip = ({ children, classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style, textAlign = null, titleStyle = null, forceDirection = null }) => {
   const { isRTL } = useSelector(state => state.core)
   return (isSimpleTooltip ?
     <BootstrapTooltip
       style={{ color: '#000', ...style }}
       title={text}
-      placement={"top"}>
+      placement={placement}>
       <IconButton aria-label={text}>
         {icon ? icon : <BsInfoCircleFill />}
       </IconButton>

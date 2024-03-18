@@ -4,14 +4,12 @@ import { ExportFile } from '../../helpers/Export/ExportFile';
 
 export const getNewslatterData = createAsyncThunk(
   'email/getEmailCampaigns', async (_, thunkAPI) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const response = await PulseemReactInstance.get(`email/getEmailCampaigns`);
-        resolve(JSON.parse(response.data))
-      } catch (error) {
-        reject(thunkAPI.rejectWithValue({ error: error.message }));
-      }
-    })
+    try {
+      const response = await PulseemReactInstance.get(`email/getEmailCampaigns`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
   }
 )
 
@@ -96,8 +94,7 @@ export const deleteCampaign = createAsyncThunk(
   'email/deleteEmailCampaign/', async (id, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.delete(`email/deleteEmailCampaign/${id}`);
-      console.log("RESPONSEDELETE:", response)
-      return response.data
+      return response?.status
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -209,7 +206,7 @@ export const saveCampaignInfo = createAsyncThunk(
     })
   });
 export const getCampaignInfo = createAsyncThunk(
-  'email/GetCampaignInfo', async (campaignId, thunkAPI) => {
+  'email/GetCampaignInfo', async (campaignId, _, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`email/GetCampaignInfo/${campaignId}`);
       return response.data
@@ -258,10 +255,23 @@ export const newsletterSlice = createSlice({
       CAMPAIGN_DELETED_SUCCESS: { severity: 'success', color: 'success', message: "campaigns.newsLetterEditor.sendSettings.deleted", showAnimtionCheck: false },
       GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
       FUTURE_DATE_PASSED: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.FUTURE_DATE_PASSED', showAnimtionCheck: false },
+    },
+    domainVerificationPopUp: {
+      domain: {
+        display: false,
+        address: ''
+      }
     }
     //archiveDirectNewsletterReport: []
   },
-  reducers: {},
+  reducers: {
+    setVerificationDomain: (state, action) => {
+      state.domainVerificationPopUp = action.payload;
+    },
+    resetNewsletterInfo: (state, action) => {
+      state.newsletterInfo = [];
+    }
+  },
   extraReducers: builder => {
     builder.addCase(getNewslatterData.fulfilled, (state, { payload }) => {
       state.newslettersData = payload.filter(row => !row.IsDeleted)
@@ -320,5 +330,5 @@ export const newsletterSlice = createSlice({
 })
 
 
-
+export const { setVerificationDomain, resetNewsletterInfo } = newsletterSlice.actions
 export default newsletterSlice.reducer

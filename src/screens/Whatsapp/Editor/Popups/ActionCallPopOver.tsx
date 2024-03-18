@@ -7,19 +7,17 @@ import React, {
 import {
 	Box,
 	Button,
-	Dialog,
 	DialogActions,
-	DialogContent,
 	DialogContentText,
-	DialogTitle,
+	FormGroup,
 	Grid,
 	IconButton,
 	MenuItem,
+	Switch,
 	TextField,
-	Typography,
+	Typography
 } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import CloseIcon from '@material-ui/icons/Close';
 import {
 	actionProps,
 	callToActionFieldProps,
@@ -28,14 +26,13 @@ import {
 } from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
 import { buttonTextLimits, countryCodes } from '../../Constant';
-import AlertModal from './AlertModal';
 import clsx from 'clsx';
 import { Autocomplete } from '@mui/material';
 import { useSelector } from 'react-redux';
-import ValidationAlert from '../../Campaign/Popups/ValidationAlert';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 const ActionCallPopOver = ({
-	isCallToActionOpen,
 	closeCallToAction,
 	classes,
 	callToActionFieldRows,
@@ -49,11 +46,12 @@ const ActionCallPopOver = ({
 	templateText,
 }: actionProps) => {
 	const { t: translator } = useTranslation();
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const [isTextLimitAlert, setIsTextLimitAlert] = useState(false);
+	const { windowSize, isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [autoCompleteOptions, setAutoCompleteOptions] = useState<string[]>([]);
 	const [validationErrors, setValidationErrors] = useState<string[]>([]);
-	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+	const [dialogType, setDialogType] = useState<any>({
+		type: ''
+	});
 
 	useEffect(() => {
 		const autoCompleteList = countryCodes?.map((country) => {
@@ -90,7 +88,7 @@ const ActionCallPopOver = ({
 			(r: callToActionRowProps) => {
 				if (r.id !== row.id) return r;
 				const updatedFields = r.fields.map((f: callToActionFieldProps) => {
-					if (field.fieldName === f.fieldName) {
+					if (field?.fieldName === f?.fieldName) {
 						if (field.fieldName !== 'whatsapp.phoneNumber')
 							return { ...f, value: value?.replace(/_/g, '') };
 						return { ...f, value: value?.replace(/\D/g, '') };
@@ -112,7 +110,9 @@ const ActionCallPopOver = ({
 
 	const onSubmit = () => {
 		if (templateText?.length >= buttonTextLimits.callToAction) {
-			setIsTextLimitAlert(true);
+			setDialogType({
+				type: 'limit'
+			});
 		} else {
 			setCallToActionFieldRows(callToActionFieldRows);
 			updateTemplateData(callToActionFieldRows);
@@ -121,14 +121,12 @@ const ActionCallPopOver = ({
 	};
 
 	const onConfirmTextLimit = () => {
-		setIsTextLimitAlert(false);
 		setCallToActionFieldRows(callToActionFieldRows);
 		updateTemplateData(callToActionFieldRows);
 		closeCallToAction(false);
 	};
 
 	const onCancelTextLimit = () => {
-		setIsTextLimitAlert(false);
 		closeCallToAction(true);
 	};
 
@@ -206,7 +204,9 @@ const ActionCallPopOver = ({
 		});
 		if (!isValidated) {
 			setValidationErrors(erros);
-			setIsValidationAlert(true);
+			setDialogType({
+				type: 'validation'
+			});
 		}
 		return isValidated;
 	};
@@ -243,225 +243,291 @@ const ActionCallPopOver = ({
 		return isDisabled;
 	};
 
+	const getValidationDialog = () => ({
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		showDefaultButtons: false,
+		content: (
+			<ul className={clsx(classes.noMargin, classes.mb20)}>
+				{validationErrors?.map((requiredField: string, index: number) => (
+					<li key={index} className={classes.validationAlertModalLi}>
+						{requiredField}
+					</li>
+				))}
+			</ul>
+		),
+		renderButtons: () => (
+			<Box className={classes.textCenter}>
+				<Button
+					name="btnConfirm"
+					variant='contained'
+					size='medium'
+					onClick={() => setDialogType({ type: '',data: '' })}
+					className={clsx(
+							classes.btn, classes.btnRounded,
+							classes.ml5
+					)}>
+					{translator('common.Ok')}
+			</Button>
+		</Box>)
+	})
+
+	const getLimitDialog = () => ({
+		title: '',
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsapp.template.textLimitAlertDesc')}
+			</Typography>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+			onConfirmTextLimit();
+		},
+	})
+
+	const renderDialog = () => {
+		const { data, type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'limit') {
+			currentDialog = getLimitDialog();
+		} else if (type === 'validation') {
+			currentDialog = getValidationDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType({})}
+					onClose={() => setDialogType({})}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
+
 	return (
 		<>
-			<Dialog
-				open={isCallToActionOpen}
-				onClose={() => closeCallToAction(true)}
-				aria-labelledby='form-dialog-title'
-				fullWidth
-				maxWidth='md'>
-				<DialogTitle
-					id='form-dialog-title'
-					className={classes.callToActionDialogHeaderTitle}>
-					<>
-						<>{translator('whatsapp.callToActionTitle')}</>
-						<IconButton
-							aria-label='close'
-							onClick={() => closeCallToAction(true)}
-							className={classes.callToActionDialogClose}>
-							<CloseIcon />
-						</IconButton>
-					</>
-				</DialogTitle>
-				<DialogContent>
-					<DialogContentText
-						className={classes.callToActionDialogHeaderDescription}>
-						<>{translator('whatsapp.callToActionDialogContentText')}</>
-					</DialogContentText>
-					<form>
-						<Grid container className={classes.callToActionFields} spacing={1}>
-							{callToActionFieldRows.map(
-								(row: callToActionRowProps, index: number) => (
-									<Grid container spacing={3} key={'TOC' + index}>
-										<Grid item xs={12} sm={6} md={3}>
-											<Typography>
-												<>{translator('whatsapp.typeOfAction')}</>
-											</Typography>
-											<TextField
-												disabled={!isEditable}
-												select
-												required
-												name='typeofaction'
-												placeholder='Enter Your Type Of Action'
-												variant='outlined'
-												onChange={(e) => onTypeOfActionChange(e, row)}
-												value={row.typeOfAction}
-												fullWidth>
-												<MenuItem
-													value='phonenumber'
-													disabled={isMenuItemDisabled('phonenumber', row)}>
-													<>{translator('whatsapp.phoneNumber')}</>
-												</MenuItem>
-												<MenuItem
-													value='website'
-													disabled={isMenuItemDisabled('website', row)}>
-													<>{translator('whatsapp.website')}</>
-												</MenuItem>
-											</TextField>
-										</Grid>
+			<DialogContentText
+				className={clsx(classes.callToActionDialogHeaderDescription, classes.f16, classes.pb15)}>
+				<>{translator('whatsapp.callToActionDialogContentText')}</>
+			</DialogContentText>
+			<form>
+				<Grid container className={classes.callToActionFields}>
+					{callToActionFieldRows.map(
+						(row: callToActionRowProps, index: number) => (
+							<Grid container spacing={3} key={'TOC' + index} className={classes.noMargin}>
+								<Grid item xs={12} sm={6} md={2}>
+									<Typography>
+										<>{translator('whatsapp.typeOfAction')}</>
+									</Typography>
+									<TextField
+										disabled={!isEditable}
+										select
+										required
+										name='typeofaction'
+										placeholder='Enter Your Type Of Action'
+										variant='outlined'
+										onChange={(e) => onTypeOfActionChange(e, row)}
+										value={row.typeOfAction}
+										fullWidth>
+										<MenuItem
+											value='phonenumber'
+											disabled={isMenuItemDisabled('phonenumber', row)}>
+											<>{translator('whatsapp.phoneNumber')}</>
+										</MenuItem>
+										<MenuItem
+											value='website'
+											disabled={isMenuItemDisabled('website', row)}>
+											<>{translator('whatsapp.website')}</>
+										</MenuItem>
+									</TextField>
+								</Grid>
 
-										{row?.fields.map(
-											(field: callToActionFieldProps, fIndex: number) =>
-												field.type !== 'select' ? (
-													<Grid
-														item
-														xs={12}
-														sm={6}
-														md={3}
-														key={'TOCF' + fIndex}>
-														<Typography>
-															<>{translator(field?.fieldName)}</>
-														</Typography>
-														<TextField
-															disabled={!isEditable}
-															required={true}
-															type={field.type}
-															name={field.fieldName}
-															inputProps={
-																field.fieldName === 'whatsapp.phoneNumber'
-																	? {
-																			maxLength: 20,
-																	  }
-																	: field.fieldName === 'whatsapp.websiteURL'
-																	? { maxLength: 2000 }
-																	: { maxLength: 20 }
-															}
-															helperText={
-																field.fieldName === 'whatsapp.websiteURL'
-																	? `${field.value?.length || 0}/${2000}`
-																	: `${field.value?.length || 0}/${20}`
-															}
-															placeholder={translator(field.placeholder)}
-															variant='outlined'
-															onChange={(e) =>
-																onTypeOfActionFieldChange(
-																	e.target.value,
-																	row,
-																	field
-																)
-															}
-															value={field.value}
-															fullWidth
-														/>
-													</Grid>
-												) : (
-													<Grid
-														item
-														xs={12}
-														sm={6}
-														md={2}
-														key={'TOCF' + fIndex}>
-														<Typography>
-															<>{translator(field?.fieldName)}</>
-														</Typography>
-														<Autocomplete
-															id='template-list'
-															className={clsx(
-																classes.buttonField,
-																classes.buttonWhatsappAutocomplete,
-																classes.buttonCallToActionAutocomplete
-															)}
-															options={autoCompleteOptions}
-															renderOption={(props, options) =>
-																renderOptions(props, options, fIndex)
-															}
-															style={{ direction: isRTL ? 'rtl' : 'ltr' }}
-															// @ts-ignore
-															renderInput={(params) => (<TextField {...params} />)}
-															onChange={(_e, value) =>
-																onTypeOfActionFieldChange(value!, row, field)
-															}
-															value={field.value}
-															disabled={!isEditable}
-														/>
-														{/* <TextField
-															disabled={!isEditable}
-															select
-															required
-															name={field.fieldName}
-															placeholder={translator(field.placeholder)}
-															variant='outlined'
-															onChange={(e) =>
-																onTypeOfActionFieldChange(e, row, field)
-															}
-															value={field.value}
-															fullWidth>
-															{countryCodes.map((countryCode) => (
-																<MenuItem
-																	key={countryCode}
-																	value={'+' + countryCode?.replace(/\D/g, '')}>
-																	{countryCode}
-																</MenuItem>
-															))}
-														</TextField> */}
-													</Grid>
-												)
-										)}
-										{isEditable && (
-											<Grid item md={1}>
-												<Typography style={{ visibility: 'hidden' }}>
-													<>{translator('whatsapp.callToActionRemoveButton')}</>
+								{row?.fields.map(
+									(field: callToActionFieldProps, fIndex: number) =>
+									 field.type && (field.type !== 'select' ? (
+											<Grid
+												item
+												xs={12}
+												sm={6}
+												md={3}
+												key={'TOCF' + fIndex}>
+												<Typography>
+													<>{translator(field?.fieldName)}</>
 												</Typography>
-												<IconButton
-													color='secondary'
-													onClick={() => onDeleteRow(row)}>
-													<DeleteOutlineIcon />
-												</IconButton>
+												<TextField
+													disabled={!isEditable}
+													required={true}
+													type={field.type}
+													name={field.fieldName}
+													inputProps={
+														field.fieldName === 'whatsapp.phoneNumber'
+															? {
+																maxLength: 20,
+															}
+															: field.fieldName === 'whatsapp.websiteURL'
+																? { maxLength: 2000 }
+																: { maxLength: 20 }
+													}
+													helperText={
+														field.fieldName === 'whatsapp.websiteURL'
+															? `${field.value?.length || 0}/${2000}`
+															: `${field.value?.length || 0}/${20}`
+													}
+													placeholder={translator(field.placeholder)}
+													variant='outlined'
+													onChange={(e) =>
+														onTypeOfActionFieldChange(
+															e.target.value,
+															row,
+															field
+														)
+													}
+													value={field.value}
+													fullWidth
+												/>
 											</Grid>
-										)}
+										) : (
+											<Grid
+												item
+												xs={12}
+												sm={6}
+												md={2}
+												key={'TOCF' + fIndex}>
+												<Typography>
+													<>{translator(field?.fieldName)}</>
+												</Typography>
+												<Autocomplete
+													id='template-list'
+													className={clsx(
+														classes.buttonField,
+														classes.buttonWhatsappAutocomplete,
+														classes.buttonCallToActionAutocomplete
+													)}
+													options={autoCompleteOptions}
+													renderOption={(props, options) =>
+														renderOptions(props, options, fIndex)
+													}
+													style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+													renderInput={(params: any) => (
+														<TextField {...params} />
+													)}
+													onChange={(_e, value) =>
+														onTypeOfActionFieldChange(value!, row, field)
+													}
+													value={field.value}
+													disabled={!isEditable}
+												/>
+											</Grid>
+										)
+								))}
+								{
+									row.typeOfAction === 'website' && (
+										<Grid
+											item
+											xs={12}
+											sm={6}
+											md={3}
+										>
+											<Box className={clsx(classes.dFlex)}>
+												<FormGroup>
+													<Switch
+														disabled={!isEditable}
+														className={
+															isRTL
+																? clsx(
+																		classes.reactSwitchHe,
+																		'react-switch',
+																		'dynamic-link-switch'
+																	)
+																: clsx(
+																		classes.reactSwitch,
+																		'react-switch',
+																		'dynamic-link-switch'
+																	)
+														}
+														checked={row?.fields.length>1 && row?.fields[2]?.value === 'true'}
+														onChange={() => onTypeOfActionFieldChange(
+															`${row?.fields[2]?.value === 'true' ? 'false' : 'true'}`,
+															row,
+															row?.fields[2]
+														)}
+													/>
+												</FormGroup>
+												<Box>
+													<Typography className='keep-track'>{translator('mainReport.keepTrack')}</Typography>
+												</Box>
+											</Box>
+											<Box>
+												<Typography className='keep-track-desc'>{translator('mainReport.keepDesc')}</Typography>
+											</Box>
+										</Grid>
+									)
+								}
+								{isEditable && (
+									<Grid item md={1} xs={12} style={{ textAlign: isRTL ? 'left': 'right' }}>
+										<IconButton
+											color='secondary'
+											onClick={() => onDeleteRow(row)}
+											className={ windowSize !== 'xs' ? classes.mt24 : ''}
+										>
+											<DeleteOutlineIcon />
+										</IconButton>
 									</Grid>
-								)
+								)}
+							</Grid>
+						)
+					)}
+				</Grid>
+
+			<DialogActions className={classes.pt50}>
+					<Grid container>
+						<Grid item md={6} xs={6}>
+							{callToActionFieldRows?.length < 2 && (
+								<Button
+									disabled={!isEditable}
+									variant='contained'
+									onClick={addMore}
+									className={clsx(classes.btn, classes.btnRounded, classes.mt10)}
+								>
+									<AiOutlinePlusCircle className={clsx(classes.mr10, classes.f18)} />
+									{translator('whatsapp.quickReply.addMore')}
+								</Button>
 							)}
 						</Grid>
 
-						<DialogActions>
-							{callToActionFieldRows?.length < 2 && (
-								<Button variant='contained' color='primary' onClick={addMore}>
-									<>{translator('whatsapp.quickReply.addMore')}</>
-								</Button>
-							)}
+						<Grid item className={clsx(classes.justifyContentEnd)} md={6} xs={6}>
 							<Button
 								onClick={() => closeCallToAction(true)}
 								variant='contained'
-								color='secondary'>
-								<>{translator('whatsapp.callToActionExitButton')}</>
+								color='secondary'
+								className={clsx(classes.btn, classes.btnRounded, classes.mlr10, classes.mt10)}
+							>
+								{translator('whatsapp.callToActionExitButton')}
 							</Button>
 							{isEditable && (
 								<Button
 									onClick={onButtonSubmit}
 									disabled={callToActionFieldRows?.length === 0 ? true : false}
 									variant='contained'
-									style={
-										callToActionFieldRows?.length > 0
-											? { backgroundColor: 'green', color: 'white' }
-											: {}
-									}>
-									<>{translator('whatsapp.callToActionSaveButton')}</>
+									className={clsx(classes.btn, classes.btnRounded, classes.redButton, classes.mt10)}
+								>
+									{translator('whatsapp.callToActionSaveButton')}
 								</Button>
 							)}
-						</DialogActions>
-					</form>
-				</DialogContent>
-			</Dialog>
-
-			<AlertModal
-				classes={classes}
-				isOpen={isTextLimitAlert}
-				onClose={() => onCancelTextLimit()}
-				title={''}
-				subtitle={translator('whatsapp.template.textLimitAlertDesc')}
-				type='delete'
-				onConfirmOrYes={() => onConfirmTextLimit()}
-			/>
-
-			<ValidationAlert
-				classes={classes}
-				isOpen={isValidationAlert}
-				onClose={() => setIsValidationAlert(false)}
-				title={translator('whatsappCampaign.sendValidation')}
-				requiredFields={validationErrors}
-			/>
+						</Grid>
+					</Grid>
+				</DialogActions>
+			</form>
+			{renderDialog()}
 		</>
 	);
 };

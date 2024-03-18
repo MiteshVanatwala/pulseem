@@ -22,6 +22,9 @@ import ConnectorsSlice from './reducers/ConnectorsSlice';
 import galleryReducer from './reducers/gallerySlice'
 import whatsappReducer from './reducers/whatsappSlice'
 import AccountSettingsSlice from './reducers/AccountSettingsSlice';
+import DynamicGroupsSlice from './reducers/DynamicGroupsSlice';
+import DomainVerificationSlice from './reducers/DomainVerificationSlice';
+import ExtraFieldsSlice from './reducers/ExtraFieldsSlice';
 
 export default configureStore({
   reducer: {
@@ -45,8 +48,11 @@ export default configureStore({
     group: groupSlice,
     report: reportSlice,
     gallery: galleryReducer,
+    connectors: ConnectorsSlice,
     whatsapp: whatsappReducer,
     accountSettings: AccountSettingsSlice,
-    connectors: ConnectorsSlice
+    dynamicGroups: DynamicGroupsSlice,
+    domainVerification: DomainVerificationSlice,
+    extraFields: ExtraFieldsSlice
   },
 });

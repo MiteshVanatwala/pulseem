@@ -56,7 +56,8 @@ export type ManagmentIconProps = {
 	classes: ClassesType['classes'];
 	key: string;
 	buttonKey: string;
-	icon: string;
+	icon?: any;
+	uIcon?: any;
 	lable: string;
 	disable?: boolean;
 	hide?: boolean;
@@ -94,6 +95,7 @@ export type AllReportReq = {
 	isPagination: boolean;
 	pageNo: number;
 	pageSize: number;
+	IsTestCampaign: boolean;
 };
 
 export type PageTypeRequest = { [key: string]: number };
@@ -114,3 +116,13 @@ export type UpdateWhatsappTierPayload = {
 export type UpdateWhatsappTier = {
 	payload: UpdateWhatsappTierPayload;
 };
+
+export type authenticationMockTemplateObject = {
+	body: string;
+	subtitle: string
+}
+export type AuthenticationMockTemplateType = {
+	[key: string]: authenticationMockTemplateObject;
+	AUTHENTICATIONEN: authenticationMockTemplateObject;
+	AUTHENTICATIONHEBREW: authenticationMockTemplateObject;
+}

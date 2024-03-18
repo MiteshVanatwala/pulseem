@@ -1,28 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
     Box, Button, Grid, Table, TableContainer,
-    TableCell, Link, FormControl, Select, MenuItem,
+    TableCell, Link, FormControl, MenuItem,
     TableHead, TableRow, TextField, Typography, TableBody
 } from '@material-ui/core';
+import Select from '@mui/material/Select';
 import {
-    TablePagination, DateField
+    TablePagination, DateField, ManagmentIcon
 } from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
+import { PreviewIcon, SearchIcon } from '../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { WhatsappStatus } from '../../../helpers/Constants';
-import { whatsappStatusToString, whatsappStatusColor } from '../../../helpers/Functions/functions';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
-import { ImWhatsapp } from 'react-icons/im';
+import { ConvertColorStatus, ConvertWhatsappStatusText, SourceType } from '../../../helpers/UI/TableText';
+import { IoIosArrowDown } from 'react-icons/io';
+import { Title } from '../../../components/managment/Title';
+import { WhatsappTemplatePreview } from '../../../components/WhatsappTemplatePreview/WhatsappTemplatePreview';
+import TotalSection from '../../../components/managment/TotalSection';
 
 const DirectWhatsappReportTab = ({
     classes,
+    title,
     dispatch,
     windowSize,
     isRTL,
@@ -44,6 +48,8 @@ const DirectWhatsappReportTab = ({
     const { t } = useTranslation();
     const [showLoader, setLoader] = useState(false)
     const [page, setPage] = useState(1);
+    const [openTemplatePreview, setTemplatePreview] = useState(false);
+    const [templateID, setTemplateID] = useState(null);
 
     const handleSearch = async () => {
         setLoader(true);
@@ -97,21 +103,21 @@ const DirectWhatsappReportTab = ({
         setPage(1);
     }
 
-    const renderCell = (data, dataType, cutOff) => {
+    const renderCell = (data, dataType, isBalanceCol) => {
         let text = data;
         if (dataType === 'date') {
             text = moment(text);
             text = `${text.format('DD/MM/YYYY HH:mm')}`
         }
         if (dataType === 'status') {
-            text = t(whatsappStatusToString(text));
+            text = t(ConvertWhatsappStatusText(text));
             return (
-                <Typography style={{ color: whatsappStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+                <Typography style={{ color: ConvertColorStatus(data, SourceType.WHATSAPP), fontWeight: 600 }}>{text}</Typography>
             )
         }
 
         return (
-            <Typography style={{ wordBreak: dataType === 'content' ? 'break-word' : null }}>{text}</Typography>
+            <Typography style={{ fontWeight: isBalanceCol ? 900 : null, wordBreak: dataType === 'content' ? 'break-word' : null }}>{text} {isBalanceCol && t("common.NIS")}</Typography>
         );
     }
 
@@ -271,32 +277,25 @@ const DirectWhatsappReportTab = ({
                     />
                 </Grid>
                 <Grid item>
-                    <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+                    <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                         <Select
+                            variant="standard"
                             autoWidth
                             displayEmpty
-                            className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
                             value={Status}
-                            style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
                             onChange={(e) => handleSearchInput(e.target.value, 'Status', 'whatsapp')}
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             MenuProps={{
-                                anchorOrigin: {
-                                    vertical: "bottom",
-                                    horizontal: "left"
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 200,
+                                        direction: isRTL ? 'rtl' : 'ltr'
+                                    },
                                 },
-                                transformOrigin: {
-                                    vertical: "top",
-                                    horizontal: "left"
-                                },
-                                getContentAnchorEl: null
                             }}
                         >
-                            <MenuItem value="" className={classes.dropDownItem}>
-                                {t("common.Status")}
-                            </MenuItem>
-                            {WhatsappStatus.map(so => {
-                                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
-                            })}
+                            <MenuItem value="">{t("common.Status")}</MenuItem>
+                            {WhatsappStatus.map(so => <MenuItem key={so.id} value={so.id}>{t(so.value)}</MenuItem>)}
                         </Select>
                     </FormControl>
                 </Grid>
@@ -307,15 +306,16 @@ const DirectWhatsappReportTab = ({
     const renderSearchLine = () => {
         const { whatsapp = false } = isSearching || {};
         return (
-            <Grid container spacing={2} className={classes.lineTopMarging}>
+            <Grid container spacing={2} className={clsx(windowSize === 'xs' || windowSize === 'sm' ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
                 {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
                 <Grid item>
                     <Button
                         size='large'
                         variant='contained'
                         onClick={handleSearch}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}>
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={<SearchIcon />}
+                    >
                         {t('campaigns.btnSearchResource1.Text')}
                     </Button>
                     {windowSize !== 'xs' && <Link
@@ -337,8 +337,9 @@ const DirectWhatsappReportTab = ({
                             setPage(1);
                             clearSearch('whatsapp');
                         }}
-                        className={classes.searchButton}
-                        endIcon={<ClearIcon />}>
+                        className={clsx(classes.btn, classes.btnRounded, classes.mleft5)}
+                        endIcon={<ClearIcon />}
+                    >
                         {t('common.clear')}
                     </Button>
                 </Grid> : null}
@@ -382,6 +383,12 @@ const DirectWhatsappReportTab = ({
                     </TableCell>
                     <TableCell
                         classes={cellStyle}
+                        className={classes.flex1}
+                        align='center'>
+                        <>{t('whatsappReport.cost')}</>
+                    </TableCell>
+                    <TableCell
+                        classes={cellStyle}
                         align='center'
                         className={classes.flex1}>
                         {t('report.failure')}
@@ -389,10 +396,7 @@ const DirectWhatsappReportTab = ({
                     <TableCell
                         classes={cellStyle}
                         className={classes.flex1}
-                        style={{ inlineSize: 90 }}
-                        align='center'>
-                        {t('common.templateId')}
-                    </TableCell>
+                        align='center'></TableCell>
                 </TableRow>
             </TableHead>
         )
@@ -416,7 +420,7 @@ const DirectWhatsappReportTab = ({
     // }
 
     const renderRow = (row) => {
-        const { Schedule, FromNumber, ToNumber, Status, Text, ErrorMessage, ReferenceId } = row;
+        const { Schedule, FromNumber, ToNumber, Status, Text, ErrorMessage, ReferenceId, Cost } = row;
         return (
             <TableRow
                 classes={rowStyle}>
@@ -452,7 +456,13 @@ const DirectWhatsappReportTab = ({
                     {renderCell(Text, 'content')}
                 </TableCell>
                 <TableCell
-                    classes={noborderCell}
+                    classes={cellStyle}
+                    align='center'
+                    className={classes.flex1}>
+                    {renderCell(Cost, null, true)}
+                </TableCell>
+                <TableCell
+                    classes={cellStyle}
                     align='center'
                     className={classes.flex1} title={ErrorMessage}>
                     <CustomTooltip
@@ -492,9 +502,17 @@ const DirectWhatsappReportTab = ({
                                 placement={"top"}
                                 title={<Typography noWrap={false}>{ReferenceId}</Typography>}
                             >
-                                {ReferenceId && ReferenceId !== '' && <Typography>
-                                    {t('common.showTemplateId')}
-                                </Typography>}
+                                {ReferenceId && ReferenceId !== '' && <>
+                                    <ManagmentIcon
+                                        uIcon={<PreviewIcon width={18} height={20} className={'PreviewIcon'} />}
+                                        lable={t('campaigns.Image1Resource1.ToolTip')}
+                                        onClick={() => {
+                                            setTemplateID(ReferenceId);
+                                            setTemplatePreview(true);
+                                        }}
+                                        classes={classes}
+                                    />
+                                </>}
                             </CustomTooltip>
                         </TableCell>
                     </>
@@ -591,11 +609,11 @@ const DirectWhatsappReportTab = ({
                 <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
                     <Grid item className={windowSize === 'xs' ? classes.mt15 : null} style={{ textAlign: isRTL ? 'left' : 'right' }}>
                         <Typography className={clsx(classes.groupsLable, classes.mb5)}>
-                            {t('common.Total')} {directWhatsappReport?.Message ?? 0} {t('report.Messages')}
+                            {t('common.Total')} {directWhatsappReport?.Message?.TotalMessages ?? 0} {t('report.Messages')}
                         </Typography>
                     </Grid>
                 </Grid>
-                <TableContainer className={clsx(classes.borderAround, classes.mt10)}>
+                <TableContainer className={clsx(classes.mt10)}>
                     <Table className={clsx(classes.tableContainer, classes.noborder)}>
                         {windowSize !== 'xs' && renderTableHead()}
                         {renderTableBody()}
@@ -606,7 +624,7 @@ const DirectWhatsappReportTab = ({
     }
 
     const renderTablePagination = () => {
-        const data = (directWhatsappReport && directWhatsappReport.Message) || 0;
+        const data = (directWhatsappReport && directWhatsappReport.Message?.TotalMessages) || 0;
         return (
             <TablePagination
                 classes={classes}
@@ -622,19 +640,18 @@ const DirectWhatsappReportTab = ({
     }
 
     return <>
-        {directWhatsappReport?.StatusCode === 201 ? (
-            <>
-                {renderSearchLine()}
-                {renderTable()}
-                {renderTablePagination()}
-                <Loader isOpen={showLoader} />
-            </>
-        ) : <>
-            <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
-                <Typography style={{ fontSize: 30 }}>{RenderHtml(t('common.whatsappCommingSoon'))}</Typography>
-                <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
-            </Box>
-        </>}
+        <Box className={clsx('topSection', classes.mt10)}>
+            <Title Text={title} classes={classes} />
+            {renderSearchLine()}
+        </Box>
+        {renderTable()}
+        {renderTablePagination()}
+        {directWhatsappReport && <TotalSection classes={classes} TotalObject={{
+            "TotalSent": directWhatsappReport?.Message?.TotalMessages,
+            "WhatsappBalance": `${directWhatsappReport?.Message?.WhatsappBalance || 0} ${t("common.NIS")}`
+        }} callerType="whatsapp" />}
+        <WhatsappTemplatePreview classes={classes} templateID={templateID} openPreview={openTemplatePreview} closeModel={() => setTemplatePreview(false)} />
+        <Loader isOpen={showLoader} />
     </>
 }
 

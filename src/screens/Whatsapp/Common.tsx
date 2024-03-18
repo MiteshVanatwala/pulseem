@@ -26,8 +26,9 @@ import { buttonTypes, fileTypes } from './Constant';
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
 //This regex will test dynamic field having one digits in side (i.e. {{1}});
 const dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
+const dynamicFieldNewLine = new RegExp('^\n$');
 
-export const getDynamicFields = (text: string) => {
+export const getDynamicFields = (text: string, replaceNewLine: boolean = false) => {
 	let indices = [];
 	for (let i = 0; i < text?.length; i++) {
 		if (dynamicFieldL5.test(text?.slice(i, i + 5))) {
@@ -35,6 +36,9 @@ export const getDynamicFields = (text: string) => {
 		}
 		if (dynamicFieldL6.test(text?.slice(i, i + 6))) {
 			indices.push(text?.slice(i, i + 6));
+		}
+		if (replaceNewLine && dynamicFieldNewLine.test(text?.slice(i, i + 1))) {
+			indices.push(text?.slice(i, i + 1));
 		}
 	}
 	return indices;
@@ -467,11 +471,13 @@ export const isShowTierAlert = (
 
 export const adjustTemplateVariablesForLink = (
 	templateData: savedTemplateTypesProps,
-	updatedDynamicVariable: updatedVariable[]
+	updatedDynamicVariable: updatedVariable[],
+	whatsappTempalteBody: string = ''
 ) => {
-	const {
+	let {
 		templateData: { templateText },
 	} = getTemplatePreviewData(templateData);
+	if (whatsappTempalteBody !== '') templateText = whatsappTempalteBody;
 	const DynamicFieldsIndex = getDynamicFieldIndex(templateText);
 	const adjustedDynamicVariableForLinks = DynamicFieldsIndex?.map(
 		(fieldIndex, index) => {

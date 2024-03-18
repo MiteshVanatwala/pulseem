@@ -12,9 +12,8 @@ import {
   TableRow,
   TableCell,
   makeStyles,
-  Divider
 } from "@material-ui/core";
-import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, DeleteEmail, DeletePhone } from "../../assets/images/managment/index";
+import { ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
 import {
   TablePagination,
@@ -22,7 +21,6 @@ import {
 } from "../../components/managment/index";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import ClearIcon from "@material-ui/icons/Clear";
 import moment from "moment";
 import "moment/locale/he";
 import { Loader } from "../../components/Loader/Loader";
@@ -49,8 +47,8 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, ReplaceExtraFieldHeader, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
+import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
+import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition, FlatObject } from '../../helpers/Export/ExportHelper';
 import { ClientStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
@@ -58,9 +56,14 @@ import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
-import { ConvertClientStatus, SourceType } from '../../helpers/UI/TableText';
+import { ReplaceExtraFieldHeader } from "../../helpers/UI/AccountExtraField";
+import { ConvertClientStatus, SourceType } from "../../helpers/UI/TableText";
+import { Title } from "../../components/managment/Title";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { getErrorMessageFromTwilioLink } from "../Whatsapp/Common";
+import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -90,7 +93,7 @@ const useStyles = makeStyles({
     }
   }
 });
-const ClientSearchResult = ({ props, classes }) => {
+const ClientSearchResult = ({ classes }) => {
   const {
     language,
     windowSize,
@@ -105,13 +108,10 @@ const ClientSearchResult = ({ props, classes }) => {
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages, downloadProgress } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
-  // const { groupData, ToastMessages } = useSelector((state) => state.group);
   const [selectedClients, setSelectedClients] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
-
-  // const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { id } = useParams();
   const [data, setData] = useState([]);
@@ -123,10 +123,11 @@ const ClientSearchResult = ({ props, classes }) => {
   const [searchData, setSearchData] = useState(null);
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
+  //eslint-disable-next-line
   const [clientToEdit, setClientToEdit] = useState(null);
   const [isDownloadProgress, setIsDownloadProgress] = useState(false);
   const [emailToNotify, setEmailToNotify] = useState('');
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -239,7 +240,7 @@ const ClientSearchResult = ({ props, classes }) => {
           TestStatusOfEmailElseSms: searchParams.get("TestStatusOfEmailElseSms") ? parseInt(searchParams.get("TestStatusOfEmailElseSms")) : null, // 0 or null = sms, 1 = email
           Switch: searchParams.get("Switch"), // Not in use for now.
           CountryOrRegion: searchParams.get("CountryOrRegion"),// Not in use for now.
-          GroupIds: searchParams.get("GroupIds").split(',').map((g) => { return parseInt(g) }), // List of 1 groupId
+          GroupIds: searchParams.get("GroupIds") ? searchParams.get("GroupIds").split(',').map((g) => { return parseInt(g) }) : [], // List of 1 groupId
           NodeID: searchParams.get("NodeID") ?? "", // Not in use for now
           CampaignID: searchParams.get("CampaignID") ? parseInt(searchParams.get("CampaignID")) : null,
           FromDate: searchParams.get("FromDate"),
@@ -248,6 +249,11 @@ const ClientSearchResult = ({ props, classes }) => {
         }
       }
 
+      if (overwriteObject.ResultTitle === null) {
+        overwriteObject = getCookie('recipientSearchResultSearchparam');
+      } else {
+        setCookie('recipientSearchResultSearchparam', JSON.stringify(overwriteObject));
+      }
       let isSmsReport = false;
 
       if (document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
@@ -277,6 +283,7 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     initSearchData();
     initExtraFields();
+
   }, []);
   useEffect(() => {
     if (extraData && Object.entries(extraData).length > 0) {
@@ -344,6 +351,7 @@ const ClientSearchResult = ({ props, classes }) => {
       updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;
     }
+
   }, [extraData])
 
 
@@ -354,6 +362,7 @@ const ClientSearchResult = ({ props, classes }) => {
       }
       getData();
     }
+
   }, [dispatch, searchData, page, rowsPerPage]);
 
   const handleFromDateChange = (value) => {
@@ -396,9 +405,10 @@ const ClientSearchResult = ({ props, classes }) => {
     }
   };
   const handleDownloadCsv = async (formatType, notifyEmail) => {
-    setDialog(null);
-    setIsDownloadProgress(true);
     setLoader(true);
+    setDialog(null);
+    setShowConfirmDialog(false);
+    setIsDownloadProgress(true);
     setEmailToNotify(notifyEmail);
     const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
@@ -528,8 +538,8 @@ const ClientSearchResult = ({ props, classes }) => {
   const EL_FromDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
-        toolbarDisabled={false}
         classes={classes}
+        toolbarDisabled={false}
         value={date.FromDate}
         onChange={handleFromDateChange}
         placeholder={t('mms.locFromDateResource1.Text')}
@@ -539,8 +549,8 @@ const ClientSearchResult = ({ props, classes }) => {
   const EL_ToDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
-        toolbarDisabled={false}
         classes={classes}
+        toolbarDisabled={false}
         value={date.ToDate}
         onChange={(value) => setDate({ ...date, ToDate: value })}
         placeholder={t('mms.locToDateResource1.Text')}
@@ -824,6 +834,7 @@ const ClientSearchResult = ({ props, classes }) => {
         { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
       ]);
     }
+
   }, [ClientData, isRTL]);
   //  HANDLERS  //
   const handleResponses = (response, actions = {
@@ -1159,27 +1170,34 @@ const ClientSearchResult = ({ props, classes }) => {
   const renderHeader = () => {
     return (
       <>
-        <Box className={clsx(classes.flex, classes.spaceBetween)}>
-          <Typography className={classes.managementTitle}>
+        <Box className={clsx(classes.flex, classes.spaceBetween, classes.flexWrap)} >
+          <Typography
+            style={{ width: windowSize !== "xs" ? 'auto' : '' }}
+            className={clsx(classes.managementTitle, "mgmtTitle", windowSize === "xs" ? classes.w70 : '')}
+          >
             {t("client.logPageHeaderResource1.Text")} {searchData?.ResultTitle ? " - " : ""} {searchData?.ResultTitle}
           </Typography>
-          {window.history.state && <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
-            if (searchData?.PageProperty || searchData?.PageName) {
-              navigate(`/react/${searchData?.PageProperty?.PageName ?? searchData?.PageName}`, {
-                state: {
-                  from: 'clientsearchresult'
+          {window.history.state &&
+            <Button
+              className={clsx(classes.btn, classes.btnRounded)}
+              onClick={() => {
+                if (searchData?.PageProperty || searchData?.PageName) {
+                  navigate(`/react/${searchData?.PageProperty?.PageName ?? searchData?.PageName}`, {
+                    state: {
+                      from: 'clientsearchresult'
+                    }
+                  })
                 }
-              })
-            }
-            else {
-              sessionStorage.removeItem('searchData');
-              window.history.back()
-            }
-          }
-          }> {t("common.back")}</Typography>
+                else {
+                  sessionStorage.removeItem('searchData');
+                  window.history.back()
+                }
+              }
+              }
+              startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            > {t("common.back")}</Button>
           }
         </Box>
-        <Divider />
       </>
     );
   };
@@ -1194,30 +1212,8 @@ const ClientSearchResult = ({ props, classes }) => {
   }
   // DONE
   const renderSearchLine = () => {
-    if (windowSize === "xs") {
-      return (
-        <SearchField
-          classes={classes}
-          value={searchStr}
-          onChange={(e) => setSearchStr(e.target.value)}
-          onClick={() => {
-            handleSearch({
-              ...searchData,
-              IsAdvanced: false,
-              IsSearchByFilter: false,
-              PageIndex: 1,
-              PageSize: rowsPerPage,
-              SearchTerm: searchStr
-            });
-            setPage(1);
-          }}
-          onKeyPress={handleKeyPress}
-          placeholder={t("appbar.search")}
-        />
-      );
-    }
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant="outlined"
@@ -1232,8 +1228,6 @@ const ClientSearchResult = ({ props, classes }) => {
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
         <Grid item>
           <Button
-            size="large"
-            variant="contained"
             onClick={() => {
               handleSearch({
                 ...searchData,
@@ -1250,8 +1244,8 @@ const ClientSearchResult = ({ props, classes }) => {
               setPage(1);
               handleFilter();
             }}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
@@ -1260,8 +1254,6 @@ const ClientSearchResult = ({ props, classes }) => {
           (searchData?.SearchTerm || searchData?.FromDate || searchData?.ToDate) && (
             <Grid item>
               <Button
-                size="large"
-                variant="contained"
                 onClick={() => {
                   setDate({ FromDate: null, ToDate: null });
                   handleSearch({ ...searchData, SearchTerm: "", FromDate: null, ToDate: null, ...filterSearch });
@@ -1269,8 +1261,8 @@ const ClientSearchResult = ({ props, classes }) => {
                   setPage(1);
                   handleFilter();
                 }}
-                className={classes.searchButton}
-                endIcon={<ClearIcon />}
+                className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               >
                 {t("common.clear")}
               </Button>
@@ -1285,23 +1277,20 @@ const ClientSearchResult = ({ props, classes }) => {
       <Grid container spacing={2} className={classes.linePadding} style={{ width: '100%' }}>
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
-            variant="contained"
-            size="medium"
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
+              classes.btn, classes.btnRounded
             )}
             onClick={() => setDialog(DialogType.ADD_GROUP)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t("group.new")}
           </Button>
         </Grid>
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
-            variant="contained"
-            size="medium"
-            className={clsx(classes.actionButton, classes.actionButtonRed)}
+            className={clsx(classes.btn, classes.btnRounded)}
             onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t("recipient.unsubscribe")}
           </Button>
@@ -1309,28 +1298,23 @@ const ClientSearchResult = ({ props, classes }) => {
         {windowSize !== "xs" && (
           <Grid item>
             <Button
-              variant="contained"
-              size="medium"
-              className={clsx(classes.actionButton, classes.actionButtonRed)}
-              // onClick={() => selectedClients.length === 0 ? setToastMessage(ToastMessages.CLIENT_ZERO_SELECT) : setDialog(DialogType.CONFIRM_INVALID)}
+              className={clsx(classes.btn, classes.btnRounded)}
               onClick={() => setDialog(DialogType.CONFIRM_INVALID)}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
               {t("client.makeInvalid")}
             </Button>
           </Grid>
         )}
         {
-          accountFeatures?.indexOf('13') === -1 && <Grid item xs={windowSize === "xs" && 12}>
+          accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && <Grid item xs={windowSize === "xs" && 12}>
             <Button
-              variant="contained"
-              size="medium"
               className={clsx(
                 !data ? classes.disabled : null,
-                classes.actionButton,
-                classes.actionButtonGreen
+                classes.btn, classes.btnRounded
               )}
               onClick={() => setDialog(DialogType.EXPORT_FORMAT)}
-              startIcon={<ExportIcon />}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
               {t("campaigns.exportFile")}
             </Button>
@@ -1349,10 +1333,16 @@ const ClientSearchResult = ({ props, classes }) => {
         {(searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) &&
           <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
             {revenueSummary && <SummaryRow
-              data={revenueSummary}
-              classes={classes} />
+              classes={classes}
+              data={revenueSummary} />
             }
-          </Grid>}
+          </Grid>},
+        {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+          {revenueSummary && <SummaryRow
+            data={revenueSummary}
+            classes={classes} />
+          }
+        </Grid>}
       </Grid>
     );
   };
@@ -1361,39 +1351,43 @@ const ClientSearchResult = ({ props, classes }) => {
   }
   const renderPhoneNameCell = (row, fullwidth) => {
     let date = null;
-    const { FirstName, LastName } = row;
+    const { FirstName, LastName, CreationDate } = row;
     let text = t("common.UpdatedOn");
-    date = moment(row.CreationDate, dateFormat);
+    date = CreationDate ? moment(CreationDate, dateFormat) :  null;
     return (
       <>
-        <CustomTooltip
-          isSimpleTooltip={false}
-          interactive={true}
-          classes={{
-            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-            arrow: classes.fBlack,
-          }}
-          arrow={true}
-          style={{ fontSize: 18, fontWeight: "bold", direction: isRTL ? 'rtl' : 'ltr' }}
-          placement={"top"}
-          title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
-          text={`${FirstName} ${LastName}`}
-        >
-          {fullwidth ? (
-            <Typography
-              className={clsx(classes.nameEllipsis, classes.fullWidth)}
-              style={{ maxWidth: "100%", minHeight: 28 }}
+        {
+          (FirstName || LastName) && (
+            <CustomTooltip
+              isSimpleTooltip={false}
+              interactive={true}
+              classes={{
+                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                arrow: classes.fBlack,
+              }}
+              arrow={true}
+              style={{ fontSize: 18, fontWeight: "bold", direction: isRTL ? 'rtl' : 'ltr' }}
+              placement={"top"}
+              title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
+              text={`${FirstName} ${LastName}`}
             >
-              {FirstName} {LastName}
-            </Typography>
-          ) : (
-            <Typography className={classes.nameEllipsis} style={{ minHeight: 28 }}>
-              {FirstName} {LastName}
-            </Typography>
-          )}
-        </CustomTooltip>
+              {fullwidth ? (
+                <Typography
+                  className={clsx(classes.nameEllipsis, classes.fullWidth)}
+                  style={{ maxWidth: "100%", minHeight: 28 }}
+                >
+                  {FirstName} {LastName}
+                </Typography>
+              ) : (
+                <Typography className={classes.nameEllipsis} style={{ minHeight: 28 }}>
+                  {FirstName} {LastName}
+                </Typography>
+              )}
+            </CustomTooltip>
+          )
+        }
         <Typography className={classes.grayTextCell}>
-          {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+          {date ? `${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}` : text}
         </Typography>
       </>
     );
@@ -1442,7 +1436,6 @@ const ClientSearchResult = ({ props, classes }) => {
       FirstName,
       LastName,
       UpdateDate,
-      LogSms_ErrorType,
       SentDate,
       CreationDate,
       LastSendDate,
@@ -1457,7 +1450,7 @@ const ClientSearchResult = ({ props, classes }) => {
       const iconsMap = [
         {
           key: 'edit',
-          icon: EditIcon,
+          uIcon: EditIcon,
           lable: t("common.edit"),
           rootClass: classes.paddingIcon,
           onClick: async () => {
@@ -1475,7 +1468,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         {
           key: 'deleteFromGroups',
-          icon: DeleteRecipient,
+          uIcon: DeleteRecipient,
           lable: t("recipient.deleteFromGroups"),
           rootClass: classes.paddingIcon,
           onClick: () => {
@@ -1485,7 +1478,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         {
           key: 'deleteFromEmail',
-          icon: DeleteEmail,
+          uIcon: RemoveEmail,
           lable: t("recipient.deleteEmail"),
           rootClass: classes.paddingIcon,
           onClick: () => {
@@ -1495,7 +1488,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         {
           key: 'deleteFromPhone',
-          icon: DeletePhone,
+          uIcon: RemovePhone,
           lable: t("recipient.deletePhone"),
           remove: windowSize === 'xs',
           rootClass: classes.paddingIcon,
@@ -1514,12 +1507,14 @@ const ClientSearchResult = ({ props, classes }) => {
         >
           {iconsMap.map(icon => (
             <Grid
-              className={icon.disable && classes.disabledCursor}
+              style={{ flex: 1, alignItems: 'center', }}
+              className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
               key={icon.key}
               item >
               <ManagmentIcon
                 classes={classes}
                 {...icon}
+                uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
               />
             </Grid>
           ))}
@@ -1528,10 +1523,10 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
-        return t(ConvertClientStatus(Status, SourceType.EMAIL))
+        return t(ConvertClientStatus(SourceType.EMAIL, Status))
       }
       else if (Cellphone && !isEmail && Cellphone !== '') {
-        return t(ConvertClientStatus(SmsStatus, SourceType.SMS))
+        return t(ConvertClientStatus(SourceType.SMS, SmsStatus))
       }
       return t("emailStatus.noStatus")
     }
@@ -1663,6 +1658,17 @@ const ClientSearchResult = ({ props, classes }) => {
       LastSendDate,
       snt_OpeningDate
     } = row;
+    
+    const switchStatus = (isEmail) => {
+      if (Email && isEmail && Email !== '') {
+        return t(ConvertClientStatus(SourceType.EMAIL, Status))
+      }
+      else if (Cellphone && !isEmail && Cellphone !== '') {
+        return t(ConvertClientStatus(SourceType.SMS, SmsStatus))
+      }
+      return t("emailStatus.noStatus")
+    }
+
     return (
       <TableRow key={ClientID} component="div" classes={rowStyle}>
         <TableCell
@@ -1686,12 +1692,14 @@ const ClientSearchResult = ({ props, classes }) => {
           </Box>
           <Box className={clsx(classes.mt5)} style={{ maxWidth: '90%' }}>
             <Box className={classes.flex}>
-              <Box className={clsx(classes.flex6)}>
+              <Box className={clsx(classes.flex6, classes.w60)}>
                 <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
-                <Typography >{Email}</Typography>
+                <Typography className={classes.elipsis}>
+                  {Email}
+                </Typography>
               </Box>
               <Box className={clsx(classes.flex4)}>
-                <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+                <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(true)}</Typography>
               </Box>
             </Box>
           </Box>
@@ -1702,7 +1710,7 @@ const ClientSearchResult = ({ props, classes }) => {
                 <Typography >{Cellphone}</Typography>
               </Box>
               <Box className={clsx(classes.flex4)}>
-                <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+                <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(false)}</Typography>
               </Box>
             </Box>
           </Box>
@@ -1748,12 +1756,12 @@ const ClientSearchResult = ({ props, classes }) => {
         }
         // title={t("group.delete")}
         title={DialogObject[dialog]?.title || ''}
-        showDivider={true}
+        showDivider={false}
         onClose={DialogObject[dialog]?.onClose || ''}
         onCancel={DialogObject[dialog]?.onClose || ''}
         onConfirm={DialogObject[dialog]?.onConfirm || null}
-        cancelText="common.Cancel"
-        confirmText="common.Ok"
+        cancelText="common.No"
+        confirmText="common.Yes"
       >
         <Box>
           <Typography variant="subtitle1">
@@ -1807,13 +1815,15 @@ const ClientSearchResult = ({ props, classes }) => {
             className: windowSize === "xs" && classes.dNone,
           }}
         >
-          <TableBody>
-            {!sortedData || sortedData.length === 0 ?
-              <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
-                <Typography>{t("common.NoDataTryFilter")}</Typography>
-              </Box> :
-              sortedData.map((obj, idx) => windowSize === "xs" ? RenderPhoneRow(obj) : RenderWebRow(obj))}
-          </TableBody>
+          <Box className='tableBodyContainer'>
+            <TableBody>
+              {!sortedData || sortedData.length === 0 ?
+                <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+                  <Typography>{t("common.NoDataTryFilter")}</Typography>
+                </Box> :
+                sortedData.map((obj, idx) => windowSize === "xs" ? RenderPhoneRow(obj) : RenderWebRow(obj))}
+            </TableBody>
+          </Box>
         </DataTable>
         <TablePagination
           classes={classes}
@@ -1843,10 +1853,10 @@ const ClientSearchResult = ({ props, classes }) => {
       }
       return (
         <BaseDialog
+          classes={classes}
           cancelText="common.Cancel"
           confirmText="common.Yes"
           disableBackdropClick={true}
-          classes={classes}
           open={showConfirmDialog}
           onCancel={() => setShowConfirmDialog(false)}
           onClose={() => setShowConfirmDialog(false)}
@@ -1864,7 +1874,6 @@ const ClientSearchResult = ({ props, classes }) => {
             classes={classes}
             isOpen={dialog === DialogType.ADD_GROUP}
             onClose={() => setDialog(null)}
-            setLoader={setLoader}
             windowSize={windowSize}
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
@@ -1898,6 +1907,7 @@ const ClientSearchResult = ({ props, classes }) => {
             Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
             DialogType={DialogType}
             selectedGroups={mappedGroups}
+            setDialog={setDialog}
             handleResponses={(response, actions) => { handleResponses(response, actions); }}
             onAddRecipient={(closeDialog = true) => {
               closeDialog && setDialog(null);
@@ -1945,8 +1955,8 @@ const ClientSearchResult = ({ props, classes }) => {
                       setDialog(null)
                     }}
                     className={clsx(
-                      classes.solidDialogButton,
-                      classes.dialogConfirmButton
+                      classes.btn,
+                      classes.btnRounded
                     )}>
                     {t('common.confirm')}
                   </Button>
@@ -2013,12 +2023,17 @@ const ClientSearchResult = ({ props, classes }) => {
   return (
     <DefaultScreen
       currentPage="groups"
-      classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
+      classes={classes}
     >
+      <Box className={'topSection'}>
+        <Title
+          classes={classes}
+          Text={renderHeader()}
+        />
+        {renderSearchLine()}
+      </Box>
       {toastMessage && renderToast()}
-      {renderHeader()}
-      {renderSearchLine()}
       {windowSize !== "xs" ? renderManagmentLine() : null}
       {renderTableBody()}
       {renderConfirmDialog()}
@@ -2031,7 +2046,7 @@ const ClientSearchResult = ({ props, classes }) => {
         onConfirm={(e, notifyEmail) => handleDownloadCsv(e, notifyEmail)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue={TotalCount > 100000 ? "csv" : "xls"}
+        defaultValue={TotalCount > 100000 ? "csv" : "xlsx"}
         showEmailToNotify={TotalCount > 100000}
         options={TotalCount > 100000 ? null : ExportFileTypes}
       />

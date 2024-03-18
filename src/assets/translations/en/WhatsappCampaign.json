@@ -1,6 +1,6 @@
 {
 	"note1": "Important note! Do not exceed the daily message limit.",
-	"note2": "Messages beyond the limit will be charged",
+	"note2": "Messages beyond the limit will be charged.",
 	"summaryNote": "Important note!",
 	"summaryNote2": "Do not exceed the daily",
 	"summaryNote3": "message limit",
@@ -75,5 +75,6 @@
 	"setupMessage2": "please contact our sales team:",
 	"groupNameRequired": "Group name - Required field",
 	"validLink": "Please enter valid link",
-	"atTime": "at"
+	"atTime": "at",
+	"filterInputText": "Don't send to recipients that got Whatsapp Campaign in last previous days"
 }

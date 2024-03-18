@@ -15,6 +15,9 @@
   "sms": {
     "title": "SMS"
   },
+  "whatsapp": {
+    "title": "Whatsapp"
+  },
   "mms": {
     "title": "MMS"
   },

@@ -39,5 +39,10 @@
     "tooltipPurchaseNewFeature": "Purchase directly from the dashboard by clicking on the SMS or Newsletter options below. Have questions? Call support at 03-5240290",
     "2faTitle": "Hey",
     "2faDescription": "Would you like to add 2-factor authentication to your account?<br /><br />2-factor authentication will send a one-time password to your email <br/>when you log in and increase the security of your account with Pulseem.<br /><br />You can always add or remove this feature later in the Account Details section of your account",
-    "changePassword": "<b>Please notice!</b><br/>The password of this user was not changed in the last Six months<br/>In case you will not change the password in the next ##days## <b>days</b>, your account will be locked until you change it through password reset email"
+    "purchaseNewsletter": "Purchase newsletter packages",
+    "purchaseSms": "Purchase sms packages",
+    "changePassword": "<b>Please notice!</b><br/>The password of this user was not changed in the last Six months<br/>In case you will not change the password in the next ##days## <b>days</b>, your account will be locked until you change it through password reset email",
+    "welcomeNewDesignTitle": "Cograts, We have renewed",
+    "welcomeNewDesignDesc": "<label><p></p><h3>New design, new experience</h3><br>We are excited to share with you the new and modern design of our system, which will give you a comfortable and friendly user experience. We hope you enjoy the change and continue sending campaigns quality and efficient.<br><br>If you have questions or comments, please contact us at any time by phone <a href='tel:03-5240290'>03-5240290</a> or by email <a href='mailto :support@pulseem.com'>support@pulseem.com</a></label>",
+    "contact": "Phone <a href='tel:03-5240290'>03-5240290</a> Or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
   }

@@ -45,13 +45,13 @@ const SmsSummary = ({ classes,
       {open && <BaseDialog
         style={{ paddingBottom: 20 }}
         title={`${t("sms.smsSummaryDialogTitle")} '${campaignName}'`}
-        showDivider={true}
+        showDivider={false}
         classes={classes}
         open={open}
         onClose={() => { handleSmsSettings() }}
         onCancel={() => { handleSmsSettings() }}
         showDefaultButtons={false}
-        icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
+        icon={<FaMobileAlt />}
       >
         <Box style={{ fontSize: "22px", marginTop: "5px" }}>
           <Box className={classes.baseSum}>
@@ -69,7 +69,7 @@ const SmsSummary = ({ classes,
               {props.pulseTrue || props.toggleRandom ? <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("mainReport.pulseSend")}</span>
                 {props.pulseTrue ? <span className={classes.smsSummaryText}>  {t("smsReport.packetSend")} - {props.pulseInput1} {props.pulsePer === "" || props.pulsePer === "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-                  {t("sms.every")} {props.pulseInput2} {props?.pulseType === 2 ? t("common.minutes") : t("common.hours")}</span> : null}
+                  {t("sms.every")} {props.pulseInput2} {props?.pulseType === 1 ? t("common.minutes") : t("common.hours")}</span> : null}
                 {props.toggleRandom ? <span className={classes.smsSummaryText}>{t("smsReport.randomSend")} - {props.random} {t("smsReport.randomRecipients")}</span> : null}
                 {props.pulseTrue ? <span className={classes.smsSummaryText}>{t("sms.estimatedDelivery")}: <span style={{ color: "#1D82B3" }}>{props.estimationDate}</span></span> : null}
               </Box>
@@ -210,16 +210,15 @@ const SmsSummary = ({ classes,
         </Box> : null}
         <Grid
           container
-          spacing={4}
+          // spacing={4}
           className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
           <Grid item>
             <Button
-              variant='contained'
-              size='small'
               onClick={onConfirm}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton,
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
                 summaryPayload.FinalCount <= 0 ? classes.disabled : null
               )}>
               {t("sms.sendDialog")}
@@ -227,12 +226,11 @@ const SmsSummary = ({ classes,
           </Grid>
           <Grid item>
             <Button
-              variant='contained'
-              size='small'
               onClick={() => { handleSmsSettings() }}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogCancelButton
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
               )}>
               {t("sms.cancelDialog")}
             </Button>

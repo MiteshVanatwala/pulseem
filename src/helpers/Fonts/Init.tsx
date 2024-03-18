@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 //import { getCookie } from '../Functions/cookies';
 import { googleFonts } from './GoogleFonts';
+import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 
 interface font {
     showDefaultFonts: boolean,
@@ -15,7 +16,7 @@ export const FONTS = () => {
         customFonts: []
     } as font;
 
-    if (accountFeatures?.indexOf(44) > -1) { // EnableBeeGoogleFonts
+    if (accountFeatures?.indexOf(PulseemFeatures.BEE_ENABLE_GOOGLE_FONTS) > -1) { // EnableBeeGoogleFonts
         allowedFonts.customFonts.push(googleFonts.Rubik);
     }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Divider, Typography, Button } from '@material-ui/core';
+import { Box, Divider, Button, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import FORM_COMPANY_DETAILS from './Form_CompanyDetails';
 import FORM_ACCOUNT_DETAILS from './Form_AccountDetails';
 import Toast from '../../../components/Toast/Toast.component';
-import useCore from '../../../helpers/hooks/Core';
 import {
 	getAccountSettings,
 	updateDetails,
@@ -22,21 +21,23 @@ import {
 	MdArrowForwardIos,
 	MdMobileFriendly,
 	MdOutlineMarkEmailRead,
+	MdOutlineVerified,
 } from 'react-icons/md';
+import { Title } from '../../../components/managment/Title';
 import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { updateWhatsappTier } from '../../../redux/reducers/whatsappSlice';
 import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.types';
 import { apiStatus } from '../../Whatsapp/Constant';
-import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
+import { getCommonFeatures, updateDefaultFromEmail } from '../../../redux/reducers/commonSlice';
+import { ListIcon } from '../../../assets/images/managment';
+import DomainsVerificationPopUp from './Popups/DomainsVerificationPopUp';
+import queryString from 'query-string';
 
-const AccountSettingsEditor = () => {
+const AccountSettingsEditor = ({ classes }: any) => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
-	const { classes } = useCore();
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
-	const { account, ToastMessages } = useSelector(
-		(state: any) => state?.accountSettings
-	);
+	const { account, ToastMessages } = useSelector((state: any) => state?.accountSettings);
 	const { WhatsappTierID } = useSelector(
 		(state: {
 			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
@@ -81,9 +82,11 @@ const AccountSettingsEditor = () => {
 		TwoFactorAuthTestMethodID: null,
 		TwoFactorAuthRetries: null,
 		TwoFactorAuthOverrideDateTime: null,
-		ExpiryDate: null,
+		ExpiryDate: null
+
 	} as AccountSettings);
 	const [selectedTier, setSelectedTier] = useState<string>('1');
+	const [showVerificationDomains, setShowVerificationDomains] = useState<boolean>(false);
 
 	const renderToast = () => {
 		setTimeout(() => {
@@ -95,7 +98,9 @@ const AccountSettingsEditor = () => {
 	const getData = async () => {
 		await dispatch(getAccountSettings());
 		setShowLoader(false);
-	};
+		const qs = window.location.search && queryString.parse(window.location.search) as any;
+		setShowVerificationDomains(qs?.sdv || false);
+	}
 	useEffect(() => {
 		getData();
 	}, []);
@@ -132,21 +137,21 @@ const AccountSettingsEditor = () => {
 						response = await dispatch(updateSettings(updatedObject));
 					}
 				}
-			} catch (ex) {
-			} finally {
+			}
+			catch (ex) { }
+			finally {
 				handleResponses(response, updatedObject);
 				setShowLoader(false);
 			}
 		}
-	};
 
-	const handleResponses = async (
-		response: any,
-		updatedObject: AccountSettings
-	) => {
+	}
+
+	const handleResponses = async (response: any, updatedObject: AccountSettings) => {
 		switch (response?.StatusCode || response?.payload?.StatusCode) {
 			case 201: {
 				setToastMessage(ToastMessages.SETTINGS_SAVED);
+				dispatch(updateDefaultFromEmail(updatedObject.DefaultFromMail));
 				break;
 			}
 			case 401: {
@@ -230,7 +235,7 @@ const AccountSettingsEditor = () => {
 				return false;
 			}
 		}
-	};
+	}
 
 	const onTierChange = async (tier: string) => {
 		const prevSelectedTier = selectedTier;
@@ -241,7 +246,7 @@ const AccountSettingsEditor = () => {
 		if (payload.Status === apiStatus.SUCCESS) {
 			setToastMessage(ToastMessages?.WHATSAPP_TIER_SAVED)
 			await dispatch<any>(getCommonFeatures());
-		} else{
+		} else {
 			setSelectedTier(prevSelectedTier)
 			setToastMessage(ToastMessages?.WHATSAPP_TIER_NOT_SAVED)
 		}
@@ -249,143 +254,176 @@ const AccountSettingsEditor = () => {
 
 	return (
 		<DefaultScreen
-			currentPage='settings'
-			subPage='accountSettings'
-			key='accountSettings'
+			currentPage="settings"
+			subPage="accountSettings"
+			key="accountSettings"
 			classes={classes}
-			containerClass={clsx(classes.management, classes.mb50)}>
+			containerClass={clsx(classes.management, classes.mb50)}
+		>
 			{toastMessage && renderToast()}
 			<Box className={clsx(classes.settingsContainer)}>
-				<Box
-					className={clsx('head', classes.flexSpaceBetween)}
-					style={{ display: windowSize !== 'xs' ? 'flex' : 'block' }}>
-					<Typography
-						className={classes.managementTitle}
-						style={{ marginTop: 0 }}>
-						{/* @ts-ignore */}
-						{t('settings.accountSettings.title')}
-					</Typography>
-					<Box style={{ marginInlineStart: 'auto' }}>
-						<Button
-							className={clsx(
-								classes.btn,
-								classes.btnNohover,
-								classes.noBorder,
-								classes.link,
-								classes.textCapitalize,
-								'link'
-							)}
-							onClick={() => handleVerification('cellphone')}
-							startIcon={<MdMobileFriendly />}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
-							<>
-								{t('settings.accountSettings.fixedComDetails.btnVerifyNumber')}
-							</>
-						</Button>
-						<Button
-							className={clsx(
-								classes.btn,
-								classes.btnNohover,
-								classes.noBorder,
-								classes.link,
-								classes.textCapitalize,
-								'link'
-							)}
-							onClick={() => handleVerification('email')}
-							startIcon={<MdOutlineMarkEmailRead />}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
-							<>
-								{t('settings.accountSettings.fixedComDetails.btnVerifyEmail')}
-							</>
-						</Button>
-					</Box>
+				<Box className={clsx("head")} style={{ display: windowSize !== 'xs' ? '' : 'block' }}>
+					<Title
+						classes={classes}
+						ContainerStyle={{ width: '100%' }}
+						isIcon={windowSize !== 'xs'}
+						Element={
+							<Box className={clsx(classes.flex, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexWrap)}>
+								{
+									windowSize === 'xs' && <ListIcon className={classes.mr15} />
+								}
+								<Typography
+									style={{ width: 'auto' }}
+									className={clsx(classes.managementTitle, "mgmtTitle")}
+								>
+									{t("settings.accountSettings.title")}
+								</Typography>
+								<div>
+									<Button
+										className={clsx(
+											classes.btn,
+											classes.btnRounded,
+											classes.mr10,
+											{
+												[classes.dFlex]: windowSize === 'xs',
+												[classes.mt10]: windowSize === 'xs',
+												[classes.f12]: windowSize === 'xs',
+											}
+										)}
+										onClick={() =>
+											handleVerification('cellphone')
+										}
+										startIcon={<MdMobileFriendly className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />}
+										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+									>
+										{t("settings.accountSettings.fixedComDetails.btnVerifyNumber")}
+									</Button>
+									<Button
+										className={clsx(
+											classes.btn,
+											classes.btnRounded,
+											classes.mr10,
+											{
+												[classes.dFlex]: windowSize === 'xs',
+												[classes.mt10]: windowSize === 'xs',
+												[classes.f12]: windowSize === 'xs',
+											}
+										)}
+										onClick={() =>
+											handleVerification('email')
+										}
+										startIcon={<MdOutlineMarkEmailRead className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />}
+										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+									>
+										<>
+											{t(
+												"settings.accountSettings.fixedComDetails.btnVerifyEmail"
+											)}
+										</>
+									</Button>
+									<Button
+										className={clsx(
+											classes.btn,
+											classes.btnRounded,
+											classes.mr10,
+											{
+												[classes.dFlex]: windowSize === 'xs',
+												[classes.mt10]: windowSize === 'xs',
+												[classes.f12]: windowSize === 'xs',
+											}
+										)}
+										startIcon={<MdOutlineVerified className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />}
+										endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+										onClick={() => setShowVerificationDomains(!showVerificationDomains)}
+									>
+										<>
+											{t('common.domainVerification.settingPopUp.title')}
+										</>
+									</Button>
+								</div>
+							</Box>
+						}
+					/>
 				</Box>
 				<Divider />
-				<Box className={'containerBody'}>
+				<Box className={clsx("containerBody", classes.pt20)}>
 					<FORM_COMPANY_DETAILS
+						classes={classes}
 						setToastMessage={setToastMessage}
 						ToastMessages={ToastMessages}
-						Settings={{ ...(settingRequest as AccountSettings) }}
-						OnUpdate={(updatedObject: AccountSettings, sendRequest: boolean) =>
-							handleUpdate(updatedObject, 'company', sendRequest)
-						}
+						Settings={{ ...settingRequest as AccountSettings }}
+						OnUpdate={(updatedObject: AccountSettings, sendRequest: boolean) => handleUpdate(updatedObject, 'company', sendRequest)}
 						onShowTwoFactorAuth={(variant: string) => {
 							if (variant === 'smsTFA') {
 								setTfaSmsVerification(true);
-							} else {
+							}
+							else {
 								setTfaEmailVerification(true);
 							}
 						}}
 					/>
-					<Divider style={{ marginTop: 35 }} />
 					<FORM_ACCOUNT_DETAILS
+						classes={classes}
 						setToastMessage={setToastMessage}
 						ToastMessages={ToastMessages}
-						Settings={{ ...(settingRequest as AccountSettings) }}
-						OnUpdate={(updatedObject: AccountSettings) =>
-							handleUpdate(updatedObject, 'account', true)
-						}
+						Settings={{ ...settingRequest as AccountSettings }}
+						OnUpdate={(updatedObject: AccountSettings) => handleUpdate(updatedObject, 'account', true)}
 						selectedTier={selectedTier}
 						onTierChange={onTierChange}
 					/>
 				</Box>
 			</Box>
-			{tfaEmailVerification && (
-				<VerificationDialog
-					variant='emailTFA'
-					textButtonOnSuccess={t('common.close')}
-					classes={classes}
-					isOpen={tfaEmailVerification}
-					step={verificationStep}
-					value={verificationStep > 0 && emailToVerify}
-					onClose={() => {
-						setTfaEmailVerification(false);
-						setVerificationStep(0);
-					}}
-				/>
-			)}
-			{emailVerificationPopup && (
-				<VerificationDialog
-					textButtonOnSuccess={t('common.close')}
-					classes={classes}
-					variant='email'
-					isOpen={emailVerificationPopup}
-					step={verificationStep}
-					value={verificationStep > 0 && emailToVerify}
-					onClose={() => {
-						setEmailVerificationPopup(false);
-						setVerificationStep(0);
-					}}
-				/>
-			)}
-			{tfaSmsVerification && (
-				<VerificationDialog
-					variant='smsTFA'
-					textButtonOnSuccess={t('common.close')}
-					classes={classes}
-					isOpen={tfaSmsVerification}
-					step={verificationStep}
-					value={verificationStep > 0 && cellphoneToVerify}
-					onClose={() => {
-						setTfaSmsVerification(false);
-						setVerificationStep(0);
-					}}
-				/>
-			)}
-			{smsVerificationPopup && (
-				<VerificationDialog
-					textButtonOnSuccess={t('common.close')}
-					classes={classes}
-					variant='sms'
-					step={verificationStep}
-					value={verificationStep > 0 && cellphoneToVerify}
-					isOpen={smsVerificationPopup}
-					onClose={() => {
-						setSmsVerificationPopup(false);
-						setVerificationStep(0);
-					}}
-				/>
-			)}
+			{showVerificationDomains && <DomainsVerificationPopUp
+				classes={classes} isOpen={showVerificationDomains}
+				onClose={() => setShowVerificationDomains(false)}
+				onConfirm={() => setShowVerificationDomains(false)}
+			/>}
+			{tfaEmailVerification && <VerificationDialog
+				variant="emailTFA"
+				textButtonOnSuccess={t('common.close')}
+				classes={classes}
+				isOpen={tfaEmailVerification}
+				step={verificationStep}
+				value={verificationStep > 0 && emailToVerify}
+				onClose={() => {
+					setTfaEmailVerification(false);
+					setVerificationStep(0);
+				}}
+			/>}
+			{emailVerificationPopup && <VerificationDialog
+				textButtonOnSuccess={t('common.close')}
+				classes={classes}
+				variant="email"
+				isOpen={emailVerificationPopup}
+				step={verificationStep}
+				value={verificationStep > 0 && emailToVerify}
+				onClose={() => {
+					setEmailVerificationPopup(false);
+					setVerificationStep(0);
+				}} />}
+			{tfaSmsVerification && <VerificationDialog
+				variant="smsTFA"
+				textButtonOnSuccess={t('common.close')}
+				classes={classes}
+				isOpen={tfaSmsVerification}
+				step={verificationStep}
+				value={verificationStep > 0 && cellphoneToVerify}
+				onClose={() => {
+					setTfaSmsVerification(false);
+					setVerificationStep(0);
+				}}
+			/>}
+			{smsVerificationPopup && <VerificationDialog
+				textButtonOnSuccess={t('common.close')}
+				classes={classes}
+				variant="sms"
+				step={verificationStep}
+				value={verificationStep > 0 && cellphoneToVerify}
+				isOpen={smsVerificationPopup}
+				onClose={() => {
+					setSmsVerificationPopup(false);
+					setVerificationStep(0);
+				}} />}
 			<Loader isOpen={showLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);

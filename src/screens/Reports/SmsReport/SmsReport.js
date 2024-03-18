@@ -2,36 +2,36 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, Tooltip, FormControlLabel, Checkbox
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControlLabel, Tooltip, Checkbox
 } from '@material-ui/core'
-import Switch from "react-switch";
 import {
-  SearchIcon, ExportIcon
-} from '../../../assets/images/managment/index'
-import {
-  TablePagination, DateField, SearchField
+  TablePagination, DateField
 } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { smsReportStatus } from '../../../helpers/Constants';
+import { SizeOptionsOfHandHeldDevices, smsReportStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { VoidFunction } from '../../../helpers/Types/common';
-import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import { SetPageState, GetPageNyName, ClearPageState } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import queryString from 'query-string';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -48,7 +48,7 @@ const SmsReport = ({ classes }) => {
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
   const dispatch = useDispatch()
-  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
+  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
@@ -59,6 +59,7 @@ const SmsReport = ({ classes }) => {
   const [hasRevenue, setHasRevenue] = useState(false);
   const [showNoticeDialog, setShowNoticeDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
+  const qs = (window.location.search && queryString.parse(window.location.search)) || state;
 
   moment.locale(language)
 
@@ -83,7 +84,7 @@ const SmsReport = ({ classes }) => {
       onClick: () => window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=verified&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     ClickCount: {
-      title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? t('common.Total') : t('common.Clicks'),
       href: null,
       onClick: null
     },
@@ -93,7 +94,7 @@ const SmsReport = ({ classes }) => {
       onClick: () => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Failed: {
-      title: windowSize === 'xs' ? '' : t("common.failedStatus"),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("common.failedStatus"),
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -103,7 +104,7 @@ const SmsReport = ({ classes }) => {
       })
     },
     Removed: {
-      title: windowSize === 'xs' ? '' : t('mainReport.removed'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.removed'),
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
@@ -117,7 +118,7 @@ const SmsReport = ({ classes }) => {
       onClick: () => window.location = `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
-      title: windowSize === 'xs' ? '' : t('common.DLR'),
+      title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
@@ -128,7 +129,7 @@ const SmsReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      // href: `/react/ClientSearchResult/${id}`,
+      href: `${sitePrefix}ClientSearchResult/${id}`,
       isRevenueCol: true,
       onClick: () => {
         navigate(`${CLIENT_CONSTANTS.BASEURL}/${id}`, {
@@ -149,14 +150,14 @@ const SmsReport = ({ classes }) => {
   useEffect(() => {
     const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
     const pageStateProperty = GetPageNyName('reports/SMSMainReport');
-    let searchData = smsQuery;
+    let searchData = { ...smsQuery, SerachTxt: qs !== null && qs?.name ? qs?.name : smsQuery.SerachTxt, From: qs !== null && qs?.name ? null : priorDate };
     if (queryState && pageStateProperty) {
       if (pageStateProperty.SearchData) {
         searchData = {
           SerachTxt: pageStateProperty.SearchData?.SerachTxt ?? '',
           From: pageStateProperty.SearchData?.From ?? null,
           To: pageStateProperty.SearchData?.To ?? null,
-          ShowTestCampaigns: smsQuery.ShowTestCampaigns ? smsQuery.ShowTestCampaigns : pageStateProperty.SearchData?.ShowTestCampaigns,
+          ShowTestCampaigns: pageStateProperty.SearchData?.ShowTestCampaigns ? pageStateProperty.SearchData?.ShowTestCampaigns : smsQuery.ShowTestCampaigns,
           CampaignID: pageStateProperty.SearchData?.CampaignID ?? null,
         }
         setSearching(true);
@@ -201,24 +202,11 @@ const SmsReport = ({ classes }) => {
   }, [dispatch, smsQuery.ShowTestCampaigns, isSearching]);
 
   useEffect(() => {
-    if (accountFeatures && accountFeatures.includes('42')) {
+    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.REVENUE) > -1) {
       setHasRevenue(true);
     }
   }, [accountFeatures])
 
-  useEffect(() => {
-    if (smsQuery.SerachTxt !== '' ||
-      JSON.stringify(smsQuery.From) !== JSON.stringify(priorDate) ||
-      smsQuery.To !== null ||
-      (prevShowTestCampaign !== undefined && prevShowTestCampaign !== smsQuery.ShowTestCampaigns)) {
-      setPage(1);
-      setSearching(true);
-    }
-  }, [dispatch, smsQuery.ShowTestCampaigns, isSearching]);
-
-  useEffect(() => {
-    getData(smsQuery);
-  }, [isSearching, smsQuery.ShowTestCampaigns])
 
   useEffect(() => {
     const getGraph = async () => {
@@ -242,10 +230,11 @@ const SmsReport = ({ classes }) => {
     "UpdateDate": t('common.UpdateDate'),
     "SendDate": t('common.SendDate'),
     "ClicksCount": t('mainReport.clickCount'),
+    "VerifiedCount": t('mainReport.verifiedCount'),
     "UniqueClicksCount": t('common.ClicksUnique'),
     "RealClicks": t('mainReport.verifiedCount'),
     "TotalSendPlan": t('mainReport.totalSendPlan'),
-    "CreditsPerSms": t('mainReport.postCredits'),
+    "CreditsPerSms": `${t('report.Credits')} ${t('mainReport.postCredits')}`,
     "IsResponse": t('mainReport.isResponse'),
     "totalSent": t('report.TotalSent'),
     "success": t('report.success'),
@@ -258,9 +247,16 @@ const SmsReport = ({ classes }) => {
   }
 
   const clearSearch = () => {
-    const resetSmsQuery = { ...smsQuery, From: priorDate, To: null, SerachTxt: '', ShowTestCampaigns: false, SmsCampaignID: null };
+    const resetSmsQuery = {
+      ...smsQuery,
+      From: priorDate,
+      To: null,
+      SerachTxt: '',
+      ShowTestCampaigns: false,
+      SmsCampaignID: null,
+      PageNumber: 1
+    };
     setSmsQuery(resetSmsQuery);
-    getData(resetSmsQuery)
     setSearching(false);
     getData(resetSmsQuery);
     SetPageState({
@@ -268,72 +264,82 @@ const SmsReport = ({ classes }) => {
       "PageNumber": page,
       "SearchData": resetSmsQuery
     });
+    ClearPageState('reports/SMSMainReport');
   }
+
   const handleDownloadCsv = async (formatType) => {
     setDialogType(null);
     setLoader(true);
-    let orderList = [...smsReport];
+
+    if (hasRevenue)
+      exportColumnHeader["Revenue"] = t("common.revenue");
+
+    const fields = { ...exportColumnHeader };
 
     const exportOptions = {
       OrderItems: true,
       FormatDate: true,
+      ConvertStatusToString: true,
       IsBoolean: true,
       BooleanToNumber: true,
-      Statuses: smsReportStatus,
-      ConvertStatusToString: true,
       PropertyToReplace: 'IsResponse',
-      Order: Object.keys(exportColumnHeader),
+      PropertyDefaultReplaceValue: t('common.No'),
+      Statuses: smsReportStatus,
+      Order: Object.keys(fields),
       DeleteProperties: ["Status"]
     };
 
     try {
-      const result = await HandleExportData(orderList, exportOptions);
+      const result = await HandleExportData([...smsReport], exportOptions);
+      delete fields["Status"];
+
       ExportFile({
         data: result,
         fileName: 'smsReport',
         exportType: formatType,
-        fields: exportColumnHeader
+        fields: fields
       });
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.log(e);
+      // dispatch(sendToTeamChannel({
+      //   MethodName: 'handleDownloadCsv',
+      //   ComponentName: 'ArchiveManagement.js',
+      //   Text: e
+      // }));
     }
-    setLoader(false);
+    finally {
+      setLoader(false);
+    }
+  }
+
+
+  const handleSearch = () => {
+    if (smsQuery.SerachTxt === '' && !smsQuery.From && !smsQuery.To) {
+      return;
+    }
+
+    setSmsQuery(smsQuery);
+    setSearching(true);
+    SetPageState({
+      "PageName": "reports/SMSMainReport",
+      "PageNumber": page,
+      "SearchData": smsQuery
+    });
+    getData(smsQuery);
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.keyCode === 13 || event.code === 'Enter') {
+      handleSearch();
+    }
   }
 
   const renderSearchSection = () => {
-    const handleSearch = () => {
-      if (smsQuery.SerachTxt === '' && !smsQuery.From && !smsQuery.To) {
-        return;
-      }
-      setSearching(true);
-      getData(smsQuery);
-    }
-    const handleKeyPress = (event) => {
-      if (event.keyCode === 13 || event.code === 'Enter') {
-        handleSearch();
-      }
-    }
-    if (windowSize === 'xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={smsQuery.SerachTxt}
-          onChange={(e) => {
-            setSmsQuery({
-              ...smsQuery,
-              SerachTxt: e.target.value
-            })
-          }}
-          onClick={() => handleSearch()}
-          placeholder={t('common.CampaignName')}
-        />
-      )
-    }
     return (
       <Grid
         container
         spacing={2}
-        className={classes.lineTopMarging}>
+        className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -351,7 +357,7 @@ const SmsReport = ({ classes }) => {
           />
         </Grid>
 
-        {windowSize !== 'xs' ?
+        {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ?
           <Grid item>
             <DateField
               toolbarDisabled={false}
@@ -368,7 +374,7 @@ const SmsReport = ({ classes }) => {
           </Grid>
           : null}
 
-        {windowSize !== 'xs' ?
+        {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ?
           <Grid item>
             <DateField
               toolbarDisabled={false}
@@ -387,7 +393,31 @@ const SmsReport = ({ classes }) => {
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Switch
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+                switchType='ios'
+                classes={classes}
+                checked={smsQuery.ShowTestCampaigns}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx({ [classes.rtlSwitch]: isRTL })}
+                onChange={() => {
+                  const p = GetPageNyName('reports/SMSMainReport');
+                  if (p.SearchData) {
+                    ClearPageState('reports/SMSMainReport');
+                  }
+                  setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns })
+                }}
+              />
+            }
+            label={t('mainReport.locShowTestCampaigns.Text')}
+          />
+          {/* <Switch
             checked={smsQuery.ShowTestCampaigns}
             onColor="#0371ad"
             handleDiameter={20}
@@ -399,28 +429,21 @@ const SmsReport = ({ classes }) => {
             width={40}
             className={clsx({ [classes.rtlSwitch]: isRTL })}
             onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
-          />
-          <Typography style={{ marginInlineStart: 8 }}>
-            {t('mainReport.locShowTestCampaigns.Text')}
-          </Typography>
+          /> */}
         </Grid>
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => handleSearch()}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => clearSearch()}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -431,18 +454,15 @@ const SmsReport = ({ classes }) => {
   const renderManagmentLine = () => {
     const dataLength = smsReport.length;
     return (
-      <Grid container spacing={2} className={classes.linePadding} >
-        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
+              classes.btn, classes.btnRounded,
               smsReport.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialogType('exportFormat')}
-            startIcon={<ExportIcon />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
         </Grid>}
@@ -517,7 +537,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}) => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
+    const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
     const isLink = value > 0 && !!onClick;
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
@@ -561,7 +581,7 @@ const SmsReport = ({ classes }) => {
       success,
       ClicksCount,
       UniqueClicksCount,
-      RealClicks,
+      RealClicks = 0,
       removed,
       replies,
       CreditsPerSms,
@@ -652,7 +672,7 @@ const SmsReport = ({ classes }) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex2}>
-          <Grid container direction={'row'} className={classes.justifyEvenly}>
+          <Grid container direction={'row'} className={classes.justifyEvenly} style={{ flexWrap: 'initial' }}>
             <Grid item className={classes.plr10}>
               {renderIntData(CreditsPerSms, '', { title: t("mainReport.postCredits") })}
             </Grid>
@@ -684,8 +704,8 @@ const SmsReport = ({ classes }) => {
       SendDate,
       UpdateDate,
       ClicksCount,
-      RealClicks,
       UniqueClicksCount,
+      RealClicks = 0,
       removed,
       failure,
       totalSent,
@@ -783,10 +803,12 @@ const SmsReport = ({ classes }) => {
     if (rowData.length > 0) {
       rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
       return (
-        <TableBody>
-          {rowData
-            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-        </TableBody>
+        <Box className='tableBodyContainer'>
+          <TableBody>
+            {rowData
+              .map(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
+          </TableBody>
+        </Box>
       )
     }
     return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
@@ -799,7 +821,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {windowSize !== 'xs' && renderTableHead()}
+          {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>
@@ -810,7 +832,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={smsReport.length}
+        rows={isSearching && smsReport.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -837,12 +859,12 @@ const SmsReport = ({ classes }) => {
     return {
       title: t("mainReport.SMSReportNote1"),
       showDivider: true,
+      exitButton: false,
       content: (
         <>
           <Typography className={classes.f18}>
             {RenderHtml(t("mainReport.SMSReportNote2"))}
           </Typography>
-
           <FormControlLabel
             label={t("common.doNotShow")}
             className={classes.pt10}
@@ -857,7 +879,7 @@ const SmsReport = ({ classes }) => {
             }
           />
         </>
-        
+
       ),
       onClose: () => { setDialogType(null) },
       onConfirm: async () => {
@@ -865,17 +887,14 @@ const SmsReport = ({ classes }) => {
         if (showNoticeDialog) {
           setCookie('SMSReportNotice', showNoticeDialog);
         }
+      }
     }
   }
-}
-
   const renderDialog = () => {
     const { type } = dialogType || {}
-
     const dialogContent = {
       featureNotice: getFeatureNoticeDialog(),
     }
-
     if (dialogContent[type]) {
       const currentDialog = dialogContent[type] || {}
       return (
@@ -890,7 +909,7 @@ const SmsReport = ({ classes }) => {
         </BaseDialog>
       )
     }
-}
+  }
 
   return (
     <DefaultScreen
@@ -898,8 +917,10 @@ const SmsReport = ({ classes }) => {
       containerClass={clsx(classes.management, classes.mb50)}
       currentPage="reports"
       subPage="SmsReport">
-      <Title Text={t('common.SMSReports')} Classes={classes} ShowDivider={true} />
-      {renderSearchSection()}
+      <Box className={'topSection'}>
+        <Title Text={t('common.SMSReports')} classes={classes} />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
@@ -911,10 +932,11 @@ const SmsReport = ({ classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialogType(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
+      {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={true} />
       {renderDialog()}
     </DefaultScreen>

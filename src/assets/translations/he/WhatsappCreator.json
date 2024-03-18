@@ -60,9 +60,10 @@
 	"marketing": "שיווקי",
 	"utility": "תפעולי",
 	"authentication": "אימות",
-
+	"authenticationEn": "אימות - אנגלית",
+	"authenticationHebrew": "אימות - עברית",
 	"displayError": "הצג שגיאה",
-
+	"copyCode": "העתק קוד",
 	"template": {
 		"textareaPlaceholder": "הכנס טקסט כאן - עד 1024 תווים מגבלה זו כוללת גם את התוכן שתמלאו במשתנים לפני השליחה",
 		"callToActionTooltip": "כפתור פעולה",
@@ -113,5 +114,10 @@
 		"websiteTextError": "כתובת אתר - שדה חובה",
 		"templateId": "מזהה תבנית",
 		"no": "לא"
-	}
+	},
+	"codeExpirationTime": "זמן תפוגת קוד",
+	"codeExpirationMessage": "זמן תפוגת קוד יכול לנוע בין 0 ל-90 דקות",
+	"replyRemoveToUnsubscribe": "להסרה השב “הסר”",
+	"templateApproved": "התבנית <b>\"##Name##\"</b> אושרה בהצלחה",
+	"templateDeclined": "התבנית <b>\"##Name##\"</b> נפסלה"
 }

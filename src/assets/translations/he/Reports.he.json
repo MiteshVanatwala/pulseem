@@ -103,7 +103,16 @@
     "abandoned": "נמענים שנטשו",
     "revenueFrmProd": "סך ההכנסות מהמוצר",
     "productId": "מוצר מספר",
-    "registrationGuide": "חברו את החנות האינטרנטית שלכם לפולסים בעזרת ה-API שלנו או באמצעות התוספים ל-Wix ו-WooCommerce<br/>לתמיכה: <a href='tel:035240290'>035240290</a> / <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+    "registrationGuide": "חברו את החנות האינטרנטית שלכם לפולסים בעזרת ה-API שלנו או באמצעות התוספים ל-Wix ו-WooCommerce<br/>"
+  },
+  "ResponsesReports": {
+    "title": "דו\"ח משובים",
+    "clientFrom": "שם לקוח (מאת)",
+    "toNumber": "אל מספר",
+    "smsStatus": "Sms סטאטוס",
+    "replyDate": "תאריך משוב",
+    "messageContent": "תוכן ההודעה",
+    "responseId": "זיהוי תגובה"
   },
   "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
   "Reactivate": "Reactivate / בטל הסרה",
@@ -119,5 +128,6 @@
   "Completed": "הושלמה",
   "errorReason": "סיבת השגיאה",
   "smsReplies": "דו\"ח SMS נכנסים",
-  "virtualNumber": "מספר וירטואלי"
+  "virtualNumber": "מספר וירטואלי",
+  "WhatsappBalance": "יתרת וואטסאפפ"
 }

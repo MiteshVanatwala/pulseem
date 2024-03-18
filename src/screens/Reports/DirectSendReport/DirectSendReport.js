@@ -1,4 +1,4 @@
-import { Button, Grid, Tab } from '@material-ui/core';
+import { Button, Grid, Tab, Tabs } from '@material-ui/core';
 import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import { useTranslation } from 'react-i18next';
@@ -9,39 +9,28 @@ import DirectSMSReportTab from './DirectSmsReport';
 import DirectWhatsappReportTab from './DirectWhatsappReportTab';
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
-import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { DeletePropertyFromArrayObject, HandleExportData, ReplaceNull } from '../../../helpers/Export/ExportHelper';
+import { HandleExportData, ReplaceNull } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus, WhatsappStatus } from '../../../helpers/Constants';
 import { ExportIcon } from '../../../assets/images/managment/index'
 import queryString from 'query-string';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useLocation } from 'react-router';
-import { useSearchParams } from 'react-router-dom';
-import { Title } from '../../../components/managment/Title';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice'
 import { withStyles, makeStyles } from "@material-ui/core/styles";
-
-const useStyles = makeStyles({
-  flexItems: {
-    '& .MuiTab-wrapper': {
-      display: 'flex',
-      flexDirection: 'row-reverse',
-      alignItems: 'space-between'
-    }
-  }
-});
+import { useSearchParams } from 'react-router-dom';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
+import Title from '../../../components/Wizard/Title';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
-
-  const localClasses = useStyles();
-
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
   const { accountFeatures } = useSelector(state => state.common);
@@ -278,6 +267,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "Text": t('common.messageContent'),
       "ErrorMessage": t('report.failure'),
       "ReferenceId": t('common.templateId'),
+      "Cost": t('whatsappReport.cost'),
     }
   };
 
@@ -292,6 +282,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
           searchData.sms.ShowContent = showContent;
           response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
 
+
+          const fields = { ...excelHeaders.SMS };
+
           const exportOption = {
             OrderItems: true,
             FormatDate: true,
@@ -300,18 +293,24 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             Statuses: SmsStatus,
             ReplaceClientStatus: true,
             DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
-            Order: Object.keys(excelHeaders.SMS)
+            Order: Object.keys(fields)
           };
 
           try {
             const result = await HandleExportData(response.payload, exportOption);
 
+            if (!showContent) {
+              delete fields["MESSAGE"];
+            }
+
             fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
+
+
             ExportFile({
               data: result,
               fileName: fileName,
               exportType: formatType,
-              fields: excelHeaders.SMS
+              fields: fields
             });
           } catch (e) {
             console.log(e);
@@ -324,6 +323,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       case 1: // Email
         {
           response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
+
+          const fields = { ...excelHeaders.EMAIL };
+
           const exportOptions = {
             OrderItems: true,
             FormatDate: true,
@@ -335,18 +337,23 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
             ReplaceNull: true,
             DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
-            Order: Object.keys(excelHeaders.EMAIL)
+            Order: Object.keys(fields)
           };
 
           try {
             const result = await HandleExportData(response.payload, exportOptions);
+
+            delete fields["Status"];
+            if (isArchive) {
+              delete fields["CreatedDate"];
+            }
 
             fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
             ExportFile({
               data: result,
               fileName: fileName,
               exportType: formatType,
-              fields: excelHeaders.EMAIL
+              fields: fields
             });
           } catch (e) {
             console.log(e);
@@ -411,40 +418,40 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             justifyContent='space-between'
             alignItems='center'
             item xs={12}
-            className={classes.borderBottom1}>
-            <TabList
+            className={clsx(classes.directSendTabSection)}>
+
+            <Tabs
+              value={tabValue}
               onChange={(e, value) => { setAdvanceSearch(tabValue !== value ? false : advanceSearch); setTabValue(value) }}
-              indicatorColor="primary"
+              className={clsx(classes.tab, classes.tablistRoot)}
+              classes={{ indicator: classes.hideIndicator }}
             >
-              <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
-              <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
-              <Tab label={t('master.whatsapp')} classes={{ root: clsx(classes.minWidth100, localClasses.flexItems) }} value={2} />
-            </TabList>
+              <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} className={clsx(classes.directSendTab, tabValue === 0 ? classes.currentActiveTab : '')} />
+              <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} className={clsx(classes.directSendTab, tabValue === 1 ? classes.currentActiveTab : '')} />
+              <Tab label={<span style={{ marginInlineEnd: 5 }}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100) }} value={2} className={clsx(classes.directSendTab, tabValue === 2 ? classes.currentActiveTab : '')} />
+            </Tabs>
             <Grid item>
               {!isArchive && tabValue !== 2 && <Button
                 onClick={() => {
-                  window.location = `/react/Reports/DirectSendReport/Archive/?t=${tabValue}`
+                  window.location = `${sitePrefix}Reports/DirectSendReport/Archive/?t=${tabValue}`
                 }}
-                variant='contained'
                 className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonArchive,
-                  classes.actionButtonLightBlue)}>
+                  classes.btn, classes.btnRounded
+                )}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+              >
                 {t('master.campaignsArchive')}
               </Button>}
-              {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <CustomTooltip
+              {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <CustomTooltip
                 style={{ fontSize: 14 }}
                 text={t('report.ExportLimitation')}
                 icon={<Button
-                  variant='contained'
-                  size='medium'
                   className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonGreen,
-                    classes.exportButton, exportEnable === false ? classes.disabled : ''
+                    classes.btn, classes.btnRounded,
+                    exportEnable === false ? classes.disabled : ''
                   )}
                   onClick={() => setDialog('exportFormat')}
-                  startIcon={<ExportIcon />}
+                  endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
                   {t('campaigns.exportFile')}
                 </Button>}
@@ -458,6 +465,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             <TabPanel value={0} index={0} className={classes.p0}>
               <DirectSMSReportTab
                 classes={classes}
+                title={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
                 dispatch={dispatch}
                 windowSize={windowSize}
                 isRTL={isRTL}
@@ -481,6 +489,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             <TabPanel value={1} index={1} className={classes.p0}>
               <DirectEmailReportTab
                 classes={classes}
+                title={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
                 dispatch={dispatch}
                 windowSize={windowSize}
                 isRTL={isRTL}
@@ -503,6 +512,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             </TabPanel>
             <TabPanel value={2} index={2} className={classes.p0}>
               <DirectWhatsappReportTab
+                title={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
                 classes={classes}
                 dispatch={dispatch}
                 windowSize={windowSize}
@@ -535,7 +545,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} Classes={classes} ShowDivider={true} />
+      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} classes={classes} ShowDivider={true} />
       {renderTabs()}
       <ConfirmRadioDialog
         classes={classes}
@@ -545,11 +555,11 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         onConfirm={(e) => handleExportFile(e)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
+        defaultValue="xlsx"
         options={ExportFileTypes}
       />
       <Loader isOpen={showLoader} showBackdrop={true} />
-    </DefaultScreen>
+    </DefaultScreen >
   );
 }
 

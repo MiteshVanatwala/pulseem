@@ -292,7 +292,8 @@
   },
   "imgSendResource1": {
     "AlternateText": "",
-    "ToolTip": "שלח"
+    "ToolTip": "שלח",
+    "nonVerifiedDomain":"כתובת מייל השולח מכילה דומיין אשר לא עבר תהליך אימות (הוספת רשומה בממשק ניהול הדומיין)"
   },
   "imgSettingsResource1": {
     "AlternateText": "",
@@ -479,7 +480,8 @@
   "newsletters": "ניוזלטרים",
   "newsLetterEditor": {
     "fromName": "שם השולח",
-    "fromEmail": "כתובת אימייל השולח",
+    "fromEmail": "כתובת אימייל <b>השולח</b>",
+    "replyTo": "כתובת אימייל <b>להשבה</b>",
     "campaignSubject": "נושא הקמפיין",
     "personalization": "מידע אישי בשורת הנושא",
     "dontSee_clickHere_mail": "אם אינך רואה מייל זה לחץ כאן",
@@ -497,11 +499,14 @@
       "Name": "משמש לזיהוי הקמפיין במערכת. הנמענים לא יראו שם זה",
       "FromName": "זהו שדה חובה",
       "FromEmail": "ניתן לשלוח מכתובת אימייל מאומתת בלבד,",
+      "ReplyEmail": "ניתן להשיב לכתובת אימייל מאומתת בלבד",
       "clickToVerify": "לאימות לחץ כאן",
       "Subject": "במקרים של שילוב אימוגים בכותרת, מומלץ להגביל את השימוש באימוגים לשניים בלבד. שימוש באימוגים מרובים עלול להכניס את המייל לתיבת הספאם.",
       "pre_helper_text": "הטקסט יופיע בשורת התצוגה במייל, טרם פתיחתו",
       "upload": "יופיע כקובץ מצורף במייל שתשלחו",
-      "newAddress": "כתובת מייל חדשה"
+      "newAddress": "כתובת מייל חדשה",
+      "cellularSupportCaution": "<b>שים לב!</b> מותאם לסלולר לא נתמך בכל המכשירים והאפליקציות",
+      "useFromEmailAsReply": "השתמש בכתובת אימייל השולח"
     },
     "errors": {
       "campaignWasNotSent": "הקמפיין לא נשלח!",
@@ -512,6 +517,7 @@
       "campaignName": "אנא מלא שם קמפיין",
       "fromName": "אנא מלא שם שולח",
       "fromEmail": "נא מלא כתובת מייל לשליחה",
+      "ReplyEmail": "נא למלא כתובת מייל להשבה",
       "campaignSubject": "נא לרשום נושא קומפיין",
       "invalidCampaignId": "מזהה קמפיין שגוי / לא משוייך לחשבון",
       "CampaignNotFound": "קמפיין לא נמצא או נמחק",
@@ -527,7 +533,8 @@
       "contactUs": "בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
       "FUTURE_DATE_PASSED": "תאריך שליחת הקמפיין עבר. יש לבחור תאריך עתידי.",
       "INVALID_CAMPAIGN_ID": "מספר מזהה של הקמפיין לא תקין",
-      "ACCOUNT_RESTRICTED": "חשבון זה מוגבל לשליחה<br/>עליכם להסדיר תשלומים קודמים מול מחלקת המכירות."
+      "ACCOUNT_RESTRICTED": "חשבון זה מוגבל לשליחה<br/>עליכם להסדיר תשלומים קודמים מול מחלקת המכירות.",
+      "SMS_BULK_ENDED_PURCHASE_OPTION": "החבילה שלכם נגמרה!<br/>באפשרותכם לרכוש חבילת SMS חדשה או לבטל את השינויים<br/>של קמפיין ה-SMS שיווק משלים."
     },
     "success": "הקמפיין נשמר בהצלחה",
     "sendSettings": {
@@ -589,12 +596,13 @@
       "doNotSend": "לא לשלוח",
       "smsComplementary": "שיווק משלים ב-SMS",
       "optimalPulseConflictMessage": "בחירת \"שליחה אופטימלית\" תבטל את השליחה בפולסים שהגדרתם<br/>האם ברצונכם להמשיך?"
-    }
+    },
+    "domainVerificationTooltip": "שליחת דיוור תתאפשר מדומיין מאומת בלבד.<br/>לאחר הגדרת הדומיין המאומת ניתן לבחור כתובת אימייל להשבה בשדה ליד."
   },
   "newsLetterMgmt": {
     "emailVerification": {
       "emailVerificationBtnText": "אימות אימייל",
-      "popupTitle": "אימות כתובת אימייל לשליחה",
+      "popupTitle": "אימות כתובת מייל לשליחה",
       "popupDesc1": "על מנת להבטיח את אבטחת חשבונך, עלינו לאמת שכתובת אימייל זאת שייכת לך",
       "popupDesc2": "זהו תהליך חד פעמי לכל כתובת אימייל המשמשת לשליחה",
       "firstSlide": {
@@ -680,5 +688,8 @@
   "weSent": "שלחנו!",
   "campaignIsOnItsWay": "הקמפיין שלך בדרך ליעד",
   "newsletterSetUp": "הגדרות קמפיין",
-  "lastSaveAt": "שמירה אחרונה ב: "
+  "lastSaveAt": "שמירה אחרונה ב: ",
+  "skipToEditor": "דלג לעריכת קמפיין",
+  "deleteTotalMarketing": "מחק שיווק משלים",
+  "deleteTotalMarketingDesc": "<b>האם אתם בטוחים שברצונכם למחוק את קמפיין השיווק המשלים?</b><br/>במידה ותרצו לשחזר את הקמפיין יהיה עליכם להגדיר אותו מחדש"
 }

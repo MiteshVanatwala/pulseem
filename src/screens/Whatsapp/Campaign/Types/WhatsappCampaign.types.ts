@@ -2,6 +2,7 @@ import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
 import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { SelectChangeEvent } from '@mui/material';
 
 export type smsProps = {
 	testGroups: [];
@@ -29,7 +30,6 @@ export type dynamicButtonProps = {
 
 export type dynamicModalProps = {
 	classes: ClassesType['classes'];
-	isDynamcFieldModal: boolean;
 	onDynamcFieldModalClose: () => void;
 	onDynamcFieldModalSave: (updatedDynamicVariable: updatedVariable[]) => void;
 	personalFields: personalFieldDataProps;
@@ -39,6 +39,7 @@ export type dynamicModalProps = {
 	isTrackLink: boolean;
 	setIsTrackLink: (isTrackLink: boolean) => void;
 	savedTemplate: string;
+	templateCategory?: number;
 };
 
 export type campaignFielsProps = {
@@ -64,10 +65,10 @@ export type validationAlertModalProps = {
 
 export type SendCampaignSuccessModalProps = {
 	classes: ClassesType['classes'];
-	isOpen: boolean;
+	isFromAutomation?: boolean;
 	onBackToHome: () => void;
 	onBackToCampaigns: () => void;
-	onClose: () => void;
+	onBackToAutomation?: () => void;
 };
 
 export type infoModalProps = {
@@ -97,7 +98,7 @@ export type selectedFilterCampaignsProps = {
 
 export type testGroupModalProps = {
 	classes: ClassesType['classes'];
-	isOpen: boolean;
+	isOpen?: boolean;
 	onClose: () => void;
 	onConfirmOrYes: () => void;
 	title: string;
@@ -119,7 +120,7 @@ export type RightPaneProps = {
 	daysBeforeAfter: string;
 	handleSpecialDayChange: (e: BaseSyntheticEvent) => void;
 	spectialDateFieldID: string;
-	handleSelectChange: (e: BaseSyntheticEvent) => void;
+	handleSelectChange: (e: SelectChangeEvent) => void;
 	isSpecialDateBefore: boolean;
 	setIsSpecialDateBefore: (value: boolean) => void;
 	specialDatedropDown: specialDateDropDownPayload | undefined;
@@ -218,7 +219,6 @@ export type FilterRecipientsDialogProps = {
 
 export type SummaryModalProps = {
 	classes: ClassesType['classes'];
-	isOpen: boolean;
 	campaignName: string;
 	fromNumber: string;
 	onSummaryModalClose: () => void;
@@ -412,6 +412,7 @@ export type reportDataProps = {
 	Failed: number;
 	CreateDate: string;
 	UpdateDate: string;
+	SendDate: string;
 	FromNumber: string;
 	TemplateID: string;
 	Revenue: number;

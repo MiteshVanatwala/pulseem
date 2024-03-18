@@ -1,5 +1,4 @@
 import React, {
-	BaseSyntheticEvent,
 	HtmlHTMLAttributes,
 	useEffect,
 	useState,
@@ -12,18 +11,20 @@ import {
 	TextField,
 	Typography,
 	Grid,
-	Select,
 	MenuItem,
 	Box,
+	FormControl,
 } from '@material-ui/core';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTranslation } from 'react-i18next';
-import AlertModal from '../Popups/AlertModal';
 import { Autocomplete } from '@mui/material';
 import {
 	getTemplateIdByName,
 	getTemplateName,
 	getTemplateNameById,
 } from '../../Common';
+import { IoIosArrowDown } from 'react-icons/io';
+import { authenticationTypes } from '../../Constant';
 
 const TemplateFields = ({
 	classes,
@@ -40,8 +41,6 @@ const TemplateFields = ({
 		(state: { core: coreProps }) => state.core
 	);
 	const { t: translator } = useTranslation();
-	const [isFileSizeAlert, setIsFileSizeAlert] = useState<boolean>(false);
-	const [isFileUploadAlert, setIsFileUploadAlert] = useState<boolean>(false);
 	const [autoCompleteOptions, setAutoCompleteOptions] = useState<string[]>([]);
 
 	useEffect(() => {
@@ -114,15 +113,15 @@ const TemplateFields = ({
 						<Autocomplete
 							id='template-list'
 							className={clsx(
-								classes.buttonField,
 								classes.buttonWhatsappAutocomplete
 							)}
+							// @ts-ignore
 							options={autoCompleteOptions}
 							renderOption={renderOptions}
 							style={{ direction: isRTL ? 'rtl' : 'ltr' }}
 							// @ts-ignore
-							renderInput={(params) => <TextField {...params} />}
-							onChange={(_event, value) => onTemplateChange(value)}
+							renderInput={(params: any) => <TextField {...params} />}
+							onChange={(_event: any, value: any) => onTemplateChange(value)}
 							value={getTemplateNameById(savedTemplateList, savedTemplate)}
 						/>
 					</Grid>
@@ -133,57 +132,45 @@ const TemplateFields = ({
 				<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 						<Typography className={classes.buttonHead}>
-							<>{translator('report.ProductsReport.category')}</>
+							{translator('report.ProductsReport.category')}
 						</Typography>
-
-						<Select
-							type='text'
-							className={classes.buttonField}
-							onChange={(e: BaseSyntheticEvent) =>
-								onCategoryChange(e.target.value)
-							}
-							MenuProps={{
-								PaperProps: {
-									style: {
-										direction: isRTL ? 'rtl' : 'ltr',
+						<FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} style={{ marginTop: 4 }}>
+							<Select
+								variant="standard"
+								displayEmpty
+								value={category}
+								onChange={(event: SelectChangeEvent) => onCategoryChange(event.target.value)}
+								IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+								className={classes.pbt5}
+								// @ts-ignore
+								MenuProps={{
+									// @ts-ignore
+									PaperProps: {
+										style: {
+											maxHeight: 300,
+											direction: isRTL ? 'rtl' : 'ltr'
+										},
 									},
-								},
-							}}
-							placeholder={translator('report.ProductsReport.category')}
-							value={category}>
-							<MenuItem key={'marketing'} value={'marketing'}>
-								<>{translator('whatsapp.marketing')}</>
-							</MenuItem>
-							<MenuItem key={'utility'} value={'utility'}>
-								<>{translator('whatsapp.utility')}</>
-							</MenuItem>
-							<MenuItem key={'authentication'} value={'authentication'}>
-								<>{translator('whatsapp.authentication')}</>
-							</MenuItem>
-						</Select>
+								}}
+								placeholder={translator('report.ProductsReport.category')}
+							>
+								<MenuItem key={'marketing'} value={'marketing'}>
+									{translator('whatsapp.marketing')}
+								</MenuItem>
+								<MenuItem key={'utility'} value={'utility'}>
+									{translator('whatsapp.utility')}
+								</MenuItem>
+								<MenuItem value={authenticationTypes.AUTHENTICATIONEN}>
+									{translator('whatsapp.authenticationEn')}
+								</MenuItem>
+								<MenuItem value={authenticationTypes.AUTHENTICATIONHEBREW}>
+									{translator('whatsapp.authenticationHebrew')}
+								</MenuItem>
+							</Select>
+						</FormControl>
 					</Grid>
 				</Grid>
 			</Grid>
-
-			<AlertModal
-				classes={classes}
-				isOpen={isFileSizeAlert}
-				onClose={() => setIsFileSizeAlert(false)}
-				title={translator('whatsapp.alertModal.alert')}
-				subtitle={translator('whatsapp.alertModal.fileSizeAlert')}
-				type='alert'
-				onConfirmOrYes={() => setIsFileSizeAlert(false)}
-			/>
-
-			<AlertModal
-				classes={classes}
-				isOpen={isFileUploadAlert}
-				onClose={() => setIsFileUploadAlert(false)}
-				title={translator('whatsapp.alertModal.alert')}
-				subtitle={translator('whatsapp.alertModal.fileUploadAlert')}
-				type='alert'
-				onConfirmOrYes={() => setIsFileUploadAlert(false)}
-			/>
 		</Grid>
 	);
 };

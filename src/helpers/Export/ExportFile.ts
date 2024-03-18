@@ -24,13 +24,22 @@ const ExportFile = (options: Options) => {
 				reject('No data has been found.');
 			}
 
-			exportFromJSON({
-				data: options.data,
-				fileName: options.fileName,
-				exportType: options.exportType,
-				fields: options.fields,
-				withBOM: true,
-			});
+			if (options.exportType === 'csv') {
+				exportFromJSON({
+					data: options.data,
+					fileName: options.fileName,
+					exportType: options.exportType,
+					fields: options.fields,
+					withBOM: true,
+				});
+			} else {
+				exportAsXLSX(
+					options.data,
+					options.fields,
+					`${options.fileName}.${options.exportType}`,
+					`${options.fileName}`,
+				);
+			}
 
 			resolve('Success');
 		} catch (e) {
@@ -65,7 +74,7 @@ const exportAsXLSX = async (
 			XLSX.utils.sheet_add_aoa(ws, [finalHeading], { origin: 'A1' });
 		}
 
-		XLSX.utils.book_append_sheet(wb, ws, sheetName);
+		XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 		XLSX.writeFile(wb, fileName, { bookType: 'xlsx', type: 'buffer' });
 
 		resolve();

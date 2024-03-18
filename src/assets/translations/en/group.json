@@ -5,7 +5,7 @@
   "ok": "Ok",
   "cancel": "Cancel",
   "resetTitle": "Reset group",
-  "deleteConfirm": "Are you sure you want to delete the following groups",
+  "deleteConfirm": "Are you sure you want to delete the following groups?",
   "resetConfirm": "Would you like to reset the group ?",
   "createNew": "Create New Group",
   "testGroupInfo": "Test Groups allow you to send a test directly from the campaign editor",
@@ -35,5 +35,12 @@
     "notFound": "Invalid username password",
     "serverFoundWithNoResponse": "Server got the request"
   },
-  "maxGroupsExceeded": "Maximum of group creation exceeded for this account"
+  "maxGroupsExceeded": "Maximum of group creation exceeded for this account",
+  "updateGroup": "Update Group",
+  "saveDynamicGroupResponse": {
+    "201": "Dynamic Group settings successfully saved! Number of recipients in the group:: {0}",
+    "400": "Group does not updated due to incorrect data",
+    "402": "Group does not updated due to broken request",
+    "404": "Not found"
+  }
 }

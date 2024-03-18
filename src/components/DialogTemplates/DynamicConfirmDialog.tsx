@@ -14,14 +14,13 @@ const DynamicConfirmDialog = ({
     title = '',
     isOpen = false,
     onCancel,
-    onConfirm
+    onConfirm,
+    onClose,
+    confirmButtonText = ''
 }: DynamicContentProps) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
-    );
-    const { verifiedEmails } = useSelector(
-        (state: { common: commonProps }) => state.common
     );
 
     const dialog = {
@@ -52,24 +51,24 @@ const DynamicConfirmDialog = ({
                         size='small'
                         onClick={() => { onConfirm() }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
-                        {t('common.confirm')}
+                        {confirmButtonText !== '' ? confirmButtonText : t('common.confirm')}
                     </Button>
                 </Grid>
-                <Grid item>
+                {onCancel && <Grid item>
                     <Button
                         variant='contained'
                         size='small'
                         onClick={() => { onCancel() }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogCancelButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.cancel')}
                     </Button>
-                </Grid>
+                </Grid>}
             </Grid>
         ),
         footerText: () => (
@@ -81,8 +80,8 @@ const DynamicConfirmDialog = ({
 
     return (<BaseDialog
         open={isOpen ?? false}
-        onClose={() => onCancel()}
-        onCancel={() => onCancel()}
+        onClose={() => onClose()}
+        onCancel={() => onCancel ? onCancel() : onClose()}
         {...dialog}>
         {dialog.content}
     </BaseDialog>);

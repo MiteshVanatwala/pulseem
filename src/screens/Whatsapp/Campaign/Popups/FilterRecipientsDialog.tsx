@@ -1,4 +1,5 @@
-import { Box, Checkbox, Dialog, Button, Grid } from '@material-ui/core';
+import { ForwardedRef, forwardRef, useImperativeHandle } from 'react';
+import { Box, Checkbox } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Groups from '../Components/Groups/Groups';
@@ -11,13 +12,11 @@ import {
 	smsProps,
 	testGroupDataProps,
 } from '../Types/WhatsappCampaign.types';
-import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
 import CampaignGroups from '../Components/Groups/CampaignGroups';
-import ValidationAlert from './ValidationAlert';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
-const FilterRecipientsDialog = ({
+const FilterRecipientsDialog = forwardRef(({
 	classes,
-	isFilterModal,
 	onFilterModalClose,
 	allGroupList,
 	finishedCampaigns,
@@ -29,12 +28,10 @@ const FilterRecipientsDialog = ({
 	exceptionalDaysToggle,
 	exceptionalDays,
 	setExceptionalDaysToggle,
-	setExceptionalDays,
-}: FilterRecipientsDialogProps) => {
+	setExceptionalDays
+}: FilterRecipientsDialogProps, ref: ForwardedRef<any>) => {
 	const [RecipientsBool, setRecipientsBool] = useState<boolean>(false);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
-	const [isValidated, setIsValidated] = useState<boolean>(false);
-	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
@@ -49,12 +46,23 @@ const FilterRecipientsDialog = ({
 	useEffect(() => {
 		setSelectedModalFilterGroups(selectedFilterGroups);
 	}, [selectedFilterGroups]);
+	const [dialogType, setDialogType] = useState<string>('');
 	const { testGroups } = useSelector((state: { sms: smsProps }) => state.sms);
 	const { t: translator } = useTranslation();
 
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
+
+	useImperativeHandle(ref, () => ({
+    onOkClick() {
+      onConfirm();
+    },
+
+		onNoClick() {
+			onClose();
+		}
+  }));
 
 	const handleReciInput = (e: BaseSyntheticEvent) => {
 		const re = /^[0-9\b]+$/;
@@ -125,9 +133,8 @@ const FilterRecipientsDialog = ({
 				return true;
 			} else {
 				setRecipientsBool(true);
-				setIsValidated(false);
 				setGroupSendValidationErrors([translator('sms.FillDay')]);
-				setIsValidationAlert(true);
+				setDialogType('validationDialog')
 				return false;
 			}
 		}
@@ -147,170 +154,162 @@ const FilterRecipientsDialog = ({
 			onConfirmOrYes();
 		}
 	};
+
+	const getValidationDialog = () => ({
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		content: (
+			<ul className={clsx(classes.noMargin, classes.mb20)}>
+				{groupSendValidationErrors?.map((requiredField: string, index: number) => (
+					<li key={index} className={classes.validationAlertModalLi}>
+						{requiredField}
+					</li>
+				))}
+			</ul>
+		),
+		onConfirm: async () => {
+			setDialogType('');
+		}
+	})
+
+	const renderDialog = () => {
+		let currentDialog: any = {};
+		if (dialogType === 'validationDialog') {
+			currentDialog = getValidationDialog();
+		}
+
+		if (dialogType) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType('')}
+					onClose={() => setDialogType('')}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
 	return (
 		<>
-			<Dialog
-				open={isFilterModal}
-				onClose={onFilterModalClose}
-				aria-labelledby='responsive-dialog-title'>
-				<div className={classes.filterModal}>
-					<div
-						id='responsive-dialog-title'
-						className={classes.filterModalTitle}>
-						<>{translator('whatsappCampaign.filter')}</>
-					</div>
-					<Box className={classes.filterModalClose}>
-						<Close fontSize={'small'} onClick={onFilterModalClose} />
-					</Box>
-					<Box className={classes.filterModalInfoWrapper}>
-						<Box className={classes.filterModalInfo}>
-							<SupervisedUserCircleOutlined
-								fontSize={'small'}
-								onClick={onFilterModalClose}
+			<div>
+				<div>
+					<Box
+						style={{
+							width:
+								windowSize === 'lg' || windowSize === 'xl' ? '500px' : '',
+						}}>
+						<div className={classes.reciCheckoxContainer}>
+							<Checkbox
+								checked={exceptionalDaysToggle}
+								color='primary'
+								inputProps={{ 'aria-label': 'secondary checkbox' }}
+								onClick={() => {
+									setExceptionalDaysToggle(!exceptionalDaysToggle);
+									setExceptionalDays('');
+								}}
 							/>
-						</Box>
-					</Box>
-					<div className={classes.filterModalContent}>
-						<div className={classes.testGroupModalContentWrapper}>
-							<Box
+							<span
 								style={{
-									width:
-										windowSize === 'lg' || windowSize === 'xl' ? '500px' : '',
+									display: 'inline-block',
+									marginTop: 2,
+								}}
+								className={classes.font13}>
+								{translator('whatsappCampaign.filterInputText')}
+							</span>
+							<div
+								style={{
+									marginRight: isRTL ? 'auto' : '',
+									marginLeft: !isRTL ? 'auto' : '',
 								}}>
-								<div className={classes.reciCheckoxContainer}>
-									<Checkbox
-										checked={exceptionalDaysToggle}
-										color='primary'
-										inputProps={{ 'aria-label': 'secondary checkbox' }}
-										onClick={() => {
-											setExceptionalDaysToggle(!exceptionalDaysToggle);
-											setExceptionalDays('');
-										}}
-									/>
-									<span
-										style={{
-											display: 'inline-block',
-											marginTop: 2,
-										}}
-										className={classes.font13}>
-										<>{translator('smsReport.filterInputText')}</>
-									</span>
-									<div
-										style={{
-											marginRight: isRTL ? 'auto' : '',
-											marginLeft: !isRTL ? 'auto' : '',
-										}}>
-										<input
-											type='text'
-											disabled={exceptionalDaysToggle ? false : true}
-											className={
-												exceptionalDaysToggle
-													? RecipientsBool
-														? clsx(classes.pulseActive, classes.error)
-														: clsx(classes.pulseActive, classes.success)
-													: clsx(classes.pulseInsert)
-											}
-											onChange={(e) => {
-												handleReciInput(e);
-											}}
-											value={exceptionalDays}
-											maxLength={3}
-										/>
-									</div>
-								</div>
-								<div>
-									<div style={{ padding: '10px' }}>
-										<span className={classes.font13}>
-											{' '}
-											<>{translator('smsReport.inputTextFilter')}</>:
-										</span>
-									</div>
-									<div>
-										<div className={clsx(classes.sidebar)}>
-											<Groups
-												isFilterSelected={selectedModalFilterGroups?.length > 0}
-												classes={classes}
-												showSortBy={false}
-												showSelectAll={false}
-												list={
-													showTestGroups
-														? [...testGroups, ...allGroupList]
-														: [...allGroupList]
-												}
-												selectedList={selectedModalFilterGroups}
-												callbackUpdateGroups={callbackUpdateGroupFilterd}
-												callbackSelectedGroups={callbackFilteredGroups}
-												callbackShowTestGroup={callbackShowTestGroup}
-												innerHeight={160}
-												uniqueKey={'groups_2'}
-												showFilter={false}
-												callbackSelectAll={() => {}}
-												callbackReciFilter={() => {}}
-												showTestGroups={showTestGroups}
-											/>
-										</div>
-									</div>
-								</div>
-								<div className={classes.camapignsDiv}>
-									<div style={{ padding: '10px' }}>
-										<span className={classes.font13}>
-											<>{translator('smsReport.campaignInfo')}</>:
-										</span>
-									</div>
-									<div>
-										<div className={clsx(classes.sidebar)}>
-											<CampaignGroups
-												isFilterSelected={
-													selectedModalFilterCampaigns?.length > 0
-												}
-												classes={classes}
-												showSortBy={false}
-												showSelectAll={false}
-												list={finishedCampaigns}
-												selectedList={selectedModalFilterCampaigns}
-												callbackUpdateGroups={callbackUpdateCampaignFilter}
-												callbackSelectedGroups={callbackFiltertedCampaigns}
-												innerHeight={160}
-												uniqueKey={'campaigns'}
-												showFilter={false}
-												callbackSelectAll={() => {}}
-												callbackReciFilter={() => {}}
-												callbackShowTestGroup={() => {}}
-											/>
-										</div>
-									</div>
-								</div>
-							</Box>
+								<input
+									type='text'
+									disabled={exceptionalDaysToggle ? false : true}
+									className={
+										exceptionalDaysToggle
+											? RecipientsBool
+												? clsx(classes.pulseActive, classes.error)
+												: clsx(classes.pulseActive, classes.success)
+											: clsx(classes.pulseInsert)
+									}
+									onChange={(e) => {
+										handleReciInput(e);
+									}}
+									value={exceptionalDays}
+									maxLength={3}
+								/>
+							</div>
 						</div>
-					</div>
-					<Grid container className={classes.alertModalAction}>
-						<Button
-							className='ok-button'
-							variant='contained'
-							color='primary'
-							autoFocus
-							onClick={onConfirm}>
-							<>{translator('whatsapp.alertModal.okButtonText')}</>
-						</Button>
-						<Button
-							className='cancel-button'
-							color='primary'
-							variant='contained'
-							onClick={onClose}>
-							<>{translator('whatsapp.alertModal.calcelButtonText')}</>
-						</Button>
-					</Grid>
+						<div>
+							<div style={{ padding: '10px' }}>
+								<span className={classes.font13}>
+									{' '}
+									<>{translator('smsReport.inputTextFilter')}</>:
+								</span>
+							</div>
+							<div>
+								<div className={clsx(classes.sidebar)}>
+									<Groups
+										isFilterSelected={selectedModalFilterGroups?.length > 0}
+										classes={classes}
+										showSortBy={false}
+										showSelectAll={false}
+										list={
+											showTestGroups
+												? [...testGroups, ...allGroupList]
+												: [...allGroupList]
+										}
+										selectedList={selectedModalFilterGroups}
+										callbackUpdateGroups={callbackUpdateGroupFilterd}
+										callbackSelectedGroups={callbackFilteredGroups}
+										callbackShowTestGroup={callbackShowTestGroup}
+										innerHeight={160}
+										uniqueKey={'groups_2'}
+										showFilter={false}
+										callbackSelectAll={() => {}}
+										callbackReciFilter={() => {}}
+										showTestGroups={showTestGroups}
+									/>
+								</div>
+							</div>
+						</div>
+						<div className={classes.camapignsDiv}>
+							<div style={{ padding: '10px' }}>
+								<span className={classes.font13}>
+									<>{translator('smsReport.campaignInfo')}</>:
+								</span>
+							</div>
+							<div>
+								<div className={clsx(classes.sidebar)}>
+									<CampaignGroups
+										isFilterSelected={
+											selectedModalFilterCampaigns?.length > 0
+										}
+										classes={classes}
+										showSortBy={false}
+										showSelectAll={false}
+										list={finishedCampaigns}
+										selectedList={selectedModalFilterCampaigns}
+										callbackUpdateGroups={callbackUpdateCampaignFilter}
+										callbackSelectedGroups={callbackFiltertedCampaigns}
+										innerHeight={160}
+										uniqueKey={'campaigns'}
+										showFilter={false}
+										callbackSelectAll={() => {}}
+										callbackReciFilter={() => {}}
+										callbackShowTestGroup={() => {}}
+									/>
+								</div>
+							</div>
+						</div>
+					</Box>
 				</div>
-			</Dialog>
-			<ValidationAlert
-				classes={classes}
-				isOpen={isValidationAlert}
-				onClose={() => setIsValidationAlert(false)}
-				title={translator('whatsappCampaign.sendValidation')}
-				requiredFields={groupSendValidationErrors}
-			/>
+			</div>
+			{renderDialog()}
 		</>
 	);
-};
+});
 
 export default FilterRecipientsDialog;

@@ -20,13 +20,13 @@ const PulseemTags = ({
     const { isRTL } = useSelector(state => state.core);
     return <Box className={classes.rightForm} style={{ ...style, position: 'relative' }}>
         <Box
-            style={{ minHeight: 40, maxHeight: 40, position: 'relative' }}
+            style={{ minHeight: 30, maxHeight: 30, position: 'relative' }}
             className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
             onClick={() => onShowModal()}
         >
             {(!items || items.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
             {items && items.length > 0 ? (
-                <Box className={classes.mappedGroup} style={{ maxWidth: '95%' }}>
+                <Box className={classes.mappedGroup} style={{ maxWidth: '90%' }}>
                     {items.map((item, index) => {
                         return (
                             <Box key={index} className={clsx(classes.selectedGroupsDiv)}>

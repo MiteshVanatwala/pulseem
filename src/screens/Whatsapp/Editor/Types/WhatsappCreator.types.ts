@@ -4,6 +4,7 @@ import {
 	campaignDataProps,
 	reportDataProps,
 } from '../../Campaign/Types/WhatsappCampaign.types';
+import { authenticationClass } from './JSON.types';
 
 export type WhatsappCreatorProps = {
 	classes: ClassesType[];
@@ -26,6 +27,7 @@ export type WhatsappCreatorProps = {
 		fileLink: string;
 		fileType: string;
 	};
+	category?: string;
 };
 
 export type TemplateFieldsProps = {
@@ -75,7 +77,6 @@ export type callToActionRowProps = {
 export type callToActionProps = callToActionRowProps[];
 
 export type actionProps = {
-	isCallToActionOpen: boolean;
 	closeCallToAction: (isReset: boolean) => void;
 	classes: ClassesType['classes'];
 	callToActionFieldRows: callToActionProps;
@@ -97,6 +98,7 @@ export type whatsappMobilePreviewProps = {
 		fileLink: string;
 		fileType: string;
 	};
+	templateId?: string;
 };
 
 export type ButtonsProps = {
@@ -104,6 +106,9 @@ export type ButtonsProps = {
 	onFormButtonClick: (buttonName: string) => void;
 	displayBackButton: boolean;
 	displayDeleteButton?: boolean;
+	showSendButton?: boolean;
+	showContinueButton?: boolean;
+	isSummary?: boolean;
 };
 
 export type campaignPage1ButtonsProps = {
@@ -136,13 +141,15 @@ export type actionButtonProps = {
 
 export type quickReplyProps = {
 	classes: ClassesType['classes'];
-	isQuickReplyOpen: boolean;
 	closeQuickReply: () => void;
 	quickReplyButtons: quickReplyButtonProps[];
 	setQuickReplyButtons: (data: quickReplyButtonProps[]) => void;
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
 	templateButtons: templateDataProps['templateButtons'];
 	isEditable: boolean;
+	isDeletionAllowed?: boolean;
+	canAddMoreButtons?: boolean;
+	maxButtonTextLength?: number;
 };
 
 export type quickReplyButtonsFieldProps = {
@@ -164,6 +171,12 @@ export type ApiButtonData = {
 	phone?: string;
 	url?: string;
 	phoneCode?: string;
+	keepTrackOfLinks?: boolean;
+};
+
+export type quickReplyButtons = {
+	id: string;
+	title: string
 };
 
 export type templateDataProps = {
@@ -255,6 +268,8 @@ export type savedTemplateTypesProps = {
 	media: savedTemplateMediaProps;
 	text: savedTemplateTextProps;
 	card: savedTemplateCardProps;
+	'whatsapp/authentication': authenticationClass;
+	authentication: authenticationClass;
 };
 
 export type savedTemplateDataProps = {
@@ -263,6 +278,7 @@ export type savedTemplateDataProps = {
 };
 
 export type savedTemplateListProps = {
+	CategoryId: number;
 	CreatedDate: string | null;
 	Data: savedTemplateDataProps;
 	RejectionReason: string;
@@ -272,6 +288,7 @@ export type savedTemplateListProps = {
 	TemplateName: string;
 	FriendlyTemplateName: string;
 	IsAllowEdit: boolean;
+	Language?: string;
 };
 
 export type toastProps = {
@@ -324,6 +341,7 @@ export type buttonsDataProps = {
 	url: string;
 	phone: string;
 	phoneCode?: string;
+	keeptrackoflinks?: any;
 };
 export type JSONFreetextVariableProps = {
 	[key: string]: string;
@@ -373,6 +391,7 @@ export type getTemplateByIdDataAPIProps = {
 	SavedApiWhatsappTemplatesId: number;
 	TemplateId: string;
 	TemplateName: string;
+	Language?: string;
 };
 
 export type getTemplateByIdPayloadAPIProps = {
@@ -527,3 +546,9 @@ export type ApiErrorKey = {
 export type ApiErrorResponse = {
 	[key: string]: ApiErrorKey;
 };
+
+export type WhatsappTemplateError = {
+	key: string;
+	title: string;
+	reason: string
+}

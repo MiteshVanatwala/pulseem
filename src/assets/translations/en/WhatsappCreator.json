@@ -60,9 +60,10 @@
 	"marketing": "Marketing",
 	"utility": "Utility",
 	"authentication": "Authentication",
-
+	"authenticationEn": "Authentication - EN",
+	"authenticationHebrew": "Authentication - Hebrew",
 	"displayError": "Display Error",
-
+	"copyCode": "Copy Code",
 	"template": {
 		"textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
 		"callToActionTooltip": "Call To Action",
@@ -113,5 +114,10 @@
 		"websiteTextError": "Website URL - Required field",
 		"templateId": "Template ID",
 		"no": "No"
-	}
+	},
+	"codeExpirationTime": "Code Expiration Time",
+	"codeExpirationMessage": "Code Expiration time can range from 0 to 90 minutes",
+	"replyRemoveToUnsubscribe": "Reply “remove” to unsubscribe",
+	"templateApproved": "The template <b>\"##Name##\"</b> was approved",
+	"templateDeclined": "The template <b>\"##Name##\"</b> was rejected"
 }

@@ -8,11 +8,6 @@ export const getGroupStyle = (windowSize, isRTL, theme) => ({
             textAlign: isRTL ? 'right' : 'left',
         }
     },
-    groupName: {
-        "@media screen and (max-width: 1160px)": {
-            fontSize: '16px'
-        }
-    },
     noWrap: {
         whiteSpace: 'nowrap',
         '& p': {
@@ -35,5 +30,11 @@ export const getGroupStyle = (windowSize, isRTL, theme) => ({
     },
     noDecoration: {
         textDecoration: 'none'
+    },
+    groupNameCell: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
-});
+})

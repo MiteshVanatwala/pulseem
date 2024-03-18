@@ -275,7 +275,27 @@
 		"noFooter": "Footer is missing",
 		"invalidPhone": "Phone number is not a valid phone number.",
 		"characterExceeded":"Character Limit Exceeded. The Body (or Content) field can't have more than 1,024 characters",
-		"common": "INVALID_FORMAT Please see https://www.twilio.com/docs/content-api/troubleshooting-and-diagnostics#common-rejection-reasons for more information"
+		"common": "INVALID_FORMAT",
+		"invalidFormat": "Invalid Format",
+		"incorrectCategory": "Incorrect Category",
+		"suspectedScam": "Suspected Scam",
+		"404NotFound": "404 Not Found",
+		"abusiveContent": "Abusive Content",
+		"footerIsMissingExpectedField": "Message template 'components' param is missing expected field(s). component of type FOOTER is missing expected field(s) (text)",
+		"categoryNotMatched": "The content of the message did not match the category the template was submitted under",
+		"bodyIsMissingExpectedField": "Message template 'components' param is missing expected field(s). component of type BODY is missing expected field(s)",
+		"invalidPhoneNumber": "Button does not have a valid phone number",
+		"moreCharacters": "The template contains more than 1,024 characters",
+		"invalidParameter": "Facebook is not able to create template due to the Invalid parameter.",
+		"abusiveContentsInTemplate": "The template contains content which Facebook labels as abusive",
+		"buttonIsMissingExpectedField": "Component of type BUTTONS is missing expected field(s) (example)",
+		"301Moved": "Error processing media URLs for the template due to the following error: 301 Moved Permanently. Couldn't read the data from URL.",
+		"moreThan1024Characters": "The template contains more than 1,024 characters",
+		"invalidButtonFormat": "Button Format is Incorrect. Buttons can't have any variables, newlines, emojis, or formatting characters",
+		"noElementPassed": "Error processing media URLs for the template due to the following error: No elements passed in the last 10000000000 nanoseconds.",
+		"twoNewLineCharactersNotAllowed": "Message body can't have more than two consecutive newline characters.",
+		"unableToReadFromURL": "Couldn't read the data from URL.",
+		"noImageAuthentication": "Unable to add image to authentication template"
 	},
 	"twilio": {
 		"22225": {
