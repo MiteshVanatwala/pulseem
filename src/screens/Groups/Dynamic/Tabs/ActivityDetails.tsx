@@ -32,18 +32,13 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 />
             </Grid>
             <Grid item xs={6} sm={6} md={2}>
-                <FormControl
-                    variant="standard"
-                    className={clsx(classes.selectInputFormControl, classes.w100)}
-                >
-                    <SelectActivityInteval
-                        Disabled={data.dynamicData?.MyActivities?.IsNotOpened === true && !data.dynamicData?.MyActivities.IsOpenedInterval}
-                        OnUpdate={(event: any) => onUpdate('IsOpenedInterval', event.target.value)}
-                        Value={data.dynamicData?.MyActivities.IsOpenedInterval}
-                        classes={classes}
-                        key={'IsOpenedInterval'}
-                    />
-                </FormControl>
+                <SelectActivityInteval
+                    Disabled={!data.dynamicData?.MyActivities?.IsOpened}
+                    OnUpdate={(event: any) => onUpdate('IsOpenedInterval', event.target.value)}
+                    Value={!data.dynamicData?.MyActivities?.IsOpened ? null : data.dynamicData?.MyActivities.IsOpenedInterval}
+                    classes={classes}
+                    key={'IsOpenedInterval'}
+                />
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
@@ -117,18 +112,13 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 />
             </Grid>
             <Grid item xs={6} sm={6} md={2}>
-                <FormControl
-                    variant="standard"
-                    className={clsx(classes.selectInputFormControl, classes.w100)}
-                >
-                    <SelectActivityInteval
-                        Disabled={data.dynamicData?.MyActivities?.IsOpened === true}
-                        OnUpdate={(event: any) => onUpdate('IsNotOpenedInterval', event.target.value)}
-                        Value={data.dynamicData?.MyActivities.IsNotOpenedInterval}
-                        classes={classes}
-                        key={'IsNotOpenedInterval'}
-                    />
-                </FormControl>
+                <SelectActivityInteval
+                    Disabled={!data.dynamicData?.MyActivities.IsNotOpened}
+                    OnUpdate={(event: any) => onUpdate('IsNotOpenedInterval', event.target.value)}
+                    Value={!data.dynamicData?.MyActivities.IsNotOpened ? null : data.dynamicData?.MyActivities.IsNotOpenedInterval}
+                    classes={classes}
+                    key={'IsNotOpenedInterval'}
+                />
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
@@ -202,18 +192,13 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 />
             </Grid>
             <Grid item xs={6} sm={6} md={2}>
-                <FormControl
-                    variant="standard"
-                    className={clsx(classes.selectInputFormControl, classes.w100)}
-                >
-                    <SelectActivityInteval
-                        Disabled={data.dynamicData?.MyActivities.IsNotClicked === true || data.dynamicData?.MyActivities.IsNotOpened === true}
-                        OnUpdate={(event: any) => onUpdate('IsClickedInterval', event.target.value)}
-                        Value={data.dynamicData?.MyActivities.IsClickedInterval}
-                        classes={classes}
-                        key={'IsClickedInterval'}
-                    />
-                </FormControl>
+                <SelectActivityInteval
+                    Disabled={!data.dynamicData?.MyActivities.IsClicked}
+                    OnUpdate={(event: any) => onUpdate('IsClickedInterval', event.target.value)}
+                    Value={!data.dynamicData?.MyActivities.IsClicked ? null : data.dynamicData?.MyActivities.IsClickedInterval}
+                    classes={classes}
+                    key={'IsClickedInterval'}
+                />
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
@@ -287,18 +272,13 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 />
             </Grid>
             <Grid item xs={6} sm={6} md={2}>
-                <FormControl
-                    variant="standard"
-                    className={clsx(classes.selectInputFormControl, classes.w100)}
-                >
-                    <SelectActivityInteval
-                        Disabled={data.dynamicData?.MyActivities.IsClicked === true}
-                        OnUpdate={(event: any) => onUpdate('IsNotClickedInterval', event.target.value)}
-                        Value={data.dynamicData?.MyActivities.IsNotClickedInterval}
-                        classes={classes}
-                        key={'IsNotClickedInterval'}
-                    />
-                </FormControl>
+                <SelectActivityInteval
+                    Disabled={!data.dynamicData?.MyActivities.IsNotClicked}
+                    OnUpdate={(event: any) => onUpdate('IsNotClickedInterval', event.target.value)}
+                    Value={!data.dynamicData?.MyActivities.IsNotClicked ? null : data.dynamicData?.MyActivities.IsNotClickedInterval}
+                    classes={classes}
+                    key={'IsNotClickedInterval'}
+                />
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
