@@ -60,7 +60,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                     {/* @ts-ignore */}
                                     <DateField
                                         toolbarDisabled={false}
-
+                                        minDate={undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsPurchased && data.dynamicData?.MyActivities.IsPurchasedFromDate}
@@ -83,7 +83,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                     {/* @ts-ignore */}
                                     <DateField
                                         toolbarDisabled={false}
-
+                                        minDate={data.dynamicData?.MyActivities.IsPurchasedFromDate || undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsPurchased && data.dynamicData?.MyActivities.IsPurchasedToDate}
@@ -200,7 +200,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                     {/* @ts-ignore */}
                                     <DateField
                                         toolbarDisabled={false}
-
+                                        minDate={undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotPurchased && data.dynamicData?.MyActivities.IsNotPurchasedFromDate}
@@ -223,7 +223,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                     {/* @ts-ignore */}
                                     <DateField
                                         toolbarDisabled={false}
-
+                                        minDate={data.dynamicData?.MyActivities.IsNotPurchasedFromDate || undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotPurchased && data.dynamicData?.MyActivities.IsNotPurchasedToDate}
@@ -340,7 +340,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                     {/* @ts-ignore */}
                                     <DateField
                                         toolbarDisabled={false}
-
+                                        minDate={undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsAbandoned && data.dynamicData?.MyActivities.IsAbandonedFromDate}
@@ -363,7 +363,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                     {/* @ts-ignore */}
                                     <DateField
                                         toolbarDisabled={false}
-
+                                        minDate={data.dynamicData?.MyActivities.IsAbandonedFromDate || undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsAbandoned && data.dynamicData?.MyActivities.IsAbandonedToDate}

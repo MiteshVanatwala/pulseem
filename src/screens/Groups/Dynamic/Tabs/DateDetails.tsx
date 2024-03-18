@@ -27,6 +27,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
+                            minDate={undefined}
                             onTimeChange={() => { }}
                             timeActive={false}
                             buttons={{
@@ -56,6 +57,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             buttons={[]}
                             removePadding={true}
                             hideInvalidDateMessage={true}
+                            minDate={data.dynamicData?.MyConditions[0]?.BirthDateFrom || undefined}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.BirthDateTo && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('BirthDateTo', null)}>{t("recipient.reset")}</Button>
@@ -82,7 +84,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             buttons={[]}
                             removePadding={true}
                             hideInvalidDateMessage={true}
-                            minDate={null}
+                            minDate={undefined}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('BirthDateFromWithoutYear', null)}>{t("recipient.reset")}</Button>
@@ -104,7 +106,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             buttons={[]}
                             removePadding={true}
                             hideInvalidDateMessage={true}
-                            minDate={null}
+                            minDate={undefined}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.BirthDateToWithoutYear && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('BirthDateToWithoutYear', null)}>{t("recipient.reset")}</Button>
@@ -131,7 +133,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             buttons={[]}
                             removePadding={true}
                             hideInvalidDateMessage={true}
-                            minDate={null}
+                            minDate={undefined}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.ReminderFrom && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ReminderFrom', null)}>{t("recipient.reset")}</Button>
@@ -153,7 +155,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             buttons={[]}
                             removePadding={true}
                             hideInvalidDateMessage={true}
-                            minDate={null}
+                            minDate={data.dynamicData?.MyConditions[0]?.ReminderFrom || undefined}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.ReminderTo && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('ReminderTo', null)}>{t("recipient.reset")}</Button>
@@ -180,7 +182,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             buttons={[]}
                             removePadding={true}
                             hideInvalidDateMessage={true}
-                            minDate={null}
+                            minDate={undefined}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.CreatedFrom && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('CreatedFrom', null)}>{t("recipient.reset")}</Button>
@@ -202,7 +204,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             buttons={[]}
                             removePadding={true}
                             hideInvalidDateMessage={true}
-                            minDate={null}
+                            minDate={data.dynamicData?.MyConditions[0]?.CreatedFrom || undefined}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.CreatedTo && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('CreatedTo', null)}>{t("recipient.reset")}</Button>
