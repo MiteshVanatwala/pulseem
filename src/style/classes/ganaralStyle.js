@@ -458,6 +458,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt50: {
     paddingTop: 50
   },
+  pt90: {
+    paddingTop: 90
+  },
   pt2: {
     paddingTop: 1.4,
   },
@@ -3355,7 +3358,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       },
       '& input': {
-        padding: '3px 0 7px 0'
+        padding: '3px 0 7px 0',
+        minHeight: 25,
       },
       '& fieldset': {
         border: 'none',
@@ -4023,5 +4027,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   selectField: {
     borderBottom: '1px solid #D6D1E6',
     height: 46
+  },
+  pageContainer: {
+    marginLeft: '7rem',
+    marginRight: '7rem',
   }
 });
