@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core'
 import clsx from 'clsx';
 import { range } from 'lodash';
-import { PulButton, PulColItem, PulDivider, PulHead, PulPara, PulPrice, PulProductImage, PulRow } from '../../screens/HtmlCampaign/helper/Template';
+import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulRow } from '../../screens/HtmlCampaign/helper/Template';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { ProductCatalogTypes } from './Types';
@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux';
 import { StateType } from '../../Models/StateTypes';
 import Select from '@mui/material/Select';
 import { IoIosArrowDown } from 'react-icons/io';
-import { DynamicProductGrid } from '../../helpers/Constants';
+import { DynamicProductGrid, NO_IMAGE_URL } from '../../helpers/Constants';
 
 const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) => {
   const { t } = useTranslation();
@@ -34,13 +34,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const [isButtonVisible, setButtonVisibility] = useState(true);
   const [buttonText, setButtonText] = useState('');
   const [structure, setStructure] = useState(Structure.Horizontal);
-  const [direction, setDirection] = useState(Direction.LeftToRight);
   const [eventType, setEventType] = useState(EventTypes.Purchase);
   const [category, setCategory] = useState(0);
   const [maxProducts, setMaxProducts] = useState(4);
   const [productOrder, setProductOrder] = useState(Structure.Horizontal);
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { productCategories } = useSelector((state: StateType) => state.product);
+  const [direction, setDirection] = useState(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
 
   useEffect(() => {
     if (productOrder === 'vertical') {
@@ -62,6 +62,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     dynamicRow['metadata']["EventType"] = eventType?.toString();
     dynamicRow['metadata']["ProductCategory"] = category;
     dynamicRow['metadata']["NumOfProdcuts"] = uptoProducts;
+    dynamicRow['metadata']["direction"] = direction.toUpperCase();
+    dynamicRow['metadata']["order"] = productOrder;
+    dynamicRow['metadata']["category"] = productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || '';
     var productJSON: any = getProductJSON();
     if (uptoProducts > 0) {
       if (productOrder === Structure.Horizontal) {
@@ -103,10 +106,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       var productCol: any = JSON.parse(JSON.stringify(PulColItem));
       productCol['uuid'] = uuidv4();
       if (isImageVisible) {
-        let image = Object.assign({}, PulProductImage);
+        let image = Object.assign({}, PulImage);
         image['uuid'] = uuidv4();
-        image['descriptor']['paragraph']['html'] = '#productsrc#';
-        image['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        image['descriptor']['image']['src'] = NO_IMAGE_URL;
+        // let image = Object.assign({}, PulProductImage);
+        // image['uuid'] = uuidv4();
+        // image['descriptor']['paragraph']['html'] = '#productsrc#';
+        // image['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         productCol['modules'].push(image);
         productCol['grid-columns'] = imageCol;
         productJSON.push(productCol);
@@ -124,7 +130,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       }
 
       if (isDescriptionVisible) {
-        let desc = Object.assign({}, PulPara);
+        let desc = JSON.parse(JSON.stringify(PulPara));
         desc['uuid'] = uuidv4();
         desc['descriptor']['paragraph']['html'] = '#description#';
         desc['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
@@ -132,11 +138,29 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       }
 
       if (isPriceVisible) {
-        let price = Object.assign({}, PulPrice);
+        let price = JSON.parse(JSON.stringify(PulPara));
         price['uuid'] = uuidv4();
         price['descriptor']['paragraph']['html'] = '#price#';
         price['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(price);
+      }
+
+      if (isFilterByEventType) {
+        let event = JSON.parse(JSON.stringify(PulPara));
+        event['uuid'] = uuidv4();
+        event['descriptor']['paragraph']['html'] = EventTypes[eventType || 0];
+        event['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        event['descriptor']['computedStyle']['hideContentOnHtml'] = true;
+        moduleItems.push(event);
+      }
+
+      if (isFilterIsByProductCategory) {
+        let cat = JSON.parse(JSON.stringify(PulPara));
+        cat['uuid'] = uuidv4();
+        cat['descriptor']['paragraph']['html'] = productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || '';
+        cat['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
+        moduleItems.push(cat);
       }
 
       if (isButtonVisible) {
@@ -157,10 +181,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       let moduleItems = [];
       // moduleItems.push(PulProductContainerStart);
       if (isImageVisible) {
-        let image = Object.assign({}, PulProductImage);
+        let image = Object.assign({}, PulImage);
         image['uuid'] = uuidv4();
-        image['descriptor']['paragraph']['html'] = '#productsrc#';
-        image['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        image['descriptor']['image']['src'] = NO_IMAGE_URL;
+        // let image = Object.assign({}, PulProductImage);
+        // image['uuid'] = uuidv4();
+        // image['descriptor']['paragraph']['html'] = '#productsrc#';
+        // image['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(image);
       }
 
@@ -173,7 +200,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       }
 
       if (isDescriptionVisible) {
-        let desc = Object.assign({}, PulPara);
+        let desc = JSON.parse(JSON.stringify(PulPara));
         desc['uuid'] = uuidv4();
         desc['descriptor']['paragraph']['html'] = '#description#';
         desc['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
@@ -181,11 +208,29 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       }
 
       if (isPriceVisible) {
-        let price = Object.assign({}, PulPrice);
+        let price = JSON.parse(JSON.stringify(PulPara));
         price['uuid'] = uuidv4();
         price['descriptor']['paragraph']['html'] = '#price#';
         price['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(price);
+      }
+
+      if (isFilterByEventType) {
+        let event = JSON.parse(JSON.stringify(PulPara));
+        event['uuid'] = uuidv4();
+        event['descriptor']['paragraph']['html'] = EventTypes[eventType || 0];
+        event['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        event['descriptor']['computedStyle']['hideContentOnHtml'] = true;
+        moduleItems.push(event);
+      }
+
+      if (isFilterIsByProductCategory) {
+        let cat = JSON.parse(JSON.stringify(PulPara));
+        cat['uuid'] = uuidv4();
+        cat['descriptor']['paragraph']['html'] = productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || '';
+        cat['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
+        moduleItems.push(cat);
       }
 
       if (isButtonVisible) {
@@ -576,7 +621,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                           structure={structure}
                           direction={direction}
                           eventType={isFilterByEventType ? eventType?.toString() : ''}
-                          category={isFilterIsByProductCategory ? category : 0}
+                          category={isFilterIsByProductCategory ?  productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || '' : ''}
                         />
                       )
                     }

@@ -1,3 +1,36 @@
+const paragraphDescriptor = {
+  "paragraph": {
+    "html": "",
+    "style": {
+      "color": "#000000",
+      "font-size": "14px",
+      "font-family": "inherit",
+      "font-weight": "400",
+      "line-height": "120%",
+      "text-align": "left",
+      "direction": "ltr",
+      "letter-spacing": "0px"
+    },
+    "computedStyle": {
+      "linkColor": "#0068a5",
+      "paragraphSpacing": "16px"
+    }
+  },
+  "style": {
+    "padding-top": "10px",
+    "padding-right": "10px",
+    "padding-bottom": "10px",
+    "padding-left": "10px"
+  },
+  "mobileStyle": {},
+  "computedStyle": {
+    "hideContentOnAmp": false,
+    "hideContentOnHtml": false,
+    "hideContentOnDesktop": false,
+    "hideContentOnMobile": false
+  }
+};
+
 export const PulImage = {
   "uuid": "",
   "type": "mailup-bee-newsletter-modules-image",
@@ -33,37 +66,7 @@ export const PulImage = {
 
 export const PulProductImage = {
   "type": "mailup-bee-newsletter-modules-paragraph",
-  "descriptor": {
-    "paragraph": {
-      "html": "",
-      "style": {
-        "color": "#000000",
-        "font-size": "14px",
-        "font-family": "inherit",
-        "font-weight": "400",
-        "line-height": "120%",
-        "text-align": "left",
-        "letter-spacing": "0px"
-      },
-      "computedStyle": {
-        "linkColor": "#0068a5",
-        "paragraphSpacing": "16px"
-      }
-    },
-    "style": {
-      "padding-top": "10px",
-      "padding-right": "10px",
-      "padding-bottom": "10px",
-      "padding-left": "10px"
-    },
-    "mobileStyle": {},
-    "computedStyle": {
-      "hideContentOnAmp": false,
-      "hideContentOnHtml": false,
-      "hideContentOnDesktop": false,
-      "hideContentOnMobile": false
-    }
-  },
+  "descriptor": JSON.parse(JSON.stringify(paragraphDescriptor)),
   "uuid": "",
   "locked": false
 }
@@ -107,75 +110,7 @@ export const PulHead = {
 
 export const PulPara = {
   "type": "mailup-bee-newsletter-modules-paragraph",
-  "descriptor": {
-    "paragraph": {
-      "html": "",
-      "style": {
-        "color": "#000000",
-        "font-size": "14px",
-        "font-family": "inherit",
-        "font-weight": "400",
-        "line-height": "120%",
-        "text-align": "left",
-        "letter-spacing": "0px"
-      },
-      "computedStyle": {
-        "linkColor": "#0068a5",
-        "paragraphSpacing": "16px"
-      }
-    },
-    "style": {
-      "padding-top": "10px",
-      "padding-right": "10px",
-      "padding-bottom": "10px",
-      "padding-left": "10px"
-    },
-    "mobileStyle": {},
-    "computedStyle": {
-      "hideContentOnAmp": false,
-      "hideContentOnHtml": false,
-      "hideContentOnDesktop": false,
-      "hideContentOnMobile": false
-    }
-  },
-  "uuid": "",
-  "locked": false
-};
-
-export const PulPrice = {
-  "type": "mailup-bee-newsletter-modules-paragraph",
-  "descriptor": {
-    "paragraph": {
-      "html": "",
-      "style": {
-        "color": "#000000",
-        "font-size": "14px",
-        "font-family": "inherit",
-        "font-weight": "400",
-        "line-height": "120%",
-        "text-align": "left",
-        "direction": "ltr",
-        "letter-spacing": "0px"
-      },
-      "computedStyle": {
-        "linkColor": "#0068a5",
-        "paragraphSpacing": "16px"
-      }
-    },
-    "style": {
-      "padding-top": "10px",
-      "padding-right": "10px",
-      "padding-bottom": "10px",
-      "padding-left": "10px"
-    },
-    "mobileStyle": {},
-    "computedStyle": {
-      "hideContentOnAmp": false,
-      "hideContentOnHtml": false,
-      "hideContentOnDesktop": false,
-      "hideContentOnMobile": false
-    }
-  },
+  "descriptor": JSON.parse(JSON.stringify(paragraphDescriptor)),
   "uuid": "",
   "locked": false
 };
@@ -210,7 +145,7 @@ export const PulButton = {
   "descriptor": {
     "button": {
       "label": "",
-      "href": "",
+      "href": "#URL#",
       "pul_id": "1",
       "style": {
         "font-family": "inherit",
@@ -269,7 +204,10 @@ export const PulRow = {
     "uuid": "",
     "EventType": "",
     "ProductCategory": 0,
-    "NumOfProdcuts": 0
+    "NumOfProdcuts": 0,
+    "direction": "ltr",
+    "order": "",
+    "category": ""
   },
   "container": {
     "style": {

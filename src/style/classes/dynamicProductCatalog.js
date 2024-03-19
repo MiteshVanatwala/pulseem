@@ -4,7 +4,7 @@ export const dynamicProductCatalog = (isRTL) => ({
         display: 'inline-table',
     },
     imageBlock: {
-        width: '35%',
+        width: '30%',
         minHeight: '100px',
         height: '100%',
         // background: '#ededed',

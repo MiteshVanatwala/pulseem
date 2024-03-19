@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button } from '@material-ui/core'
+import { Box, Button, Grid, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -56,6 +56,7 @@ import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
 import { getCategories } from '../../redux/reducers/productSlice';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -107,6 +108,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   });
   const [showDomainVerification, setShowDomainVerification] = useState(false);
   const [emailProps, setEmailProps] = useState(null);
+  const [dialogType, setDialogType] = useState(null)
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -405,6 +407,14 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
+    if (saveRef.current?.checkDynamicBlock && (args.HtmlData?.indexOf('#name#') > -1 || args.HtmlData?.indexOf('#description#') > -1 || args.HtmlData?.indexOf('#price#') > -1)) {
+      setDialogType({
+        type: 'productCatalogPrompt',
+        data: args
+      })
+      return false;
+    }
+
     const reInit = saveRef.current?.reInitEditor;
 
     try {
@@ -462,8 +472,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
+  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false) => {
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock };
     await editorRef.current.save();
     setTimeout(() => {
       const now = moment();
@@ -596,13 +606,15 @@ const CampaignEditor = ({ classes, ...props }) => {
       uuid: block?.metadata?.uuid
     };
     dispatch(saveUserBlock(blockRequest)).then(async () => {
-      setLoader(false);
-      dispatch(getUserblocks());
       let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
       var tags = [].concat.apply([], tempTags);
       if (tags && tags?.length > 0 && tags.indexOf('product-catalog') === -1) {
         localStorage.setItem('reloadBeeEditor', 1);
+        setSilentSave(true)
+        await saveDesign(false, null, false);
       }
+      await dispatch(getUserblocks());
+      setLoader(false);
     });
   }
   const onEditBlock = (blockRequest) => {
@@ -787,6 +799,67 @@ const CampaignEditor = ({ classes, ...props }) => {
   //       {t('common.saveTemplate')}
   //     </Button></>
   // }
+
+  const productCatalogModal = (args) => {
+		return {
+			showDivider: false,
+			title: t("common.important"),
+			content: (
+				<Box>
+					<Typography title={t("common.dynamicProductNotice")} className={classes.alignDir}>
+						{RenderHtml(t("common.dynamicProductNotice"))}
+					</Typography>
+				</Box>
+			),
+			renderButtons: () => (
+        <Grid
+          container
+          spacing={4}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => { 
+                setDialogType(null);
+                saveRef.current = { ...saveRef.current, checkDynamicBlock: false };
+                onSave(args);
+              }}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}>
+              {t('common.Ok')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+		};
+	}
+
+  const renderDialog = () => {
+    const { type, data } = dialogType || {}
+		let currentDialog = {};
+		if (type === 'productCatalogPrompt') {
+			currentDialog = productCatalogModal(data);
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
+
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
@@ -827,7 +900,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             setShowDomainVerification(true)
           }
           else {
-            saveDesign(true);
+            saveDesign(true, null, true, true);
           }
 
         }}
@@ -981,6 +1054,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           setShowDomainVerification(false)
         }}
       />
+      {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
   )
