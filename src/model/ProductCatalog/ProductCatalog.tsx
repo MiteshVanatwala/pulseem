@@ -152,6 +152,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isFilterByEventType) {
         let event = JSON.parse(JSON.stringify(PulPara));
         event['uuid'] = uuidv4();
+        event['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
         event['descriptor']['paragraph']['html'] = getEventName(eventType);
         event['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         event['descriptor']['computedStyle']['hideContentOnHtml'] = true;
@@ -161,6 +162,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isFilterIsByProductCategory) {
         let cat = JSON.parse(JSON.stringify(PulPara));
         cat['uuid'] = uuidv4();
+        cat['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
         cat['descriptor']['paragraph']['html'] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
         cat['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
@@ -227,6 +229,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         event['uuid'] = uuidv4();
         event['descriptor']['paragraph']['html'] = getEventName(eventType);
         event['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        event['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
         event['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(event);
       }
@@ -236,6 +239,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         cat['uuid'] = uuidv4();
         cat['descriptor']['paragraph']['html'] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
         cat['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        cat['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
         cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(cat);
       }
@@ -273,7 +277,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       case 1:
         event = t('campaigns.purchase');
         break;
-        
+
       case 2:
         event = t('campaigns.cartAbandonment');
         break;
@@ -642,7 +646,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                           structure={structure}
                           direction={direction}
                           eventType={isFilterByEventType ? getEventName(eventType) : ''}
-                          category={isFilterIsByProductCategory ?  productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || t('campaigns.allCategories') : ''}
+                          category={isFilterIsByProductCategory ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || t('campaigns.allCategories') : ''}
                         />
                       )
                     }
