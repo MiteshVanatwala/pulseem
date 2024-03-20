@@ -482,8 +482,8 @@ const VerificationDialog = ({
                                 className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
-                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
-                                        setVerificationCode(e.target.value)
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
+                                        setVerificationCode(e.target.value.trim())
                                     }
                                 }}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
@@ -670,8 +670,8 @@ const VerificationDialog = ({
                                 className={clsx(classes.textField, classes.maxWidth400)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
-                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
-                                        setVerificationCode(e.target.value)
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
+                                        setVerificationCode(e.target.value.trim())
                                     }
                                 }}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
@@ -867,8 +867,8 @@ const VerificationDialog = ({
                                 className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
-                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
-                                        setVerificationCode(e.target.value)
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
+                                        setVerificationCode(e.target.value.trim())
                                     }
                                 }}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
@@ -1075,8 +1075,8 @@ const VerificationDialog = ({
                                 className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
                                 onChange={(e) => {
                                     !!verificationError?.code && setVerificationError({ code: '' })
-                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
-                                        setVerificationCode(e.target.value)
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
+                                        setVerificationCode(e.target.value.trim())
                                     }
                                 }}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}

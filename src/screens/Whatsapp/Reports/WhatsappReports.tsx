@@ -1,6 +1,7 @@
 import {
 	Box,
 	Button,
+	FormControlLabel,
 	Grid,
 	Table,
 	TableBody,
@@ -58,6 +59,7 @@ import NoSetup from '../NoSetup/NoSetup';
 import { TablePagination } from '../../../components/managment';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { SizeOptions_XS_SM } from '../../../helpers/Constants';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -77,6 +79,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [hasRevenue, setHasRevenue] = useState<boolean>(false);
 	const [totalRecord, setTotalRecord] = useState<number>(0);
+	const [includeTestCampaigns, setIncludeTestCampaigns] = useState(false)
 
 	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
 		useState<boolean>(false);
@@ -150,6 +153,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		}
 	}, [fromDate, toDate, campaignNameSearch]);
 
+	useEffect(() => {
+		onSearch();
+	}, [ includeTestCampaigns ])
+
 	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
 		if (toDate && value && value > toDate) {
 			handleToDate(null);
@@ -166,6 +173,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		handleFromDate(null);
 		handleToDate(null);
 		setSearching(false);
+		setIncludeTestCampaigns(false);
 
 		const updatedPagination: AllReportReq = {
 			...paginationSetting,
@@ -173,6 +181,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			campaignName: '',
 			fromDate: null,
 			toDate: null,
+			IsTestCampaign: false
 		};
 		setPaginationSetting(updatedPagination);
 		setApiReportData(updatedPagination);
@@ -226,6 +235,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			campaignName: campaignNameSearch || '',
 			fromDate: fromDate || null,
 			toDate: toDate || null,
+			IsTestCampaign: includeTestCampaigns,
 		};
 		setPaginationSetting(updatedPagination);
 		setApiReportData(updatedPagination);
@@ -493,6 +503,28 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						/>
 					</Grid>
 				)}
+
+				<Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+								id="type"
+                switchType='ios'
+                classes={classes}
+                checked={includeTestCampaigns}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+                onChange={() => setIncludeTestCampaigns(!includeTestCampaigns)}
+              />
+            }
+            label={translator('mainReport.locShowTestCampaigns.Text')}
+          />
+        </Grid>
 
 				<Grid item>
 					<Button
