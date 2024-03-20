@@ -63,7 +63,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     let dynamicRow = Object.assign({}, PulRow);
     dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['content']['style']['direction'] = direction;
-    dynamicRow['metadata']["EventType"] = getEventName(eventType);
+    dynamicRow['metadata']["EventType"] = eventType.toString(); //getEventName(eventType);
     dynamicRow['metadata']["ProductCategory"] = category;
     dynamicRow['metadata']["NumOfProdcuts"] = uptoProducts;
     dynamicRow['metadata']["direction"] = direction.toUpperCase();
