@@ -408,9 +408,9 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
-    if (saveRef.current?.checkDynamicBlock && (args.HtmlData?.indexOf('#name#') > -1 || args.HtmlData?.indexOf('#description#') > -1 || args.HtmlData?.indexOf('#price#') > -1 || args.HtmlData?.indexOf(NO_IMAGE_URL) > -1)) {
-      var noImage = new RegExp(NO_IMAGE_URL, 'g');
-      if ((args.HtmlData?.match(/#name#/g) || []).length > 1 || (args.HtmlData?.match(/#description#/g) || []).length > 1 || (args.HtmlData?.match(/#price#/g) || []).length > 1 || (args.HtmlData?.match(noImage) || []).length > 1) {
+    const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
+    if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
+      if (dynamicBlocks > 1) {
         setDialogType({type: 'moreThanOneDynamicBlock'})
       } else {
         setDialogType({
@@ -657,7 +657,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       setShowDomainVerification(true)
     }
     else {
-      saveDesign(false, null, false).then(async (r) => {
+      saveDesign(false, null, false, true).then(async (r) => {
+        console.log(r);
         setIsResponseModal(false);
         editorRef.current.send();
       });
@@ -884,7 +885,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 		if (type === 'productCatalogPrompt') {
 			currentDialog = productCatalogModal(data);
 		} else if (type === 'moreThanOneDynamicBlock') {
-      currentDialog = moreThanOneDynamicBlockModal(data);
+      currentDialog = moreThanOneDynamicBlockModal();
     }
 
 		if (type) {

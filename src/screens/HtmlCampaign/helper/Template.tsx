@@ -218,6 +218,7 @@ export const PulRow = {
       "background-repeat": "no-repeat",
       "background-position": "top left",
       "direction": "rtl",
+      "product-block-container": ""
     }
   },
   "content": {

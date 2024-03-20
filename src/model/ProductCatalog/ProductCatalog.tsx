@@ -62,6 +62,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const onHandleSave = () => {
     let dynamicRow = Object.assign({}, PulRow);
     dynamicRow['container']['style']['direction'] = direction;
+    dynamicRow['container']['style']['product-block-container'] = '1';
     dynamicRow['content']['style']['direction'] = direction;
     dynamicRow['metadata']["EventType"] = eventType.toString(); //getEventName(eventType);
     dynamicRow['metadata']["ProductCategory"] = category;
@@ -196,7 +197,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         image['descriptor']['style']['padding-left'] = '20px';
         image['descriptor']['style']['padding-right'] = '20px';
-        image['descriptor']['computedStyle']['class'] = `${direction === 'ltr' ? 'right' : 'left'} fixedwidth`;
+        image['descriptor']['computedStyle']['class'] = `left fixedwidth`;
         moduleItems.push(image);
       }
 
