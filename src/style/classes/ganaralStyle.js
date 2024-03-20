@@ -830,6 +830,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   font30: {
     fontSize: 30,
   },
+  w30: {
+    width: '30%'
+  },
   w50: {
     width: '50%'
   },

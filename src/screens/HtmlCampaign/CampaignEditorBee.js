@@ -57,6 +57,7 @@ import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
 import { getCategories } from '../../redux/reducers/productSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { NO_IMAGE_URL } from '../../helpers/Constants';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -407,11 +408,16 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
-    if (saveRef.current?.checkDynamicBlock && (args.HtmlData?.indexOf('#name#') > -1 || args.HtmlData?.indexOf('#description#') > -1 || args.HtmlData?.indexOf('#price#') > -1)) {
-      setDialogType({
-        type: 'productCatalogPrompt',
-        data: args
-      })
+    if (saveRef.current?.checkDynamicBlock && (args.HtmlData?.indexOf('#name#') > -1 || args.HtmlData?.indexOf('#description#') > -1 || args.HtmlData?.indexOf('#price#') > -1 || args.HtmlData?.indexOf(NO_IMAGE_URL) > -1)) {
+      var noImage = new RegExp(NO_IMAGE_URL, 'g');
+      if ((args.HtmlData?.match(/#name#/g) || []).length > 1 || (args.HtmlData?.match(/#description#/g) || []).length > 1 || (args.HtmlData?.match(/#price#/g) || []).length > 1 || (args.HtmlData?.match(noImage) || []).length > 1) {
+        setDialogType({type: 'moreThanOneDynamicBlock'})
+      } else {
+        setDialogType({
+          type: 'productCatalogPrompt',
+          data: args
+        })
+      }
       return false;
     }
 
@@ -838,12 +844,48 @@ const CampaignEditor = ({ classes, ...props }) => {
 		};
 	}
 
+  const moreThanOneDynamicBlockModal = () => {
+		return {
+			showDivider: false,
+			title: t("common.pleaseNotice"),
+			content: (
+				<Box>
+					<Typography title={t("common.noMoreThanOneDynamicBlock")} className={classes.alignDir}>
+						{RenderHtml(t("common.noMoreThanOneDynamicBlock"))}
+					</Typography>
+				</Box>
+			),
+			renderButtons: () => (
+        <Grid
+          container
+          spacing={4}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}>
+              {t('common.Ok')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+		};
+	}
+
   const renderDialog = () => {
     const { type, data } = dialogType || {}
 		let currentDialog = {};
 		if (type === 'productCatalogPrompt') {
 			currentDialog = productCatalogModal(data);
-		}
+		} else if (type === 'moreThanOneDynamicBlock') {
+      currentDialog = moreThanOneDynamicBlockModal(data);
+    }
 
 		if (type) {
 			return (

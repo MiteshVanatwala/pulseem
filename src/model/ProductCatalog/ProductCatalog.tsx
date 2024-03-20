@@ -33,7 +33,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const [isPriceVisible, setPriceVisibility] = useState(true);
   const [isButtonVisible, setButtonVisibility] = useState(true);
   const [buttonText, setButtonText] = useState('');
-  const [structure, setStructure] = useState(Structure.Horizontal);
+  const [structure, setStructure] = useState(Structure.Vertical);
   const [eventType, setEventType] = useState(EventTypes.Purchase);
   const [category, setCategory] = useState(0);
   const [maxProducts, setMaxProducts] = useState(4);
@@ -43,13 +43,17 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const [direction, setDirection] = useState(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
 
   useEffect(() => {
-    if (productOrder === 'vertical') {
+    if (productOrder === Structure.Vertical) {
       setStructure(productOrder);
-      setMaxProducts(10);
-    } else {
       setMaxProducts(4);
+    } else {
+      setMaxProducts(2);
     }
   }, [productOrder]);
+
+  useEffect(() => {
+    setMaxProducts(structure === Structure.Vertical ? 4 : 2);
+  }, [structure])
 
   useEffect(() => {
     setButtonText(t('campaigns.buyNow'));
@@ -59,12 +63,12 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     let dynamicRow = Object.assign({}, PulRow);
     dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['content']['style']['direction'] = direction;
-    dynamicRow['metadata']["EventType"] = eventType?.toString();
+    dynamicRow['metadata']["EventType"] = getEventName(eventType);
     dynamicRow['metadata']["ProductCategory"] = category;
     dynamicRow['metadata']["NumOfProdcuts"] = uptoProducts;
     dynamicRow['metadata']["direction"] = direction.toUpperCase();
     dynamicRow['metadata']["order"] = productOrder;
-    dynamicRow['metadata']["category"] = productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || '';
+    dynamicRow['metadata']["category"] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
     var productJSON: any = getProductJSON();
     if (uptoProducts > 0) {
       if (productOrder === Structure.Horizontal) {
@@ -112,7 +116,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         // let image = Object.assign({}, PulProductImage);
         // image['uuid'] = uuidv4();
         // image['descriptor']['paragraph']['html'] = '#productsrc#';
-        // image['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        image['descriptor']['style']['text-align'] = direction === 'ltr' ? 'right' : 'left';
         productCol['modules'].push(image);
         productCol['grid-columns'] = imageCol;
         productJSON.push(productCol);
@@ -148,7 +152,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isFilterByEventType) {
         let event = JSON.parse(JSON.stringify(PulPara));
         event['uuid'] = uuidv4();
-        event['descriptor']['paragraph']['html'] = EventTypes[eventType || 0];
+        event['descriptor']['paragraph']['html'] = getEventName(eventType);
         event['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         event['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(event);
@@ -157,7 +161,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isFilterIsByProductCategory) {
         let cat = JSON.parse(JSON.stringify(PulPara));
         cat['uuid'] = uuidv4();
-        cat['descriptor']['paragraph']['html'] = productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || '';
+        cat['descriptor']['paragraph']['html'] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
         cat['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(cat);
@@ -187,7 +191,10 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         // let image = Object.assign({}, PulProductImage);
         // image['uuid'] = uuidv4();
         // image['descriptor']['paragraph']['html'] = '#productsrc#';
-        // image['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        image['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        image['descriptor']['style']['padding-left'] = '20px';
+        image['descriptor']['style']['padding-right'] = '20px';
+        image['descriptor']['computedStyle']['class'] = `${direction === 'ltr' ? 'right' : 'left'} fixedwidth`;
         moduleItems.push(image);
       }
 
@@ -218,7 +225,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isFilterByEventType) {
         let event = JSON.parse(JSON.stringify(PulPara));
         event['uuid'] = uuidv4();
-        event['descriptor']['paragraph']['html'] = EventTypes[eventType || 0];
+        event['descriptor']['paragraph']['html'] = getEventName(eventType);
         event['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         event['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(event);
@@ -227,7 +234,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isFilterIsByProductCategory) {
         let cat = JSON.parse(JSON.stringify(PulPara));
         cat['uuid'] = uuidv4();
-        cat['descriptor']['paragraph']['html'] = productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || '';
+        cat['descriptor']['paragraph']['html'] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
         cat['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(cat);
@@ -259,6 +266,20 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   }
 
   const previewContainerHeight = window.innerHeight - 400;
+
+  const getEventName = (eventType: number) => {
+    let event = t('campaigns.allEvents');
+    switch (eventType) {
+      case 1:
+        event = t('campaigns.purchase');
+        break;
+        
+      case 2:
+        event = t('campaigns.cartAbandonment');
+        break;
+    }
+    return event;
+  }
 
   return (
     <BaseDialog
@@ -620,8 +641,8 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                           buttonText={buttonText}
                           structure={structure}
                           direction={direction}
-                          eventType={isFilterByEventType ? eventType?.toString() : ''}
-                          category={isFilterIsByProductCategory ?  productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || '' : ''}
+                          eventType={isFilterByEventType ? getEventName(eventType) : ''}
+                          category={isFilterIsByProductCategory ?  productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || t('campaigns.allCategories') : ''}
                         />
                       )
                     }

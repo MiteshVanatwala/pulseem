@@ -17,10 +17,10 @@ const paragraphDescriptor = {
     }
   },
   "style": {
-    "padding-top": "10px",
-    "padding-right": "10px",
-    "padding-bottom": "10px",
-    "padding-left": "10px"
+    "padding-top": "5px",
+    "padding-right": "20px",
+    "padding-bottom": "5px",
+    "padding-left": "20px"
   },
   "mobileStyle": {},
   "computedStyle": {
@@ -54,13 +54,13 @@ export const PulImage = {
       "text-align": "left"
     },
     "computedStyle": {
-      "class": "center fixedwidth",
+      "class": "right fixedwidth",
       "width": "200px",
       "hideContentOnMobile": false
     },
     "mobileStyle": {}
   },
-  "align": "left",
+  "align": "right",
   "locked": false
 }
 
@@ -94,9 +94,9 @@ export const PulHead = {
       "width": "100%",
       "text-align": "left",
       "padding-top": "10px",
-      "padding-right": "10px",
+      "padding-right": "20px",
       "padding-bottom": "10px",
-      "padding-left": "10px"
+      "padding-left": "20px"
     },
     "mobileStyle": {},
     "computedStyle": {
@@ -160,11 +160,13 @@ export const PulButton = {
         "color": "#ffffff",
         "line-height": "200%",
         "padding-top": "5px",
-        "padding-right": "20px",
+        "padding-right": "10px",
         "padding-bottom": "5px",
-        "padding-left": "20px",
+        "padding-left": "10px",
         "width": "auto",
         "max-width": "100%",
+        "margin-left": "10px",
+        "margin-right": "10px",
       }
     },
     "style": {

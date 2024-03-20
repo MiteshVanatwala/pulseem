@@ -36,9 +36,17 @@ const Preview = ({
       {
         isImageVisible && (
           <div
-            className={clsx(classes.imageBlock, structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, structure === Structure.Vertical ? classes.w100 : '')}
+            className={clsx(classes.imageBlock, structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, structure === Structure.Vertical ? classes.w100 : classes.w30)}
           >
-            <img src={NO_IMAGE_URL} className={clsx(structure === Structure.Vertical ? classes.wAuto : classes.w100)} alt='' />
+            <img
+              src={NO_IMAGE_URL}
+              className={clsx(classes.w100)}
+              alt=''
+              style={{
+                width: 'calc(100% - 20px)',
+                padding: '0px 20px'
+              }}
+            />
           </div>
         )
       }
@@ -50,7 +58,7 @@ const Preview = ({
         {isNameVisible && <div className={clsx(classes.nameStyle)}>{name}</div>}
         {isDescriptionVisible && <div className={clsx(classes.bodyStyle)}>{description}</div>}
         {isPriceVisible && <div className={clsx(classes.bodyStyle)}>{price}</div>}
-        {eventType && <div className={clsx(classes.bodyStyle)}>{EventTypes[Number(eventType) || 0]}</div>}
+        {eventType && <div className={clsx(classes.bodyStyle)}>{eventType}</div>}
         {renderCategory()}
         {isButtonVisible && <input type='button' value={buttonText} className={clsx(classes.buttonStyle)} />}
       </div>

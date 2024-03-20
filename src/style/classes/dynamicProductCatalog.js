@@ -4,11 +4,10 @@ export const dynamicProductCatalog = (isRTL) => ({
         display: 'inline-table',
     },
     imageBlock: {
-        width: '30%',
         minHeight: '100px',
         height: '100%',
-        // background: '#ededed',
-        textAlign: 'center',
+        textAlign: isRTL ? 'right' : 'left',
+        maxWidth: '200px',
     },
     contentBlock: {
         width: '65%',
@@ -20,12 +19,14 @@ export const dynamicProductCatalog = (isRTL) => ({
         fontSize: '1rem',
         paddingBottom: '10px',
         fontWeight: 'bold',
-        paddingLeft: '10px',
+        paddingLeft: '20px',
+        paddingRight: '20px',
     },
     bodyStyle: {
         fontSize: '0.8rem',
         paddingBottom: '10px',
-        paddingLeft: '10px',
+        paddingLeft: '20px',
+        paddingRight: '20px',
     },
     buttonStyle: {
         backgroundColor: '#38afe1',
@@ -34,7 +35,8 @@ export const dynamicProductCatalog = (isRTL) => ({
         padding: '5px 10px',
         borderRadius: '5px',
         fontWeight: '500',
-        marginLeft: '10px',
+        marginLeft: '20px',
+        marginRight: '20px',
         border: 'none',
     },
     productCatalogContainer: {

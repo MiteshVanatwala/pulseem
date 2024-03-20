@@ -119,7 +119,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         newRow['container']['style']['category'] = newRow?.metadata?.ProductCategory;
                         newRow['container']['style']['product-count'] = newRow?.metadata?.NumOfProdcuts;
                         newRow['metadata']['uuid'] = uuidv4();
-                        newRow['metadata']['name'] = `#${newRow?.metadata?.NumOfProdcuts} - ${EventTypes[newRow?.metadata?.EventType || 0]} - ${newRow?.metadata?.category.substring(0, 5)} - ${newRow?.metadata?.order} - ${newRow?.metadata?.direction}`;
+                        newRow['metadata']['name'] = `#${newRow?.metadata?.NumOfProdcuts} - ${newRow?.metadata?.EventType} - ${newRow?.metadata?.category} - ${newRow?.metadata?.order} - ${newRow?.metadata?.direction}`;
                         newRow['metadata']['tags'] = 'product-catalog';
                         await onSaveUserBlock(JSON.stringify(newRow), newRow)
                         resolve();
@@ -205,7 +205,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
             // console.log('onError ', errorMessage)
         },
         onLoad: async (jsonFile: any) => {
-            console.log(jsonFile);
+            // console.log(jsonFile);
         },
         onAutoSave: () => AutoSaveCampaign(),
         onChange: () => DesignChange()
