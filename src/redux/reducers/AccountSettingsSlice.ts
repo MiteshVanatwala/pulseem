@@ -108,6 +108,20 @@ export const checkCellphoneAuthorization = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     })
+export const setBypassPending = createAsyncThunk(
+    'AccountSettings/SetBypassPending',
+    async (settings: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AccountSettings/SetBypassPending`, settings)
+            return response.data;
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+
+
 
 interface AuthorizationValues {
     value: string,
