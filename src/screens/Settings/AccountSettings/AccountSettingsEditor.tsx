@@ -82,7 +82,9 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		TwoFactorAuthTestMethodID: null,
 		TwoFactorAuthRetries: null,
 		TwoFactorAuthOverrideDateTime: null,
-		ExpiryDate: null
+		ExpiryDate: null,
+		ByPassOTPAgreement: false,
+		ByPassOTPAgreementDate: null
 
 	} as AccountSettings);
 	const [selectedTier, setSelectedTier] = useState<string>('1');

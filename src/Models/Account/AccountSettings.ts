@@ -28,4 +28,6 @@ export interface AccountSettings {
     TwoFactorAuthRetries: number | null;
     TwoFactorAuthOverrideDateTime: Date | string | null;
     ExpiryDate: Date | string | null;
+    ByPassOTPAgreement: boolean | null;
+    ByPassOTPAgreementDate: Date | string | null;
 }
