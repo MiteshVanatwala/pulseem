@@ -181,10 +181,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, []);
   useEffect(() => {
     if (userBlocks) {
-      if (localStorage.getItem('reloadBeeEditor') === '1') {
-        localStorage.removeItem('reloadBeeEditor');
-        initBeeEditor();
-      }
       return new Promise((resolve) => {
         userBlocks.forEach(x => setRow(x.data));
         resolve();
@@ -279,11 +275,20 @@ const CampaignEditor = ({ classes, ...props }) => {
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
+    let tempRows = [{
+      name: 'product-catalog',
+      value: 'product-catalog',
+      handle: 'product-catalog',
+      isLocal: true,
+      behaviors: {
+        canEdit: true,
+        canDelete: true,
+      }
+    }]
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];
-      let tempRows = [];
       tags?.forEach((tag, idx) => {
-        if (tag && tag !== undefined && tag !== null) {
+        if (tag && tag !== undefined && tag !== null && tag.trim() !== 'product-catalog') {
           const tagObj = {
             name: tag.trim(),
             value: tag.replace(' ', ''),
@@ -303,8 +308,8 @@ const CampaignEditor = ({ classes, ...props }) => {
           return JSON.stringify(obj) === _value;
         });
       });
-      config.rowsConfiguration.externalContentURLs = tempRows;
     }
+    config.rowsConfiguration.externalContentURLs = tempRows;
   }
   const initBeeEditor = (templateId = null) => {
     initSpecialLinks().then(async (specialLinksFiles) => {
@@ -614,8 +619,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
       var tags = [].concat.apply([], tempTags);
-      if (tags && tags?.length > 0 && tags.indexOf('product-catalog') === -1) {
-        localStorage.setItem('reloadBeeEditor', 1);
+      if (tags && tags?.length > 0) {
         setSilentSave(true)
         await saveDesign(false, null, false);
       }

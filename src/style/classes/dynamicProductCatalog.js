@@ -6,8 +6,7 @@ export const dynamicProductCatalog = (isRTL) => ({
     imageBlock: {
         minHeight: '100px',
         height: '100%',
-        textAlign: isRTL ? 'right' : 'left',
-        maxWidth: '200px',
+        maxWidth: '100%',
     },
     contentBlock: {
         width: '65%',

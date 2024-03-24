@@ -30,21 +30,35 @@ const Preview = ({
   return (
     <div
       className={
-        clsx(classes.card, classes.w100, classes.mb10, classes.mr10, direction === Direction.RightToLeft ? classes.directionRTL : '')
+        clsx(
+          classes.card, classes.w100, classes.mb10, classes.mr10,
+          {
+            [classes.directionRTL]: direction === Direction.RightToLeft,
+            [classes.textCenter]: direction === Direction.Center,
+          }
+        )
       }
     >
       {
         isImageVisible && (
           <div
-            className={clsx(classes.imageBlock, structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, structure === Structure.Vertical ? classes.w100 : classes.w30)}
+            className={clsx(
+              classes.imageBlock,
+              structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, 
+              structure === Structure.Vertical ? classes.w100 : classes.w35,
+              {
+                [classes.textCenter]: direction === Direction.Center,
+                [classes.textRight]: direction === Direction.RightToLeft,
+                [classes.textLeft]: direction === Direction.LeftToRight,
+              }
+            )}
           >
             <img
               src={NO_IMAGE_URL}
-              className={clsx(classes.w100)}
               alt=''
               style={{
-                width: 'calc(100% - 20px)',
-                padding: '0px 20px'
+                width: structure === Structure.Horizontal ? '100%' : '220px',
+                padding: structure === Structure.Horizontal ? '' : '0px 20px'
               }}
             />
           </div>
@@ -52,7 +66,12 @@ const Preview = ({
       }
       <div
         className={
-          clsx(classes.contentBlock, structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, structure === Structure.Vertical ? classes.w100 : '')
+          clsx(
+            classes.contentBlock,
+            structure === Structure.Horizontal ? classes.pt0 : '',
+            structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock,
+            structure === Structure.Vertical ? classes.w100 : '',
+          )
         }
       >
         {isNameVisible && <div className={clsx(classes.nameStyle)}>{name}</div>}

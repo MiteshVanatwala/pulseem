@@ -55,7 +55,7 @@ export const PulImage = {
     },
     "computedStyle": {
       "class": "right fixedwidth",
-      "width": "200px",
+      "width": "100%",
       "hideContentOnMobile": false
     },
     "mobileStyle": {}
@@ -125,9 +125,9 @@ export const PulDivider = {
       }
     },
     "style": {
-      "padding-top": "50px",
+      "padding-top": "20px",
       "padding-right": "10px",
-      "padding-bottom": "50px",
+      "padding-bottom": "20px",
       "padding-left": "10px"
     },
     "mobileStyle": {},
@@ -209,7 +209,8 @@ export const PulRow = {
     "NumOfProdcuts": 0,
     "direction": "ltr",
     "order": "",
-    "category": ""
+    "category": "",
+    "width": "100%"
   },
   "container": {
     "style": {
@@ -218,7 +219,8 @@ export const PulRow = {
       "background-repeat": "no-repeat",
       "background-position": "top left",
       "direction": "rtl",
-      "product-block-container": ""
+      "product-block-container": "",
+      "width": "100%"
     }
   },
   "content": {

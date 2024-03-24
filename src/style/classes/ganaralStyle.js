@@ -189,7 +189,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "0px !important",
   },
   noMargin: {
-    margin: 0,
+    margin: '0px !important',
   },
   wizardFlex: {
     flex: 1,
@@ -438,7 +438,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingInlineStart: 25,
   },
   pt0: {
-    paddingTop: 0,
+    paddingTop: '0px !important',
   },
   pt2rem: {
     paddingTop: "2rem",
@@ -833,6 +833,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w30: {
     width: '30%'
   },
+  w35: {
+    width: '35%'
+  },
   w50: {
     width: '50%'
   },
@@ -849,7 +852,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: 'auto'
   },
   w100: {
-    width: '100%'
+    width: '100% !important'
   },
   h100: {
     height: '100%'
@@ -2593,7 +2596,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   //#endregion
   textCenter: {
-    textAlign: "center",
+    textAlign: "center !important",
   },
   marginBlock10: {
     marginBlock: 10,

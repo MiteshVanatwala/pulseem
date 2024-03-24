@@ -1,5 +1,6 @@
 export enum Direction {
   LeftToRight = 'ltr',
+  Center = 'center',
   RightToLeft = 'rtl'
 }
 

@@ -6,7 +6,7 @@ import {
   Grid,
   RadioGroup,
   Radio,
-  Dialog as BaseDialog, FormControlLabel, MenuItem, Checkbox, Button, Input, FormControl
+  FormControlLabel, MenuItem, Checkbox, Button, Input, FormControl
 } from '@material-ui/core'
 import clsx from 'clsx';
 import { range } from 'lodash';
@@ -20,6 +20,7 @@ import { StateType } from '../../Models/StateTypes';
 import Select from '@mui/material/Select';
 import { IoIosArrowDown } from 'react-icons/io';
 import { DynamicProductGrid, NO_IMAGE_URL } from '../../helpers/Constants';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 
 const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) => {
   const { t } = useTranslation();
@@ -36,24 +37,45 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const [structure, setStructure] = useState(Structure.Vertical);
   const [eventType, setEventType] = useState(EventTypes.Purchase);
   const [category, setCategory] = useState(0);
-  const [maxProducts, setMaxProducts] = useState(4);
+  const [maxProducts, setMaxProducts] = useState(2);
   const [productOrder, setProductOrder] = useState(Structure.Horizontal);
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { productCategories } = useSelector((state: StateType) => state.product);
   const [direction, setDirection] = useState(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
 
   useEffect(() => {
-    if (productOrder === Structure.Vertical) {
-      setStructure(productOrder);
+    if (structure === Structure.Vertical && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
       setMaxProducts(4);
+      setDescriptionVisibility(false);
     } else {
       setMaxProducts(2);
     }
-  }, [productOrder]);
+    if (productOrder === Structure.Vertical && structure === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
+      setDirection(Direction.Center);
+    } else {
+      setDirection(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
+    }
+  }, [productOrder, structure]);
 
   useEffect(() => {
-    setMaxProducts(structure === Structure.Vertical ? 4 : 2);
-  }, [structure])
+    if (isSingleOrMultiple === Items.Multiple) {
+      setStructure(Structure.Horizontal);
+      setProductOrder(Structure.Horizontal);
+      setUptoProducts(2);
+    } else setUptoProducts(1);
+
+    if (productOrder === Structure.Vertical && structure === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
+      setDirection(Direction.Center);
+    } else {
+      setDirection(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
+    }
+    if (structure === Structure.Vertical && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
+      setMaxProducts(4);
+      setDescriptionVisibility(false);
+    } else {
+      setMaxProducts(2);
+    }
+  }, [isSingleOrMultiple]);
 
   useEffect(() => {
     setButtonText(t('campaigns.buyNow'));
@@ -267,10 +289,10 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   }, []);
 
   const getProductNumbers = () => {
-    return range(1, maxProducts + 1).map((item: number) => <MenuItem key={`${item}`} value={`${item}`}>{item}</MenuItem>)
+    return range(2, maxProducts + 1).map((item: number) => <MenuItem key={`${item}`} value={`${item}`}>{item}</MenuItem>)
   }
 
-  const previewContainerHeight = window.innerHeight - 400;
+  const previewContainerHeight = window.innerHeight - 350;
 
   const getEventName = (eventType: number) => {
     let event = t('campaigns.allEvents');
@@ -289,12 +311,41 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   return (
     <BaseDialog
       open={isOpen}
-      className={clsx(classes.dialogContainers)}
-      disableEnforceFocus
+      classes={classes}
+      disableBackdropClick={true}
+      title={t("campaigns.setupDynamicProduct")}
+      showDefaultButtons={false}
+      contentStyle={classes.noPadding}
+		  customContainerStyle={classes.callToAction}
+      onCancel={onHandleCancel}
+			onClose={onHandleCancel}
+      renderButtons={() => (
+        <div className={clsx(classes.textCenter, classes.mt25)}>
+          <Button
+            onClick={onHandleSave}
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.btn,
+              classes.btnRounded
+            )}
+            color="primary"
+          >
+            {t('campaigns.addProductBlock')}
+          </Button>
+          <Button
+            onClick={onHandleCancel}
+            variant='contained'
+            size='medium'
+            className={clsx(classes.btn, classes.btnRounded, classes.ml10)}
+          >
+            {t('common.cancel')}
+          </Button>
+        </div>
+      )}
     >
       <div className='product-block' style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
         <Box>
-          <h2 className={clsx(classes.mt0)}>{t('campaigns.setupDynamicProduct')}</h2>
           <Grid container spacing={5}>
             <Grid item md={5}>
               <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1">
@@ -582,6 +633,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                       }}
                     >
                       <MenuItem key={Direction.LeftToRight} value={Direction.LeftToRight}>{t('campaigns.leftToRight')}</MenuItem>
+                      {
+                        structure === Structure.Vertical && <MenuItem key={Direction.Center} value={Direction.Center}>{t('campaigns.center')}</MenuItem>
+                      }
                       <MenuItem key={Direction.RightToLeft} value={Direction.RightToLeft}>{t('campaigns.rightToLeft')}</MenuItem>
                     </Select>
                   </FormControl>
@@ -653,28 +707,6 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     }
                     )]
                 }
-              </div>
-              <div className={clsx(classes.textCenter, classes.mt25)}>
-                <Button
-                  onClick={onHandleSave}
-                  variant='contained'
-                  size='medium'
-                  className={clsx(
-                    classes.btn,
-                    classes.btnRounded
-                  )}
-                  color="primary"
-                >
-                  {t('campaigns.addProductBlock')}
-                </Button>
-                <Button
-                  onClick={onHandleCancel}
-                  variant='contained'
-                  size='medium'
-                  className={clsx(classes.btn, classes.btnRounded, classes.ml10)}
-                >
-                  {t('common.cancel')}
-                </Button>
               </div>
             </Grid>
           </Grid>
