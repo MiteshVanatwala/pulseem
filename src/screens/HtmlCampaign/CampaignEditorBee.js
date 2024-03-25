@@ -662,7 +662,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     else {
       saveDesign(false, null, false, true).then(async (r) => {
-        console.log(r);
         setIsResponseModal(false);
         editorRef.current.send();
       });

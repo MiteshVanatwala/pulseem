@@ -133,7 +133,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       var productCol: any = JSON.parse(JSON.stringify(PulColItem));
       productCol['uuid'] = uuidv4();
       if (isImageVisible) {
-        let image = Object.assign({}, PulImage);
+        let image = JSON.parse(JSON.stringify(PulImage));
         image['uuid'] = uuidv4();
         image['descriptor']['image']['src'] = NO_IMAGE_URL;
         // let image = Object.assign({}, PulProductImage);
@@ -145,11 +145,11 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         productJSON.push(productCol);
       }
 
-      var productCol: any = Object.assign({}, PulColItem);
+      var productCol: any = JSON.parse(JSON.stringify(PulColItem));
       productCol['uuid'] = uuidv4();
       const moduleItems = [];
       if (isNameVisible) {
-        let head = Object.assign({}, PulHead);
+        let head = JSON.parse(JSON.stringify(PulHead));
         head['uuid'] = uuidv4();
         head['descriptor']['heading']['text'] = '#name#';
         head['descriptor']['heading']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
@@ -193,7 +193,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       }
 
       if (isButtonVisible) {
-        let button = Object.assign({}, PulButton);
+        let button = JSON.parse(JSON.stringify(PulButton));
         button['uuid'] = uuidv4();
         button['descriptor']['button']['label'] = buttonText;
         button['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
@@ -204,13 +204,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       productCol['modules'] = moduleItems;
       productJSON.push(productCol);
     } else {
-      let productCol: any = Object.assign({}, PulColItem);
+      let productCol: any = JSON.parse(JSON.stringify(PulColItem));
       productCol['uuid'] = uuidv4();
-      productCol['grid-columns'] = 12 / uptoProducts;
+      productCol['grid-columns'] = 12 / (productOrder === Structure.Vertical ? 1 : uptoProducts);
       let moduleItems = [];
       // moduleItems.push(PulProductContainerStart);
       if (isImageVisible) {
-        let image = Object.assign({}, PulImage);
+        let image = JSON.parse(JSON.stringify(PulImage));
         image['uuid'] = uuidv4();
         image['descriptor']['image']['src'] = NO_IMAGE_URL;
         // let image = Object.assign({}, PulProductImage);
@@ -219,12 +219,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         image['descriptor']['style']['padding-left'] = '20px';
         image['descriptor']['style']['padding-right'] = '20px';
+        image['descriptor']['image']['percWidth'] = '30';
         image['descriptor']['computedStyle']['class'] = `left fixedwidth`;
         moduleItems.push(image);
       }
 
       if (isNameVisible) {
-        let head = Object.assign({}, PulHead);
+        let head = JSON.parse(JSON.stringify(PulHead));
         head['uuid'] = uuidv4();
         head['descriptor']['heading']['text'] = '#name#';
         head['descriptor']['heading']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
@@ -268,7 +269,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       }
 
       if (isButtonVisible) {
-        let button = Object.assign({}, PulButton);
+        let button = JSON.parse(JSON.stringify(PulButton));
         button['uuid'] = uuidv4();
         button['descriptor']['button']['label'] = buttonText || t('campaigns.buttonText');
         button['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';

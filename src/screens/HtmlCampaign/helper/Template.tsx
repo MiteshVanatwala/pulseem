@@ -39,11 +39,12 @@ export const PulImage = {
       "alt": "",
       "src": "",
       "href": "",
+      "percWidth": "75",
       "style": {
         "width": "100%",
         "text-align": "left"
       },
-      "width": "200",
+      "width": "100%",
     },
     "style": {
       "width": "100%",
@@ -61,6 +62,7 @@ export const PulImage = {
     "mobileStyle": {}
   },
   "align": "right",
+  "autoWidth": "50%",
   "locked": false
 }
 
