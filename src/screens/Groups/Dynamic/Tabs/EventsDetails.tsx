@@ -114,7 +114,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         key={'IsPurchasedComparingType'}
                     />
                 </Grid>
-                {(data.dynamicData?.MyActivities.IsPurchasedComparingType === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsPurchasedComparingType === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsPurchased && <Grid item xs={12} sm={2} md={2} className={classes.pt5}>
+                {(data.dynamicData?.MyActivities.IsPurchasedComparingType.toString() === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsPurchasedComparingType.toString() === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsPurchased && <Grid item xs={12} sm={2} md={2} className={classes.pt5}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                             <InputLabel className={classes.fBlack}>{t('common.price')}:</InputLabel>
@@ -131,7 +131,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                 </Grid>
                 }
                 {
-                    data.dynamicData?.MyActivities.IsPurchasedComparingType === ActivityEvent.Range && data.dynamicData?.MyActivities.IsPurchased && <Grid item xs={12} sm={3} md={3} className={classes.pt5}>
+                    data.dynamicData?.MyActivities.IsPurchasedComparingType.toString() === ActivityEvent.Range && data.dynamicData?.MyActivities.IsPurchased && <Grid item xs={12} sm={3} md={3} className={classes.pt5}>
 
                         <Grid container spacing={3}>
                             <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
@@ -254,7 +254,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         key={'IsNotPurchasedComparingType'}
                     />
                 </Grid>
-                {(data.dynamicData?.MyActivities.IsNotPurchasedComparingType === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsNotPurchasedComparingType === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsNotPurchased && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
+                {(data.dynamicData?.MyActivities.IsNotPurchasedComparingType.toString() === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsNotPurchasedComparingType.toString() === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsNotPurchased && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                             <InputLabel className={classes.fBlack}>{t('common.price')}:</InputLabel>
@@ -271,7 +271,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                 </Grid>)
                 }
 
-                {data.dynamicData?.MyActivities.IsNotPurchasedComparingType === ActivityEvent.Range && data.dynamicData?.MyActivities.IsNotPurchased && <Grid item xs={12} sm={4} md={4} className={classes.pt5}>
+                {data.dynamicData?.MyActivities.IsNotPurchasedComparingType.toString() === ActivityEvent.Range && data.dynamicData?.MyActivities.IsNotPurchased && <Grid item xs={12} sm={4} md={4} className={classes.pt5}>
 
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
@@ -394,7 +394,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         key={'IsAbandonedComparingType'}
                     />
                 </Grid>
-                {(data.dynamicData?.MyActivities.IsAbandonedComparingType === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsAbandonedComparingType === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsAbandoned && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
+                {(data.dynamicData?.MyActivities.IsAbandonedComparingType.toString() === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsAbandonedComparingType.toString() === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsAbandoned && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                             <InputLabel className={classes.fBlack}>{t('common.price')}:</InputLabel>
@@ -411,7 +411,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                 </Grid>)
                 }
 
-                {data.dynamicData?.MyActivities.IsAbandonedComparingType === ActivityEvent.Range && data.dynamicData?.MyActivities.IsAbandoned && <Grid item xs={12} sm={4} md={4} className={classes.pt5}>
+                {data.dynamicData?.MyActivities.IsAbandonedComparingType.toString() === ActivityEvent.Range && data.dynamicData?.MyActivities.IsAbandoned && <Grid item xs={12} sm={4} md={4} className={classes.pt5}>
 
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
@@ -499,7 +499,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         </Select>
                     </FormControl>
                 </Grid>
-                {(data.dynamicData?.MyActivities.IsPageViewedPriceType === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsPageViewedPriceType === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsPageViewed && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
+                {(data.dynamicData?.MyActivities.IsPageViewedPriceType.toString() === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsPageViewedPriceType.toString() === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsPageViewed && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                             <InputLabel className={classes.fBlack}>{t('common.price')}:</InputLabel>
@@ -516,7 +516,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                 </Grid>)
                 }
 
-                {data.dynamicData?.MyActivities.IsPageViewedPriceType === ActivityEvent.Range && data.dynamicData?.MyActivities.IsPageViewed && <Grid item xs={12} sm={4} md={4} className={classes.pt5}>
+                {data.dynamicData?.MyActivities.IsPageViewedPriceType.toString() === ActivityEvent.Range && data.dynamicData?.MyActivities.IsPageViewed && <Grid item xs={12} sm={4} md={4} className={classes.pt5}>
 
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
