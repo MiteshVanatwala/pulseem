@@ -44,7 +44,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const [direction, setDirection] = useState(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
 
   useEffect(() => {
-    if (structure === Structure.Vertical && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
+    if (structure === Structure.Vertical && productOrder === Structure.Horizontal && isSingleOrMultiple === Items.Multiple) {
       setMaxProducts(4);
       setDescriptionVisibility(false);
     } else {
@@ -82,7 +82,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   }, []);
 
   const onHandleSave = () => {
-    let dynamicRow = Object.assign({}, PulRow);
+    let dynamicRow = JSON.parse(JSON.stringify(PulRow));
     dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['container']['style']['product-block-container'] = '1';
     dynamicRow['content']['style']['direction'] = direction;
@@ -127,6 +127,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
 
   const getProductJSON = () => {
     const productJSON = [];
+    const alignment = direction === Direction.Center ? 'center' : direction === Direction.RightToLeft ? 'right' : 'left';
     if (structure === Structure.Horizontal) {
       const imageCol = DynamicProductGrid[`Item_${uptoProducts}`].image;
       const contentCol = DynamicProductGrid[`Item_${uptoProducts}`].content;
@@ -136,10 +137,8 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let image = JSON.parse(JSON.stringify(PulImage));
         image['uuid'] = uuidv4();
         image['descriptor']['image']['src'] = NO_IMAGE_URL;
-        // let image = Object.assign({}, PulProductImage);
-        // image['uuid'] = uuidv4();
-        // image['descriptor']['paragraph']['html'] = '#productsrc#';
-        image['descriptor']['style']['text-align'] = direction === 'ltr' ? 'right' : 'left';
+        image['descriptor']['image']['style']['text-align'] = alignment;
+        image['descriptor']['style']['text-align'] = alignment;
         productCol['modules'].push(image);
         productCol['grid-columns'] = imageCol;
         productJSON.push(productCol);
@@ -152,7 +151,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let head = JSON.parse(JSON.stringify(PulHead));
         head['uuid'] = uuidv4();
         head['descriptor']['heading']['text'] = '#name#';
-        head['descriptor']['heading']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        head['descriptor']['heading']['style']['text-align'] = alignment;
         moduleItems.push(head);
       }
 
@@ -160,7 +159,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let desc = JSON.parse(JSON.stringify(PulPara));
         desc['uuid'] = uuidv4();
         desc['descriptor']['paragraph']['html'] = '#description#';
-        desc['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        desc['descriptor']['paragraph']['style']['text-align'] = alignment;
         moduleItems.push(desc);
       }
 
@@ -168,7 +167,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let price = JSON.parse(JSON.stringify(PulPara));
         price['uuid'] = uuidv4();
         price['descriptor']['paragraph']['html'] = '#price#';
-        price['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        price['descriptor']['paragraph']['style']['text-align'] = alignment;
         moduleItems.push(price);
       }
 
@@ -177,7 +176,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         event['uuid'] = uuidv4();
         event['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
         event['descriptor']['paragraph']['html'] = getEventName(eventType);
-        event['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        event['descriptor']['paragraph']['style']['text-align'] = alignment;
         event['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(event);
       }
@@ -187,7 +186,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         cat['uuid'] = uuidv4();
         cat['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
         cat['descriptor']['paragraph']['html'] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
-        cat['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        cat['descriptor']['paragraph']['style']['text-align'] = alignment;
         cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(cat);
       }
@@ -196,7 +195,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let button = JSON.parse(JSON.stringify(PulButton));
         button['uuid'] = uuidv4();
         button['descriptor']['button']['label'] = buttonText;
-        button['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        button['descriptor']['style']['text-align'] = alignment;
         moduleItems.push(button);
       }
 
@@ -208,19 +207,16 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       productCol['uuid'] = uuidv4();
       productCol['grid-columns'] = 12 / (productOrder === Structure.Vertical ? 1 : uptoProducts);
       let moduleItems = [];
-      // moduleItems.push(PulProductContainerStart);
       if (isImageVisible) {
         let image = JSON.parse(JSON.stringify(PulImage));
         image['uuid'] = uuidv4();
         image['descriptor']['image']['src'] = NO_IMAGE_URL;
-        // let image = Object.assign({}, PulProductImage);
-        // image['uuid'] = uuidv4();
-        // image['descriptor']['paragraph']['html'] = '#productsrc#';
-        image['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        image['descriptor']['image']['style']['text-align'] = alignment;
+        image['descriptor']['image']['percWidth'] = '30';
+        image['descriptor']['style']['text-align'] = alignment;
         image['descriptor']['style']['padding-left'] = '20px';
         image['descriptor']['style']['padding-right'] = '20px';
-        image['descriptor']['image']['percWidth'] = '30';
-        image['descriptor']['computedStyle']['class'] = `left fixedwidth`;
+        image['descriptor']['computedStyle']['class'] = `${alignment === Direction.Center ? 'center' : 'left'} fixedwidth`;
         moduleItems.push(image);
       }
 
@@ -228,7 +224,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let head = JSON.parse(JSON.stringify(PulHead));
         head['uuid'] = uuidv4();
         head['descriptor']['heading']['text'] = '#name#';
-        head['descriptor']['heading']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        head['descriptor']['heading']['style']['text-align'] = alignment;
         moduleItems.push(head);
       }
 
@@ -236,7 +232,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let desc = JSON.parse(JSON.stringify(PulPara));
         desc['uuid'] = uuidv4();
         desc['descriptor']['paragraph']['html'] = '#description#';
-        desc['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        desc['descriptor']['paragraph']['style']['text-align'] = alignment;
         moduleItems.push(desc);
       }
 
@@ -244,7 +240,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let price = JSON.parse(JSON.stringify(PulPara));
         price['uuid'] = uuidv4();
         price['descriptor']['paragraph']['html'] = '#price#';
-        price['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        price['descriptor']['paragraph']['style']['text-align'] = alignment;
         moduleItems.push(price);
       }
 
@@ -252,7 +248,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let event = JSON.parse(JSON.stringify(PulPara));
         event['uuid'] = uuidv4();
         event['descriptor']['paragraph']['html'] = getEventName(eventType);
-        event['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        event['descriptor']['paragraph']['style']['text-align'] = alignment;
         event['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
         event['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(event);
@@ -262,7 +258,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let cat = JSON.parse(JSON.stringify(PulPara));
         cat['uuid'] = uuidv4();
         cat['descriptor']['paragraph']['html'] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
-        cat['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        cat['descriptor']['paragraph']['style']['text-align'] = alignment;
         cat['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
         cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(cat);
@@ -272,10 +268,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         let button = JSON.parse(JSON.stringify(PulButton));
         button['uuid'] = uuidv4();
         button['descriptor']['button']['label'] = buttonText || t('campaigns.buttonText');
-        button['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
+        button['descriptor']['style']['text-align'] = alignment;
         moduleItems.push(button);
       }
-      // moduleItems.push(PulProductContainerEnd);
       productCol['modules'] = moduleItems;
       productJSON.push(productCol);
     }

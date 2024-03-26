@@ -57,7 +57,7 @@ const Preview = ({
               src={NO_IMAGE_URL}
               alt=''
               style={{
-                width: structure === Structure.Horizontal ? '100%' : '220px',
+                width: structure === Structure.Horizontal ? '100%' : '150px',
                 padding: structure === Structure.Horizontal ? '' : '0px 20px'
               }}
             />

@@ -211,8 +211,7 @@ export const PulRow = {
     "NumOfProdcuts": 0,
     "direction": "ltr",
     "order": "",
-    "category": "",
-    "width": "100%"
+    "category": ""
   },
   "container": {
     "style": {
@@ -221,8 +220,7 @@ export const PulRow = {
       "background-repeat": "no-repeat",
       "background-position": "top left",
       "direction": "rtl",
-      "product-block-container": "",
-      "width": "100%"
+      "product-block-container": ""
     }
   },
   "content": {
