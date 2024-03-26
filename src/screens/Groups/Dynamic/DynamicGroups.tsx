@@ -1531,7 +1531,6 @@ const DynamicGroups = ({ classes }: any) => {
     const handleRowsPerPageChange = (val: Number) => {
         initPageState(serachData.PageSize, serachData?.PageNumber);
         dispatch(setRowsPerPage(val));
-        getData({ ...serachData, PageSize: val });
     }
     const handlePageChange = (val: Number) => {
         initPageState(rowsPerPage, val);
