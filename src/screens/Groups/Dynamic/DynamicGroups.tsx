@@ -188,7 +188,7 @@ const DynamicGroups = ({ classes }: any) => {
     }
 
     const getData = async (customSearch: any | never = null) => {
-        const search: any = { ...serachData, PageSize: rowsPerPage, ...customSearch };
+        const search: any = { ...serachData, PageSize: rowsPerPage || 6, ...customSearch };
         setLoader(true);
         // @ts-ignore
         await dispatch(getGroups(search));
@@ -1535,8 +1535,8 @@ const DynamicGroups = ({ classes }: any) => {
     }
     const handlePageChange = (val: Number) => {
         initPageState(rowsPerPage, val);
-        // const lastSearch = { ...serachData, PageIndex: val, PageSize: rowsPerPage };
-        // getData(lastSearch);
+        const lastSearch = { ...serachData, PageIndex: val, PageSize: rowsPerPage };
+        getData(lastSearch);
     }
     const renderTablePagination = () => {
         return (
