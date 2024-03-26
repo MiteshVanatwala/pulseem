@@ -209,7 +209,7 @@ const DynamicGroups = ({ classes }: any) => {
         else {
             getData();
         }
-    }, [, dispatch, rowsPerPage, serachData.SearchTerm]);
+    }, [serachData.SearchTerm]);
 
     // useEffect(() => {
     //     getData();
@@ -1521,7 +1521,8 @@ const DynamicGroups = ({ classes }: any) => {
             "PageNumber": pageIndex,
             "SearchData": (serachData.SearchTerm !== '') ? {
                 SearchTerm: serachData.SearchTerm,
-                PageIndex: pageIndex
+                PageIndex: pageIndex,
+                PageSize: pageSize
             } : null,
             "IsDynamic": true
         } as PageProperty);
@@ -1529,12 +1530,13 @@ const DynamicGroups = ({ classes }: any) => {
 
     const handleRowsPerPageChange = (val: Number) => {
         initPageState(serachData.PageSize, serachData?.PageNumber);
-        dispatch(setRowsPerPage(val))
+        dispatch(setRowsPerPage(val));
+        getData({ ...serachData, PageSize: val });
     }
     const handlePageChange = (val: Number) => {
         initPageState(rowsPerPage, val);
-        const lastSearch = { ...serachData, PageIndex: val };
-        getData(lastSearch);
+        // const lastSearch = { ...serachData, PageIndex: val, PageSize: rowsPerPage };
+        // getData(lastSearch);
     }
     const renderTablePagination = () => {
         return (
