@@ -228,6 +228,54 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                     </Grid>
                 </Grid>
             </Grid>
+            <Grid item xs={4} sm={4} md={4}>
+                <Grid container>
+                    <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
+                        <InputLabel className={classes.fBlack}>{t('common.state')}:</InputLabel>
+                        <TextField
+                            placeholder={t('common.state')}
+                            variant='outlined'
+                            size='small'
+                            value={data?.dynamicData.MyConditions[0]?.State}
+                            onChange={(event: any) => onUpdate('State', event.target.value)}
+                            className={clsx(classes.w100, classes.textField, classes.mt25)}
+                        />
+                    </Grid>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                        <SelectConditionType
+                            Disabled={data?.dynamicData.MyConditions[0]?.State === ''}
+                            OnUpdate={(event: any) => onUpdate('StateCond', event.target.value)}
+                            Value={data?.dynamicData.MyConditions[0]?.StateCond ?? CondType.Undefined}
+                            classes={classes}
+                            key={'StateCond'}
+                        />
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item xs={4} sm={4} md={4}>
+                <Grid container>
+                    <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
+                        <InputLabel className={classes.fBlack}>{t('common.cellphone')}:</InputLabel>
+                        <TextField
+                            placeholder={t('common.cellphone')}
+                            variant='outlined'
+                            size='small'
+                            value={data?.dynamicData.MyConditions[0]?.Cellphone}
+                            onChange={(event: any) => onUpdate('Cellphone', event.target.value)}
+                            className={clsx(classes.w100, classes.textField, classes.mt25)}
+                        />
+                    </Grid>
+                    <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
+                        <SelectConditionType
+                            Disabled={data?.dynamicData.MyConditions[0]?.Cellphone === ''}
+                            OnUpdate={(event: any) => onUpdate('CellphoneCond', event.target.value)}
+                            Value={data?.dynamicData.MyConditions[0]?.CellphoneCond ?? CondType.Undefined}
+                            classes={classes}
+                            key={'CellphoneCond'}
+                        />
+                    </Grid>
+                </Grid>
+            </Grid>
             <Box className={clsx(classes.fullWidth, classes.pt25)}>
                 <Accordion
                     expanded={showExtraFields}
