@@ -95,10 +95,14 @@ export interface CondGroup {
     LastNameCond: CondType;
     Email: string;
     EmailCond: CondType;
+    Cellphone: string;
+    CellphoneCond: CondType;
     City: string;
     CityCond: CondType;
     Country: string;
     CountryCond: CondType;
+    State: string;
+    StateCond: CondType;
     Company: string;
     ComapnyCond: CondType;
     BirthDateFrom: Date | string | null;
