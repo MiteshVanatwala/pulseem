@@ -52,7 +52,7 @@ import {
 import { GroupData } from '../../../Models/Groups/Group';
 import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
-import debounce from 'lodash.debounce';
+import debounce from "lodash/debounce";
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
