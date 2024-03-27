@@ -1532,7 +1532,7 @@ const DynamicGroups = ({ classes }: any) => {
     }
 
     const handleRowsPerPageChange = (val: Number) => {
-        dispatch(setRowsPerPage(val))
+        dispatch(setRowsPerPage(Number(val)))
     }
     const handlePageChange = (val: Number) => {
         SetPageState({
