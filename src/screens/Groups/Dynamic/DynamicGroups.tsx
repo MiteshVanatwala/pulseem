@@ -212,7 +212,7 @@ const DynamicGroups = ({ classes }: any) => {
     useEffect(() => {
         console.log('213');
         reSearch();
-    }, [dispatch, serachData.PageIndex, rowsPerPage]);
+    }, [serachData.PageIndex, rowsPerPage]);
 
     const reSearch = () => {
         const queryState = from?.toLowerCase().indexOf('editdynamicgroup') > -1;
