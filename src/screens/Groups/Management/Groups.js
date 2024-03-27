@@ -1572,7 +1572,7 @@ const Groups = ({ classes }) => {
 
     }
     const handleRowsPerPageChange = (val) => {
-        dispatch(setRowsPerPage(val))
+        dispatch(setRowsPerPage(`${val}`))
     }
     const handlePageChange = (val) => {
         SetPageState({

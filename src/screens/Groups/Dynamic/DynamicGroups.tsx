@@ -52,7 +52,6 @@ import {
 import { GroupData } from '../../../Models/Groups/Group';
 import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
-import debounce from "lodash/debounce";
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -205,14 +204,12 @@ const DynamicGroups = ({ classes }: any) => {
     useEffect(() => {
         const queryState = from?.toLowerCase().indexOf('editdynamicgroup') > -1;
         if (queryState || serachData.SearchTerm !== '') {
-            console.log('207');
-            debouncedReSearch();
+            reSearch();
         }
     }, [serachData.SearchTerm]);
 
     useEffect(() => {
-        console.log('213');
-        debouncedReSearch();
+        reSearch();
     }, [serachData.PageIndex, rowsPerPage]);
 
     const reSearch = () => {
@@ -238,10 +235,8 @@ const DynamicGroups = ({ classes }: any) => {
         }
 
         setSearchData(lastSearch);
-        console.log('238');
         getData(lastSearch);
     }
-    const debouncedReSearch = debounce(reSearch, 1000);
 
     useEffect(() => {
         if (qs?.NewGroup === 'true') {
@@ -302,7 +297,6 @@ const DynamicGroups = ({ classes }: any) => {
                                 } as PageProperty);
 
                                 setSearchStr("");
-                                console.log('301');
                                 getData(searchObject);
                             }}
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -1688,7 +1682,6 @@ const DynamicGroups = ({ classes }: any) => {
         await dispatch(deleteGroups(selectedGroups));
         await dispatch(getGroupsBySubAccountId())
         setSelectedGroups([]);
-        console.log('1687');
         getData(null);
         setLoader(false);
     };
