@@ -52,6 +52,7 @@ import {
 import { GroupData } from '../../../Models/Groups/Group';
 import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
+import debounce from 'lodash.debounce';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -205,13 +206,13 @@ const DynamicGroups = ({ classes }: any) => {
         const queryState = from?.toLowerCase().indexOf('editdynamicgroup') > -1;
         if (queryState || serachData.SearchTerm !== '') {
             console.log('207');
-            reSearch();
+            debouncedReSearch();
         }
     }, [serachData.SearchTerm]);
 
     useEffect(() => {
         console.log('213');
-        reSearch();
+        debouncedReSearch();
     }, [serachData.PageIndex, rowsPerPage]);
 
     const reSearch = () => {
@@ -240,6 +241,7 @@ const DynamicGroups = ({ classes }: any) => {
         console.log('238');
         getData(lastSearch);
     }
+    const debouncedReSearch = debounce(reSearch, 100);
 
     useEffect(() => {
         if (qs?.NewGroup === 'true') {
