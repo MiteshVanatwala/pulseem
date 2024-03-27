@@ -241,7 +241,7 @@ const DynamicGroups = ({ classes }: any) => {
         console.log('238');
         getData(lastSearch);
     }
-    const debouncedReSearch = debounce(reSearch, 100);
+    const debouncedReSearch = debounce(reSearch, 1000);
 
     useEffect(() => {
         if (qs?.NewGroup === 'true') {
