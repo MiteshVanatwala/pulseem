@@ -235,6 +235,7 @@ const DynamicGroups = ({ classes }: any) => {
         }
 
         setSearchData(lastSearch);
+        console.log('238');
         getData(lastSearch);
     }
 
@@ -297,6 +298,7 @@ const DynamicGroups = ({ classes }: any) => {
                                 } as PageProperty);
 
                                 setSearchStr("");
+                                console.log('301');
                                 getData(searchObject);
                             }}
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -1682,6 +1684,7 @@ const DynamicGroups = ({ classes }: any) => {
         await dispatch(deleteGroups(selectedGroups));
         await dispatch(getGroupsBySubAccountId())
         setSelectedGroups([]);
+        console.log('1687');
         getData(null);
         setLoader(false);
     };
