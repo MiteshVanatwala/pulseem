@@ -204,11 +204,13 @@ const DynamicGroups = ({ classes }: any) => {
     useEffect(() => {
         const queryState = from?.toLowerCase().indexOf('editdynamicgroup') > -1;
         if (queryState || serachData.SearchTerm !== '') {
+            console.log('207');
             reSearch();
         }
     }, [serachData.SearchTerm]);
 
     useEffect(() => {
+        console.log('213');
         reSearch();
     }, [dispatch, serachData.PageIndex, rowsPerPage]);
 
