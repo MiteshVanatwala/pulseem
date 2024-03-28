@@ -802,5 +802,6 @@
   "minPrice": "מחיר מינימלי",
   "maxPrice": "מחיר מקסימלי",
   "abandonedCart": "נטש עגלה ב",
-  "pageViewed": "צפה בעמוד ב"
+  "pageViewed": "צפה בעמוד ב",
+  "priceRangeError": "מחיר המקסימום גבוה ממחיר המינימום"
 }

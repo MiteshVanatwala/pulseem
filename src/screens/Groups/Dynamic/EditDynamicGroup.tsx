@@ -192,16 +192,36 @@ const EditDynamicGroup = ({ classes }: any) => {
     };
 
     const onSave = async () => {
+        let isValid = true;
         // Add validations
-        // IsPurchased && Range && required min & max - SpecificDates && required min & max 
-        // IsNotPurchased && Range && required min & max - SpecificDates && required min & max 
-        // IsAbandoned && Range && required min & max - SpecificDates && required min & max 
-        // IsPageViewed && Range && required min & max - SpecificDates && required min & max 
+        // IsPageViewed && Range && required min & max - SpecificDates && required min & max  
 
-        setLoader(true);
-        var requestObject = { Group: dynamicGroupModel?.Group, DynamicData: dynamicGroupModel?.dynamicData } as any;
-        const response = await dispatch(save(requestObject));
-        handleResponse(response.payload);
+        console.log('here');
+        if (dynamicGroupModel.dynamicData.MyActivities.IsPurchased &&
+            ((dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice === null || !dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice === null)
+                || (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice)))) {
+            isValid = false;
+        }
+        else if (dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased &&
+            ((dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice === null || dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMaxPrice === null)
+                || (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMaxPrice)))) {
+            isValid = false;
+        }
+        else if (dynamicGroupModel.dynamicData.MyActivities.IsAbandoned &&
+            ((dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice === null || dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice === null)
+                || parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice))) {
+            isValid = false;
+        }
+
+        if (isValid) {
+            setLoader(true);
+            var requestObject = { Group: dynamicGroupModel?.Group, DynamicData: dynamicGroupModel?.dynamicData } as any;
+            const response = await dispatch(save(requestObject));
+            handleResponse(response.payload);
+        }
+        else {
+
+        }
     }
 
     const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)

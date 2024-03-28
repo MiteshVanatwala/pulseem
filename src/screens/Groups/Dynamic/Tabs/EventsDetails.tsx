@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import {
-    Grid, FormControl, MenuItem, Checkbox, FormControlLabel, InputLabel, TextField, Button
+    Grid, FormControl, MenuItem, Checkbox, FormControlLabel, InputLabel, TextField, Button, FormHelperText
 } from '@material-ui/core'
 import 'moment/locale/he';
 import { Select } from '@mui/material';
@@ -137,6 +137,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                             <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                                 <InputLabel className={classes.fBlack}>{t('common.minPrice')}:</InputLabel>
                                 <TextField
+                                    id="purchaseMinPrice"
                                     placeholder={t('common.minPrice')}
                                     variant='outlined'
                                     size='small'
@@ -148,13 +149,16 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                             <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                                 <InputLabel className={classes.fBlack}>{t('common.maxPrice')}:</InputLabel>
                                 <TextField
+                                    id="purchaseMaxPrice"
                                     placeholder={t('common.maxPrice')}
                                     variant='outlined'
                                     size='small'
                                     value={data.dynamicData?.MyActivities.IsPurchasedMaxPrice}
                                     onChange={(event: any) => onUpdate('IsPurchasedMaxPrice', event.target.value.trim())}
-                                    className={clsx(classes.w100, classes.textField)}
+                                    className={clsx(classes.w100, classes.textField, parseInt(data.dynamicData?.MyActivities.IsPurchasedMaxPrice) < parseInt(data.dynamicData?.MyActivities.IsPurchasedMinPrice) ? classes.error : null)}
                                 />
+                                {parseInt(data.dynamicData?.MyActivities.IsPurchasedMaxPrice) < parseInt(data.dynamicData?.MyActivities.IsPurchasedMinPrice) &&
+                                    <FormHelperText className={classes.red}>{t('common.priceRangeError')}</FormHelperText>}
                             </Grid>
                         </Grid>
                     </Grid>
@@ -277,6 +281,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                             <InputLabel className={classes.fBlack}>{t('common.minPrice')}:</InputLabel>
                             <TextField
+                                id="notPurchaseMinPrice"
                                 placeholder={t('common.minPrice')}
                                 variant='outlined'
                                 size='small'
@@ -288,13 +293,16 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                             <InputLabel className={classes.fBlack}>{t('common.maxPrice')}:</InputLabel>
                             <TextField
+                                id="notPurchaseMaxPrice"
                                 placeholder={t('common.maxPrice')}
                                 variant='outlined'
                                 size='small'
                                 value={data.dynamicData?.MyActivities.IsNotPurchasedMaxPrice}
                                 onChange={(event: any) => onUpdate('IsNotPurchasedMaxPrice', event.target.value.trim())}
-                                className={clsx(classes.w100, classes.textField)}
+                                className={clsx(classes.w100, classes.textField, parseInt(data.dynamicData?.MyActivities.IsNotPurchasedMaxPrice) < parseInt(data.dynamicData?.MyActivities.IsNotPurchasedMinPrice) ? classes.error : null)}
                             />
+                            {parseInt(data.dynamicData?.MyActivities.IsNotPurchasedMaxPrice) < parseInt(data.dynamicData?.MyActivities.IsNotPurchasedMinPrice) &&
+                                <FormHelperText className={classes.red}>{t('common.priceRangeError')}</FormHelperText>}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -417,6 +425,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                             <InputLabel className={classes.fBlack}>{t('common.minPrice')}:</InputLabel>
                             <TextField
+                                id="abandonedMinPrice"
                                 placeholder={t('common.minPrice')}
                                 variant='outlined'
                                 size='small'
@@ -428,13 +437,16 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                             <InputLabel className={classes.fBlack}>{t('common.maxPrice')}:</InputLabel>
                             <TextField
+                                id="abandonedMaxPrice"
                                 placeholder={t('common.maxPrice')}
                                 variant='outlined'
                                 size='small'
                                 value={data.dynamicData?.MyActivities.IsAbandonedMaxPrice}
                                 onChange={(event: any) => onUpdate('IsAbandonedMaxPrice', event.target.value.trim())}
-                                className={clsx(classes.w100, classes.textField)}
+                                className={clsx(classes.w100, classes.textField, parseInt(data.dynamicData?.MyActivities.IsAbandonedMaxPrice) < parseInt(data.dynamicData?.MyActivities.IsAbandonedMinPrice) ? classes.error : null)}
                             />
+                            {parseInt(data.dynamicData?.MyActivities.IsAbandonedMaxPrice) < parseInt(data.dynamicData?.MyActivities.IsAbandonedMinPrice) &&
+                                <FormHelperText className={classes.red}>{t('common.priceRangeError')}</FormHelperText>}
                         </Grid>
                     </Grid>
                 </Grid>
