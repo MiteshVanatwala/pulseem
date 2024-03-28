@@ -25,12 +25,11 @@ const SelectConditionType = (args: IntervalArgs) => {
     >
       <Select
         native
-        disabled={Disabled}
         variant='standard'
         value={Value ?? undefined}
         onChange={OnUpdate}
         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-        className={clsx(classes.w100, classes.mt20, Disabled ? classes.disabled : null)}
+        className={clsx(classes.w100, classes.mt20)}
         style={{ border: 'none' }}
         MenuProps={{
           PaperProps: {
@@ -42,10 +41,10 @@ const SelectConditionType = (args: IntervalArgs) => {
       >
         {/* @ts-ignore */}
         <option name={t('common.select')} value={CondType.Undefined}>{t('common.select')}</option>
-        <option value={CondType.Equal}>{t('common.equal')}</option>
-        <option value={CondType.Like}>{t('common.like')}</option>
-        <option value={CondType.NotEqual}>{t('common.notEqual')}</option>
-        <option value={CondType.StartsWith}>{t('common.startsWith')}</option>
+        <option value={CondType.Equal} disabled={Disabled}>{t('common.equal')}</option>
+        <option value={CondType.Like} disabled={Disabled}>{t('common.like')}</option>
+        <option value={CondType.NotEqual} disabled={Disabled}>{t('common.notEqual')}</option>
+        <option value={CondType.StartsWith} disabled={Disabled}>{t('common.startsWith')}</option>
         <option value={CondType.NoValue}>{t('common.noValue')}</option>
       </Select>
     </FormControl>

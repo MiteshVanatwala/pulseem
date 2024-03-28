@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import {
-    Grid, FormControl, Checkbox, FormControlLabel, Button
+    Grid, Checkbox, FormControlLabel, Button
 } from '@material-ui/core'
 import 'moment/locale/he';
 import { ActivtyTimeInterval } from '../../../../Models/Groups/DynamicGroup';
@@ -20,7 +20,6 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 <FormControlLabel
                     control={
                         <Checkbox
-                            disabled={data.dynamicData?.MyActivities?.IsNotOpened === true && !data.dynamicData?.MyActivities?.IsOpened}
                             onChange={(event: any) => onUpdate('IsOpened', !!event.target.checked)}
                             checked={!!data.dynamicData?.MyActivities?.IsOpened}
                             name="openedinlast"
@@ -100,7 +99,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 <FormControlLabel
                     control={
                         <Checkbox
-                            disabled={data.dynamicData?.MyActivities?.IsOpened === true}
+                            // disabled={data.dynamicData?.MyActivities?.IsOpened === true}
                             checked={!!data.dynamicData?.MyActivities.IsNotOpened}
                             onChange={(event: any) => onUpdate('IsNotOpened', !!event.target.checked)}
                             name="notopenedinlast"
@@ -180,7 +179,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 <FormControlLabel
                     control={
                         <Checkbox
-                            disabled={data.dynamicData?.MyActivities.IsNotClicked === true || data.dynamicData?.MyActivities.IsNotOpened === true}
+                            // disabled={data.dynamicData?.MyActivities.IsNotClicked === true || data.dynamicData?.MyActivities.IsNotOpened === true}
                             checked={!!data.dynamicData?.MyActivities.IsClicked}
                             onChange={(event: any) => onUpdate('IsClicked', !!event.target.checked)}
                             name="notopenedinlast"
@@ -260,7 +259,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 <FormControlLabel
                     control={
                         <Checkbox
-                            disabled={data.dynamicData?.MyActivities.IsClicked === true}
+                            // disabled={data.dynamicData?.MyActivities.IsClicked === true}
                             checked={!!data.dynamicData?.MyActivities.IsNotClicked}
                             onChange={(event: any) => onUpdate('IsNotClicked', !!event.target.checked)}
                             name="notopenedinlast"
