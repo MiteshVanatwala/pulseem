@@ -808,5 +808,6 @@
   "minPrice": "Minimum Price",
   "maxPrice": "Maximum Price",
   "abandonedCart": "Abandoned Cart in",
-  "pageViewed": "Page Viewed in"
+  "pageViewed": "Page Viewed in",
+  "priceRangeError": "Maximum price cannot be larger then Minimum Price"
 }
