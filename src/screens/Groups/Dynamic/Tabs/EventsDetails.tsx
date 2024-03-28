@@ -53,7 +53,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     />
                 </Grid>
                 {
-                    data.dynamicData?.MyActivities.IsPurchasedInterval === ActivtyTimeInterval.SpecificDates && (
+                    data.dynamicData?.MyActivities.IsPurchasedInterval.toString() === ActivtyTimeInterval.SpecificDates && (
                         <Grid item xs={12} sm={3} md={3} className={classes.pt5}>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
@@ -193,7 +193,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     />
                 </Grid>
                 {
-                    data.dynamicData?.MyActivities.IsNotPurchasedInterval === ActivtyTimeInterval.SpecificDates && (
+                    data.dynamicData?.MyActivities.IsNotPurchasedInterval.toString() === ActivtyTimeInterval.SpecificDates && (
                         <Grid item xs={12} sm={3} md={3} className={classes.pt5}>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
@@ -333,7 +333,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     />
                 </Grid>
                 {
-                    data.dynamicData?.MyActivities.IsAbandonedInterval === ActivtyTimeInterval.SpecificDates && (
+                    data.dynamicData?.MyActivities.IsAbandonedInterval.toString() === ActivtyTimeInterval.SpecificDates && (
                         <Grid item xs={12} sm={3} md={3} className={classes.pt5}>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
