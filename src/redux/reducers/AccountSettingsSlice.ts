@@ -120,8 +120,17 @@ export const setBypassPending = createAsyncThunk(
     }
 );
 
-
-
+export const getAllTwoFactorAuthValues = createAsyncThunk(
+    'authorization/GetAllTwoFactorAuthValues',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`authorization/GetAllTwoFactorAuthValues`)
+            return response.data;
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
 
 interface AuthorizationValues {
     value: string,
@@ -161,7 +170,11 @@ const AccountSettingsSlice = createSlice({
             StatusCode: 200,
             Message: '',
             Data: ''
-        } as PulseemResponse
+        } as PulseemResponse,
+        authorizedValues: {
+            Emails: [],
+            Cellphones: []
+        } as any
     },
     reducers: {
         resetTwoFA: (state) => {
@@ -179,6 +192,11 @@ const AccountSettingsSlice = createSlice({
         builder.addCase(update2FASettings.fulfilled, (state, action) => {
             state.twoFAUpdated = action.payload;
         })
+        builder.addCase(getAllTwoFactorAuthValues.fulfilled, (state, action) => {
+            state.authorizedValues.Emails = action.payload?.Data?.Emails;
+            state.authorizedValues.Cellphones = action.payload?.Data?.Cellphones;
+        })
+
     },
 })
 

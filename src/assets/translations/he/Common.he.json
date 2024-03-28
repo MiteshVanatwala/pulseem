@@ -789,5 +789,7 @@
   "parameters": "פרמטרים",
   "accessibility": "הוסף תמיכה בנגישות",
   "typeKey": "הזן משתנה",
-  "typeValue": "הזן ערך"
+  "typeValue": "הזן ערך",
+  "verifyByEmail": "אימות באימייל",
+  "verifyBySms": "אימות ב-SMS"
 }

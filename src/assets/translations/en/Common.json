@@ -795,5 +795,7 @@
   "parameters": "Parameters",
   "accessibility": "Add accessibility support",
   "typeKey": "Type Key",
-  "typeValue": "Type Value"
+  "typeValue": "Type Value",
+  "verifyByEmail": "Via Email",
+  "verifyBySms": "Via SMS"
 }

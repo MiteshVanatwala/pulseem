@@ -32,6 +32,7 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import moment from 'moment';
 import { setBypassPending } from '../../../redux/reducers/AccountSettingsSlice';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import DisableOtpPopup from './Popups/DisableOtpPopup';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -399,7 +400,12 @@ const FORM_ACCOUNT_DETAILS = ({
 					</Grid>
 				</Grid>
 			</Box>
-			{otpRegulationDialog()}
+			{showOtpRegulationDialog && <DisableOtpPopup
+				classes={classes}
+				onClose={() => { setShowOtpRegulationDialog(false) }}
+				onConfirm={handleConfirmOtpRegulation}
+			/>}
+			{/* {otpRegulationDialog()} */}
 		</Box>
 	);
 };
