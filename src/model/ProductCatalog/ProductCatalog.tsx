@@ -44,11 +44,12 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const [direction, setDirection] = useState(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
 
   useEffect(() => {
-    if (structure === Structure.Vertical && productOrder === Structure.Horizontal && isSingleOrMultiple === Items.Multiple) {
+    if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
       setMaxProducts(4);
       setDescriptionVisibility(false);
     } else {
       setMaxProducts(2);
+      setDescriptionVisibility(true);
     }
     if (productOrder === Structure.Vertical && structure === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
       setDirection(Direction.Center);
@@ -92,32 +93,48 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     dynamicRow['metadata']["direction"] = direction.toUpperCase();
     dynamicRow['metadata']["order"] = productOrder;
     dynamicRow['metadata']["category"] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
-    var productJSON: any = getProductJSON();
-    if (uptoProducts > 0) {
-      if (productOrder === Structure.Horizontal) {
-        for (let ind = 0; ind < uptoProducts; ind++) {
-          dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
-        }
-      } else if (productOrder === Structure.Vertical) {
-        var modules: any = [];
-        for (let ind = 0; ind < uptoProducts; ind++) {
-          for (let indJ = 0; indJ < productJSON.length; indJ++) {
-            modules = modules.concat(productJSON[indJ]['modules']);
-          }
-          if (ind < uptoProducts - 1) modules = modules.concat(PulDivider);
-        }
 
-        if (structure === Structure.Vertical) {
-          productJSON[0]['modules'] = modules;
-          dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
-        } else {
+    if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
+      var productJSON: any = getProductJSON();
+      productJSON[0]['grid-columns'] = 4;
+      productJSON[1]['grid-columns'] = 8;
+      const mod0 = productJSON[0]['modules'];
+      const mod1 = productJSON[1]['modules'];
+      for (let ind=1; ind<uptoProducts; ind++) {
+        productJSON[0]['modules'] = productJSON[0]['modules'].concat(mod0);
+        productJSON[1]['modules'] = productJSON[1]['modules'].concat(mod1);
+      }
+      dynamicRow['columns'].push(productJSON[0]);
+      dynamicRow['columns'].push(productJSON[1]);
+    } else {
+      var productJSON: any = getProductJSON();
+      console.log(productJSON)
+      if (uptoProducts > 0) {
+        if (productOrder === Structure.Horizontal) {
           for (let ind = 0; ind < uptoProducts; ind++) {
             dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
-            dynamicRow['columns'] = dynamicRow['columns'].concat(PulDivider as any);
+          }
+        } else if (productOrder === Structure.Vertical) {
+          var modules: any = [];
+          for (let ind = 0; ind < uptoProducts; ind++) {
+            for (let indJ = 0; indJ < productJSON.length; indJ++) {
+              modules = modules.concat(productJSON[indJ]['modules']);
+            }
+            if (ind < uptoProducts - 1) modules = modules.concat(PulDivider);
+          }
+  
+          if (structure === Structure.Vertical) {
+            productJSON[0]['modules'] = modules;
+            dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
+          } else {
+            for (let ind = 0; ind < uptoProducts; ind++) {
+              dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
+              dynamicRow['columns'] = dynamicRow['columns'].concat(PulDivider as any);
+            }
           }
         }
-      }
-    } else dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
+      } else dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
+    }
 
     save({
       success: true,
@@ -139,6 +156,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['image']['src'] = NO_IMAGE_URL;
         image['descriptor']['image']['style']['text-align'] = alignment;
         image['descriptor']['style']['text-align'] = alignment;
+        if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple == Items.Multiple) {
+          image['descriptor']['style']['padding-bottom'] = '25px';
+        }
         productCol['modules'].push(image);
         productCol['grid-columns'] = imageCol;
         productJSON.push(productCol);
@@ -413,6 +433,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     control={
                       <Checkbox
                         defaultChecked={isFilterByEventType}
+                        checked={isFilterByEventType}
                         onChange={(event) => setFilterIsByEventType(event.target.checked)}
                         name="by_event_type"
                         color="primary"
@@ -454,6 +475,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     control={
                       <Checkbox
                         defaultChecked={isFilterIsByProductCategory}
+                        checked={isFilterIsByProductCategory}
                         onChange={(event) => setFilterIsByProductCategory(event.target.checked)}
                         name="by_product_category"
                         color="primary"
@@ -497,6 +519,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     control={
                       <Checkbox
                         defaultChecked={isImageVisible}
+                        checked={isImageVisible}
                         onChange={(event) => setImageVisibility(event.target.checked)}
                         name="display"
                         color="primary"
@@ -511,6 +534,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     control={
                       <Checkbox
                         defaultChecked={isNameVisible}
+                        checked={isNameVisible}
                         onChange={(event) => setNameVisibility(event.target.checked)}
                         name="display"
                         color="primary"
@@ -526,6 +550,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     control={
                       <Checkbox
                         defaultChecked={isDescriptionVisible}
+                        checked={isDescriptionVisible}
                         onChange={(event) => setDescriptionVisibility(event.target.checked)}
                         name="display"
                         color="primary"
@@ -541,6 +566,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     control={
                       <Checkbox
                         defaultChecked={isPriceVisible}
+                        checked={isPriceVisible}
                         onChange={(event) => setPriceVisibility(event.target.checked)}
                         name="display"
                         color="primary"
@@ -556,6 +582,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                     control={
                       <Checkbox
                         defaultChecked={isButtonVisible}
+                        checked={isButtonVisible}
                         onChange={(event) => setButtonVisibility(event.target.checked)}
                         name="display"
                         color="primary"
