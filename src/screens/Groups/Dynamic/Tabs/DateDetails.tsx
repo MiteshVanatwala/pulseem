@@ -164,11 +164,10 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                 </Grid>
             </Grid>
 
-            <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
+            {/* <Grid item xs={6} sm={6} md={6} className={clsx(classes.p10)}>
                 <InputLabel className={classes.fBlack}>{t('common.createFrom')}:</InputLabel>
                 <Grid container spacing={3} className={clsx(classes.pt25)}>
                     <Grid item xs={6} sm={6} md={6}>
-                        {/* @ts-ignore */}
                         <DateField
                             toolbarDisabled={false}
                             classes={classes}
@@ -190,7 +189,6 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                     </Grid>
 
                     <Grid item xs={6} sm={6} md={6}>
-                        {/* @ts-ignore */}
                         <DateField
                             toolbarDisabled={false}
                             classes={classes}
@@ -211,7 +209,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                         }
                     </Grid>
                 </Grid>
-            </Grid>
+            </Grid> */}
         </Grid>
     )
 }

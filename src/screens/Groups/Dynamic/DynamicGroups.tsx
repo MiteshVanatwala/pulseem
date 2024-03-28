@@ -223,7 +223,7 @@ const DynamicGroups = ({ classes }: any) => {
         }
 
         SetPageState({
-            "PageName": "dynamicGroups",
+            "PageName": `${sitePrefix}Groups/Dynamic`,
             "PageNumber": lastSearch?.PageNumber,
             "SearchData": lastSearch,
             "SearchTerm": lastSearch.SearchTerm,
@@ -289,7 +289,7 @@ const DynamicGroups = ({ classes }: any) => {
                                 setSearchData(searchObject);
 
                                 SetPageState({
-                                    "PageName": "dynamicGroups",
+                                    "PageName": `${sitePrefix}Groups/Dynamic`,
                                     "PageNumber": 1,
                                     "SearchData": searchObject,
                                     "SearchTerm": "",
@@ -641,7 +641,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("campaigns.recipients"),
-                                                value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0),
+                                                value: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0))?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -679,7 +679,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Active"),
-                                                value: ActiveEmails,
+                                                value: ActiveEmails?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -717,7 +717,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Removed"),
-                                                value: RemovedEmails,
+                                                value: RemovedEmails?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -756,7 +756,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Bounced"),
-                                                value: InvalidEmails,
+                                                value: InvalidEmails?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -795,7 +795,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Pending"),
-                                                value: PendingClients || 0,
+                                                value: PendingClients?.toLocaleString() || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -844,7 +844,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("campaigns.recipients"),
-                                                value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0),
+                                                value: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0))?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -882,7 +882,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Active"),
-                                                value: ActiveCell,
+                                                value: ActiveCell?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -920,7 +920,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Removed"),
-                                                value: RemovedCell,
+                                                value: RemovedCell?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -959,7 +959,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Bounced"),
-                                                value: InvalidCell,
+                                                value: InvalidCell?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -998,7 +998,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Pending"),
-                                                value: PendingSmsClients || 0,
+                                                value: PendingSmsClients?.toLocaleString() || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -1006,7 +1006,7 @@ const DynamicGroups = ({ classes }: any) => {
                                                 },
                                                 onClick: (e: any) => {
                                                     e?.preventDefault();
-                                                    if ((PendingSmsClients || 0) > 0) {
+                                                    if ((PendingSmsClients?.toLocaleString() || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1514,7 +1514,7 @@ const DynamicGroups = ({ classes }: any) => {
         setSearchData(searchObject);
 
         SetPageState({
-            "PageName": "dynamicGroups",
+            "PageName": `${sitePrefix}Groups/Dynamic`,
             "PageNumber": pageIndex,
             "SearchData": (serachData.SearchTerm !== '') ? {
                 SearchTerm: serachData.SearchTerm,
