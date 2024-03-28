@@ -42,7 +42,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
-                    data.dynamicData?.MyActivities.IsOpenedInterval === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsOpened && (
+                    data.dynamicData?.MyActivities.IsOpenedInterval.toString() === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsOpened && (
                         <>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
@@ -122,7 +122,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
-                    data.dynamicData?.MyActivities.IsNotOpenedInterval === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsNotOpened && (
+                    data.dynamicData?.MyActivities.IsNotOpenedInterval.toString() === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsNotOpened && (
                         <>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
@@ -202,7 +202,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
-                    data.dynamicData?.MyActivities.IsClickedInterval === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsClicked && (
+                    data.dynamicData?.MyActivities.IsClickedInterval.toString() === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsClicked && (
                         <>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
@@ -282,7 +282,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
                 {
-                    data.dynamicData?.MyActivities.IsNotClickedInterval === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsNotClicked && (
+                    data.dynamicData?.MyActivities.IsNotClickedInterval.toString() === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsNotClicked && (
                         <>
                             <Grid container spacing={3}>
                                 <Grid item xs={6} sm={6} md={6}>
