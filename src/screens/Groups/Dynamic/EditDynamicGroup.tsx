@@ -318,7 +318,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 ...dynamicGroupModel,
                 dynamicData: {
                     ...dynamicGroupModel.dynamicData,
-                    MyGroups: []
+                    MyGroups: groups.map((value: Group) => value.GroupID)
                 }
             });
         }
