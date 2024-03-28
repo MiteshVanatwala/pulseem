@@ -1,19 +1,22 @@
 import clsx from 'clsx';
 import {
-    Grid, TextField, FormControl, InputLabel, MenuItem, Box, Accordion, AccordionSummary, Typography, makeStyles, AccordionDetails, Button
+    Grid, TextField,
+    // FormControl, InputLabel, MenuItem,
+    // Button,
+    Box, Accordion, AccordionSummary, Typography, makeStyles, AccordionDetails,
 } from '@material-ui/core'
 import 'moment/locale/he';
-import { Select } from '@mui/material';
-import { IoIosArrowDown } from 'react-icons/io';
+// import { Select } from '@mui/material';
+// import { IoIosArrowDown } from 'react-icons/io';
 import { CondType } from '../../../../Models/Groups/DynamicGroup';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAccountExtraData } from '../../../../redux/reducers/smsSlice';
 import { useEffect, useState } from 'react';
 import { GrFormAdd, GrFormSubtract } from 'react-icons/gr';
-import { DateField } from '../../../../components/managment';
-import moment from 'moment';
-import { DateFormats } from '../../../../helpers/Constants';
+// import { DateField } from '../../../../components/managment';
+// import moment from 'moment';
+// import { DateFormats } from '../../../../helpers/Constants';
 import SelectConditionType from '../Components/SelectConditionType';
 
 const useStyles = makeStyles({
@@ -87,14 +90,19 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10, classes.pb25)}>
-                        <InputLabel className={classes.fBlack}>{t('common.first_name')}:</InputLabel>
+                        {/* <InputLabel className={classes.fBlack}>{t('common.first_name')}:</InputLabel> */}
                         <TextField
-                            placeholder={t('common.first_name')}
-                            variant='outlined'
+                            label={t('common.first_name')}
+                            variant='standard'
                             size='small'
                             value={data.dynamicData.MyConditions[0]?.FirstName}
                             onChange={(event: any) => onUpdate('FirstName', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17
+                                }
+                            }}
                         />
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
@@ -111,14 +119,18 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                        <InputLabel className={classes.fBlack}>{t('common.last_name')}:</InputLabel>
                         <TextField
-                            placeholder={t('common.last_name')}
-                            variant='outlined'
+                            label={t('common.last_name')}
+                            variant='standard'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.LastName}
                             onChange={(event: any) => onUpdate('LastName', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17
+                                }
+                            }}
                         />
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
@@ -135,14 +147,18 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                        <InputLabel className={classes.fBlack}>{t('common.email')}:</InputLabel>
                         <TextField
-                            placeholder={t('common.email')}
-                            variant='outlined'
+                            label={t('common.email')}
+                            variant='standard'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Email}
                             onChange={(event: any) => onUpdate('Email', event.target.value.trim())}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17
+                                }
+                            }}
                         />
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
@@ -159,14 +175,18 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                        <InputLabel className={classes.fBlack}>{t('common.country')}:</InputLabel>
                         <TextField
-                            placeholder={t('common.country')}
-                            variant='outlined'
+                            label={t('common.country')}
+                            variant='standard'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Country}
                             onChange={(event: any) => onUpdate('Country', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17
+                                }
+                            }}
                         />
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
@@ -183,14 +203,18 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                        <InputLabel className={classes.fBlack}>{t('common.city')}:</InputLabel>
                         <TextField
-                            placeholder={t('common.city')}
-                            variant='outlined'
+                            label={t('common.city')}
+                            variant='standard'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.City}
                             onChange={(event: any) => onUpdate('City', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17
+                                }
+                            }}
                         />
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
@@ -207,14 +231,18 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                        <InputLabel className={classes.fBlack}>{t('common.company')}:</InputLabel>
                         <TextField
-                            placeholder={t('common.company')}
-                            variant='outlined'
+                            label={t('common.company')}
+                            variant='standard'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Company}
                             onChange={(event: any) => onUpdate('Company', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17
+                                }
+                            }}
                         />
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
@@ -231,14 +259,18 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                        <InputLabel className={classes.fBlack}>{t('common.state')}:</InputLabel>
                         <TextField
-                            placeholder={t('common.state')}
-                            variant='outlined'
+                            label={t('common.state')}
+                            variant='standard'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.State}
                             onChange={(event: any) => onUpdate('State', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17
+                                }
+                            }}
                         />
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
@@ -255,14 +287,18 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={4} sm={4} md={4}>
                 <Grid container>
                     <Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                        <InputLabel className={classes.fBlack}>{t('common.cellphone')}:</InputLabel>
                         <TextField
-                            placeholder={t('common.cellphone')}
-                            variant='outlined'
+                            label={t('common.cellphone')}
+                            variant='standard'
                             size='small'
                             value={data?.dynamicData.MyConditions[0]?.Cellphone}
                             onChange={(event: any) => onUpdate('Cellphone', event.target.value)}
                             className={clsx(classes.w100, classes.textField, classes.mt25)}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17
+                                }
+                            }}
                         />
                     </Grid>
                     <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
@@ -303,11 +339,9 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                 return <Grid item xs={4} sm={4} md={4} key={fieldName ?? field}>
                                     <Grid container>
                                         {field.toLowerCase().indexOf('date') > -1 ? (
-                                            <><Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                                                <InputLabel className={classes.fBlack}>{fieldName ?? field}:</InputLabel>
-                                            </Grid>
+                                            <>
                                                 {/* @ts-ignore */}
-                                                <DateField
+                                                {/* <DateField
                                                     toolbarDisabled={false}
                                                     classes={classes}
                                                     value={data.dynamicData.MyConditions[0][field]}
@@ -323,16 +357,20 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                                 />
                                                 {
                                                     data.dynamicData.MyConditions[0][field] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(field, null)}>{t("recipient.reset")}</Button>
-                                                }
+                                                } */}
                                             </>) : (<><Grid item xs={8} sm={8} md={8} className={clsx(classes.p10)}>
-                                                <InputLabel className={classes.fBlack}>{fieldName ?? field}:</InputLabel>
                                                 <TextField
-                                                    placeholder={fieldName ?? field}
-                                                    variant='outlined'
+                                                    label={fieldName ?? field}
+                                                    variant='standard'
                                                     size='small'
                                                     value={data.dynamicData.MyConditions[0][field]}
                                                     onChange={(event: any) => onUpdate(field, event.target.value)}
                                                     className={clsx(classes.w100, classes.textField, classes.mt25)}
+                                                    InputLabelProps={{
+                                                        style: {
+                                                            fontSize: 17
+                                                        }
+                                                    }}
                                                 />
                                             </Grid>
                                                 <Grid item xs={4} sm={4} md={4} className={clsx(classes.p10, classes.mt15)}>
@@ -343,7 +381,8 @@ const PersonalDetails = ({ classes, data, onUpdate }: any) => {
                                                         classes={classes}
                                                         key={`${field}Cond`}
                                                     />
-                                                </Grid></>
+                                                </Grid>
+                                            </>
                                         )}
                                     </Grid>
                                 </Grid>
