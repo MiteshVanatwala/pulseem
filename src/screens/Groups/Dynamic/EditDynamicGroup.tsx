@@ -27,6 +27,7 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
 import { Title } from '../../../components/managment/Title';
 import DefaultScreen from '../../DefaultScreen';
+import { GiExitDoor } from 'react-icons/gi';
 
 const EditDynamicGroup = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -191,12 +192,11 @@ const EditDynamicGroup = ({ classes }: any) => {
         return <Toast customData={toastMessage} data={null} />;
     };
 
-    const onSave = async () => {
+    const onSave = async (isExit: boolean | never = false) => {
         let isValid = true;
         // Add validations
         // IsPageViewed && Range && required min & max - SpecificDates && required min & max  
 
-        console.log('here');
         if (dynamicGroupModel.dynamicData.MyActivities.IsPurchased &&
             ((dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice === null || !dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice === null)
                 || (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice)))) {
@@ -217,7 +217,7 @@ const EditDynamicGroup = ({ classes }: any) => {
             setLoader(true);
             var requestObject = { Group: dynamicGroupModel?.Group, DynamicData: dynamicGroupModel?.dynamicData } as any;
             const response = await dispatch(save(requestObject));
-            handleResponse(response.payload);
+            handleResponse(response.payload, isExit);
         }
         else {
 
@@ -226,10 +226,16 @@ const EditDynamicGroup = ({ classes }: any) => {
 
     const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
 
-    const handleResponse = (response: any) => {
+    const handleResponse = async (response: any, isExit: boolean = false) => {
         switch (response.StatusCode) {
             case 201: {
-                getData(true);
+                await getData(true);
+                if (isExit) {
+                    // setLoader(false);
+                    setTimeout(() => {
+                        onBack();
+                    }, 1500);
+                }
                 break;
             }
             case 400: { // Group does not updated due to incorrect data
@@ -703,9 +709,20 @@ const EditDynamicGroup = ({ classes }: any) => {
                                 style={{ margin: '8px' }}
                                 startIcon={<BiSave />}
                                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                                onClick={onSave}
-                            >
+                                onClick={() => { onSave(false) }}>
                                 {t("common.save")}
+                            </Button>
+                            <Button
+                                className={clsx(
+                                    classes.btn,
+                                    classes.btnRounded
+                                )}
+                                style={{ margin: '8px' }}
+                                startIcon={<GiExitDoor />}
+                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                onClick={() => { onSave(true) }}
+                            >
+                                {t("common.SaveExit")}
                             </Button>
                         </Box>
                     </Box>
