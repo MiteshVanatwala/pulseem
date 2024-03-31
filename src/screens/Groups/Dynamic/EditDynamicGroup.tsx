@@ -208,8 +208,8 @@ const EditDynamicGroup = ({ classes }: any) => {
             isValid = false;
         }
         else if (dynamicGroupModel.dynamicData.MyActivities.IsAbandoned &&
-            ((dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice === null || dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice === null)
-                || parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice))) {
+            ((dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice === null || dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMaxPrice === null)
+                || parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMaxPrice))) {
             isValid = false;
         }
 
