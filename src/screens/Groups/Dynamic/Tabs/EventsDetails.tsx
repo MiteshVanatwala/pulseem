@@ -14,7 +14,7 @@ import moment from 'moment';
 import { DateFormats } from '../../../../helpers/Constants';
 import SelectComparingType from '../Components/SelectComparingType';
 
-const EventsDetails = ({ classes, data, onUpdate }: any) => {
+const EventsDetails = ({ classes, data, onUpdate, onResetPrices }: any) => {
     const { t } = useTranslation();
     const [optionsDisabled, setOptionDisabled] = useState<boolean>(false);
 
@@ -24,6 +24,19 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
             data.dynamicData?.MyActivities.IsAbandoned /* || data.dynamicData?.MyActivities.IsPageViewed */
         )
     }, [data.dynamicData?.MyActivities]);
+
+    useEffect(() => {
+        if (data.dynamicData?.MyActivities?.IsAbandonedComparingType?.toString() === ActivityEvent.Any ||
+            data.dynamicData?.MyActivities?.IsPurchasedComparingType?.toString() === ActivityEvent.Any ||
+            data.dynamicData?.MyActivities?.IsNotPurchasedComparingType?.toString() === ActivityEvent.Any) {
+            onResetPrices();
+        }
+
+    }, [
+        data.dynamicData?.MyActivities?.IsAbandonedComparingType,
+        data.dynamicData?.MyActivities?.IsPurchasedComparingType,
+        data.dynamicData?.MyActivities?.IsNotPurchasedComparingType
+    ]);
 
     const renderIsPurchased = () => {
         return (
@@ -108,7 +121,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                 <Grid item xs={6} sm={6} md={2}>
                     <SelectComparingType
                         Disabled={!data.dynamicData?.MyActivities.IsPurchased}
-                        Value={data.dynamicData?.MyActivities.IsPurchasedComparingType ?? ActivityEvent.Any}
+                        Value={data.dynamicData?.MyActivities.IsPurchasedComparingType || ActivityEvent.Any}
                         OnUpdate={(event: any) => onUpdate('IsPurchasedComparingType', event.target.value)}
                         classes={classes}
                         key={'IsPurchasedComparingType'}
@@ -252,7 +265,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                 <Grid item xs={6} sm={6} md={2}>
                     <SelectComparingType
                         Disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
-                        Value={data.dynamicData?.MyActivities.IsNotPurchasedComparingType ?? ActivityEvent.Any}
+                        Value={data.dynamicData?.MyActivities.IsNotPurchasedComparingType || ActivityEvent.Any}
                         OnUpdate={(event: any) => onUpdate('IsNotPurchasedComparingType', event.target.value)}
                         classes={classes}
                         key={'IsNotPurchasedComparingType'}
@@ -396,7 +409,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                 <Grid item xs={6} sm={6} md={2}>
                     <SelectComparingType
                         Disabled={!data.dynamicData?.MyActivities.IsAbandoned}
-                        Value={data.dynamicData?.MyActivities.IsAbandonedComparingType ?? ActivityEvent.Any}
+                        Value={data.dynamicData?.MyActivities.IsAbandonedComparingType || ActivityEvent.Any}
                         OnUpdate={(event: any) => onUpdate('IsAbandonedComparingType', event.target.value)}
                         classes={classes}
                         key={'IsAbandonedComparingType'}
@@ -492,7 +505,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                             disabled={!data.dynamicData?.MyActivities.IsPageViewed}
                             // disabled={data.dynamicData?.MyActivities?.IsPurchased === true}
                             variant='standard'
-                            value={data.dynamicData?.MyActivities.IsPageViewedPriceType ?? ActivityEvent.Any}
+                            value={data.dynamicData?.MyActivities.IsPageViewedPriceType || ActivityEvent.Any}
                             onChange={(event: any) => onUpdate('IsPageViewedPriceType', event.target.value)}
                             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                             className={clsx(classes.w100, classes.mt10)}

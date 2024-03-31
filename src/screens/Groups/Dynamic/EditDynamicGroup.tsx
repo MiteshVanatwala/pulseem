@@ -197,17 +197,20 @@ const EditDynamicGroup = ({ classes }: any) => {
         // Add validations
         // IsPageViewed && Range && required min & max - SpecificDates && required min & max  
 
-        if (dynamicGroupModel.dynamicData.MyActivities.IsPurchased &&
+        if ((dynamicGroupModel.dynamicData.MyActivities.IsPurchased &&
+            dynamicGroupModel.dynamicData.MyActivities?.IsPurchasedComparingType?.toString() !== ActivityEvent.Any) &&
             ((dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice === null || !dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice === null)
                 || (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice)))) {
             isValid = false;
         }
-        else if (dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased &&
+        else if ((dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased &&
+            dynamicGroupModel.dynamicData.MyActivities?.IsNotPurchasedComparingType?.toString() !== ActivityEvent.Any) &&
             ((dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice === null || dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMaxPrice === null)
                 || (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMaxPrice)))) {
             isValid = false;
         }
-        else if (dynamicGroupModel.dynamicData.MyActivities.IsAbandoned &&
+        else if ((dynamicGroupModel.dynamicData.MyActivities.IsAbandoned &&
+            dynamicGroupModel.dynamicData.MyActivities?.IsAbandonedComparingType?.toString() !== ActivityEvent.Any) &&
             ((dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice === null || dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMaxPrice === null)
                 || parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMaxPrice))) {
             isValid = false;
@@ -649,7 +652,30 @@ const EditDynamicGroup = ({ classes }: any) => {
                                 <ActivityDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} />
                             </TabPanel>
                             <TabPanel value='3'>
-                                <EventsDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} />
+                                <EventsDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} onResetPrices={() => {
+
+                                    setDynamicGroupModel({
+                                        ...dynamicGroupModel, dynamicData: {
+                                            ...dynamicGroupModel.dynamicData,
+                                            MyActivities: {
+                                                ...dynamicGroupModel.dynamicData.MyActivities,
+                                                IsAbandonedComparingType: ActivityEvent.Any,
+                                                IsPurchasedComparingType: ActivityEvent.Any,
+                                                IsNotPurchasedComparingType: ActivityEvent.Any,
+                                                AbandonedPrice: null,
+                                                IsAbandonedMaxPrice: null,
+                                                IsAbandonedMinPrice: null,
+                                                PurchasePrice: null,
+                                                IsPurchaseMaxPrice: null,
+                                                IsPurchaseMinPrice: null,
+                                                NotPurchasedPrice: null,
+                                                IsNotPurchasedMinPrice: null,
+                                                IsNotPurchasedMaxPrice: null
+                                            }
+                                        }
+                                    });
+
+                                }} />
                             </TabPanel>
 
                             <TabPanel value='4'>
