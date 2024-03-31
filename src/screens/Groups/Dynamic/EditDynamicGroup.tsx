@@ -197,23 +197,62 @@ const EditDynamicGroup = ({ classes }: any) => {
         // Add validations
         // IsPageViewed && Range && required min & max - SpecificDates && required min & max  
 
-        if ((dynamicGroupModel.dynamicData.MyActivities.IsPurchased &&
-            dynamicGroupModel.dynamicData.MyActivities?.IsPurchasedComparingType?.toString() !== ActivityEvent.Any) &&
-            ((dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice === null || !dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice === null)
-                || (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice)))) {
-            isValid = false;
+        if (dynamicGroupModel.dynamicData.MyActivities.IsPurchased === true) {
+            switch (dynamicGroupModel.dynamicData.MyActivities?.IsPurchasedComparingType.toString()) {
+                case ActivityEvent.Range: {
+                    if ((dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice === null ||
+                        dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice === null) ||
+                        (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsPurchasedMaxPrice))) {
+                        isValid = false;
+                    }
+                    break;
+                }
+                case ActivityEvent.MoreThan:
+                case ActivityEvent.LessThan: {
+                    if (dynamicGroupModel.dynamicData.MyActivities.PurchasedPrice === null) {
+                        isValid = false;
+                    }
+                    break;
+                }
+            }
         }
-        else if ((dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased &&
-            dynamicGroupModel.dynamicData.MyActivities?.IsNotPurchasedComparingType?.toString() !== ActivityEvent.Any) &&
-            ((dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice === null || dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMaxPrice === null)
-                || (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMaxPrice)))) {
-            isValid = false;
+        else if (dynamicGroupModel.dynamicData.MyActivities.IsNotPurchased === true) {
+            switch (dynamicGroupModel.dynamicData.MyActivities?.IsNotPurchasedComparingType.toString()) {
+                case ActivityEvent.Range: {
+                    if ((dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice === null ||
+                        dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMaxPrice === null) ||
+                        (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsNotPurchasedMaxPrice))) {
+                        isValid = false;
+                    }
+                    break;
+                }
+                case ActivityEvent.MoreThan:
+                case ActivityEvent.LessThan: {
+                    if (dynamicGroupModel.dynamicData.MyActivities.NotPurchasedPrice === null) {
+                        isValid = false;
+                    }
+                    break;
+                }
+            }
         }
-        else if ((dynamicGroupModel.dynamicData.MyActivities.IsAbandoned &&
-            dynamicGroupModel.dynamicData.MyActivities?.IsAbandonedComparingType?.toString() !== ActivityEvent.Any) &&
-            ((dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice === null || dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMaxPrice === null)
-                || parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMaxPrice))) {
-            isValid = false;
+        else if (dynamicGroupModel.dynamicData.MyActivities.IsAbandoned === true) {
+            switch (dynamicGroupModel.dynamicData.MyActivities?.IsAbandonedComparingType.toString()) {
+                case ActivityEvent.Range: {
+                    if ((dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice === null ||
+                        dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMaxPrice === null) ||
+                        (parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMinPrice) > parseInt(dynamicGroupModel.dynamicData.MyActivities.IsAbandonedMaxPrice))) {
+                        isValid = false;
+                    }
+                    break;
+                }
+                case ActivityEvent.MoreThan:
+                case ActivityEvent.LessThan: {
+                    if (dynamicGroupModel.dynamicData.MyActivities.AbandonedPrice === null) {
+                        isValid = false;
+                    }
+                    break;
+                }
+            }
         }
 
         if (isValid) {
@@ -223,7 +262,7 @@ const EditDynamicGroup = ({ classes }: any) => {
             handleResponse(response.payload, isExit);
         }
         else {
-
+            showErrorToast(t('group.saveDynamicGroupResponse.incorrectValue'));
         }
     }
 
@@ -404,167 +443,181 @@ const EditDynamicGroup = ({ classes }: any) => {
         });
     }
 
-    const updateMyActivities = (keyName: string, value: string) => {
-        const paramsToReset = ["IsPurchased", "IsNotPurchased", "IsAbandoned", "IsPageViewed", "IsClicked", "IsNotClicked", "IsOpened", "IsNotOpened"];
+    const updateMyActivities = (keyName: string, value: string, object: any | never = null) => {
 
-        const resetValues = (keyName: string, value: string) => {
-            if (paramsToReset.filter((x: string) => { return x === keyName }).length > 0 && value.toString() === 'false') {
-                switch (keyName) {
-                    case 'IsClicked': {
-                        setDynamicGroupModel({
-                            ...dynamicGroupModel, dynamicData: {
-                                ...dynamicGroupModel.dynamicData,
-                                MyActivities: {
-                                    ...dynamicGroupModel.dynamicData.MyActivities,
-                                    IsClicked: null,
-                                    IsClickedFromDate: null,
-                                    IsClickedToDate: null,
-                                    IsClickedInterval: ActivtyTimeInterval.Last2Weeks
-                                }
-                            }
-                        });
-                        break;
-                    }
-                    case 'IsNotClicked': {
-                        setDynamicGroupModel({
-                            ...dynamicGroupModel, dynamicData: {
-                                ...dynamicGroupModel.dynamicData,
-                                MyActivities: {
-                                    ...dynamicGroupModel.dynamicData.MyActivities,
-                                    IsNotClicked: null,
-                                    IsNotClickedFromDate: null,
-                                    IsNotClickedToDate: null,
-                                    IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks
-                                }
-                            }
-                        });
-                        break;
-                    }
-                    case 'IsOpened': {
-                        setDynamicGroupModel({
-                            ...dynamicGroupModel, dynamicData: {
-                                ...dynamicGroupModel.dynamicData,
-                                MyActivities: {
-                                    ...dynamicGroupModel.dynamicData.MyActivities,
-                                    IsOpened: null,
-                                    IsOpenedFromDate: null,
-                                    IsOpenedToDate: null,
-                                    IsOpenedInterval: ActivtyTimeInterval.Last2Weeks
-                                }
-                            }
-                        });
-                        break;
-                    }
-                    case 'IsNotOpened': {
-                        setDynamicGroupModel({
-                            ...dynamicGroupModel, dynamicData: {
-                                ...dynamicGroupModel.dynamicData,
-                                MyActivities: {
-                                    ...dynamicGroupModel.dynamicData.MyActivities,
-                                    IsNotOpened: null,
-                                    IsNotOpenedFromDate: null,
-                                    IsNotOpenedToDate: null,
-                                    IsNotOpenedInterval: ActivtyTimeInterval.Last2Weeks
-                                }
-                            }
-                        });
-                        break;
-                    }
-                    case 'IsPurchased': {
-                        setDynamicGroupModel({
-                            ...dynamicGroupModel, dynamicData: {
-                                ...dynamicGroupModel.dynamicData,
-                                MyActivities: {
-                                    ...dynamicGroupModel.dynamicData.MyActivities,
-                                    IsPurchased: null,
-                                    IsPurchasedComparingType: ActivityEvent.Any,
-                                    IsPurchasedFromDate: null,
-                                    IsPurchasedToDate: null,
-                                    IsPurchasedMinPrice: null,
-                                    IsPurchasedMaxPrice: null,
-                                    IsPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
-                                    PurchasedPrice: null
-                                }
-                            }
-                        });
-                        break;
-                    }
-                    case 'IsNotPurchased': {
-                        setDynamicGroupModel({
-                            ...dynamicGroupModel, dynamicData: {
-                                ...dynamicGroupModel.dynamicData,
-                                MyActivities: {
-                                    ...dynamicGroupModel.dynamicData.MyActivities,
-                                    IsNotPurchased: null,
-                                    IsNotPurchasedComparingType: ActivityEvent.Any,
-                                    IsNotPurchasedFromDate: null,
-                                    IsNotPurchasedToDate: null,
-                                    IsNotPurchasedMinPrice: null,
-                                    IsNotPurchasedMaxPrice: null,
-                                    IsNotPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
-                                    NotPurchasedPrice: null
-                                }
-                            }
-                        });
-                        break;
-                    }
-                    case 'IsAbandoned': {
-                        setDynamicGroupModel({
-                            ...dynamicGroupModel, dynamicData: {
-                                ...dynamicGroupModel.dynamicData,
-                                MyActivities: {
-                                    ...dynamicGroupModel.dynamicData.MyActivities,
-                                    IsAbandoned: null,
-                                    IsAbandonedComparingType: ActivityEvent.Any,
-                                    IsAbandonedFromDate: null,
-                                    IsAbandonedToDate: null,
-                                    IsAbandonedMinPrice: null,
-                                    IsAbandonedMaxPrice: null,
-                                    IsAbandonedInterval: ActivtyTimeInterval.Last2Weeks,
-                                    AbandonedPrice: null
-                                }
-                            }
-                        });
-                        break;
-                    }
-                    case 'IsPageViewed': {
-                        setDynamicGroupModel({
-                            ...dynamicGroupModel, dynamicData: {
-                                ...dynamicGroupModel.dynamicData,
-                                MyActivities: {
-                                    ...dynamicGroupModel.dynamicData.MyActivities,
-                                    IsPageViewed: null,
-                                    IsPageViewedComparingType: ActivityEvent.Any,
-                                    IsPageViewedFromDate: null,
-                                    IsPageViewedToDate: null,
-                                    IsPageViewedMinPrice: null,
-                                    IsPageViewedMaxPrice: null,
-                                    IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
-                                    PageViewedPrice: null
-                                }
-                            }
-                        });
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (paramsToReset.filter((x: string) => { return x === keyName }).length > 0 && value.toString() === 'false') {
-            resetValues(keyName, value);
-        }
-        else {
+        if (object) {
             setDynamicGroupModel({
                 ...dynamicGroupModel, dynamicData: {
                     ...dynamicGroupModel.dynamicData,
                     MyActivities: {
                         ...dynamicGroupModel.dynamicData.MyActivities,
-                        [keyName]: value
+                        ...object
                     }
                 }
             });
         }
 
+        else {
+            const paramsToReset = ["IsPurchased", "IsNotPurchased", "IsAbandoned", "IsPageViewed", "IsClicked", "IsNotClicked", "IsOpened", "IsNotOpened"];
+
+            const resetValues = (keyName: string, value: string) => {
+                if (paramsToReset.filter((x: string) => { return x === keyName }).length > 0 && value.toString() === 'false') {
+                    switch (keyName) {
+                        case 'IsClicked': {
+                            setDynamicGroupModel({
+                                ...dynamicGroupModel, dynamicData: {
+                                    ...dynamicGroupModel.dynamicData,
+                                    MyActivities: {
+                                        ...dynamicGroupModel.dynamicData.MyActivities,
+                                        IsClicked: null,
+                                        IsClickedFromDate: null,
+                                        IsClickedToDate: null,
+                                        IsClickedInterval: ActivtyTimeInterval.Last2Weeks
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                        case 'IsNotClicked': {
+                            setDynamicGroupModel({
+                                ...dynamicGroupModel, dynamicData: {
+                                    ...dynamicGroupModel.dynamicData,
+                                    MyActivities: {
+                                        ...dynamicGroupModel.dynamicData.MyActivities,
+                                        IsNotClicked: null,
+                                        IsNotClickedFromDate: null,
+                                        IsNotClickedToDate: null,
+                                        IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                        case 'IsOpened': {
+                            setDynamicGroupModel({
+                                ...dynamicGroupModel, dynamicData: {
+                                    ...dynamicGroupModel.dynamicData,
+                                    MyActivities: {
+                                        ...dynamicGroupModel.dynamicData.MyActivities,
+                                        IsOpened: null,
+                                        IsOpenedFromDate: null,
+                                        IsOpenedToDate: null,
+                                        IsOpenedInterval: ActivtyTimeInterval.Last2Weeks
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                        case 'IsNotOpened': {
+                            setDynamicGroupModel({
+                                ...dynamicGroupModel, dynamicData: {
+                                    ...dynamicGroupModel.dynamicData,
+                                    MyActivities: {
+                                        ...dynamicGroupModel.dynamicData.MyActivities,
+                                        IsNotOpened: null,
+                                        IsNotOpenedFromDate: null,
+                                        IsNotOpenedToDate: null,
+                                        IsNotOpenedInterval: ActivtyTimeInterval.Last2Weeks
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                        case 'IsPurchased': {
+                            setDynamicGroupModel({
+                                ...dynamicGroupModel, dynamicData: {
+                                    ...dynamicGroupModel.dynamicData,
+                                    MyActivities: {
+                                        ...dynamicGroupModel.dynamicData.MyActivities,
+                                        IsPurchased: null,
+                                        IsPurchasedComparingType: ActivityEvent.Any,
+                                        IsPurchasedFromDate: null,
+                                        IsPurchasedToDate: null,
+                                        IsPurchasedMinPrice: null,
+                                        IsPurchasedMaxPrice: null,
+                                        IsPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
+                                        PurchasedPrice: null
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                        case 'IsNotPurchased': {
+                            setDynamicGroupModel({
+                                ...dynamicGroupModel, dynamicData: {
+                                    ...dynamicGroupModel.dynamicData,
+                                    MyActivities: {
+                                        ...dynamicGroupModel.dynamicData.MyActivities,
+                                        IsNotPurchased: null,
+                                        IsNotPurchasedComparingType: ActivityEvent.Any,
+                                        IsNotPurchasedFromDate: null,
+                                        IsNotPurchasedToDate: null,
+                                        IsNotPurchasedMinPrice: null,
+                                        IsNotPurchasedMaxPrice: null,
+                                        IsNotPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
+                                        NotPurchasedPrice: null
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                        case 'IsAbandoned': {
+                            setDynamicGroupModel({
+                                ...dynamicGroupModel, dynamicData: {
+                                    ...dynamicGroupModel.dynamicData,
+                                    MyActivities: {
+                                        ...dynamicGroupModel.dynamicData.MyActivities,
+                                        IsAbandoned: null,
+                                        IsAbandonedComparingType: ActivityEvent.Any,
+                                        IsAbandonedFromDate: null,
+                                        IsAbandonedToDate: null,
+                                        IsAbandonedMinPrice: null,
+                                        IsAbandonedMaxPrice: null,
+                                        IsAbandonedInterval: ActivtyTimeInterval.Last2Weeks,
+                                        AbandonedPrice: null
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                        case 'IsPageViewed': {
+                            setDynamicGroupModel({
+                                ...dynamicGroupModel, dynamicData: {
+                                    ...dynamicGroupModel.dynamicData,
+                                    MyActivities: {
+                                        ...dynamicGroupModel.dynamicData.MyActivities,
+                                        IsPageViewed: null,
+                                        IsPageViewedComparingType: ActivityEvent.Any,
+                                        IsPageViewedFromDate: null,
+                                        IsPageViewedToDate: null,
+                                        IsPageViewedMinPrice: null,
+                                        IsPageViewedMaxPrice: null,
+                                        IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
+                                        PageViewedPrice: null
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (paramsToReset.filter((x: string) => { return x === keyName }).length > 0 && value.toString() === 'false') {
+                resetValues(keyName, value);
+            }
+            else {
+                setDynamicGroupModel({
+                    ...dynamicGroupModel, dynamicData: {
+                        ...dynamicGroupModel.dynamicData,
+                        MyActivities: {
+                            ...dynamicGroupModel.dynamicData.MyActivities,
+                            [keyName]: value
+                        }
+                    }
+                });
+            }
+        }
     }
 
     const updateGroup = (keyName: string, value: string) => {
@@ -652,30 +705,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                                 <ActivityDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} />
                             </TabPanel>
                             <TabPanel value='3'>
-                                <EventsDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} onResetPrices={() => {
-
-                                    setDynamicGroupModel({
-                                        ...dynamicGroupModel, dynamicData: {
-                                            ...dynamicGroupModel.dynamicData,
-                                            MyActivities: {
-                                                ...dynamicGroupModel.dynamicData.MyActivities,
-                                                IsAbandonedComparingType: ActivityEvent.Any,
-                                                IsPurchasedComparingType: ActivityEvent.Any,
-                                                IsNotPurchasedComparingType: ActivityEvent.Any,
-                                                AbandonedPrice: null,
-                                                IsAbandonedMaxPrice: null,
-                                                IsAbandonedMinPrice: null,
-                                                PurchasePrice: null,
-                                                IsPurchaseMaxPrice: null,
-                                                IsPurchaseMinPrice: null,
-                                                NotPurchasedPrice: null,
-                                                IsNotPurchasedMinPrice: null,
-                                                IsNotPurchasedMaxPrice: null
-                                            }
-                                        }
-                                    });
-
-                                }} />
+                                <EventsDetails classes={classes} data={dynamicGroupModel} onUpdate={updateMyActivities} />
                             </TabPanel>
 
                             <TabPanel value='4'>

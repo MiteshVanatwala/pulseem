@@ -14,7 +14,7 @@ import moment from 'moment';
 import { DateFormats } from '../../../../helpers/Constants';
 import SelectComparingType from '../Components/SelectComparingType';
 
-const EventsDetails = ({ classes, data, onUpdate, onResetPrices }: any) => {
+const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
     const [optionsDisabled, setOptionDisabled] = useState<boolean>(false);
 
@@ -25,18 +25,18 @@ const EventsDetails = ({ classes, data, onUpdate, onResetPrices }: any) => {
         )
     }, [data.dynamicData?.MyActivities]);
 
-    useEffect(() => {
-        if (data.dynamicData?.MyActivities?.IsAbandonedComparingType?.toString() === ActivityEvent.Any ||
-            data.dynamicData?.MyActivities?.IsPurchasedComparingType?.toString() === ActivityEvent.Any ||
-            data.dynamicData?.MyActivities?.IsNotPurchasedComparingType?.toString() === ActivityEvent.Any) {
-            onResetPrices();
-        }
+    // useEffect(() => {
+    //     if (data.dynamicData?.MyActivities?.IsAbandonedComparingType?.toString() === ActivityEvent.Any ||
+    //         data.dynamicData?.MyActivities?.IsPurchasedComparingType?.toString() === ActivityEvent.Any ||
+    //         data.dynamicData?.MyActivities?.IsNotPurchasedComparingType?.toString() === ActivityEvent.Any) {
+    //         onResetPrices();
+    //     }
 
-    }, [
-        data.dynamicData?.MyActivities?.IsAbandonedComparingType,
-        data.dynamicData?.MyActivities?.IsPurchasedComparingType,
-        data.dynamicData?.MyActivities?.IsNotPurchasedComparingType
-    ]);
+    // }, [
+    //     data.dynamicData?.MyActivities?.IsAbandonedComparingType,
+    //     data.dynamicData?.MyActivities?.IsPurchasedComparingType,
+    //     data.dynamicData?.MyActivities?.IsNotPurchasedComparingType
+    // ]);
 
     const renderIsPurchased = () => {
         return (
@@ -122,7 +122,19 @@ const EventsDetails = ({ classes, data, onUpdate, onResetPrices }: any) => {
                     <SelectComparingType
                         Disabled={!data.dynamicData?.MyActivities.IsPurchased}
                         Value={data.dynamicData?.MyActivities.IsPurchasedComparingType || ActivityEvent.Any}
-                        OnUpdate={(event: any) => onUpdate('IsPurchasedComparingType', event.target.value)}
+                        OnUpdate={(event: any) => {
+                            if (event.target.value === ActivityEvent.Any) {
+                                onUpdate('', '', {
+                                    IsPurchasedComparingType: ActivityEvent.Any,
+                                    IsPurchasedMinPrice: null,
+                                    IsPurchasedMaxPrice: null,
+                                    PurchasedPrice: null
+                                })
+                            }
+                            else {
+                                onUpdate('IsPurchasedComparingType', event.target.value)
+                            }
+                        }}
                         classes={classes}
                         key={'IsPurchasedComparingType'}
                     />
@@ -266,7 +278,19 @@ const EventsDetails = ({ classes, data, onUpdate, onResetPrices }: any) => {
                     <SelectComparingType
                         Disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
                         Value={data.dynamicData?.MyActivities.IsNotPurchasedComparingType || ActivityEvent.Any}
-                        OnUpdate={(event: any) => onUpdate('IsNotPurchasedComparingType', event.target.value)}
+                        OnUpdate={(event: any) => {
+                            if (event.target.value === ActivityEvent.Any) {
+                                onUpdate('', '', {
+                                    IsNotPurchasedComparingType: ActivityEvent.Any,
+                                    IsNotPurchasedMinPrice: null,
+                                    IsNotPurchasedMaxPrice: null,
+                                    NotPurchasedPrice: null
+                                })
+                            }
+                            else {
+                                onUpdate('IsNotPurchasedComparingType', event.target.value)
+                            }
+                        }}
                         classes={classes}
                         key={'IsNotPurchasedComparingType'}
                     />
@@ -410,7 +434,19 @@ const EventsDetails = ({ classes, data, onUpdate, onResetPrices }: any) => {
                     <SelectComparingType
                         Disabled={!data.dynamicData?.MyActivities.IsAbandoned}
                         Value={data.dynamicData?.MyActivities.IsAbandonedComparingType || ActivityEvent.Any}
-                        OnUpdate={(event: any) => onUpdate('IsAbandonedComparingType', event.target.value)}
+                        OnUpdate={(event: any) => {
+                            if (event.target.value === ActivityEvent.Any) {
+                                onUpdate('', '', {
+                                    IsAbandonedComparingType: ActivityEvent.Any,
+                                    IsAbandonedMinPrice: null,
+                                    IsAbandonedMaxPrice: null,
+                                    AbandonedPrice: null
+                                })
+                            }
+                            else {
+                                onUpdate('IsAbandonedComparingType', event.target.value)
+                            }
+                        }}
                         classes={classes}
                         key={'IsAbandonedComparingType'}
                     />
