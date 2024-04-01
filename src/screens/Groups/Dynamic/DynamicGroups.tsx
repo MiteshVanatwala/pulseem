@@ -7,7 +7,7 @@ import {
     Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox, GridSize
 } from '@material-ui/core'
-import { PreviewIcon, SettingIcon, DeleteIcon, EditIcon } from '../../../assets/images/managment/index'
+import { PreviewIcon, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon, EditIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
@@ -35,7 +35,7 @@ import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
-import { SetPageState, GetPageNyName, PageProperty } from '../../../helpers/UI/SessionStorageManager';
+import { SetPageState, GetPageNyName, PageProperty, ClearPageState } from '../../../helpers/UI/SessionStorageManager';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
@@ -50,7 +50,7 @@ import {
     getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
 import { GroupData } from '../../../Models/Groups/Group';
-// import { sitePrefix } from '../../../config';
+import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
 
 const DynamicGroups = ({ classes }: any) => {
@@ -188,7 +188,7 @@ const DynamicGroups = ({ classes }: any) => {
     }
 
     const getData = async (customSearch: any | never = null) => {
-        const search: any = { ...serachData, PageSize: rowsPerPage, ...customSearch };
+        const search: any = { ...serachData, PageSize: rowsPerPage || "6", ...customSearch };
         setLoader(true);
         // @ts-ignore
         await dispatch(getGroups(search));
@@ -202,37 +202,41 @@ const DynamicGroups = ({ classes }: any) => {
     };
 
     useEffect(() => {
-        getData();
-    }, [serachData])
+        const queryState = from?.toLowerCase().indexOf('editdynamicgroup') > -1;
+        if (queryState || serachData.SearchTerm !== '') {
+            reSearch();
+        }
+    }, [serachData.SearchTerm]);
+
+    useEffect(() => {
+        reSearch();
+    }, [serachData.PageIndex, rowsPerPage]);
 
     const reSearch = () => {
-        const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
-        pageProperty.current = GetPageNyName('groups');
+        const queryState = from?.toLowerCase().indexOf('editdynamicgroup') > -1;
+        pageProperty.current = GetPageNyName('dynamicGroups');
         let lastSearch = { ...serachData, PageSize: rowsPerPage };
         if (queryState && pageProperty.current) {
             let tempSearchData = pageProperty.current?.SearchData;
-            lastSearch = { ...serachData, ...tempSearchData };
+            lastSearch = { ...serachData, ...tempSearchData, PageIndex: pageProperty.current?.PageNumber ?? 1 };
+            ClearPageState();
         }
-        setSearchData(lastSearch);
+
         SetPageState({
-            "PageName": "groups",
-            "PageNumber": lastSearch?.PageNumber ?? 1,
+            "PageName": `${sitePrefix}Groups/Dynamic`,
+            "PageNumber": lastSearch?.PageNumber,
             "SearchData": lastSearch,
             "SearchTerm": lastSearch.SearchTerm,
             "IsDynamic": true
         } as PageProperty);
 
-        getData(lastSearch);
         if (lastSearch?.SearchTerm) {
             setSearchStr(lastSearch?.SearchTerm ?? "");
         }
-    }
 
-    useEffect(() => {
-        if (serachData.SearchTerm !== '') {
-            reSearch();
-        }
-    }, [dispatch, serachData.SearchTerm, rowsPerPage]);
+        setSearchData(lastSearch);
+        getData(lastSearch);
+    }
 
     useEffect(() => {
         if (qs?.NewGroup === 'true') {
@@ -243,20 +247,7 @@ const DynamicGroups = ({ classes }: any) => {
     const renderSearchSection = () => {
         const handleKeyDown = (event: any) => {
             if (event.keyCode === 13 || event.code === "Enter") {
-                const searchObject = {
-                    PageIndex: 1,
-                    PageSize: rowsPerPage,
-                    SearchTerm: searchStr,
-                    IsDynamic: true
-                };
-                setSearchData(searchObject);
-                SetPageState({
-                    "PageName": "groups",
-                    "PageNumber": 1,
-                    "SearchData": searchObject,
-                    "SearchTerm": searchStr,
-                    "IsDynamic": true
-                } as PageProperty);
+                initPageState(rowsPerPage, 1);
             }
         };
 
@@ -276,20 +267,7 @@ const DynamicGroups = ({ classes }: any) => {
                 <Grid item>
                     <Button
                         onClick={() => {
-                            const searchObject = {
-                                PageIndex: 1,
-                                PageSize: rowsPerPage,
-                                SearchTerm: searchStr,
-                                IsDynamic: true
-                            };
-                            setSearchData(searchObject);
-
-                            SetPageState({
-                                "PageName": "groups",
-                                "PageNumber": 1,
-                                "SearchData": searchObject,
-                                "IsDynamic": true
-                            } as PageProperty);
+                            initPageState(rowsPerPage, 1);
                         }}
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -311,7 +289,7 @@ const DynamicGroups = ({ classes }: any) => {
                                 setSearchData(searchObject);
 
                                 SetPageState({
-                                    "PageName": "groups",
+                                    "PageName": `${sitePrefix}Groups/Dynamic`,
                                     "PageNumber": 1,
                                     "SearchData": searchObject,
                                     "SearchTerm": "",
@@ -345,6 +323,19 @@ const DynamicGroups = ({ classes }: any) => {
                         {t("group.new")}
                     </Button>
                 </Grid>
+                {windowSize !== "xs" && (
+                    <Grid item>
+                        <Button
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                            onClick={() => {
+                                selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
+                            }}
+                        >
+                            {t("group.delete")}
+                        </Button>
+                    </Grid>
+                )}
                 {
                     accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
@@ -484,21 +475,20 @@ const DynamicGroups = ({ classes }: any) => {
                 lable: t('campaigns.Image2Resource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    window.location.href = `/Pulseem/EditDynamicGroup.aspx?groupID=${GroupID}`;
-                    // navigate(`${sitePrefix}groups/dynamic/edit/${GroupID}`)
+                    navigate(`${sitePrefix}groups/dynamic/edit/${GroupID}`)
                 }
             },
-            // {
-            //     key: 'reset',
-            //     uIcon: ResetIcon,
-            //     lable: t("recipient.reset"),
-            //     remove: windowSize === 'xs',
-            //     rootClass: classes.paddingIcon,
-            //     onClick: () => {
-            //         setSelectedGroups([GroupID])
-            //         setDialog(DialogType.RESET_GROUP)
-            //     },
-            // },
+            {
+                key: 'reset',
+                uIcon: ResetIcon,
+                lable: t("recipient.reset"),
+                remove: windowSize === 'xs',
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.RESET_GROUP)
+                },
+            },
             {
                 key: 'settings',
                 uIcon: SettingIcon,
@@ -510,17 +500,17 @@ const DynamicGroups = ({ classes }: any) => {
                 },
                 rootClass: classes.paddingIcon,
             },
-            // {
-            //     key: 'automation',
-            //     uIcon: AutomationIcon,
-            //     lable: t("recipient.automation"),
-            //     disable: !AutomationID,
-            //     rootClass: classes.paddingIcon,
-            //     onClick: () => {
-            //         if (AutomationID)
-            //             window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
-            //     }
-            // },
+            {
+                key: 'automation',
+                uIcon: AutomationIcon,
+                lable: t("recipient.automation"),
+                disable: !AutomationID,
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    if (AutomationID)
+                        window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
+                }
+            },
             {
                 key: 'delete',
                 uIcon: DeleteIcon,
@@ -544,14 +534,12 @@ const DynamicGroups = ({ classes }: any) => {
             >
                 {iconsMap.map(icon => (
                     <Grid
-                        className={'rowIconContainer'}
+                        className={clsx(icon.disable && classes.disabledCursor, classes.smallActionIcons, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
                         key={icon.key}
                         item >
                         {/* @ts-ignore */}
                         <ManagmentIcon
                             classes={classes}
-                            // @ts-ignore
-                            className={'rowIconContainer'}
                             {...icon}
                             uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                         />
@@ -653,7 +641,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("campaigns.recipients"),
-                                                value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0),
+                                                value: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0))?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -691,7 +679,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Active"),
-                                                value: ActiveEmails,
+                                                value: ActiveEmails?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -729,7 +717,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Removed"),
-                                                value: RemovedEmails,
+                                                value: RemovedEmails?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -768,7 +756,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Bounced"),
-                                                value: InvalidEmails,
+                                                value: InvalidEmails?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -807,7 +795,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Pending"),
-                                                value: PendingClients || 0,
+                                                value: PendingClients?.toLocaleString() || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -856,7 +844,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("campaigns.recipients"),
-                                                value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0),
+                                                value: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0))?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -894,7 +882,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Active"),
-                                                value: ActiveCell,
+                                                value: ActiveCell?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -932,7 +920,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Removed"),
-                                                value: RemovedCell,
+                                                value: RemovedCell?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -971,7 +959,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Bounced"),
-                                                value: InvalidCell,
+                                                value: InvalidCell?.toLocaleString(),
                                                 classes: {
                                                     name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -1010,7 +998,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         gridArr={[
                                             {
                                                 name: t("recipient.Pending"),
-                                                value: PendingSmsClients || 0,
+                                                value: PendingSmsClients?.toLocaleString() || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
                                                     value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
@@ -1018,7 +1006,7 @@ const DynamicGroups = ({ classes }: any) => {
                                                 },
                                                 onClick: (e: any) => {
                                                     e?.preventDefault();
-                                                    if ((PendingSmsClients || 0) > 0) {
+                                                    if ((PendingSmsClients?.toLocaleString() || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {
@@ -1516,20 +1504,41 @@ const DynamicGroups = ({ classes }: any) => {
         return <></>;
 
     }
+    const initPageState = (pageSize: Number, pageIndex: Number, props: any = null) => {
+        const searchObject = {
+            PageIndex: pageIndex,
+            PageSize: pageSize,
+            SearchTerm: searchStr,
+            IsDynamic: true
+        };
+        setSearchData(searchObject);
+
+        SetPageState({
+            "PageName": `${sitePrefix}Groups/Dynamic`,
+            "PageNumber": pageIndex,
+            "SearchData": (serachData.SearchTerm !== '') ? {
+                SearchTerm: serachData.SearchTerm,
+                PageIndex: pageIndex,
+                PageSize: pageSize
+            } : null,
+            "IsDynamic": true
+        } as PageProperty);
+    }
+
     const handleRowsPerPageChange = (val: Number) => {
-        dispatch(setRowsPerPage(val))
+        dispatch(setRowsPerPage(`${val}`))
     }
     const handlePageChange = (val: Number) => {
         SetPageState({
             "PageName": "groups",
+            // @ts-ignore
             "PageNumber": val,
             "SearchTerm": serachData.SearchTerm,
             "SearchData": (serachData.SearchTerm !== '') ? {
                 SearchTerm: serachData.SearchTerm,
                 PageIndex: val
-            } : null,
-            "IsDynamic": true
-        } as PageProperty);
+            } : null
+        });
         setSearchData({ ...serachData, PageIndex: val });
     }
     const renderTablePagination = () => {

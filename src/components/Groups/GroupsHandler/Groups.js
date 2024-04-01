@@ -75,7 +75,7 @@ const Groups = ({ classes,
     }
 
     const onTagChange = (event, value) => {
-        callbackUpdateGroups(value);
+        callbackUpdateGroups(value, event);
     }
 
     const defaultProps = {
