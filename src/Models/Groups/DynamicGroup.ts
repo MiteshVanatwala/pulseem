@@ -1,62 +1,108 @@
 
 export interface DynamicGroupModel {
-    MyActivities: ActivityGroup;
-    MyConditions: Conditions[];
+    MyActivities: MyActivities;
+    MyConditions: CondGroup[];
     MyGroups: number[];
-    ShowOpened: boolean;
-    ShowNotOpened: boolean;
-    ShowClicked: boolean;
-    ShowNotClicked: boolean;
 }
 export enum CondType {
-    Undefined = 0,
-    Equal = 1,
-    Like = 2,
-    NotEqual = 3,
-    StartsWith = 4,
-    NoValue = 5
+    Undefined = '0',
+    Equal = '1',
+    Like = '2',
+    NotEqual = '3',
+    StartsWith = '4',
+    NoValue = '5'
 }
 export enum ActivtyTimeInterval {
-    LastWeek = 0,
-    Last2Weeks = 1,
-    LastMonth = 2,
-    Last3Months = 3,
-    Last6Months = 4,
-    LastYear = 5,
-    SpecificDates = 6,
-    Ever = 7
+    LastWeek = '0',
+    Last2Weeks = '1',
+    LastMonth = '2',
+    Last3Months = '3',
+    Last6Months = '4',
+    LastYear = '5',
+    SpecificDates = '6',
+    Ever = '7'
 }
-export interface ActivityGroup {
+
+export enum ActivityEvent {
+    Any = '0',
+    MoreThan = '1',
+    LessThan = '2',
+    Range = '3'
+}
+
+export interface MyActivities {
     IsOpened: boolean | null;
     IsOpenedInterval: ActivtyTimeInterval;
     IsOpenedFromDate: Date | string | null;
     IsOpenedToDate: Date | string | null;
+
     IsNotOpened: boolean | null;
     IsNotOpenedInterval: ActivtyTimeInterval;
     IsNotOpenedFromDate: Date | string | null;
     IsNotOpenedToDate: Date | string | null;
+
+    IsClicked: boolean | null;
+    IsClickedInterval: ActivtyTimeInterval;
+    IsClickedFromDate: Date | string | null;
+    IsClickedToDate: Date | string | null;
+
+    IsNotClicked: boolean | null;
+    IsNotClickedInterval: ActivtyTimeInterval;
+    IsNotClickedFromDate: Date | string | null;
+    IsNotClickedToDate: Date | string | null;
+
+    IsPurchased: boolean | null;
+    IsPurchasedComparingType: ActivityEvent;
+    IsPurchasedMinPrice: number | string | null;
+    IsPurchasedMaxPrice: number | string | null;
+    IsPurchasedInterval: ActivtyTimeInterval;
+    IsPurchasedFromDate: Date | string | null;
+    IsPurchasedToDate: Date | string | null;
+    PurchasedPrice: number | string | null;
+
+    IsNotPurchased: boolean | null;
+    IsNotPurchasedComparingType: ActivityEvent;
+    IsNotPurchasedMinPrice: number | string | null;
+    IsNotPurchasedMaxPrice: number | string | null;
+    IsNotPurchasedInterval: ActivtyTimeInterval;
+    IsNotPurchasedFromDate: Date | string | null;
+    IsNotPurchasedToDate: Date | string | null;
+    NotPurchasedPrice: number | string | null;
+
+    IsAbandoned: boolean | null;
+    IsAbandonedComparingType: ActivityEvent;
+    IsAbandonedMinPrice: number | string | null;
+    IsAbandonedMaxPrice: number | string | null;
+    IsAbandonedInterval: ActivtyTimeInterval;
+    IsAbandonedFromDate: Date | string | null;
+    IsAbandonedToDate: Date | string | null;
+    AbandonedPrice: number | string | null;
+
+    IsPageViewed: boolean | null;
+    IsPageViewedComparingType: ActivityEvent;
+    IsPageViewedMinPrice: number | string | null;
+    IsPageViewedMaxPrice: number | string | null;
+    IsPageViewedInterval: ActivtyTimeInterval;
+    IsPageViewedFromDate: Date | string | null;
+    IsPageViewedToDate: Date | string | null;
+    PageViewedPrice: number | string | null;
+
 }
-export interface Conditions {
+export interface CondGroup {
     FirstName: string;
     FirstNameCond: CondType;
     LastName: string;
     LastNameCond: CondType;
     Email: string;
     EmailCond: CondType;
-    // Address: string;
-    // AddressCond: CondType;
+    Cellphone: string;
+    CellphoneCond: CondType;
     City: string;
     CityCond: CondType;
     Country: string;
     CountryCond: CondType;
-    // State: string;
-    // StateCond: CondType;
-    // Zip: string;
-    // ZipCond: CondType;
-    // Telephone: string;
-    // TelephoneCond: CondType;
-    // Cellphone: string;
-    // CellphoneCond: CondType;
+    State: string;
+    StateCond: CondType;
     Company: string;
     ComapnyCond: CondType;
     BirthDateFrom: Date | string | null;

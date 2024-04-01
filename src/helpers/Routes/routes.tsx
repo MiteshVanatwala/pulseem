@@ -93,9 +93,14 @@ export const getRoutes = (
         {
           key: "dynamicGroups",
           title: t("master.RadMenuItemResourceDynamicGroups.Text"),
-          href: `${rootDomain}/DynamicGroups.aspx?fromreact=true`,
-          // href: `${sitePrefix}Groups/Dynamic`,
+          href: `${sitePrefix}Groups/Dynamic`,
           isShow: true,
+        },
+        {
+          key: 'EditDynamicGroup',
+          title: t("recipient.logPageHeaderResource1.Edit"),
+          href: ``,
+          isShow: false,
         },
         {
           title: t("master.RadMenuItemResourceFileUploads.Text"),
@@ -280,6 +285,18 @@ export const getRoutes = (
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
           isShow: true,
         },
+        {
+          key: 'CreateLandingPage',
+          title: t("landingPages.createLandingPage"),
+          href: ``,
+          isShow: false,
+        },
+        {
+          key: 'EditLandingPage',
+          title: t("landingPages.editLandingPage"),
+          href: ``,
+          isShow: false,
+        }
       ],
     },
     {
