@@ -129,7 +129,29 @@ export const isSweepingApprovalAccount = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+export const sendOTP = createAsyncThunk(
+  'authorization/SendOTP',
+  async (request, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`authorization/SendOTP`, request);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
 
+export const checkOTP = createAsyncThunk(
+  'authorization/CheckOTP',
+  async (request, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`authorization/CheckOTP`, request);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
 
 export const commonSlice = createSlice({
   name: 'common',
