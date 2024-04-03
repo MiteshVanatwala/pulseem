@@ -225,7 +225,8 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
               classes.btnRounded,
               "saveFixedDetails"
             )}
-            onClick={() => { handleSendOtp() }}>שלח קוד</Button>
+            onClick={() => { handleSendOtp(false) }}>
+          </Button>
         </Box>
       </Box>
     </Box>
