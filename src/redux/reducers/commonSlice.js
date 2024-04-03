@@ -141,18 +141,6 @@ export const sendOTP = createAsyncThunk(
   }
 );
 
-export const checkOTP = createAsyncThunk(
-  'authorization/CheckOTP',
-  async (request, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.post(`authorization/CheckOTP`, request);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  }
-);
-
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {

@@ -1,15 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
-import { Box, Button, FormControl, Grid, MenuItem, Select, TextField, Typography } from "@material-ui/core";
+import { Box, Button, CircularProgress, FormControl, Grid, MenuItem, Select, TextField, Typography } from "@material-ui/core";
 import clsx from 'clsx';
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllTwoFactorAuthValues } from "../../../../redux/reducers/AccountSettingsSlice";
+import { getAllTwoFactorAuthValues, setDisablePendingFeature } from "../../../../redux/reducers/AccountSettingsSlice";
 import PulseemRadio from "../../../../components/Controlls/PulseemRadio";
 import { IoIosArrowDown } from "react-icons/io";
 import { StateType } from "../../../../Models/StateTypes";
-import { checkOTP, sendOTP } from "../../../../redux/reducers/commonSlice";
+import { sendOTP } from "../../../../redux/reducers/commonSlice";
 import { logout } from "../../../../helpers/Api/PulseemReactAPI";
 
 const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
@@ -21,7 +21,11 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
   const [authSelected, setAuthSelected] = useState<string>(t('common.select'));
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [otpCode, setOtpCode] = useState<string>('');
+  const [codeResend, setCodeResend] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [resendDisabled, setResendDisalbed] = useState(false);
+  const [resendInterval, setResendInterval] = useState(10);
+  const [userCodeConfirmed, setUserCodeConfirmed] = useState<boolean>(false);
   const SLIDE_HEIGHTS = [25, 20, 20];
   const slideTitles = [
     t('settings.accountSettings.bypassOtp.regulationPopup.title'),
@@ -51,7 +55,34 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
 
   }, [])
 
-  const handleSendOtp = async () => {
+  useEffect(() => {
+    if (codeResend === true) {
+      handleResendInterval();
+    }
+  }, [codeResend])
+
+  const handleResendInterval = () => {
+    let intervalTime = 10;
+
+    const startInterval = () => {
+      if (intervalTime === 0) {
+        stopInterval();
+      }
+      setResendInterval(intervalTime--);
+    }
+    const stopInterval = () => {
+      setCodeResend(false);
+      setResendInterval(10);
+      clearInterval(interval);
+      setResendDisalbed(false);
+    }
+
+    const interval = setInterval(startInterval, 1000);
+  }
+
+  const handleSendOtp = async (isResend: never | any | boolean) => {
+    setResendDisalbed(isResend);
+    setCodeResend(isResend);
     // @ts-ignore
     const response = await dispatch(sendOTP({
       Device: '',
@@ -68,9 +99,11 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
     }
   }
   const handleConfirmOtp = async () => {
+    setErrorMessage('');
+    setUserCodeConfirmed(true);
     // @ts-ignore
-    const response = await dispatch(checkOTP({
-      AuthType: selectedOption,
+    const response = await dispatch(setDisablePendingFeature({
+      AuthType: parseInt(selectedOption),
       Value: authSelected,
       Code: otpCode
     })) as any;
@@ -91,6 +124,7 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
       case 501:
       default: {
         setErrorMessage(errorMessages[results?.StatusCode]);
+        setUserCodeConfirmed(false);
         break;
       }
     }
@@ -199,33 +233,48 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
 
   const secondeSlide = () => {
     return <Box className='cFlexSlide secondSlide'>
-      <Box style={{ display: 'flex', flexDirection: 'column' }}>
-        Type OTP Code
+      <Box>
+        <Typography variant='h4' className={classes.bold}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.title')}</Typography>
+        <Typography variant='body1' className={classes.mt4}>{selectedOption === '6' ? t("sms.OtpSentSuccessLine1") : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.desc1')} <strong>{authSelected}</strong></Typography>
+        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.desc2')}</Typography>
+      </Box>
+      <Box className={clsx(classes.flexColumn, classes.mt20)}>
+        <Box>
+          <TextField
+            variant='outlined'
+            size='small'
+            className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
+            onChange={(e) => {
+              if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
+                setErrorMessage('');
+                setOtpCode(e.target.value);
+              }
+            }}
+            placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
+            error={!!errorMessage}
+            value={otpCode}
+          />
+        </Box>
+        <Box mt={2}>
+          <Button
+            className={clsx(classes.btn, classes.btnRounded, userCodeConfirmed ? classes.disabled : null)}
+            onClick={() => {
+              if (otpCode) {
+                handleConfirmOtp();
+              }
+              else {
+                setErrorMessage(t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2'))
+              }
+            }}
+          >
+            {userCodeConfirmed ? <CircularProgress size={31} style={{ color: '#FFF' }} /> : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
+          </Button>
+          {errorMessage !== '' && <Typography className='error' variant="body1">{errorMessage}</Typography>}
+        </Box>
       </Box>
       <Box>
-        <TextField
-          variant="outlined"
-          name={'otpCode'}
-          value={otpCode.trim()}
-          className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
-          onChange={(e: any) => {
-            setOtpCode(e.target.value.trim());
-          }} />
-      </Box>
-      <Box>
-        <Button
-          className={clsx(
-            classes.btn,
-            classes.btnRounded,
-            "saveFixedDetails"
-          )}
-          onClick={() => handleConfirmOtp()}>{t("mainReport.send")}</Button>
-      </Box>
-      <Box>{errorMessage}</Box>
-      <Box>
-        <Typography className={clsx(classes.font16, classes.mt5)}>
-          {t("settings.accountSettings.bypassOtp.regulationPopup.acceptAgreement")}
-        </Typography>
+        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendOtp(true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
+        <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
       </Box>
     </Box>
   }

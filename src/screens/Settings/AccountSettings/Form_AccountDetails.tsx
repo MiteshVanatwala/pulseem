@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
 	Box,
 	Button,
-	Checkbox,
 	FormControl,
 	FormControlLabel,
 	Grid,
-	InputAdornment,
 	MenuItem,
 	Radio,
 	RadioGroup,
@@ -26,13 +24,8 @@ import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
 import { IoIosArrowDown } from 'react-icons/io';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
-import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
-import moment from 'moment';
-import { setBypassPending } from '../../../redux/reducers/AccountSettingsSlice';
-import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import DisableOtpPopup from './Popups/DisableOtpPopup';
+import { cancelDisablePluginOTP } from '../../../redux/reducers/AccountSettingsSlice';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -53,11 +46,9 @@ const FORM_ACCOUNT_DETAILS = ({
 		DefaultCellNumber: '',
 		UnsubscribeType: false,
 		IsSmsImmediateUnsubscribeLink: false,
-		ByPassOTPAgreement: false
+		DisablePluginOTP: false
 	} as AccountSettings);
 	const [showOtpRegulationDialog, setShowOtpRegulationDialog] = useState<boolean>(false);
-	const [showPassword, setShowPassword] = useState<boolean>(false);
-	const [password, setPassword] = useState<string>('');
 
 	const isValidPayload = () => {
 		if (!accountDetails?.DefaultFromMail) {
@@ -86,115 +77,24 @@ const FORM_ACCOUNT_DETAILS = ({
 		}
 	};
 
-	const handleByPassPending = (event: any, selected: any) => {
+	const handleByPassPending = async (event: any, selected: any) => {
 		if (selected) {
 			setShowOtpRegulationDialog(true);
 		}
 		else {
+			await dispatch(cancelDisablePluginOTP());
+
 			setAccountDetails({
 				...accountDetails,
-				ByPassOTPAgreement:
-					selected
+				DisablePluginOTP:
+					false
 			} as AccountSettings);
 		}
 	}
 
 	const handleConfirmOtpRegulation = async () => {
-		const request = { ByPassOTPAgreement: true, password, ByPassOTPAgreementDate: moment() } as any
-		const response = await dispatch(setBypassPending(request)) as any;
-
-		switch (response?.payload?.StatusCode) {
-			case 401: {
-				logout();
-				break;
-			}
-			case 403: {
-				alert(response?.payload?.Message)
-				break;
-			}
-			case 406: {
-				alert(response?.payload?.Message)
-				break;
-			}
-			case 201:
-			default: {
-				// show results
-				setAccountDetails({ ...accountDetails, ByPassOTPAgreement: true } as AccountSettings);
-				setShowOtpRegulationDialog(false)
-				break;
-			}
-		}
-	}
-
-	const otpRegulationDialog = () => {
-		return <BaseDialog
-			// icon={<MdCelebration />}
-			title={t('settings.accountSettings.bypassOtp.regulationPopup.title')}
-			children={<>
-				{RenderHtml(t("settings.accountSettings.bypassOtp.regulationPopup.text"))}
-				<Typography className={clsx(classes.font18, classes.mt15)}>
-					{t("settings.accountSettings.bypassOtp.regulationPopup.reEnterPassword")}
-				</Typography>
-
-				<Grid container className={classes.mt15}>
-					<Grid item md={6} xs={12}>
-						<TextField
-							type={showPassword ? "text" : "password"}
-							id="outlined-basic"
-							name="OldPassword"
-
-							variant="outlined"
-							value={password}
-							className={clsx(
-								classes.textField,
-								classes.minWidth252
-								// password === "" ? classes.textFieldError : null
-							)}
-							inputProps={{ autocomplete: "password" }}
-							placeholder={t('settings.accountSettings.bypassOtp.regulationPopup.typePassword')}
-							onChange={(event: any) => {
-								setPassword(event.target.value.trim());
-							}}
-							// helperText={t('common.requiredField')}
-							InputProps={{
-								endAdornment: (
-									<Button
-										onClick={() => setShowPassword(!showPassword)}
-										style={{
-											width: 25,
-											padding: 5,
-											minWidth: 10,
-											marginRight: 5
-										}}
-									>
-										{" "}
-										{showPassword ? (
-											<VisibilityOff style={{ fontSize: 15 }} />
-										) : (
-											<Visibility style={{ fontSize: 15 }} />
-										)}
-									</Button>
-								),
-							}}
-						/>
-					</Grid>
-				</Grid>
-				<Typography className={clsx(classes.font16, classes.mt5)}>
-					{t("settings.accountSettings.bypassOtp.regulationPopup.acceptAgreement")}
-				</Typography>
-			</>
-			}
-			open={showOtpRegulationDialog}
-			classes={classes}
-			confirmText={t("common.Ok")}
-			disableBackdropClick={true}
-			onCancel={() => setShowOtpRegulationDialog(false)}
-			onClose={() => setShowOtpRegulationDialog(false)}
-			onConfirm={() => {
-				handleConfirmOtpRegulation();
-			}}
-			showDefaultButtons={true}
-		/>
+		setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
+		setShowOtpRegulationDialog(false);
 	}
 
 	return (
@@ -366,7 +266,7 @@ const FORM_ACCOUNT_DETAILS = ({
 									key='bypassPending'
 									id="type"
 									classes={classes}
-									checked={!!accountDetails?.ByPassOTPAgreement}
+									checked={!!accountDetails?.DisablePluginOTP}
 									onColor="#0371ad"
 									handleDiameter={20}
 									boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"

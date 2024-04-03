@@ -108,17 +108,6 @@ export const checkCellphoneAuthorization = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     })
-export const setBypassPending = createAsyncThunk(
-    'AccountSettings/SetBypassPending',
-    async (settings: any, thunkAPI) => {
-        try {
-            const response = await PulseemReactInstance.put(`AccountSettings/SetBypassPending`, settings)
-            return response.data;
-        } catch (error) {
-            return console.log(error);
-        }
-    }
-);
 
 export const getAllTwoFactorAuthValues = createAsyncThunk(
     'authorization/GetAllTwoFactorAuthValues',
@@ -131,6 +120,32 @@ export const getAllTwoFactorAuthValues = createAsyncThunk(
         }
     }
 );
+
+export const setDisablePendingFeature = createAsyncThunk(
+    'AccountSettings/SetBypassPending',
+    async (request: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AccountSettings/SetBypassPending`, request);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+export const cancelDisablePluginOTP = createAsyncThunk(
+    'AccountSettings/CancelDisablePluginOTP',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AccountSettings/CancelDisablePluginOTP`);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+
 
 interface AuthorizationValues {
     value: string,

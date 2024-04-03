@@ -83,8 +83,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		TwoFactorAuthRetries: null,
 		TwoFactorAuthOverrideDateTime: null,
 		ExpiryDate: null,
-		ByPassOTPAgreement: false,
-		ByPassOTPAgreementDate: null
+		DisablePluginOTP: false
 
 	} as AccountSettings);
 	const [selectedTier, setSelectedTier] = useState<string>('1');
