@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
-import { Box, Button, CircularProgress, FormControl, Grid, MenuItem, Select, TextField, Typography } from "@material-ui/core";
+import { Box, Button, CircularProgress, FormControl, FormHelperText, Grid, MenuItem, Select, TextField, Typography } from "@material-ui/core";
 import clsx from 'clsx';
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,6 +26,7 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
   const [resendDisabled, setResendDisalbed] = useState(false);
   const [resendInterval, setResendInterval] = useState(10);
   const [userCodeConfirmed, setUserCodeConfirmed] = useState<boolean>(false);
+  const [showError, setShowError] = useState<boolean>(false);
   const SLIDE_HEIGHTS = [25, 20, 20];
   const slideTitles = [
     t('settings.accountSettings.bypassOtp.regulationPopup.title'),
@@ -81,6 +82,10 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
   }
 
   const handleSendOtp = async (isResend: never | any | boolean) => {
+    if (!authSelected || authSelected === '' || authSelected === t('common.select')) {
+      setShowError(true);
+      return false;
+    }
     setResendDisalbed(isResend);
     setCodeResend(isResend);
     // @ts-ignore
@@ -146,6 +151,7 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
               onChange={(e: any, x: any, y: any) => {
                 setAuthSelected(t('common.select'))
                 setSelected(e.target.value.toString())
+                setShowError(false);
               }}
               radioOptions={[
                 {
@@ -175,8 +181,11 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
                 autoWidth
                 value={authSelected || ''}
                 name='TwoFactorAuthOptionID'
-                onChange={(e: any) =>
+                required
+                onChange={(e: any) => {
+                  setShowError(false);
                   setAuthSelected(e.target.value)
+                }
                 }
                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                 MenuProps={{
@@ -216,6 +225,7 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
                 })}
               </Select>
             </FormControl>
+            {showError && <FormHelperText>{t('common.requiredField')}</FormHelperText>}
           </Grid>
         </Grid>
         <Box className={classes.mt25} style={{ textAlign: 'center' }}>
@@ -225,7 +235,7 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
               classes.btnRounded,
               "saveFixedDetails"
             )}
-            onClick={() => { handleSendOtp(false) }}>
+            onClick={() => { handleSendOtp(false) }}>{t('common.continue')}
           </Button>
         </Box>
       </Box>
@@ -293,7 +303,7 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
     <>
       <Box className={clsx(classes.carouselContainer, classes.sidebar)} style={{ height: `${SLIDE_HEIGHTS[currentSlide]}rem`, transition: 'height .5s' }}>
         <Box
-          className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)}
+          className={clsx(classes.carouselItem, classes.T05S)}
           style={{ position: "relative", transform: `translate(${isRTL ? (currentSlide * 100) : -(currentSlide * 100)}%)` }}
         >{(emailList?.length > 0 || cellphoneList.length > 0) && firstSlide()}</Box>
         <Box
