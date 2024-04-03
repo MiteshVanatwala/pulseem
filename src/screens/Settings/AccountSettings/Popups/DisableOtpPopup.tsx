@@ -246,7 +246,7 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
     return <Box className='cFlexSlide secondSlide'>
       <Box>
         <Typography variant='h4' className={classes.bold}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.title')}</Typography>
-        <Typography variant='body1' className={classes.mt4}>{selectedOption === '6' ? t("sms.OtpSentSuccessLine1") : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.desc1')} <strong>{authSelected}</strong></Typography>
+        <Typography variant='body1' className={classes.mt4}>{selectedOption === '6' ? t("sms.OtpSentSuccessLine1") : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.desc1')} <strong> {authSelected}</strong></Typography>
         <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.desc2')}</Typography>
       </Box>
       <Box className={clsx(classes.flexColumn, classes.mt20)}>
