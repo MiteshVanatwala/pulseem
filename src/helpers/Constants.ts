@@ -241,33 +241,47 @@ export const NoAuthenticationPath = [
 ]
 
 export const FieldOfActivities = [
-    'אומנות',
-    'איקומרס',
-    'בידור ואירועים',
-    'ביטוח',
-    'בלוגים וקהילות אינטרנטיות',
-    'בניה וארכיטקטורה',
-    'בריאות',
-    'גיוס וכוח אדם',
-    'גיימינג',
-    'דת',
-    'השכלה גבוהה',
-    'טיולים ונסיעות',
-    'טיפוח',
-    'יחסי ציבור',
-    'ייעוץ',
-    'מדיה ופרסום',
-    'מוצרים לבית',
-    'ממשלתי',
-    'מסעדנות',
-    'משפטי',
-    'נדל"ן',
-    'ספורט וכושר',
-    'פוליטיקה',
-    'פיננסים',
-    'קורסים והכשרות',
-    'קמעונאי',
-    'תוכנה',
-    'תחבורה',
-    'תקשורת'
+    'Art',
+    'Ecommerce',
+    'EntertainmentAndEvents',
+    'Insurance',
+    'BlogsOnlineCommunities',
+    'ConstructionAndArchitecture',
+    'Health',
+    'RecruitmentAndPersonnel',
+    'Gaming',
+    'Religion',
+    'HigherEducation',
+    'Travel',
+    'Beauty',
+    'PublicRelations',
+    'Counseling',
+    'MediaAndAdvertising',
+    'HouseholdProducts',
+    'Government',
+    'Restaurants',
+    'Legal',
+    'RealEstate',
+    'SportsAndFitness',
+    'Politics',
+    'Finance',
+    'CoursesAndTrainings',
+    'Retail',
+    'Software',
+    'Transportation',
+    'Communication'
 ]
+
+export const FieldOfInterest = [
+    { index: 1, label: 'BulkEmail' },
+    { index: 2, label: 'BulkSMS' },
+    { index: 3, label: 'WhatsApp' },
+    { index: 4, label: 'LandingPages' },
+    { index: 5, label: 'Ecommerce' },
+    { index: 6, label: 'Notification' },
+]
+
+export const lowerCaseLetters = /[a-z]/g;
+export const upperCaseLetters = /[A-Z]/g;
+export const numbers = /[0-9]/g;
+export const specialLetters = /[!"#$%&'()*+.\/:;<=>?@\[\\\]^_`{|}~-]/g;

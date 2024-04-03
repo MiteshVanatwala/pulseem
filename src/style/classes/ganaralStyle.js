@@ -4031,5 +4031,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pageContainer: {
     marginLeft: '7rem',
     marginRight: '7rem',
+  },
+  fieldOfInterestButton: {
+    borderRadius: 10,
+    paddingInline: 20,
+    '& .MuiButton-startIcon': {
+      marginRight: 0,
+      marginLeft: 0,
+      paddingInline: 5,
+    }
+  },
+  SignUpButtonGroup: {
+    background: '#fff',
+    '& button': {
+      borderBottom: 'solid 3px #fff',
+    },
+    '& .Mui-selected': {
+      borderBottomColor: 'green'
+    }
   }
 });
