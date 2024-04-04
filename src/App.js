@@ -77,7 +77,7 @@ import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContai
 //import EditDynamicGroups from './screens/Groups/Dynamic/EditDynamicGroups';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
-import { isAuthRequired } from './helpers/Utils/common';
+import { isAuthRequired, isSignupPage } from './helpers/Utils/common';
 import SignUp from './screens/SignUp/SignUp.tsx';
 
 const renderRoutes = (classes, redirect) => {
@@ -546,14 +546,14 @@ const App = ({ screenSize }) => {
   const { accountSettings } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
-  const authRequired = isAuthRequired(location.pathname);
+  const isSignup = isSignupPage(location.pathname);
 
   React.useEffect(() => {
-    authRequired && dispatch(getNotificationUpdates());
+    !isSignup && dispatch(getNotificationUpdates());
   }, [location]);
 
   useEffect(() => {
-    authRequired && screenSize && dispatch(setWindowSize(screenSize));
+    !isSignup && screenSize && dispatch(setWindowSize(screenSize));
   }, [screenSize]);
 
   useEffect(() => {
@@ -630,8 +630,8 @@ const App = ({ screenSize }) => {
       if (!!cookieFunction)
         cookieFunction()
     })
-    authRequired && updateToken()
-    authRequired && initFeatures()
+    !isSignup && updateToken()
+    !isSignup && initFeatures()
 
   }, [dispatch])
 
@@ -643,7 +643,7 @@ const App = ({ screenSize }) => {
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
-  return (accountSettings || !authRequired) && (
+  return (accountSettings || isSignup) && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
