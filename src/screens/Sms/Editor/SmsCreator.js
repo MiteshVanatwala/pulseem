@@ -15,7 +15,7 @@ import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
-import { useLocation, useParams } from "react-router";
+import { useParams } from "react-router";
 import {
   getPreviousCampaignData,
   getPreviousLandingData,
@@ -166,7 +166,6 @@ const SmsCreator = ({ classes }) => {
   const [isTestCampaign, setIsTestCampaign] = useState(false);
   const [extraAccountDATA, setextraAccountDATA] = useState([]);
   const [isLinksStatistics, setIsLinksStatistics] = useState(true);
-  // const [isFromAutomation, setIsFromAutomation] = useState(false);
   const [otpOpen, setOTPOpen] = useState(null);
   const [isSiteTracking, setIsSiteTracking] = useState(false);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
@@ -359,9 +358,7 @@ const SmsCreator = ({ classes }) => {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
     }
     setextraAccountDATA(defaultAccountExtraData)
-    // if (id && FromAutomation && FromAutomation > 0) {
-    //   setIsFromAutomation(true);
-    // }
+
     await getSavedData();
     if (!accountSettings || Object.keys(accountSettings).length === 0)
       await dispatch(getCommonFeatures());
@@ -595,10 +592,6 @@ const SmsCreator = ({ classes }) => {
     setrestoreBool(true);
     setcampaignNumber(StaticNumber);
     setLoader(true);
-    //let r = await dispatch(getCommonFeatures());
-    setLoader(false);
-    // setcampaignNumber(r.payload.DefaultCellNumber)
-    setLoader(true);
     let response = await dispatch(getSMSVirtualNumber(accountSettings.DefaultCellNumber));
     setLoader(false);
     setcampaignNumber(response.payload.Number);
@@ -723,9 +716,6 @@ const SmsCreator = ({ classes }) => {
     if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
       handleMsgSelect();
     }
-
-    // let arr = smsModel.Text.split("\n");
-    // setcharacterCount(characterCount + (arr.length - 1));
   };
 
   const onRemovalLink = async () => {
