@@ -78,6 +78,7 @@ import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 import { isSignupPage } from './helpers/Utils/common';
 import './helpers/global';
+import { isSignupPage } from './helpers/Utils/common';
 import SignUp from './screens/SignUp/SignUp.tsx';
 
 const renderRoutes = (classes, redirect) => {
