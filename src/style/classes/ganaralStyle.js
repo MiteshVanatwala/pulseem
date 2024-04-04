@@ -4049,5 +4049,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .Mui-selected': {
       borderBottomColor: 'green'
     }
+  },
+  gradientBackground: {
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
   }
 });

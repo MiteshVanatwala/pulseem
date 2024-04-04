@@ -1,5 +1,5 @@
 {
-  "Header": "סיום הרשמה",
+  "Header": "טופס הרשמה",
   "SubHeader": "הרשמתך נקלטה וממתינה לאישור לסיום ההרשמה, מלא את הפרטים הבאים",
   "PersonalInfo": "פרטים אישיים",
   "PersonalInfoDesc": "מהי הדרך המועדפת ליצור עמך קשר?",
@@ -51,5 +51,18 @@
   "Retail": "קמעונאי",
   "Software": "תוכנה",
   "Transportation": "תחבורה",
-  "Communication": "תקשורת"
+  "Communication": "תקשורת",
+  "InvalidPassword": "סיסמא לא תקינה",
+  "Message": {
+    "emptyinput": "שדה חובה ריק",
+    "usernotfound": "משתמש אינו נמצא",
+    "linkexpired": "קישור פג תוקף",
+    "invalidinput": "ערך שגוי הוזן",
+    "needcheck": "יש לסמן את אישור מדיניות הפרטיות",
+    "ok": "ההרשמה הסתיימה בהצלחה",
+    "servererror": "אופס! משהו השתבש בצד השרת",
+    "internalerror": "אופס! נמצאה שגיאה פנימית. אנא נסו שוב.",
+    "nickexists": "שם משתמש קיים",
+    "userexist": "שם משתמש קיים"
+  }
 }

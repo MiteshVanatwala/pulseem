@@ -1,5 +1,5 @@
 {
-  "Header": "REGISTRATION COMPLETE",
+  "Header": "REGISTRATION FORM",
   "SubHeader": "Your sign up was sent for approval In order to continue, fill in the following form",
   "PersonalInfo": "Personal Info",
   "PersonalInfoDesc": "What is the best way to reach you?",
@@ -20,7 +20,7 @@
   "WhatsApp": "WhatsApp",
   "LandingPages": "Landing Pages",
   "Ecommerce": "Ecommerce",
-  "Notification": "Notification",
+  "Notification": "Notifications",
   "FieldOfActivity": "Field of Activity",
   "UpdateTrainingContentCheckbox": "I agree for receiving updates and training content through Pulseem’s Newsletter",
   "PrivacyPolicyCheckbox": "By submitting this form you're agreeing to the <a href='https://site.pulseem.co.il/%d7%aa%d7%a7%d7%a0%d7%95%d7%9f/'>Antispam Policy</a> and Pulseem's <a href='https://site.pulseem.co.il/%d7%9e%d7%93%d7%99%d7%a0%d7%99%d7%95%d7%aa-%d7%a4%d7%a8%d7%98%d7%99%d7%95%d7%aa/'>Privacy & Security Policy</a>",
@@ -51,5 +51,18 @@
   "Retail": "Retail",
   "Software": "Software",
   "Transportation": "Transportation",
-  "Communication": "Communication"
+  "Communication": "Communication",
+  "InvalidPassword": "Invalid Password",
+  "Message": {
+    "emptyinput": "One or more textboxes are empty.",
+    "usernotfound": "User not found.",
+    "linkexpired": "Link has been expired.",
+    "invalidinput": "Wrong value entered.",
+    "needcheck": "Privacy Policy checkbox need to be checked.",
+    "ok": "User has been registered succesfully.",
+    "servererror": "Oops!! Something went wrong on server side.",
+    "internalerror": "Oops!! Internal error found. Please try again.",
+    "nickexists": "Already Exist",
+    "userexist": "User already exist"
+  }
 }

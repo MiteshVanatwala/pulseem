@@ -22,20 +22,23 @@ import Illustration_BG_BR from "../../assets/images/Illustration_BG_BR";
 import PasswordHint from "../Settings/AccountSettings/Password/PasswordHint";
 import { ValidPassword } from "../Settings/AccountSettings/Password/Types";
 import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
+import Toast from "../../components/Toast/Toast.component";
+import { loginURL } from "../../config";
+import queryString from 'query-string';
 
 const SignUp = ({ classes }: any) => {
-  const { windowSize, language, isRTL } = useSelector((state: StateType) => state.core);
+  const { windowSize, language } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
   const [ showLoader, setLoader ] = useState(false);
   const [ userDetails, setUserDetails ] = useState({
-    firstName: 'Test',
-    lastName: 'Test',
-    phone: 'Test',
-    cellPhone: 'Test',
-    userName: 'Test',
-    password: 'a@b.com!A1',
-    companyName: 'Test',
-    website: 'www.google.com',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    cellPhone: '',
+    userName: '',
+    password: '',
+    companyName: '',
+    website: '',
     fieldOfActivity: '',
     fieldOfInterest: [],
     chkUpdate: false,
@@ -52,7 +55,7 @@ const SignUp = ({ classes }: any) => {
     fieldOfInterest: '',
     chkPolicy: ''
   });
-  const [ langSelected, setSelectedLang ] = useState(isRTL ? 'he' : 'en');
+  const [ langSelected, setSelectedLang ] = useState('he');
   const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
     LowerChar: false,
     SpecialChar: false,
@@ -60,33 +63,50 @@ const SignUp = ({ classes }: any) => {
     PasswordLength: 0,
     NumberChar: false,
   } as ValidPassword);
-
+  const [ toastMessage, setToastMessage ] = useState<any | never>(null);
+  const qs = queryString.parse(window.location.search);
   const navigate = useNavigate()
   moment.locale(language);
 
-  const renderInterestIcon = (icon: number) => {
+  const renderToast = () => {
+    if (toastMessage) {
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 3000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
+
+  const renderInterestIcon = (icon: string) => {
     switch (icon) {
-      case 1:
+      case 'BulkEmail':
         return <MdOutlineMarkEmailRead className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
 
-      case 2:
+      case 'BulkSMS':
         return <MdMobileFriendly className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
     
-      case 3:
+      case 'WhatsApp':
         return <MdOutlineWhatsapp className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
 
-      case 4:
+      case 'LandingPages':
         return <MdDvr className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
       
-      case 5:
+      case 'Ecommerce':
         return <MdOutlineAddShoppingCart className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
       
-      case 6:
+      case 'Notification':
         return <MdNotifications className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
       
       default:
         return <></>;
     }
+  }
+
+  const showMessage = (message: string, type: string = 'error') => {
+    setToastMessage({ severity: type, color: type, message: t(message), showAnimtionCheck: false });
   }
 
   const saveSignup = async () => {
@@ -95,35 +115,51 @@ const SignUp = ({ classes }: any) => {
     errorsTemp.lastName = userDetails.lastName ? '' : t('common.Required', { lng: langSelected });
     errorsTemp.cellPhone = userDetails.cellPhone ? '' : t('common.Required', { lng: langSelected });
     errorsTemp.userName = userDetails.userName ? '' : t('common.Required', { lng: langSelected });
-    errorsTemp.password = userDetails.password ? '' : t('common.Required', { lng: langSelected });
+    errorsTemp.password = '';
     errorsTemp.companyName = userDetails.companyName ? '' : t('common.Required', { lng: langSelected });
     errorsTemp.fieldOfActivity = userDetails.fieldOfActivity ? '' : t('common.Required', { lng: langSelected });
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('common.Required', { lng: langSelected });
     errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.Required', { lng: langSelected });
+    if (userDetails.password && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
+      errorsTemp.password = t('SignUp.InvalidPassword', { lng: langSelected });
+    } else if (!userDetails.password) {
+      errorsTemp.password = t('common.Required', { lng: langSelected });
+    }
     setErrors({
       ...errors,
       ...errorsTemp
     });
 
-    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && passwordValidation.LowerChar && passwordValidation.NumberChar && passwordValidation.PasswordLength && passwordValidation.SpecialChar && passwordValidation.UpperChar && !errorsTemp.chkPolicy) {
+    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy) {
       setLoader(true);
 
-      const response = await PulseemReactInstance.post(`User/Signup`, {
+      const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
         FirstName: userDetails.firstName,
         LastName: userDetails.lastName,
         Mobile: userDetails.phone,
-        CellPhone: userDetails.cellPhone, // API
+        Phone: userDetails.cellPhone,
         UserName: userDetails.userName,
         Password: userDetails.password,
         Company: userDetails.companyName,
-        Website: userDetails.website, // API
+        Website: userDetails.website,
         ActivityField: userDetails.fieldOfActivity,
         InterestField: userDetails.fieldOfInterest,
-        UserID: "",
+        UserID: qs?.uid,
         ProductType: "",
       });
-      console.log(response);
       setLoader(false);
+      if (status === 200) {
+        if (Message === 'ok') {
+          showMessage(`SignUp.Message.${Message}`, 'success');
+          setTimeout(() => {
+            navigate(loginURL);
+          }, 5000);
+        } else {
+          showMessage(`SignUp.Message.${Message}`);
+        }
+      } else {
+        showMessage(`SignUp.Message.internalerror`);
+      }
     }
   }
 
@@ -151,10 +187,10 @@ const SignUp = ({ classes }: any) => {
       style={{ direction:  langSelected === 'he' ? 'rtl' : 'ltr' }}
     >
       <div className={classes.background}>
-        <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
-        <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
+        <Illustration_BG_BL className={'leftSvg'} />
+        <Illustration_BG_BR className={'rightSvg'} />
       </div>
-      <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter)}>
+      <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground)}>
         <Grid container>
           <Grid md={2}></Grid>
           
@@ -200,9 +236,9 @@ const SignUp = ({ classes }: any) => {
       </AppBar>
       
       <Box className={clsx(classes.pt90, classes.pageContainer)}>
-        <h2 className={clsx(classes.flexColCenter, classes.colrPrimary)}>
+        {/* <h2 className={clsx(classes.flexColCenter, classes.colrPrimary)}>
           {t('SignUp.SubHeader', { lng: langSelected })}
-        </h2>
+        </h2> */}
 
         <Box className={clsx(classes.pt10)}>
           <h3 className={clsx(classes.colrPrimary, classes.mb5)}>
@@ -469,7 +505,8 @@ const SignUp = ({ classes }: any) => {
           <div>{t('SignUp.FieldOfInterestDesc', { lng: langSelected })}</div>
           <Box className={clsx(classes.pt20)} style={{ marginBottom: 25 }}>
             {
-              FieldOfInterest.map(({ index, label }) => {
+              FieldOfInterest.map((interest) => {
+              // FieldOfInterest.map(({ index, label }) => {
                 return <Button
                   className={clsx(
                     classes.btn,
@@ -480,19 +517,20 @@ const SignUp = ({ classes }: any) => {
                       [classes.dFlex]: windowSize === 'xs',
                       [classes.mt10]: windowSize === 'xs',
                       [classes.f12]: windowSize === 'xs',
-                      [classes.redButton]: userDetails.fieldOfInterest.find((item) => item === index)
+                      [classes.gradientBackground]: userDetails.fieldOfInterest.find((item) => item === interest),
+                      [classes.colorWhite]: userDetails.fieldOfInterest.find((item) => item === interest)
                     }
                   )}
                   onClick={() => {
                     setUserDetails({
                       ...userDetails,
                       // @ts-ignore
-                      fieldOfInterest: userDetails.fieldOfInterest.find((item) => item === index) ? userDetails.fieldOfInterest.filter(item => item !== index) : [...userDetails.fieldOfInterest, index]
+                      fieldOfInterest: userDetails.fieldOfInterest.find((item) => item === interest) ? userDetails.fieldOfInterest.filter(item => item !== interest) : [...userDetails.fieldOfInterest, interest]
                     })
                   }}
-                  startIcon={renderInterestIcon(index)}
+                  startIcon={renderInterestIcon(interest)}
                 >
-                  {t(`SignUp.${label}`, { lng: langSelected })}
+                  {t(`SignUp.${interest}`, { lng: langSelected })}
                 </Button>
               })
             }
@@ -547,7 +585,8 @@ const SignUp = ({ classes }: any) => {
               classes.mr10,
               classes.p10,
               classes.mb50,
-              classes.redButton
+              classes.colorWhite,
+              classes.gradientBackground
             )}
             style={{ width: '200px', height: '50px' }}
             onClick={saveSignup}
@@ -557,6 +596,7 @@ const SignUp = ({ classes }: any) => {
         </Box>
       </Box>
       <Loader isOpen={showLoader} showBackdrop={true} />
+      {renderToast()}
     </Container>
   );
 };

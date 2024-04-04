@@ -273,12 +273,12 @@ export const FieldOfActivities = [
 ]
 
 export const FieldOfInterest = [
-    { index: 1, label: 'BulkEmail' },
-    { index: 2, label: 'BulkSMS' },
-    { index: 3, label: 'WhatsApp' },
-    { index: 4, label: 'LandingPages' },
-    { index: 5, label: 'Ecommerce' },
-    { index: 6, label: 'Notification' },
+    'BulkEmail',
+    'BulkSMS',
+    'WhatsApp',
+    'LandingPages',
+    'Ecommerce',
+    'Notification'
 ]
 
 export const lowerCaseLetters = /[a-z]/g;
