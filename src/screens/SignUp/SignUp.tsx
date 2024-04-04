@@ -262,6 +262,7 @@ const SignUp = ({ classes }: any) => {
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
                 <Typography>
                   {t("SignUp.Phone", { lng: langSelected })}
+                  <span className={clsx(classes.f18)}></span>
                 </Typography>
                 <TextField
                   variant="outlined"
@@ -395,6 +396,7 @@ const SignUp = ({ classes }: any) => {
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
                 <Typography>
                   {t("SignUp.Website", { lng: langSelected })}
+                  <span className={clsx(classes.f18)}></span>
                 </Typography>
                 <TextField
                   type="text"
