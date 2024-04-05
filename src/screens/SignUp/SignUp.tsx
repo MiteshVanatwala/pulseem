@@ -30,6 +30,7 @@ const SignUp = ({ classes }: any) => {
   const { windowSize, language } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
   const [ showLoader, setLoader ] = useState(false);
+  const qs = queryString.parse(window.location.search);
   const [ userDetails, setUserDetails ] = useState({
     firstName: '',
     lastName: '',
@@ -55,7 +56,7 @@ const SignUp = ({ classes }: any) => {
     fieldOfInterest: '',
     chkPolicy: ''
   });
-  const [ langSelected, setSelectedLang ] = useState('he');
+  const [ langSelected, setSelectedLang ] = useState(qs?.culture || 'he');
   const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
     LowerChar: false,
     SpecialChar: false,
@@ -64,7 +65,6 @@ const SignUp = ({ classes }: any) => {
     NumberChar: false,
   } as ValidPassword);
   const [ toastMessage, setToastMessage ] = useState<any | never>(null);
-  const qs = queryString.parse(window.location.search);
   const navigate = useNavigate()
   moment.locale(language);
 
@@ -144,7 +144,7 @@ const SignUp = ({ classes }: any) => {
         Website: userDetails.website,
         ActivityField: userDetails.fieldOfActivity,
         InterestField: userDetails.fieldOfInterest,
-        UserID: qs?.uid,
+        UserID: qs?.id,
         ProductType: "",
       });
       setLoader(false);

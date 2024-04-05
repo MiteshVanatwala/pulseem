@@ -37,4 +37,4 @@ export const validatePhoneNumber = (phone: any) => /^\(?([0-9]{3})\)?[-. ]?([0-9
 //@ts-ignore
 export const ValidateEmailAddress = (email: any) => /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(email); 
 
-export const isSignupPage = (pathname: string) => pathname.indexOf('signup') >= 0;
+export const isSignupPage = (pathname: string) => pathname.indexOf('new-registration') >= 0;
