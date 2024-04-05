@@ -44,17 +44,32 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const [direction, setDirection] = useState(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
 
   useEffect(() => {
-    if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
-      setMaxProducts(4);
-      setDescriptionVisibility(false);
-    } else {
+    if (structure === Structure.Horizontal) {
+      setProductOrder(Structure.Horizontal);
       setMaxProducts(2);
-      setDescriptionVisibility(true);
+      setUptoProducts(isSingleOrMultiple === Items.Multiple ? 2 : 1);
     }
+    
     if (productOrder === Structure.Vertical && structure === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
+      setMaxProducts(4);
+      setUptoProducts(isSingleOrMultiple === Items.Multiple ? 2 : 1);
       setDirection(Direction.Center);
     } else {
       setDirection(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
+    }
+
+    if (structure === Structure.Vertical && productOrder === Structure.Horizontal && isSingleOrMultiple === Items.Multiple) {
+      setMaxProducts(4);
+      if (uptoProducts === 3) {
+        setNameVisibility(true);
+        setDescriptionVisibility(false);
+      } else if (uptoProducts === 4) {
+        setNameVisibility(false);
+        setDescriptionVisibility(false);
+      } else {
+        setNameVisibility(true);
+        setDescriptionVisibility(true);
+      }
     }
   }, [productOrder, structure]);
 
@@ -77,6 +92,21 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       setMaxProducts(2);
     }
   }, [isSingleOrMultiple]);
+
+  useEffect(() => {
+    if (structure === Structure.Vertical && productOrder === Structure.Horizontal && isSingleOrMultiple === Items.Multiple && uptoProducts > 2) {
+      if (uptoProducts === 3) {
+        setNameVisibility(true);
+        setDescriptionVisibility(false);
+      } else if (uptoProducts === 4) {
+        setNameVisibility(false);
+        setDescriptionVisibility(false);
+      }
+    } else {
+      setNameVisibility(true);
+      setDescriptionVisibility(true);
+    }
+  }, [uptoProducts]);
 
   useEffect(() => {
     setButtonText(t('campaigns.buyNow'));
@@ -108,7 +138,6 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       dynamicRow['columns'].push(productJSON[1]);
     } else {
       var productJSON: any = getProductJSON();
-      console.log(productJSON)
       if (uptoProducts > 0) {
         if (productOrder === Structure.Horizontal) {
           for (let ind = 0; ind < uptoProducts; ind++) {
@@ -406,7 +435,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                       <Select
                         variant="standard"
                         value={uptoProducts}
-                        onChange={(event: any) => setUptoProducts(event.target.value)}
+                        onChange={(event: any) => setUptoProducts(Number(event.target.value))}
                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         style={{ width: '100%' }}
                         MenuProps={{
@@ -541,6 +570,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                         value="Name"
                       />
                     }
+                    disabled={structure === Structure.Vertical && productOrder === Structure.Horizontal && isSingleOrMultiple === Items.Multiple && uptoProducts === 4}
                     label={t('campaigns.name')}
                   />
                 </div>
@@ -555,6 +585,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                         name="display"
                         color="primary"
                         value="Description"
+                        disabled={structure === Structure.Vertical && productOrder === Structure.Horizontal && isSingleOrMultiple === Items.Multiple && (uptoProducts === 3 || uptoProducts === 4)}
                       />
                     }
                     label={t('campaigns.description')}
@@ -692,7 +723,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                             }}
                           >
                             <MenuItem key={Structure.Horizontal} value={Structure.Horizontal}>{t('campaigns.horizontal')}</MenuItem>
-                            <MenuItem key={Structure.Vertical} value={Structure.Vertical}>{t('campaigns.vertical')}</MenuItem>
+                            {
+                              structure !== Structure.Horizontal && <MenuItem key={Structure.Vertical} value={Structure.Vertical}>{t('campaigns.vertical')}</MenuItem>
+                            }
                           </Select>
                         </FormControl>
                       </Grid>
