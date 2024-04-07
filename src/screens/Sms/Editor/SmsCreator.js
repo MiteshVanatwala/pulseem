@@ -15,7 +15,7 @@ import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
-import { useLocation, useParams } from "react-router";
+import { useParams } from "react-router";
 import {
   getPreviousCampaignData,
   getPreviousLandingData,
@@ -109,8 +109,8 @@ const SmsCreator = ({ classes }) => {
   const { t } = useTranslation();
   const { id } = useParams();
   const queryParams = new URLSearchParams(window.location.search)
-  const FromAutomation = queryParams.get("FromAutomation") || false
-  const NodeToEdit = queryParams.get("NodeToEdit") || false
+  const isFromAutomation = queryParams.get("FromAutomation");
+  const NodeToEdit = queryParams.get("NodeToEdit");
   document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
@@ -166,7 +166,6 @@ const SmsCreator = ({ classes }) => {
   const [isTestCampaign, setIsTestCampaign] = useState(false);
   const [extraAccountDATA, setextraAccountDATA] = useState([]);
   const [isLinksStatistics, setIsLinksStatistics] = useState(true);
-  const [isFromAutomation, setIsFromAutomation] = useState(false);
   const [otpOpen, setOTPOpen] = useState(null);
   const [isSiteTracking, setIsSiteTracking] = useState(false);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
@@ -359,9 +358,7 @@ const SmsCreator = ({ classes }) => {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
     }
     setextraAccountDATA(defaultAccountExtraData)
-    if (id && FromAutomation && FromAutomation > 0) {
-      setIsFromAutomation(true);
-    }
+
     await getSavedData();
     if (!accountSettings || Object.keys(accountSettings).length === 0)
       await dispatch(getCommonFeatures());
@@ -408,7 +405,7 @@ const SmsCreator = ({ classes }) => {
   }, [reInitFromNumber])
 
   const getAutomationReturnUrl = (campaignId) => {
-    return `/pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+    return `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
   }
   const getSavedData = async () => {
     if (id) {
@@ -595,10 +592,6 @@ const SmsCreator = ({ classes }) => {
     setrestoreBool(true);
     setcampaignNumber(StaticNumber);
     setLoader(true);
-    //let r = await dispatch(getCommonFeatures());
-    setLoader(false);
-    // setcampaignNumber(r.payload.DefaultCellNumber)
-    setLoader(true);
     let response = await dispatch(getSMSVirtualNumber(accountSettings.DefaultCellNumber));
     setLoader(false);
     setcampaignNumber(response.payload.Number);
@@ -723,9 +716,6 @@ const SmsCreator = ({ classes }) => {
     if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
       handleMsgSelect();
     }
-
-    // let arr = smsModel.Text.split("\n");
-    // setcharacterCount(characterCount + (arr.length - 1));
   };
 
   const onRemovalLink = async () => {
@@ -1190,7 +1180,7 @@ const SmsCreator = ({ classes }) => {
       if (isSave) {
         setToastMessage(ToastMessages.SUCCESS);
         setTimeout(() => {
-          Redirect({ url: `${sitePrefix}sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + FromAutomation + "&NodeToEdit=" + NodeToEdit : ""}` });
+          Redirect({ url: `${sitePrefix}sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + isFromAutomation + "&NodeToEdit=" + NodeToEdit : ""}` });
           setToastMessage(null);
         }, 1500);
       } else if (returnToAutomation) {
@@ -1330,7 +1320,7 @@ const SmsCreator = ({ classes }) => {
         }
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
-          Redirect({ url: !!FromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
+          Redirect({ url: !!isFromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
         }
         else {
           setDialogType(null);
@@ -1343,7 +1333,7 @@ const SmsCreator = ({ classes }) => {
       }
     }
     else if (saveBeforeExit === false) {
-      Redirect({ url: !!FromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
+      Redirect({ url: !!isFromAutomation ? getAutomationReturnUrl(id) : `${sitePrefix}SMSCampaigns` });
       setDialogType(null);
     }
   };
