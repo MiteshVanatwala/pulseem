@@ -45,10 +45,10 @@ const FORM_ACCOUNT_DETAILS = ({
 		DefaultFromName: '',
 		DefaultCellNumber: '',
 		UnsubscribeType: false,
-		IsSmsImmediateUnsubscribeLink: false,
-		DisablePluginOTP: false
+		IsSmsImmediateUnsubscribeLink: false
+		// DisablePluginOTP: false
 	} as AccountSettings);
-	const [showOtpRegulationDialog, setShowOtpRegulationDialog] = useState<boolean>(false);
+	// const [showOtpRegulationDialog, setShowOtpRegulationDialog] = useState<boolean>(false);
 
 	const isValidPayload = () => {
 		if (!accountDetails?.DefaultFromMail) {
@@ -77,25 +77,25 @@ const FORM_ACCOUNT_DETAILS = ({
 		}
 	};
 
-	const handleByPassPending = async (event: any, selected: any) => {
-		if (selected) {
-			setShowOtpRegulationDialog(true);
-		}
-		else {
-			await dispatch(cancelDisablePluginOTP());
+	// const handleByPassPending = async (event: any, selected: any) => {
+	// 	if (selected) {
+	// 		setShowOtpRegulationDialog(true);
+	// 	}
+	// 	else {
+	// 		await dispatch(cancelDisablePluginOTP());
 
-			setAccountDetails({
-				...accountDetails,
-				DisablePluginOTP:
-					false
-			} as AccountSettings);
-		}
-	}
+	// 		setAccountDetails({
+	// 			...accountDetails,
+	// 			DisablePluginOTP:
+	// 				false
+	// 		} as AccountSettings);
+	// 	}
+	// }
 
-	const handleConfirmOtpRegulation = async () => {
-		setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
-		setShowOtpRegulationDialog(false);
-	}
+	// const handleConfirmOtpRegulation = async () => {
+	// 	setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
+	// 	setShowOtpRegulationDialog(false);
+	// }
 
 	return (
 		<Box
@@ -256,7 +256,7 @@ const FORM_ACCOUNT_DETAILS = ({
 						</Grid>
 					</Grid>
 				</Grid>
-				<Grid container>
+				{/* <Grid container>
 					<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
 						<FormControlLabel
 							control={
@@ -280,7 +280,7 @@ const FORM_ACCOUNT_DETAILS = ({
 							label={t('settings.accountSettings.bypassOtp.checkboxTitle')}
 						/>
 					</Grid>
-				</Grid>
+				</Grid> */}
 				<Grid container className={'form'} style={{ maxWidth: '100%' }}>
 					<Grid item xs={12} className={classes.justifyContentEnd}>
 						<Button
@@ -300,11 +300,11 @@ const FORM_ACCOUNT_DETAILS = ({
 					</Grid>
 				</Grid>
 			</Box>
-			{showOtpRegulationDialog && <DisableOtpPopup
+			{/* {showOtpRegulationDialog && <DisableOtpPopup
 				classes={classes}
 				onClose={() => { setShowOtpRegulationDialog(false) }}
 				onConfirm={handleConfirmOtpRegulation}
-			/>}
+			/>} */}
 			{/* {otpRegulationDialog()} */}
 		</Box>
 	);
