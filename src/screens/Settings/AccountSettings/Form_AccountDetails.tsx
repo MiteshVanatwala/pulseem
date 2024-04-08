@@ -5,7 +5,6 @@ import {
 	FormControl,
 	FormControlLabel,
 	Grid,
-	InputAdornment,
 	MenuItem,
 	Radio,
 	RadioGroup,
@@ -15,7 +14,7 @@ import {
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
 import { AccDtlPropTypes } from '../../../Models/Settings/AccountDetails';
@@ -24,6 +23,9 @@ import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
 import { IoIosArrowDown } from 'react-icons/io';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import DisableOtpPopup from './Popups/DisableOtpPopup';
+import { cancelDisablePluginOTP } from '../../../redux/reducers/AccountSettingsSlice';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -32,8 +34,9 @@ const FORM_ACCOUNT_DETAILS = ({
 	Settings,
 	OnUpdate,
 	selectedTier,
-	onTierChange = () => {},
+	onTierChange = () => { },
 }: AccDtlPropTypes) => {
+	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
 
@@ -43,7 +46,9 @@ const FORM_ACCOUNT_DETAILS = ({
 		DefaultCellNumber: '',
 		UnsubscribeType: false,
 		IsSmsImmediateUnsubscribeLink: false,
+		DisablePluginOTP: false
 	} as AccountSettings);
+	const [showOtpRegulationDialog, setShowOtpRegulationDialog] = useState<boolean>(false);
 
 	const isValidPayload = () => {
 		if (!accountDetails?.DefaultFromMail) {
@@ -72,6 +77,26 @@ const FORM_ACCOUNT_DETAILS = ({
 		}
 	};
 
+	const handleByPassPending = async (event: any, selected: any) => {
+		if (selected) {
+			setShowOtpRegulationDialog(true);
+		}
+		else {
+			await dispatch(cancelDisablePluginOTP());
+
+			setAccountDetails({
+				...accountDetails,
+				DisablePluginOTP:
+					false
+			} as AccountSettings);
+		}
+	}
+
+	const handleConfirmOtpRegulation = async () => {
+		setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
+		setShowOtpRegulationDialog(false);
+	}
+
 	return (
 		<Box
 			className={'settingsWrapper'}>
@@ -85,7 +110,7 @@ const FORM_ACCOUNT_DETAILS = ({
 				}}
 			/>
 			<Box className={'formContainer'}>
-				{ windowSize !== 'xs' && <Illustration_app_Settings className={"svg_app_settings"} />}
+				{windowSize !== 'xs' && <Illustration_app_Settings className={"svg_app_settings"} />}
 				<Grid container className={'form'}>
 					<Grid item xs={12} sm={6} md={4} className={'textBoxWrapper'}>
 						<Typography>
@@ -231,6 +256,31 @@ const FORM_ACCOUNT_DETAILS = ({
 						</Grid>
 					</Grid>
 				</Grid>
+				<Grid container>
+					<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
+						<FormControlLabel
+							control={
+								<PulseemSwitch
+									switchType={'ios'}
+									isRTL={false}
+									key='bypassPending'
+									id="type"
+									classes={classes}
+									checked={!!accountDetails?.DisablePluginOTP}
+									onColor="#0371ad"
+									handleDiameter={20}
+									boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+									activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+									height={15}
+									width={40}
+									className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+									onChange={handleByPassPending}
+								/>
+							}
+							label={t('settings.accountSettings.bypassOtp.checkboxTitle')}
+						/>
+					</Grid>
+				</Grid>
 				<Grid container className={'form'} style={{ maxWidth: '100%' }}>
 					<Grid item xs={12} className={classes.justifyContentEnd}>
 						<Button
@@ -250,6 +300,12 @@ const FORM_ACCOUNT_DETAILS = ({
 					</Grid>
 				</Grid>
 			</Box>
+			{showOtpRegulationDialog && <DisableOtpPopup
+				classes={classes}
+				onClose={() => { setShowOtpRegulationDialog(false) }}
+				onConfirm={handleConfirmOtpRegulation}
+			/>}
+			{/* {otpRegulationDialog()} */}
 		</Box>
 	);
 };

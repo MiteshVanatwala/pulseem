@@ -803,5 +803,7 @@
   "maxPrice": "מחיר מקסימלי",
   "abandonedCart": "נטש עגלה ב",
   "pageViewed": "צפה בעמוד ב",
-  "priceRangeError": "מחיר המקסימום גבוה ממחיר המינימום"
+  "priceRangeError": "מחיר המקסימום גבוה ממחיר המינימום",
+  "verifyByEmail": "אימות באימייל",
+  "verifyBySms": "אימות ב-SMS"
 }

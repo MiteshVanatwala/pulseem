@@ -809,5 +809,7 @@
   "maxPrice": "Maximum Price",
   "abandonedCart": "Abandoned Cart in",
   "pageViewed": "Page Viewed in",
-  "priceRangeError": "Maximum price cannot be larger then Minimum Price"
+  "priceRangeError": "Maximum price cannot be larger then Minimum Price",
+  "verifyByEmail": "Via Email",
+  "verifyBySms": "Via SMS"
 }
