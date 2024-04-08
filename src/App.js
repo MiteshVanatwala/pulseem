@@ -99,7 +99,7 @@ const renderRoutes = (classes, redirect) => {
     <Routes>
       <Route
         exact
-        path={`new-registration`}
+        path={`${sitePrefix}new-registration`}
         element={<SignUp classes={classes} />}
       />
       <Route
@@ -108,7 +108,6 @@ const renderRoutes = (classes, redirect) => {
         element={<DashboardScreen classes={classes} />}
       />
       <Route
-
         path={`${sitePrefix}sms/create/`}
         element={<SmsCreator classes={classes} key="create" />}
       />
