@@ -34,7 +34,7 @@ PulseemReactInstance.interceptors.request.use(async config => {
     try {
         const jtoken = getCookie('jtoken')
         let token = jtoken
-        if (isProdMode || NoAuthenticationAPIs.indexOf(config?.url || '') === -1) {
+        if (isProdMode && NoAuthenticationAPIs.indexOf(config?.url || '') === -1) {
             if (!jtoken) {
                 redirectToLogin()
                 return Promise.reject('Unautorized')
