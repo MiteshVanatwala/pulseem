@@ -236,8 +236,8 @@ export const BEE_EDITOR_TYPES = {
     LANDING_PAGE: 'LandingPages'
 }
 
-export const NoAuthenticationPath = [
-    'signup'
+export const NoAuthenticationAPIs = [
+    'User/Signup'
 ]
 
 export const FieldOfActivities = [

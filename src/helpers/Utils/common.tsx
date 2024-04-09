@@ -2,7 +2,6 @@ import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 } from '../../screens/Whatsapp/Editor/Types/WhatsappCreator.types';
-import { NoAuthenticationPath } from '../Constants';
 
 export const getValueByFieldName = (
 	button: quickReplyButtonProps,
