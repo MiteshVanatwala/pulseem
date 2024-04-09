@@ -261,7 +261,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['uuid'] = uuidv4();
         image['descriptor']['image']['src'] = NO_IMAGE_URL;
         image['descriptor']['image']['style']['text-align'] = alignment;
-        image['descriptor']['image']['percWidth'] = '30';
+        image['descriptor']['image']['percWidth'] = productOrder === Structure.Vertical ? '30' : '100';
         image['descriptor']['style']['text-align'] = alignment;
         image['descriptor']['style']['padding-left'] = '20px';
         image['descriptor']['style']['padding-right'] = '20px';

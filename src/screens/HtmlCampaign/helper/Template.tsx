@@ -39,7 +39,7 @@ export const PulImage = {
       "alt": "",
       "src": "",
       "href": "",
-      "percWidth": "75",
+      "percWidth": "100",
       "style": {
         "width": "100%",
         "text-align": "left"
