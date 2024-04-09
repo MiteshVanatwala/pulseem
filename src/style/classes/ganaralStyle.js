@@ -320,6 +320,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dBlock: {
     display: "block !important",
   },
+  dInlineBlock: {
+    display: "inline-block !important",
+  },
   dNone: {
     display: "none",
   },
@@ -4045,6 +4048,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: '#fff',
     '& button': {
       borderBottom: 'solid 3px #fff',
+      padding: '3px 0px',
     },
     '& .Mui-selected': {
       borderBottomColor: 'green'
