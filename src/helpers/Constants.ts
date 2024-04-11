@@ -278,7 +278,8 @@ export const FieldOfInterest = [
     'WhatsApp',
     'LandingPages',
     'Ecommerce',
-    'Notification'
+    'Notification',
+    'MarketingAutomation'
 ]
 
 export const lowerCaseLetters = /[a-z]/g;

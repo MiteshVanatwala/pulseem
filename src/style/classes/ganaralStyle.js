@@ -4038,20 +4038,24 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   fieldOfInterestButton: {
     borderRadius: 10,
     paddingInline: 20,
+    textTransform: 'none',
     '& .MuiButton-startIcon': {
       marginRight: 0,
       marginLeft: 0,
       paddingInline: 5,
     }
   },
-  SignUpButtonGroup: {
-    background: '#fff',
-    '& button': {
-      borderBottom: 'solid 3px #fff',
-      padding: '3px 0px',
+  SignUpLanguageDropdown: {
+    width: 150,
+    borderRadius: 5,
+    '& .MuiSelect-select': {
+      padding: '5px 7px !important',
     },
-    '& .Mui-selected': {
-      borderBottomColor: 'green'
+    '& img': {
+      height: 20,
+    },
+    '& .cname': {
+      paddingInline: 10,
     }
   },
   gradientBackground: {

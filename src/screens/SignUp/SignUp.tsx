@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown } from "react-icons/io";
 import { FieldOfActivities, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
-import { MdDvr, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
+import { MdDvr, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
 import USImage from "../../assets/images/united-states-flag-icon.svg";
@@ -41,12 +41,13 @@ const SignUp = ({ classes }: any) => {
     cellPhone: '',
     userName: '',
     password: '',
+    confirmPassword: '',
     companyName: '',
     website: '',
     fieldOfActivity: '',
     fieldOfInterest: [],
-    chkUpdate: false,
-    chkPolicy: false
+    chkUpdate: true,
+    chkPolicy: true
   });
   const [ errors, setErrors ] = useState({
     firstName: '',
@@ -54,6 +55,7 @@ const SignUp = ({ classes }: any) => {
     cellPhone: '',
     userName: '',
     password: '',
+    confirmPassword: '',
     companyName: '',
     fieldOfActivity: '',
     fieldOfInterest: '',
@@ -109,6 +111,9 @@ const SignUp = ({ classes }: any) => {
       
       case 'Notification':
         return <MdNotifications className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
+
+      case 'MarketingAutomation':
+        return <MdOutlineAutoMode className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
       
       default:
         return <></>;
@@ -126,6 +131,7 @@ const SignUp = ({ classes }: any) => {
     errorsTemp.cellPhone = userDetails.cellPhone ? '' : t('common.Required');
     errorsTemp.userName = userDetails.userName ? '' : t('common.Required');
     errorsTemp.password = '';
+    errorsTemp.confirmPassword = userDetails.confirmPassword === '' ? t('common.Required') : (userDetails.password === userDetails.confirmPassword ? '' : t("settings.changePassword.error.notMatch"));
     errorsTemp.companyName = userDetails.companyName ? '' : t('common.Required');
     errorsTemp.fieldOfActivity = userDetails.fieldOfActivity ? '' : t('common.Required');
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('common.Required');
@@ -141,7 +147,7 @@ const SignUp = ({ classes }: any) => {
       ...errorsTemp
     });
 
-    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy) {
+    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.confirmPassword) {
       setLoader(true);
 
       const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
@@ -216,40 +222,41 @@ const SignUp = ({ classes }: any) => {
             [classes.textRight]: !isRTL,
             [classes.textLeft]: isRTL,
           })}>
-            <ToggleButtonGroup
-              color="primary"
-              value={isRTL ? 'he' : 'en'}
-              exclusive
-              aria-label="Platform"
-              className={classes.SignUpButtonGroup}
-            >
-              <ToggleButton value="en" onClick={() => dispatch(setLanguage('en'))}>
-                <Tooltip
-                  disableFocusListener
-                  title={`${t('languages.langCodes.english')}`}
-                  placement='top-start'
-                  arrow
-                >
-                  <img src={USImage} alt={t('languages.langCodes.english')} />
-                </Tooltip>
-              </ToggleButton>
-              <ToggleButton value="he" onClick={() => dispatch(setLanguage('he'))}>
-                <Tooltip
-                  disableFocusListener
-                  title={`${t('languages.langCodes.hebrew')}`}
-                  placement='top-start'
-                  arrow
-                >
-                  <img src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
-                </Tooltip>
-              </ToggleButton>
-            </ToggleButtonGroup>
+            <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100, classes.SignUpLanguageDropdown, classes.bgWhite)}>
+              <Select
+                variant="standard"
+                value={isRTL ? 'he' : 'en'}
+                name='TwoFactorAuthOptionID'
+                onChange={(e: SelectChangeEvent) => dispatch(setLanguage(e.target.value))}
+                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      width: 100,
+                      maxHeight: 200,
+                      direction: isRTL ? 'rtl' : 'ltr'
+                    },
+                  },
+                }}
+                className={classes.SignUpLanguageDropdown}
+              >
+                <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+                  <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
+                  <label className="cname">{t('languages.langCodes.hebrew')}</label>
+                </MenuItem>
+
+                <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+                  <img width={35} src={USImage} alt={t('languages.langCodes.english')} />
+                  <label className="cname">{t('languages.langCodes.english')}</label>
+                </MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
         </Grid>
       </AppBar>
       
-      <Box className={clsx(classes.pt90, classes.pageContainer)}>
-        <Box className={clsx(classes.pt10)}>
+      <Box className={clsx(classes.pt50, classes.pageContainer)}>
+        <Box className={clsx(classes.pt20)}>
           <h3 className={clsx(classes.colrPrimary, classes.mb5)}>
             {t('SignUp.PersonalInfo')}
           </h3>
@@ -344,9 +351,18 @@ const SignUp = ({ classes }: any) => {
                   </Typography>
                 )}
               </Grid>
+            </Grid>
+          </Box>
+        </Box>
 
+        <Box className={clsx(classes.pt10)}>
+          <h3 className={clsx(classes.colrPrimary, classes.mb5)}>
+            {t('SignUp.LoginDetails')}
+          </h3>
+          <Box className={"formContainer"} style={{ marginBottom: 25 }}>
+            <Grid container className={clsx("form", classes.pt10)} spacing={3}>
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+              <Typography>
                   {t("SignUp.UserName")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -370,7 +386,7 @@ const SignUp = ({ classes }: any) => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+              <Typography>
                   {t("SignUp.Password")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -401,20 +417,44 @@ const SignUp = ({ classes }: any) => {
                   </Typography>
                 )}
               </Grid>
+
+              <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
+                <Typography>
+                  {t("SignUp.PasswordVerification")}
+                  <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                </Typography>
+                <TextField
+                  type="password"
+                  variant="outlined"
+                  size="small"
+                  name="confirmPassword"
+                  value={userDetails?.confirmPassword}
+                  onChange={(event: any) => setUserDetails({
+                    ...userDetails,
+                    confirmPassword: event.target.value
+                  })}
+                  className={clsx(classes.textField, classes.minWidth252)}
+                  error={!!errors.confirmPassword}
+                />
+                {!!errors.confirmPassword && (
+                  <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                    {errors.confirmPassword}
+                  </Typography>
+                )}
+              </Grid>
             </Grid>
           </Box>
         </Box>
 
         <Box className={clsx("settingsWrapper", classes.pt10)}>
           <h3 className={clsx(classes.colrPrimary, classes.mb5)}>
-            {t('SignUp.Company')}
+            {t('SignUp.BusinessDetail')}
           </h3>
-          <div>{t('SignUp.CompanyDesc')}</div>
           <Box className={"formContainer"} style={{ marginBottom: 25 }}>
             <Grid container className={clsx("form", classes.pt20)} spacing={3}>
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
                 <Typography>
-                  {t("settings.accountSettings.fixedComDetails.fields.compName")}
+                  {t("SignUp.BusinessName")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
                 <TextField
@@ -519,6 +559,7 @@ const SignUp = ({ classes }: any) => {
                     classes.btnRounded,
                     classes.mr10,
                     classes.fieldOfInterestButton,
+                    classes.mb10,
                     {
                       [classes.dFlex]: windowSize === 'xs',
                       [classes.mt10]: windowSize === 'xs',
@@ -598,7 +639,7 @@ const SignUp = ({ classes }: any) => {
             style={{ width: '200px', height: '50px' }}
             onClick={saveSignup}
           >
-            {t(`common.save`)}
+            {t(`SignUp.Submit`)}
           </Button>
         </Box>
       </Box>
