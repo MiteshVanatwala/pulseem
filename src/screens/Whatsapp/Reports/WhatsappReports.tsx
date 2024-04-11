@@ -306,7 +306,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						`${cellValue >= 1 && isClickable && 'value-cell'}`
 					)}>
 					{amountCell.includes(cellName)
-						? `${cellValue ? cellValue.toFixed(3) : '0'} ${translator(
+						? `${cellValue ? cellValue.toFixed(2) : '0'} ${translator(
 							'common.NIS'
 						)}`
 						: cellValue || '0'}

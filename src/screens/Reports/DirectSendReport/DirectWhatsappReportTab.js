@@ -117,7 +117,7 @@ const DirectWhatsappReportTab = ({
         }
 
         return (
-            <Typography style={{ fontWeight: isBalanceCol ? 900 : null, wordBreak: dataType === 'content' ? 'break-word' : null }}>{text} {isBalanceCol && t("common.NIS")}</Typography>
+            <Typography style={{ fontWeight: isBalanceCol ? 900 : null, wordBreak: dataType === 'content' ? 'break-word' : null }}>{isBalanceCol ? text?.toFixed(2) : text} {isBalanceCol && t("common.NIS")}</Typography>
         );
     }
 
@@ -459,7 +459,7 @@ const DirectWhatsappReportTab = ({
                     classes={cellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderCell(Cost, null, true)}
+                    {Status !== 7 && renderCell(Cost, null, true)}
                 </TableCell>
                 <TableCell
                     classes={cellStyle}
