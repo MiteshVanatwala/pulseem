@@ -4043,7 +4043,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginRight: 0,
       marginLeft: 0,
       paddingInline: 5,
-    }
+    },
+    [theme.breakpoints.down('xs')]: {
+      display: 'inline-flex',
+      marginBottom: 0,
+    },
   },
   SignUpLanguageDropdown: {
     width: 150,

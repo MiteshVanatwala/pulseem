@@ -552,7 +552,7 @@ const App = ({ screenSize }) => {
   }, [location]);
 
   useEffect(() => {
-    !isSignup && screenSize && dispatch(setWindowSize(screenSize));
+    screenSize && dispatch(setWindowSize(screenSize));
   }, [screenSize]);
 
   useEffect(() => {

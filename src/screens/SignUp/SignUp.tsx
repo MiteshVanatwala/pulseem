@@ -14,7 +14,6 @@ import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
 import USImage from "../../assets/images/united-states-flag-icon.svg";
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Illustration_BG_BL from "../../assets/images/Illustration_BG_BL";
 import Illustration_BG_BR from "../../assets/images/Illustration_BG_BR";
 import PasswordHint from "../Settings/AccountSettings/Password/PasswordHint";
@@ -26,7 +25,7 @@ import queryString from 'query-string';
 import { setLanguage } from "../../redux/reducers/coreSlice";
 import { useDispatch } from 'react-redux';
 import i18n from "../../i18n";
-import { IsValidPhoneNumber } from "../../helpers/Utils/Validations";
+import { IsValidEmail, IsValidPhoneNumber } from "../../helpers/Utils/Validations";
 
 const SignUp = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -37,6 +36,7 @@ const SignUp = ({ classes }: any) => {
   const [ userDetails, setUserDetails ] = useState({
     firstName: '',
     lastName: '',
+    emailId: qs?.emailid || '',
     phone: '',
     cellPhone: '',
     userName: '',
@@ -52,6 +52,7 @@ const SignUp = ({ classes }: any) => {
   const [ errors, setErrors ] = useState({
     firstName: '',
     lastName: '',
+    emailId: '',
     cellPhone: '',
     userName: '',
     password: '',
@@ -95,25 +96,25 @@ const SignUp = ({ classes }: any) => {
   const renderInterestIcon = (icon: string) => {
     switch (icon) {
       case 'BulkEmail':
-        return <MdOutlineMarkEmailRead className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
+        return <MdOutlineMarkEmailRead className={clsx(classes.p5)} />;
 
       case 'BulkSMS':
-        return <MdMobileFriendly className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
+        return <MdMobileFriendly className={clsx(classes.p5)} />;
     
       case 'WhatsApp':
-        return <MdOutlineWhatsapp className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
+        return <MdOutlineWhatsapp className={clsx(classes.p5)} />;
 
       case 'LandingPages':
-        return <MdDvr className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
+        return <MdDvr className={clsx(classes.p5)} />;
       
       case 'Ecommerce':
-        return <MdOutlineAddShoppingCart className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
+        return <MdOutlineAddShoppingCart className={clsx(classes.p5)} />;
       
       case 'Notification':
-        return <MdNotifications className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
+        return <MdNotifications className={clsx(classes.p5)} />;
 
       case 'MarketingAutomation':
-        return <MdOutlineAutoMode className={clsx(classes.p5, windowSize === 'xs' ? classes.f16 : '')} />;
+        return <MdOutlineAutoMode className={clsx(classes.p5)} />;
       
       default:
         return <></>;
@@ -136,6 +137,7 @@ const SignUp = ({ classes }: any) => {
     errorsTemp.fieldOfActivity = userDetails.fieldOfActivity ? '' : t('common.Required');
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('common.Required');
     errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.Required');
+    errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     if (userDetails.password && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
       errorsTemp.password = t('SignUp.InvalidPassword');
@@ -147,7 +149,7 @@ const SignUp = ({ classes }: any) => {
       ...errorsTemp
     });
 
-    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.confirmPassword) {
+    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
       setLoader(true);
 
       const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
@@ -218,9 +220,10 @@ const SignUp = ({ classes }: any) => {
             </div>
           </Grid>
 
-          <Grid md={2} className={clsx({
+          <Grid md={2} className={clsx(classes.w100, {
             [classes.textRight]: !isRTL,
             [classes.textLeft]: isRTL,
+            [classes.mt10]: windowSize === 'sm' || windowSize === 'xs'
           })}>
             <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100, classes.SignUpLanguageDropdown, classes.bgWhite)}>
               <Select
@@ -255,14 +258,14 @@ const SignUp = ({ classes }: any) => {
         </Grid>
       </AppBar>
       
-      <Box className={clsx(classes.pt50, classes.pageContainer)}>
+      <Box className={clsx(classes.pt50, windowSize === 'md' || windowSize === 'lg' ? classes.pageContainer : '', windowSize === 'xs' || windowSize === 'sm' ? classes.pt90 : '')}>
         <Box className={clsx(classes.pt20)}>
           <h3 className={clsx(classes.colrPrimary, classes.mb5)}>
             {t('SignUp.PersonalInfo')}
           </h3>
           <Box className={"formContainer"} style={{ marginBottom: 25 }}>
             <Grid container spacing={3} className={clsx("form", classes.pt10)}>
-              <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
+              <Grid item xs={12} sm={12} md={4} className={"textBoxWrapper"}>
                 <Typography>
                   {t("SignUp.FirstName")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
@@ -312,20 +315,27 @@ const SignUp = ({ classes }: any) => {
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
                 <Typography>
-                  {t("SignUp.Phone")}
-                  <span className={clsx(classes.f18)}></span>
+                  {t("common.Email")}
+                  <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
                 <TextField
+                  type="email"
                   variant="outlined"
                   size="small"
-                  name="Phone"
-                  value={userDetails?.phone}
-                  onChange={(event: any) => IsValidPhoneNumber(event.target.value) && setUserDetails({
+                  name="EmailLastName"
+                  value={userDetails?.emailId}
+                  onChange={(event: any) => setUserDetails({
                     ...userDetails,
-                    phone: event.target.value
+                    emailId: event.target.value
                   })}
                   className={clsx(classes.textField, classes.minWidth252)}
+                  error={!!errors.emailId}
                 />
+                {!!errors.emailId && (
+                  <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                    {errors.emailId}
+                  </Typography>
+                )}
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
@@ -350,6 +360,24 @@ const SignUp = ({ classes }: any) => {
                     {errors.cellPhone}
                   </Typography>
                 )}
+              </Grid>
+              
+              <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
+                <Typography>
+                  {t("SignUp.Phone")}
+                  <span className={clsx(classes.f18)}></span>
+                </Typography>
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  name="Phone"
+                  value={userDetails?.phone}
+                  onChange={(event: any) => IsValidPhoneNumber(event.target.value) && setUserDetails({
+                    ...userDetails,
+                    phone: event.target.value
+                  })}
+                  className={clsx(classes.textField, classes.minWidth252)}
+                />
               </Grid>
             </Grid>
           </Box>
@@ -451,7 +479,7 @@ const SignUp = ({ classes }: any) => {
             {t('SignUp.BusinessDetail')}
           </h3>
           <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-            <Grid container className={clsx("form", classes.pt20)} spacing={3}>
+            <Grid container className={clsx("form", classes.pt10)} spacing={3}>
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
                 <Typography>
                   {t("SignUp.BusinessName")}
@@ -636,7 +664,7 @@ const SignUp = ({ classes }: any) => {
               classes.colorWhite,
               classes.gradientBackground
             )}
-            style={{ width: '200px', height: '50px' }}
+            style={{ width: windowSize === 'xs' ? '100%' : '200px', height: '50px' }}
             onClick={saveSignup}
           >
             {t(`SignUp.Submit`)}
