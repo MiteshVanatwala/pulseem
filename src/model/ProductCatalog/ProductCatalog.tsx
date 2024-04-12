@@ -38,7 +38,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const [eventType, setEventType] = useState(EventTypes.Purchase);
   const [category, setCategory] = useState(0);
   const [maxProducts, setMaxProducts] = useState(2);
-  const [productOrder, setProductOrder] = useState(Structure.Horizontal);
+  const [productOrder, setProductOrder] = useState(Structure.Vertical);
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { productCategories } = useSelector((state: StateType) => state.product);
   const [direction, setDirection] = useState(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
@@ -75,8 +75,8 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
 
   useEffect(() => {
     if (isSingleOrMultiple === Items.Multiple) {
-      setStructure(Structure.Horizontal);
-      setProductOrder(Structure.Horizontal);
+      setStructure(Structure.Vertical);
+      setProductOrder(Structure.Vertical);
       setUptoProducts(2);
     } else setUptoProducts(1);
 
@@ -188,6 +188,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple == Items.Multiple) {
           image['descriptor']['style']['padding-bottom'] = '25px';
         }
+        image['descriptor']['computedStyle']['class'] = 'fullwidthOnMobile';
         productCol['modules'].push(image);
         productCol['grid-columns'] = imageCol;
         productJSON.push(productCol);
@@ -265,7 +266,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['style']['text-align'] = alignment;
         image['descriptor']['style']['padding-left'] = '20px';
         image['descriptor']['style']['padding-right'] = '20px';
-        image['descriptor']['computedStyle']['class'] = `${alignment === Direction.Center ? 'center' : 'left'} fixedwidth`;
+        image['descriptor']['computedStyle']['class'] = `${alignment === Direction.Center ? 'center' : 'left'} fixedwidth fullwidthOnMobile`;
         moduleItems.push(image);
       }
 
