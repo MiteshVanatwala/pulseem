@@ -165,6 +165,7 @@ const SignUp = ({ classes }: any) => {
         InterestField: userDetails.fieldOfInterest,
         UserID: qs?.id,
         ProductType: "",
+        chkMailingApproval: userDetails.chkUpdate
       });
       setLoader(false);
       if (status === 200) {
