@@ -28,4 +28,5 @@ export interface AccountSettings {
     TwoFactorAuthRetries: number | null;
     TwoFactorAuthOverrideDateTime: Date | string | null;
     ExpiryDate: Date | string | null;
+    DisablePluginOTP: boolean;
 }
