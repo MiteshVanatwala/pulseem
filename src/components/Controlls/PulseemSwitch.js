@@ -44,7 +44,8 @@ const IOSSwitch = styled((props) => (
         height: 24,
         margin: 1,
         borderRadius: 50,
-        background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+        background: 'radial-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35) 60%, rgba(0,0,0,.35) 70%, transparent 100%)',
+        borderColor: '2px solid #FF0076',
         transition: theme.transitions.create(['width'], {
             duration: 200,
         }),
@@ -54,9 +55,9 @@ const IOSSwitch = styled((props) => (
         height: 30,
         opacity: 1,
         backgroundColor:
-            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : '#fff',
+            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.05)',
         boxSizing: 'border-box',
-        border: '1px solid #FF0076'
+        border: '1px solid rgba(0,0,0,.25)'
     },
 }));
 
