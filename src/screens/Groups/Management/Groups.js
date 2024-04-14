@@ -8,7 +8,7 @@ import {
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
 import { PreviewIcon, AddRecipient, AddRecipients, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon } from '../../../assets/images/managment/index'
-import { TablePagination, SearchField, ManagmentIcon } from '../../../components/managment/index'
+import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import { useTranslation } from 'react-i18next';
@@ -83,6 +83,7 @@ const Groups = ({ classes }) => {
         PageIndex: 1,
         PageSize: rowsPerPage,
         SearchTerm: "",
+        IsDynamic: false
     });
     const navigate = useNavigate()
     moment.locale(language);
@@ -1618,7 +1619,7 @@ const Groups = ({ classes }) => {
 
     }
     const handleRowsPerPageChange = (val) => {
-        dispatch(setRowsPerPage(val))
+        dispatch(setRowsPerPage(`${val}`))
     }
     const handlePageChange = (val) => {
         SetPageState({

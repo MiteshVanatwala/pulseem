@@ -100,6 +100,17 @@
 		"whatsAppTier": {
 			"tierUpdatedSuccessfully": "Tier saved successfully",
 			"tierUpdatedFailed": "Tier was not saved. Please contact support."
+		},
+		"bypassOtp": {
+			"checkboxTitle": "Insert “Pending” Recipients as “Active”",
+			"regulationPopup": {
+				"title": "Pay attention!",
+				"text": "For your attention, by activating <b>Insert “Pending” Recipients as “Active”</b> setting, you are requesting to cancel, in relation to all recipients who are added to the Pulseem system through external systems integrations, the sending of a confirmation email for the receipt of mail by Pulseem company in accordance with the requirements of the law.<br/>Changing the aforementioned settings is carried out at your sole responsibility, and in doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or to Pulseem as a result, and therefore these damages will apply only to you.",
+				"acceptAgreement": "By clicking OK, I agree and accept the legal responsibility",
+				"reEnterPassword": "Re-Enter Password to complete the action",
+				"selectAuthType": "Choose a way to verify the account via email or SMS associated with this account:",
+				"typePassword": "Account Password"
+			}
 		}
 	},
 	"billingSettings": {

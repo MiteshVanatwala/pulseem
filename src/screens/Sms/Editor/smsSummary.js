@@ -139,6 +139,14 @@ const SmsSummary = ({ classes,
             flexDirection: "column",
             justifyContent: "center",
           }}>
+            {(!summaryPayload.Pending || summaryPayload.Pending === 0) ? null : <span className={classes.summaryDetailsSpan}
+            >
+              {t("campaigns.newsLetterEditor.sendSettings.pendingClients")}:
+              <span className={classes.summaryDetailsSpanBold}
+              >
+                {summaryPayload.Pending || 0}
+              </span></span>
+            }
             {summaryPayload.DuplicateCellphoneSharedWithClienCount === 0 ? null : <span
               className={classes.summaryDetailsSpan}
             >
