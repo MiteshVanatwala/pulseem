@@ -446,7 +446,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
           localStorage.setItem('reloadBeeEditor', 1);
 
-          if (isAutoResponder) {
+          if (isAutoResponder || isFromAutomation) {
             window.location.href = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
           }
           else {
