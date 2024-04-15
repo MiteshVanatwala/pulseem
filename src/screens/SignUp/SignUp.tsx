@@ -216,9 +216,9 @@ const SignUp = ({ classes }: any) => {
           
           <Grid md={8} className={clsx(classes.pt5)}>
             <PulseemNewLogo />
-            <div className={clsx(classes.pt5, classes.f22, classes.dInlineBlock, classes.pr10)}>
+            <span className={clsx(classes.f22, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
             -&nbsp;&nbsp;{t('SignUp.Header')}
-            </div>
+            </span>
           </Grid>
 
           <Grid md={2} className={clsx(classes.w100, {
@@ -331,6 +331,7 @@ const SignUp = ({ classes }: any) => {
                   })}
                   className={clsx(classes.textField, classes.minWidth252)}
                   error={!!errors.emailId}
+                  disabled={!!qs?.emailid || false}
                 />
                 {!!errors.emailId && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -583,6 +584,7 @@ const SignUp = ({ classes }: any) => {
             {
               FieldOfInterest.map((interest) => {
                 return <Button
+                  key={interest}
                   className={clsx(
                     classes.btn,
                     classes.btnRounded,
