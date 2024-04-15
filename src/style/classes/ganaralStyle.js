@@ -1283,6 +1283,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       border: "solid 5px #ff3343"
     }
   },
+  removeTemplateItem: {
+    position: 'absolute',
+    color: 'red',
+    top: 6,
+    color: '#FFF',
+    right: 15,
+    position: 'absolute',
+    background: 'red',
+    padding: 5,
+    borderRadius: 50,
+    fontSize: '1.5rem',
+    cursor: 'pointer',
+  },
   baseButtons: {
     display: "flex",
     alignItems: "center",

@@ -94,6 +94,15 @@ export const getTemplateById = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     })
+export const deleteTemplateById = createAsyncThunk(
+    '/CampaignEditor/DeleteTemplateById/', async (id, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.delete(`/CampaignEditor/DeleteTemplateById/${id}`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
 export const saveTemplateToAccount = createAsyncThunk(
     '/CampaignEditor/SaveAsTemplate', async (data, thunkAPI) => {
         try {
