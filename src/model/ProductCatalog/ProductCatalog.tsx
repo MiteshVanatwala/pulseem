@@ -736,7 +736,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
               }
 
               <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.preview')}:</h4>
-              <div className='preview' style={{ display: productOrder === Structure.Horizontal ? 'flex' : 'block', height: previewContainerHeight, minHeight: previewContainerHeight, maxHeight: previewContainerHeight, overflowY: 'auto', overflowX: 'hidden' }}>
+              <div className='preview' style={{ display: productOrder === Structure.Horizontal ? 'flex' : 'block', height: previewContainerHeight, minHeight: previewContainerHeight, maxHeight: previewContainerHeight, overflowY: 'auto', overflowX: 'auto' }}>
                 {
                   [
                     times(uptoProducts, (i) => {
