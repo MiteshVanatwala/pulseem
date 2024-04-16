@@ -412,6 +412,7 @@ export type reportDataProps = {
 	Failed: number;
 	CreateDate: string;
 	UpdateDate: string;
+	SendDate: string;
 	FromNumber: string;
 	TemplateID: string;
 	Revenue: number;

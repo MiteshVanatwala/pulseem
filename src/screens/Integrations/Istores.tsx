@@ -12,6 +12,7 @@ import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import GroupTags from "../../components/Groups/GroupTags";
+import { URL_HELPER } from "../../helpers/Links/ExternalLink";
 const Istores = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -255,7 +256,20 @@ const Istores = ({ classes }: any) => {
       {
         !isPageLoading && (
           <Box className={"formContainer"}>
-            <Box className={clsx(classes.dblock, classes.pb15)}>
+            <Button
+              onClick={() => window.open(URL_HELPER.Integrations.IStore.guide, '_blank')}
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.btn,
+                classes.btnRounded,
+                classes.mb20
+              )}
+              color="primary"
+            >
+              {t(`integrations.Istores.connectStore`)}
+            </Button>
+            <Box className={clsx(classes.dblock)}>
               <Typography className={clsx(classes.bold)}>
                 <>{t("integrations.apiKey")}</>
                 <label className={clsx(classes.ml10, classes.textRed)}>*</label>
@@ -278,7 +292,7 @@ const Istores = ({ classes }: any) => {
               )}
             </Box>
 
-            <Box className={clsx(classes.dblock, classes.pb15)}>
+            <Box className={clsx(classes.dblock, classes.pb15, classes.mt15)}>
               <Typography className={clsx(classes.bold)}>
                 <>{t("integrations.Istores.storeID")}</>
                 <label className={clsx(classes.ml10, classes.textRed)}>*</label>

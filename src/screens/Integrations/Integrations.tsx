@@ -13,6 +13,9 @@ import CashCowIcon from '../../assets/images/cashCow.png';
 import { Title } from "../../components/managment/Title";
 import IsraCardIcon from '../../assets/images/isracard.png';
 import Istores from "./Istores";
+import EcwidIcon from '../../assets/images/ecwid.png';
+import Ecwid from "./Ecwid";
+
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -45,7 +48,7 @@ const Integrations = ({ classes }: any) => {
           <Tab
             // @ts-ignore
             label={t('integrations.shopify.title')}
-            icon={<img src={ShopifyIcon} alt="" />}
+            icon={<img src={ShopifyIcon} alt="אייקון של Shopify" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
             className={classes.iconTab}
             value='0'
@@ -54,7 +57,7 @@ const Integrations = ({ classes }: any) => {
           <Tab
             // @ts-ignore
             label={t('integrations.wooCommerce.title')}
-            icon={<img src={WooCommerceIcon} alt="" />}
+            icon={<img src={WooCommerceIcon} alt="אייקון של WooCommerce" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
             className={classes.iconTab}
             value='1'
@@ -63,7 +66,7 @@ const Integrations = ({ classes }: any) => {
           <Tab
             // @ts-ignore
             label={t('integrations.cashCow.title')}
-            icon={<img src={CashCowIcon} alt="" />}
+            icon={<img src={CashCowIcon} alt="אייקון של CashCow" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
             className={classes.iconTab}
             value='2'
@@ -72,10 +75,17 @@ const Integrations = ({ classes }: any) => {
           <Tab
             // @ts-ignore
             label={t('integrations.Istores.title')}
-            icon={<img src={IsraCardIcon} alt="" />}
+            icon={<img src={IsraCardIcon} alt="אייקון של Isracard" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
             className={classes.iconTab}
             value='3'
+          />
+          <Tab
+            label={t('integrations.ecwid.title')}
+            icon={<img src={EcwidIcon} alt="אייקון של Ecwid" />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='4'
           />
         </Tabs>
         <TabContext value={`${tabValue}`}>
@@ -93,6 +103,9 @@ const Integrations = ({ classes }: any) => {
 
           <TabPanel value='3'>
             <Istores classes={classes} />
+          </TabPanel>
+          <TabPanel value='4'>
+            <Ecwid classes={classes} />
           </TabPanel>
         </TabContext>
       </Box>

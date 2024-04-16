@@ -40,7 +40,7 @@ export const getSettingsItem = (
     { title: t('master.linkAccountBilling.Text'), href: `${rootDomain}/AccountBilling.aspx?fromreact=true`, iconSrc: DolarMenuIcon, isShow: true },
     { title: t('master.RadMenuItemResource3.Text'), href: `${rootDomain}/AccountUsers.aspx?fromreact=true`, iconSrc: GroupMenuIcon, isShow: isAllowSwitchAccount },
     { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount },
-    { title: t('master.RadMenuItemResource23.Text'), href: `${rootDomain}/ExtraFieldsDefinition.aspx?fromreact=true`, iconSrc: StarMenuIcon, isShow: true },
+    { title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
     { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: true },
     { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: true },
     { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: true },
@@ -93,9 +93,14 @@ export const getRoutes = (
         {
           key: "dynamicGroups",
           title: t("master.RadMenuItemResourceDynamicGroups.Text"),
-          href: `${rootDomain}/DynamicGroups.aspx?fromreact=true`,
-          // href: `${sitePrefix}Groups/Dynamic`,
+          href: `${sitePrefix}Groups/Dynamic`,
           isShow: true,
+        },
+        {
+          key: 'EditDynamicGroup',
+          title: t("recipient.logPageHeaderResource1.Edit"),
+          href: ``,
+          isShow: false,
         },
         {
           title: t("master.RadMenuItemResourceFileUploads.Text"),
@@ -267,7 +272,7 @@ export const getRoutes = (
       options: [
         {
           title: t("master.RadMenuItemLandingPage.Text"),
-          href: `${rootDomain}/LandingPageWizard.aspx?fromreact=true`,
+          href: `${sitePrefix}LandingPages/Create`,
           isShow: true,
         },
         {
@@ -280,6 +285,18 @@ export const getRoutes = (
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
           isShow: true,
         },
+        {
+          key: 'CreateLandingPage',
+          title: t("landingPages.createLandingPage"),
+          href: ``,
+          isShow: false,
+        },
+        {
+          key: 'EditLandingPage',
+          title: t("landingPages.editLandingPage"),
+          href: ``,
+          isShow: false,
+        }
       ],
     },
     {

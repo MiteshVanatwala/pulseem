@@ -37,7 +37,6 @@ import {
 	coreProps,
 	deleteTemplateAPIProps,
 	quickReplyButtonProps,
-	quickReplyButtons,
 	savedTemplateCallToActionProps,
 	savedTemplateCardProps,
 	savedTemplateDataProps,
@@ -79,12 +78,12 @@ import { getTemplateName } from '../Common';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import NoSetup from '../NoSetup/NoSetup';
-import { getApiErrorResponseMessage } from '../Common';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { IoIosArrowDown } from 'react-icons/io';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { sitePrefix } from '../../../config';
 import { TablePagination } from '../../../components/managment';
+import { TemplateErrorDialog } from '../../../components/TemplateErrorDialog/TemplateErrorDialog';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -97,7 +96,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const [failedTemplateReason, setFailedTemplateReason] = useState<string>('');
 	const [templateNameSearch, setTemplateNameSearch] = useState<string>('');
 	const [templateStatusSearch, setTemplateStatusSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
@@ -216,31 +214,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		setApiTemplateData(updatedPagination);
 	};
 
-	const onStatusResonClick = (row: templateListItemsProps) => {
-		// setFailedTemplateReason(row?.RejectionReason);
-		if (row?.RejectionReason?.includes('BODY is missing expected field')) {
-			setFailedTemplateReason('invalidTemplateName');
-		} else if (
-			row?.RejectionReason?.includes('FOOTER is missing expected field')
-		) {
-			setFailedTemplateReason('noFooter');
-		} else if (row?.RejectionReason?.includes('is not a valid phone number')) {
-			setFailedTemplateReason('invalidPhone');
-		} else if (
-			row?.RejectionReason?.includes(
-				'Character Limit Exceeded. The Body (or Content) field '
-			)
-		) {
-			setFailedTemplateReason('characterExceeded');
-		} else {
-			setFailedTemplateReason('common');
-		}
-		setDialogType({
-			type: 'errorDialog',
-			data: ''
-		});
-	};
-
 	const renderNameCell = (row: templateListItemsProps) => {
 		let date = null;
 		let text = '';
@@ -278,7 +251,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const renderStatusCell = (row: templateListItemsProps) => {
-		const { Status } = row;
+		const { Status, RejectionReason } = row;
 		return (
 			<Typography
 				className={clsx(classes.middleText, classes.whatsappTemplatesStatus, {
@@ -311,7 +284,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				</CustomTooltip>
 				{Status === 'Rejected' && (
 					<Typography
-						onClick={() => onStatusResonClick(row)}
+						onClick={() => setDialogType({
+							type: 'errorDialog',
+							data: RejectionReason
+						})}
 						style={{ cursor: 'pointer', fontSize: '16px' }}
 						className={classes.whatsappTemplateStatusRejectedReason}>
 						{translator('whatsapp.displayError')}
@@ -484,7 +460,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const onPreview = async (id: string) => {
 		const templateData = templateListData?.find(
 			(template) => template?.Id === Number(id)
-		);
+		);	
 		if (templateData) {
 			if (templateData.CategoryId === 3) {
 				renderAuthenticationPreview(templateData);
@@ -493,7 +469,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			}
 			setDialogType({
 				type: 'preview',
-				data: ''
+				data: templateData?.TemplateId
 			});
 		}
 	};
@@ -776,36 +752,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		/>
   })
 
-	const getDisplayErrorDialog = () => ({
-    title: '',
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {translator(getApiErrorResponseMessage('templateError', failedTemplateReason))}
-      </Typography>
-    ),
-    renderButtons: () => (
-			<Grid
-				container
-				spacing={4}
-				className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
-			>
-				<Grid item>
-					<Button
-						variant='contained'
-						size='small'
-						onClick={() => { setDialogType(null) }}
-						className={clsx(
-							classes.btn,
-							classes.btnRounded
-						)}>
-						{translator('common.Ok')}
-					</Button>
-				</Grid>
-			</Grid>
-		)
-  })
-
 	const getDeleteDialog = () => ({
     title: translator('whatsappManagement.deleteTemplate'),
     showDivider: false,
@@ -821,7 +767,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		/>
   })
 
-	const getPreviewDialog = () => ({
+	const getPreviewDialog = (templateId: string) => ({
     title: translator('whatsappManagement.preview'),
     showDivider: false,
     content: (
@@ -831,6 +777,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					templateData={templateData}
 					buttonType={buttonType}
 					fileData={fileData}
+					templateId={templateId}
 				/>
 			</Box>
     ),
@@ -880,16 +827,16 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
   })
 
   const renderDialog = () => {
-    const { type } = dialogType || {}
+    const { type, data } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'duplicate') {
     	currentDialog = getDuplicateDialog();
 		} else if (type === 'errorDialog') {
-    	currentDialog = getDisplayErrorDialog();
+			currentDialog = TemplateErrorDialog({classes, failedTemplateResponse: data, setDialogType, translator, isRTL});
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
 		} else if (type === 'preview') {
-			currentDialog = getPreviewDialog();
+			currentDialog = getPreviewDialog(data);
 		} else if (type === 'submitTemplate') {
 			currentDialog = getSubmitTemplateDialog();
 		}
@@ -897,6 +844,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		if (type) {
 			return (
 				dialogType && <BaseDialog
+					contentStyle={type === 'errorDialog' ? classes.maxWidth400 : null}
 					classes={classes}
 					open={dialogType}
 					onCancel={() => setDialogType({})}

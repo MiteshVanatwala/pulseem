@@ -13,8 +13,8 @@ export const DASHBOARD_SHORTCUT = {
       },
       {
         title: 'appBar.groups.dynamicGroups',
-        // link: '/react/Groups/Dynamic'
-        link: '/Pulseem/DynamicGroups.aspx?fromreact=true'
+        link: '/react/Groups/Dynamic'
+        // link: '/Pulseem/DynamicGroups.aspx?fromreact=true'
       },
       {
         title: 'appBar.groups.search',
@@ -110,11 +110,11 @@ export const DASHBOARD_SHORTCUT = {
     pages: [
       {
         title: 'landingPages.CreateNewResource.Text',
-        link: '/Pulseem/LandingPageWizard.aspx'
+        link: `/${sitePrefix}LandingPages/Create`
       },
       {
         title: 'landingPages.logPageHeaderResource1.Text',
-        link: '/react/EditRegistrationPage'
+        link: `/${sitePrefix}EditRegistrationPage`
       }
     ]
   },

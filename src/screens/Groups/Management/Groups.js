@@ -8,7 +8,7 @@ import {
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
 import { PreviewIcon, AddRecipient, AddRecipients, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon } from '../../../assets/images/managment/index'
-import { TablePagination, SearchField, ManagmentIcon } from '../../../components/managment/index'
+import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import { useTranslation } from 'react-i18next';
@@ -41,16 +41,18 @@ import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
-import { VoidFunction } from '../../../helpers/Types/common';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
-import { RenderHtml, ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import queryString from 'query-string';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { ClientStatus } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
-import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+
+// very first structure for next refactor
+// import { GetExtraFields } from '../../../redux/reducers/ExtraFieldsSlice';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -60,6 +62,8 @@ const Groups = ({ classes }) => {
     const { accountFeatures } = useSelector(state => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
+    // New Logic to implement
+    // const { extraData } = useSelector(state => state.extraFields);
     const rowsOptions = [6, 10, 20, 50];
     const [selectedGroups, setSelectedGroups] = useState([]);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
@@ -77,6 +81,7 @@ const Groups = ({ classes }) => {
         PageIndex: 1,
         PageSize: rowsPerPage,
         SearchTerm: "",
+        IsDynamic: false
     });
     const navigate = useNavigate()
     moment.locale(language);
@@ -190,6 +195,7 @@ const Groups = ({ classes }) => {
         await dispatch(getGroups(search));
         if (!extraData || extraData.length === 0) {
             await dispatch(getAccountExtraData());
+            // await dispatch(GetExtraFields());
         }
         setLoader(false);
         getSubAccountGroups();
@@ -1566,7 +1572,7 @@ const Groups = ({ classes }) => {
 
     }
     const handleRowsPerPageChange = (val) => {
-        dispatch(setRowsPerPage(val))
+        dispatch(setRowsPerPage(`${val}`))
     }
     const handlePageChange = (val) => {
         SetPageState({

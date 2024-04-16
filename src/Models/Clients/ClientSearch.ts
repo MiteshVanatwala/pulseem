@@ -12,7 +12,7 @@ export interface ClientSearchModel {
     IsExport: boolean;
 }
 export enum CondType {
-    Undefined = 0,
+    null = 0,
     Equal = 1,
     Like = 2,
     NotEqual = 3,

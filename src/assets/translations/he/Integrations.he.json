@@ -37,7 +37,8 @@
     "showCredentials": "הצג פרטי התחברות",
     "hideCredentials": "הסתר פרטי התחברות",
     "apiVersion": "גרסת וובהוק",
-    "apiVersionDesc": "בדקו את גרסאת הוובהוק בעמוד \"Configuration\""
+    "apiVersionDesc": "בדקו את גרסאת הוובהוק בעמוד \"Configuration\"",
+    "connectStore": "מדריך לחיבור החנות שלכם"
   },
   "wooCommerce": {
     "title": "WooCommerce",
@@ -53,6 +54,12 @@
     "title": "Istores",
     "subTitle": "הכניסו את מפתח ה-API שקיבלתם מ-Istores",
     "storeID": "מספר מזהה חנות",
-    "storeIDDesc": "הכנס מספר מזהה חנות"
+    "storeIDDesc": "הכנס מספר מזהה חנות",
+    "connectStore": "מדריך לחיבור החנות שלכם"
+  },
+  "ecwid": {
+    "title": "Ecwid",
+    "description": "על מנת לחבר את חנות הווקומרס שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
+    "connectStore": "חברו חנות Ecwid"
   }
 }
