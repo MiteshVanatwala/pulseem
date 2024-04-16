@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Box, TextField, Typography } from '@material-ui/core'
 import clsx from 'clsx';
 import Toast from '../../../components/Toast/Toast.component';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const SaveTemplate = ({ onClose, isOpen, classes }) => {
   const { t } = useTranslation();
@@ -35,7 +36,7 @@ const SaveTemplate = ({ onClose, isOpen, classes }) => {
 
   return (
     <>
-      <SolidDialog
+      <BaseDialog
         classes={classes}
         key={'save-template'}
         disableBackdropClick={true}
@@ -73,7 +74,7 @@ const SaveTemplate = ({ onClose, isOpen, classes }) => {
           </>
         }
       >
-      </SolidDialog>
+      </BaseDialog>
       {renderToast()}
     </>
   )

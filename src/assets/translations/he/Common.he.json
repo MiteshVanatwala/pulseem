@@ -592,6 +592,7 @@
   "chooseFile": "טען קובץ",
   "createOrEdit": "צור או ערוך תבנית",
   "templateName": "שם התבנית",
+  "rowName": "שם שורה",
   "tags": "תגיות",
   "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר.",
   "uploadImage": "העלאת תמונה",
