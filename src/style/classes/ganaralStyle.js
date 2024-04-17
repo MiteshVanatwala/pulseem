@@ -1291,10 +1291,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     right: 15,
     position: 'absolute',
     background: 'red',
-    padding: 5,
-    borderRadius: 50,
-    fontSize: '1.5rem',
+    padding: '2px 5px 0px 5px',
+    borderRadius: 5,
+    fontSize: '1.2rem',
     cursor: 'pointer',
+    '& svg': {
+      marginInline: 2,
+    }
   },
   baseButtons: {
     display: "flex",

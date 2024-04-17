@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import clsx from "clsx";
-import { Box, Tab, Grid, Tabs, Typography, Button } from "@material-ui/core";
+import { Box, Tab, Grid, Tabs, Typography, Button, Tooltip } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -9,11 +9,12 @@ import { Loader } from '../../../components/Loader/Loader';
 import { convertHyphensToword } from '../../../helpers/Utils/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { EmailTemplateType } from '../../../Models/PushNotifications/Enums';
-import { MdDelete } from 'react-icons/md';
+import { MdDelete, MdEdit } from 'react-icons/md';
 import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicConfirmDialog';
-import { deleteTemplateById, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
+import { deleteTemplateById, getAllTemplatesBySubaccountId, saveTemplateToAccount } from '../../../redux/reducers/campaignEditorSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { apiStatus } from '../../Whatsapp/Constant';
+import SaveTemplate from './SaveTemplate';
 
 const Templates = ({
   classes,
@@ -38,8 +39,17 @@ const Templates = ({
     (state: { campaignEditor: any }) => state.campaignEditor
   );
   const [displayRemoveTemplateDialog, setDisplayRemoveTemplateDialog] = useState<boolean>(false);
-  const [deleteTemplateId, setDeleteTemplateId] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [displaySaveTemplate, setDisplaySaveTemplate] = useState<boolean>(false);
+  const [templateDetails, setTemplateDetails] = useState<{
+    ID: number;
+    Name?: string,
+    Category?: string,
+  }>({
+    ID: 0,
+    Name: '',
+    Category: '',
+  });
 
   const handleChange = (event: any, newValue: any) => {
     setTabValue(newValue);
@@ -101,10 +111,26 @@ const Templates = ({
     return (
       <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={12} sm={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10, 'template-item', classes.posRelative)} onClick={(event: any) => event.target instanceof HTMLDivElement && setSelectedTemplateId(templateDetails.ID)}>
         {
-          tabValue === EmailTemplateType.MY_TEMPLATES && <MdDelete className={classes.removeTemplateItem} onClick={() => {
-            setDisplayRemoveTemplateDialog(true);
-            setDeleteTemplateId(templateDetails.ID);
-          }} />
+          tabValue === EmailTemplateType.MY_TEMPLATES && (
+            <Box className={classes.removeTemplateItem}>
+              <Tooltip title={t('common.Edit')}>
+                <MdEdit onClick={() => {
+                  setTemplateDetails({
+                    ID: templateDetails.ID,
+                    Name: templateDetails.Name,
+                    Category: templateDetails.Category,
+                  });
+                  setDisplaySaveTemplate(true);
+                }} />
+              </Tooltip>
+              <Tooltip title={t('common.Delete')}>
+                <MdDelete onClick={() => {
+                  setDisplayRemoveTemplateDialog(true);
+                  setTemplateDetails({ ID: templateDetails.ID });
+                }} />
+              </Tooltip>
+            </Box>
+          )
         }
         <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
           {renderHtml(templateDetails.Html)}
@@ -160,7 +186,7 @@ const Templates = ({
     setLoader(true);
     setDisplayRemoveTemplateDialog(false);
     // @ts-ignore
-    const { payload: { Message } } = await dispatch(deleteTemplateById(deleteTemplateId));
+    const { payload: { Message } } = await dispatch(deleteTemplateById(templateDetails.ID));
     setToastMessage({
       // @ts-ignore
       severity: Message === apiStatus.SUCCESS ? 'success' : 'error',
@@ -182,6 +208,24 @@ const Templates = ({
       );
     }
     return null;
+  }
+
+  const saveTemplate = async (name: string, category: string) => {
+    // @ts-ignore
+    // const { payload: { Message } } = await dispatch(saveTemplateToAccount({
+    //   Name: name,
+    //   JsonData: {},
+    //   HTML: '',
+    //   Category: category
+    // }));
+    // setToastMessage({
+    //   // @ts-ignore
+    //   severity: Message === apiStatus.SUCCESS ? 'success' : 'error',
+    //   color: Message === apiStatus.SUCCESS ? 'success' : 'error',
+    //   message: t(Message === apiStatus.SUCCESS ? 'whatsappCampaign.deleteTemplate' : 'client.errors.somethingWentWrong'),
+    //   showAnimtionCheck: false
+    // });
+    // dispatch(getAllTemplatesBySubaccountId());
   }
 
   return <BaseDialog
@@ -297,6 +341,16 @@ const Templates = ({
         onCancel={() => setDisplayRemoveTemplateDialog(false)}
         confirmButtonText={t('common.Yes')}
         cancelButtonText={t('common.No')}
+      />
+      <SaveTemplate
+        classes={classes}
+        onClose={(resp: any) => {
+          setDisplaySaveTemplate(false);
+          if (resp !== undefined) saveTemplate(resp?.name, resp?.category);
+        }}
+        isOpen={displaySaveTemplate}
+        name={templateDetails.Name}
+        categoryName={templateDetails.Category}
       />
       {renderToast()}
     </Box>
