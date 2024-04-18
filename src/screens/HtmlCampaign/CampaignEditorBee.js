@@ -161,6 +161,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
 
   }, [isRTL]);
+
   // Get data by campaign id
   useEffect(() => {
     if (params?.id > 0) {
@@ -171,9 +172,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
     dispatch(getAllTemplatesBySubaccountId());
-    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-    dispatch(getAllTemplatesBySubaccountId());
   }, []);
+
   useEffect(() => {
     if (userBlocks) {
       return new Promise((resolve) => {
@@ -419,8 +419,8 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         else if (saveRef.current?.showAnimation) {
-          // setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
-          setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+          // setToastMessage(ToastMessages.CAMPAIGN_SAVED);
         }
 
         if (reInit) {
@@ -760,7 +760,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         size='medium'
         className={clsx(
           classes.btn,
-          classes.btnRounded,
+          classes.btnRounded
         )}
         style={{ margin: '8px' }}
         startIcon={<BiSave />}
@@ -768,6 +768,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         {t('common.saveTemplate')}
       </Button></>
   }
+
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
