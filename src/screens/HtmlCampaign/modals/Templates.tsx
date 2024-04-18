@@ -90,8 +90,15 @@ const Templates = ({
   const template = (templateDetails: any, selectedCategory: string) => {
     return (
       <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={12} sm={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10, 'template-item')} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
-        <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
-          {renderHtml(templateDetails.Html)}
+        <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')} style={{ overflowY: 'auto' }}>
+          <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
+            style={{
+              width: '100%',
+              height: 'auto',
+              overflowY: 'auto'
+            }}
+            alt={templateDetails.Name}
+            title={templateDetails.Name} />
         </Box>
         <div id='name' className={clsx(classes.textCenter, classes.pt10, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
         <div id='buttons' className={clsx(classes.textCenter, classes.pb25)}>
