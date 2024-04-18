@@ -697,6 +697,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   posRelative: {
     position: "relative",
   },
+  posAbsolute: {
+    position: "absolute",
+  },
   iconsFont: {
     fontFamily: "pulseemicons",
     fontSize: 22,

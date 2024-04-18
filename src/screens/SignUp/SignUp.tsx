@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router';
 import PulseemNewLogo from "../../assets/images/PulseemNewLogo";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
-import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { FieldOfActivities, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
 import { MdDvr, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
@@ -26,6 +26,7 @@ import { setLanguage } from "../../redux/reducers/coreSlice";
 import { useDispatch } from 'react-redux';
 import i18n from "../../i18n";
 import { IsValidEmail, IsValidPhoneNumber } from "../../helpers/Utils/Validations";
+import { Autocomplete } from "@mui/material";
 
 const SignUp = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -41,7 +42,9 @@ const SignUp = ({ classes }: any) => {
     cellPhone: '',
     userName: '',
     password: '',
+    isPasswordVisible: false,
     confirmPassword: '',
+    isConfirmPasswordVisible: false,
     companyName: '',
     website: '',
     fieldOfActivity: '',
@@ -127,22 +130,22 @@ const SignUp = ({ classes }: any) => {
 
   const saveSignup = async () => {
     let errorsTemp = errors;
-    errorsTemp.firstName = userDetails.firstName ? '' : t('common.Required');
-    errorsTemp.lastName = userDetails.lastName ? '' : t('common.Required');
-    errorsTemp.cellPhone = userDetails.cellPhone ? '' : t('common.Required');
-    errorsTemp.userName = userDetails.userName ? '' : t('common.Required');
+    errorsTemp.firstName = userDetails.firstName ? '' : t('SignUp.FirstNameRequired');
+    errorsTemp.lastName = userDetails.lastName ? '' : t('SignUp.LastNameRequired');
+    errorsTemp.cellPhone = userDetails.cellPhone ? '' : t('SignUp.CellPhoneRequired');
+    errorsTemp.userName = userDetails.userName ? '' : t('SignUp.UserNameRequired');
     errorsTemp.password = '';
-    errorsTemp.confirmPassword = userDetails.confirmPassword === '' ? t('common.Required') : (userDetails.password === userDetails.confirmPassword ? '' : t("settings.changePassword.error.notMatch"));
-    errorsTemp.companyName = userDetails.companyName ? '' : t('common.Required');
-    errorsTemp.fieldOfActivity = userDetails.fieldOfActivity ? '' : t('common.Required');
-    errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('common.Required');
+    errorsTemp.confirmPassword = userDetails.confirmPassword === '' ? t('SignUp.ConfirmPasswordRequired') : (userDetails.password === userDetails.confirmPassword ? '' : t("settings.changePassword.error.notMatch"));
+    errorsTemp.companyName = userDetails.companyName ? '' : t('SignUp.BusinessNameRequired');
+    errorsTemp.fieldOfActivity = userDetails.fieldOfActivity ? '' : t('SignUp.FieldOfActivityRequired');
+    errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('SignUp.FieldOfInterestRequired');
     errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.Required');
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     if (userDetails.password && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
       errorsTemp.password = t('SignUp.InvalidPassword');
     } else if (!userDetails.password) {
-      errorsTemp.password = t('common.Required');
+      errorsTemp.password = t('SignUp.PasswordRequired');
     }
     setErrors({
       ...errors,
@@ -151,20 +154,20 @@ const SignUp = ({ classes }: any) => {
 
     if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
       setLoader(true);
-
+      const interests: any = [];
+      userDetails.fieldOfInterest.map((item: any) => interests.push(t(`SignUp.${item}`)))
       const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
         FirstName: userDetails.firstName,
         LastName: userDetails.lastName,
-        Mobile: userDetails.phone,
-        Phone: userDetails.cellPhone,
+        Mobile: userDetails.cellPhone,
+        Phone: userDetails.phone,
         UserName: userDetails.userName,
         Password: userDetails.password,
         Company: userDetails.companyName,
         Website: userDetails.website,
-        ActivityField: userDetails.fieldOfActivity,
-        InterestField: userDetails.fieldOfInterest,
+        ActivityField: t(`SignUp.${userDetails.fieldOfActivity}`),
+        ProductType: interests.join(','),
         UserID: qs?.id,
-        ProductType: "",
         chkMailingApproval: userDetails.chkUpdate
       });
       setLoader(false);
@@ -173,7 +176,7 @@ const SignUp = ({ classes }: any) => {
           showMessage(`SignUp.Message.${Message}`, 'success');
           setTimeout(() => {
             navigate(loginURL);
-          }, 5000);
+          }, 3000);
         } else {
           showMessage(`SignUp.Message.${Message}`);
         }
@@ -416,31 +419,38 @@ const SignUp = ({ classes }: any) => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-              <Typography>
+                <Typography>
                   {t("SignUp.Password")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
-                <Tooltip
-                  TransitionComponent={Zoom}
-                  interactive={true}
-                  title={<PasswordHint
-                    Password={passwordValidation}
-                    classes={classes}
-                  />}
-                  placement='bottom'
-                  arrow
-                >
-                  <TextField
-                    type="password"
-                    variant="outlined"
-                    size="small"
-                    name="Password"
-                    value={userDetails?.password}
-                    onChange={handleChange}
-                    className={clsx(classes.textField, classes.minWidth252)}
-                    error={!!errors.password}
-                  />
-                </Tooltip>
+                <Box className={classes.posRelative}>
+                  <Tooltip
+                    TransitionComponent={Zoom}
+                    interactive={true}
+                    title={<PasswordHint
+                      Password={passwordValidation}
+                      classes={classes}
+                    />}
+                    placement='bottom'
+                    arrow
+                  >
+                    <TextField
+                      type={userDetails.isPasswordVisible ? "text" : "password"}
+                      variant="outlined"
+                      size="small"
+                      name="Password"
+                      value={userDetails?.password}
+                      onChange={handleChange}
+                      className={clsx(classes.textField, classes.minWidth252)}
+                      error={!!errors.password}
+                    />
+                  </Tooltip>
+                  {
+                    userDetails.isPasswordVisible
+                    ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer)} style={{ top: 0, right: 0 }} onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })} /> 
+                    : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer)} style={{ top: 0, right: 0 }} onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })} />
+                  }
+                </Box>
                 {!!errors.password && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
                     {errors.password}
@@ -453,19 +463,26 @@ const SignUp = ({ classes }: any) => {
                   {t("SignUp.PasswordVerification")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
-                <TextField
-                  type="password"
-                  variant="outlined"
-                  size="small"
-                  name="confirmPassword"
-                  value={userDetails?.confirmPassword}
-                  onChange={(event: any) => setUserDetails({
-                    ...userDetails,
-                    confirmPassword: event.target.value
-                  })}
-                  className={clsx(classes.textField, classes.minWidth252)}
-                  error={!!errors.confirmPassword}
-                />
+                <Box className={classes.posRelative}>
+                  <TextField
+                    type={userDetails.isConfirmPasswordVisible ? "text" : "password"}
+                    variant="outlined"
+                    size="small"
+                    name="confirmPassword"
+                    value={userDetails?.confirmPassword}
+                    onChange={(event: any) => setUserDetails({
+                      ...userDetails,
+                      confirmPassword: event.target.value
+                    })}
+                    className={clsx(classes.textField, classes.minWidth252)}
+                    error={!!errors.confirmPassword}
+                  />
+                  {
+                    userDetails.isConfirmPasswordVisible
+                    ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer)} style={{ top: 0, right: 0 }} onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })} /> 
+                    : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer)} style={{ top: 0, right: 0 }} onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })} />
+                  }
+                </Box>
                 {!!errors.confirmPassword && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
                     {errors.confirmPassword}
@@ -531,38 +548,24 @@ const SignUp = ({ classes }: any) => {
                   {t("SignUp.FieldOfActivity")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
-                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
-                  <Select
-                    variant="standard"
-                    value={userDetails.fieldOfActivity}
-                    name='TwoFactorAuthOptionID'
-                    onChange={(e: SelectChangeEvent) => {
+                <FormControl variant='standard' className={clsx(classes.w100)}>
+                  <Autocomplete
+                    value={t(userDetails.fieldOfActivity ? `SignUp.${userDetails.fieldOfActivity}` : '')}
+                    disablePortal
+                    id='pinkScrollbar'
+                    options={FieldOfActivities}
+                    renderOption={(props, options) => <MenuItem component='li' {...props} key={options} value={options}>{t(`SignUp.${options}`)}</MenuItem>
+                    }
+                    style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                    renderInput={(params: any) => <TextField {...params} color="primary" className={clsx(classes.textField, classes.w100)} />}
+                    onChange={(event: any, value: any) => {
                       setUserDetails({
                         ...userDetails,
-                        fieldOfActivity: e.target.value
+                        fieldOfActivity: value
                       })                      
                     }}
-                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 200,
-                          direction: isRTL ? 'rtl' : 'ltr'
-                        },
-                      },
-                    }}
-                  >
-                    {FieldOfActivities?.map((tier: any) => {
-                      return (
-                        <MenuItem
-                          key={tier}
-                          value={tier}
-                        >
-                          {t(`SignUp.${tier}`)}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
+                    popupIcon={<IoIosArrowDown size={20} className={classes.colrPrimary} />}
+                  />
                 </FormControl>
                 {!!errors.fieldOfActivity && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
