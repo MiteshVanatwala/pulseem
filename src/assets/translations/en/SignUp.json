@@ -71,10 +71,8 @@
     "ok": "User has been registered succesfully.",
     "servererror": "Oops!! Something went wrong on server side.",
     "internalerror": "Oops!! Internal error found. Please try again.",
-    "nickexists": "Already Exist",
-    "userexist": "Username already exists",
-    "businessexist": "Business Name already exists",
-    "phoneexist": "Phone Number already exists"
+    "nickexist": "Username already exists",
+    "userexist": "Username already exists"
   },
   "LoginDetails": "Login Details",
   "PasswordVerification": "Password Verification",
