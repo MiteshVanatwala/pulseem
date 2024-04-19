@@ -31,7 +31,7 @@ const Preview = ({
     <div
       className={
         clsx(
-          classes.card, classes.w100, classes.mb10, classes.mr10,
+          classes.card, classes.w100, classes.mb10,
           {
             [classes.textRight]: direction === Direction.RightToLeft,
             [classes.textCenter]: direction === Direction.Center,

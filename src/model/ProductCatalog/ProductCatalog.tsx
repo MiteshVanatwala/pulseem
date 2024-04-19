@@ -30,7 +30,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const [isFilterIsByProductCategory, setFilterIsByProductCategory] = useState(true);
   const [isImageVisible, setImageVisibility] = useState(true);
   const [isNameVisible, setNameVisibility] = useState(true);
-  const [isDescriptionVisible, setDescriptionVisibility] = useState(true);
+  const [isDescriptionVisible, setDescriptionVisibility] = useState(false);
   const [isPriceVisible, setPriceVisibility] = useState(true);
   const [isButtonVisible, setButtonVisibility] = useState(true);
   const [buttonText, setButtonText] = useState('');
@@ -62,13 +62,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       setMaxProducts(4);
       if (uptoProducts === 3) {
         setNameVisibility(true);
-        setDescriptionVisibility(false);
+        // setDescriptionVisibility(false);
       } else if (uptoProducts === 4) {
         setNameVisibility(false);
-        setDescriptionVisibility(false);
+        // setDescriptionVisibility(false);
       } else {
         setNameVisibility(true);
-        setDescriptionVisibility(true);
+        // setDescriptionVisibility(true);
       }
     }
   }, [productOrder, structure]);
@@ -87,7 +87,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     }
     if (structure === Structure.Vertical && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
       setMaxProducts(4);
-      setDescriptionVisibility(false);
+      // setDescriptionVisibility(false);
     } else {
       setMaxProducts(2);
     }
@@ -97,14 +97,14 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     if (structure === Structure.Vertical && productOrder === Structure.Horizontal && isSingleOrMultiple === Items.Multiple && uptoProducts > 2) {
       if (uptoProducts === 3) {
         setNameVisibility(true);
-        setDescriptionVisibility(false);
+        // setDescriptionVisibility(false);
       } else if (uptoProducts === 4) {
         setNameVisibility(false);
-        setDescriptionVisibility(false);
+        // setDescriptionVisibility(false);
       }
     } else {
       setNameVisibility(true);
-      setDescriptionVisibility(true);
+      // setDescriptionVisibility(true);
     }
   }, [uptoProducts]);
 
