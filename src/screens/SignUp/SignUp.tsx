@@ -73,16 +73,25 @@ const SignUp = ({ classes }: any) => {
     NumberChar: false,
   } as ValidPassword);
   const [ toastMessage, setToastMessage ] = useState<any | never>(null);
+  const [ filterFieldOfActivity, setFilterFieldOfActivity ] = useState<string[]>([]);
   const navigate = useNavigate()
 
   useEffect(() => {
     dispatch(setLanguage(qs?.culture || 'he'));
     i18n.changeLanguage('he-IL');
+    populateFieldOfActivities();
   }, []);
 
   useEffect(() => {
     i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
+    populateFieldOfActivities();
   }, [isRTL]);
+
+  const populateFieldOfActivities = () => {
+    const interests: string[] = [];
+    FieldOfActivities.map((item: any) => interests.push(t(`SignUp.${item}`)));
+    setFilterFieldOfActivity(interests);
+  }
 
   const renderToast = () => {
     if (toastMessage) {
@@ -443,13 +452,19 @@ const SignUp = ({ classes }: any) => {
                       onChange={handleChange}
                       className={clsx(classes.textField, classes.minWidth252)}
                       error={!!errors.password}
+                      InputProps={{
+                        endAdornment: (
+                          <span onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })}>
+                            {
+                              userDetails.isPasswordVisible
+                              ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} /> 
+                              : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
+                            }
+                          </span>
+                        ),
+                      }}
                     />
                   </Tooltip>
-                  {
-                    userDetails.isPasswordVisible
-                    ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer)} style={{ top: 0, right: 0 }} onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })} /> 
-                    : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer)} style={{ top: 0, right: 0 }} onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })} />
-                  }
                 </Box>
                 {!!errors.password && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -463,7 +478,7 @@ const SignUp = ({ classes }: any) => {
                   {t("SignUp.PasswordVerification")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
-                <Box className={classes.posRelative}>
+                <Box>
                   <TextField
                     type={userDetails.isConfirmPasswordVisible ? "text" : "password"}
                     variant="outlined"
@@ -476,12 +491,18 @@ const SignUp = ({ classes }: any) => {
                     })}
                     className={clsx(classes.textField, classes.minWidth252)}
                     error={!!errors.confirmPassword}
+                    InputProps={{
+                      endAdornment: (
+                        <span onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })}>
+                          {
+                            userDetails.isConfirmPasswordVisible
+                            ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} /> 
+                            : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
+                          }
+                        </span>
+                      ),
+                    }}
                   />
-                  {
-                    userDetails.isConfirmPasswordVisible
-                    ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer)} style={{ top: 0, right: 0 }} onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })} /> 
-                    : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer)} style={{ top: 0, right: 0 }} onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })} />
-                  }
                 </Box>
                 {!!errors.confirmPassword && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -550,14 +571,21 @@ const SignUp = ({ classes }: any) => {
                 </Typography>
                 <FormControl variant='standard' className={clsx(classes.w100)}>
                   <Autocomplete
-                    value={t(userDetails.fieldOfActivity ? `SignUp.${userDetails.fieldOfActivity}` : '')}
+                    value={userDetails.fieldOfActivity}
                     disablePortal
                     id='pinkScrollbar'
-                    options={FieldOfActivities}
-                    renderOption={(props, options) => <MenuItem component='li' {...props} key={options} value={options}>{t(`SignUp.${options}`)}</MenuItem>
+                    className={classes.autoComplete}
+                    options={filterFieldOfActivity}
+                    renderOption={(props, options) => <MenuItem component='li' {...props} key={options} value={options}>{options}</MenuItem>
                     }
                     style={{ direction: isRTL ? 'rtl' : 'ltr' }}
-                    renderInput={(params: any) => <TextField {...params} color="primary" className={clsx(classes.textField, classes.w100)} />}
+                    renderInput={(params) => {
+                      //@ts-ignore
+                      return (<TextField
+                          {...params}
+                          color="primary" className={clsx(classes.textField, classes.w100)}
+                      />)
+                    }}
                     onChange={(event: any, value: any) => {
                       setUserDetails({
                         ...userDetails,
