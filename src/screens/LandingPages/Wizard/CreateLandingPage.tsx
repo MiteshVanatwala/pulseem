@@ -655,132 +655,184 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			}
 		}
 
-		const renderButtons = () => {
-			const wizardButtons = [];
-			if (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
+	};
+
+	const renderButtons = () => {
+		const wizardButtons = [];
+		if (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
+			wizardButtons.push(
+				<>
+					<Button
+						onClick={() => { saveAndContinue(EditorType.SAVE_ONLY) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded,
+							classes.backButton
+						)}
+						style={{ margin: '8px' }}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
+						{t("common.save")}
+					</Button>
+					<Button
+						onClick={() => { saveAndContinue(EditorType.OLD) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded,
+							classes.backButton
+						)}
+						style={{ margin: '8px' }}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
+						{t('common.continue')}
+					</Button>
+				</>
+			);
+		}
+		else {
+			if (!landingPageModel.IsNewEditor) {
 				wizardButtons.push(
-					<>
-						<Button
-							onClick={() => { saveAndContinue(EditorType.SAVE_ONLY) }}
-							className={clsx(
-								classes.btn,
-								classes.btnRounded,
-								classes.backButton
-							)}
-							style={{ margin: '8px' }}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-						>
-							{t("common.save")}
-						</Button>
-						<Button
-							onClick={() => { saveAndContinue(EditorType.OLD) }}
-							className={clsx(
-								classes.btn,
-								classes.btnRounded,
-								classes.backButton
-							)}
-							style={{ margin: '8px' }}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-						>
-							{t('common.continue')}
-						</Button>
-					</>
+					<Button
+						onClick={() => { saveAndContinue(EditorType.OLD) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded,
+							classes.backButton
+						)}
+						style={{ margin: '8px' }}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						key="saveContinue"
+					>
+						<>{t('common.saveAndContinue')}</>
+					</Button>
 				);
 			}
-			else {
-				if (!landingPageModel.IsNewEditor) {
-					wizardButtons.push(
-						<Button
-							onClick={() => { saveAndContinue(EditorType.OLD) }}
-							className={clsx(
-								classes.btn,
-								classes.btnRounded,
-								classes.backButton
-							)}
-							style={{ margin: '8px' }}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-							key="saveContinue"
-						>
-							<>{t('common.saveAndContinue')}</>
-						</Button>
-					);
-				}
 
-				if (landingPageModel.IsNewEditor || !id) {
-					wizardButtons.push(
-						<Button
-							onClick={() => { saveAndContinue(EditorType.BEE) }}
-							className={clsx(
-								classes.btn,
-								classes.btnRounded,
-								classes.backButton
-							)}
-							style={{ margin: '8px' }}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-							key='newEditor'
-						>
-							{t('master.continueToNewEditor')}
-						</Button>
-					);
-				}
-
-			}
-			return wizardButtons.map((b) => b);
-		}
-
-		const renderToast = () => {
-			setTimeout(() => {
-				setToastMessage(null);
-			}, 2000);
-			return <Toast customData={null} data={toastMessage} />;
-		};
-
-		return (
-			<DefaultScreen
-				currentPage="landingPages"
-				subPage={"newsletterInfo"}
-				classes={classes}
-				customPadding={true}
-				containerClass={clsx(classes.mb50, classes.editorCont)}
-			>
-				<Box className="head">
-					<Title Text={t("landingPages.createLandingPage")} classes={classes} />
-				</Box>
-				<Box className={"containerBody"}>
-					<Tabs
-						variant='scrollable'
-						scrollButtons="auto"
-						value={tabValue}
-						onChange={(e, value) => setTabValue(value)}
-						className={clsx(classes.mr15, classes.ml15)}
-						classes={{ indicator: classes.hideIndicator }}
+			if (landingPageModel.IsNewEditor || !id) {
+				wizardButtons.push(
+					<Button
+						onClick={() => { saveAndContinue(EditorType.BEE) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded,
+							classes.backButton
+						)}
+						style={{ margin: '8px' }}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						key='newEditor'
 					>
-						<Tab
-							label={t('landingPages.formProperties')}
-							classes={{ root: classes.tabText, selected: classes.activeTab }}
-							className={clsx(classes.iconTab, classes.f18)}
-							value='1'
+						{t('master.continueToNewEditor')}
+					</Button>
+				);
+			}
+
+		}
+		return wizardButtons.map((b) => b);
+	}
+
+	const renderToast = () => {
+		setTimeout(() => {
+			setToastMessage(null);
+		}, 2000);
+		return <Toast customData={null} data={toastMessage} />;
+	};
+
+	return (
+		<DefaultScreen
+			currentPage="landingPages"
+			subPage={"newsletterInfo"}
+			classes={classes}
+			customPadding={true}
+			containerClass={clsx(classes.mb50, classes.editorCont)}
+		>
+			<Box className="head">
+				<Title Text={t("landingPages.createLandingPage")} classes={classes} />
+			</Box>
+			<Box className={"containerBody"}>
+				<Tabs
+					variant='scrollable'
+					scrollButtons="auto"
+					value={tabValue}
+					onChange={(e, value) => setTabValue(value)}
+					className={clsx(classes.mr15, classes.ml15)}
+					classes={{ indicator: classes.hideIndicator }}
+				>
+					<Tab
+						label={t('landingPages.formProperties')}
+						classes={{ root: classes.tabText, selected: classes.activeTab }}
+						className={clsx(classes.iconTab, classes.f18)}
+						value='1'
+					/>
+					{landingPageModel.PageType !== 3 && <Tab
+						label={t('landingPages.SEOSettings')}
+						classes={{ root: classes.tabText, selected: classes.activeTab }}
+						className={clsx(classes.iconTab, classes.f18)}
+						value='2'
+					/>}
+					<Tab
+						label={t('landingPages.developmentSettings')}
+						classes={{ root: classes.tabText, selected: classes.activeTab }}
+						className={clsx(classes.iconTab, classes.f18)}
+						value='3'
+					/>
+					<Tab
+						style={{ overflow: 'unset' }}
+						label={<>
+							<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 18, fontWeight: 500 }}>
+								{t("landingPages.linkPreviewSettings")}
+								<Tooltip
+									disableFocusListener
+									title={t('landingPages.linkPreviewTooltip')}
+									classes={{
+										tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+										arrow: classes.fBlack
+									}}
+									enterTouchDelay={50}
+									placement={"top"}
+								>
+									<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
+										<BsInfoCircle />
+									</IconButton>
+								</Tooltip>
+							</Typography>
+						</>}
+						classes={{ root: classes.tabText, selected: classes.activeTab }}
+						className={clsx(classes.iconTab, classes.f18)}
+						value='4'
+					/>
+				</Tabs>
+				<TabContext value={`${tabValue}`}>
+					<TabPanel value='1' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
+						<FormProperties
+							classes={classes}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
+							onSetDialog={setDialogType}
+							errors={errors}
+							setErrors={setErrors}
 						/>
-						{landingPageModel.PageType !== 3 && <Tab
-							label={t('landingPages.SEOSettings')}
-							classes={{ root: classes.tabText, selected: classes.activeTab }}
-							className={clsx(classes.iconTab, classes.f18)}
-							value='2'
-						/>}
-						<Tab
-							label={t('landingPages.developmentSettings')}
-							classes={{ root: classes.tabText, selected: classes.activeTab }}
-							className={clsx(classes.iconTab, classes.f18)}
-							value='3'
-						/>
-						<Tab
-							style={{ overflow: 'unset' }}
-							label={<>
-								<Typography style={{ whiteSpace: 'nowrap', textAlign: 'center', fontSize: 18, fontWeight: 500 }}>
-									{t("landingPages.linkPreviewSettings")}
+
+						<Grid container spacing={3}>
+							{landingPageModel.PageType !== 2 && <Grid item md={6}>
+								<Typography title={t("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.font18)}>
+									{t("landingPages.subscriberSettings")}
+								</Typography>
+								<SubscriberSettings
+									classes={classes}
+									data={landingPageModel}
+									onUpdate={setLandingPageModel}
+									onSetDialog={setDialogType}
+									removeEmailId={removeEmailId}
+									errors={errors}
+									onDone={getData}
+								/>
+							</Grid>}
+							{landingPageModel.PageType < 3 && <Grid item md={6}>
+								<Typography className={clsx(classes.bold, classes.font18)}>
+									{t("landingPages.formOfflineProperties")}
 									<Tooltip
 										disableFocusListener
-										title={t('landingPages.linkPreviewTooltip')}
+										title={t('landingPages.formOfflineDateTooltip')}
 										classes={{
 											tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
 											arrow: classes.fBlack
@@ -793,118 +845,68 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 										</IconButton>
 									</Tooltip>
 								</Typography>
-							</>}
-							classes={{ root: classes.tabText, selected: classes.activeTab }}
-							className={clsx(classes.iconTab, classes.f18)}
-							value='4'
-						/>
-					</Tabs>
-					<TabContext value={`${tabValue}`}>
-						<TabPanel value='1' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
-							<FormProperties
-								classes={classes}
-								data={landingPageModel}
-								onUpdate={setLandingPageModel}
-								onSetDialog={setDialogType}
-								errors={errors}
-								setErrors={setErrors}
-							/>
 
-							<Grid container spacing={3}>
-								{landingPageModel.PageType !== 2 && <Grid item md={6}>
-									<Typography title={t("landingPages.subscriberSettings")} className={clsx(classes.bold, classes.font18)}>
-										{t("landingPages.subscriberSettings")}
-									</Typography>
-									<SubscriberSettings
-										classes={classes}
-										data={landingPageModel}
-										onUpdate={setLandingPageModel}
-										onSetDialog={setDialogType}
-										removeEmailId={removeEmailId}
-										errors={errors}
-										onDone={getData}
-									/>
-								</Grid>}
-								{landingPageModel.PageType < 3 && <Grid item md={6}>
-									<Typography className={clsx(classes.bold, classes.font18)}>
-										{t("landingPages.formOfflineProperties")}
-										<Tooltip
-											disableFocusListener
-											title={t('landingPages.formOfflineDateTooltip')}
-											classes={{
-												tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-												arrow: classes.fBlack
-											}}
-											enterTouchDelay={50}
-											placement={"top"}
-										>
-											<IconButton className={clsx(classes.icon_Info, classes.noPadding, classes.ml5)}>
-												<BsInfoCircle />
-											</IconButton>
-										</Tooltip>
-									</Typography>
-
-									<OfflineProperties
-										classes={classes}
-										data={landingPageModel}
-										onUpdate={setLandingPageModel}
-										errors={errors}
-										setErrors={setErrors}
-									/>
-								</Grid>}
-							</Grid>
-							{/* <Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
-							{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
-						</Typography>
-						<SubscriberGroup
+								<OfflineProperties
+									classes={classes}
+									data={landingPageModel}
+									onUpdate={setLandingPageModel}
+									errors={errors}
+									setErrors={setErrors}
+								/>
+							</Grid>}
+						</Grid>
+						{/* <Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
+						{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
+					</Typography>
+					<SubscriberGroup
+						classes={classes}
+						data={landingPageModel}
+						onUpdate={setLandingPageModel}
+						onSetDialog={setDialogType}
+						removeEmailId={removeEmailId}
+						errors={errors}
+					/> */}
+					</TabPanel >
+					<TabPanel value='2' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
+						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
+					</TabPanel>
+					<TabPanel value='3' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
+						<DevelopmentSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
+					</TabPanel>
+					<TabPanel value='4' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
+						<LinkPreviewSettings
 							classes={classes}
 							data={landingPageModel}
 							onUpdate={setLandingPageModel}
+							filesProperties={filesProperties}
 							onSetDialog={setDialogType}
-							removeEmailId={removeEmailId}
+							removeAttachmentFile={removeAttachmentFile}
 							errors={errors}
-						/> */}
-						</TabPanel >
-						<TabPanel value='2' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
-							<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
-						</TabPanel>
-						<TabPanel value='3' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
-							<DevelopmentSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} />
-						</TabPanel>
-						<TabPanel value='4' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
-							<LinkPreviewSettings
-								classes={classes}
-								data={landingPageModel}
-								onUpdate={setLandingPageModel}
-								filesProperties={filesProperties}
-								onSetDialog={setDialogType}
-								removeAttachmentFile={removeAttachmentFile}
-								errors={errors}
-							/>
-						</TabPanel>
-					</TabContext >
-
-					<Box>
-						<WizardActions
-							classes={classes}
-							// @ts-ignore
-							onBack={{
-								callback: () => setDialogType({ type: 'confirmExit' })
-							}}
-							// @ts-ignore
-							onDelete={id ? () => setDialogType({ type: "delete" }) : null}
-							// @ts-ignore
-							onExit={() => setDialogType({ type: 'confirmExit' })}
-							// @ts-ignore
-							additionalButtons={renderButtons()}
 						/>
-					</Box>
-					<Loader isOpen={isLoader} />
-				</Box >
-				{renderDialog()}
-				{toastMessage && renderToast()}
-			</DefaultScreen >
-		);
-	};
+					</TabPanel>
+				</TabContext >
 
-	export default CreateLandingPage;
+				<Box>
+					<WizardActions
+						classes={classes}
+						// @ts-ignore
+						onBack={{
+							callback: () => setDialogType({ type: 'confirmExit' })
+						}}
+						// @ts-ignore
+						onDelete={id ? () => setDialogType({ type: "delete" }) : null}
+						// @ts-ignore
+						onExit={() => setDialogType({ type: 'confirmExit' })}
+						// @ts-ignore
+						additionalButtons={renderButtons()}
+					/>
+				</Box>
+				<Loader isOpen={isLoader} />
+			</Box >
+			{renderDialog()}
+			{toastMessage && renderToast()}
+		</DefaultScreen >
+	)
+}
+
+export default CreateLandingPage;
