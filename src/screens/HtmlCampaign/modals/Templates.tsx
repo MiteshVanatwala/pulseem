@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { EmailTemplateType } from '../../../Models/PushNotifications/Enums';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import DynamicConfirmDialog from '../../../components/DialogTemplates/DynamicConfirmDialog';
-import { deleteTemplateById, getAllTemplatesBySubaccountId, saveTemplateToAccount } from '../../../redux/reducers/campaignEditorSlice';
+import { deleteTemplateById, getAllTemplatesBySubaccountId, updateTemplateMeta } from '../../../redux/reducers/campaignEditorSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { apiStatus } from '../../Whatsapp/Constant';
 import SaveTemplate from './SaveTemplate';
@@ -217,22 +217,21 @@ const Templates = ({
     return null;
   }
 
-  const saveTemplate = async (name: string, category: string) => {
+  const updateTemplate = async (name: string, category: string) => {
     // @ts-ignore
-    // const { payload: { Message } } = await dispatch(saveTemplateToAccount({
-    //   Name: name,
-    //   JsonData: {},
-    //   HTML: '',
-    //   Category: category
-    // }));
-    // setToastMessage({
-    //   // @ts-ignore
-    //   severity: Message === apiStatus.SUCCESS ? 'success' : 'error',
-    //   color: Message === apiStatus.SUCCESS ? 'success' : 'error',
-    //   message: t(Message === apiStatus.SUCCESS ? 'whatsappCampaign.deleteTemplate' : 'client.errors.somethingWentWrong'),
-    //   showAnimtionCheck: false
-    // });
-    // dispatch(getAllTemplatesBySubaccountId());
+    const response = await dispatch(updateTemplateMeta({
+      ID: templateDetails.ID,
+      Name: name,
+      Category: category
+    }));
+    setToastMessage({
+      // @ts-ignore
+      severity: response.payload.StatusCode === 201 ? 'success' : 'error',
+      color: response.payload.Message === apiStatus.SUCCESS ? 'success' : 'error',
+      message: 'Updated',
+      showAnimtionCheck: false
+    });
+    dispatch(getAllTemplatesBySubaccountId());
   }
 
   return <BaseDialog
@@ -353,7 +352,7 @@ const Templates = ({
         classes={classes}
         onClose={(resp: any) => {
           setDisplaySaveTemplate(false);
-          if (resp !== undefined) saveTemplate(resp?.name, resp?.category);
+          if (resp !== undefined) updateTemplate(resp?.name, resp?.category);
         }}
         isOpen={displaySaveTemplate}
         name={templateDetails.Name}

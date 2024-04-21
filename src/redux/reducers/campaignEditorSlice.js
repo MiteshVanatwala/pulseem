@@ -132,6 +132,16 @@ export const getAllTemplatesBySubaccountId = createAsyncThunk(
         }
     })
 
+export const updateTemplateMeta = createAsyncThunk(
+    '/CampaignEditor/UpdateTemplateMeta', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`CampaignEditor/UpdateTemplateMeta`, data);
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {

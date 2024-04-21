@@ -1285,11 +1285,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   removeTemplateItem: {
     position: 'absolute',
-    color: 'red',
     top: 6,
     color: '#FFF',
-    right: 15,
-    position: 'absolute',
+    right: isRTL ? 'auto' : 15,
+    left: isRTL ? 25 : 'auto',
     background: 'red',
     padding: '2px 5px 0px 5px',
     borderRadius: 5,
