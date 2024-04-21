@@ -297,7 +297,10 @@ const Templates = ({
             <Grid container ref={refScriptCode}>
               {
                 templateList?.map((templ, i): any => {
-                  if (selectedCategory !== '' && selectedCategory === templ['Category']) return template(templ, 'category');
+                  const catList = templ['CategoryList'];
+                  //@ts-ignore
+                  const exists = catList?.filter((t: string) => { return t === selectedCategory });
+                  if (selectedCategory !== '' && exists?.length > 0) return template(templ, 'category');
                   if (selectedCategory === '') return template(templ, 'all');
                 })
               }
@@ -357,6 +360,7 @@ const Templates = ({
         isOpen={displaySaveTemplate}
         name={templateDetails.Name}
         categoryName={templateDetails.Category}
+        categoryList={templateDetails.Category?.split(',')}
       />
       {renderToast()}
     </Box>

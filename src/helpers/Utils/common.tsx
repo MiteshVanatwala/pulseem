@@ -16,7 +16,20 @@ export const getValueByFieldName = (
 
 export const getUniqueValuesOfKey = (array: any, key: string) => {
 	return array?.reduce(function (carry: any, item: any) {
-		if (item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
+
+		if (item[key]) {
+
+			for (var i = 0; i < item[key].length; i++) {
+				const carryItems = item[key];
+				const current = carryItems[i];
+
+				if (!~carry.indexOf(current)) {
+					carry.push(current);
+
+				}
+			}
+
+		}
 		return carry;
 	}, []);
 }
