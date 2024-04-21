@@ -199,6 +199,7 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
                 }}
               >
                 <option
+                  disabled
                   key={''}
                   value={t('common.select')}
                 >
