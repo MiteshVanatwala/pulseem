@@ -129,10 +129,10 @@ const SmsReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `${sitePrefix}ClientSearchResult/${id}`,
+      href: `${sitePrefix}ClientSearchResult`,
       isRevenueCol: true,
       onClick: () => {
-        navigate(`${CLIENT_CONSTANTS.BASEURL}/${id}`, {
+        navigate(`${CLIENT_CONSTANTS.BASEURL}`, {
           state:
           {
             ...CLIENT_CONSTANTS.QUERY_PARAMS,

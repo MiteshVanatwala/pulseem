@@ -75,8 +75,8 @@ const NoCreditDialog = ({
                             variant='contained'
                             size='small'
                             className={clsx(
-                                classes.dialogButton,
-                                classes.dialogConfirmButton
+                                classes.btn,
+                                classes.btnRounded
                             )} onClick={handleDialogClose}>{t("common.Ok")}</Button>
                     </Box>
                 </Grid >
@@ -105,7 +105,7 @@ const NoCreditDialog = ({
                             <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
                         </>
                         :
-                        <Typography className={classes?.f18}>{RenderHtml(t('campaigns.newsLetterEditor.errors.SMS_BULK_ENDED_PURCHASE_OPTION'))}</Typography>
+                        <Typography className={classes?.f18}>{RenderHtml(t(popUpType === 2 ? 'campaigns.newsLetterEditor.errors.NEWSLETTER_BULK_ENDED_PURCHASE_OPTION' : 'campaigns.newsLetterEditor.errors.SMS_BULK_ENDED_PURCHASE_OPTION'))}</Typography>
                 }
             </Box>
         ),
@@ -123,8 +123,8 @@ const NoCreditDialog = ({
                             size='small'
                             onClick={() => { setIsOpenPackageDialog(true) }}
                             className={clsx(
-                                classes?.solidDialogButton,
-                                classes?.dialogConfirmButton
+                                classes.btn,
+                                classes.btnRounded
                             )}>
                             {t('dashboard.purchase')}
                         </Button>
@@ -136,8 +136,8 @@ const NoCreditDialog = ({
                         size='small'
                         onClick={() => { onCancel() }}
                         className={clsx(
-                            classes?.solidDialogButton,
-                            classes?.dialogCancelButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {!isAllowedToPurchase ? t('common.cancel') : t('common.notNow')}
                     </Button>
