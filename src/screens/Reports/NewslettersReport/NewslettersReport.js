@@ -61,8 +61,8 @@ const NewslettersReport = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const [hasRevenue, setHasRevenue] = useState(false);
   const [dialogType, setDialog] = useState(null);
-  const [ expandedIds, setExpandedIds ] = useState([]);
-  const [ parentCampaignsWithChild, setParentCampaignsWithChild ] = useState([]);
+  const [expandedIds, setExpandedIds] = useState([]);
+  const [parentCampaignsWithChild, setParentCampaignsWithChild] = useState([]);
 
   moment.locale(language)
 
@@ -266,7 +266,7 @@ const NewslettersReport = ({ classes }) => {
       }, []);
     }
     setParentCampaignsWithChild(ids);
-  }, [ newslettersReportsParentCampaigns, newslettersReportsChildCampaigns ]);
+  }, [newslettersReportsParentCampaigns, newslettersReportsChildCampaigns]);
 
   const clearSearch = () => {
     setNotificationNameSearch('')
@@ -319,7 +319,7 @@ const NewslettersReport = ({ classes }) => {
         parentChildCampaigns.push(campaign);
       }
     })
-    
+
     const fields = { ...exportColumnHeader };
     const exportOptions = {
       OrderItems: true,
@@ -601,8 +601,8 @@ const NewslettersReport = ({ classes }) => {
               isParentCampaignWithChild && <>
                 {
                   expandedIds.indexOf(row.CampaignID) === -1
-                  ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.p5, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
-                  : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.p5, classes.verticalAlignMiddle)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
+                    ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.p5, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
+                    : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.p5, classes.verticalAlignMiddle)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
                 }
               </>
             }
@@ -631,8 +631,8 @@ const NewslettersReport = ({ classes }) => {
             isParent && parentCampaignsWithChild.indexOf(row.CampaignID) > -1 && <>
               {
                 expandedIds.indexOf(row.CampaignID) === -1
-                ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
-                : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
+                  ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
+                  : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
               }
             </>
           }
@@ -792,7 +792,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const getParentChildSum = (row) => {
-    const childItems  = newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID);
+    const childItems = newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID);
     const SumTotalSendPlan = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.TotalSendPlan, row.TotalSendPlan);
     const SumTotalSendCompleted = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.TotalSendCompleted, row.TotalSendCompleted);
     const SumOpenCount = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.OpenCount, row.OpenCount);
@@ -803,14 +803,14 @@ const NewslettersReport = ({ classes }) => {
     const SumRemovedClients = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.RemovedClients, row.RemovedClients);
     const SumNotOpened = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.NotOpened, row.NotOpened);
     const divider = SumTotalSendCompleted - SumSendError;
-    
+
     let SumPercentageOpens = 0, SumPercetangeClicks = 0;
     if (divider >= 1) {
-      SumPercentageOpens = (SumOpenCountUnique  / (SumTotalSendCompleted - SumSendError)) * 100;
-      SumPercetangeClicks = (SumClickCountUnique  / (SumTotalSendCompleted - SumSendError)) * 100;
+      SumPercentageOpens = (SumOpenCountUnique / (SumTotalSendCompleted - SumSendError)) * 100;
+      SumPercetangeClicks = (SumClickCountUnique / (SumTotalSendCompleted - SumSendError)) * 100;
     } else if (SumTotalSendCompleted >= 1) {
-      SumPercentageOpens = SumOpenCountUnique  / SumTotalSendCompleted * 100;
-      SumPercetangeClicks = SumClickCountUnique  / SumTotalSendCompleted * 100;
+      SumPercentageOpens = SumOpenCountUnique / SumTotalSendCompleted * 100;
+      SumPercetangeClicks = SumClickCountUnique / SumTotalSendCompleted * 100;
     }
 
     return {
@@ -819,7 +819,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderRow = (row, isParent = true, isEven = false) => {
-    const childItems  = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
+    const childItems = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
     const {
       CampaignID,
       Name,
@@ -833,7 +833,7 @@ const NewslettersReport = ({ classes }) => {
     const {
       SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
     } = getParentChildSum(row);
-    
+
     const hrefs = getHrefs(CampaignID, Revenue)
     return (
       <>
@@ -845,7 +845,9 @@ const NewslettersReport = ({ classes }) => {
           <TableCell
             classes={cellBodyStyle}
             align='center'
-            className={clsx(classes.flex4)}>
+            className={isParent ? classes.flex4 : classes.flex3}
+            style={{ paddingInlineStart: isParent ? 0 : 35, paddingInlineEnd: isParent ? 0 : 17 }}
+          >
             {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status, LastEditDate }, isParent)}
           </TableCell>
           <TableCell
@@ -853,7 +855,7 @@ const NewslettersReport = ({ classes }) => {
             classes={noBorderCellStyle}
             className={classes.flex1}>
             {
-              renderIntData(SumTotalSendPlan,'', row, false, t("mainReport.totalSendPlan"))
+              renderIntData(SumTotalSendPlan, '', row, false, t("mainReport.totalSendPlan"))
             }
           </TableCell>
           <TableCell
@@ -941,7 +943,7 @@ const NewslettersReport = ({ classes }) => {
             className={classes.flex1}>
             {renderRevenueData(Revenue, '', hrefs.Revenue)}
           </TableCell>}
-        </TableRow>
+        </TableRow >
         {
           isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && childItems.map((campaign) => renderRow(campaign, false, isEven))
         }
@@ -950,7 +952,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderPhoneRow = (row, isParent = true, isEven = false) => {
-    const childItems  = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
+    const childItems = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
     const {
       CampaignID,
       TotalSendPlan,
@@ -1063,7 +1065,7 @@ const NewslettersReport = ({ classes }) => {
       return (
         <TableBody>
           {rowData
-            .map((item, index) => SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow(item, true, index%2) : renderRow(item, true, index%2))}
+            .map((item, index) => SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow(item, true, index % 2) : renderRow(item, true, index % 2))}
         </TableBody>
       )
     }
