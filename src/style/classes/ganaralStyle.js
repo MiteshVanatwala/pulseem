@@ -98,6 +98,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   greyBackground: {
     background: '#F0F5FF',
   },
+  evenRowBackground: {
+    backgroundColor: "#f7faff",
+  },
   sidebar: {
     paddingRight: '0 !important',
     "&::-webkit-scrollbar": {
@@ -356,8 +359,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w20: {
     width: "20%",
   },
+  w40: {
+    width: "40%",
+  },
   w80: {
     width: "80%",
+  },
+  w60: {
+    width: "60%",
   },
   minWidth100: {
     minWidth: 100,
@@ -3725,6 +3734,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   paddingInline25: {
     paddingInline: 25
   },
+  paddingInline30: {
+    paddingInline: 30
+  },
   desktop: {
     boxSizing: 'border-box',
     '& .ep_container': {
@@ -3939,6 +3951,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   verticalAlignTop: {
     verticalAlign: 'top'
+  },
+  verticalAlignMiddle: {
+    verticalAlign: 'middle'
   },
   messageButtons: {
     display: 'contents'

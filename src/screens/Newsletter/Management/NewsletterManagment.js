@@ -14,7 +14,8 @@ import {
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
-  getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign, resetNewsletterInfo
+  restoreCampaigns, deleteCampaign, duplicteCampaign, resetNewsletterInfo,
+  getNewslatterParentChildData
 } from '../../../redux/reducers/newsletterSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -29,7 +30,7 @@ import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
 import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
-import { MdArrowBackIos, MdArrowForwardIos, MdError } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdError, MdOutlineAddCircleOutline, MdOutlineRemoveCircleOutline } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
@@ -44,7 +45,7 @@ import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHel
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
-  const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
+  const { newslettersDeletedData, newslettersParentCampaigns, newslettersChildCampaigns } = useSelector(state => state.newsletter)
   const { ToastMessages } = useSelector(state => state.client);
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -80,6 +81,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
     preText: '',
     showSkip: false
   });
+  const [ expandedIds, setExpandedIds ] = useState([]);
+  const [ parentCampaignsWithChild, setParentCampaignsWithChild ] = useState([]);
 
   moment.locale(language);
 
@@ -97,7 +100,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   
 
   const getData = async () => {
-    await dispatch(getNewslatterData())
+    await dispatch(getNewslatterParentChildData())
     dispatch(getAuthorizedEmails());
     setLoader(false);
   }
@@ -115,6 +118,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
   useEffect(() => {
     dispatch(getPublicTemplates(isRTL));
   }, [isRTL])
+
+  useEffect(() => {
+    let ids = [];
+    if (newslettersChildCampaigns.length > 0) {
+      ids = newslettersParentCampaigns.reduce((prevVal, campaign) => {
+        const isExist = newslettersChildCampaigns.filter((childCampaign) => childCampaign?.ParentCampaignId === campaign?.CampaignID).length;
+        return isExist ? [...prevVal, campaign?.CampaignID] : prevVal;
+      }, []);
+    }
+    setParentCampaignsWithChild(ids);
+  }, [ newslettersParentCampaigns, newslettersChildCampaigns ]);
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -170,7 +184,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         }
       }
 
-      let sortData = newslettersData
+      let sortData = newslettersParentCampaigns
       searchArray.forEach(values => {
         sortData = sortData.filter(row => filtersObject[values.type](row, values))
       });
@@ -318,7 +332,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         </Grid>
         <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching ? searchResults.length : newslettersData.length} ${t('campaigns.newsletters')}`}
+            {`${isSearching ? searchResults.length : newslettersParentCampaigns.length} ${t('campaigns.newsletters')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -444,7 +458,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
               data: { CampaignID: CampaignID }
             });
           } else {
-            const campaign = newslettersData?.find((e) => { return parseInt(e.CampaignID) === parseInt(CampaignID) });
+            const campaign = newslettersParentCampaigns?.find((e) => { return parseInt(e.CampaignID) === parseInt(CampaignID) });
             setDuplicateDialog({
               id: CampaignID,
               name: campaign?.Name
@@ -638,6 +652,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       const currentDateMillis = moment().valueOf()
       text = dateMillis > currentDateMillis ? t('common.ScheduledFor') : t('common.SentOn')
     }
+    const isParentCampaignWithChild = parentCampaignsWithChild.indexOf(row.CampaignID) > -1;
 
     return (
       <>
@@ -648,83 +663,114 @@ const NewsletterManagnentScreen = ({ classes }) => {
           arrow={true}
           placement={'top'}
           title={<Typography noWrap={false}>{row.Name}</Typography>}
-          text={row.Name}
+          text={<div className={isParentCampaignWithChild ? classes.paddingInline30 : ''}>{row.Name}</div>}
         />
-        <Typography className={classes.f14}>
-          {`${t("mainReport.CampaignID")}${separator} ${row.CampaignID}`}
-        </Typography>
-        <Typography
-          className={classes.grayTextCell}>
-          {`${text}${separator} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
-        </Typography>
+          <Grid container>
+            <Grid item md={1}>
+              {
+                isParentCampaignWithChild && <>
+                  {
+                    expandedIds.indexOf(row.CampaignID) === -1
+                    ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.p5, classes.cursorPointer)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
+                    : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.p5, classes.cursorPointer)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
+                  }
+                </>
+              }
+            </Grid>
+            <Grid item md={11}>
+              <Typography className={classes.f14}>
+                {`${t("mainReport.CampaignID")}${separator} ${row.CampaignID}`}
+              </Typography>
+              <Typography
+                className={classes.grayTextCell}>
+                {`${text}${separator} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+              </Typography>
+            </Grid>
+          </Grid>
       </>
     )
   }
 
-  const renderRow = (row) => {
+  const renderRow = (row, isParent = true, isEven = false) => {
+    const childItems  = isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
     return (
-      <TableRow
-        key={row.CampaignID}
-        classes={rowStyle}>
-        <TableCell
-          classes={cellStyle}
-          align='center'
-          className={classes.flex2}>
-          {renderNameCell(row)}
-        </TableCell>
-        <TableCell
-          classes={cellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderRecipientsCell(row.SentCount)}
-        </TableCell>
-        <TableCell
-          classes={cellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderStatusCell(row.Status)}
-        </TableCell>
-        <TableCell
-          component='th'
-          scope='row'
-          classes={{ root: classes.tableCellRoot }}
-          className={classes.flex6}>
-          {accountFeatures && renderCellIcons(row)}
-        </TableCell>
-      </TableRow>
+      <>
+        <TableRow
+          key={row.CampaignID}
+          classes={rowStyle}
+          className={!isParent ? (isEven ? classes.evenRowBackground : classes.bgWhite) : ''}
+        >
+          <TableCell
+            classes={cellStyle}
+            align='center'
+            className={classes.flex2}>
+            {renderNameCell(row)}
+          </TableCell>
+          <TableCell
+            classes={cellStyle}
+            align='center'
+            className={classes.flex1}>
+            {renderRecipientsCell(childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.SentCount, row.SentCount))}
+          </TableCell>
+          <TableCell
+            classes={cellStyle}
+            align='center'
+            className={classes.flex1}>
+            {renderStatusCell(row.Status)}
+          </TableCell>
+          <TableCell
+            component='th'
+            scope='row'
+            classes={{ root: classes.tableCellRoot }}
+            className={classes.flex6}>
+            {accountFeatures && renderCellIcons(row)}
+          </TableCell>
+        </TableRow>
+        {
+          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && childItems.map((campaign) => renderRow(campaign, false, isEven))
+        }
+      </>
     )
   }
 
-  const renderPhoneRow = (row) => {
+  const renderPhoneRow = (row, isParent = true, isEven = false) => {
+    const childItems  = isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
     return (
-      <TableRow
-        key={row.CampaignID}
-        component='div'
-        classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }}>
-          <Box className={classes.justifyBetween}>
-            <Box className={classes.inlineGrid}>
-              {renderNameCell(row)}
+      <>
+        <TableRow
+          key={row.CampaignID}
+          component='div'
+          classes={rowStyle}
+          className={!isParent ? (isEven ? classes.evenRowBackground : classes.bgWhite) : ''}
+        >
+          <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }}>
+            <Box className={classes.justifyBetween}>
+              <Box className={classes.inlineGrid}>
+                {renderNameCell(row)}
+              </Box>
+              <Box>
+                {renderStatusCell(row.Status)}
+              </Box>
             </Box>
-            <Box>
-              {renderStatusCell(row.Status)}
-            </Box>
-          </Box>
-          {renderCellIcons(row)}
-        </TableCell>
-      </TableRow>
+            {renderCellIcons(row)}
+          </TableCell>
+        </TableRow>
+        {
+          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && childItems.map((campaign) => renderPhoneRow(campaign, false, isEven))
+        }
+      </>
     )
   }
 
   const renderTableBody = () => {
-    let sortData = isSearching ? searchResults : newslettersData;
+    let sortData = isSearching ? searchResults : newslettersParentCampaigns;
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <Box className='tableBodyContainer'>
         <TableBody>
           {sortData
-            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+            .map((item, index) => windowSize === 'xs' ? renderPhoneRow(item, true, index%2) : renderRow(item, true, index%2))}
         </TableBody>
       </Box>
     )
@@ -748,7 +794,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? searchResults.length : newslettersData.length}
+        rows={isSearching ? searchResults.length : newslettersParentCampaigns.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
@@ -920,7 +966,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   const renderDialog = () => {
     const { data, type } = dialogType || {}
-    // const campaign = newslettersData?.find((e) => { return parseInt(e.CampaignID) === parseInt(data) });
 
     const dialogContent = {
       restore: getRestorDialog(data),
