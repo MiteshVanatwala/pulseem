@@ -840,7 +840,7 @@ const NewslettersReport = ({ classes }) => {
         <TableRow
           key={CampaignID}
           classes={rowStyle}
-          className={clsx(classes.maxHeight87, classes.maxHeightReponsive, !isParent ? (isEven ? classes.evenRowBackground : classes.bgWhite) : '')}
+          className={clsx(classes.maxHeight87, classes.maxHeightReponsive, isEven ? classes.evenRowBackground : classes.bgWhite)}
         >
           <TableCell
             classes={cellBodyStyle}
@@ -970,7 +970,7 @@ const NewslettersReport = ({ classes }) => {
           key={row.ID}
           component='div'
           classes={rowStyle}
-          className={!isParent ? (isEven ? classes.evenRowBackground : classes.bgWhite) : ''}
+          className={isEven ? classes.evenRowBackground : classes.bgWhite}
         >
           <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} >
             <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>

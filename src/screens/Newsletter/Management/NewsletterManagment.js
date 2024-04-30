@@ -698,7 +698,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         <TableRow
           key={row.CampaignID}
           classes={rowStyle}
-          className={!isParent ? (isEven ? classes.evenRowBackground : classes.bgWhite) : ''}
+          className={isEven ? classes.evenRowBackground : classes.bgWhite}
         >
           <TableCell
             classes={cellStyle}
@@ -741,7 +741,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           key={row.CampaignID}
           component='div'
           classes={rowStyle}
-          className={!isParent ? (isEven ? classes.evenRowBackground : classes.bgWhite) : ''}
+          className={isEven ? classes.evenRowBackground : classes.bgWhite}
         >
           <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }}>
             <Box className={classes.justifyBetween}>
