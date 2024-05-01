@@ -11,7 +11,7 @@ import ResponseModal from './modals/ResponseModal'
 import Toast from '../../components/Toast/Toast.component';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
-import { deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveLandingPage } from '../../redux/reducers/landingPagesSlice';
+import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform } from '../../redux/reducers/landingPagesSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/config';
 import { IoMdImages } from 'react-icons/io';
@@ -197,10 +197,15 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#endregion 
   const getData = async () => {
     setLoader(true);
-    const initBeeToken = () => {
-      dispatch(getLPBeeToken());
+    const initBeeToken = async () => {
+      await dispatch(getLPBeeToken());
+    }
+    const loadLp = async () => {
+      //@ts-ignore
+      await dispatch(getById(params.id))
     }
     initBeeToken();
+    loadLp();
     setDataReady(true);
   }
   //#region Init Bee Token & Configuration
@@ -346,11 +351,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
       //@ts-ignore
-      const response: any = await dispatch(saveLandingPage({
+      const response: any = await dispatch(saveWebform({
         Name: '',
-        campaignId: args.campaignId,
+        ID: args.campaignId,
         JsonData: finalJson,
-        HTML: finalHtml
+        HtmlData: finalHtml,
+
       }));
       if (response.payload === true) {
         //@ts-ignore

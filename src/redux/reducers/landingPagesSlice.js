@@ -216,6 +216,16 @@ export const getPageHeight = createAsyncThunk(
     }
   });
 
+export const saveWebform = createAsyncThunk(
+  'landingpages/SaveWebform',
+  async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`landingpages/SaveWebform`, data);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 
 
