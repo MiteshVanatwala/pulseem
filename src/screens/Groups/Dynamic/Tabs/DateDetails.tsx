@@ -76,7 +76,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             classes={classes}
                             value={moment(data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear).diff('0001-01-01') > 0 ? data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear : null}
                             onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', moment(value).format(DateFormats.DATE_ONLY))}
-                            placeholder={`${t('common.FromDate')}`}
+                            placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
                             onTimeChange={() => { }}
