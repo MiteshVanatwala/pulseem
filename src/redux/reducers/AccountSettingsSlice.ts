@@ -109,6 +109,44 @@ export const checkCellphoneAuthorization = createAsyncThunk(
         }
     })
 
+export const getAllTwoFactorAuthValues = createAsyncThunk(
+    'authorization/GetAllTwoFactorAuthValues',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`authorization/GetAllTwoFactorAuthValues`)
+            return response.data;
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+export const setDisablePendingFeature = createAsyncThunk(
+    'AccountSettings/SetBypassPending',
+    async (request: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AccountSettings/SetBypassPending`, request);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+export const cancelDisablePluginOTP = createAsyncThunk(
+    'AccountSettings/CancelDisablePluginOTP',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AccountSettings/CancelDisablePluginOTP`);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+
+
 interface AuthorizationValues {
     value: string,
     isTwoFa: boolean
@@ -147,7 +185,11 @@ const AccountSettingsSlice = createSlice({
             StatusCode: 200,
             Message: '',
             Data: ''
-        } as PulseemResponse
+        } as PulseemResponse,
+        authorizedValues: {
+            Emails: [],
+            Cellphones: []
+        } as any
     },
     reducers: {
         resetTwoFA: (state) => {
@@ -165,6 +207,11 @@ const AccountSettingsSlice = createSlice({
         builder.addCase(update2FASettings.fulfilled, (state, action) => {
             state.twoFAUpdated = action.payload;
         })
+        builder.addCase(getAllTwoFactorAuthValues.fulfilled, (state, action) => {
+            state.authorizedValues.Emails = action.payload?.Data?.Emails;
+            state.authorizedValues.Cellphones = action.payload?.Data?.Cellphones;
+        })
+
     },
 })
 

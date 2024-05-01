@@ -1434,7 +1434,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             {noCreditLeft && <NoCreditDialog
                 classes={classes}
                 isOpen={noCreditLeft}
-                popUpType={CreditType.SMS}
+                popUpType={CreditType.EMAIL}
                 onClose={() => setNoCreditLeft(false)}
                 onCancel={() => setNoCreditLeft(false)}
                 key={'123'}

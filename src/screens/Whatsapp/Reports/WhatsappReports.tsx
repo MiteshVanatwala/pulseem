@@ -155,7 +155,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	useEffect(() => {
 		onSearch();
-	}, [ includeTestCampaigns ])
+	}, [includeTestCampaigns])
 
 	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
 		if (toDate && value && value > toDate) {
@@ -277,9 +277,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			}
 		} else {
 			const win: Window = window;
-			win.location = `/Pulseem/WhatsappLinksClicksReport.aspx?CampaignID=${campaignId}&fromreact=true&Culture=${
-				isRTL ? 'he-IL' : 'en-US'
-			}`;
+			win.location = `/Pulseem/WhatsappLinksClicksReport.aspx?CampaignID=${campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'
+				}`;
 		}
 	};
 
@@ -307,9 +306,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						`${cellValue >= 1 && isClickable && 'value-cell'}`
 					)}>
 					{amountCell.includes(cellName)
-						? `${cellValue ? cellValue.toLocaleString() : '0'} ${translator(
-								'common.NIS'
-						  )}`
+						? `${cellValue ? cellValue.toFixed(2) : '0'} ${translator(
+							'common.NIS'
+						)}`
 						: cellValue || '0'}
 				</Typography>
 				{!amountCell.includes(cellName) && (
@@ -439,7 +438,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const renderSearchSection = () => {
-    return (
+		return (
 			<Grid container spacing={2} className={clsx(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? classes.mt15 : classes.lineTopMarging, 'searchLine')}>
 				<Grid item>
 					<TextField
@@ -505,26 +504,26 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				)}
 
 				<Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <FormControlLabel
-            control={
-              <PulseemSwitch
+					<FormControlLabel
+						control={
+							<PulseemSwitch
 								id="type"
-                switchType='ios'
-                classes={classes}
-                checked={includeTestCampaigns}
-                onColor="#0371ad"
-                handleDiameter={20}
-                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                height={15}
-                width={40}
-                className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
-                onChange={() => setIncludeTestCampaigns(!includeTestCampaigns)}
-              />
-            }
-            label={translator('mainReport.locShowTestCampaigns.Text')}
-          />
-        </Grid>
+								switchType='ios'
+								classes={classes}
+								checked={includeTestCampaigns}
+								onColor="#0371ad"
+								handleDiameter={20}
+								boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+								activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+								height={15}
+								width={40}
+								className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+								onChange={() => setIncludeTestCampaigns(!includeTestCampaigns)}
+							/>
+						}
+						label={translator('mainReport.locShowTestCampaigns.Text')}
+					/>
+				</Grid>
 
 				<Grid item>
 					<Button
@@ -554,8 +553,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const renderManagmentLine = () => {
-    return (
-      <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
+		return (
+			<Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
 				{
 					windowSize !== 'xs' && (
 						<Grid item>
@@ -573,17 +572,17 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				}
 
 				<Grid item className={classes.groupsLableContainer} >
-          <Typography className={classes.groupsLable}>
+					<Typography className={classes.groupsLable}>
 						{totalRecord || 0} {translator('whatsappReport.campaigns')}
-          </Typography>
-        </Grid>
+					</Typography>
+				</Grid>
 			</Grid>
-    )
-  }
+		)
+	}
 
 	const renderTableHead = () => {
-    return (
-      <TableHead>
+		return (
+			<TableHead>
 				<TableRow classes={rowStyle}>
 					<TableCell classes={cellStyle} className={classes.flex3} align='center'>{translator('sms.GridBoundColumnResource2.HeaderText')}</TableCell>
 					<TableCell classes={cellStyle} className={classes.flex2} align='center'>
@@ -598,21 +597,21 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('whatsappReport.cost')}</TableCell>
 					{hasRevenue && <TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('common.revenue')}</TableCell>}
 				</TableRow>
-      </TableHead>
-    )
-  }
+			</TableHead>
+		)
+	}
 
 	const renderPhoneRow = (report: any) => {
 		return (
 			<TableRow
-        key={report.ID}
-        component='div'
-        classes={rowStyle}>
-        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
-          <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
-            {renderNameCell(report)}
-          </Box>
-          <Grid container spacing={2} className={classes.pr10}>
+				key={report.ID}
+				component='div'
+				classes={rowStyle}>
+				<TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
+					<Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
+						{renderNameCell(report)}
+					</Box>
+					<Grid container spacing={2} className={classes.pr10}>
 						<Grid item xs={3}>
 							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
 								{translator("whatsappReport.toSend")}
@@ -647,69 +646,69 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						</Grid>
 					</Grid>
 					<Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
-            <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {translator('whatsappReport.clicks')}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item className={clsx(`${report?.ClicksCount >= 1 && classes.underline}`, classes.blueTextColor)}>
+						<Grid item xs={3}>
+							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+								{translator('whatsappReport.clicks')}
+							</Typography>
+							<Grid container spacing={2}>
+								<Grid item className={clsx(`${report?.ClicksCount >= 1 && classes.underline}`, classes.blueTextColor)}>
 									{getTableTypographyCells('', report.ClicksCount, reportCellNames.CLICKS, report, true)}
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {translator('whatsappReport.unique')}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item className={clsx(`${report?.UniqueClicksCount >= 1 && classes.underline}`, classes.blueTextColor)}>
-									{ getTableTypographyCells( '', report.UniqueClicksCount, reportCellNames.UNIQUE, report, true) }
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {translator('common.Removed')}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item className={clsx(`${report?.Removed >= 1 && classes.underline}`, classes.redTextColor)}>
+								</Grid>
+							</Grid>
+						</Grid>
+						<Grid item xs={3}>
+							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+								{translator('whatsappReport.unique')}
+							</Typography>
+							<Grid container spacing={2}>
+								<Grid item className={clsx(`${report?.UniqueClicksCount >= 1 && classes.underline}`, classes.blueTextColor)}>
+									{getTableTypographyCells('', report.UniqueClicksCount, reportCellNames.UNIQUE, report, true)}
+								</Grid>
+							</Grid>
+						</Grid>
+						<Grid item xs={3}>
+							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+								{translator('common.Removed')}
+							</Typography>
+							<Grid container spacing={2}>
+								<Grid item className={clsx(`${report?.Removed >= 1 && classes.underline}`, classes.redTextColor)}>
 									{getTableTypographyCells('', report.Removed, reportCellNames.REMOVED, report, true)}
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {translator('common.failedStatus')}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item className={clsx(`${report?.Failed >= 1 && classes.underline}`, classes.redTextColor)}>
+								</Grid>
+							</Grid>
+						</Grid>
+						<Grid item xs={3}>
+							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+								{translator('common.failedStatus')}
+							</Typography>
+							<Grid container spacing={2}>
+								<Grid item className={clsx(`${report?.Failed >= 1 && classes.underline}`, classes.redTextColor)}>
 									{getTableTypographyCells('', report.Failed, reportCellNames.FAILED, report, true)}
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {translator('whatsappReport.cost')}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item>
+								</Grid>
+							</Grid>
+						</Grid>
+						<Grid item xs={3}>
+							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+								{translator('whatsappReport.cost')}
+							</Typography>
+							<Grid container spacing={2}>
+								<Grid item>
 									{getTableTypographyCells('', report?.Cost, reportCellNames.COST, report)}
-                </Grid>
-              </Grid>
-            </Grid>
-            {hasRevenue && <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {translator('common.revenue')}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item className={`${report?.Revenue >= 1 && classes.underline}`}>
+								</Grid>
+							</Grid>
+						</Grid>
+						{hasRevenue && <Grid item xs={3}>
+							<Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+								{translator('common.revenue')}
+							</Typography>
+							<Grid container spacing={2}>
+								<Grid item className={`${report?.Revenue >= 1 && classes.underline}`}>
 									{getTableTypographyCells('', report.Revenue, reportCellNames.REVENUE, report, true)}
-                </Grid>
-              </Grid>
-            </Grid>}
-          </Grid>
-        </TableCell>
-      </TableRow>
+								</Grid>
+							</Grid>
+						</Grid>}
+					</Grid>
+				</TableCell>
+			</TableRow>
 		);
 	}
 
@@ -745,9 +744,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						</Grid>
 						<Grid
 							item
-							className={`${
-								report?.Sent >= 1 && classes.underline
-							}`}>
+							className={`${report?.Sent >= 1 && classes.underline
+								}`}>
 							{getTableTypographyCells(
 								translator('whatsappReport.sent'),
 								report.Sent,
@@ -794,10 +792,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						</Grid>
 						<Grid
 							item
-							className={`${
-								report?.UniqueClicksCount >= 1 &&
+							className={`${report?.UniqueClicksCount >= 1 &&
 								classes.underline
-							}`}>
+								}`}>
 							{getTableTypographyCells(
 								translator('whatsappReport.unique'),
 								report.UniqueClicksCount,
@@ -820,8 +817,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						<Grid
 							item
 							className={clsx(
-								`${
-								report?.Removed >= 1 && classes.underline
+								`${report?.Removed >= 1 && classes.underline
 								}`,
 								classes.redTextColor
 							)}>
@@ -836,8 +832,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						<Grid
 							item
 							className={clsx(
-								`${
-									report?.Failed >= 1 && classes.underline
+								`${report?.Failed >= 1 && classes.underline
 								}`,
 								classes.redTextColor
 							)}>
@@ -875,10 +870,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							classes.flex1,
 							classes.tableCellNoBorder,
 							classes.revenueTableCell,
-							`${
-								report && report?.Revenue > 0
-									? classes.revenueTableCellPointer
-									: ''
+							`${report && report?.Revenue > 0
+								? classes.revenueTableCellPointer
+								: ''
 							}`
 						)}>
 						{getTableTypographyCells(
@@ -895,35 +889,35 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	}
 
 	const renderTableBody = () => {
-    let rowData = reportListData;
-    if (rowData.length > 0) {
-      return (
-        <Box className='tableBodyContainer'>
-          <TableBody>
+		let rowData = reportListData;
+		if (rowData.length > 0) {
+			return (
+				<Box className='tableBodyContainer'>
+					<TableBody>
 						{rowData.map(SizeOptions_XS_SM.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
-          </TableBody>
-        </Box>
-      )
-    }
-    return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
-      <Typography>{translator("common.NoDataTryFilter")}</Typography>
-    </Box>
-  }
+					</TableBody>
+				</Box>
+			)
+		}
+		return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+			<Typography>{translator("common.NoDataTryFilter")}</Typography>
+		</Box>
+	}
 
 	const renderTable = () => {
-    return (
-      <TableContainer className={classes.tableStyle}>
-        <Table className={classes.tableContainer}>
-          {SizeOptions_XS_SM.indexOf(windowSize) === -1 && renderTableHead()}
-          {renderTableBody()}
-        </Table>
-      </TableContainer>
-    )
-  }
+		return (
+			<TableContainer className={classes.tableStyle}>
+				<Table className={classes.tableContainer}>
+					{SizeOptions_XS_SM.indexOf(windowSize) === -1 && renderTableHead()}
+					{renderTableBody()}
+				</Table>
+			</TableContainer>
+		)
+	}
 
-  const renderTablePagination = () => {
-    return (
-      <TablePagination
+	const renderTablePagination = () => {
+		return (
+			<TablePagination
 				classes={classes}
 				rows={totalRecord}
 				rowsPerPage={paginationSetting?.pageSize}
@@ -938,8 +932,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				}
 				returnPageOne={false}
 			/>
-    )
-  }
+		)
+	}
 
 	return (
 		<DefaultScreen
@@ -964,7 +958,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					<div className={classes.manageWhatsappTemplates}>
 						{renderManagmentLine()}
 						{renderTable()}
-      			{renderTablePagination()}
+						{renderTablePagination()}
 					</div>
 				</>
 			) : (

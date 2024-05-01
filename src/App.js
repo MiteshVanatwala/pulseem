@@ -72,9 +72,8 @@ import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 import RecipientReport from './screens/Reports/RecipientReport/RecipientReport';
 import Integrations from './screens/Integrations/Integrations';
 import ApiSettings from './screens/Settings/ApiSettings/ApiSettings';
-// import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
-// import DynamicGroupsContainer from './screens/Groups/Dynamic/DynamicGroupsContainer';
-//import EditDynamicGroups from './screens/Groups/Dynamic/EditDynamicGroups';
+import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
+import EditDynamicGroup from './screens/Groups/Dynamic/EditDynamicGroup';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 import './helpers/global';
@@ -513,7 +512,7 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}reports/recipient`}
         element={<RecipientReport classes={classes} />}
       />
-      {/* <Route
+      <Route
         exact
         path={`${sitePrefix}Groups/Dynamic`}
         element={<DynamicGroups classes={classes} />}
@@ -521,8 +520,8 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}groups/dynamic/edit/:id`}
-        element={<DynamicGroupsContainer classes={classes} />}
-      /> */}
+        element={<EditDynamicGroup classes={classes} />}
+      />
       <Route
         exact
         path={`${sitePrefix}AccountSettings/ExtraFields`}

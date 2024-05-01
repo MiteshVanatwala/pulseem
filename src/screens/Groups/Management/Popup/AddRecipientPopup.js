@@ -94,6 +94,7 @@ const AddRecipientPopup = ({ classes,
     ToastMessages,
     onAddRecipient = () => null,
     onRecipientAdded = () => null,
+    onAnotherRecipientAdded = () => null,
     handleResponses = (response, actions) => null,
     recipientData = null
 }) => {
@@ -315,7 +316,9 @@ const AddRecipientPopup = ({ classes,
                     code: 201,
                     message: recipientData ? ToastMessages.RECIPIENT_UPDATED : ToastMessages.RECIPIENT_ADDED,
                     Func: () => {
-                        selectGroup([]);
+                        if (!callback) {
+                            selectGroup([]);
+                        }
                         new Promise(async (resolutionFunc, rejectionFunc) => {
                             resolutionFunc(onAddRecipient());
                         }).then((res) => {
@@ -1357,6 +1360,7 @@ const AddRecipientPopup = ({ classes,
                                 onClick={() => handleSubmit(() => {
                                     setAccountExtraFields(null)
                                     setAddRecipientData(DEFAULT_RECIPIENT_DATA)
+                                    onAnotherRecipientAdded();
                                 })}
                             >
                                 {t("recipient.addAnotherRecipient")}
