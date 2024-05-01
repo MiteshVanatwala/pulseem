@@ -105,7 +105,7 @@ export const DateField = ({
       }}
       variant={buttons ? 'dialog' : 'inline'}
       keyboardIcon={<CalendarIcon />}
-      format={"DD/MM/YYYY"}
+      format={props.format || "DD/MM/YYYY"}
       margin='none'
       minDate={minDate}
       placeholder={placeholder}

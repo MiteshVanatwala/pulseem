@@ -76,7 +76,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             classes={classes}
                             value={moment(data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear).diff('0001-01-01') > 0 ? data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear : null}
                             onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', moment(value).format(DateFormats.DATE_ONLY))}
-                            placeholder={t('common.FromDate')}
+                            placeholder={`${t('common.FromDate')}`}
                             timePickerOpen={true}
                             dateActive={true}
                             onTimeChange={() => { }}
@@ -85,6 +85,8 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             removePadding={true}
                             hideInvalidDateMessage={true}
                             minDate={undefined}
+                            datePickerView={["date", "month"]}
+                            format={"DD/MM"}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('BirthDateFromWithoutYear', null)}>{t("recipient.reset")}</Button>
@@ -107,6 +109,8 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             removePadding={true}
                             hideInvalidDateMessage={true}
                             minDate={undefined}
+                            datePickerView={["date", "month"]}
+                            format={"DD/MM"}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.BirthDateToWithoutYear && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('BirthDateToWithoutYear', null)}>{t("recipient.reset")}</Button>
