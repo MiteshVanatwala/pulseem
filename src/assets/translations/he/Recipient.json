@@ -1,8 +1,8 @@
 {
   "logPageHeaderResource1": {
     "Text": "ניהול קבוצות נמענים",
-    "Dynamic": "ניהול קבוצות דינמיות",
-    "Edit": "ערוך קבוצה דינמית"
+    "Dynamic": "ניהול קבוצות דינאמיות",
+    "Edit": "ערוך קבוצה דינאמית"
   },
   "deleteRecipient": "מחק מקבוצה",
   "unsubscribe": "הסר מחשבון",
