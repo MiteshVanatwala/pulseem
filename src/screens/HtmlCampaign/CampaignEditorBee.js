@@ -245,7 +245,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups());
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
-    await dispatch(getAuthorizedEmails());
     setDataReady(true);
     const initBeeToken = () => {
       dispatch(getBeeToken());

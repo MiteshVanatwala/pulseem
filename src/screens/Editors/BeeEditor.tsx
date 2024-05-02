@@ -9,7 +9,7 @@ import { Loader } from '../../components/Loader/Loader';
 import { useTranslation } from "react-i18next";
 import ResponseModal from './modals/ResponseModal'
 import Toast from '../../components/Toast/Toast.component';
-import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
+import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform } from '../../redux/reducers/landingPagesSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
@@ -39,6 +39,7 @@ import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplat
 import { SMSStoreProps } from '../../model/Sms/Sms.types';
 import { FileGallery } from '../../Models/Files/FileGallery';
 import { DemoModal } from '../HtmlCampaign/components/DemoModal';
+import { getAccountExtraData, getPreviousLandingData, getTestGroups } from '../../redux/reducers/smsSlice';
 const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region State
   const { t } = useTranslation();
@@ -52,7 +53,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
   const { language, isRTL } = useSelector((state: StateType) => state.core);
-  const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
+  const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector((state: { common: commonProps }) => state.common);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
   const [showLoader, setLoader] = useState(true);
   const [dataReady, setDataReady] = useState(false);
@@ -197,16 +198,18 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#endregion 
   const getData = async () => {
     setLoader(true);
+    //@ts-ignore
+    await dispatch(getById(params.id))
+    await dispatch(getAccountExtraData());
+    await dispatch(getPreviousLandingData());
+    await dispatch(getTestGroups());
+    await dispatch(getLPUserblocks());
+    await dispatch(getAuthorizedEmails());
+    setDataReady(true);
     const initBeeToken = async () => {
       await dispatch(getLPBeeToken());
     }
-    const loadLp = async () => {
-      //@ts-ignore
-      await dispatch(getById(params.id))
-    }
     initBeeToken();
-    loadLp();
-    setDataReady(true);
   }
   //#region Init Bee Token & Configuration
   const initTags = () => {
@@ -244,7 +247,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   const initLPBeeEditor = (templateId: number | null = null) => {
     initSpecialLinks().then(async (specialLinksFiles) => {
-      const isRtlLang = landingPage?.LanguageCode === 0 || landingPage?.LanguageCode === 8 ? true : false;
+      const webform = landingPage?.Data?.WebForm;
+      const isRtlLang = webform?.BaseLanguage === 0 || webform?.BaseLanguage === 8 ? true : false;
       let forceTemplate = null;
       let defaultContent = DefaultContent(isRtlLang);
       // if (templateId !== null) {
@@ -258,16 +262,16 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
       //   }
       // }
-      // config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
-      // config.mergeTags = mergeData;
-      // config.specialLinks = specialLinksFiles;
-      // config.titleDefaultStyles = defaultContent.titleDefaultStyles;
-      // config.contentDefaults = defaultContent.contentDefaults;
-      // if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
-      //   config.workspace.type = 'mixed';
-      // }
+      config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
+      config.mergeTags = mergeData;
+      config.specialLinks = specialLinksFiles;
+      config.titleDefaultStyles = defaultContent.titleDefaultStyles;
+      config.contentDefaults = defaultContent.contentDefaults;
+      if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
+        config.workspace.type = 'mixed';
+      }
 
-      // initTags();
+      initTags();
       switch (LPBeeToken?.StatusCode) {
         case 201: {
           if (LPBeeToken.Message === "null" || LPBeeToken.Message === null) {
@@ -278,7 +282,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           }
           else {
             const beeTest = new BeePlugin(JSON.parse(LPBeeToken.Message));
-            const template = forceTemplate !== null ? forceTemplate : landingPage?.JsonData ? JSON.parse(landingPage?.JsonData) : defaultContent.defaultTemplate;
+            const template = forceTemplate !== null ? forceTemplate : webform?.JsonData ? JSON.parse(webform?.JsonData) : defaultContent.defaultTemplate;
 
             //@ts-ignore
             beeTest.start(config, template).then((instance) => {
@@ -509,7 +513,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       handleEditRow,
       handleDeleteRow,
       t: t
-    });
+    }) as any;
   }
   const config = getConfig();
   const saveTemplate = async () => {
