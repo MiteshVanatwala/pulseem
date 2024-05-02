@@ -267,6 +267,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       config.specialLinks = specialLinksFiles;
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
+      console.log(config.defaultForm);
       if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
         config.workspace.type = 'mixed';
       }
