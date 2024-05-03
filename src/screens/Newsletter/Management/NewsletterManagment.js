@@ -639,7 +639,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
-  const renderNameCell = (row) => {
+  const renderNameCell = (row, isParent = false) => {
     let date = null
     let text = ''
     let separator = windowSize === 'xs' ? ":" : "";
@@ -663,12 +663,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
           arrow={true}
           placement={'top'}
           title={<Typography noWrap={false}>{row.Name}</Typography>}
-          text={<div className={isParentCampaignWithChild ? classes.paddingInline30 : ''}>{row.Name}</div>}
+          text={!(expandedIds.indexOf(row.CampaignID) > -1 && isParent) && <div className={isParentCampaignWithChild ? classes.paddingInline30 : ''}>{row.Name}</div>}
         />
           <Grid container>
             <Grid item md={1}>
               {
-                isParentCampaignWithChild && <>
+                isParentCampaignWithChild && isParent && <>
                   {
                     expandedIds.indexOf(row.CampaignID) === -1
                     ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.p5, classes.cursorPointer)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
@@ -677,34 +677,45 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 </>
               }
             </Grid>
-            <Grid item md={11}>
-              <Typography className={classes.f14}>
-                {`${t("mainReport.CampaignID")}${separator} ${row.CampaignID}`}
-              </Typography>
-              <Typography
-                className={classes.grayTextCell}>
-                {`${text}${separator} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
-              </Typography>
-            </Grid>
+            {
+              !(expandedIds.indexOf(row.CampaignID) > -1 && isParent) ? (
+                <Grid item md={11}>
+                  <Typography className={classes.f14}>
+                    {`${t("mainReport.CampaignID")}${separator} ${row.CampaignID}`}
+                  </Typography>
+                  <Typography
+                    className={classes.grayTextCell}>
+                    {`${text}${separator} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+                  </Typography>
+                </Grid>
+              ) : (
+                <div className={clsx(isParentCampaignWithChild ? classes.paddingInline30 : '', classes.bold, classes.pt5, classes.f16)}>{row.Name}</div>
+              )
+            }
           </Grid>
       </>
     )
   }
 
-  const renderRow = (row, isParent = true, isEven = false) => {
-    const childItems  = isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
+  const renderRow = (row, isParent = true, isLast = false) => {
+    const childItems  = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
+    const isExpanded = expandedIds.indexOf(row.CampaignID) > -1;
     return (
       <>
         <TableRow
           key={row.CampaignID}
           classes={rowStyle}
-          className={isEven ? classes.evenRowBackground : classes.bgWhite}
+          className={clsx(
+            isExpanded || !isParent ? classes.highlightExpandedRow : '',
+            isLast ? 'last' : '',
+            isParent && isExpanded ? 'first' : ''
+          )}
         >
           <TableCell
             classes={cellStyle}
             align='center'
             className={classes.flex2}>
-            {renderNameCell(row)}
+            {renderNameCell(row, isParent)}
           </TableCell>
           <TableCell
             classes={cellStyle}
@@ -716,47 +727,59 @@ const NewsletterManagnentScreen = ({ classes }) => {
             classes={cellStyle}
             align='center'
             className={classes.flex1}>
-            {renderStatusCell(row.Status)}
+            {!(isExpanded && isParent) && renderStatusCell(row.Status)}
           </TableCell>
           <TableCell
             component='th'
             scope='row'
             classes={{ root: classes.tableCellRoot }}
             className={classes.flex6}>
-            {accountFeatures && renderCellIcons(row)}
+            {!(isExpanded && isParent) && accountFeatures && renderCellIcons(row)}
           </TableCell>
         </TableRow>
         {
-          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && childItems.map((campaign) => renderRow(campaign, false, isEven))
+          isParent === true && isExpanded && (
+            <>
+              {renderRow(row, false, false)}
+              {
+                childItems.map((campaign, index) => renderRow(campaign, false, index+1 === childItems.length))
+              }
+            </>
+          )
         }
       </>
     )
   }
 
-  const renderPhoneRow = (row, isParent = true, isEven = false) => {
-    const childItems  = isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
+  const renderPhoneRow = (row, isParent = true, isLast = false) => {
+    const childItems  = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
+    const isExpanded = expandedIds.indexOf(row.CampaignID) > -1;
     return (
       <>
         <TableRow
           key={row.CampaignID}
           component='div'
           classes={rowStyle}
-          className={isEven ? classes.evenRowBackground : classes.bgWhite}
+          className={clsx(
+            isExpanded || !isParent ? classes.highlightExpandedRow : '',
+            isLast ? 'last' : '',
+            isParent && isExpanded ? 'first' : ''
+          )}
         >
           <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }}>
             <Box className={classes.justifyBetween}>
               <Box className={classes.inlineGrid}>
-                {renderNameCell(row)}
+                {renderNameCell(row, isParent)}
               </Box>
               <Box>
-                {renderStatusCell(row.Status)}
+                {!(isExpanded && isParent) && renderStatusCell(row.Status)}
               </Box>
             </Box>
             {renderCellIcons(row)}
           </TableCell>
         </TableRow>
         {
-          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && childItems.map((campaign) => renderPhoneRow(campaign, false, isEven))
+          isParent === true && isExpanded && childItems.map((campaign, index) => renderPhoneRow(campaign, false, index+1 === childItems.length))
         }
       </>
     )
@@ -770,7 +793,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       <Box className='tableBodyContainer'>
         <TableBody>
           {sortData
-            .map((item, index) => windowSize === 'xs' ? renderPhoneRow(item, true, index%2) : renderRow(item, true, index%2))}
+            .map((item) => windowSize === 'xs' ? renderPhoneRow(item, true, false) : renderRow(item, true, false))}
         </TableBody>
       </Box>
     )

@@ -4038,5 +4038,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   selectField: {
     borderBottom: '1px solid #D6D1E6',
     height: 46
-  }
+  },
+  highlightExpandedRow: {
+    backgroundColor: '#dbdbdb !important',
+    borderLeft: 'solid 2px #797979',
+    borderRight: 'solid 2px #797979',
+    '&.last': {
+      borderBottom: 'solid 2px #797979 !important',
+    },
+    '&.first': {
+      borderTop: 'solid 2px #797979 !important',
+    },
+  },
+
 });
