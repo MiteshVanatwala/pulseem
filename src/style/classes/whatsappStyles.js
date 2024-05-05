@@ -3005,6 +3005,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	revenueTableCellPointer: {
 		'& p': {
 			cursor: 'pointer',
+			textDecoration: 'underline'
 		},
 	},
 	whatsappChatSendTemplateButton: {

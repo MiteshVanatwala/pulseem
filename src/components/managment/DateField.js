@@ -76,7 +76,7 @@ export const DateField = ({
       helperText={props?.errorMessage}
       InputProps={{
         readOnly: true,
-        style: { borderRadius: isRoundedOnMobile === true ? 50 : null, border: props?.errorMessage ? '1px solid #f44336' : null }
+        style: { borderRadius: isRoundedOnMobile === true ? 50 : null, border: props?.errorMessage ? '1px solid #f44336' : null, color: 'rgba(0, 0, 0, 0.87)' }
       }}
       autoOk={true}
       style={{ borderRadius: isRoundedOnMobile === true ? 50 : null }}
@@ -105,7 +105,7 @@ export const DateField = ({
       }}
       variant={buttons ? 'dialog' : 'inline'}
       keyboardIcon={<CalendarIcon />}
-      format={"DD/MM/YYYY"}
+      format={props.format || "DD/MM/YYYY"}
       margin='none'
       minDate={minDate}
       placeholder={placeholder}
@@ -134,7 +134,7 @@ export const DateField = ({
       minDateMessage={props.errorMessage || t("common.minimalDateRequired")}
       InputProps={{
         readOnly: true,
-        style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
+        style: { borderRadius: isRoundedOnMobile === true ? 50 : null, color: 'rgba(0, 0, 0, 0.87)' }
       }}
       autoOk={true}
     />

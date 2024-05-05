@@ -252,7 +252,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		};
 		if (cellName !== reportCellNames.UNIQUE) {
 			if (cellName === reportCellNames.REVENUE) {
-				navigate(`${CLIENT_CONSTANTS.BASEURL}/${campaignId}`, {
+				navigate(`${CLIENT_CONSTANTS.BASEURL}`, {
 					state: {
 						...CLIENT_CONSTANTS.QUERY_PARAMS,
 						CampaignID: campaignId,
