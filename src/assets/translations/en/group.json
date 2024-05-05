@@ -43,5 +43,6 @@
     "402": "Group does not updated due to broken request",
     "404": "Not found",
     "incorrectValue": "One of the values or more are incorrect"
-  }
+  },
+  "eCommerceEventNotice": "<b>Please notice:</b> These events will work only for accounts linked to eCommerce stores integrated with Pulseem."
 }
