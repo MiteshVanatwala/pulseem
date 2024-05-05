@@ -13,6 +13,7 @@ import { DateField } from '../../../../components/managment';
 import moment from 'moment';
 import { DateFormats } from '../../../../helpers/Constants';
 import SelectComparingType from '../Components/SelectComparingType';
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 
 const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
@@ -611,6 +612,9 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
     }
 
     return (<>
+        <Grid item xs={12} className={clsx(classes.pb10)}>
+            {RenderHtml(t('group.eCommerceEventNotice'))}
+        </Grid>
         {renderIsPurchased()}
         {renderIsNotPurchased()}
         {renderAbandoned()}
