@@ -416,13 +416,15 @@ const CampaignEditor = ({ classes, ...props }) => {
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
       if (dynamicBlocks > 1) {
-        setDialogType({type: 'moreThanOneDynamicBlock'})
+        setDialogType({type: 'moreThanOneDynamicBlock', data: saveRef.current?.operation})
       } else {
         setDialogType({
           type: 'productCatalogPrompt',
           data: args
         })
       }
+      return false;
+    } else if (dynamicBlocks > 1) {
       return false;
     }
 
@@ -483,8 +485,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false) => {
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock };
+  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '') => {
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock, operation };
     await editorRef.current.save();
     setTimeout(() => {
       const now = moment();
@@ -524,7 +526,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
 
     if (saveBeforeExit) {
-      saveDesign(true, redirectLink, false);
+      saveDesign(true, redirectLink, false, true, 'exit');
     }
     else {
       if (isAutoResponder) window.location.href = redirectLink;
@@ -848,14 +850,17 @@ const CampaignEditor = ({ classes, ...props }) => {
 		};
 	}
 
-  const moreThanOneDynamicBlockModal = () => {
+  const moreThanOneDynamicBlockModal = (data = '') => {
 		return {
 			showDivider: false,
 			title: t("common.pleaseNotice"),
 			content: (
 				<Box>
 					<Typography title={t("common.noMoreThanOneDynamicBlock")} className={classes.alignDir}>
-						{RenderHtml(t("common.noMoreThanOneDynamicBlock"))}
+						{RenderHtml(t(
+              data === 'save' ? "common.noMoreThanOneDynamicBlockSave" 
+              : (data === "exit" ? "common.noMoreThanOneDynamicBlockExit" : "common.noMoreThanOneDynamicBlock")
+            ))}
 					</Typography>
 				</Box>
 			),
@@ -888,7 +893,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 		if (type === 'productCatalogPrompt') {
 			currentDialog = productCatalogModal(data);
 		} else if (type === 'moreThanOneDynamicBlock') {
-      currentDialog = moreThanOneDynamicBlockModal();
+      currentDialog = moreThanOneDynamicBlockModal(data);
     }
 
 		if (type) {
@@ -912,7 +917,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       wizardButtons.push(<>
         <Button
           onClick={() =>
-            saveDesign(false, null, true)}
+            saveDesign(false, null, true, true, 'save')}
           className={clsx(
             classes.btn,
             classes.btnRounded,

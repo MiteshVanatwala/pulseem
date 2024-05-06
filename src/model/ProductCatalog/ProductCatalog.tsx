@@ -52,7 +52,6 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     
     if (productOrder === Structure.Vertical && structure === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
       setMaxProducts(4);
-      setUptoProducts(isSingleOrMultiple === Items.Multiple ? 2 : 1);
       setDirection(Direction.Center);
     } else {
       setDirection(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
