@@ -38,6 +38,10 @@ const Templates = ({
   const { publicTemplates, templatesBySubAccount, publicTemplateCategories, templatesBySubAccountCategories } = useSelector(
     (state: { campaignEditor: any }) => state.campaignEditor
   );
+  const { windowSize } = useSelector(
+    (state: { core: any }) => state.core
+  );
+
   const [displayRemoveTemplateDialog, setDisplayRemoveTemplateDialog] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [displaySaveTemplate, setDisplaySaveTemplate] = useState<boolean>(false);
@@ -56,15 +60,6 @@ const Templates = ({
     setTemplateList([]);
     setSelectedCategory(null);
   };
-
-  const renderHtml = (html: any) => {
-    function createMarkup() {
-      return { __html: html };
-    }
-    return (
-      <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-  }
 
   useEffect(() => {
     const templates = tabValue === 0 ? publicTemplates : templatesBySubAccount;
@@ -94,7 +89,7 @@ const Templates = ({
   }, []);
 
   const resizeWindow = () => {
-    const height = (document.querySelector('.bee-templates') as HTMLElement)?.offsetHeight - 120;
+    const height = (document.querySelector('.bee-templates') as HTMLElement)?.offsetHeight - 160;
     if (refScriptCode.current !== null) {
       refScriptCode.current.style['maxHeight'] = `${height}px`;
       refScriptCode.current.style['height'] = `${height}px`;
@@ -109,7 +104,7 @@ const Templates = ({
 
   const template = (templateDetails: any, selectedCategory: string) => {
     return (
-      <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={12} sm={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10, 'template-item', classes.posRelative)} onClick={(event: any) => event.target instanceof HTMLDivElement && setSelectedTemplateId(templateDetails.ID)}>
+      <Grid style={{ paddingBottom: '15x' }} key={selectedCategory + '_' + templateDetails.ID} item xs={12} sm={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10, 'template-item', classes.posRelative)} onClick={(event: any) => event.target instanceof HTMLDivElement && setSelectedTemplateId(templateDetails.ID)}>
         {
           tabValue === EmailTemplateType.MY_TEMPLATES && (
             <Box className={classes.removeTemplateItem}>
@@ -143,7 +138,7 @@ const Templates = ({
             title={templateDetails.Name} />
         </Box>
         <div id='name' className={clsx(classes.textCenter, classes.pt10, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
-        <div id='buttons' className={clsx(classes.textCenter, classes.pb25)}>
+        <div id='buttons' className={clsx(classes.textCenter)}>
           <Button
             className={clsx(
               classes.p5,
@@ -246,9 +241,10 @@ const Templates = ({
     reduceTitle
     showDefaultButtons={false}
     exitButton={true}
-    maxHeight='70vh'
+    maxHeight={windowSize !== 'lg' && windowSize !== 'xl' ? '90vh' : '80vh'}
     className='bee-templates'>
     <Box className={clsx(classes.templateModal)}>
+      {/* {windowSize} */}
       <Grid container style={{ width: '100%' }}>
         <Grid item xs={12} sm={4} md={2} ref={refCategory} className='category-container'>
           {
@@ -310,14 +306,16 @@ const Templates = ({
                     <Box className={clsx(classes.textCenter, classes.pt15)}>
                       <Button
                         className={clsx(
+                          classes.btn,
+                          classes.btnRounded,
                           classes.actionButton,
-                          classes.actionButtonLightBlue,
+                          classes.textCapitalize,
                           classes.paddingSides25
                         )}
                         onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
                       >
                         <Typography
-                          className={clsx(classes.dBlock, classes.f18)}
+                          className={clsx(classes.dBlock, classes.f14)}
                         >
                           {t('common.loadMore')}
                         </Typography>
