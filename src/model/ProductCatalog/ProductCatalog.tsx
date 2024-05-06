@@ -188,6 +188,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
           image['descriptor']['style']['padding-bottom'] = '25px';
         }
         image['descriptor']['computedStyle']['class'] = 'fullwidthOnMobile';
+        image['align'] = alignment;
         productCol['modules'].push(image);
         productCol['grid-columns'] = imageCol;
         productJSON.push(productCol);
@@ -266,6 +267,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['style']['padding-left'] = '20px';
         image['descriptor']['style']['padding-right'] = '20px';
         image['descriptor']['computedStyle']['class'] = `${alignment === Direction.Center ? 'center' : 'left'} fixedwidth fullwidthOnMobile`;
+        image['align'] = alignment;
         moduleItems.push(image);
       }
 

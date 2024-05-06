@@ -851,16 +851,17 @@ const CampaignEditor = ({ classes, ...props }) => {
 	}
 
   const moreThanOneDynamicBlockModal = (data = '') => {
+    const message = t(
+      data === 'save' ? "common.noMoreThanOneDynamicBlockSave" 
+      : (data === "exit" ? "common.noMoreThanOneDynamicBlockExit" : "common.noMoreThanOneDynamicBlock")
+    );
 		return {
 			showDivider: false,
 			title: t("common.pleaseNotice"),
 			content: (
 				<Box>
-					<Typography title={t("common.noMoreThanOneDynamicBlock")} className={classes.alignDir}>
-						{RenderHtml(t(
-              data === 'save' ? "common.noMoreThanOneDynamicBlockSave" 
-              : (data === "exit" ? "common.noMoreThanOneDynamicBlockExit" : "common.noMoreThanOneDynamicBlock")
-            ))}
+					<Typography title={message} className={classes.alignDir}>
+						{RenderHtml(message)}
 					</Typography>
 				</Box>
 			),
