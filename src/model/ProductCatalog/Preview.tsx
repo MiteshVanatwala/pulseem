@@ -85,7 +85,7 @@ const Preview = ({
         {isPriceVisible && <div className={clsx(classes.bodyStyle)}>{price}</div>}
         {eventType && <div className={clsx(classes.bodyStyle)}>{eventType}</div>}
         {renderCategory()}
-        {isButtonVisible && <input type='button' value={buttonText} className={clsx(classes.buttonStyle)} />}
+        {isButtonVisible && buttonText && <input type='button' value={buttonText} className={clsx(classes.buttonStyle)} />}
       </div>
     </div>
   )

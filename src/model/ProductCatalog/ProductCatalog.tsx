@@ -241,7 +241,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         moduleItems.push(cat);
       }
 
-      if (isButtonVisible) {
+      if (isButtonVisible && buttonText) {
         let button = JSON.parse(JSON.stringify(PulButton));
         button['uuid'] = uuidv4();
         button['descriptor']['button']['label'] = buttonText;
@@ -317,7 +317,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         moduleItems.push(cat);
       }
 
-      if (isButtonVisible) {
+      if (isButtonVisible && buttonText) {
         let button = JSON.parse(JSON.stringify(PulButton));
         button['uuid'] = uuidv4();
         button['descriptor']['button']['label'] = buttonText || t('campaigns.buttonText');
