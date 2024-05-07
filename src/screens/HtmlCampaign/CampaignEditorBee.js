@@ -417,13 +417,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
       if (dynamicBlocks > 1) {
         setDialogType({type: 'moreThanOneDynamicBlock', data: saveRef.current?.operation})
-      } else {
+        return false;
+      } else if (['save', 'exit'].indexOf(saveRef.current?.operation) === -1) {
         setDialogType({
           type: 'productCatalogPrompt',
           data: args
-        })
+        });
+        return false;
       }
-      return false;
     } else if (dynamicBlocks > 1) {
       return false;
     }
@@ -444,6 +445,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       }));
 
       if (response.payload === true) {
+        const now = moment();
+        setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
         if (saveRef.current?.redirectAfterSave) {
           const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
           localStorage.setItem('reloadBeeEditor', 1);
@@ -489,8 +492,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock, operation };
     await editorRef.current.save();
     setTimeout(() => {
-      const now = moment();
-      setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
+      // const now = moment();
+      // setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
   }
