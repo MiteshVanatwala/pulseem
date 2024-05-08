@@ -237,7 +237,8 @@ export const BEE_EDITOR_TYPES = {
 }
 
 export const NoAuthenticationAPIs = [
-    'User/Signup'
+    'User/Signup',
+    'User/ResendEmail'
 ]
 
 export const FieldOfActivities = [
