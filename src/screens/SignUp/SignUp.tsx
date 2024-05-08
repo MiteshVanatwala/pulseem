@@ -175,7 +175,7 @@ const SignUp = ({ classes }: any) => {
         Password: userDetails.password,
         Company: userDetails.companyName,
         Website: userDetails.website,
-        ActivityField: t(`SignUp.${userDetails.fieldOfActivity}`),
+        ActivityField: userDetails.fieldOfActivity,
         ProductType: interests.join(','),
         UserID: qs?.id,
         chkMailingApproval: userDetails.chkUpdate
