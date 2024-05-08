@@ -71,11 +71,16 @@
     "ok": "ההרשמה הסתיימה בהצלחה",
     "servererror": "אופס! משהו השתבש בצד השרת",
     "internalerror": "אופס! נמצאה שגיאה פנימית. אנא נסו שוב.",
-    "nickexist": "שם משתמש כבר קיים",
-    "userexist": "שם משתמש כבר קיים"
+    "userexist": "משתמש כבר קיים במערכת תחת כתובת המייל שבחרתם",
+    "usernameexist": "שם משתמש כבר קיים"
   },
   "LoginDetails": "פרטי התחברות",
   "PasswordVerification": "אימות סיסמא",
   "Submit": "שלח",
-  "EmailAddressRequired": "יש למלא אימייל"
+  "EmailAddressRequired": "יש למלא אימייל",
+  "ConfirmationTitle": "נהדר! כעת בוא נאמת את כתובת הדוא\"ל שלכם",
+  "ConfirmationMessage": "כדי לאמת את הרישום שלכם, נשלח אימייל לכתובת <b>{emailid}</b> עם קישור לאימות חשבונכם.",
+  "ResendEmail": "שלח מחדש",
+  "EmailSent": "אימייל נשלח בהצלחה",
+  "EmailNotSent": "ישנה בעיה בשליחת המייל, אנא המתינו מעט ונסו שוב"
 }

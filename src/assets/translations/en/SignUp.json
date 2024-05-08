@@ -71,11 +71,16 @@
     "ok": "User has been registered succesfully.",
     "servererror": "Oops!! Something went wrong on server side.",
     "internalerror": "Oops!! Internal error found. Please try again.",
-    "nickexist": "Username already exists",
-    "userexist": "Username already exists"
+    "userexist": "User already exist under this Email Address",
+    "usernameexist": "Username already exists"
   },
   "LoginDetails": "Login Details",
   "PasswordVerification": "Password Verification",
   "Submit": "Submit",
-  "EmailAddressRequired": "Email is required"
+  "EmailAddressRequired": "Email is required",
+  "ConfirmationTitle": "Great! Now let's verify your email address.",
+  "ConfirmationMessage": "To validate your registration, an email has been sent to <b>{emailid}</b> with a link to verify your account.",
+  "ResendEmail": "Resend Email",
+  "EmailSent": "Email has been sent successfully.",
+  "EmailNotSent": "There is an issue while sending an email. Please try after some time."
 }

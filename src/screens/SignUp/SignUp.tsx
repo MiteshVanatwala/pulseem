@@ -3,7 +3,6 @@ import { AppBar, Box, Button, Checkbox, Container, FormControl, FormControlLabel
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from 'react-router';
 import PulseemNewLogo from "../../assets/images/PulseemNewLogo";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
@@ -20,13 +19,13 @@ import PasswordHint from "../Settings/AccountSettings/Password/PasswordHint";
 import { ValidPassword } from "../Settings/AccountSettings/Password/Types";
 import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
 import Toast from "../../components/Toast/Toast.component";
-import { loginURL } from "../../config";
 import queryString from 'query-string';
 import { setLanguage } from "../../redux/reducers/coreSlice";
 import { useDispatch } from 'react-redux';
 import i18n from "../../i18n";
 import { IsValidEmail, IsValidPhoneNumber } from "../../helpers/Utils/Validations";
 import { Autocomplete } from "@mui/material";
+import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 
 const SignUp = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -74,7 +73,9 @@ const SignUp = ({ classes }: any) => {
   } as ValidPassword);
   const [ toastMessage, setToastMessage ] = useState<any | never>(null);
   const [ filterFieldOfActivity, setFilterFieldOfActivity ] = useState<string[]>([]);
-  const navigate = useNavigate()
+  const [ dialogType, setDialogType ] = useState<{
+		type: string;
+	} | null>(null);
 
   useEffect(() => {
     dispatch(setLanguage(qs?.culture || 'he'));
@@ -182,10 +183,7 @@ const SignUp = ({ classes }: any) => {
       setLoader(false);
       if (status === 200) {
         if (Message === 'ok') {
-          showMessage(`SignUp.Message.${Message}`, 'success');
-          setTimeout(() => {
-            navigate(loginURL);
-          }, 3000);
+          setDialogType({ type: 'confirmation'});
         } else {
           showMessage(`SignUp.Message.${Message}`);
         }
@@ -211,6 +209,61 @@ const SignUp = ({ classes }: any) => {
 
     setPasswordValidation(validPass);
   };
+
+  const sendEmail = async () => {
+    setLoader(true);
+    const { data: { Message }, status } = await PulseemReactInstance.post(`User/ResendEmail`, {
+      UserID: qs?.id
+    });
+    setLoader(false);
+    if (status === 200) {
+      if (Message === 'Sent Email') {
+        showMessage('SignUp.EmailSent', 'success');
+      } else {
+        showMessage('SignUp.EmailNotSent');
+      }
+    } else {
+      showMessage('SignUp.EmailNotSent');
+    }
+  }
+
+  const displayConfirmationPopup = () => ({
+		title: t('SignUp.ConfirmationTitle'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{RenderHtml(t('SignUp.ConfirmationMessage').replace(/{emailid}/g, userDetails.emailId))}
+			</Typography>
+		),
+		cancelText: t('common.No'),
+		confirmText: t('SignUp.ResendEmail'),
+    onClose: () => setDialogType(null),
+    onCancel: () => setDialogType(null),
+    onConfirm: () => sendEmail(),
+	})
+
+  const renderDialog = () => {
+		const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'confirmation') {
+			currentDialog = displayConfirmationPopup();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+          contentStyle={classes.maxWidth400}
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
   
   return (
     <Container
@@ -705,8 +758,9 @@ const SignUp = ({ classes }: any) => {
           </Button>
         </Box>
       </Box>
-      <Loader isOpen={showLoader} showBackdrop={true} />
+      <Loader isOpen={showLoader} showBackdrop={true} zIndex={9999} />
       {renderToast()}
+      {renderDialog()}
     </Container>
   );
 };
