@@ -15,6 +15,7 @@ import { deleteTemplateById, getAllTemplatesBySubaccountId, updateTemplateMeta }
 import Toast from '../../../components/Toast/Toast.component';
 import { apiStatus } from '../../Whatsapp/Constant';
 import SaveTemplate from './SaveTemplate';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const Templates = ({
   classes,
@@ -128,14 +129,27 @@ const Templates = ({
           )
         }
         <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')} style={{ overflowY: 'auto' }}>
-          <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
-            style={{
-              width: '100%',
-              height: 'auto',
-              overflowY: 'auto'
-            }}
-            alt={templateDetails.Name}
-            title={templateDetails.Name} />
+          {
+            tabValue === EmailTemplateType.PULSEEM_TEMPLATES && <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
+              style={{
+                width: '100%',
+                height: 'auto',
+                overflowY: 'auto'
+              }}
+              alt={templateDetails.Name}
+              title={templateDetails.Name} />
+          }
+          {
+            tabValue === EmailTemplateType.MY_TEMPLATES && <Box
+              style={{
+                width: '100%',
+                height: 'auto',
+                overflowY: 'auto'
+              }}
+              title={templateDetails.Name}>
+              {RenderHtml(templateDetails.Html)}
+            </Box>
+          }
         </Box>
         <div id='name' className={clsx(classes.textCenter, classes.pt10, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
         <div id='buttons' className={clsx(classes.textCenter)}>
