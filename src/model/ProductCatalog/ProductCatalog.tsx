@@ -49,7 +49,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       setMaxProducts(2);
       setUptoProducts(isSingleOrMultiple === Items.Multiple ? 2 : 1);
     }
-    
+
     if (productOrder === Structure.Vertical && structure === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
       setMaxProducts(4);
       setDirection(Direction.Center);
@@ -129,7 +129,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       productJSON[1]['grid-columns'] = 8;
       const mod0 = productJSON[0]['modules'];
       const mod1 = productJSON[1]['modules'];
-      for (let ind=1; ind<uptoProducts; ind++) {
+      for (let ind = 1; ind < uptoProducts; ind++) {
         productJSON[0]['modules'] = productJSON[0]['modules'].concat(mod0);
         productJSON[1]['modules'] = productJSON[1]['modules'].concat(mod1);
       }
@@ -150,7 +150,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
             }
             if (ind < uptoProducts - 1) modules = modules.concat(PulDivider);
           }
-  
+
           if (structure === Structure.Vertical) {
             productJSON[0]['modules'] = modules;
             dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
@@ -267,6 +267,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['style']['padding-left'] = '20px';
         image['descriptor']['style']['padding-right'] = '20px';
         image['descriptor']['computedStyle']['class'] = `${alignment === Direction.Center ? 'center' : 'left'} fixedwidth fullwidthOnMobile`;
+        if (alignment === 'right') image['descriptor']['style']['padding-left'] = '70%';
         image['align'] = alignment;
         moduleItems.push(image);
       }
@@ -363,9 +364,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       title={t("campaigns.setupDynamicProduct")}
       showDefaultButtons={false}
       contentStyle={classes.noPadding}
-		  customContainerStyle={classes.callToAction}
+      customContainerStyle={classes.callToAction}
       onCancel={onHandleCancel}
-			onClose={onHandleCancel}
+      onClose={onHandleCancel}
       renderButtons={() => (
         <div className={clsx(classes.textCenter, classes.mt25)}>
           <Button
