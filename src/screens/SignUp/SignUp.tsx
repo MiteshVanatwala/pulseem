@@ -347,6 +347,7 @@ const SignUp = ({ classes }: any) => {
                   })}
                   className={clsx(classes.textField, classes.minWidth252)}
                   error={!!errors.firstName}
+                  inputProps={{ maxLength: 50 }}
                 />
                 {!!errors.firstName && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -371,6 +372,7 @@ const SignUp = ({ classes }: any) => {
                   })}
                   className={clsx(classes.textField, classes.minWidth252)}
                   error={!!errors.lastName}
+                  inputProps={{ maxLength: 50 }}
                 />
                 {!!errors.lastName && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -397,6 +399,7 @@ const SignUp = ({ classes }: any) => {
                   className={clsx(classes.textField, classes.minWidth252)}
                   error={!!errors.emailId}
                   disabled={!!qs?.emailid || false}
+                  inputProps={{ maxLength: 100 }}
                 />
                 {!!errors.emailId && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -421,6 +424,7 @@ const SignUp = ({ classes }: any) => {
                   })}
                   className={clsx(classes.textField, classes.minWidth252)}
                   error={!!errors.cellPhone}
+                  inputProps={{ maxLength: 15 }}
                 />
                 {!!errors.cellPhone && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -444,6 +448,7 @@ const SignUp = ({ classes }: any) => {
                     phone: event.target.value
                   })}
                   className={clsx(classes.textField, classes.minWidth252)}
+                  inputProps={{ maxLength: 15 }}
                 />
               </Grid>
             </Grid>
@@ -472,6 +477,7 @@ const SignUp = ({ classes }: any) => {
                   })}
                   className={clsx(classes.textField, classes.minWidth252)}
                   error={!!errors.userName}
+                  inputProps={{ maxLength: 50 }}
                 />
                 {!!errors.userName && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -505,6 +511,7 @@ const SignUp = ({ classes }: any) => {
                       onChange={handleChange}
                       className={clsx(classes.textField, classes.minWidth252)}
                       error={!!errors.password}
+                      inputProps={{ maxLength: 50 }}
                       InputProps={{
                         endAdornment: (
                           <span onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })}>
@@ -544,6 +551,7 @@ const SignUp = ({ classes }: any) => {
                     })}
                     className={clsx(classes.textField, classes.minWidth252)}
                     error={!!errors.confirmPassword}
+                    inputProps={{ maxLength: 50 }}
                     InputProps={{
                       endAdornment: (
                         <span onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })}>
@@ -590,6 +598,7 @@ const SignUp = ({ classes }: any) => {
                   })}
                   className={clsx(classes.textField, classes.minWidth252)}
                   error={!!errors.companyName}
+                  inputProps={{ maxLength: 100 }}
                 />
                 {!!errors.companyName && (
                   <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -614,6 +623,7 @@ const SignUp = ({ classes }: any) => {
                     website: event.target.value
                   })}
                   className={clsx(classes.textField, classes.minWidth252)}
+                  inputProps={{ maxLength: 100 }}
                 />
               </Grid>
 
