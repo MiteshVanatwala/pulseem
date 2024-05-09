@@ -123,8 +123,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     dynamicRow['metadata']["order"] = productOrder;
     dynamicRow['metadata']["category"] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
 
+    const alignment = direction === Direction.Center ? 'center' : direction === Direction.RightToLeft ? 'right' : 'left';
     if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
-      var productJSON: any = await getProductJSON();
+      var productJSON: any = await getProductJSON(alignment);
       productJSON[0]['grid-columns'] = 4;
       productJSON[1]['grid-columns'] = 8;
       const mod0 = productJSON[0]['modules'];
@@ -136,7 +137,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       dynamicRow['columns'].push(productJSON[0]);
       dynamicRow['columns'].push(productJSON[1]);
     } else {
-      var productJSON: any = await getProductJSON();
+      var productJSON: any = await getProductJSON(alignment);
       if (uptoProducts > 0) {
         if (productOrder === Structure.Horizontal) {
           for (let ind = 0; ind < uptoProducts; ind++) {
@@ -164,15 +165,16 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       } else dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
     }
 
-    save({
-      success: true,
-      row: dynamicRow,
-    })
+    setTimeout(() => {
+      save({
+        success: true,
+        row: dynamicRow,
+      })
+    }, 1);
   };
 
-  const getProductJSON = async () => {
+  const getProductJSON = async (alignment: string) => {
     const productJSON = [];
-    const alignment = direction === Direction.Center ? 'center' : direction === Direction.RightToLeft ? 'right' : 'left';
     if (structure === Structure.Horizontal) {
       const imageCol = DynamicProductGrid[`Item_${uptoProducts}`].image;
       const contentCol = DynamicProductGrid[`Item_${uptoProducts}`].content;
