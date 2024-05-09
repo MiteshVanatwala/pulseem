@@ -123,7 +123,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     dynamicRow['metadata']["order"] = productOrder;
     dynamicRow['metadata']["category"] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
 
-    const alignment = direction === Direction.Center ? 'center' : direction === Direction.RightToLeft ? 'right' : 'left';
+    const alignment = direction === Direction.Center ? 'center' : (direction == Direction.RightToLeft ? 'right' : 'left');
     if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
       var productJSON: any = await getProductJSON(alignment);
       productJSON[0]['grid-columns'] = 4;
