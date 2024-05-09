@@ -111,7 +111,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     setButtonText(t('campaigns.buyNow'));
   }, []);
 
-  const onHandleSave = () => {
+  const onHandleSave = async () => {
     let dynamicRow = JSON.parse(JSON.stringify(PulRow));
     // dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['container']['style']['product-block-container'] = '1';
@@ -124,7 +124,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     dynamicRow['metadata']["category"] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
 
     if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
-      var productJSON: any = getProductJSON();
+      var productJSON: any = await getProductJSON();
       productJSON[0]['grid-columns'] = 4;
       productJSON[1]['grid-columns'] = 8;
       const mod0 = productJSON[0]['modules'];
@@ -136,7 +136,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       dynamicRow['columns'].push(productJSON[0]);
       dynamicRow['columns'].push(productJSON[1]);
     } else {
-      var productJSON: any = getProductJSON();
+      var productJSON: any = await getProductJSON();
       if (uptoProducts > 0) {
         if (productOrder === Structure.Horizontal) {
           for (let ind = 0; ind < uptoProducts; ind++) {
@@ -170,7 +170,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     })
   };
 
-  const getProductJSON = () => {
+  const getProductJSON = async () => {
     const productJSON = [];
     const alignment = direction === Direction.Center ? 'center' : direction === Direction.RightToLeft ? 'right' : 'left';
     if (structure === Structure.Horizontal) {
