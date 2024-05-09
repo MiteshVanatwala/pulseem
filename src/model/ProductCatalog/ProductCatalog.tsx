@@ -266,8 +266,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['style']['text-align'] = alignment;
         image['descriptor']['style']['padding-left'] = '20px';
         image['descriptor']['style']['padding-right'] = '20px';
+        if (alignment !== Direction.Center) image['descriptor']['style']['display'] = 'flex';
         image['descriptor']['computedStyle']['class'] = `${alignment === Direction.Center ? 'center' : 'left'} fixedwidth fullwidthOnMobile`;
-        if (alignment === 'right') image['descriptor']['style']['padding-left'] = '70%';
+        image['descriptor']['computedStyle']['style'] = `text-align: ${alignment}`;
         image['align'] = alignment;
         moduleItems.push(image);
       }

@@ -33,6 +33,7 @@ const Preview = ({
         clsx(
           classes.card, classes.w100, classes.mb10,
           {
+            [classes.directionRTL]: direction === Direction.RightToLeft,
             [classes.textRight]: direction === Direction.RightToLeft,
             [classes.textCenter]: direction === Direction.Center,
           }
