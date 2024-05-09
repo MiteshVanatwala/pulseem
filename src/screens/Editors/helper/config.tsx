@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translations/BeeEditor/Languages';
 import { FONTS } from '../../../helpers/Fonts/Init';
 import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
+import { isProdMode } from '../../../config';
 type dialog = (a: any) => void;
 type save = (a: any) => void;
 const AUTO_SAVE_SECONDS = 180; // 3 minutes
@@ -24,6 +25,7 @@ export interface ConfigOptions {
   handleEditRow: Function;
   // HandleAutoSave: Function,
   t: any;
+  forms: any;
 }
 export const BeeConfig = (Options: ConfigOptions) => {
   const {
@@ -44,7 +46,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
     // HandleAutoSave,
     handleDeleteRow,
     PulseemEditBlock,
-    t
+    t,
+    forms
   } = Options;
   return {
     uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
@@ -69,59 +72,28 @@ export const BeeConfig = (Options: ConfigOptions) => {
         title: 'Form title',
         description: "A BEE test form",
         fields: {
-          firstName: { type: 'text', label: 'First Name', canBeRemovedFromLayout: true },
-          lastName: { type: 'text', label: 'Last Name', canBeRemovedFromLayout: true },
-          email: { type: 'email', label: 'Email', canBeRemovedFromLayout: true },
-          telephone: { type: 'tel', label: 'Telephone', canBeRemovedFromLayout: true },
-          cellphone: { type: 'tel', label: 'Cellphone', canBeRemovedFromLayout: true, attributes: { pattern: "[0-9]{3}-[0-9]{3}-[0-9]{4}" } },
-          address: { type: 'text', label: 'Address', canBeRemovedFromLayout: true },
-          city: { type: 'text', label: 'City', canBeRemovedFromLayout: true },
-          company: { type: 'text', label: 'Company', canBeRemovedFromLayout: true },
-          birthDate: { type: 'text', label: 'Birth Date', canBeRemovedFromLayout: true },
-          zip: { type: 'text', label: 'Zip', canBeRemovedFromLayout: true },
-          country: { type: 'text', label: 'Country', canBeRemovedFromLayout: true },
-          gender: {
-            type: "select",
-            label: "Gender",
-            options: [{
-              type: "option",
-              label: "Male",
-              value: "M"
-            },
-            {
-              type: "option",
-              label: "Female",
-              value: "F"
-            },
-            {
-              type: "option",
-              label: "Not telling",
-              value: "-"
-            }
-            ]
+          ...forms,
+          confirmation: {
+            type: 'checkbox', label: IsRTL ? 'אני מסכים לתנאי השירות' : 'I agree to the TOS', canBeRemovedFromLayout: false, attributes: { dir: IsRTL ? 'right' : 'left' }
           },
-          confirmation: { type: 'checkbox', label: 'Confirmation', canBeRemovedFromLayout: false },
-          submit: { type: 'submit', label: '', canBeRemovedFromLayout: false, attributes: { value: 'Submit', name: "submit_button" } },
+          submit: {
+            type: 'submit', label: '', canBeRemovedFromLayout: false, attributes: { value: IsRTL ? 'שלח' : 'Submit', name: "submit_button" }
+          },
         },
         layout: [
-          ['firstName', 'lastName'],
-          ['email'],
-          ['telephone', 'cellphone'],
-          ['address', 'zip'],
-          ['city', 'country'],
-          ['company'],
-          ['birthDate'],
+          Object.keys(forms),
           ['confirmation'],
           ['submit'],
         ],
         attributes: {
           "accept-charset": "UTF-8",
-          action: "http://example.com/read-form-script",
+          action: isProdMode ? "https://secure.pulseem.com/submithandler.axd" : "https://l-p.site/submithandler.axd",
           autocomplete: "on",
           enctype: "multipart/form-data",
           method: "post",
           novalidate: false,
-          target: "_self"
+          target: "_self",
+          dir: IsRTL ? 'rtl' : 'ltr'
         },
       },
       style: {
@@ -149,18 +121,15 @@ export const BeeConfig = (Options: ConfigOptions) => {
           "width": "50%"
         },
         "fields": {
-          // "backgroundColor": "#ffffff",
-          "border-bottom": "1px solid #FC7318",
-          "border-left": "1px solid #FC7318",
-          "border-radius": "6px",
-          "border-right": "1px solid #FC7318",
-          "border-top": "1px solid #FC7318",
+          "border": "3px solid red",
+          "border-radius": "2px",
           "color": "#000000",
-          "outlineColor": "#953ae0",
-          "padding-bottom": "5px",
-          "padding-left": "5px",
-          "padding-right": "5px",
-          "padding-top": "5px"
+          // "outlineColor": "#953ae0",
+          // "padding-bottom": "5px",
+          // "padding-left": "5px",
+          // "padding-right": "5px",
+          // "padding-top": "5px",
+          "text-align": IsRTL ? "right" : "left"
         },
         "labels": {
           "color": "#000000",
@@ -169,7 +138,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
           "label-position": "side",
           "line-height": "200%",
           "min-width": "100px",
-          "text-align": "left"
+          "text-align": IsRTL ? "right" : "left",
+          "direction": IsRTL ? "rtl" : "ltr"
         }
       }
     },
@@ -256,14 +226,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
           }
         }
       },
-      manageForm: {
-        label: 'Edit form',
-        handler: async (resolve: any, reject: any, args: any) => {
-          //   const structure = await onHandleManageForm(args)
-          //   structure ? resolve(structure) : reject()
-          reject()
-        }
-      },
+      // manageForm: {
+      //   label: 'Edit form',
+      //   handler: async (resolve: any, reject: any, args: any) => {
+      //     //   const structure = await onHandleManageForm(args)
+      //     //   structure ? resolve(structure) : reject()
+      //     reject()
+      //   }
+      // },
     },
     //#region Methods
     onSave: async (jsonFile: any, htmlFile: any, ampHtml: any) => {

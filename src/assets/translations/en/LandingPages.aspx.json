@@ -428,5 +428,6 @@
   },
   "noRequiredGroupSelection": "Not required for Pages without registration form",
   "shortUrlExist": "Short URL is already in use, Try another srting for Short URL",
-  "typeParameters": "Type parameters"
+  "typeParameters": "Type parameters",
+  "surveyQuestion": "Survey Question"
 }

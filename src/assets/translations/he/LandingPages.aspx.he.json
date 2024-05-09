@@ -428,5 +428,6 @@
   },
   "noRequiredGroupSelection": "לא חובה לבחור קבוצה בדפי נחיתה ללא טופס הרשמה",
   "shortUrlExist": "קישור מקוצר כבר תפוס. נסה מחרוזת אחרת לקישור מקוצר",
-  "typeParameters": "הזן פרמטרים"
+  "typeParameters": "הזן פרמטרים",
+  "surveyQuestion": "שאלת סקר"
 }

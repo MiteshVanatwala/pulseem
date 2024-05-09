@@ -12,7 +12,7 @@ import Toast from '../../components/Toast/Toast.component';
 import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform } from '../../redux/reducers/landingPagesSlice';
-import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
+import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/config';
 import { IoMdImages } from 'react-icons/io';
 import Gallery from '../../components/Gallery/Gallery.component';
@@ -39,7 +39,9 @@ import { BeeEditorModel, BeeEditorStoreModel, LandingPageRow, LandingPageTemplat
 import { SMSStoreProps } from '../../model/Sms/Sms.types';
 import { FileGallery } from '../../Models/Files/FileGallery';
 import { DemoModal } from '../HtmlCampaign/components/DemoModal';
+import { ClientForm } from '../../Models/BeeModels/BeeModel';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from '../../redux/reducers/smsSlice';
+
 const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region State
   const { t } = useTranslation();
@@ -87,12 +89,25 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     templateName: '',
     categoryName: '',
   });
+
+  const [clientForm, setClientForm] = useState<ClientForm>({});
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
+  const loadAccountExtraData = () => {
+    return new Promise(async (resolve: any) => {
+      const res: any = await dispatch(getAccountExtraData());
+      resolve(res?.payload);
+    });
+  }
   const initFields = () => {
-    initExtraDataField(extraData, t).then((exData) => {
-      setPulseemMergeData(exData);
-    })
+    loadAccountExtraData().then((ed: any) => {
+      initExtraDataField(extraData, t).then((exData) => {
+        setPulseemMergeData(exData);
+        initClientForm(ed, t, isRTL).then((res) => {
+          setClientForm(res);
+        })
+      })
+    });
   }
   const initSpecialLinks = () => {
     return new Promise((resolve, reject) => {
@@ -267,6 +282,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       config.specialLinks = specialLinksFiles;
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
+      // config.defaultForm
       console.log(config.defaultForm);
       if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
         config.workspace.type = 'mixed';
@@ -513,7 +529,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       getRows,
       handleEditRow,
       handleDeleteRow,
-      t: t
+      t: t,
+      forms: clientForm
     }) as any;
   }
   const config = getConfig();
