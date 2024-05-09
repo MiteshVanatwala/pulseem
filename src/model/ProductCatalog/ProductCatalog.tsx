@@ -113,13 +113,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
 
   const onHandleSave = () => {
     let dynamicRow = JSON.parse(JSON.stringify(PulRow));
-    dynamicRow['container']['style']['direction'] = direction;
+    // dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['container']['style']['product-block-container'] = '1';
-    dynamicRow['content']['style']['direction'] = direction;
+    // dynamicRow['content']['style']['direction'] = direction;
     dynamicRow['metadata']["EventType"] = eventType.toString(); //getEventName(eventType);
     dynamicRow['metadata']["ProductCategory"] = category;
     dynamicRow['metadata']["NumOfProdcuts"] = uptoProducts;
-    dynamicRow['metadata']["direction"] = direction.toUpperCase();
+    // dynamicRow['metadata']["direction"] = direction.toUpperCase();
     dynamicRow['metadata']["order"] = productOrder;
     dynamicRow['metadata']["category"] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
 
@@ -266,8 +266,8 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['style']['text-align'] = alignment;
         image['descriptor']['style']['padding-left'] = '20px';
         image['descriptor']['style']['padding-right'] = '20px';
-        if (alignment !== Direction.Center) image['descriptor']['style']['display'] = 'flex';
-        image['descriptor']['computedStyle']['class'] = `${alignment === Direction.Center ? 'center' : 'left'} fixedwidth fullwidthOnMobile`;
+        // if (alignment !== Direction.Center) image['descriptor']['style']['display'] = 'flex';
+        image['descriptor']['computedStyle']['class'] = `${alignment} fixedwidth fullwidthOnMobile`;
         image['descriptor']['computedStyle']['style'] = `text-align: ${alignment}`;
         image['align'] = alignment;
         moduleItems.push(image);

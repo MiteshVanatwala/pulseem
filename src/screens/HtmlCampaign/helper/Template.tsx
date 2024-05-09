@@ -236,7 +236,7 @@ export const PulRow = {
       "border-bottom": "0px solid transparent",
       "border-left": "0px solid transparent",
       "border-radius": "0px",
-      "direction": "rtl",
+      "direction": "ltr",
     },
     "computedStyle": {
       "rowColStackOnMobile": true,
