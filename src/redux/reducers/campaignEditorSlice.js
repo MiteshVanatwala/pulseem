@@ -156,7 +156,7 @@ export const campaignEditorSlice = createSlice({
                         tags: b?.TagsAsString?.split(',')
                     }
                 });
-                state.userBlocks = blocks
+                state.userBlocks = blocks;
             })
             .addCase(getBeeToken.fulfilled, (state, { payload }) => {
                 state.beeToken = payload;

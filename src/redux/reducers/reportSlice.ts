@@ -5,7 +5,7 @@ import { ResponsesFilter } from "../../Models/Reports/ResponsesReports";
 
 export const GetProductReports = createAsyncThunk(
   "ProductReport/Get",
-  async (data, thunkAPI) => {
+  async (data: any, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post(
         `ProductReport/Get`,

@@ -34,24 +34,24 @@ const useMockAPI = () => {
     return new Promise((resolve) => resolve);
   }
 
-  const getRows = async (handle) => {
-    let items = ref.current;
-    if (ref?.current.length > 0) {
-      items = ref?.current.filter((row) => {
-        return row.metadata.tags.split(',').find((tag) => {
-          return tag.trim() === handle
-        });
-      });
-      items = items.filter((value, index) => {
-        const _value = JSON.stringify(value);
-        return index === items.findIndex(obj => {
-          return JSON.stringify(obj) === _value;
-        });
-      });
-    }
-
+  const getRows = async (handle, all=false) => {
     return new Promise((resolve) => {
-      resolve(items)
+      let items = ref.current;
+      if (ref?.current.length > 0) {
+        items = ref?.current.filter((row) => {
+          return row.metadata?.tags.split(',').find((tag) => {
+            return tag.trim() === handle
+          });
+        });
+        items = items.filter((value, index) => {
+          const _value = JSON.stringify(value);
+          return index === items.findIndex(obj => {
+            return JSON.stringify(obj) === _value;
+          });
+        });
+      }
+
+      resolve(all ? ref.current : items)
     })
   }
 

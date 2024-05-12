@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button } from '@material-ui/core'
+import { Box, Button, Grid, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -55,6 +55,9 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
+import { getCategories } from '../../redux/reducers/productSlice';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { NO_IMAGE_URL } from '../../helpers/Constants';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -72,6 +75,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
+  const { productCategories } = useSelector(state => state.product);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -105,6 +109,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   });
   const [showDomainVerification, setShowDomainVerification] = useState(false);
   const [emailProps, setEmailProps] = useState(null);
+  const [dialogType, setDialogType] = useState(null)
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -150,7 +155,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (dataReady) {
       Promise.all([initFields()]).then(() => {
         return true;
-      })
+      });
     }
 
   }, [dataReady]);
@@ -246,6 +251,10 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
     await dispatch(getAuthorizedEmails());
+
+    if (productCategories?.length <= 0) {
+      getProductCategories();
+    }
     setDataReady(true);
     const initBeeToken = () => {
       dispatch(getBeeToken());
@@ -266,11 +275,20 @@ const CampaignEditor = ({ classes, ...props }) => {
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
+    let tempRows = [{
+      name: 'product-catalog',
+      value: 'product-catalog',
+      handle: 'product-catalog',
+      isLocal: true,
+      behaviors: {
+        canEdit: true,
+        canDelete: true,
+      }
+    }]
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];
-      let tempRows = [];
       tags?.forEach((tag, idx) => {
-        if (tag && tag !== undefined && tag !== null) {
+        if (tag && tag !== undefined && tag !== null && tag.trim() !== 'product-catalog') {
           const tagObj = {
             name: tag.trim(),
             value: tag.replace(' ', ''),
@@ -290,8 +308,8 @@ const CampaignEditor = ({ classes, ...props }) => {
           return JSON.stringify(obj) === _value;
         });
       });
-      config.rowsConfiguration.externalContentURLs = tempRows;
     }
+    config.rowsConfiguration.externalContentURLs = tempRows;
   }
   const initBeeEditor = (templateId = null) => {
     initSpecialLinks().then(async (specialLinksFiles) => {
@@ -367,6 +385,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     })
   }
+
+  const getProductCategories = async () => {
+    await dispatch(getCategories());
+  }
+
   useEffect(() => {
     if (beeToken) {
       initBeeEditor();
@@ -390,6 +413,22 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
+    const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
+    if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
+      if (dynamicBlocks > 1) {
+        setDialogType({type: 'moreThanOneDynamicBlock', data: saveRef.current?.operation})
+        return false;
+      } else if (['save', 'exit'].indexOf(saveRef.current?.operation) === -1) {
+        setDialogType({
+          type: 'productCatalogPrompt',
+          data: args
+        });
+        return false;
+      }
+    } else if (dynamicBlocks > 1) {
+      return false;
+    }
+
     const reInit = saveRef.current?.reInitEditor;
 
     try {
@@ -406,6 +445,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       }));
 
       if (response.payload === true) {
+        const now = moment();
+        setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
         if (saveRef.current?.redirectAfterSave) {
           const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
           localStorage.setItem('reloadBeeEditor', 1);
@@ -447,12 +488,12 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
+  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '') => {
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock, operation };
     await editorRef.current.save();
     setTimeout(() => {
-      const now = moment();
-      setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
+      // const now = moment();
+      // setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
   }
@@ -488,7 +529,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
 
     if (saveBeforeExit) {
-      saveDesign(true, redirectLink, false);
+      saveDesign(true, redirectLink, false, true, 'exit');
     }
     else {
       if (isAutoResponder) window.location.href = redirectLink;
@@ -581,16 +622,21 @@ const CampaignEditor = ({ classes, ...props }) => {
       uuid: block?.metadata?.uuid
     };
     dispatch(saveUserBlock(blockRequest)).then(async () => {
+      let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
+      var tags = [].concat.apply([], tempTags);
+      if (tags && tags?.length > 0) {
+        setSilentSave(true)
+        await saveDesign(false, null, false);
+      }
+      await dispatch(getUserblocks());
       setLoader(false);
-      dispatch(getUserblocks());
-      await setRow(json);
     });
   }
   const onEditBlock = (blockRequest) => {
     setLoader(true);
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
-      await setRow(JSON.stringify(blockRequest?.Json));
+      dispatch(getUserblocks());
     });
   }
   const handleDeleteBlock = (e, row_id) => {
@@ -620,7 +666,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       setShowDomainVerification(true)
     }
     else {
-      saveDesign(false, null, false).then(async (r) => {
+      saveDesign(false, null, false, true).then(async (r) => {
         setIsResponseModal(false);
         editorRef.current.send();
       });
@@ -768,13 +814,114 @@ const CampaignEditor = ({ classes, ...props }) => {
   //       {t('common.saveTemplate')}
   //     </Button></>
   // }
+
+  const productCatalogModal = (args) => {
+		return {
+			showDivider: false,
+			title: t("common.important"),
+			content: (
+				<Box>
+					<Typography title={t("common.dynamicProductNotice")} className={classes.alignDir}>
+						{RenderHtml(t("common.dynamicProductNotice"))}
+					</Typography>
+				</Box>
+			),
+			renderButtons: () => (
+        <Grid
+          container
+          spacing={4}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => { 
+                setDialogType(null);
+                saveRef.current = { ...saveRef.current, checkDynamicBlock: false };
+                onSave(args);
+              }}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}>
+              {t('common.Ok')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+		};
+	}
+
+  const moreThanOneDynamicBlockModal = (data = '') => {
+    const message = t(
+      data === 'save' ? "common.noMoreThanOneDynamicBlockSave" 
+      : (data === "exit" ? "common.noMoreThanOneDynamicBlockExit" : "common.noMoreThanOneDynamicBlock")
+    );
+		return {
+			showDivider: false,
+			title: t("common.pleaseNotice"),
+			content: (
+				<Box>
+					<Typography title={message} className={classes.alignDir}>
+						{RenderHtml(message)}
+					</Typography>
+				</Box>
+			),
+			renderButtons: () => (
+        <Grid
+          container
+          spacing={4}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}>
+              {t('common.Ok')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+		};
+	}
+
+  const renderDialog = () => {
+    const { type, data } = dialogType || {}
+		let currentDialog = {};
+		if (type === 'productCatalogPrompt') {
+			currentDialog = productCatalogModal(data);
+		} else if (type === 'moreThanOneDynamicBlock') {
+      currentDialog = moreThanOneDynamicBlockModal(data);
+    }
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+  }
+
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
       wizardButtons.push(<>
         <Button
           onClick={() =>
-            saveDesign(false, null, true)}
+            saveDesign(false, null, true, true, 'save')}
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -808,7 +955,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             setShowDomainVerification(true)
           }
           else {
-            saveDesign(true);
+            saveDesign(true, null, true, true);
           }
 
         }}
@@ -962,6 +1109,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           setShowDomainVerification(false)
         }}
       />
+      {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
   )
