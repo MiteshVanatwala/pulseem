@@ -16,13 +16,15 @@ export class BeeFormModel {
   canBeRemovedFromLayout?: boolean;
   removeFromLayout?: boolean;
   attributes?: any;
-  constructor(_type: ElementTypes | never | any, _label: string | never | any, _canBeRemovedFromLayout: boolean, _removeFromLayout: boolean, _attr: any) {
+  classes?: any;
+  constructor(_type: ElementTypes | never | any, _label: string | never | any, _canBeRemovedFromLayout: boolean, _removeFromLayout: boolean, _attr: any, _classes: string | never | any) {
     this.type = _type ?? 'text';
     this.label = _label ?? '';
     this.canBeRemovedFromLayout = _canBeRemovedFromLayout ?? false;
     this.removeFromLayout = _removeFromLayout ?? false
+    this.classes = _classes || '';
     this.attributes = {
-      "class": "g-recaptcha",
+      "class": `form-control ${_classes || ''}`,
       "data-action": "submit",
       "data-sitekey": isProdMode ? "6LcY9cwjAAAAAGxR66dKqOoLMGVPQ--8nRxWpHJl" : "6LcY9cwjAAAAAG5_zmvxFOEpAB20OEPaJRBWiSXe",
       ..._attr

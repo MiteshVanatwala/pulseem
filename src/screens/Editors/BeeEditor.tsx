@@ -530,7 +530,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       handleEditRow,
       handleDeleteRow,
       t: t,
-      forms: clientForm
+      form: clientForm
     }) as any;
   }
   const config = getConfig();

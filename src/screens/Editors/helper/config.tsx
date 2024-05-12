@@ -25,7 +25,7 @@ export interface ConfigOptions {
   handleEditRow: Function;
   // HandleAutoSave: Function,
   t: any;
-  forms: any;
+  form: any;
 }
 export const BeeConfig = (Options: ConfigOptions) => {
   const {
@@ -47,8 +47,17 @@ export const BeeConfig = (Options: ConfigOptions) => {
     handleDeleteRow,
     PulseemEditBlock,
     t,
-    forms
+    form
   } = Options;
+
+  const layout = [];
+  Object.keys(form).forEach((key, index) => {
+    layout.push([`${key}`]);
+  });
+  layout.push(['confirmation']);
+  layout.push(['submit']);
+
+
   return {
     uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
     container: 'page-bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
@@ -69,79 +78,77 @@ export const BeeConfig = (Options: ConfigOptions) => {
     },
     defaultForm: {
       structure: {
-        title: 'Form title',
-        description: "A BEE test form",
+        title: 'כותרת הטופס',
+        description: "טופס הרשמה",
         fields: {
-          ...forms,
+          ...form,
           confirmation: {
-            type: 'checkbox', label: IsRTL ? 'אני מסכים לתנאי השירות' : 'I agree to the TOS', canBeRemovedFromLayout: false, attributes: { dir: IsRTL ? 'right' : 'left' }
+            type: 'checkbox', label: IsRTL ? 'אני מאשר קבלת דיוור' : 'I agree to the TOS', canBeRemovedFromLayout: false, attributes: { dir: IsRTL ? 'right' : 'left' }
           },
           submit: {
             type: 'submit', label: '', canBeRemovedFromLayout: false, attributes: { value: IsRTL ? 'שלח' : 'Submit', name: "submit_button" }
           },
         },
-        layout: [
-          Object.keys(forms),
-          ['confirmation'],
-          ['submit'],
-        ],
+        layout: layout,
         attributes: {
-          "accept-charset": "UTF-8",
+          // "accept-charset": "UTF-8",
           action: isProdMode ? "https://secure.pulseem.com/submithandler.axd" : "https://l-p.site/submithandler.axd",
-          autocomplete: "on",
-          enctype: "multipart/form-data",
+          // autocomplete: "on",
+          // enctype: "multipart/form-data",
           method: "post",
           novalidate: false,
-          target: "_self",
+          // target: "_self",
           dir: IsRTL ? 'rtl' : 'ltr'
         },
       },
       style: {
         "buttons": {
-          "backgroundColor": "#fc7318",
-          "border-bottom": "0px solid transparent",
-          "border-left": "0px solid transparent",
-          "border-radius": "4px",
-          "border-right": "0px solid transparent",
-          "border-top": "0px solid transparent",
-          "color": "#ffffff",
-          "outer": {
-            "flexGrow": 1,
-            "display": "flex",
-            "padding-buttom": "0px",
-            "padding-left": "0px",
-            "padding-right": "0px",
-            "padding-top": "0px"
-          },
-          "padding-bottom": "11px",
-          "padding-left": "20px",
-          "padding-right": "20px",
-          "padding-top": "11px",
-          "text-align": "center",
-          "width": "50%"
+            "backgroundColor": "#fc7318",
+            "border-bottom": "0px solid transparent",
+            "border-left": "0px solid transparent",
+            "border-radius": "4px",
+            "border-right": "0px solid transparent",
+            "border-top": "0px solid transparent",
+            "color": "#ffffff",
+            "outer": {
+                "flexGrow": 1,
+                "display": "flex",
+                "padding-buttom": "0px",
+                "padding-left": "0px",
+                "padding-right": "0px",
+                "padding-top": "0px"
+            },
+            "padding-bottom": "11px",
+            "padding-left": "20px",
+            "padding-right": "20px",
+            "padding-top": "11px",
+            "text-align": "center",
+            "width": "50%"
         },
         "fields": {
-          "border": "3px solid red",
-          "border-radius": "2px",
-          "color": "#000000",
-          // "outlineColor": "#953ae0",
-          // "padding-bottom": "5px",
-          // "padding-left": "5px",
-          // "padding-right": "5px",
-          // "padding-top": "5px",
-          "text-align": IsRTL ? "right" : "left"
+            "backgroundColor": "#ffffff",
+            "border-bottom": "1px solid #FC7318",
+            "border-left": "1px solid #FC7318",
+            "border-radius": "6px",
+            "border-right": "1px solid #FC7318",
+            "border-top": "1px solid #FC7318",
+            "color": "#000000",
+            "outlineColor": "#953ae0",
+            "padding-bottom": "5px",
+            "padding-left": "5px",
+            "padding-right": "5px",
+            "padding-top": "5px"
         },
         "labels": {
-          "color": "#000000",
-          "font-style": "",
-          "font-weight": "",
-          "label-position": "side",
-          "line-height": "200%",
-          "min-width": "100px",
-          "text-align": IsRTL ? "right" : "left",
-          "direction": IsRTL ? "rtl" : "ltr"
+            "color": "#000000",
+            "font-style": "",
+            "font-weight": "",
+            "label-position": "side",
+            "line-height": "200%",
+            "min-width": "100px",
+            "text-align": "right"
         }
-      }
+    }
     },
     defaultModulesOrder: [
       'Form',
