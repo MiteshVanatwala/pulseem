@@ -8,7 +8,8 @@ export enum ElementTypes {
   checkbox = 'checkbox',
   date = 'date',
   textarea = 'textarea',
-  submit = 'submit'
+  submit = 'submit',
+  number = 'digit'
 }
 export class BeeFormModel {
   type?: ElementTypes;
