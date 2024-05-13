@@ -1845,6 +1845,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "&.MuiTooltip-tooltipPlacementTop": {
       margin: "10px 0px!important",
     },
+    "&.MuiTooltip-arrow": {
+      color: '#000'
+    }
   },
   tooltipArrow: {
     color: "black",

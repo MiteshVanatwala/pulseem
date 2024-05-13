@@ -11,6 +11,9 @@ const useStyles = makeStyles({
 		backgroundColor: 'black',
 		fontSize: '14px',
 		textAlign: 'center',
+		"& span": {
+			color: '#000'
+		}
 	},
 	noMaxWidth: {
 		maxWidth: 'none',
