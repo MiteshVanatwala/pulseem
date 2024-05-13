@@ -429,5 +429,22 @@
   "noRequiredGroupSelection": "לא חובה לבחור קבוצה בדפי נחיתה ללא טופס הרשמה",
   "shortUrlExist": "קישור מקוצר כבר תפוס. נסה מחרוזת אחרת לקישור מקוצר",
   "typeParameters": "הזן פרמטרים",
-  "surveyQuestion": "שאלת סקר"
+  "surveyQuestion": "שאלת סקר",
+  "placeholder":{
+    "first_name": "הקלד שם פרטי",
+    "last_name": "הקלד שם משפחה",
+    "email": "הקלד כתובת",
+    "cellphone": "הקלד סלולארי",
+    "zip": "הקלד מיקוד",
+    "city": "הקלד ארץ",
+    "state": "הקלד מחוז",
+    "company": "הקלד שם חברה",
+    "country": "הקלד מדינה",
+    "address": "הקלד כתובת",
+    "telephone": "הקלד טלפון",
+    "birth_date": "בחר תאריך לידה",
+    "reminder_date": "בחר תאריך תזכורת",
+    "surveyQuestion": "הקלד תשובה",
+    "typeHere": "הקלד כאן"
+  }
 }

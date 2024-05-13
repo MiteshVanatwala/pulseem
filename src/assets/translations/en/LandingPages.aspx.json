@@ -429,5 +429,22 @@
   "noRequiredGroupSelection": "Not required for Pages without registration form",
   "shortUrlExist": "Short URL is already in use, Try another srting for Short URL",
   "typeParameters": "Type parameters",
-  "surveyQuestion": "Survey Question"
+  "surveyQuestion": "Survey Question",
+  "placeholder":{
+    "first_name": "Type your First name",
+    "last_name": "Type your Last name",
+    "email": "Type your Email address",
+    "cellphone": "Type your Cellphone",
+    "zip": "Type your Zip address",
+    "city": "Type your City",
+    "state": "Type your State",
+    "company": "Type Company Name",
+    "country": "Type your Country",
+    "address": "Type your Address",
+    "telephone": "Type your Telephone",
+    "birth_date": "Type your Birth date",
+    "reminder_date": "Select Reminder Date",
+    "surveyQuestion": "Type a Survey Question",
+    "typeHere": "Type here"
+  }
 }

@@ -9,7 +9,7 @@ export enum ElementTypes {
   date = 'date',
   textarea = 'textarea',
   submit = 'submit',
-  number = 'digit'
+  number = 'number'
 }
 export class BeeFormModel {
   type?: ElementTypes;
@@ -18,10 +18,10 @@ export class BeeFormModel {
   removeFromLayout?: boolean;
   attributes?: any;
   classes?: any;
-  constructor(_type: ElementTypes | never | any, _label: string | never | any, _canBeRemovedFromLayout: boolean, _removeFromLayout: boolean, _attr: any, _classes: string | never | any) {
+  constructor(_type: ElementTypes | never | any, _label: string | never | any, _removeFromLayout: boolean, _attr: any, _classes: string | never | any) {
     this.type = _type ?? 'text';
     this.label = _label ?? '';
-    this.canBeRemovedFromLayout = _canBeRemovedFromLayout ?? false;
+    this.canBeRemovedFromLayout = true;
     this.removeFromLayout = _removeFromLayout ?? false
     this.classes = _classes || '';
     this.attributes = {
