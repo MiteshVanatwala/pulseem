@@ -101,7 +101,7 @@ const ApiSettings = ({ classes }: any) => {
         }
     }, [showApiKey])
 
-    const requestApiKey = async () => {
+    const requestApiKey = async (isCopy: boolean = false) => {
         const response = await dispatch(getApiKey()) as any;
         const payload = response?.payload;
 
@@ -112,7 +112,8 @@ const ApiSettings = ({ classes }: any) => {
             setToastMessage(ToastMessages?.GENERAL_ERROR);
         }
         else {
-            setApiKey(payload?.Data);
+            if (isCopy) navigator.clipboard.writeText(payload?.Data)
+            else setApiKey(payload?.Data);
         }
     }
 
@@ -157,7 +158,9 @@ const ApiSettings = ({ classes }: any) => {
         }
     }
 
-    const handleCopyScript = () => {
+    const handleCopyScript = async () => {
+        if (apiKey !== '') navigator.clipboard.writeText(apiKey);
+        else await requestApiKey(true);
         setCopyStatus(true);
         setTimeout(() => {
             setCopyStatus(false);
