@@ -50,5 +50,6 @@ export type StateType = {
     connectors: any;
     accountSettings: any;
     whatsapp: any;
+    product: any;
     extraFields: any;
 };
