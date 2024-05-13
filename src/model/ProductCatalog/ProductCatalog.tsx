@@ -482,7 +482,6 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                   >
                     <Select
                       variant="standard"
-                      autoWidth
                       displayEmpty
                       IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                       value={eventType}
