@@ -115,7 +115,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     let dynamicRow = JSON.parse(JSON.stringify(PulRow));
     // dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['container']['style']['product-block-container'] = '1';
-    // dynamicRow['content']['style']['direction'] = direction;
+    if (structure === Structure.Horizontal) dynamicRow['content']['style']['direction'] = direction;
     dynamicRow['metadata']["EventType"] = eventType.toString(); //getEventName(eventType);
     dynamicRow['metadata']["ProductCategory"] = category;
     dynamicRow['metadata']["NumOfProdcuts"] = uptoProducts;
@@ -482,7 +482,6 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                   >
                     <Select
                       variant="standard"
-                      autoWidth
                       displayEmpty
                       IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                       value={eventType}
