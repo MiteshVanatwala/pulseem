@@ -91,6 +91,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   });
 
   const [clientForm, setClientForm] = useState<ClientForm>({});
+  const [reInit, setReinit] = useState<boolean>(false);
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -155,11 +156,17 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }, [isRTL]);
 
   useEffect(() => {
+    if (Number(moduleId) > 0 && reInit === true) {
+      window.location.reload();
+    }
+  }, [reInit]);
+
+  useEffect(() => {
     if (!includes(BEE_EDITOR_TYPES, moduleType)) {
       navigateToLandingPageManagement();
     }
     if (Number(moduleId) > 0) {
-      if (localStorage.getItem('reloadLPBeeEditor') == '1') {
+      if (localStorage.getItem('reloadLPBeeEditor') === '1') {
         localStorage.removeItem('reloadLPBeeEditor');
         window.location.reload();
       } else getData();
@@ -392,13 +399,13 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         if (saveRef.current?.redirectAfterSave) {
           localStorage.setItem('reloadLPBeeEditor', '1');
           //@ts-ignore
-          window.location = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
+          window.location = saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`;
           return false;
         }
         //@ts-ignore
         else if (saveRef.current?.showAnimation) {
           //@ts-ignore
-          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.LANDING_PAGE_SAVED);
         }
         if (reInit) {
           getData();
@@ -499,7 +506,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     dispatch(saveLPUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       dispatch(getLPUserblocks());
-      await setRow(json);
+      //@ts-ignore
+      setToastMessage(ToastMessages.USER_BLOCK_SAVED);
+      getData();
     });
   }
   const onEditBlock = (blockRequest: any) => {
@@ -507,7 +516,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     //@ts-ignore
     dispatch(saveLPUserBlock(blockRequest)).then(async () => {
       setLoader(false);
-      await setRow(JSON.stringify(blockRequest?.Json));
+      getData();
     });
   }
   const handleDeleteBlock = (e: any, row_id: string) => {
@@ -622,7 +631,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           open={showDocs}
           onClose={() => { setShowDocuments(false); }}
           onCancel={() => { setShowDocuments(false); }}
-          onConfirm={() => { setShowDocuments(false); onBeforeReinit(); }}
+          onConfirm={() => { setShowDocuments(false); onBeforeReinit(); setReinit(true); }}
           {...dialog}>
           {dialog.content}
         </BaseDialog>
