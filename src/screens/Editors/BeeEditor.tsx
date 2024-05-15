@@ -11,7 +11,7 @@ import ResponseModal from './modals/ResponseModal'
 import Toast from '../../components/Toast/Toast.component';
 import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
-import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform } from '../../redux/reducers/landingPagesSlice';
+import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish } from '../../redux/reducers/landingPagesSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/config';
 import { IoMdImages } from 'react-icons/io';
@@ -372,14 +372,22 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
       //@ts-ignore
-      const response: any = await dispatch(saveWebform({
+      let response: any = await dispatch(saveWebform({
         Name: '',
         ID: args.campaignId,
         JsonData: finalJson,
         HtmlData: finalHtml,
 
       }));
-      if (response.payload === true) {
+
+      if (response.payload.StatusCode === 201) {
+        //@ts-ignore
+        if (saveRef.current?.isPublish) {
+          //@ts-ignore
+          response = await dispatch(publish(args?.campaignId));
+          // TODO: Handle publish response
+        }
+
         //@ts-ignore
         if (saveRef.current?.redirectAfterSave) {
           localStorage.setItem('reloadLPBeeEditor', '1');
@@ -421,9 +429,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true) => {
+  const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false) => {
     //@ts-ignore
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish };
     //@ts-ignore
     await editorRef.current.save();
     setTimeout(() => {
@@ -455,7 +463,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}EditRegistrationPage`;
     if (saveBeforeExit) {
-      saveDesign(true, redirectLink, false);
+      saveDesign(true, redirectLink, false, false);
     }
     else {
       window.location.href = redirectLink;
@@ -463,7 +471,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   const onExit = () => setDialogType({ type: DialogType.EXIT })
 
-  const onBack = () => saveDesign(true, `${sitePrefix}CreateLandingPage/${moduleId}`);
+  const onBack = () => saveDesign(true, `${sitePrefix}LandingPages/Create/${moduleId}`);
   const renderToast = () => {
     if (toastMessage) {
       setTimeout(() => {
@@ -508,6 +516,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       console.log(result);
     })
   }
+
   const getConfig = () => {
     return BeeConfig({
       //@ts-ignore
@@ -680,7 +689,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             fromLink?.toLowerCase() !== 'autoresponder' && (
               <>
                 {/* @ts-ignore */}
-                <Button onClick={saveDesign}
+                <Button onClick={() => saveDesign(false, null, true, true)}
                   variant='contained'
                   size='medium'
                   className={clsx(

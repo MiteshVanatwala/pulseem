@@ -121,7 +121,8 @@ export interface LandingPageRowBehaviour {
 export interface SaveLandingPageArguments {
     HtmlData: string;
     JsonData: string;
-    campaignId: number
+    campaignId: number;
+    isPublish: boolean;
 }
 
 export interface LandingPageTemplate {

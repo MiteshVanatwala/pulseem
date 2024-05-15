@@ -227,6 +227,17 @@ export const saveWebform = createAsyncThunk(
     }
   });
 
+export const publish = createAsyncThunk(
+  'landingpages/publish',
+  async (id, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.put(`landingpages/publish/${id}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 
 
 

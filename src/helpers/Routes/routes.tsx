@@ -296,6 +296,12 @@ export const getRoutes = (
           title: t("landingPages.editLandingPage"),
           href: ``,
           isShow: false,
+        },
+        {
+          key: 'campaignEditor',
+          title: t("landingPages.editLandingPage"),
+          href: ``,
+          isShow: false
         }
       ],
     },

@@ -18,7 +18,7 @@ export class BeeFormModel {
   removeFromLayout?: boolean;
   attributes?: any;
   classes?: any;
-  constructor(_type: ElementTypes | never | any, _label: string | never | any, _removeFromLayout: boolean, _attr: any, _classes: string | never | any) {
+  constructor(_type: ElementTypes | never | any, _label: string | never | any, _removeFromLayout: boolean, _attr: any, _classes: string) {
     this.type = _type ?? 'text';
     this.label = _label ?? '';
     this.canBeRemovedFromLayout = true;
