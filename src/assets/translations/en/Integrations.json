@@ -1,5 +1,6 @@
 {
   "title": "Integrations",
+  "signUp": "Sign Up",
   "purchase": "Purchase",
   "cartAbandonment": "Cart Abandonment",
   "authResponses": {
@@ -61,5 +62,16 @@
     "title": "Ecwid",
     "description": "In order to integrate your Ecwid store to your Pulseem account please read the following guide:",
     "connectStore": "Connect your Ecwid Store"
+  },
+  "eShop": {
+    "title": "E-Shop",
+    "apiKey": "API Key",
+    "connectStore": "Connect store",
+    "fetchStore": "Fetch store every",
+    "hoursOrDays": "Hours/Days",
+    "fetchData": "Fetch data from",
+    "daysAgo": "days ago",
+    "cartAbandonedMinutesHours": "Insert cart as abandoned after",
+    "subTitle": "Insert your eShop API key"
   }
 }

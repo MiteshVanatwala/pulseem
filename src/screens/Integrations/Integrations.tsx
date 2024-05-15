@@ -10,11 +10,13 @@ import CashCow from "./CashCow";
 import ShopifyIcon from '../../assets/images/shopify.png';
 import WooCommerceIcon from '../../assets/images/woocommerce.png';
 import CashCowIcon from '../../assets/images/cashCow.png';
+import EShopIcon from '../../assets/images/e-shop.jpg';
 import { Title } from "../../components/managment/Title";
 import IsraCardIcon from '../../assets/images/isracard.png';
 import Istores from "./Istores";
 import EcwidIcon from '../../assets/images/ecwid.png';
 import Ecwid from "./Ecwid";
+import EShop from "./EShop";
 
 
 const Integrations = ({ classes }: any) => {
@@ -83,6 +85,13 @@ const Integrations = ({ classes }: any) => {
             className={classes.iconTab}
             value='4'
           />
+          <Tab
+            label={t('integrations.eShop.title')}
+            icon={<img src={EShopIcon} alt={t('integrations.eShop.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='5'
+          />
         </Tabs>
         <TabContext value={`${tabValue}`}>
           <TabPanel value='0' className={clsx(classes.pt0)}>
@@ -102,6 +111,10 @@ const Integrations = ({ classes }: any) => {
           </TabPanel>
           <TabPanel value='4'>
             <Ecwid classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='5'>
+            <EShop classes={classes} />
           </TabPanel>
         </TabContext>
       </Box>

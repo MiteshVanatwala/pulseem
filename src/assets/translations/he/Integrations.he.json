@@ -1,5 +1,6 @@
 {
   "title": "אינטגרציות",
+  "signUp": "הרשמה",
   "purchase": "רכישה",
   "cartAbandonment": "נטישת עגלה",
   "authResponses": {
@@ -61,5 +62,16 @@
     "title": "Ecwid",
     "description": "על מנת לחבר את חנות הווקומרס שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
     "connectStore": "חברו חנות Ecwid"
+  },
+  "eShop": {
+    "title": "E-Shop",
+    "apiKey": "מפתח API",
+    "connectStore": "חבר חנות",
+    "fetchStore": "דגום חנות כל X",
+    "hoursOrDays": "שעות\\ימים",
+    "fetchData": "דגום נתונים כל",
+    "daysAgo": "ימים",
+    "cartAbandonedMinutesHours": "הכנס עגלה כנטושה לאחר X שעות\\ימים",
+    "subTitle": "Insert your eShop API key"
   }
 }
