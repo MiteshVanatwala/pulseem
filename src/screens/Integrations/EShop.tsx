@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
 import { Loader } from "../../components/Loader/Loader";
 import { authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
-import { EShopModel, IntegrationGroups, IsracardModel } from '../../Models/Integrations/Integration';
+import { EShopModel, IntegrationGroups } from '../../Models/Integrations/Integration';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
@@ -15,40 +15,44 @@ import GroupTags from "../../components/Groups/GroupTags";
 import { IoIosArrowDown } from "react-icons/io";
 import { StateType } from "../../Models/StateTypes";
 import Select from '@mui/material/Select';
+import { TimeType } from "../../Models/PushNotifications/Enums";
 
 const EShop = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
   const { isRTL } = useSelector((state: StateType) => state.core);
-  const [showResetDialog, setShowResetDialog] = useState(false);
-  const [toastMessage, setToastMessage] = useState(null);
-  const [showLoader, setShowLoader] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(false);
-  const [errors, setErrors] = useState({
-    api_key: '',
+  const [ showResetDialog, setShowResetDialog ] = useState(false);
+  const [ toastMessage, setToastMessage ] = useState(null);
+  const [ showLoader, setShowLoader ] = useState(false);
+  const [ isPageLoading, setIsPageLoading ] = useState(false);
+  const [ errors, setErrors ] = useState({
+    ApiKey: '',
     authentication_message: '',
     group_not_selected: '',
-    fetchStoreNumber: '',
-    fetchDataNumber: '',
+    IntervalToRunService: '',
+    IntervalToProccessingAbandoned: '',
+    DaysBackwards: '',
   });
   const [messages, setMessages] = useState({
     authentication_message: '',
     group_saved: ''
   });
   const [settings, setSettings] = useState({
-    api_key: '',
-    interfaceConnected: true,
-    fetchStoreNumber: 0,
-    fetchStoreHourOrDay: 'hours',
-    fetchDataNumber: 0,
+    ApiKey: '',
+    IntervalToRunService: '',
+    IntervalToProccessingAbandoned: '',
+    DaysBackwards: 1,
     RegisterEventActive: false,
     PurchaseEventActive: false,
     AbandonedEventActive: false,
-    cartAsAbandonedMinutesHours: 15,
-    cartAsAbandonedType: 'minutes',
     Groups: {} as IntegrationGroups,
   } as EShopModel);
+  const [ isAuthenticated, setAuthenticated ] = useState(false);
+  const [ storeRunInterval, setStoreRunInterval ] = useState<number>(0);
+  const [ storeRunIntervalType, setStoreRunIntervalType ] = useState<number>(TimeType.Hours);
+  const [ insertCartAsAbandonedTime, setInsertCartAsAbandonedTime ] = useState<number>(0);
+  const [ insertCartAsAbandonedTimeType, setInsertCartAsAbandonedTimeType ] = useState<number>(TimeType.Minutes);
   
   const renderToast = () => {
     setTimeout(() => {
@@ -62,36 +66,86 @@ const EShop = ({ classes }: any) => {
     document.title = `${t('integrations.eShop.title')} | ${document.title}`;
   }, []);
 
+  useEffect(() => {
+    if (storeRunIntervalType === TimeType.Days && storeRunInterval > 365) setStoreRunInterval(365); 
+    else if (storeRunIntervalType === TimeType.Hours && storeRunInterval > 24) setStoreRunInterval(24); 
+  }, [ storeRunIntervalType ])
+
+  useEffect(() => {
+    if (insertCartAsAbandonedTimeType === TimeType.Minutes && storeRunInterval > 60) setStoreRunInterval(60); 
+    else if (insertCartAsAbandonedTimeType === TimeType.Hours && storeRunInterval > 24) setStoreRunInterval(24); 
+  }, [ insertCartAsAbandonedTimeType ])
+
   const initSettings = async () => {
     setShowLoader(true);
-    // const settingResponse = await dispatch(getIntegration(LU_Plugin.EShop)) as any;
+    const settingResponse = await dispatch(getIntegration(LU_Plugin.EShop)) as any;
     setShowLoader(false);
-    // handleGetIntegrationResponse(settingResponse)
-    if (subAccountAllGroups?.length === 0) {
+    handleGetIntegrationResponse(settingResponse)
+    if (!subAccountAllGroups?.length) {
       dispatch(getGroupsBySubAccountId());
     }
     setIsPageLoading(false);
   }
 
   const submitForm = async () => {
-    if (settings.RegisterEventActive || settings.PurchaseEventActive || settings.AbandonedEventActive) {
+    let isValid = settings.RegisterEventActive || settings.PurchaseEventActive || settings.AbandonedEventActive;
+    let errorsObj = JSON.parse(JSON.stringify(errors));
+    
+    if (!isValid) {
+      errorsObj = { ...errorsObj, group_not_selected: t(`integrations.selectGroup`) };
+    }
+    
+    if (settings.DaysBackwards < 0 || settings.DaysBackwards > 365) {
+      errorsObj = { ...errorsObj, DaysBackwards: t('integrations.eShop.1To365') };
+      isValid = false;
+    }
+
+    if (storeRunInterval <= 0) {
+      errorsObj = { ...errorsObj, IntervalToRunService: t('integrations.eShop.nonZero') };
+      isValid = false;
+    }
+
+    if (insertCartAsAbandonedTime <= 0) {
+      errorsObj = { ...errorsObj, IntervalToProccessingAbandoned: t('integrations.eShop.nonZero') };
+      isValid = false;
+    }
+
+    if (isValid) {
       setErrors({
         ...errors,
         group_not_selected: '',
+        DaysBackwards: '',
+        IntervalToRunService: '',
+        IntervalToProccessingAbandoned: ''
       })
       setShowLoader(true);
+      let IntervalToProccessingAbandoned = '';
+      let IntervalToRunService = '';
+      if (storeRunIntervalType === TimeType.Hours) {
+        IntervalToRunService = `00:${storeRunInterval < 10 ? `0${storeRunInterval}` : storeRunInterval}:00`;
+      } else {
+        IntervalToRunService = `${storeRunInterval < 10 ? `0${storeRunInterval}` : storeRunInterval}:00:00`;
+      }
+
+      if (insertCartAsAbandonedTimeType === TimeType.Hours) {
+        IntervalToProccessingAbandoned = `${insertCartAsAbandonedTime < 10 ? `0${insertCartAsAbandonedTime}` : insertCartAsAbandonedTime}:00`;
+      } else {
+        IntervalToProccessingAbandoned = `00:${insertCartAsAbandonedTime < 10 ? `0${insertCartAsAbandonedTime}` : insertCartAsAbandonedTime}`;
+      }
+
       const request = {
-        IntegrationSource: LU_Plugin.Isracard,
-        JsonData: JSON.stringify({ ...settings })
+        IntegrationSource: LU_Plugin.EShop,
+        JsonData: JSON.stringify({
+          ...settings,
+          IntervalToRunService,
+          IntervalToProccessingAbandoned
+        })
       } as IntegrationRequest;
       const response = await dispatch(setIntegration(request));
       handleSubmitFormResponse(response);
       setShowLoader(false);
     } else {
-      setErrors({
-        ...errors,
-        group_not_selected: t(`integrations.selectGroup`),
-      })
+      setErrors(errorsObj);
     }
   }
 
@@ -116,10 +170,12 @@ const EShop = ({ classes }: any) => {
   const handleGetIntegrationResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        const IsracardResponse = response?.payload?.Data as IsracardModel;
-        if (IsracardResponse.api_key) {
-          // setSettings(response?.payload?.Data as IsracardModel);
-          // setAuthenticated(true);
+        const resp = response?.payload?.Data as EShopModel;
+        if (resp.ApiKey) {
+          setSettings(resp);
+          calculateDaysHoursMinutes(resp.IntervalToProccessingAbandoned)
+          calculateDaysHoursMinutes(resp.IntervalToRunService)
+          setAuthenticated(true);
         }
         break;
       }
@@ -138,12 +194,12 @@ const EShop = ({ classes }: any) => {
   const handleResetIntegrationResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
+        setAuthenticated(false);
         setSettings({
-          api_key: '',
-          interfaceConnected: false,
-          fetchStoreNumber: 0,
-          fetchStoreHourOrDay: '',
-          fetchDataNumber: 0,
+          ApiKey: '',
+          IntervalToRunService: '',
+          IntervalToProccessingAbandoned: '',
+          DaysBackwards: 1,
           RegisterEventActive: false,
           PurchaseEventActive: false,
           AbandonedEventActive: false,
@@ -167,7 +223,7 @@ const EShop = ({ classes }: any) => {
   const resetStore = async () => {
     setShowResetDialog(false);
     setShowLoader(true);
-    const resetResponse = await dispatch(resetIntegration(LU_Plugin.Isracard)) as any;
+    const resetResponse = await dispatch(resetIntegration(LU_Plugin.EShop)) as any;
     handleResetIntegrationResponse(resetResponse);
     setShowLoader(false);
   }
@@ -192,25 +248,52 @@ const EShop = ({ classes }: any) => {
 
   const authenticateStore = async () => {
     let errorsDump = errors;
-    if (settings.api_key.trim() === '') errorsDump = { ...errorsDump, api_key: t('integrations.eShop.subTitle') };
+    if (settings.ApiKey.trim() === '') errorsDump = { ...errorsDump, ApiKey: t('integrations.eShop.subTitle') };
     await setErrors(errorsDump);
-    if (settings.api_key.trim() !== '') {
+    if (settings.ApiKey.trim() !== '') {
       setErrors({
-        api_key: '',
+        ApiKey: '',
         authentication_message: '',
         group_not_selected: '',
-        fetchStoreNumber: '',
-        fetchDataNumber: ''
+        IntervalToRunService: '',
+        DaysBackwards: '',
+        IntervalToProccessingAbandoned: '',
       })
       setShowLoader(true);
       const request = {
-        IntegrationSource: LU_Plugin.Isracard,
+        IntegrationSource: LU_Plugin.EShop,
         JsonData: JSON.stringify(settings)
       } as IntegrationRequest;
       const authResponse = await dispatch(authenticate(request));
       setShowLoader(false);
       handleAuthResponse(authResponse);
     }
+  }
+
+  const calculateDaysHoursMinutes = (str: string) => {
+    const strSplit: any = str.split(':');
+    if (strSplit.length > 2) {
+      setStoreRunInterval(Number(Number(strSplit[0]) === 0 ? strSplit[1] : strSplit[0]));
+      setStoreRunIntervalType(Number(strSplit[0]) === 0 ? TimeType.Hours : TimeType.Days);
+    } else {
+      setInsertCartAsAbandonedTime(Number(Number(strSplit[0]) === 0 ? strSplit[1] : strSplit[0]));
+      setInsertCartAsAbandonedTimeType(Number(strSplit[0]) === 0 ? TimeType.Minutes : TimeType.Hours);
+    }
+  }
+
+  const validateDayHourMinuteField = (element: React.FormEvent<HTMLInputElement>, type: number) => {
+    let number = Number(element.currentTarget.value || 0);
+    let min = 0, max = 0;
+    if (type === TimeType.Days) {
+      min = 1; max = 365;
+    } else if (type === TimeType.Hours) {
+      min = 1; max = 24;
+    } else if (type === TimeType.Minutes) {
+      min = 1; max = 60;
+    }
+    if (number < min) number = min;
+    else if (number > max) number = max;
+    return number;
   }
 
   const handleAuthResponse = (response: any) => {
@@ -225,7 +308,7 @@ const EShop = ({ classes }: any) => {
             ...messages,
             authentication_message: '',
           });
-          // setAuthenticated(true);
+          setAuthenticated(true);
           initSettings();
         }, 2000);
         break;
@@ -259,6 +342,7 @@ const EShop = ({ classes }: any) => {
       }
     }
   }
+
   return (
     <>
       {toastMessage && renderToast()}
@@ -276,19 +360,19 @@ const EShop = ({ classes }: any) => {
               <TextField
                 size="small"
                 name="DefaultFromName"
-                value={settings.api_key}
-                onChange={(event) => setSettings({ ...settings, api_key: event.target.value })}
+                value={settings.ApiKey}
+                onChange={(event) => setSettings({ ...settings, ApiKey: event.target.value })}
                 className={clsx(classes.dBlock, classes.shopifySettingTextBox)}
-                disabled={settings.interfaceConnected}
+                disabled={isAuthenticated}
               />
-              {!!errors.api_key && (
+              {!!errors.ApiKey && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>
-                  {errors.api_key}
+                  {errors.ApiKey}
                 </Typography>
               )}
             </Box>
 
-            {!settings.interfaceConnected &&
+            {!isAuthenticated &&
               <Box className={clsx(classes.dblock, classes.pb15, classes.pt30)}>
                 <Button
                   onClick={authenticateStore}
@@ -308,7 +392,7 @@ const EShop = ({ classes }: any) => {
         )
       }
       {
-        !settings.interfaceConnected && (
+        !isAuthenticated && (
           <>
             {!!errors.authentication_message && (
               <Box className={clsx(classes.flex, classes.pbt15)}>
@@ -328,7 +412,7 @@ const EShop = ({ classes }: any) => {
         )
       }
       {
-        settings.interfaceConnected && (
+        isAuthenticated && (
           <Box className={"formContainer"}>
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt20)}>
               <Button
@@ -353,10 +437,14 @@ const EShop = ({ classes }: any) => {
                   <Grid container>
                     <Grid>
                       <TextField
+                        type="number"
                         size="small"
                         name="DefaultFromName"
-                        value={settings.fetchStoreNumber}
-                        onChange={(event) => setSettings({ ...settings, fetchStoreNumber: Number(event.target.value || 0) })}
+                        value={storeRunInterval}
+                        onChange={async (event: any) => {
+                          const number = validateDayHourMinuteField(event, storeRunIntervalType);
+                          setStoreRunInterval(number);
+                        }}
                         className={clsx(classes.textField, classes.pt5, classes.pb5)}
                         InputProps={{
                           style: { paddingTop: 5, paddingBottom: 4 },
@@ -370,8 +458,8 @@ const EShop = ({ classes }: any) => {
                         <Select
                           variant="standard"
                           name="fetchStoreHourOrDay"
-                          onChange={(e: any) => { setSettings({ ...settings, fetchStoreHourOrDay: e.target.value }) }}
-                          value={settings.fetchStoreHourOrDay}
+                          onChange={(e: any) => setStoreRunIntervalType(e.target.value)}
+                          value={storeRunIntervalType}
                           className={classes.pbt5}
                           IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                           MenuProps={{
@@ -383,20 +471,20 @@ const EShop = ({ classes }: any) => {
                             },
                           }}
                         >
-                          <MenuItem value='hours'>{t("common.hours")}</MenuItem>
-                          <MenuItem value='days'>{t("common.days")}</MenuItem>
+                          <MenuItem value={TimeType.Hours}>{t("common.hours")}</MenuItem>
+                          <MenuItem value={TimeType.Days}>{t("common.days")}</MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
                   </Grid>
                 </Box>
-                {!!errors.fetchStoreNumber && (
-                  <Typography className={clsx(classes.errorText, classes.f14)}>
-                    {errors.fetchStoreNumber}
-                  </Typography>
-                )}
               </Box>
             </Grid>
+            {!!errors.IntervalToRunService && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {errors.IntervalToRunService}
+              </Typography>
+            )}
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
               <Box className={clsx(classes.justifyBetween)}>
                 <Typography className={clsx(classes.pt10, classes.fBlack)}>
@@ -404,10 +492,11 @@ const EShop = ({ classes }: any) => {
                 </Typography>
                 <Box className={clsx(classes.pr10, classes.pe10)}>
                   <TextField
+                    type="number"
                     size="small"
-                    name="DefaultFromName"
-                    value={settings.fetchStoreNumber}
-                    onChange={(event) => setSettings({ ...settings, fetchStoreNumber: Number(event.target.value || 0) })}
+                    name="DaysBackwards"
+                    value={settings.DaysBackwards}
+                    onChange={(event) => setSettings({ ...settings, DaysBackwards: Number(event.target.value || 0) })}
                     className={clsx(classes.textField, classes.pt5, classes.pb5)}
                     InputProps={{
                       style: { paddingTop: 5, paddingBottom: 4 },
@@ -417,13 +506,13 @@ const EShop = ({ classes }: any) => {
                 <Typography className={clsx(classes.pt10, classes.fBlack)}>
                   {t("integrations.eShop.daysAgo")}
                 </Typography>
-                {!!errors.fetchStoreNumber && (
-                  <Typography className={clsx(classes.errorText, classes.f14)}>
-                    {errors.fetchStoreNumber}
-                  </Typography>
-                )}
               </Box>
             </Grid>
+            {!!errors.DaysBackwards && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {errors.DaysBackwards}
+              </Typography>
+            )}
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
               <FormControlLabel
                 control={
@@ -578,10 +667,14 @@ const EShop = ({ classes }: any) => {
                   <Grid container>
                     <Grid>
                       <TextField
+                        type="number"
                         size="small"
-                        name="DefaultFromName"
-                        value={settings.cartAsAbandonedMinutesHours}
-                        onChange={(event) => setSettings({ ...settings, cartAsAbandonedMinutesHours: Number(event.target.value || 0) })}
+                        name="insertCartAsAbandonedTime"
+                        value={insertCartAsAbandonedTime}
+                        onChange={async (event: any) => {
+                          const number = validateDayHourMinuteField(event, insertCartAsAbandonedTimeType);
+                          setInsertCartAsAbandonedTime(number);
+                        }}
                         className={clsx(classes.textField, classes.pt5, classes.pb5)}
                         InputProps={{
                           style: { paddingTop: 5, paddingBottom: 4 },
@@ -595,8 +688,8 @@ const EShop = ({ classes }: any) => {
                         <Select
                           variant="standard"
                           name="cartAsAbandonedType"
-                          onChange={(e: any) => { setSettings({ ...settings, cartAsAbandonedType: e.target.value }) }}
-                          value={settings.cartAsAbandonedType}
+                          onChange={(e: any) => setInsertCartAsAbandonedTimeType(e.target.value)}
+                          value={insertCartAsAbandonedTimeType}
                           className={classes.pbt5}
                           IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                           MenuProps={{
@@ -608,20 +701,20 @@ const EShop = ({ classes }: any) => {
                             },
                           }}
                         >
-                            <MenuItem value='minutes'>{t("common.minutes")}</MenuItem>
-                            <MenuItem value='hours'>{t("common.hours")}</MenuItem>
+                            <MenuItem value={TimeType.Minutes}>{t("common.minutes")}</MenuItem>
+                            <MenuItem value={TimeType.Hours}>{t("common.hours")}</MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
                   </Grid>
                 </Box>
-                {!!errors.fetchStoreNumber && (
-                  <Typography className={clsx(classes.errorText, classes.f14)}>
-                    {errors.fetchStoreNumber}
-                  </Typography>
-                )}
               </Box>
             </Grid>
+            {!!errors.IntervalToProccessingAbandoned && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {errors.IntervalToProccessingAbandoned}
+              </Typography>
+            )}
             {!!messages.group_saved && (
               <Box className={clsx(classes.flex, classes.pbt15)}>
                 <Typography className={clsx(classes.green, classes.f16)}>

@@ -72,6 +72,8 @@
     "fetchData": "Fetch data from",
     "daysAgo": "days ago",
     "cartAbandonedMinutesHours": "Insert cart as abandoned after",
-    "subTitle": "Insert your eShop API key"
+    "subTitle": "Insert your eShop API key",
+    "1To365": "Number of days should be between 1 and 365.",
+    "nonZero": "Value should be more than 0."
   }
 }

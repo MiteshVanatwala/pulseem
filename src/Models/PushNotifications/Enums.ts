@@ -19,7 +19,8 @@ export enum NotificationStatus {
 
 export enum TimeType {
     Minutes = 1,
-    Hours = 2
+    Hours = 2,
+    Days = 3
 }
 export enum SendType {
     Immediate = 1,

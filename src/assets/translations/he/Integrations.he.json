@@ -67,11 +67,13 @@
     "title": "E-Shop",
     "apiKey": "מפתח API",
     "connectStore": "חבר חנות",
-    "fetchStore": "דגום חנות כל X",
+    "fetchStore": "דגום חנות כל",
     "hoursOrDays": "שעות\\ימים",
     "fetchData": "דגום נתונים כל",
     "daysAgo": "ימים",
-    "cartAbandonedMinutesHours": "הכנס עגלה כנטושה לאחר X שעות\\ימים",
-    "subTitle": "Insert your eShop API key"
+    "cartAbandonedMinutesHours": "הכנס עגלה כנטושה לאחר",
+    "subTitle": "הכניסו את מפתח ה-API שקיבלתם מ-E Shop",
+    "1To365": "מספר הימים צריך להיות בין 1 ל-365",
+    "nonZero": "על הערך להיות יותר מ-0"
   }
 }
