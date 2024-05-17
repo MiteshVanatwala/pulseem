@@ -21,7 +21,7 @@ const EShop = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
-  const { isRTL } = useSelector((state: StateType) => state.core);
+  const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   const [ showResetDialog, setShowResetDialog ] = useState(false);
   const [ toastMessage, setToastMessage ] = useState(null);
   const [ showLoader, setShowLoader ] = useState(false);
@@ -429,7 +429,7 @@ const EShop = ({ classes }: any) => {
               </Button>
             </Grid>
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
-              <Box className={clsx(classes.justifyBetween)}>
+              <Box className={clsx(windowSize !== 'xs' ? classes.justifyBetween : '')}>
                 <Typography className={clsx(classes.pt10, classes.fBlack)}>
                   {t("integrations.eShop.fetchStore")}
                 </Typography>
@@ -486,7 +486,7 @@ const EShop = ({ classes }: any) => {
               </Typography>
             )}
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
-              <Box className={clsx(classes.justifyBetween)}>
+              <Box className={clsx(windowSize !== 'xs' ? classes.justifyBetween : '')}>
                 <Typography className={clsx(classes.pt10, classes.fBlack)}>
                   {t("integrations.eShop.fetchData")}
                 </Typography>
@@ -659,7 +659,7 @@ const EShop = ({ classes }: any) => {
               </Box>
             )}
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, !settings.AbandonedEventActive ? classes.disabled : '')}>
-              <Box className={clsx(classes.justifyBetween)}>
+              <Box className={clsx(windowSize !== 'xs' ? classes.justifyBetween : '')}>
                 <Typography className={clsx(classes.pt10, classes.fBlack)}>
                   {t("integrations.eShop.cartAbandonedMinutesHours")}
                 </Typography>
