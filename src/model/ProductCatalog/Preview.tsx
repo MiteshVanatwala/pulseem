@@ -1,0 +1,94 @@
+import noImagePreview from '../../assets/images/no-image-preview.jpg';
+import clsx from 'clsx';
+import { PreviewTypes } from './Types';
+import { Direction, EventTypes, Structure } from '../../config/enum';
+import { NO_IMAGE_URL } from '../../helpers/Constants';
+
+const Preview = ({
+  classes,
+  isImageVisible,
+  isNameVisible,
+  isDescriptionVisible,
+  isPriceVisible,
+  isButtonVisible,
+  imageURL,
+  name,
+  description,
+  price,
+  buttonText,
+  structure,
+  direction,
+  eventType,
+  category,
+}: PreviewTypes) => {
+  const renderCategory = () => {
+    if (category !== '') {
+      return (<div className={clsx(classes.bodyStyle)}>{category}</div>)
+    }
+    return <></>
+  }
+  return (
+    <div
+      className={
+        clsx(
+          classes.card, classes.w100, classes.mb10,
+          {
+            [classes.directionRTL]: direction === Direction.RightToLeft,
+            [classes.textRight]: direction === Direction.RightToLeft,
+            [classes.textCenter]: direction === Direction.Center,
+          }
+        )
+      }
+    >
+      {
+        isImageVisible && (
+          <div
+            className={clsx(
+              classes.imageBlock,
+              structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock, 
+              structure === Structure.Vertical ? classes.w100 : classes.w35,
+              {
+                [classes.textCenter]: direction === Direction.Center,
+                [classes.textRight]: direction === Direction.RightToLeft,
+                [classes.textLeft]: direction === Direction.LeftToRight,
+              }
+            )}
+          >
+            <img
+              src={NO_IMAGE_URL}
+              alt=''
+              style={{
+                width: structure === Structure.Horizontal ? '100%' : '150px',
+                padding: structure === Structure.Horizontal ? '' : '0px 20px'
+              }}
+            />
+          </div>
+        )
+      }
+      <div
+        className={
+          clsx(
+            classes.contentBlock,
+            structure === Structure.Horizontal ? classes.pt0 : '',
+            structure === Structure.Horizontal ? classes.dInlineBlock : classes.dBlock,
+            structure === Structure.Vertical ? classes.w100 : '',
+            {
+              [classes.textCenter]: direction === Direction.Center,
+              [classes.textRight]: direction === Direction.RightToLeft,
+              [classes.textLeft]: direction === Direction.LeftToRight,
+            }
+          )
+        }
+      >
+        {isNameVisible && <div className={clsx(classes.nameStyle)}>{name}</div>}
+        {isDescriptionVisible && <div className={clsx(classes.bodyStyle)}>{description}</div>}
+        {isPriceVisible && <div className={clsx(classes.bodyStyle)}>{price}</div>}
+        {eventType && <div className={clsx(classes.bodyStyle)}>{eventType}</div>}
+        {renderCategory()}
+        {isButtonVisible && buttonText && <input type='button' value={buttonText} className={clsx(classes.buttonStyle)} />}
+      </div>
+    </div>
+  )
+}
+
+export default Preview

@@ -85,6 +85,8 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             removePadding={true}
                             hideInvalidDateMessage={true}
                             minDate={undefined}
+                            datePickerView={["date", "month"]}
+                            format={"DD/MM"}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('BirthDateFromWithoutYear', null)}>{t("recipient.reset")}</Button>
@@ -107,6 +109,8 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             removePadding={true}
                             hideInvalidDateMessage={true}
                             minDate={undefined}
+                            datePickerView={["date", "month"]}
+                            format={"DD/MM"}
                         />
                         {
                             data.dynamicData?.MyConditions[0]?.BirthDateToWithoutYear && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('BirthDateToWithoutYear', null)}>{t("recipient.reset")}</Button>

@@ -10,6 +10,7 @@ import { getSiteTrackingStyle } from './siteTrackingStyles';
 import { getCampaignEditorStyle } from './campaignEditorStyles';
 import { getGroupStyle } from './groupStyle'
 import { getWhatsappStyle } from './whatsappStyles';
+import { dynamicProductCatalog } from './dynamicProductCatalog';
 
 export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
@@ -22,5 +23,6 @@ export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getSiteTrackingStyle(windowSize, isRTL),
   ...getCampaignEditorStyle(windowSize, isRTL),
   ...getGroupStyle(windowSize, isRTL, theme),
-  ...getWhatsappStyle(windowSize, isRTL, theme)
+  ...getWhatsappStyle(windowSize, isRTL, theme),
+  ...dynamicProductCatalog(isRTL)
 }))

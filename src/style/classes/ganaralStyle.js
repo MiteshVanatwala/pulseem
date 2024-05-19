@@ -189,7 +189,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "0px !important",
   },
   noMargin: {
-    margin: 0,
+    margin: '0px !important',
   },
   wizardFlex: {
     flex: 1,
@@ -230,6 +230,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   paddingSides5: {
     paddingRight: 5,
     paddingLeft: 5,
+  },
+  pl10: {
+    paddingLeft: 10,
+  },
+  pl30: {
+    paddingLeft: 30,
   },
   paddingSides10: {
     paddingRight: 10,
@@ -432,7 +438,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingInlineStart: 25,
   },
   pt0: {
-    paddingTop: 0,
+    paddingTop: '0px !important',
   },
   pt2rem: {
     paddingTop: "2rem",
@@ -464,6 +470,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pb0: {
     paddingBottom: 0
   },
+  pb5: {
+    paddingBottom: 5,
+  },
   pb10: {
     paddingBottom: 10,
   },
@@ -492,7 +501,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 20,
   },
   ml25: {
-    marginInlineStart: 25,
+    marginInlineStart: '25px !important',
   },
   mtNeg15: {
     marginTop: -15,
@@ -608,6 +617,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   bgLightGray: {
     backgroundColor: "rgba(242, 242, 242, 1)",
+  },
+  borderRadius30: {
+    borderRadius: "30px",
   },
   justifyBetween: {
     display: "flex",
@@ -818,6 +830,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   font30: {
     fontSize: 30,
   },
+  w30: {
+    width: '30%'
+  },
+  w35: {
+    width: '35%'
+  },
   w50: {
     width: '50%'
   },
@@ -827,8 +845,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w70: {
     width: '70%'
   },
+  directionRTL: {
+    direction: 'rtl',
+  },
+  wAuto: {
+    width: 'auto'
+  },
   w100: {
-    width: '100%'
+    width: '100% !important'
   },
   h100: {
     height: '100%'
@@ -2304,6 +2328,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "bold",
     maxWidth: graphTextWidth[windowSize],
   },
+  greyButtonWithRoundCorder: {
+    background: '#535353',
+    color: '#fff',
+    borderRadius: '20px'
+  },
   mt24: {
     marginTop: 24,
   },
@@ -2582,7 +2611,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   //#endregion
   textCenter: {
-    textAlign: "center",
+    textAlign: "center !important",
   },
   marginBlock10: {
     marginBlock: 10,
@@ -4034,6 +4063,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center !important',
     paddingInline: '15px !important',
     paddingBlock: '10px !important'
+  },
+  productCatalogDialog: {
+    '& .MuiPaper-root': {
+      maxWidth: '70% !important',
+      width: '70% !important',
+      padding: '10px !important'
+    }
   },
   selectField: {
     borderBottom: '1px solid #D6D1E6',
