@@ -250,7 +250,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups());
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
-    await dispatch(getAuthorizedEmails());
 
     if (productCategories?.length <= 0) {
       getProductCategories();
@@ -480,6 +479,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
         }
         dispatch(getAllTemplatesBySubaccountId());
+        getData();
       }
     } catch (e) {
       console.error(e);
