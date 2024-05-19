@@ -76,7 +76,9 @@ import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import EditDynamicGroup from './screens/Groups/Dynamic/EditDynamicGroup';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
+import { isSignupPage } from './helpers/Utils/common';
 import './helpers/global';
+import SignUp from './screens/SignUp/SignUp.tsx';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -97,11 +99,15 @@ const renderRoutes = (classes, redirect) => {
     <Routes>
       <Route
         exact
+        path={`${sitePrefix}new-registration`}
+        element={<SignUp classes={classes} />}
+      />
+      <Route
+        exact
         path={sitePrefix}
         element={<DashboardScreen classes={classes} />}
       />
       <Route
-
         path={`${sitePrefix}sms/create/`}
         element={<SmsCreator classes={classes} key="create" />}
       />
@@ -539,9 +545,10 @@ const App = ({ screenSize }) => {
   const { accountSettings } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
+  const isSignup = isSignupPage(location.pathname);
 
   React.useEffect(() => {
-    dispatch(getNotificationUpdates());
+    !isSignup && dispatch(getNotificationUpdates());
   }, [location]);
 
   useEffect(() => {
@@ -622,8 +629,8 @@ const App = ({ screenSize }) => {
       if (!!cookieFunction)
         cookieFunction()
     })
-    updateToken()
-    initFeatures()
+    !isSignup && updateToken()
+    !isSignup && initFeatures()
 
   }, [dispatch])
 
@@ -635,7 +642,7 @@ const App = ({ screenSize }) => {
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
-  return accountSettings && (
+  return (accountSettings || isSignup) && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>

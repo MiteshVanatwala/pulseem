@@ -326,6 +326,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dBlock: {
     display: "block !important",
   },
+  dInlineBlock: {
+    display: "inline-block !important",
+  },
   dNone: {
     display: "none",
   },
@@ -463,6 +466,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pt50: {
     paddingTop: 50
+  },
+  pt90: {
+    paddingTop: 90
   },
   pt2: {
     paddingTop: 1.4,
@@ -3399,7 +3405,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       },
       '& input': {
-        padding: '3px 0 7px 0'
+        padding: '3px 0 7px 0',
+        minHeight: 25,
       },
       '& fieldset': {
         border: 'none',
@@ -4074,5 +4081,39 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   selectField: {
     borderBottom: '1px solid #D6D1E6',
     height: 46
+  },
+  pageContainer: {
+    marginLeft: '7rem',
+    marginRight: '7rem',
+  },
+  fieldOfInterestButton: {
+    borderRadius: 10,
+    paddingInline: 20,
+    textTransform: 'none',
+    '& .MuiButton-startIcon': {
+      marginRight: 0,
+      marginLeft: 0,
+      paddingInline: 5,
+    },
+    [theme.breakpoints.down('xs')]: {
+      display: 'inline-flex',
+      marginBottom: 0,
+    },
+  },
+  SignUpLanguageDropdown: {
+    width: 150,
+    borderRadius: 5,
+    '& .MuiSelect-select': {
+      padding: '5px 7px !important',
+    },
+    '& img': {
+      height: 20,
+    },
+    '& .cname': {
+      paddingInline: 10,
+    }
+  },
+  gradientBackground: {
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
   }
 });
