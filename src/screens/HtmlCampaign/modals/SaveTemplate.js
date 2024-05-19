@@ -64,6 +64,7 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
         showDefaultButtons={true}
         onConfirm={onHandleSave}
         onClose={() => onClose()}
+        onCancel={() => onClose()}
         children={
           <>
             <Box className={clsx(classes.mt15, classes.mb15)}>
