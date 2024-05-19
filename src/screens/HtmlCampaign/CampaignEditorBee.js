@@ -416,7 +416,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
     if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
       if (dynamicBlocks > 1) {
-        setDialogType({type: 'moreThanOneDynamicBlock', data: saveRef.current?.operation})
+        setDialogType({ type: 'moreThanOneDynamicBlock', data: saveRef.current?.operation })
         return false;
       } else if (['save', 'exit'].indexOf(saveRef.current?.operation) === -1) {
         setDialogType({
@@ -628,20 +628,19 @@ const CampaignEditor = ({ classes, ...props }) => {
         setSilentSave(true)
         await saveDesign(false, null, false);
       }
-      await dispatch(getUserblocks());
-      setLoader(false);
+      getData();
     });
   }
   const onEditBlock = (blockRequest) => {
     setLoader(true);
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
-      dispatch(getUserblocks());
+      getData();
     });
   }
   const handleDeleteBlock = (e, row_id) => {
     dispatch(deleteUserBlock(row_id)).then((result) => {
-      console.log(result);
+      getData();
     })
   }
   const handleOpenTestSend = () => {
@@ -816,17 +815,17 @@ const CampaignEditor = ({ classes, ...props }) => {
   // }
 
   const productCatalogModal = (args) => {
-		return {
-			showDivider: false,
-			title: t("common.important"),
-			content: (
-				<Box>
-					<Typography title={t("common.dynamicProductNotice")} className={classes.alignDir}>
-						{RenderHtml(t("common.dynamicProductNotice"))}
-					</Typography>
-				</Box>
-			),
-			renderButtons: () => (
+    return {
+      showDivider: false,
+      title: t("common.important"),
+      content: (
+        <Box>
+          <Typography title={t("common.dynamicProductNotice")} className={classes.alignDir}>
+            {RenderHtml(t("common.dynamicProductNotice"))}
+          </Typography>
+        </Box>
+      ),
+      renderButtons: () => (
         <Grid
           container
           spacing={4}
@@ -836,7 +835,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             <Button
               variant='contained'
               size='small'
-              onClick={() => { 
+              onClick={() => {
                 setDialogType(null);
                 saveRef.current = { ...saveRef.current, checkDynamicBlock: false };
                 onSave(args);
@@ -850,25 +849,25 @@ const CampaignEditor = ({ classes, ...props }) => {
           </Grid>
         </Grid>
       )
-		};
-	}
+    };
+  }
 
   const moreThanOneDynamicBlockModal = (data = '') => {
     const message = t(
-      data === 'save' ? "common.noMoreThanOneDynamicBlockSave" 
-      : (data === "exit" ? "common.noMoreThanOneDynamicBlockExit" : "common.noMoreThanOneDynamicBlock")
+      data === 'save' ? "common.noMoreThanOneDynamicBlockSave"
+        : (data === "exit" ? "common.noMoreThanOneDynamicBlockExit" : "common.noMoreThanOneDynamicBlock")
     );
-		return {
-			showDivider: false,
-			title: t("common.pleaseNotice"),
-			content: (
-				<Box>
-					<Typography title={message} className={classes.alignDir}>
-						{RenderHtml(message)}
-					</Typography>
-				</Box>
-			),
-			renderButtons: () => (
+    return {
+      showDivider: false,
+      title: t("common.pleaseNotice"),
+      content: (
+        <Box>
+          <Typography title={message} className={classes.alignDir}>
+            {RenderHtml(message)}
+          </Typography>
+        </Box>
+      ),
+      renderButtons: () => (
         <Grid
           container
           spacing={4}
@@ -888,31 +887,31 @@ const CampaignEditor = ({ classes, ...props }) => {
           </Grid>
         </Grid>
       )
-		};
-	}
+    };
+  }
 
   const renderDialog = () => {
     const { type, data } = dialogType || {}
-		let currentDialog = {};
-		if (type === 'productCatalogPrompt') {
-			currentDialog = productCatalogModal(data);
-		} else if (type === 'moreThanOneDynamicBlock') {
+    let currentDialog = {};
+    if (type === 'productCatalogPrompt') {
+      currentDialog = productCatalogModal(data);
+    } else if (type === 'moreThanOneDynamicBlock') {
       currentDialog = moreThanOneDynamicBlockModal(data);
     }
 
-		if (type) {
-			return (
-				dialogType && <BaseDialog
-					classes={classes}
-					open={dialogType}
-					onCancel={() => setDialogType(null)}
-					onClose={() => setDialogType(null)}
-					renderButtons={currentDialog?.renderButtons || null}
-					{...currentDialog}>
-					{currentDialog?.content}
-				</BaseDialog>
-			)
-		}
+    if (type) {
+      return (
+        dialogType && <BaseDialog
+          classes={classes}
+          open={dialogType}
+          onCancel={() => setDialogType(null)}
+          onClose={() => setDialogType(null)}
+          renderButtons={currentDialog?.renderButtons || null}
+          {...currentDialog}>
+          {currentDialog?.content}
+        </BaseDialog>
+      )
+    }
   }
 
   const renderButtons = () => {
