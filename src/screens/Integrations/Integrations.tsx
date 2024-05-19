@@ -46,6 +46,7 @@ const Integrations = ({ classes }: any) => {
           classes={{ indicator: classes.hideIndicator }}
         >
           <Tab
+            // @ts-ignore
             label={t('integrations.shopify.title')}
             icon={<img src={ShopifyIcon} alt="אייקון של Shopify" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -54,6 +55,7 @@ const Integrations = ({ classes }: any) => {
           />
 
           <Tab
+            // @ts-ignore
             label={t('integrations.wooCommerce.title')}
             icon={<img src={WooCommerceIcon} alt="אייקון של WooCommerce" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -62,6 +64,7 @@ const Integrations = ({ classes }: any) => {
           />
 
           <Tab
+            // @ts-ignore
             label={t('integrations.cashCow.title')}
             icon={<img src={CashCowIcon} alt="אייקון של CashCow" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -70,6 +73,7 @@ const Integrations = ({ classes }: any) => {
           />
 
           <Tab
+            // @ts-ignore
             label={t('integrations.Istores.title')}
             icon={<img src={IsraCardIcon} alt="אייקון של Isracard" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}

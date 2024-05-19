@@ -40,14 +40,14 @@ const EditRow = ({ onClose, save, args, classes }) => {
         children={
           <>
             <Box className={clsx(classes.mt15, classes.mb15)}>
-              <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.templateName')}</Typography>
+              <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.rowName')}</Typography>
               <TextField
                 variant='outlined'
                 size='small'
                 value={text}
                 onChange={handleTextChange}
                 className={clsx(classes.textField, classes.minWidth252)}
-                placeholder={t('common.templateName')}
+                placeholder={t('common.rowName')}
               />
             </Box>
             <Box className={clsx(classes.mt15, classes.mb15)}>

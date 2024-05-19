@@ -94,6 +94,15 @@ export const getTemplateById = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     })
+export const deleteTemplateById = createAsyncThunk(
+    '/CampaignEditor/DeleteTemplateById/', async (id, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.delete(`/CampaignEditor/DeleteTemplateById/${id}`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
 export const saveTemplateToAccount = createAsyncThunk(
     '/CampaignEditor/SaveAsTemplate', async (data, thunkAPI) => {
         try {
@@ -118,6 +127,16 @@ export const getAllTemplatesBySubaccountId = createAsyncThunk(
         try {
             const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
             return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const updateTemplateMeta = createAsyncThunk(
+    '/CampaignEditor/UpdateTemplateMeta', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`CampaignEditor/UpdateTemplateMeta`, data);
+            return response.data;
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
@@ -163,11 +182,11 @@ export const campaignEditorSlice = createSlice({
             })
             .addCase(getPublicTemplates.fulfilled, (state, action) => {
                 state.publicTemplates = action.payload.Data || []
-                state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
+                state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'CategoryList');
             })
             .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
                 state.templatesBySubAccount = action.payload.Data || [];
-                state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
+                state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'CategoryList');
             })
 
     }
