@@ -709,6 +709,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   posRelative: {
     position: "relative",
   },
+  posAbsolute: {
+    position: "absolute",
+  },
   iconsFont: {
     fontFamily: "pulseemicons",
     fontSize: 22,
@@ -4115,5 +4118,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   gradientBackground: {
     background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+  },
+  passwordVisibilityToggle: {
+    top: 0,
+    right: isRTL ? 'initial' : 0,
+    left: isRTL ? 0 : 'initial'
+  },
+  autoComplete: {
+    '& .MuiAutocomplete-endAdornment': {
+			right: isRTL ? 'unset' : '0px',
+			left: isRTL ? '0px' : 'unset',
+		},
+		'& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
+		{
+			paddingRight: isRTL ? '0px !important' : '0px',
+		}
   }
 });

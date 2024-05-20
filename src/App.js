@@ -99,7 +99,7 @@ const renderRoutes = (classes, redirect) => {
     <Routes>
       <Route
         exact
-        path={`${sitePrefix}new-registration`}
+        path={`${sitePrefix}sign-up`}
         element={<SignUp classes={classes} />}
       />
       <Route
