@@ -381,5 +381,7 @@
   "whatsapp": "Whatsapp",
   "responses": "משובים",
   "download": "לחץ להורדה",
-  "fileDownload": "הורדת קבצים"
+  "fileDownload": "הורדת קבצים",
+  "manageTemplate": "צור תבנית",
+  "createTemplate": "נהל תבנית"
 }

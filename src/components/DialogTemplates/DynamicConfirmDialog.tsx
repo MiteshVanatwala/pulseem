@@ -16,7 +16,8 @@ const DynamicConfirmDialog = ({
     onCancel,
     onConfirm,
     onClose,
-    confirmButtonText = ''
+    confirmButtonText = '',
+    cancelButtonText = 'common.cancel'
 }: DynamicContentProps) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(
@@ -32,7 +33,7 @@ const DynamicConfirmDialog = ({
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.mb4)}>
                     <Box>
-                        <Typography className={classes.smsSummaryText}>
+                        <Typography>
                             {RenderHtml(text)}
                         </Typography>
                     </Box>
@@ -66,7 +67,7 @@ const DynamicConfirmDialog = ({
                             classes.btn,
                             classes.btnRounded
                         )}>
-                        {t('common.cancel')}
+                        {t(cancelButtonText)}
                     </Button>
                 </Grid>}
             </Grid>

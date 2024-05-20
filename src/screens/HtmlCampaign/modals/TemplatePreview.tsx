@@ -38,7 +38,14 @@ const TemplatePreview = ({
     confirmText={t('common.loadTemplate')}
   >
     <Box className={clsx(classes.templateModal)}>
-      {renderHtml(templateDetails.Html)}
+      <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
+        style={{
+          width: '100%',
+          height: 'auto',
+          overflowY: 'auto'
+        }}
+        alt={templateDetails.Name}
+        title={templateDetails.Name} />
     </Box>
   </BaseDialog>
 }
