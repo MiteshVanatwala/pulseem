@@ -234,6 +234,7 @@ const Templates = ({
       Category: category
     }));
     setToastMessage({
+      // @ts-ignore
       severity: response.payload.StatusCode === 201 ? 'success' : 'error',
       color: response.payload.Message === apiStatus.SUCCESS ? 'success' : 'error',
       message: 'Updated',
