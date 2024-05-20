@@ -228,13 +228,12 @@ const Templates = ({
 
   const updateTemplate = async (name: string, category: string) => {
     // @ts-ignore
-    const response = await dispatch(updateTemplateMeta({
+    const response: any = await dispatch(updateTemplateMeta({
       ID: templateDetails.ID,
       Name: name,
       Category: category
     }));
     setToastMessage({
-      // @ts-ignore
       severity: response.payload.StatusCode === 201 ? 'success' : 'error',
       color: response.payload.Message === apiStatus.SUCCESS ? 'success' : 'error',
       message: 'Updated',
