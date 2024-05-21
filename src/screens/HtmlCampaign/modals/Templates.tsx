@@ -349,6 +349,7 @@ const Templates = ({
         }}
         isOpen={openPreview}
         templateDetails={selectedTemplate}
+        isMyTemplate={tabValue}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
       <DynamicConfirmDialog
