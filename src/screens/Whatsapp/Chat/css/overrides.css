@@ -45,6 +45,14 @@ ul {
     width: 100%;
 }
 
+#pinkScrollbar-listbox::-webkit-scrollbar {
+    width: 15px !important;
+}
+    
+#pinkScrollbar-listbox::-webkit-scrollbar-thumb {
+    background-color: #FF0054;
+}
+
 @media screen and (max-width: 420px) {
     .mobileColumn {
         flex-direction: row;

@@ -245,3 +245,54 @@ export const BEE_EDITOR_TYPES = {
 }
 
 export const NO_IMAGE_URL = 'https://www.pulseem.co.il/Pulseem/images/productimage.png';
+export const NoAuthenticationAPIs = [
+    'User/Signup',
+    'User/ResendEmail'
+]
+
+export const FieldOfActivities = [
+    'Art',
+    'Ecommerce',
+    'EntertainmentAndEvents',
+    'Insurance',
+    'BlogsOnlineCommunities',
+    'ConstructionAndArchitecture',
+    'Health',
+    'RecruitmentAndPersonnel',
+    'Gaming',
+    'Religion',
+    'HigherEducation',
+    'Travel',
+    'Beauty',
+    'PublicRelations',
+    'Counseling',
+    'MediaAndAdvertising',
+    'HouseholdProducts',
+    'Government',
+    'Restaurants',
+    'Legal',
+    'RealEstate',
+    'SportsAndFitness',
+    'Politics',
+    'Finance',
+    'CoursesAndTrainings',
+    'Retail',
+    'Software',
+    'Transportation',
+    'Communication'
+]
+
+export const FieldOfInterest = [
+    'BulkEmail',
+    'BulkSMS',
+    'WhatsApp',
+    'LandingPages',
+    'Ecommerce',
+    'Notification',
+    'MarketingAutomation'
+]
+
+export const lowerCaseLetters = /[a-z]/g;
+export const upperCaseLetters = /[A-Z]/g;
+export const numbers = /[0-9]/g;
+export const specialLetters = /[!"#$%&'()*+.\/:;<=>?@\[\\\]^_`{|}~-]/g;
