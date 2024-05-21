@@ -594,6 +594,7 @@
   "chooseFile": "Upload File",
   "createOrEdit": "Create or Edit block",
   "templateName": "Template name",
+  "rowName": "Row name",
   "tags": "Tags",
   "notAllowedExtension": "This file extension is not allowed! Please try another file.",
   "uploadImage": "Upload Image",

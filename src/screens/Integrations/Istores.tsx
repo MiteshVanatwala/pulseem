@@ -174,7 +174,7 @@ const Istores = ({ classes }: any) => {
       >
         <Box className={clsx(classes.bodyTextDialog, classes.pb25)}>
           <Typography>
-            {t("integrations.resetConfirmation")}
+            <>{t("integrations.resetConfirmation")}</>
           </Typography>
         </Box>
       </BaseDialog>
@@ -271,11 +271,11 @@ const Istores = ({ classes }: any) => {
             </Button>
             <Box className={clsx(classes.dblock)}>
               <Typography className={clsx(classes.bold)}>
-                {t("integrations.apiKey")}
+                <>{t("integrations.apiKey")}</>
                 <label className={clsx(classes.ml10, classes.textRed)}>*</label>
               </Typography>
               <Typography className={clsx(classes.mb5)}>
-                {t("integrations.Istores.subTitle")}
+                <>{t("integrations.Istores.subTitle")}</>
               </Typography>
               <TextField
                 size="small"
@@ -294,11 +294,11 @@ const Istores = ({ classes }: any) => {
 
             <Box className={clsx(classes.dblock, classes.pb15, classes.mt15)}>
               <Typography className={clsx(classes.bold)}>
-                {t("integrations.Istores.storeID")}
+                <>{t("integrations.Istores.storeID")}</>
                 <label className={clsx(classes.ml10, classes.textRed)}>*</label>
               </Typography>
               <Typography className={clsx(classes.mb5)}>
-                {t("integrations.Istores.storeIDDesc")}
+                <>{t("integrations.Istores.storeIDDesc")}</>
               </Typography>
               <TextField
                 size="small"
@@ -326,7 +326,7 @@ const Istores = ({ classes }: any) => {
                   )}
                   color="primary"
                 >
-                  {t("integrations.connectStore")}
+                  <>{t("integrations.connectStore")}</>
                 </Button>
               </Box>
             }
@@ -363,7 +363,7 @@ const Istores = ({ classes }: any) => {
                     )}
                     color="primary"
                   >
-                    {t("integrations.connectStore")}
+                    <>{t("integrations.connectStore")}</>
                   </Button>
                 </Box>
               )
@@ -385,7 +385,7 @@ const Istores = ({ classes }: any) => {
                 )}
                 color="primary"
               >
-                {t("integrations.disconnectStore")}
+                <>{t("integrations.disconnectStore")}</>
               </Button>
             </Grid>
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15)}>
@@ -407,6 +407,7 @@ const Istores = ({ classes }: any) => {
                     color="primary"
                   />
                 }
+                // @ts-ignore
                 label={t('integrations.purchase')}
               />
               <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
@@ -453,6 +454,7 @@ const Istores = ({ classes }: any) => {
                     color="primary"
                   />
                 }
+                // @ts-ignore
                 label={t('integrations.cartAbandonment')}
               />
               <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
@@ -505,7 +507,7 @@ const Istores = ({ classes }: any) => {
                 )}
                 color="primary"
               >
-                {t("common.save")}
+                <>{t("common.save")}</>
               </Button>
             </Box>
           </Box>

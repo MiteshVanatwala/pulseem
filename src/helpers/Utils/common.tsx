@@ -16,7 +16,20 @@ export const getValueByFieldName = (
 
 export const getUniqueValuesOfKey = (array: any, key: string) => {
 	return array?.reduce(function (carry: any, item: any) {
-		if (item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
+
+		if (item[key]) {
+
+			for (var i = 0; i < item[key].length; i++) {
+				const carryItems = item[key];
+				const current = carryItems[i];
+
+				if (!~carry.indexOf(current)) {
+					carry.push(current);
+
+				}
+			}
+
+		}
 		return carry;
 	}, []);
 }
@@ -34,4 +47,6 @@ export const convertHyphensToword = (input: any) => {
 
 export const validatePhoneNumber = (phone: any) => /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phone);
 //@ts-ignore
-export const ValidateEmailAddress = (email: any) => /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(email); 
+export const ValidateEmailAddress = (email: any) => /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(email);
+
+export const isSignupPage = (pathname: string) => pathname.indexOf('sign-up') >= 0;

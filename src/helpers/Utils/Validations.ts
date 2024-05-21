@@ -24,6 +24,11 @@ export const IsNumberField = (event: any) => {
   }
 };
 
+export const IsValidPhoneNumber = (number: string) => {
+  var NumberRegEx = /^(\+\d{1,3}[- ]?)?\d{0,12}$/;
+  return NumberRegEx.test(number);
+};
+
 export const IsValidURL = (value: string) => {
   var pattern = new RegExp(
     "^(https?:\\/\\/)?" + // protocol
