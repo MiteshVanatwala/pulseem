@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
 import { Loader } from "../../components/Loader/Loader";
-import { authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
+import { RunIntegrationService, authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
 import { EShopModel, IntegrationGroups } from '../../Models/Integrations/Integration';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -87,7 +87,7 @@ const EShop = ({ classes }: any) => {
     setIsPageLoading(false);
   }
 
-  const submitForm = async () => {
+  const submitForm = async (isManualProcessing: boolean = false) => {
     let isValid = settings.RegisterEventActive || settings.PurchaseEventActive || settings.AbandonedEventActive;
     let errorsObj = JSON.parse(JSON.stringify(errors));
     
@@ -141,7 +141,9 @@ const EShop = ({ classes }: any) => {
           IntervalToProccessingAbandoned
         })
       } as IntegrationRequest;
-      const response = await dispatch(setIntegration(request));
+      const response = await dispatch(
+        isManualProcessing ? RunIntegrationService(request) : setIntegration(request)
+      );
       handleSubmitFormResponse(response);
       setShowLoader(false);
     } else {
@@ -156,12 +158,44 @@ const EShop = ({ classes }: any) => {
           ...messages,
           group_saved: t(`integrations.formSubmitResponses.201`),
         });
+        setToastMessage({ severity: 'success', color: 'success', message: t(`integrations.formSubmitResponses.201`), showAnimtionCheck: false } as any);
         setTimeout(() => {
           setMessages({
             ...errors,
             group_saved: '',
           });
         }, 4000);
+        break;
+      }
+      case 401: {
+        setErrors({
+          ...errors,
+          authentication_message: t(`integrations.formSubmitResponses.401`),
+        });
+        setToastMessage({ severity: 'error', color: 'error', message: t(`integrations.formSubmitResponses.401`), showAnimtionCheck: false } as any);
+        break;
+      }
+      case 402:
+        setErrors({
+          ...errors,
+          authentication_message: t(`integrations.formSubmitResponses.402`),
+        });
+        setToastMessage({ severity: 'error', color: 'error', message: t(`integrations.formSubmitResponses.402`), showAnimtionCheck: false } as any);
+        break;
+      case 404: {
+        setErrors({
+          ...errors,
+          authentication_message: t(`integrations.authResponses.404`),
+        })
+        setToastMessage({ severity: 'error', color: 'error', message: t("integrations.authResponses.404"), showAnimtionCheck: false } as any);
+        break;
+      }
+      case 500: {
+        setErrors({
+          ...errors,
+          authentication_message: t(`integrations.formSubmitResponses.500`),
+        });
+        setToastMessage({ severity: 'error', color: 'error', message: t(`integrations.formSubmitResponses.500`), showAnimtionCheck: false } as any);
         break;
       }
     }
@@ -179,8 +213,24 @@ const EShop = ({ classes }: any) => {
         }
         break;
       }
+      case 400: {
+        setErrors({
+          ...errors,
+          authentication_message: t(`integrations.authResponses.400`),
+        });
+        setToastMessage({ severity: 'error', color: 'error', message: t("integrations.authResponses.400"), showAnimtionCheck: false } as any);
+        break;
+      }
       case 401: {
         logout();
+        break;
+      }
+      case 404: {
+        setErrors({
+          ...errors,
+          authentication_message: t(`integrations.authResponses.404`),
+        })
+        setToastMessage({ severity: 'error', color: 'error', message: t("integrations.authResponses.404"), showAnimtionCheck: false } as any);
         break;
       }
       case 200:
@@ -318,6 +368,7 @@ const EShop = ({ classes }: any) => {
           ...errors,
           authentication_message: t(`integrations.authResponses.400`),
         });
+        setToastMessage({ severity: 'error', color: 'error', message: t("integrations.authResponses.400"), showAnimtionCheck: false } as any);
         break;
       }
       case 401: {
@@ -330,6 +381,7 @@ const EShop = ({ classes }: any) => {
           ...errors,
           authentication_message: t(`integrations.authResponses.403`),
         })
+        setToastMessage({ severity: 'error', color: 'error', message: t("integrations.authResponses.403"), showAnimtionCheck: false } as any);
         break;
       }
       case 404: {
@@ -337,7 +389,7 @@ const EShop = ({ classes }: any) => {
           ...errors,
           authentication_message: t(`integrations.authResponses.404`),
         })
-        setToastMessage({ severity: 'error', color: 'error', message: "integrations.authResponses.404", showAnimtionCheck: false } as any);
+        setToastMessage({ severity: 'error', color: 'error', message: t("integrations.authResponses.404"), showAnimtionCheck: false } as any);
         break;
       }
     }
@@ -475,6 +527,20 @@ const EShop = ({ classes }: any) => {
                           <MenuItem value={TimeType.Days}>{t("common.days")}</MenuItem>
                         </Select>
                       </FormControl>
+                    </Grid>
+                    <Grid className={clsx(classes.pt5, windowSize === 'xs' ? classes.pt10 : '')}>
+                      <Button
+                        onClick={() => submitForm(true)}
+                        variant='contained'
+                        size='medium'
+                        className={clsx(
+                          classes.btn,
+                          classes.btnRounded
+                        )}
+                        color="primary"
+                      >
+                        {t("integrations.eShop.fetchDataManually")}
+                      </Button>
                     </Grid>
                   </Grid>
                 </Box>
@@ -724,7 +790,7 @@ const EShop = ({ classes }: any) => {
             )}
             <Box className={clsx(classes.flex, classes.pbt15)}>
               <Button
-                onClick={submitForm}
+                onClick={() => submitForm(false)}
                 variant='contained'
                 size='medium'
                 className={clsx(
