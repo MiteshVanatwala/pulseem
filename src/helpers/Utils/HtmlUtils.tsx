@@ -19,10 +19,10 @@ export const ConvertObjectToQueryString = (object: any) => {
 
 export const useStylesBootstrapPasswordHint = makeStyles((theme) => ({
     arrow: {
-      color: '#000',
+      color: '#000 !important',
     },
     tooltip: {
-      backgroundColor: '#000',
+      backgroundColor: '#000 !important',
       fontSize: 14,
       width: 350,
       maxWidth: "none",
