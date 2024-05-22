@@ -23,8 +23,8 @@ export const useStylesBootstrapPasswordHint = makeStyles((theme) => ({
     },
     tooltip: {
       backgroundColor: '#000 !important',
-      fontSize: 14,
-      width: 350,
+      fontSize: '16px !important',
+      width: '350px !important',
       maxWidth: "none",
     },
 }));
