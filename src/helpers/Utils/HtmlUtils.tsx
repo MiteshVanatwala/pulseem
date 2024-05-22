@@ -25,6 +25,6 @@ export const useStylesBootstrapPasswordHint = makeStyles((theme) => ({
       backgroundColor: '#000 !important',
       fontSize: '16px !important',
       width: '350px !important',
-      maxWidth: "none",
+      maxWidth: "none !important",
     },
 }));
