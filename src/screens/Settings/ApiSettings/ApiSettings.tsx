@@ -344,17 +344,8 @@ const ApiSettings = ({ classes }: any) => {
                                         inputMode='text'
                                         InputProps={{
                                             inputComponent: (e: any) => {
-                                                return (<Box className={localClasses.customMask} style={{ minWidth: windowSize !== 'xs' ? 650 : 'unset', }}>
-                                                    <InputMask
-                                                        style={{ border: 'none' }}
-                                                        name="apiKey"
-                                                        className={clsx(classes.InputMaskTextField, classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-                                                        mask={apiKey ? apiKey : "***********************"}
-                                                        maskPlaceholder=""
-                                                        placeholder="***********************"
-                                                        value={apiKey}
-                                                        disabled
-                                                    />
+                                                return (<Box className={clsx(localClasses.customMask, classes.f18)} style={{ minWidth: windowSize !== 'xs' ? 650 : 'unset', color: '#0009', lineHeight: '25px', letterSpacing: 1 }}>
+                                                    {`${apiKey ? apiKey : "***********************"}`}
                                                 </Box>)
                                             }
                                             ,
