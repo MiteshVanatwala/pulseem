@@ -430,7 +430,16 @@
   "shortUrlExist": "קישור מקוצר כבר תפוס. נסה מחרוזת אחרת לקישור מקוצר",
   "typeParameters": "הזן פרמטרים",
   "surveyQuestion": "שאלת סקר",
-  "placeholder":{
+  "surveyQuestion2": "שאלת סקר 2",
+  "surveyQuestion3": "שאלת סקר 3",
+  "surveyQuestion4": "שאלת סקר 4",
+  "surveyQuestion5": "שאלת סקר 5",
+  "surveyQuestion6": "שאלת סקר 6",
+  "surveyQuestion7": "שאלת סקר 7",
+  "surveyQuestion8": "שאלת סקר 8",
+  "surveyQuestion9": "שאלת סקר 9",
+  "surveyQuestion10": "שאלת סקר 10",
+  "placeholder": {
     "first_name": "הקלד שם פרטי",
     "last_name": "הקלד שם משפחה",
     "email": "הקלד כתובת",

@@ -59,7 +59,16 @@ export const initClientForm = (extraFields, t, isRTL) => {
                 Telephone: new BeeFormModel(ElementTypes.number, t('common.telephone'), true, { ...fieldDirection, size: '100', pattern: '\\d*', placeholder: t('landingPages.placeholder.telephone') }),
                 BirthDate: new BeeFormModel(ElementTypes.date, t('common.birth_date'), true, { ...fieldDirection, placeholder: t('landingPages.placeholder.birth_date') }),
                 ReminderDate: new BeeFormModel(ElementTypes.date, t('common.reminder_date'), true, { ...fieldDirection, placeholder: t('landingPages.placeholder.reminder_date') }),
-                PulseemSurvey1: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey')
+                PulseemSurvey1: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey'),
+                PulseemSurvey2: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion2'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey'),
+                PulseemSurvey3: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion3'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey'),
+                PulseemSurvey4: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion4'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey'),
+                PulseemSurvey5: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion5'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey'),
+                PulseemSurvey6: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion6'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey'),
+                PulseemSurvey7: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion7'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey'),
+                PulseemSurvey8: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion8'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey'),
+                PulseemSurvey9: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion9'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey'),
+                PulseemSurvey10: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion10'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion') }, 'PulseemSurvey')
             }
             if (extraFields && Object.keys(extraFields)?.length > 0) {
                 Object.keys(extraFields).forEach((key) => {

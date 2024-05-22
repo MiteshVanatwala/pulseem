@@ -9,7 +9,8 @@ export enum ElementTypes {
   date = 'date',
   textarea = 'textarea',
   submit = 'submit',
-  number = 'number'
+  number = 'number',
+  radio = 'radio'
 }
 export class BeeFormModel {
   type?: ElementTypes;
@@ -19,8 +20,8 @@ export class BeeFormModel {
   attributes?: any;
   classes?: any;
   constructor(_type: ElementTypes | never | any, _label: string | never | any, _removeFromLayout: boolean, _attr: any, _classes: string) {
-    this.type = _type ?? 'text';
-    this.label = _label ?? '';
+    this.type = _type || 'text';
+    this.label = _label || '';
     this.canBeRemovedFromLayout = true;
     this.removeFromLayout = _removeFromLayout ?? false
     this.classes = _classes || '';
@@ -67,4 +68,13 @@ export interface ClientForm {
   BirthDate?: BeeFormModel | any | never;
   ReminderDate?: BeeFormModel | any | never;
   PulseemSurvey1?: BeeFormModel | any | never;
+  PulseemSurvey2?: BeeFormModel | any | never;
+  PulseemSurvey3?: BeeFormModel | any | never;
+  PulseemSurvey4?: BeeFormModel | any | never;
+  PulseemSurvey5?: BeeFormModel | any | never;
+  PulseemSurvey6?: BeeFormModel | any | never;
+  PulseemSurvey7?: BeeFormModel | any | never;
+  PulseemSurvey8?: BeeFormModel | any | never;
+  PulseemSurvey9?: BeeFormModel | any | never;
+  PulseemSurvey10?: BeeFormModel | any | never;
 }

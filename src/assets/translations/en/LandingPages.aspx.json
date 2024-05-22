@@ -430,7 +430,16 @@
   "shortUrlExist": "Short URL is already in use, Try another srting for Short URL",
   "typeParameters": "Type parameters",
   "surveyQuestion": "Survey Question",
-  "placeholder":{
+  "surveyQuestion2": "Survey Question 2",
+  "surveyQuestion3": "Survey Question 3",
+  "surveyQuestion4": "Survey Question 4",
+  "surveyQuestion5": "Survey Question 5",
+  "surveyQuestion6": "Survey Question 6",
+  "surveyQuestion7": "Survey Question 7",
+  "surveyQuestion8": "Survey Question 8",
+  "surveyQuestion9": "Survey Question 9",
+  "surveyQuestion10": "Survey Question 10",
+  "placeholder": {
     "first_name": "Type your First name",
     "last_name": "Type your Last name",
     "email": "Type your Email address",
@@ -444,7 +453,7 @@
     "telephone": "Type your Telephone",
     "birth_date": "Type your Birth date",
     "reminder_date": "Select Reminder Date",
-    "surveyQuestion": "Type a Survey Question",
+    "surveyQuestion": "Type a Survey Answer",
     "typeHere": "Type here"
   }
 }
