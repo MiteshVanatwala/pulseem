@@ -277,13 +277,13 @@ const SignUp = ({ classes }: any) => {
         <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
         <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
       </div>
-      <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground, windowSize === 'xl' ? classes.p20 : '')}>
+      <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground, windowSize === 'xl' ? classes.p10 : '')}>
         <Grid container>
           <Grid md={2}></Grid>
           
-          <Grid md={8} className={clsx(classes.pt5)}>
+          <Grid md={8}>
             <PulseemNewLogo />
-            <span className={clsx(classes.f22, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
+            <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)} style={{ paddingTop: 3 }}>
             -&nbsp;&nbsp;{t('SignUp.Header')}
             </span>
           </Grid>
@@ -328,11 +328,11 @@ const SignUp = ({ classes }: any) => {
       
       <Box className={clsx(classes.pt50, windowSize !== 'sm' && windowSize !== 'xs' ? classes.pageContainer : '', windowSize === 'xs' || windowSize === 'sm' ? classes.pt90 : '')}>
         <Box className={clsx(windowSize === 'xs' ? classes.pt50 : classes.pt20)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25)}>
+          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
             {t('SignUp.PersonalInfo')}
           </h3>
-          <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-            <Grid container spacing={3} className={clsx("form", classes.pt10)}>
+          <Box className={"formContainer"} style={{ marginBottom: 10 }}>
+            <Grid container spacing={3} className={clsx("form")}>
               <Grid item xs={12} sm={12} md={4} className={"textBoxWrapper"}>
                 <Typography className={clsx(classes.f18)}>
                   {t("SignUp.FirstName")}
@@ -458,11 +458,11 @@ const SignUp = ({ classes }: any) => {
         </Box>
 
         <Box className={clsx(classes.pt10)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25)}>
+          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
             {t('SignUp.LoginDetails')}
           </h3>
-          <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-            <Grid container className={clsx("form", classes.pt10)} spacing={3}>
+          <Box className={"formContainer"} style={{ marginBottom: 10 }}>
+            <Grid container className={clsx("form")} spacing={3}>
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography className={clsx(classes.f18)}>
                   {t("SignUp.UserName")}
@@ -582,11 +582,11 @@ const SignUp = ({ classes }: any) => {
         </Box>
 
         <Box className={clsx("settingsWrapper", classes.pt10)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25)}>
+          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
             {t('SignUp.BusinessDetail')}
           </h3>
-          <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-            <Grid container className={clsx("form", classes.pt10)} spacing={3}>
+          <Box className={"formContainer"} style={{ marginBottom: 10 }}>
+            <Grid container className={clsx("form")} spacing={3}>
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
                 <Typography className={clsx(classes.f18)}>
                   {t("SignUp.BusinessName")}
@@ -675,12 +675,12 @@ const SignUp = ({ classes }: any) => {
         </Box>
 
         <Box className={clsx(classes.pt10)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25)}>
+          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
             {t('SignUp.FieldOfInterest')}
             <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
           </h3>
           <div className={clsx(classes.f18)}>{t('SignUp.FieldOfInterestDesc')}</div>
-          <Box className={clsx(classes.pt20)} style={{ marginBottom: 25 }}>
+          <Box className={clsx(classes.pt10)} style={{ marginBottom: 10 }}>
             {
               FieldOfInterest.map((interest) => {
                 return <Button
@@ -720,7 +720,7 @@ const SignUp = ({ classes }: any) => {
             )}
           </Box>
 
-          <FormControl className={classes.pt20}>
+          <FormControl>
             <FormControlLabel
               control={
                 <Checkbox
@@ -760,7 +760,7 @@ const SignUp = ({ classes }: any) => {
           </FormControl>
         </Box>
 
-        <Box className={clsx(classes.pt50, classes.pb25, classes.textCenter)}>
+        <Box className={clsx(classes.pt25, classes.pb25, classes.textCenter)}>
           <Button
             className={clsx(
               classes.btn,
