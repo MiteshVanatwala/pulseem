@@ -283,7 +283,7 @@ const SignUp = ({ classes }: any) => {
           
           <Grid md={8}>
             <PulseemNewLogo />
-            <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)} style={{ paddingTop: 3 }}>
+            <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
             -&nbsp;&nbsp;{t('SignUp.Header')}
             </span>
           </Grid>
@@ -760,7 +760,7 @@ const SignUp = ({ classes }: any) => {
           </FormControl>
         </Box>
 
-        <Box className={clsx(classes.pt25, classes.pb25, classes.textCenter)}>
+        <Box className={clsx(classes.pt25, classes.pb25, isRTL ? classes.textLeft : classes.textRight)}>
           <Button
             className={clsx(
               classes.btn,
