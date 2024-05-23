@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Divider, Button, Typography, TextField, makeStyles, Link } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
@@ -27,7 +27,6 @@ import { HiOutlineRefresh } from 'react-icons/hi';
 import { BiExport } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import PulseemRadio from '../../../components/Controlls/PulseemRadio';
-import InputMask from 'react-input-mask';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { getDirectRemovals } from '../../../redux/reducers/ApiSettingsSlice';
 import { ExportData, ExportOption, HandleExportData } from '../../../helpers/Export/ExportHelper';
@@ -345,7 +344,7 @@ const ApiSettings = ({ classes }: any) => {
                                         InputProps={{
                                             inputComponent: (e: any) => {
                                                 return (<Box className={clsx(localClasses.customMask, classes.f18)} style={{ minWidth: windowSize !== 'xs' ? 650 : 'unset', color: '#0009', lineHeight: '25px', letterSpacing: 1 }}>
-                                                    {`${apiKey ? apiKey : "***********************"}`}
+                                                    {apiKey ? apiKey : "***********************"}
                                                 </Box>)
                                             }
                                             ,
@@ -369,7 +368,7 @@ const ApiSettings = ({ classes }: any) => {
                                                                     else setAPIKeyRestrictionDialog(true);
                                                                 }}
                                                                 className={localClasses.pwdEveButton}
-                                                                startIcon={<div className={classes.copyIcon}>{showApiKey ? (
+                                                                startIcon={<div className={classes.copyIcon}>{!showApiKey ? (
                                                                     <VisibilityOff style={{ fontSize: 18 }} />
                                                                 ) : (
                                                                     <Visibility style={{ fontSize: 18 }} />
