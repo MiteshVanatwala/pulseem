@@ -337,16 +337,13 @@ const LatestReports = ({ classes, t, isRTL }) => {
                 {updatedOnText}
               </Typography>
             </Box>
-            <Box className={{ [classes.w100]: windowSize === 'xs' }}>
+            <Box className={windowSize === 'xs' ? classes.w100 : ''}>
               <Tabs
                 value={tabValue}
                 onChange={(e, value) => handleTabValue(value)}
                 className={clsx(classes.ml15, classes.tab, classes.tablistRoot)}
                 classes={{ indicator: classes.hideIndicator }}
-                visibleScrollbar={false}
-              // scrollableX={true}
-              // variant="scrollable"
-              // orientation="horizontal"
+                visiblescrollbar={'false'}
               >
                 <Tab label={t('appBar.newsletter.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />
                 <Tab label={t('appBar.sms.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />

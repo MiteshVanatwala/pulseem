@@ -106,7 +106,7 @@ export const Loader = ({
           <div style={{ width: '100%', minHeight: props?.containerSize ?? size, display: 'flex', justifyContent: 'center', zIndex: zIndex, alignItems: 'center' }}>
             <CircularProgress
               style={{ textAlign: 'center', margin: '0 auto', alignSelf: 'center' }}
-              color="#fff"
+              color="inherit"
               size={size ?? 40}
               thickness={3.6}
               variant="indeterminate"
