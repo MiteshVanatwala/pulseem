@@ -9,7 +9,7 @@ import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { FieldOfActivities, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
 import { MdDvr, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
-import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
+import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
 import USImage from "../../assets/images/united-states-flag-icon.svg";
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
@@ -76,6 +76,7 @@ const SignUp = ({ classes }: any) => {
   const [ dialogType, setDialogType ] = useState<{
 		type: string;
 	} | null>(null);
+  const [ showPasswordTip, setShowPasswordTip ] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(setLanguage(qs?.culture || 'he'));
@@ -178,7 +179,8 @@ const SignUp = ({ classes }: any) => {
         ActivityField: userDetails.fieldOfActivity,
         ProductType: interests.join(','),
         UserID: qs?.id,
-        chkMailingApproval: userDetails.chkUpdate
+        chkMailingApproval: userDetails.chkUpdate,
+        Email: userDetails.emailId
       });
       setLoader(false);
       if (status === 200) {
@@ -275,13 +277,13 @@ const SignUp = ({ classes }: any) => {
         <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
         <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
       </div>
-      <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground)}>
+      <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground, windowSize === 'xl' ? classes.p10 : '')}>
         <Grid container>
           <Grid md={2}></Grid>
           
-          <Grid md={8} className={clsx(classes.pt5)}>
+          <Grid md={8}>
             <PulseemNewLogo />
-            <span className={clsx(classes.f22, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
+            <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
             -&nbsp;&nbsp;{t('SignUp.Header')}
             </span>
           </Grid>
@@ -291,7 +293,7 @@ const SignUp = ({ classes }: any) => {
             [classes.textLeft]: isRTL,
             [classes.mt10]: windowSize === 'sm' || windowSize === 'xs'
           })}>
-            <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100, classes.SignUpLanguageDropdown, classes.bgWhite)}>
+            <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.SignUpLanguageDropdown, classes.bgWhite)}>
               <Select
                 variant="standard"
                 value={isRTL ? 'he' : 'en'}
@@ -324,17 +326,17 @@ const SignUp = ({ classes }: any) => {
         </Grid>
       </AppBar>
       
-      <Box className={clsx(classes.pt50, windowSize === 'md' || windowSize === 'lg' ? classes.pageContainer : '', windowSize === 'xs' || windowSize === 'sm' ? classes.pt90 : '')}>
-        <Box className={clsx(classes.pt20)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5)}>
+      <Box className={clsx(classes.pt50, windowSize !== 'sm' && windowSize !== 'xs' ? classes.pageContainer : '', windowSize === 'xs' || windowSize === 'sm' ? classes.pt90 : '')}>
+        <Box className={clsx(windowSize === 'xs' ? classes.pt50 : classes.pt20)}>
+          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
             {t('SignUp.PersonalInfo')}
           </h3>
-          <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-            <Grid container spacing={3} className={clsx("form", classes.pt10)}>
+          <Box className={"formContainer"} style={{ marginBottom: 10 }}>
+            <Grid container spacing={3} className={clsx("form")}>
               <Grid item xs={12} sm={12} md={4} className={"textBoxWrapper"}>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.FirstName")}
-                  <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                  <span className={clsx(classes.pl5, classes.colrPrimary)}>*</span>
                 </Typography>
                 <TextField
                   variant="outlined"
@@ -357,9 +359,9 @@ const SignUp = ({ classes }: any) => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.LastName")}
-                  <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                  <span className={clsx(classes.pl5, classes.colrPrimary)}>*</span>
                 </Typography>
                 <TextField
                   variant="outlined"
@@ -382,7 +384,7 @@ const SignUp = ({ classes }: any) => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("common.Email")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -409,7 +411,7 @@ const SignUp = ({ classes }: any) => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.CellPhone")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -434,7 +436,7 @@ const SignUp = ({ classes }: any) => {
               </Grid>
               
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.Phone")}
                   <span className={clsx(classes.f18)}></span>
                 </Typography>
@@ -456,13 +458,13 @@ const SignUp = ({ classes }: any) => {
         </Box>
 
         <Box className={clsx(classes.pt10)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5)}>
+          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
             {t('SignUp.LoginDetails')}
           </h3>
-          <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-            <Grid container className={clsx("form", classes.pt10)} spacing={3}>
+          <Box className={"formContainer"} style={{ marginBottom: 10 }}>
+            <Grid container className={clsx("form")} spacing={3}>
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-              <Typography>
+              <Typography className={clsx(classes.f18)}>
                   {t("SignUp.UserName")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -487,7 +489,7 @@ const SignUp = ({ classes }: any) => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.Password")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -499,10 +501,14 @@ const SignUp = ({ classes }: any) => {
                       Password={passwordValidation}
                       classes={classes}
                     />}
-                    placement='bottom'
                     arrow
+                    open={showPasswordTip}
+                    classes={useStylesBootstrapPasswordHint()}
                   >
                     <TextField
+                      autoFocus
+                      onFocus={() => setShowPasswordTip(true)}
+                      onBlur={() => setShowPasswordTip(false)}
                       type={userDetails.isPasswordVisible ? "text" : "password"}
                       variant="outlined"
                       size="small"
@@ -511,7 +517,7 @@ const SignUp = ({ classes }: any) => {
                       onChange={handleChange}
                       className={clsx(classes.textField, classes.minWidth252)}
                       error={!!errors.password}
-                      inputProps={{ maxLength: 50 }}
+                      inputProps={{ maxWidth: 50 }}
                       InputProps={{
                         endAdornment: (
                           <span onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })}>
@@ -534,7 +540,7 @@ const SignUp = ({ classes }: any) => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.PasswordVerification")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -576,13 +582,13 @@ const SignUp = ({ classes }: any) => {
         </Box>
 
         <Box className={clsx("settingsWrapper", classes.pt10)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5)}>
+          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
             {t('SignUp.BusinessDetail')}
           </h3>
-          <Box className={"formContainer"} style={{ marginBottom: 25 }}>
-            <Grid container className={clsx("form", classes.pt10)} spacing={3}>
+          <Box className={"formContainer"} style={{ marginBottom: 10 }}>
+            <Grid container className={clsx("form")} spacing={3}>
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.BusinessName")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -608,7 +614,7 @@ const SignUp = ({ classes }: any) => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.Website")}
                   <span className={clsx(classes.f18)}></span>
                 </Typography>
@@ -628,7 +634,7 @@ const SignUp = ({ classes }: any) => {
               </Grid>
 
               <Grid item xs={12} sm={6} md={4} className='selectWrapper'>
-                <Typography>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.FieldOfActivity")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -669,12 +675,12 @@ const SignUp = ({ classes }: any) => {
         </Box>
 
         <Box className={clsx(classes.pt10)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5)}>
+          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
             {t('SignUp.FieldOfInterest')}
             <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
           </h3>
-          <div>{t('SignUp.FieldOfInterestDesc')}</div>
-          <Box className={clsx(classes.pt20)} style={{ marginBottom: 25 }}>
+          <div className={clsx(classes.f18)}>{t('SignUp.FieldOfInterestDesc')}</div>
+          <Box className={clsx(classes.pt10)} style={{ marginBottom: 10 }}>
             {
               FieldOfInterest.map((interest) => {
                 return <Button
@@ -685,6 +691,7 @@ const SignUp = ({ classes }: any) => {
                     classes.mr10,
                     classes.fieldOfInterestButton,
                     classes.mb10,
+                    classes.f18,
                     {
                       [classes.dFlex]: windowSize === 'xs',
                       [classes.mt10]: windowSize === 'xs',
@@ -713,7 +720,7 @@ const SignUp = ({ classes }: any) => {
             )}
           </Box>
 
-          <FormControl className={classes.pt20}>
+          <FormControl>
             <FormControlLabel
               control={
                 <Checkbox
@@ -722,7 +729,11 @@ const SignUp = ({ classes }: any) => {
                   color="primary"
                 />
               }
-              label={RenderHtml(t('SignUp.UpdateTrainingContentCheckbox'))}
+              label={
+                <span className={classes.f18}>
+                  {RenderHtml(t('SignUp.UpdateTrainingContentCheckbox'))}
+                </span>
+              }
             />
           </FormControl>
 
@@ -736,7 +747,7 @@ const SignUp = ({ classes }: any) => {
                 />
               }
               label={<>
-                  {RenderHtml(t('SignUp.PrivacyPolicyCheckbox'))}
+                  <span className={classes.f18}>{RenderHtml(t('SignUp.PrivacyPolicyCheckbox'))}</span>
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                   {!!errors.chkPolicy && (
                     <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -749,7 +760,7 @@ const SignUp = ({ classes }: any) => {
           </FormControl>
         </Box>
 
-        <Box className={clsx(classes.pt50, classes.pb25, classes.textCenter)}>
+        <Box className={clsx(classes.pt25, classes.pb25, isRTL ? classes.textLeft : classes.textRight)}>
           <Button
             className={clsx(
               classes.btn,

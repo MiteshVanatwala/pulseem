@@ -9,7 +9,7 @@ const PasswordHint = ({ classes, Password }: any) => {
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
 
-  const elemStyle = { fontSize: 16, marginTop: 5 };
+  const elemStyle = { fontSize: 16, marginTop: 5, paddingRight: 5 };
 
   return (
     <Box
@@ -18,6 +18,8 @@ const PasswordHint = ({ classes, Password }: any) => {
         flexDirection: "column",
         width: "100%",
         direction: isRTL ? "rtl" : "ltr",
+        fontSize: 16,
+        background: classes.bgBlack
       }}
     >
       <span className={classes.mb1}>
