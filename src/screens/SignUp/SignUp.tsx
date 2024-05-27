@@ -186,11 +186,14 @@ const SignUp = ({ classes }: any) => {
       if (status === 200) {
         if (Message === 'ok') {
           setDialogType({ type: 'confirmation'});
+        } else if (Message === 'internalerror') {
+          setDialogType({ type: 'internalError'});
         } else {
           showMessage(`SignUp.Message.${Message}`);
         }
       } else {
-        showMessage(`SignUp.Message.internalerror`);
+        setDialogType({ type: 'internalError'});
+        // showMessage(`SignUp.Message.internalerror`);
       }
     }
   }
@@ -244,11 +247,25 @@ const SignUp = ({ classes }: any) => {
     onConfirm: () => sendEmail(),
 	})
 
+  const displayInternalErrorPopup = () => ({
+		title: t('common.ErrorTitle'),
+		showDivider: false,
+    showDefaultButtons: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{RenderHtml(t('SignUp.Message.contactSupport'))}
+			</Typography>
+		),
+    onClose: () => setDialogType(null)
+	})
+
   const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'confirmation') {
 			currentDialog = displayConfirmationPopup();
+		} else if (type === 'internalError') {
+			currentDialog = displayInternalErrorPopup();
 		}
 
 		if (type) {
