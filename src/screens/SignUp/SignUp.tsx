@@ -271,7 +271,7 @@ const SignUp = ({ classes }: any) => {
 		if (type) {
 			return (
 				dialogType && <BaseDialog
-          contentStyle={classes.maxWidth400}
+          contentStyle={classes.maxWidth540}
 					classes={classes}
 					open={dialogType}
 					onCancel={() => setDialogType(null)}
