@@ -38,9 +38,9 @@ const TemplatePreview = ({
     title={t('common.Preview')}
     confirmText={t('common.loadTemplate')}
   >
-    <Box className={clsx(classes.templateModal)}>
-      { isMyTemplate
-        ? renderHtml(templateDetails.Html) 
+    <Box className={clsx(classes.templateModal)} style={{ direction: 'ltr' }}>
+      {isMyTemplate
+        ? renderHtml(templateDetails.Html)
         : (
           <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
             style={{
