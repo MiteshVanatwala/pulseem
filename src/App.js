@@ -79,6 +79,7 @@ import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 import { isSignupPage } from './helpers/Utils/common';
 import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
+import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -331,7 +332,11 @@ const renderRoutes = (classes, redirect) => {
         element={<CreateLandingPage classes={classes} />}
       />
       <Route
-        path={`/LandingPageWizard`}
+        path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
+        element={<SurveyDetails classes={classes} />}
+      />
+      <Route
+        path={`/Survey`}
         component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
       />
       <Route

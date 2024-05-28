@@ -34,6 +34,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { sitePrefix } from '../../../config';
 import { rootDomain } from '../../../helpers/Routes/routes';
 import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
+import { FaChartPie } from "react-icons/fa";
 
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
@@ -253,6 +254,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     )
 
     const iconsMap = [
+      {
+        key: 'surveyGraph',
+        uIcon: FaChartPie,
+        lable: t('landingPages.SurveyExportTitle'),
+        remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
+        onClick: () => {
+          navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`)
+        },
+        rootClass: classes.paddingIcon,
+      },
       {
         key: 'purchase/survey',
         uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
