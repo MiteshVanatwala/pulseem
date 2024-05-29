@@ -235,3 +235,5 @@ export const BEE_EDITOR_TYPES = {
     CAMPAIGN: 'Campaign',
     LANDING_PAGE: 'LandingPages'
 }
+
+export const SEND_1 = '_Send_1';

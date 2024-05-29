@@ -41,6 +41,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
+import { SEND_1 } from '../../../helpers/Constants';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
@@ -663,7 +664,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           arrow={true}
           placement={'top'}
           title={<Typography noWrap={false}>{row.Name}</Typography>}
-          text={!(expandedIds.indexOf(row.CampaignID) > -1 && isParent) && <div className={isParentCampaignWithChild ? classes.paddingInline30 : ''}>{row.Name}</div>}
+          text={!(expandedIds.indexOf(row.CampaignID) > -1 && isParent) && <div>{isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '') : row.Name}</div>}
         />
           <Grid container>
             <Grid item md={1}>
@@ -689,7 +690,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
                   </Typography>
                 </Grid>
               ) : (
-                <div className={clsx(isParentCampaignWithChild ? classes.paddingInline30 : '', classes.bold, classes.pt5, classes.f16)}>{row.Name}</div>
+                <div className={clsx(isParentCampaignWithChild ? classes.paddingInline30 : '', classes.bold, classes.pt5, classes.f16)}>
+                  {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '') : row.Name}
+                </div>
               )
             }
           </Grid>
@@ -779,7 +782,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
           </TableCell>
         </TableRow>
         {
-          isParent === true && isExpanded && childItems.map((campaign, index) => renderPhoneRow(campaign, false, index+1 === childItems.length))
+          isParent === true && isExpanded && (
+            <>
+              {renderPhoneRow(row, false, false)}
+              {childItems.map((campaign, index) => renderPhoneRow(campaign, false, index+1 === childItems.length))}
+            </>
+          )
         }
       </>
     )

@@ -17,7 +17,7 @@ import { getGetEmailReportsManagement, getNewsletterReports } from '../../../red
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
+import { EmailStatus, SEND_1, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
@@ -554,8 +554,8 @@ const NewslettersReport = ({ classes }) => {
           <TableCell classes={cellStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t('campaigns.camapignName')}</TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.locTotalSendPlan.HeaderText")}</span></TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex3, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex3, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex3, classes.f16)} align='center'></TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen, classes.f16)} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
@@ -606,17 +606,17 @@ const NewslettersReport = ({ classes }) => {
                 }
               </>
             }
-            {Name}
+            {isParent ? Name.replace(SEND_1, '') : Name}
           </Typography>
           {Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           {SendDate !== null && SendDate !== '' ?
             (
-              <Typography className={clsx(classes.grayTextCell, isParentCampaignWithChild ? classes.paddingInline30 : '')}>
+              <Typography className={clsx(classes.grayTextCell)}>
                 {t("common.SentOn")} {`${showDate} ${showTime}`}
               </Typography>
             ) :
             (
-              <Typography className={clsx(classes.grayTextCell, isParentCampaignWithChild ? classes.paddingInline30 : '')}>
+              <Typography className={clsx(classes.grayTextCell)}>
                 {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
               </Typography>
             )
@@ -626,15 +626,15 @@ const NewslettersReport = ({ classes }) => {
     }
     return (
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && (isParentCampaignWithChild ? classes.w40 : classes.w20))}>
+        <Grid item className={clsx(classes.w30)}>
           {
-            isParent && parentCampaignsWithChild.indexOf(row.CampaignID) > -1 && <>
+            <span style={{ opacity: (isParent && parentCampaignsWithChild.indexOf(row.CampaignID) > -1) ? 1 : 0 }}>
               {
                 expandedIds.indexOf(row.CampaignID) === -1
                   ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
                   : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
               }
-            </>
+            </span>
           }
           {isChecked && <Checkbox
             color='primary'
@@ -648,10 +648,10 @@ const NewslettersReport = ({ classes }) => {
             }}
           />}
         </Grid>
-        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? (isParentCampaignWithChild ? classes.w60 : classes.w80) : '', 'rowTitle')}>
+        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? classes.w70 : '', 'rowTitle')}>
           <Tooltip
             arrow
-            title={row.Name}
+            title={isParent ? row.Name.replace(SEND_1, '') : row.Name}
             placement={'top'}
             classes={{
               tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
@@ -659,7 +659,7 @@ const NewslettersReport = ({ classes }) => {
             }}
           >
             <Typography noWrap={false} className={classes.nameEllipsis}>
-              {row.Name}
+              {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '') : row.Name}
               {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
             </Typography>
           </Tooltip>
@@ -845,8 +845,7 @@ const NewslettersReport = ({ classes }) => {
           <TableCell
             classes={cellBodyStyle}
             align='center'
-            className={isParent ? classes.flex4 : classes.flex3}
-            style={{ paddingInlineStart: isParent ? 0 : 35, paddingInlineEnd: isParent ? 0 : 17 }}
+            className={classes.flex4}
           >
             {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status, LastEditDate }, isParent)}
           </TableCell>
@@ -855,28 +854,28 @@ const NewslettersReport = ({ classes }) => {
             classes={noBorderCellStyle}
             className={classes.flex1}>
             {
-              renderIntData(SumTotalSendPlan, '', row, false, t("mainReport.totalSendPlan"))
+              renderIntData(isParent ? SumTotalSendPlan : row.TotalSendPlan, '', row, false, t("mainReport.totalSendPlan"))
             }
           </TableCell>
           <TableCell
             classes={borderCellStyle}
             align='center'
             className={classes.flex1}>
-            {renderIntData(SumTotalSendCompleted, '', hrefs.TotalSendCompleted, windowSize !== 'xs', t("mainReport.ToalSent"))}
+            {renderIntData(isParent ? SumTotalSendCompleted : row.TotalSendCompleted, '', hrefs.TotalSendCompleted, windowSize !== 'xs', t("mainReport.ToalSent"))}
           </TableCell>
           <TableCell
             classes={borderCellStyle}
             align='center'
-            className={classes.flex4}>
+            className={classes.flex3}>
             <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderDataTooltip(SumOpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
+                {renderDataTooltip(isParent ? SumOpenCount : row.OpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderDataTooltip(SumOpenCountUnique, 'green', hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text', row.CampaignID)}
+                {renderDataTooltip(isParent ? SumOpenCountUnique : row.OpenCountUnique, 'green', hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text', row.CampaignID)}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderPercetangeData(SumPercentageOpens, 'green', hrefs.PercentageOpens, row.CampaignID)}
+                {renderPercetangeData(isParent ? SumPercentageOpens : row.PercentageOpens, 'green', hrefs.PercentageOpens, row.CampaignID)}
               </Grid>
             </Grid>
           </TableCell>
@@ -885,16 +884,16 @@ const NewslettersReport = ({ classes }) => {
           <TableCell
             classes={borderCellStyle}
             align='center'
-            className={classes.flex4}>
+            className={classes.flex3}>
             <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderDataTooltip(SumClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
+                {renderDataTooltip(isParent ? SumClickCount : row.ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderDataTooltip(SumClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
+                {renderDataTooltip(isParent ? SumClickCountUnique : row.ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderPercetangeData(SumPercetangeClicks, 'blue', hrefs.PercetangeClicks)}
+                {renderPercetangeData(isParent ? SumPercetangeClicks : row.PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
               </Grid>
             </Grid>
           </TableCell>
@@ -905,13 +904,13 @@ const NewslettersReport = ({ classes }) => {
             className={classes.flex3}>
             <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderIntData(SumSendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'))}
+                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'))}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderIntData(SumRemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
+                {renderIntData(isParent ? SumRemovedClients : row.RemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderIntData(SumNotOpened, 'red', hrefs.NotOpened, true, t("mainReport.GridButtonColumnResource3.HeaderText"))}
+                {renderIntData(isParent ? SumNotOpened : rowsPerPage.NotOpened, 'red', hrefs.NotOpened, true, t("mainReport.GridButtonColumnResource3.HeaderText"))}
               </Grid>
             </Grid>
           </TableCell>
@@ -945,7 +944,12 @@ const NewslettersReport = ({ classes }) => {
           </TableCell>}
         </TableRow >
         {
-          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && childItems.map((campaign) => renderRow(campaign, false, isEven))
+          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
+            <>
+              {renderRow(row, false, false)}
+              {childItems.map((campaign) => renderRow(campaign, false, isEven))}
+            </>
+          )
         }
       </>
     )
@@ -966,6 +970,10 @@ const NewslettersReport = ({ classes }) => {
       Revenue = 0
     } = row
     const hrefs = getHrefs(CampaignID)
+    const {
+      SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
+    } = getParentChildSum(row);
+
     return (
       <>
         <TableRow
@@ -986,10 +994,10 @@ const NewslettersReport = ({ classes }) => {
                   </Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
-                      {renderIntData(OpenCount, 'green', hrefs.OpenCount, false)}
+                      {renderIntData(isParent ? SumOpenCount : OpenCount, 'green', hrefs.OpenCount, false)}
                     </Grid>
                     <Grid item xs={6}>
-                      {renderIntData(OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
+                      {renderIntData(isParent ? SumOpenCountUnique : OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
                     </Grid>
                   </Grid>
                 </Grid>
@@ -999,10 +1007,10 @@ const NewslettersReport = ({ classes }) => {
                   </Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
-                      {renderIntData(ClickCount, 'blue', hrefs.ClickCount, false)}
+                      {renderIntData(isParent ? SumClickCount : ClickCount, 'blue', hrefs.ClickCount, false)}
                     </Grid>
                     <Grid item xs={6}>
-                      {renderIntData(ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
+                      {renderIntData(isParent ? SumClickCountUnique : ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
                     </Grid>
                   </Grid>
                 </Grid>
@@ -1015,7 +1023,7 @@ const NewslettersReport = ({ classes }) => {
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item>
-                    {renderIntData(TotalSendPlan, '')}
+                    {renderIntData(isParent ? SumTotalSendPlan : TotalSendPlan, '')}
                   </Grid>
                 </Grid>
               </Grid>
@@ -1023,19 +1031,19 @@ const NewslettersReport = ({ classes }) => {
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                   {t("mainReport.GridButtonColumnResource4.HeaderText")}
                 </Typography>
-                {renderIntData(SendError, 'red', hrefs.SendError, false)}
+                {renderIntData(isParent ? SumSendError : SendError, 'red', hrefs.SendError, false)}
               </Grid>
               <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                   {t("mainReport.removals")}
                 </Typography>
-                {renderIntData(RemovedClients, 'red', hrefs.RemovedClients, false)}
+                {renderIntData(isParent ? SumRemovedClients : RemovedClients, 'red', hrefs.RemovedClients, false)}
               </Grid>
               <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                   {t("mainReport.GridButtonColumnResource3.HeaderText")}
                 </Typography>
-                {renderIntData(NotOpened, 'red', hrefs.NotOpened, false)}
+                {renderIntData(isParent ? SumNotOpened : NotOpened, 'red', hrefs.NotOpened, false)}
               </Grid>
               {hasRevenue && <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
@@ -1051,7 +1059,12 @@ const NewslettersReport = ({ classes }) => {
           </TableCell>
         </TableRow>
         {
-          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && childItems.map((campaign) => renderPhoneRow(campaign, false, isEven))
+          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
+            <>
+              {renderPhoneRow(row, false, isEven)}
+              {childItems.map((campaign) => renderPhoneRow(campaign, false, isEven))}
+            </>
+          )
         }
       </>
     )

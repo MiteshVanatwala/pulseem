@@ -359,11 +359,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w20: {
     width: "20%",
   },
+  w30: {
+    width: "30%",
+  },
   w40: {
     width: "40%",
   },
   w80: {
     width: "80%",
+  },
+  w70: {
+    width: "70%",
   },
   w60: {
     width: "60%",
