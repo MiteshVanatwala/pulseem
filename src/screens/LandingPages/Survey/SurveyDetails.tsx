@@ -16,12 +16,15 @@ import { StateType } from "../../../Models/StateTypes";
 import { exportSurvey } from "../../../redux/reducers/landingPagesSlice";
 import { ExportFile } from "../../../helpers/Export/ExportFile";
 import { FaFileExcel } from "react-icons/fa";
+import { ColorPalettes } from "../../../helpers/UI/ColorPalettes";
+import ColorPaletteView from "../../../components/Chart/ColorPalette";
 
 const SurveyDetails = ({ classes }: any) => {
   const { t } = useTranslation();
   const { id } = useParams();
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   const [showLoader, setShowLoader] = useState<boolean>(true);
+  const [selectedPalette, setSelectedPallete] = useState<any>('Pulseem');
   // @ts-ignore
   const [webForm, setWebForm] = useState<LandingPageModel>({ PageName: '' });
   const [surveyResult, setSurveyResult] = useState<SurveyResponse[]>();
@@ -81,7 +84,7 @@ const SurveyDetails = ({ classes }: any) => {
     switch (item.QuestionType) {
       case eQuestionType.MultipleSelect: {
         const pieArr: any = createPieObject(item, true);
-        return <PulseemPie data={pieArr} onChartClick={(p: any) => { onAnswerSelected(p) }} />;
+        return <PulseemPie data={pieArr} onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />;
       }
       case eQuestionType.Text: {
         return <>
@@ -96,7 +99,7 @@ const SurveyDetails = ({ classes }: any) => {
       }
       case eQuestionType.SingleSelect: {
         const arr: any = createPieObject(item, false);
-        return <PulseemPie data={arr} onChartClick={(p: any) => { onAnswerSelected(p) }} />;
+        return <PulseemPie data={arr} onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />;
       }
     }
   }
@@ -148,6 +151,9 @@ const SurveyDetails = ({ classes }: any) => {
                 {surveyResult && surveyResult?.length > 1 &&
                   <Box className={clsx(classes.dFlex)} style={{ alignItems: 'center', justifySelf: 'flex-end', paddingInline: 15 }}>
                     <Typography>{t('common.Preview')}</Typography>
+                    <Box style={{ width: 400 }}>
+                      <ColorPaletteView selected={selectedPalette} onSelected={setSelectedPallete} />
+                    </Box>
                     <Select native onChange={(event: any) => {
                       setGridSize(event.target.value)
                     }} value={gridSize}>
