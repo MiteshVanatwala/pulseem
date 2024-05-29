@@ -455,5 +455,11 @@
     "reminder_date": "Select Reminder Date",
     "surveyQuestion": "Type a Survey Answer",
     "typeHere": "Type here"
+  },
+  "survey": {
+    "text": "Open Question",
+    "SingleSelect": "Single Select",
+    "MultipleSelect": "Multiple Select",
+    "surveysPerLine": "Surveys per Line"
   }
 }

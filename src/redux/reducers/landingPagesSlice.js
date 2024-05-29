@@ -45,7 +45,7 @@ export const duplicteLandingPage = createAsyncThunk(
   })
 
 export const downloadReport = createAsyncThunk(
-  'report/ExportPurchase/', async ({ ID, Name }, thunkAPI) => {
+  'report/ExportPurchase/', async (ID, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`${apiURL}/report/ExportPurchase/${ID}`);
       return JSON.parse(response.data)
@@ -55,7 +55,7 @@ export const downloadReport = createAsyncThunk(
   })
 
 export const exportSurvey = createAsyncThunk(
-  'report/ExportSurvey/', async ({ ID, Name }, thunkAPI) => {
+  'report/ExportSurvey/', async (ID, thunkAPI) => {
     try {
 
       const response = await PulseemReactInstance.get(`${apiURL}/report/ExportSurvey/${ID}`);

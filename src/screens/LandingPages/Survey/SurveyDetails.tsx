@@ -1,4 +1,4 @@
-import { Box } from "@material-ui/core";
+import { Box, Button, Divider, Grid, Select, Typography } from "@material-ui/core";
 import DefaultScreen from "../../DefaultScreen";
 import { Title } from "../../../components/managment/Title";
 import { Loader } from "../../../components/Loader/Loader";
@@ -10,19 +10,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { PulseemResponse } from "../../../Models/APIResponse";
 import { logout } from "../../../helpers/Api/PulseemReactAPI";
 import { useParams } from "react-router-dom";
-import { LandingPageModel } from "../../../Models/LandingPage/LandingPage";
+import { LandingPageModel, SurveyResponse, eQuestionType } from "../../../Models/LandingPage/LandingPage";
 import PulseemPie from "../../../components/Chart/PieChart";
-import { Typography } from "@mui/material";
 import { StateType } from "../../../Models/StateTypes";
+import { exportSurvey } from "../../../redux/reducers/landingPagesSlice";
+import { ExportFile } from "../../../helpers/Export/ExportFile";
+import { FaFileExcel } from "react-icons/fa";
 
 const SurveyDetails = ({ classes }: any) => {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { isRTL } = useSelector((state: StateType) => state.core);
+  const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   // @ts-ignore
   const [webForm, setWebForm] = useState<LandingPageModel>({ PageName: '' });
-  const [surveyResult, setSurveyResult] = useState<any>();
+  const [surveyResult, setSurveyResult] = useState<SurveyResponse[]>();
+  const [gridSize, setGridSize] = useState<any>(4);
   const dispatch = useDispatch();
 
   const getData = async () => {
@@ -76,23 +79,52 @@ const SurveyDetails = ({ classes }: any) => {
 
   const renderResults = (item: any) => {
     switch (item.QuestionType) {
-      case 'checkbox': {
+      case eQuestionType.MultipleSelect: {
         const pieArr: any = createPieObject(item, true);
         return <PulseemPie data={pieArr} onChartClick={(p: any) => { onAnswerSelected(p) }} />;
       }
-      case 'text': {
+      case eQuestionType.Text: {
         return <>
-          <Box style={{ padding: 15, direction: isRTL ? 'rtl' : 'ltr' }}>
-            {item.Answers.map((t: string) => {
-              return <Typography className={classes.font18}>{t}</Typography>
-            })}
+          <Box style={{ width: '100%', height: '50%', overflow: 'hidden', overflowY: 'auto' }}>
+            <Box style={{ padding: 15, direction: isRTL ? 'rtl' : 'ltr' }}>
+              {item.Answers.map((answer: string) => {
+                return <Typography className={classes.font18}>{answer}</Typography>
+              })}
+            </Box>
           </Box>
         </>
       }
-      case 'select':
-      case 'radio': {
+      case eQuestionType.SingleSelect: {
         const arr: any = createPieObject(item, false);
         return <PulseemPie data={arr} onChartClick={(p: any) => { onAnswerSelected(p) }} />;
+      }
+    }
+  }
+
+  const onExportSurvey = async () => {
+    //@ts-ignore
+    const surveysResponse = await dispatch(exportSurvey(id)) as any;
+    const surveys = surveysResponse?.payload;
+    const fields = surveys?.length > 0 && Object.keys(surveys[0]);
+    ExportFile({
+      data: surveys,
+      fileName: 'surveyReport',
+      exportType: 'xls',
+      fields: fields
+    });
+  }
+
+  const renderQuestionType = (questionType: eQuestionType) => {
+    switch (questionType) {
+      case eQuestionType.Text: {
+        return t('landingPages.survey.text');
+
+      }
+      case eQuestionType.SingleSelect: {
+        return t('landingPages.survey.SingleSelect');
+      }
+      case eQuestionType.MultipleSelect: {
+        return t('landingPages.survey.MultipleSelect');
       }
     }
   }
@@ -103,18 +135,61 @@ const SurveyDetails = ({ classes }: any) => {
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>
-        <Title Text={`${t('landingPages.SurveyExportTitle')} - ${webForm?.PageName && webForm?.PageName}`} classes={classes} />
-        <Box style={{ padding: 25 }}>
-          {surveyResult && surveyResult?.map((item: any, idx: number) => {
-            return <Box key={idx}>
-              <Box>
-                {item?.QuestionNumber}. {item?.Question}
-              </Box>
-              <Box style={{ direction: 'ltr', display: 'flex', alignItems: 'flex-end', flexDirection: 'column' }}>
-                {renderResults(item)}
+        <Title
+          classes={classes}
+          Element={
+            <Box className={clsx(windowSize !== 'xs' ? classes.dFlex : '', classes.flexWrap)}
+              style={{ justifyContent: 'space-between' }}>
+              <Typography
+                className={clsx(classes.managementTitle, "mgmtTitle")}
+                style={{ width: 'auto' }}>{`${t('landingPages.SurveyExportTitle')} - ${webForm?.PageName && webForm?.PageName}`}
+              </Typography>
+              <Box style={{ display: 'flex' }}>
+                {surveyResult && surveyResult?.length > 1 &&
+                  <Box className={clsx(classes.dFlex)} style={{ alignItems: 'center', justifySelf: 'flex-end', paddingInline: 15 }}>
+                    <Typography>{t('common.Preview')}</Typography>
+                    <Select native onChange={(event: any) => {
+                      setGridSize(event.target.value)
+                    }} value={gridSize}>
+                      <option value={12}>1</option>
+                      <option value={6}>2</option>
+                      <option value={4}>3</option>
+                      <option value={3}>4</option>
+                    </Select>
+                    &nbsp;<Typography>{t('landingPages.survey.surveysPerLine')}</Typography>
+                  </Box>
+                }
+                <Button
+                  onClick={onExportSurvey}
+                  className={clsx(
+                    windowSize !== "xs" ? classes.implementButtonFlex : classes.mt10,
+                    classes.btn, classes.btnRounded,
+                  )}
+                  style={{ alignSelf: 'flex-end' }}
+                  endIcon={<FaFileExcel className={clsx(classes.f25)} />}>
+                  {t('master.download')}
+                </Button>
               </Box>
             </Box>
-          })}
+          }
+        />
+        <Box style={{ padding: 25 }}>
+          <Grid container>
+            {surveyResult && surveyResult?.map((item: SurveyResponse, idx: number) => {
+              return <Grid item xs={gridSize}>
+                <Box key={idx}>
+                  <Box>
+                    <b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})
+                  </Box>
+                  <Box>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
+                  <Box style={{ direction: 'ltr', display: 'flex', alignItems: 'flex-end', flexDirection: 'column' }}>
+                    {renderResults(item)}
+                  </Box>
+                  {idx < (surveyResult.length - 1) && <Divider style={{ marginBlock: 25 }} />}
+                </Box>
+              </Grid>
+            })}
+          </Grid>
         </Box>
       </Box>
       <Loader isOpen={showLoader} />

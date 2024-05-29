@@ -175,3 +175,31 @@ export enum PageLanguage {
     Dutch = 12,
     Unicode = 13
 }
+
+export interface SurveyResponse {
+    QuestionNumber: number;
+    Question: string;
+    QuestionType: eQuestionType;
+    Answers: string[];
+    AnswerAndCount: { [key: string]: number; };
+    AnswerWithText: { [key: string]: string; };
+}
+
+export interface SurveyAnswers {
+    Answer1: string;
+    Answer2: string;
+    Answer3: string;
+    Answer4: string;
+    Answer5: string;
+    Answer6: string;
+    Answer7: string;
+    Answer8: string;
+    Answer9: string;
+    Answer10: string;
+}
+
+export enum eQuestionType {
+    Text = 1,
+    SingleSelect = 2,
+    MultipleSelect = 3
+}

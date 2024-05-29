@@ -7,14 +7,14 @@ import {
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon,
-  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon, SettingIcon
+  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SettingIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, RestorDialogContent, PopMassage, SearchField
+  TablePagination, ManagmentIcon, RestorDialogContent, PopMassage,
 } from '../../../components/managment/index'
 import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
-  duplicteLandingPage, downloadReport, exportSurvey, getPageHeight
+  duplicteLandingPage, downloadReport, getPageHeight
 } from '../../../redux/reducers/landingPagesSlice'
 import { openInNewTab } from '../../../helpers/Functions/functions'
 import { useNavigate } from "react-router-dom";
@@ -32,7 +32,6 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 import { sitePrefix } from '../../../config';
-import { rootDomain } from '../../../helpers/Routes/routes';
 import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
 import { FaChartPie } from "react-icons/fa";
 
@@ -266,36 +265,21 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       },
       {
         key: 'purchase/survey',
-        uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
-        lable: IsPayment ?
-          t('landingPages.PurchaseExportTitle')
-          : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
+        uIcon: ReportsIcon,
+        lable: t('landingPages.PurchaseExportTitle'),
+        remove: (windowSize === 'xs' || !IsPayment),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
         disable: accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) > -1,
         onClick: async () => {
-          if (IsPayment) {
-            const purchasesResponse = await dispatch(downloadReport(row));
-            const purchases = purchasesResponse?.payload;
-            const fields = purchases?.length > 0 && Object.keys(purchases[0]);
-            ExportFile({
-              data: purchases,
-              fileName: 'purchaseReport',
-              exportType: 'xls',
-              fields: fields
-            });
-          }
-          else {
-            const surveysResponse = await dispatch(exportSurvey(row));
-            const surveys = surveysResponse?.payload;
-            const fields = surveys?.length > 0 && Object.keys(surveys[0]);
-            ExportFile({
-              data: surveys,
-              fileName: 'surveyReport',
-              exportType: 'xls',
-              fields: fields
-            });
-          }
+          const purchasesResponse = await dispatch(downloadReport(ID));
+          const purchases = purchasesResponse?.payload;
+          const fields = purchases?.length > 0 && Object.keys(purchases[0]);
+          ExportFile({
+            data: purchases,
+            fileName: 'purchaseReport',
+            exportType: 'xls',
+            fields: fields
+          });
         }
       },
       {

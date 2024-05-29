@@ -455,5 +455,11 @@
     "reminder_date": "בחר תאריך תזכורת",
     "surveyQuestion": "הקלד תשובה",
     "typeHere": "הקלד כאן"
+  },
+  "survey": {
+    "text": "שאלה פתוחה",
+    "SingleSelect": "בחירה בודדת",
+    "MultipleSelect": "בחירה מרובה",
+    "surveysPerLine": "סקרים בשורה"
   }
 }
