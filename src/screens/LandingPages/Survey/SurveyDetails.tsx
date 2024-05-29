@@ -151,7 +151,7 @@ const SurveyDetails = ({ classes }: any) => {
                 {surveyResult && surveyResult?.length > 1 &&
                   <Box className={clsx(classes.dFlex)} style={{ alignItems: 'center', justifySelf: 'flex-end', paddingInline: 15 }}>
                     <Typography>{t('common.Preview')}</Typography>
-                    <Box style={{ width: 400 }}>
+                    <Box style={{ width: 300 }}>
                       <ColorPaletteView selected={selectedPalette} onSelected={setSelectedPallete} />
                     </Box>
                     <Select native onChange={(event: any) => {
