@@ -1,12 +1,18 @@
 import { Box, MenuItem, Select, Typography } from "@material-ui/core";
 import { ColorPalettes } from "../../helpers/UI/ColorPalettes";
+import { StateType } from "../../Models/StateTypes";
+import { useSelector } from "react-redux";
 
 const ColorPaletteView = ({ selected, onSelected }: any) => {
+  const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   return <Select onChange={(e: any) => {
-    console.log(e.target.value);
     onSelected(e.target.value)
+  }}
+    SelectDisplayProps={{
+      style: { display: 'flex', gap: 10, alignItems: 'center', paddingInlineStart: 0 }
 
-  }} value={selected}>
+    }}
+    value={selected}>
     {Object.keys(ColorPalettes).map((paletteName: any) => {
       return <MenuItem value={paletteName} style={{ display: 'flex', flexDirection: 'row' }}>
         <Typography>{paletteName}</Typography>

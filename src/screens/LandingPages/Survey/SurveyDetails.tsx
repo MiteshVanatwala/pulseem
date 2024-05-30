@@ -1,10 +1,10 @@
-import { Box, Button, Divider, Grid, Select, Typography } from "@material-ui/core";
+import { Box, Button, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, ListSubheader, Paper, Select, Typography } from "@material-ui/core";
 import DefaultScreen from "../../DefaultScreen";
 import { Title } from "../../../components/managment/Title";
 import { Loader } from "../../../components/Loader/Loader";
 import clsx from 'clsx';
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getSurveyDetailsByWebformId } from "../../../redux/reducers/SurveyReportsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { PulseemResponse } from "../../../Models/APIResponse";
@@ -18,17 +18,21 @@ import { ExportFile } from "../../../helpers/Export/ExportFile";
 import { FaFileExcel } from "react-icons/fa";
 import { ColorPalettes } from "../../../helpers/UI/ColorPalettes";
 import ColorPaletteView from "../../../components/Chart/ColorPalette";
+import { MdQuestionAnswer } from "react-icons/md";
+import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 
 const SurveyDetails = ({ classes }: any) => {
   const { t } = useTranslation();
   const { id } = useParams();
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   const [showLoader, setShowLoader] = useState<boolean>(true);
-  const [selectedPalette, setSelectedPallete] = useState<any>('Pulseem');
+  const cookie_colorPalette = getCookie('chartsColorPalette');
+  const cookie_surveyGridSize = getCookie('surveyGridSize');
+  const [selectedPalette, setSelectedPallete] = useState<any>(cookie_colorPalette || 'Pulseem');
+  const [gridSize, setGridSize] = useState<any>(cookie_surveyGridSize || 4);
   // @ts-ignore
   const [webForm, setWebForm] = useState<LandingPageModel>({ PageName: '' });
   const [surveyResult, setSurveyResult] = useState<SurveyResponse[]>();
-  const [gridSize, setGridSize] = useState<any>(4);
   const dispatch = useDispatch();
 
   const getData = async () => {
@@ -88,13 +92,22 @@ const SurveyDetails = ({ classes }: any) => {
       }
       case eQuestionType.Text: {
         return <>
-          <Box style={{ width: '100%', height: '50%', overflow: 'hidden', overflowY: 'auto' }}>
-            <Box style={{ padding: 15, direction: isRTL ? 'rtl' : 'ltr' }}>
-              {item.Answers.map((answer: string) => {
-                return <Typography className={classes.font18}>{answer}</Typography>
-              })}
-            </Box>
-          </Box>
+          <List style={{ width: '100%', maxWidth: 'calc(100% - 15px)', direction: isRTL ? 'rtl' : 'ltr' }}>
+            {item.Answers.map((answer: string, idx: number) => {
+              return <><ListItem alignItems="flex-start" key={idx}>
+                <ListItemAvatar>
+                  <MdQuestionAnswer />
+
+                </ListItemAvatar>
+                <ListItemText
+                  primary="תשובת סקר"
+                  secondary={answer}
+                />
+              </ListItem>
+                <Divider variant="inset" component="li" />
+              </>
+            })}
+          </List>
         </>
       }
       case eQuestionType.SingleSelect: {
@@ -132,6 +145,11 @@ const SurveyDetails = ({ classes }: any) => {
     }
   }
 
+  useEffect(() => {
+    if (windowSize === 'sm' || windowSize === 'xs')
+      setGridSize(12);
+  }, [windowSize]);
+
   return (
     <DefaultScreen
       currentPage='SurveyDetails'
@@ -141,20 +159,21 @@ const SurveyDetails = ({ classes }: any) => {
         <Title
           classes={classes}
           Element={
-            <Box className={clsx(windowSize !== 'xs' ? classes.dFlex : '', classes.flexWrap)}
-              style={{ justifyContent: 'space-between' }}>
+            <Box
+              className={clsx(windowSize !== 'xs' ? classes.dFlex : '', classes.flexWrap, classes.justifySpaceBetween)}>
               <Typography
                 className={clsx(classes.managementTitle, "mgmtTitle")}
                 style={{ width: 'auto' }}>{`${t('landingPages.SurveyExportTitle')} - ${webForm?.PageName && webForm?.PageName}`}
               </Typography>
-              <Box style={{ display: 'flex' }}>
+              <Box className={classes.dFlex}>
                 {surveyResult && surveyResult?.length > 1 &&
-                  <Box className={clsx(classes.dFlex)} style={{ alignItems: 'center', justifySelf: 'flex-end', paddingInline: 15 }}>
-                    <Typography>{t('common.Preview')}</Typography>
-                    <Box style={{ width: 300 }}>
-                      <ColorPaletteView selected={selectedPalette} onSelected={setSelectedPallete} />
-                    </Box>
-                    <Select native onChange={(event: any) => {
+                  <Box className={clsx(classes.dFlex, classes.surveySettingContainer)}>
+                    <ColorPaletteView selected={selectedPalette} onSelected={(selectedPlt: any) => {
+                      setCookie('chartsColorPalette', selectedPlt, { maxAge: 36000000000 });
+                      setSelectedPallete(selectedPlt);
+                    }} />
+                    {windowSize !== 'sm' && windowSize !== 'xs' && <><Select native onChange={(event: any) => {
+                      setCookie('surveyGridSize', event.target.value, { maxAge: 36000000000 });
                       setGridSize(event.target.value)
                     }} value={gridSize}>
                       <option value={12}>1</option>
@@ -162,7 +181,9 @@ const SurveyDetails = ({ classes }: any) => {
                       <option value={4}>3</option>
                       <option value={3}>4</option>
                     </Select>
-                    &nbsp;<Typography>{t('landingPages.survey.surveysPerLine')}</Typography>
+                      &nbsp;<Typography>{t('landingPages.survey.surveysPerLine')}</Typography>
+                    </>
+                    }
                   </Box>
                 }
                 <Button
@@ -179,20 +200,27 @@ const SurveyDetails = ({ classes }: any) => {
             </Box>
           }
         />
-        <Box style={{ padding: 25 }}>
+        <Box style={{ padding: 15 }}>
           <Grid container>
             {surveyResult && surveyResult?.map((item: SurveyResponse, idx: number) => {
               return <Grid item xs={gridSize}>
-                <Box key={idx}>
-                  <Box>
-                    <b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})
-                  </Box>
-                  <Box>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
-                  <Box style={{ direction: 'ltr', display: 'flex', alignItems: 'flex-end', flexDirection: 'column' }}>
+                <Paper elevation={2} key={idx} className={classes.surveyPapaerContainer}>
+                  {item.QuestionType === eQuestionType.Text ? (
+                    <ListSubheader className={clsx(classes.textAnswerDirection, classes.subHeaderInherit)}>
+                      <b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})
+                      <Box>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
+                    </ListSubheader>
+                  ) : (
+                    <Box className={classes.p15}>
+                      <b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})
+                      <Box>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
+                    </Box>
+                  )}
+                  <Divider className={classes.mt15} />
+                  <Box className={classes.surveyResults}>
                     {renderResults(item)}
                   </Box>
-                  {idx < (surveyResult.length - 1) && <Divider style={{ marginBlock: 25 }} />}
-                </Box>
+                </Paper>
               </Grid>
             })}
           </Grid>
