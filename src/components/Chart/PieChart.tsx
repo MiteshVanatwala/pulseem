@@ -38,12 +38,10 @@ const PulseemPie = ({ data, onChartClick, colorPalette }: any) => {
       width={500}
       height={300}
       onItemClick={onItemClick}
-      // margin={{ top: 50, bottom: 10, left: 10, right: 100 }}
       slotProps={{
         legend: {
           direction: 'column',
           position: { vertical: 'middle', horizontal: 'right' },
-          // itemGap: 15,
           markGap: isRTL ? 55 : 10,
           labelStyle: {
             marginBlockEnd: 20,

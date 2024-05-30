@@ -183,6 +183,7 @@ export interface SurveyResponse {
     Answers: string[];
     AnswerAndCount: { [key: string]: number; };
     AnswerWithText: { [key: string]: string; };
+    ShowAsPie: boolean;
 }
 
 export interface SurveyAnswers {

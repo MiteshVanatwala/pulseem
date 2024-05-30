@@ -13,13 +13,13 @@ const ColorPaletteView = ({ selected, onSelected }: any) => {
 
     }}
     value={selected}>
-    {Object.keys(ColorPalettes).map((paletteName: any) => {
-      return <MenuItem value={paletteName} style={{ display: 'flex', flexDirection: 'row' }}>
+    {Object.keys(ColorPalettes).map((paletteName: any, idx: number) => {
+      return <MenuItem value={paletteName} style={{ display: 'flex', flexDirection: 'row' }} key={idx}>
         <Typography>{paletteName}</Typography>
         <Box style={{ width: 200, height: 20 }}>
           {/* @ts-ignore */}
-          {ColorPalettes[paletteName]?.map((color: any) => {
-            return <Box style={{ width: 20, height: 20, backgroundColor: `${color}`, display: 'inline-block' }}></Box>
+          {ColorPalettes[paletteName]?.map((color: any, index: number) => {
+            return <Box key={index} style={{ width: 20, height: 20, backgroundColor: `${color}`, display: 'inline-block' }}></Box>
           })
           }
         </Box>

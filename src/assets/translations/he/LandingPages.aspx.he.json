@@ -460,6 +460,9 @@
     "text": "שאלה פתוחה",
     "SingleSelect": "בחירה בודדת",
     "MultipleSelect": "בחירה מרובה",
-    "surveysPerLine": "שאלות בשורה"
+    "surveysPerLine": "שאלות בשורה",
+    "surveyAnswer": "תשובת סקר",
+    "userAnswered": "משתמש 1 ענה",
+    "usersAnswered": "משתמשים ענו"
   }
 }

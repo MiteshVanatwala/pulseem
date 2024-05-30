@@ -20,6 +20,8 @@ import { ColorPalettes } from "../../../helpers/UI/ColorPalettes";
 import ColorPaletteView from "../../../components/Chart/ColorPalette";
 import { MdQuestionAnswer } from "react-icons/md";
 import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
+import PulseemBarChart from "../../../components/Chart/BarChart";
+import { v4 as uuidv4 } from 'uuid';
 
 const SurveyDetails = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -84,33 +86,64 @@ const SurveyDetails = ({ classes }: any) => {
     return pieArr;
   }
 
+  const createBarChartObject = (item: any, isMultipleSelection: boolean) => {
+    const dataset: any = [];
+
+    Object.keys(item?.AnswerWithText)?.forEach((ans: any, idx: number) => {
+      const optionAnswer = item?.AnswerWithText[ans];
+      const answers = isMultipleSelection ? item?.Answers.map((a: string) => {
+        return a.split('|');
+      }) : (item?.AnswerAndCount[optionAnswer] || 0);
+
+      const answerOptions: any = Object.values(item.AnswerWithText);
+
+      const tempObj: any = [];
+      tempObj["answer"] = isMultipleSelection ? (answers.flat().filter((x: any) => x === optionAnswer).length) : (answers || 0)
+      tempObj['question'] = item.AnswerWithText[ans];
+
+      dataset.push(tempObj);
+
+    });
+    return dataset;
+  }
+
   const renderResults = (item: any) => {
     switch (item.QuestionType) {
       case eQuestionType.MultipleSelect: {
-        const pieArr: any = createPieObject(item, true);
-        return <PulseemPie data={pieArr} onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />;
+        // ShowAsPie = false as default
+        const arr: any = createBarChartObject(item, true);
+        return <PulseemBarChart
+          // label={`${item?.Answers.length} ${t('common.Total')}`}
+          key={uuidv4()}
+          data={arr}
+          labels={[...Object.values(item.AnswerAndCount)]}
+          yAxis={[{ scaleType: 'band', dataKey: 'question' }]}
+          onChartClick={(p: any) => { onAnswerSelected(p) }}
+          colors={ColorPalettes[selectedPalette]} />;
+        // const pieArr: any = createPieObject(item, true);
+        // return <PulseemPie key={uuidv4()} data={pieArr} onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />;
       }
       case eQuestionType.Text: {
-        return <>
-          <List style={{ width: '100%', maxWidth: 'calc(100% - 15px)', direction: isRTL ? 'rtl' : 'ltr' }}>
-            {item.Answers.map((answer: string, idx: number) => {
-              return <><ListItem alignItems="flex-start" key={idx}>
+        return <List key={uuidv4()} className={classes.answerListContainer}>
+          {
+            item.Answers.map((answer: string, idx: number) => {
+              return <Box key={idx}><ListItem alignItems="flex-start">
                 <ListItemAvatar>
                   <MdQuestionAnswer />
-
                 </ListItemAvatar>
                 <ListItemText
-                  primary="תשובת סקר"
+                  primary={t('landingPages.survey.surveyAnswer')}
                   secondary={answer}
                 />
               </ListItem>
                 <Divider variant="inset" component="li" />
-              </>
-            })}
-          </List>
-        </>
+              </Box>
+            })
+          }
+        </List>
       }
       case eQuestionType.SingleSelect: {
+        // ShowAsPie = true as default
         const arr: any = createPieObject(item, false);
         return <PulseemPie data={arr} onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />;
       }
@@ -203,7 +236,7 @@ const SurveyDetails = ({ classes }: any) => {
         <Box style={{ padding: 15 }}>
           <Grid container>
             {surveyResult && surveyResult?.map((item: SurveyResponse, idx: number) => {
-              return <Grid item xs={gridSize}>
+              return <Grid item xs={parseInt(gridSize || 0)} key={`grid_${idx}`}>
                 <Paper elevation={2} key={idx} className={classes.surveyPapaerContainer}>
                   {item.QuestionType === eQuestionType.Text ? (
                     <ListSubheader className={clsx(classes.textAnswerDirection, classes.subHeaderInherit)}>

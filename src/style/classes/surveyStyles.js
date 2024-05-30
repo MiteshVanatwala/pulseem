@@ -26,5 +26,8 @@ export const surveyStyle = (windowSize, isRTL, theme) => ({
     fontFamily: 'inherit',
     fontWeight: 'inherit',
     lineHeight: 'inherit'
+  },
+  answerListContainer: {
+    width: '100%', maxWidth: 'calc(100% - 15px)', direction: isRTL ? 'rtl' : 'ltr'
   }
 });

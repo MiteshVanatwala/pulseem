@@ -460,6 +460,9 @@
     "text": "Open Question",
     "SingleSelect": "Single Select",
     "MultipleSelect": "Multiple Select",
-    "surveysPerLine": "Questions per Line"
+    "surveysPerLine": "Questions per Line",
+    "surveyAnswer": "Survey Answer",
+    "userAnswered": "One user answered",
+    "usersAnswered": "Users answered"
   }
 }
