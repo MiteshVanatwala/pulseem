@@ -128,7 +128,8 @@ const Templates = ({
             </Box>
           )
         }
-        <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')} style={{ overflowY: 'auto' }}>
+        <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')} style={{ 
+          overflowY: 'auto', direction: 'ltr' }}>
           {
             tabValue === EmailTemplateType.PULSEEM_TEMPLATES && <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
               style={{
@@ -349,6 +350,7 @@ const Templates = ({
         }}
         isOpen={openPreview}
         templateDetails={selectedTemplate}
+        isMyTemplate={tabValue}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
       <DynamicConfirmDialog
