@@ -177,6 +177,7 @@ export enum PageLanguage {
 }
 
 export interface SurveyResponse {
+    ID?: any | never;
     QuestionNumber: number;
     Question: string;
     QuestionType: eQuestionType;

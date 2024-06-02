@@ -22,6 +22,7 @@ import { MdQuestionAnswer } from "react-icons/md";
 import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 import PulseemBarChart from "../../../components/Chart/BarChart";
 import { v4 as uuidv4 } from 'uuid';
+import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 
 const SurveyDetails = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -46,7 +47,7 @@ const SurveyDetails = ({ classes }: any) => {
   const handleResponse = (payload: PulseemResponse) => {
     switch (payload.StatusCode) {
       case 201: {
-        setWebForm(payload?.Data?.WebForm)
+        setWebForm(payload?.Data?.WebForm);
         setSurveyResult(payload?.Data?.Survey)
         break;
       }
@@ -110,18 +111,20 @@ const SurveyDetails = ({ classes }: any) => {
   const renderResults = (item: any) => {
     switch (item.QuestionType) {
       case eQuestionType.MultipleSelect: {
-        // ShowAsPie = false as default
-        const arr: any = createBarChartObject(item, true);
-        return <PulseemBarChart
-          // label={`${item?.Answers.length} ${t('common.Total')}`}
-          key={uuidv4()}
+        let arr: any;
+        arr = item.ShowAsPie ? createPieObject(item, true) : createBarChartObject(item, true);
+
+        return !item.ShowAsPie ? (<PulseemBarChart
+          key={item.ID || uuidv4()}
           data={arr}
           labels={[...Object.values(item.AnswerAndCount)]}
           yAxis={[{ scaleType: 'band', dataKey: 'question' }]}
           onChartClick={(p: any) => { onAnswerSelected(p) }}
-          colors={ColorPalettes[selectedPalette]} />;
-        // const pieArr: any = createPieObject(item, true);
-        // return <PulseemPie key={uuidv4()} data={pieArr} onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />;
+          colors={ColorPalettes[selectedPalette]} />) :
+          (<PulseemPie
+            key={item.ID || uuidv4()}
+            data={arr}
+            onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />)
       }
       case eQuestionType.Text: {
         return <List key={uuidv4()} className={classes.answerListContainer}>
@@ -143,9 +146,20 @@ const SurveyDetails = ({ classes }: any) => {
         </List>
       }
       case eQuestionType.SingleSelect: {
-        // ShowAsPie = true as default
-        const arr: any = createPieObject(item, false);
-        return <PulseemPie data={arr} onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />;
+        let arr: any;
+        arr = item.ShowAsPie || item.ShowAsPie === undefined ? createPieObject(item, false) : createBarChartObject(item, false);
+
+        return (item.ShowAsPie === true || item.ShowAsPie === undefined) ? (<PulseemPie
+          key={item.ID || uuidv4()}
+          data={arr}
+          onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />) :
+          (<PulseemBarChart
+            key={item.ID || uuidv4()}
+            data={arr}
+            labels={[...Object.values(item.AnswerAndCount)]}
+            yAxis={[{ scaleType: 'band', dataKey: 'question' }]}
+            onChartClick={(p: any) => { onAnswerSelected(p) }}
+            colors={ColorPalettes[selectedPalette]} />)
       }
     }
   }
@@ -236,7 +250,8 @@ const SurveyDetails = ({ classes }: any) => {
         <Box style={{ padding: 15 }}>
           <Grid container>
             {surveyResult && surveyResult?.map((item: SurveyResponse, idx: number) => {
-              return <Grid item xs={parseInt(gridSize || 0)} key={`grid_${idx}`}>
+              item.ID = !item.ID ? uuidv4() : item.ID;
+              return <Grid item xs={gridSize || 0} key={`grid_${idx}`}>
                 <Paper elevation={2} key={idx} className={classes.surveyPapaerContainer}>
                   {item.QuestionType === eQuestionType.Text ? (
                     <ListSubheader className={clsx(classes.textAnswerDirection, classes.subHeaderInherit)}>
@@ -245,7 +260,31 @@ const SurveyDetails = ({ classes }: any) => {
                     </ListSubheader>
                   ) : (
                     <Box className={classes.p15}>
-                      <b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})
+                      <Box className={clsx(classes.dFlex, classes.justifySpaceBetween)}>
+                        <Box><b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})</Box>
+                        {(item.QuestionType === eQuestionType.MultipleSelect ||
+                          item.QuestionType === eQuestionType.SingleSelect) &&
+                          <Box className={classes.dFlex}> Show as Pie
+                            <PulseemSwitch
+                              classes={classes}
+                              key={item.ID}
+                              isRTL={isRTL}
+                              checked={item.ShowAsPie === true || (item.ShowAsPie === undefined && item.QuestionType === eQuestionType.SingleSelect)}
+                              onChange={(e: any, selected: any) => {
+                                const newArr = surveyResult?.map((sItem: SurveyResponse, idx: number) => {
+                                  if (sItem.ID === item.ID) {
+                                    sItem.ShowAsPie = selected;
+                                  }
+                                  return sItem;
+                                });
+                                setSurveyResult(newArr);
+                              }}
+                              id={item.ID}
+                              switchType={'ios'}
+                            />
+                          </Box>
+                        }
+                      </Box>
                       <Box>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
                     </Box>
                   )}
