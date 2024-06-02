@@ -4,7 +4,7 @@ import { Title } from "../../../components/managment/Title";
 import { Loader } from "../../../components/Loader/Loader";
 import clsx from 'clsx';
 import { useTranslation } from "react-i18next";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getSurveyDetailsByWebformId } from "../../../redux/reducers/SurveyReportsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { PulseemResponse } from "../../../Models/APIResponse";
@@ -22,12 +22,16 @@ import { MdQuestionAnswer } from "react-icons/md";
 import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 import PulseemBarChart from "../../../components/Chart/BarChart";
 import { v4 as uuidv4 } from 'uuid';
-import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
+import IconSwitch from "../../../components/Controlls/IconSwitch";
+import { FaChartPie } from "react-icons/fa";
+import { PiChartBarHorizontalFill } from "react-icons/pi";
+
+
 
 const SurveyDetails = ({ classes }: any) => {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
+  const { windowSize } = useSelector((state: StateType) => state.core);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const cookie_colorPalette = getCookie('chartsColorPalette');
   const cookie_surveyGridSize = getCookie('surveyGridSize');
@@ -264,23 +268,39 @@ const SurveyDetails = ({ classes }: any) => {
                         <Box><b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})</Box>
                         {(item.QuestionType === eQuestionType.MultipleSelect ||
                           item.QuestionType === eQuestionType.SingleSelect) &&
-                          <Box className={classes.dFlex}> Show as Pie
-                            <PulseemSwitch
-                              classes={classes}
-                              key={item.ID}
-                              isRTL={isRTL}
-                              checked={item.ShowAsPie === true || (item.ShowAsPie === undefined && item.QuestionType === eQuestionType.SingleSelect)}
-                              onChange={(e: any, selected: any) => {
-                                const newArr = surveyResult?.map((sItem: SurveyResponse, idx: number) => {
-                                  if (sItem.ID === item.ID) {
-                                    sItem.ShowAsPie = selected;
-                                  }
-                                  return sItem;
-                                });
-                                setSurveyResult(newArr);
-                              }}
-                              id={item.ID}
-                              switchType={'ios'}
+                          <Box className={classes.dFlex}>
+                            <IconSwitch
+                              icons={[
+                                {
+                                  ID: uuidv4(),
+                                  Icon: <FaChartPie />,
+                                  OnClick: () => {
+                                    const newArr = surveyResult?.map((sItem: SurveyResponse, idx: number) => {
+                                      if (sItem.ID === item.ID) {
+                                        sItem.ShowAsPie = true;
+                                      }
+                                      return sItem;
+                                    });
+                                    setSurveyResult(newArr);
+                                  },
+                                  Title: 'show as Pie',
+                                  Enabled: item.ShowAsPie === true || (item.QuestionType === eQuestionType.SingleSelect && item.ShowAsPie === undefined)
+                                },
+                                {
+                                  ID: uuidv4(),
+                                  Icon: <PiChartBarHorizontalFill />,
+                                  OnClick: () => {
+                                    const newArr = surveyResult?.map((sItem: SurveyResponse, idx: number) => {
+                                      if (sItem.ID === item.ID) {
+                                        sItem.ShowAsPie = false;
+                                      }
+                                      return sItem;
+                                    });
+                                    setSurveyResult(newArr);
+                                  },
+                                  Title: 'show as graph',
+                                  Enabled: item.ShowAsPie === false || (item.QuestionType === eQuestionType.MultipleSelect && item.ShowAsPie === undefined)
+                                }]}
                             />
                           </Box>
                         }

@@ -4,7 +4,7 @@ import { StateType } from '../../Models/StateTypes';
 import { Box } from '@material-ui/core';
 
 const PulseemPie = ({ data, onChartClick, colorPalette }: any) => {
-  const { isRTL } = useSelector((state: StateType) => state.core);
+  const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
 
   const onItemClick = (
     event: any, // The mouse event.
@@ -35,8 +35,8 @@ const PulseemPie = ({ data, onChartClick, colorPalette }: any) => {
           fontWeight: 'bold',
         },
       }}
-      width={500}
-      height={300}
+      width={windowSize !== 'sm' && windowSize !== 'xs' ? 450 : 250}
+      height={280}
       onItemClick={onItemClick}
       slotProps={{
         legend: {

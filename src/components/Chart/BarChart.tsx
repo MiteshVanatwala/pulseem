@@ -26,7 +26,7 @@ const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels }: a
       },
     ],
     width: windowSize !== 'sm' && windowSize !== 'xs' ? 450 : 250,
-    height: 300,
+    height: 280,
   };
 
   // const onItemClick = (
