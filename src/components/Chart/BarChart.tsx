@@ -46,7 +46,9 @@ const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels }: a
       //@ts-ignore
       series={[{ dataKey: 'answer', valueFormatter }]}
       layout="horizontal"
-      barLabel="value"
+      barLabel={(item, context) => {
+        return `${item.value} (${data.filter((e: any) => e.answer === item.value)[0]?.percentage})`;
+      }}
       {...chartSetting}
     />
   </Box>

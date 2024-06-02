@@ -74,6 +74,26 @@ const SurveyDetails = ({ classes }: any) => {
     console.log(params);
   }
 
+  const calculatePercentages = (item: SurveyResponse, selected: any, answers: any, isMultipleSelection: boolean) => {
+    const summArray: any = [];
+
+    if (isMultipleSelection) {
+      const objToScan = Object.values(answers.flat()) as any;
+      for (var i = 0; i < objToScan?.length; i++) {
+        summArray[objToScan[i]] = !summArray[objToScan[i]] ? 1 : summArray[objToScan[i]] + 1;
+      }
+    }
+
+    const allAnswers = isMultipleSelection ? Object.values(item?.AnswerAndCount).flat() : (Object.values(item?.AnswerAndCount) || 0);
+    const sumValues = Object.values(isMultipleSelection ? summArray : item?.AnswerAndCount).reduce((a: any, b: any) => a + b, 0) as any;
+    // @ts-ignore
+    const percentage = allAnswers.reduce(() => {
+      return `${(selected / sumValues * 100).toFixed(1)}%`;
+    }) as any
+
+    return percentage;
+  }
+
   const createPieObject = (item: any, isMultipleSelection: boolean) => {
     const pieArr: any = [];
 
@@ -84,8 +104,9 @@ const SurveyDetails = ({ classes }: any) => {
       }) : (item?.AnswerAndCount[optionAnswer] || 0);
 
       const selected = isMultipleSelection ? (answers.flat().filter((x: any) => x === optionAnswer).length) : (answers || 0);
+      const percentage = calculatePercentages(item, selected, answers, isMultipleSelection);
 
-      pieArr.push({ id: idx, value: selected, label: ans.slice(0, 7) })
+      pieArr.push({ id: idx, value: selected, label: ans.slice(0, 7), percentage: percentage })
     });
 
     return pieArr;
@@ -100,11 +121,16 @@ const SurveyDetails = ({ classes }: any) => {
         return a.split('|');
       }) : (item?.AnswerAndCount[optionAnswer] || 0);
 
-      const answerOptions: any = Object.values(item.AnswerWithText);
+      // const answerOptions: any = Object.values(item.AnswerWithText);
+
+      const selected = isMultipleSelection ? (answers.flat().filter((x: any) => x === optionAnswer).length) : (answers || 0);
+
+      const percentage = calculatePercentages(item, selected, answers, isMultipleSelection);
 
       const tempObj: any = [];
       tempObj["answer"] = isMultipleSelection ? (answers.flat().filter((x: any) => x === optionAnswer).length) : (answers || 0)
       tempObj['question'] = item.AnswerWithText[ans];
+      tempObj['percentage'] = percentage;
 
       dataset.push(tempObj);
 
