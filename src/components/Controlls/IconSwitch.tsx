@@ -23,7 +23,7 @@ const IconSwitch = ({ icons, classes }: any) => {
                 placement={'top'}
                 title={<Typography className={classes.f16} noWrap={false}>{icon.Title}</Typography>}
                 text={<IconButton
-                    style={{ opacity: icon.Enabled ? 1 : '.4' }}
+                    style={{ opacity: icon.Enabled ? 1 : '.2', color: icon.Enabled ? '#c91b63' : '#000' }}
                     aria-label={icon.Title}
                     key={icon.ID}
                     onClick={icon.OnClick}
