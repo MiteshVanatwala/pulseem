@@ -73,7 +73,7 @@
     "internalerror": "Oops!! Internal error found. Please try again.",
     "userexist": "User already exist under this Email Address",
     "usernameexist": "Username already exists",
-    "contactSupport": "There was a problem during the sign up process. <br />Please contact our support team.<br />Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+    "contactSupport": "Oops! We encountered a problem during your sign up.<br />The username or Email address might already be in use.<br />Please try a different username/Email address or contact our support team.<br />Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
   },
   "LoginDetails": "Login Details",
   "PasswordVerification": "Password Verification",
