@@ -55,7 +55,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
   const { extraData, previousLandingData } = useSelector((state: { sms: SMSStoreProps }) => state.sms);
   const { language, isRTL } = useSelector((state: StateType) => state.core);
-  const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector((state: { common: commonProps }) => state.common);
+  const { tokenAlive, accountSettings, accountFeatures } = useSelector((state: { common: commonProps }) => state.common);
   const { landingPage, landingPageUserBlocks, ToastMessages, LPBeeToken, publicTemplates, templatesBySubAccount } = useSelector((state: { landingPages: BeeEditorStoreModel }) => state.landingPages)
   const [showLoader, setLoader] = useState(true);
   const [dataReady, setDataReady] = useState(false);
@@ -399,7 +399,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         if (saveRef.current?.redirectAfterSave) {
           localStorage.setItem('reloadLPBeeEditor', '1');
           //@ts-ignore
-          window.location = saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`;
+          navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`);
           return false;
         }
         //@ts-ignore
@@ -698,7 +698,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             fromLink?.toLowerCase() !== 'autoresponder' && (
               <>
                 {/* @ts-ignore */}
-                <Button onClick={() => saveDesign(false, null, true, true)}
+                <Button onClick={() => saveDesign(true, null, false, true)}
                   variant='contained'
                   size='medium'
                   className={clsx(
@@ -713,7 +713,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                   {t('common.publish')}
                 </Button>
                 {/* @ts-ignore */}
-                <Button onClick={saveDesign}
+                <Button onClick={() => {
+                  saveDesign(true, `${sitePrefix}EditRegistrationPage`, false, landingPage.Status === 2);
+                }}
                   variant='contained'
                   size='medium'
                   className={clsx(
