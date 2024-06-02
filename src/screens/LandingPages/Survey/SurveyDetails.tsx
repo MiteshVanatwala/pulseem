@@ -270,6 +270,7 @@ const SurveyDetails = ({ classes }: any) => {
                           item.QuestionType === eQuestionType.SingleSelect) &&
                           <Box className={classes.dFlex}>
                             <IconSwitch
+                              classes={classes}
                               icons={[
                                 {
                                   ID: uuidv4(),

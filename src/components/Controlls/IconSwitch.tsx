@@ -1,4 +1,6 @@
-import { IconButton } from "@material-ui/core";
+import { IconButton, Typography } from "@material-ui/core";
+import CustomTooltip from "../Tooltip/CustomTooltip";
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 
 export interface IconSet {
     ID?: number | never;
@@ -8,20 +10,29 @@ export interface IconSet {
     Enabled: boolean;
 }
 
-const IconSwitch = ({ icons }: any) => {
+const IconSwitch = ({ icons, classes }: any) => {
     return <>
         {icons?.map((icon: IconSet, idx: number) => {
-            return <IconButton
-                style={{ opacity: icon.Enabled ? 1 : '.4' }}
-                aria-label={icon.Title}
-                key={icon.ID}
-                onClick={icon.OnClick}
-                title={icon.Title}
-                //@ts-ignore
-                size="large"
-            >
-                {icon.Icon}
-            </IconButton>
+            // @ts-ignore
+            return <CustomTooltip
+                arrow
+                style={{ fontSize: 16, maxWidth: '400' }}
+                isSimpleTooltip={false}
+                classes={classes}
+                interactive={true}
+                placement={'top'}
+                title={<Typography className={classes.f16} noWrap={false}>{icon.Title}</Typography>}
+                text={<IconButton
+                    style={{ opacity: icon.Enabled ? 1 : '.4' }}
+                    aria-label={icon.Title}
+                    key={icon.ID}
+                    onClick={icon.OnClick}
+                    //@ts-ignore
+                    size="large"
+                >
+                    {icon.Icon}
+                </IconButton>}
+            />
         })}
     </>
 }
