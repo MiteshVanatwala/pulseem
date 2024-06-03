@@ -26,6 +26,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import DisableOtpPopup from './Popups/DisableOtpPopup';
 import { cancelDisablePluginOTP } from '../../../redux/reducers/AccountSettingsSlice';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -39,6 +40,7 @@ const FORM_ACCOUNT_DETAILS = ({
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
+	const { accountFeatures } = useSelector((state: any) => state.common);
 
 	const [accountDetails, setAccountDetails] = useState<AccountSettings | null>({
 		DefaultFromMail: '',
@@ -256,7 +258,7 @@ const FORM_ACCOUNT_DETAILS = ({
 						</Grid>
 					</Grid>
 				</Grid>
-				<Grid container>
+				{accountFeatures?.indexOf(PulseemFeatures.DISABLE_OPTIN_PLUGIN) > -1 && <Grid container>
 					<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
 						<FormControlLabel
 							control={
@@ -280,7 +282,7 @@ const FORM_ACCOUNT_DETAILS = ({
 							label={t('settings.accountSettings.bypassOtp.checkboxTitle')}
 						/>
 					</Grid>
-				</Grid>
+				</Grid>}
 				<Grid container className={'form'} style={{ maxWidth: '100%' }}>
 					<Grid item xs={12} className={classes.justifyContentEnd}>
 						<Button
