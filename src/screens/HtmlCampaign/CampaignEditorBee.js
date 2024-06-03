@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button } from '@material-ui/core'
+import { Box, Button, Grid, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,10 +12,10 @@ import {
   testSend,
   saveUserBlock,
   deleteUserBlock,
-  // saveTemplateToAccount,
-  // getTemplateById,
-  // getPublicTemplates,
-  // getAllTemplatesBySubaccountId
+  saveTemplateToAccount,
+  getTemplateById,
+  getPublicTemplates,
+  getAllTemplatesBySubaccountId
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
@@ -45,9 +45,9 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-// // import Templates from './modals/Templates.tsx';
-// // import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
-// // import SaveTemplate from './modals/SaveTemplate';
+import Templates from './modals/Templates.tsx';
+import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
+import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 import { sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
@@ -55,6 +55,9 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
+import { getCategories } from '../../redux/reducers/productSlice';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { NO_IMAGE_URL } from '../../helpers/Constants';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -72,6 +75,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
+  const { productCategories } = useSelector(state => state.product);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -92,8 +96,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [lastSaveText, setLastSaveText] = useState(null);
   const [silentSave, setSilentSave] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  // const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
-  // const [newTemplate, setNewTemplate] = useState('');
+  const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
+  const [newTemplate, setNewTemplate] = useState('');
   const [domainAddressError, setDomainAddressError] = useState({
     display: false,
     address: '',
@@ -105,6 +109,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   });
   const [showDomainVerification, setShowDomainVerification] = useState(false);
   const [emailProps, setEmailProps] = useState(null);
+  const [dialogType, setDialogType] = useState(null)
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -150,7 +155,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (dataReady) {
       Promise.all([initFields()]).then(() => {
         return true;
-      })
+      });
     }
 
   }, [dataReady]);
@@ -161,6 +166,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
 
   }, [isRTL]);
+
   // Get data by campaign id
   useEffect(() => {
     if (params?.id > 0) {
@@ -169,11 +175,10 @@ const CampaignEditor = ({ classes, ...props }) => {
         window.location.reload(true);
       } else getData();
     }
-    // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-    // dispatch(getAllTemplatesBySubaccountId());
-    // if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
-    // dispatch(getAllTemplatesBySubaccountId());
+    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    dispatch(getAllTemplatesBySubaccountId());
   }, []);
+
   useEffect(() => {
     if (userBlocks) {
       return new Promise((resolve) => {
@@ -245,7 +250,10 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups());
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
-    await dispatch(getAuthorizedEmails());
+
+    if (productCategories?.length <= 0) {
+      getProductCategories();
+    }
     setDataReady(true);
     const initBeeToken = () => {
       dispatch(getBeeToken());
@@ -266,11 +274,20 @@ const CampaignEditor = ({ classes, ...props }) => {
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
+    let tempRows = [{
+      name: 'product-catalog',
+      value: 'product-catalog',
+      handle: 'product-catalog',
+      isLocal: true,
+      behaviors: {
+        canEdit: true,
+        canDelete: true,
+      }
+    }]
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];
-      let tempRows = [];
       tags?.forEach((tag, idx) => {
-        if (tag && tag !== undefined && tag !== null) {
+        if (tag && tag !== undefined && tag !== null && tag.trim() !== 'product-catalog') {
           const tagObj = {
             name: tag.trim(),
             value: tag.replace(' ', ''),
@@ -290,25 +307,25 @@ const CampaignEditor = ({ classes, ...props }) => {
           return JSON.stringify(obj) === _value;
         });
       });
-      config.rowsConfiguration.externalContentURLs = tempRows;
     }
+    config.rowsConfiguration.externalContentURLs = tempRows;
   }
   const initBeeEditor = (templateId = null) => {
     initSpecialLinks().then(async (specialLinksFiles) => {
       const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
       let forceTemplate = null;
       let defaultContent = DefaultContent(isRtlLang);
-      // if (templateId !== null) {
-      //   const templateResponse = await dispatch(getTemplateById(templateId));
+      if (templateId !== null) {
+        const templateResponse = await dispatch(getTemplateById(templateId));
 
-      // //   if (templateResponse?.payload?.StatusCode === 201) {
-      // //     const responseData = templateResponse?.payload?.Data;
-      // //     setNewTemplate(responseData)
-      // //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
-      // //   } else {
-      // //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
-      // //   }
-      // // }
+        if (templateResponse?.payload?.StatusCode === 201) {
+          const responseData = templateResponse?.payload?.Data;
+          setNewTemplate(responseData)
+          forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+        } else {
+          setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+        }
+      }
 
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
@@ -331,12 +348,12 @@ const CampaignEditor = ({ classes, ...props }) => {
             const beeTest = new BeePlugin(beeObject);
             let template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
 
-            // if (forceTemplate !== null) {
-            //   template = forceTemplate;
-            // }
-            // else {
-            //   template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
-            // }
+            if (forceTemplate !== null) {
+              template = forceTemplate;
+            }
+            else {
+              template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
+            }
 
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
@@ -367,6 +384,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     })
   }
+
+  const getProductCategories = async () => {
+    await dispatch(getCategories());
+  }
+
   useEffect(() => {
     if (beeToken) {
       initBeeEditor();
@@ -390,6 +412,22 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
+    const dynamicBlocks = (args.HtmlData?.match(/product-block-container/g) || []).length;
+    if (saveRef.current?.checkDynamicBlock && dynamicBlocks > 0) {
+      if (dynamicBlocks > 1) {
+        setDialogType({ type: 'moreThanOneDynamicBlock', data: saveRef.current?.operation })
+        return false;
+      } else if (['save', 'exit'].indexOf(saveRef.current?.operation) === -1) {
+        setDialogType({
+          type: 'productCatalogPrompt',
+          data: args
+        });
+        return false;
+      }
+    } else if (dynamicBlocks > 1) {
+      return false;
+    }
+
     const reInit = saveRef.current?.reInitEditor;
 
     try {
@@ -406,6 +444,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       }));
 
       if (response.payload === true) {
+        const now = moment();
+        setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
         if (saveRef.current?.redirectAfterSave) {
           const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
           localStorage.setItem('reloadBeeEditor', 1);
@@ -419,8 +459,8 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         else if (saveRef.current?.showAnimation) {
-          // setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
-          setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+          // setToastMessage(ToastMessages.CAMPAIGN_SAVED);
         }
 
         if (reInit) {
@@ -428,18 +468,19 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       }
 
-      // if (saveRef.current?.saveTemplate) {
-      //   const templateResponse = await dispatch(saveTemplateToAccount({
-      //     Name: saveRef.current?.templateName,
-      //     JsonData: finalJson,
-      //     HTML: finalHtml,
-      //     Category: saveRef.current?.templateCategory
-      //   }));
-      //   if (!templateResponse.payload.Data) {
-      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
-      //   }
-      //   dispatch(getAllTemplatesBySubaccountId());
-      // }
+      if (saveRef.current?.saveTemplate) {
+        const templateResponse = await dispatch(saveTemplateToAccount({
+          Name: saveRef.current?.templateName,
+          JsonData: finalJson,
+          HTML: finalHtml,
+          Category: saveRef.current?.templateCategory
+        }));
+        if (!templateResponse.payload.Data) {
+          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+        }
+        dispatch(getAllTemplatesBySubaccountId());
+        getData();
+      }
     } catch (e) {
       console.error(e);
     }
@@ -447,12 +488,12 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     }
   }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
+  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true, checkDynamicBlock = false, operation = '') => {
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, checkDynamicBlock, operation };
     await editorRef.current.save();
     setTimeout(() => {
-      const now = moment();
-      setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
+      // const now = moment();
+      // setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
   }
@@ -488,7 +529,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : `${sitePrefix}Campaigns`;
 
     if (saveBeforeExit) {
-      saveDesign(true, redirectLink, false);
+      saveDesign(true, redirectLink, false, true, 'exit');
     }
     else {
       if (isAutoResponder) window.location.href = redirectLink;
@@ -581,21 +622,25 @@ const CampaignEditor = ({ classes, ...props }) => {
       uuid: block?.metadata?.uuid
     };
     dispatch(saveUserBlock(blockRequest)).then(async () => {
-      setLoader(false);
-      dispatch(getUserblocks());
-      await setRow(json);
+      let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
+      var tags = [].concat.apply([], tempTags);
+      if (tags && tags?.length > 0) {
+        setSilentSave(true)
+        await saveDesign(false, null, false);
+      }
+      getData();
     });
   }
   const onEditBlock = (blockRequest) => {
     setLoader(true);
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
-      await setRow(JSON.stringify(blockRequest?.Json));
+      getData();
     });
   }
   const handleDeleteBlock = (e, row_id) => {
     dispatch(deleteUserBlock(row_id)).then((result) => {
-      console.log(result);
+      getData();
     })
   }
   const handleOpenTestSend = () => {
@@ -620,7 +665,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       setShowDomainVerification(true)
     }
     else {
-      saveDesign(false, null, false).then(async (r) => {
+      saveDesign(false, null, false, true).then(async (r) => {
         setIsResponseModal(false);
         editorRef.current.send();
       });
@@ -655,10 +700,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   const config = getConfig();
 
 
-  // const saveTemplate = async (name, category) => {
-  //   saveRef.current = { templateName: name, templateCategory: category, saveTemplate: true, showAnimation: true };
-  //   await editorRef.current.save();
-  // }
+  const saveTemplate = async (name, category) => {
+    saveRef.current = { templateName: name, templateCategory: category, saveTemplate: true, showAnimation: true };
+    await editorRef.current.save();
+  }
 
   const onBeforeReinit = async () => {
     saveRef.current = { showAnimation: false, reInitEditor: true };
@@ -733,13 +778,41 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
-  // const renderTemplateButtons = () => {
-  //   return <>
-  //     <Button onClick={() => {
-  //       setLoader(true);
-  //       setTimeout(() => {
-  //         setDialog(DialogType.Templates);
-  //       }, 1000);
+  const renderTemplateButtons = () => {
+    return <>
+      <Button onClick={() => {
+        setLoader(true);
+        setTimeout(() => {
+          setDialog(DialogType.Templates);
+        }, 1000);
+
+        setTimeout(() => {
+          setLoader(false);
+        }, 2000);
+      }}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.btn,
+          classes.btnRounded
+        )}
+        style={{ margin: '8px' }}
+      >
+        {t('common.templates')}
+      </Button>
+      <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.btn,
+          classes.btnRounded
+        )}
+        style={{ margin: '8px' }}
+        startIcon={<BiSave />}
+      >
+        {t('common.saveTemplate')}
+      </Button></>
+  }
 
   //       setTimeout(() => {
   //         setLoader(false);
@@ -768,13 +841,114 @@ const CampaignEditor = ({ classes, ...props }) => {
   //       {t('common.saveTemplate')}
   //     </Button></>
   // }
+
+  const productCatalogModal = (args) => {
+    return {
+      showDivider: false,
+      title: t("common.important"),
+      content: (
+        <Box>
+          <Typography title={t("common.dynamicProductNotice")} className={classes.alignDir}>
+            {RenderHtml(t("common.dynamicProductNotice"))}
+          </Typography>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Grid
+          container
+          spacing={4}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => {
+                setDialogType(null);
+                saveRef.current = { ...saveRef.current, checkDynamicBlock: false };
+                onSave(args);
+              }}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}>
+              {t('common.Ok')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+    };
+  }
+
+  const moreThanOneDynamicBlockModal = (data = '') => {
+    const message = t(
+      data === 'save' ? "common.noMoreThanOneDynamicBlockSave"
+        : (data === "exit" ? "common.noMoreThanOneDynamicBlockExit" : "common.noMoreThanOneDynamicBlock")
+    );
+    return {
+      showDivider: false,
+      title: t("common.pleaseNotice"),
+      content: (
+        <Box>
+          <Typography title={message} className={classes.alignDir}>
+            {RenderHtml(message)}
+          </Typography>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Grid
+          container
+          spacing={4}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+        >
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded
+              )}>
+              {t('common.Ok')}
+            </Button>
+          </Grid>
+        </Grid>
+      )
+    };
+  }
+
+  const renderDialog = () => {
+    const { type, data } = dialogType || {}
+    let currentDialog = {};
+    if (type === 'productCatalogPrompt') {
+      currentDialog = productCatalogModal(data);
+    } else if (type === 'moreThanOneDynamicBlock') {
+      currentDialog = moreThanOneDynamicBlockModal(data);
+    }
+
+    if (type) {
+      return (
+        dialogType && <BaseDialog
+          classes={classes}
+          open={dialogType}
+          onCancel={() => setDialogType(null)}
+          onClose={() => setDialogType(null)}
+          renderButtons={currentDialog?.renderButtons || null}
+          {...currentDialog}>
+          {currentDialog?.content}
+        </BaseDialog>
+      )
+    }
+  }
+
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
       wizardButtons.push(<>
         <Button
           onClick={() =>
-            saveDesign(false, null, true)}
+            saveDesign(false, null, true, true, 'save')}
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -808,7 +982,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             setShowDomainVerification(true)
           }
           else {
-            saveDesign(true);
+            saveDesign(true, null, true, true);
           }
 
         }}
@@ -870,7 +1044,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       {renderToast()}
       {showGalleryModal()}
       {showDocumentsModal()}
-      {/* {
+      {
         dialog === DialogType.Templates && <Templates
           classes={classes}
           onClose={(template) => {
@@ -882,7 +1056,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           }}
           isOpen={dialog === DialogType.Templates}
         />
-      } */}
+      }
       <NoCreditsModal
         classes={classes}
         onClose={() => setDialog(null)}
@@ -930,11 +1104,10 @@ const CampaignEditor = ({ classes, ...props }) => {
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
-        // additionalButtonsOnStart={renderTemplateButtons()}
+        additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
-      {/* <OverwriteTemplatePopUp
-      {/* <OverwriteTemplatePopUp
+      <OverwriteTemplatePopUp
         classes={classes}
         onClose={(resp) => {
           if (resp) {
@@ -952,7 +1125,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           if (resp !== undefined) saveTemplate(resp.name, resp.category);
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
-      /> */}
+      />
       <DomainVerification
         classes={classes}
         domain={domainAddressError}
@@ -962,6 +1135,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           setShowDomainVerification(false)
         }}
       />
+      {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
   )

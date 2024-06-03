@@ -18,5 +18,6 @@
 	"pleaseUpdate": "אנא ערכו את כל השדות הדינאמיים בהודעה",
 	"noChat": "אין שיחות",
 	"noContacts": "לא נמצאו אנשי קשר",
-	"messageErrorText": "לא ניתן להציג הודעה זאת"
+	"messageErrorText": "לא ניתן להציג הודעה זאת",
+	"typeMessage": "הקלד הודעה כאן"
 }

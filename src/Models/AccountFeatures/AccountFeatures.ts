@@ -33,7 +33,8 @@ export enum AccountFeatures {
     Automation = 32,
     SmppDlrOnly = 33,
     PrepaidFromWS = 34,
-    Notifications = 35
+    Notifications = 35,
+    AutomationTemplate = 57,
 }
 export interface AccountFeature {
     CompanyID: number;

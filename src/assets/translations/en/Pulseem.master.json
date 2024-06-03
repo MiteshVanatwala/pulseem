@@ -384,5 +384,7 @@
   "whatsapp": "Whatsapp",
   "responses": "Responses",
   "download": "Download",
-  "fileDownload": "File Download"
+  "fileDownload": "File Download",
+  "manageTemplate": "Manage Template",
+  "createTemplate": "Create Template"
 }

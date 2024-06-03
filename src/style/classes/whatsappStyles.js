@@ -1921,6 +1921,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__header': {
 			zIndex: '20',
+			paddingInline: 15
 		},
 		'&.chat__avatar-wrapper': {
 			width: '50px',
