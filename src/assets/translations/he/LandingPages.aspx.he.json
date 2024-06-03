@@ -464,5 +464,11 @@
     "surveyAnswer": "תשובת סקר",
     "userAnswered": "משתמש 1 ענה",
     "usersAnswered": "משתמשים ענו"
-  }
+  },
+  "publish": "פרסום",
+  "webformLanguage": "שפת טופס",
+  "groupsForSubscribers": "קבוצות לשיוך נרשמים",
+  "doubleOptIn": "הפעל נמען דרך אימייל - Double optin",
+  "commentsToForm": "תגובות לטופס",
+  "facebookLikes": "לייק בפייסבוק"
 }

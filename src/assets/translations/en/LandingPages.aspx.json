@@ -464,5 +464,11 @@
     "surveyAnswer": "Survey Answer",
     "userAnswered": "One user answered",
     "usersAnswered": "Users answered"
-  }
+  },
+  "publish": "Publish",
+  "webformLanguage": "Form Language",
+  "groupsForSubscribers": "Group for Subscribers",
+  "doubleOptIn": "Activate Subscriber with Double Opt In",
+  "commentsToForm": "Comments to Form",
+  "facebookLikes": "Facebook Like"
 }

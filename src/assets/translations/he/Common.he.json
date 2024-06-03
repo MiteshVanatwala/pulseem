@@ -813,5 +813,6 @@
   "pageViewed": "צפה בעמוד ב",
   "priceRangeError": "מחיר המקסימום גבוה ממחיר המינימום",
   "verifyByEmail": "אימות באימייל",
-  "verifyBySms": "אימות ב-SMS"
+  "verifyBySms": "אימות ב-SMS",
+  "notSet": "לא הוגדר"
 }

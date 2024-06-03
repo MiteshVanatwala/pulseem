@@ -80,6 +80,7 @@ import { isSignupPage } from './helpers/Utils/common';
 import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
 import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
+import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -334,6 +335,10 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
         element={<SurveyDetails classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}LandingPages/summary/:id`}
+        element={<WebformSummary classes={classes} />}
       />
       <Route
         path={`/Survey`}

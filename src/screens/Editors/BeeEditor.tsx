@@ -392,7 +392,13 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         if (saveRef.current?.isPublish) {
           //@ts-ignore
           response = await dispatch(publish(args?.campaignId));
-          // TODO: Handle publish response
+
+          if (response.payload?.StatusCode === 201) {
+            navigate(`${sitePrefix}landingpages/LandingPages/Summary/${args?.campaignId}`)
+          }
+          else {
+            // TODO: Handle publish response
+          }
         }
 
         //@ts-ignore
