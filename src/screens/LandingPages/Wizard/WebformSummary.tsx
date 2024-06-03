@@ -74,12 +74,12 @@ const WebformSummary = ({ classes }: any) => {
                 classes={classes}
                 Text={t('landingPages.publish')}
             />
-            {/* <Box style={{ padding: 25, maxWidth: 900, margin: '0 auto' }}> */}
-            <Box style={{ padding: 25 }}>
+            <Box style={{ padding: 25, maxWidth: 900, margin: '0 auto' }}>
+                {/* <Box style={{ padding: 25 }}> */}
                 <Grid container spacing={1}>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>{t("landingPages.formName")}</Typography>
-                        <Typography>{webForm.PageName}</Typography>
+                        <Typography title={webForm.PageName} className={classes.ellipsisText}>{webForm.PageName}</Typography>
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>{t('common.campaignType')}</Typography>
@@ -102,28 +102,28 @@ const WebformSummary = ({ classes }: any) => {
                             const groupFound = subAccountAllGroups?.find((g: any) => {
                                 return g?.GroupID === parseInt(groupId)
                             });
-                            return <Typography>{groupFound?.GroupName}</Typography>
+                            return <Typography title={groupFound?.GroupName} className={classes.ellipsisText}>{groupFound?.GroupName}</Typography>
                         })}
                     </Grid>}
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>{t('landingPages.limitNumberOfSubscribers')}</Typography>
-                        <Typography>{webForm.SubscriptionsLimit > 0 ? webForm.SubscriptionsLimit : t('common.disabled')}</Typography>
+                        <Typography title={webForm.SubscriptionsLimit > 0 ? webForm.SubscriptionsLimit : t('common.disabled')} className={classes.ellipsisText}>{webForm.SubscriptionsLimit > 0 ? webForm.SubscriptionsLimit : t('common.disabled')}</Typography>
                     </Grid>
                     <Grid item xs={12}>
                         <Divider style={{ margin: '10px 0px' }} />
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>{t('landingPages.formOfflineDate')}</Typography>
-                        <Typography>{webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.IL_DATE_ONLY) : t('common.notSet')}</Typography>
+                        <Typography title={webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.IL_DATE_ONLY) : t('common.notSet')}>{webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.IL_DATE_ONLY) : t('common.notSet')}</Typography>
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>{t('landingPages.redirectURLWhenOffline')}</Typography>
-                        <Typography>{webForm.OfflineUrl || t('common.notSet')}</Typography>
+                        <Typography title={webForm.OfflineUrl} className={classes.ellipsisText}>{webForm.OfflineUrl || t('common.notSet')}</Typography>
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>{t('landingPages.reportLeadsToEmails')}</Typography>
                         {webForm?.EmailsToReport?.split(',')?.length > 0 ? webForm?.EmailsToReport.split(',')?.map((email: string) => {
-                            return <Typography>{email}</Typography>
+                            return <Typography className={classes.ellipsisText}>{email}</Typography>
                         }) : <>{t('common.notSet')}</>}
                     </Grid>
                     {/* <Grid item xs={4}>
