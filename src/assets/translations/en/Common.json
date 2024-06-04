@@ -675,6 +675,8 @@
   "daily2AM": "Daily (2 AM)",
   "weekly2AM": "Weekly (2 AM)",
   "allTheTimes": "All The Times",
+  "daysBack": "Number of days back",
+  "typeDaysBack": "Type Number of days back",
   "newsletterCampaignName": "Newsletter Campaign Name",
   "newsletterCampaignDates": "Newsletter Campaign Date",
   "newsletterCampaignStatus": "Newsletter Campaign Status",
