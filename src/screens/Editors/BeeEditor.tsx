@@ -41,6 +41,7 @@ import { FileGallery } from '../../Models/Files/FileGallery';
 import { DemoModal } from '../HtmlCampaign/components/DemoModal';
 import { ClientForm } from '../../Models/BeeModels/BeeModel';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from '../../redux/reducers/smsSlice';
+import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
 
 const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -92,6 +93,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
   const [clientForm, setClientForm] = useState<ClientForm>({});
   const [reInit, setReinit] = useState<boolean>(false);
+  const [showGroupSelection, setShowGroupSelection] = useState<boolean>(false);
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -290,7 +292,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
       // config.defaultForm
-      console.log(config.defaultForm);
+      // console.log(config.defaultForm);
       if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
         config.workspace.type = 'mixed';
       }
@@ -378,6 +380,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
+
+      if (finalHtml.indexOf('submithandler.axd') > -1 && landingPage?.Data?.WebForm?.SelectedGroupList?.length <= 0) {
+        // show Popup
+        setShowGroupSelection(true);
+        return false;
+      }
       //@ts-ignore
       let response: any = await dispatch(saveWebform({
         Name: '',
@@ -1034,6 +1042,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     }
     return <></>
   }
+
+  const updateWebFormGroups = (list: Array<number>) => {
+    console.log(list);
+  }
   return (
     <DefaultScreen
       showAppBar={false}
@@ -1088,6 +1100,16 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       />
       {renderDialog()}
       <Loader isOpen={showLoader} showBackdrop={false} />
+      {/* @ts-ignore */}
+      {showGroupSelection && <GroupSelectorPopUp
+        classes={classes}
+        key={'groupSelection'}
+        isOpen={true}
+        onConfirm={updateWebFormGroups}
+        onClose={() => setShowGroupSelection(false)}
+        onCancel={() => setShowGroupSelection(false)}
+        selectedGroups={landingPage?.Data?.WebForm?.SelectedGroupList}
+      />}
     </DefaultScreen>
   )
 }

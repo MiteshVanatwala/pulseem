@@ -297,3 +297,26 @@ export const lowerCaseLetters = /[a-z]/g;
 export const upperCaseLetters = /[A-Z]/g;
 export const numbers = /[0-9]/g;
 export const specialLetters = /[!"#$%&'()*+.\/:;<=>?@\[\\\]^_`{|}~-]/g;
+
+export const DEFAULT_NEW_GROUP = {
+    ActiveCell: 0,
+    ActiveEmails: 0,
+    DynamicData: null,
+    DynamicLastUpdate: null,
+    DynamicUpdatePolicy: null,
+    GroupID: null,
+    InvalidCell: 0,
+    InvalidEmails: 0,
+    IsDynamic: false,
+    IsTestGroup: false,
+    PendingClients: 0,
+    Recipients: 0,
+    RemovedCell: 0,
+    RemovedEmails: 0,
+    RestrictedEmails: 0,
+    SubAccountID: 0,
+    TotalRecipients: 0,
+    GroupName: "",
+    UpdatedDate: new Date(),
+    CreatedDate: new Date(),
+};
