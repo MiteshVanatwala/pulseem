@@ -82,7 +82,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const [lastSaveText, setLastSaveText] = useState<string | null>(null);
   const [silentSave, setSilentSave] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  // const [newTemplate, setNewTemplate] = useState('');
+  const [newTemplate, setNewTemplate] = useState('');
   const [saveTemplateDetails, setSaveTemplateDetails] = useState({
     templateName: '',
     categoryName: '',
@@ -276,17 +276,19 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       const isRtlLang = webform?.BaseLanguage === 0 || webform?.BaseLanguage === 8 ? true : false;
       let forceTemplate = null;
       let defaultContent = DefaultContent(isRtlLang);
-      // if (templateId !== null) {
-      //   const templateResponse = await dispatch(getLPTemplateById(templateId));
+      if (templateId !== null) {
+        //@ts-ignore
+        const templateResponse = await dispatch(getLPTemplateById(templateId)) as any;
 
-      //   if (templateResponse?.payload?.StatusCode === 201) {
-      //     const responseData = templateResponse?.payload?.Data;
-      //     setNewTemplate(responseData)
-      //     forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
-      //   } else {
-      //     setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
-      //   }
-      // }
+        if (templateResponse?.payload?.StatusCode === 201) {
+          const responseData = templateResponse?.payload?.Data;
+          setNewTemplate(responseData)
+          forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+        } else {
+          // @ts-ignore
+          setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+        }
+      }
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
       config.specialLinks = specialLinksFiles;

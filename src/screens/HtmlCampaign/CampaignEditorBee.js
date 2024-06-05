@@ -45,7 +45,7 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-import Templates from './modals/Templates.tsx';
+import Templates from './modals/Templates';
 import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
 import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */

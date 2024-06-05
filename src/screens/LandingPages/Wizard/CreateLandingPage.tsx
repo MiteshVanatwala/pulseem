@@ -23,8 +23,6 @@ import { BsInfoCircle } from 'react-icons/bs';
 import { getById, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
 import { sitePrefix } from '../../../config';
 import { useNavigate, useParams } from 'react-router-dom';
-// import Templates from '../../HtmlCampaign/modals/Templates';
-// import Templates from '../../BeeEditorPage/modals/Templates';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import FormProperties from './Tabs/FormProperties';
 import OfflineProperties from './Tabs/OfflineProperties';

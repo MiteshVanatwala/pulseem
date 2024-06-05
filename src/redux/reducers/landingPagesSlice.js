@@ -79,19 +79,18 @@ export const saveLandingPage = createAsyncThunk(
 export const saveLPTemplateToAccount = createAsyncThunk(
   '/landingpages/SaveAsTemplate', async (data, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.post(`landingpages/SaveAsTemplate`, data);
-      // return response.data;
-      return {};
+      const response = await PulseemReactInstance.post(`LandingPages/SaveAsTemplate`, data);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
 
 export const getLPBeeToken = createAsyncThunk(
-  '/CampaignEditor/GetBeeLPToken/',
+  '/LandingPages/GetBeeLPToken',
   async (_, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.get(`/CampaignEditor/GetBeeLPToken`);
+      const response = await PulseemReactInstance.get(`/LandingPages/GetBeeLPToken`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -101,9 +100,8 @@ export const getLPBeeToken = createAsyncThunk(
 export const getLPPublicTemplates = createAsyncThunk(
   '/landingpages/GetPublicTemplates', async (isRTL, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
-      // return response.data
-      return { Data: publicTemplates };
+      const response = await PulseemReactInstance.get(`LandingPages/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -112,9 +110,8 @@ export const getLPPublicTemplates = createAsyncThunk(
 export const getAllLPTemplatesBySubaccountId = createAsyncThunk(
   '/landingpages/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
-      // return response.data
-      return { Data: publicTemplates };
+      const response = await PulseemReactInstance.get(`LandingPages/GetAllTemplatesBySubaccountId`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -123,11 +120,8 @@ export const getAllLPTemplatesBySubaccountId = createAsyncThunk(
 export const getLPTemplateById = createAsyncThunk(
   '/landingpages/GetTemplateById/', async (id, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.get(`/CampaignEditor/GetTemplateById/${id}`);
-      // return response.data
-      return {
-        Data: ''
-      };
+      const response = await PulseemReactInstance.get(`/LandingPages/GetTemplateById/${id}`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -303,7 +297,7 @@ export const landingPagesSlice = createSlice({
     })
     builder.addCase(getAllLPTemplatesBySubaccountId.fulfilled, (state, action) => {
       state.templatesBySubAccount = action.payload.Data || [];
-      state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
+      state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'CategoryList');
     })
 
     builder.addCase(downloadReport.rejected, (_, action) => console.log('Error - api downloadReport: ' + action.error))
