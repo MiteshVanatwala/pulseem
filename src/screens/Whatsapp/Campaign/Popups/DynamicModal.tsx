@@ -16,8 +16,9 @@ import { useTranslation } from 'react-i18next';
 import DynamicModalFields from './DynamicModalFields';
 import { fieldIDs, fieldNames } from '../../Constant';
 import { useParams } from 'react-router-dom';
-import ValidationAlert from './ValidationAlert';
 import { RemoveNewLineAndConsecutiveSpaces } from '../../../../helpers/Utils/TextHelper';
+import { IsValidURL } from '../../../../helpers/Utils/Validations';
+import { DynamicProductLink } from '../../../../Models/PushNotifications/Enums';
 
 const DynamicModal = ({
 	classes,
@@ -46,12 +47,23 @@ const DynamicModal = ({
 	const [validationErrors, setValidationErrors] = useState<string[]>([]);
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
-	>([]);
-
+	>(dynamicVariable || []);
+	const [dynamicProductType, setDynamicProductType] = useState<string>('');
+	const [dynamicProductFallbackURL, setDynamicProductFallbackURL] = useState<string>('');
+	
 	useEffect(() => {
 		if (campaignID && !isDynamcVariableUpdated && dynamicVariable?.length > 0) {
 			setUpdatedDynamicVariable(dynamicVariable);
 			setIsDynamcVariableUpdated(true);
+		}
+		const isDynamicProduct = getFieldValueByID(fieldIDs[fieldNames.LINK]);
+		if (isDynamicProduct.indexOf('dynamic') > -1) {
+			setDynamicProductType(isDynamicProduct.indexOf('?Purchase') > -1 ? DynamicProductLink.LATEST_PURCHASE : DynamicProductLink.LATEST_ABANDONMENT)
+			setDynamicProductFallbackURL(updatedDynamicVariable?.find(
+				(updatedVariable: updatedVariable) =>
+					updatedVariable?.VariableIndex === dynamicModalVariable &&
+					updatedVariable?.FieldTypeId === fieldIDs[fieldNames.LINK]
+			)?.FallbackUrl || '')
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dynamicVariable]);
@@ -100,13 +112,14 @@ const DynamicModal = ({
 	}, [dynamicModalVariable]);
 
 	useEffect(() => {
-		setUpdatedDynamicVariable([]);
+		// setUpdatedDynamicVariable([]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [savedTemplate]);
 
 	const onClose = () => {
 		setUpdatedDynamicVariable(dynamicVariable);
 		onDynamcFieldModalClose();
+		setUpdatedDynamicVariable([]);
 	};
 
 	const dynamicButtons: dynamicButtonProps[] = [
@@ -166,16 +179,23 @@ const DynamicModal = ({
 			}
 		});
 
+		if (activeDynamicButton === 'whatsappCampaign.link' && dynamicProductType !== '' && !IsValidURL(dynamicProductFallbackURL)) {
+			validationErrors.push(translator('common.invalidURL'));
+			isValidated = false;
+		}
+
 		if (!isValidated) {
 			setValidationErrors([...validationErrors]);
 			setIsValidationAlert(true);
 		}
+		
 		return isValidated;
 	};
 
 	const onSave = () => {
 		if (validateDynamicField()) {
 			onDynamcFieldModalSave(updatedDynamicVariable);
+			setUpdatedDynamicVariable([]);
 		}
 	};
 
@@ -199,7 +219,8 @@ const DynamicModal = ({
 	const updateDynamicVariables = (
 		field: string,
 		value: string,
-		isTrackLink: boolean = false
+		isTrackLink: boolean = false,
+		fallbackUrl: string = ''
 	) => {
 		const isVariableUpdated = updatedDynamicVariable?.find(
 			(updatedVariable: updatedVariable) =>
@@ -210,7 +231,7 @@ const DynamicModal = ({
 		}
 		if (!!isVariableUpdated) {
 			const newDynamicVariables = updatedDynamicVariable.map(
-				(updatedVariable) => {
+				(updatedVariable: any) => {
 					if (updatedVariable?.VariableIndex !== dynamicModalVariable)
 						return updatedVariable;
 
@@ -219,6 +240,7 @@ const DynamicModal = ({
 						VariableValue: field === 'text' ? RemoveNewLineAndConsecutiveSpaces(value) : value,
 						FieldTypeId: getfieldTypeId(field),
 						IsStatastic: field === 'link' ? isTrackLink : false,
+						FallbackUrl: fallbackUrl
 					};
 				}
 			);
@@ -231,6 +253,7 @@ const DynamicModal = ({
 					VariableIndex: dynamicModalVariable,
 					VariableValue: field === 'text' ? RemoveNewLineAndConsecutiveSpaces(value) : value,
 					IsStatastic: field === 'link' ? isTrackLink : false,
+					FallbackUrl: fallbackUrl
 				},
 			]);
 		}
@@ -298,7 +321,7 @@ const DynamicModal = ({
 						}
 						onAddRemovalLink={(isTrackLink) => onAddRemovalLink(isTrackLink)}
 						setLinkInput={(value, isTrackLink) =>
-							updateDynamicVariables('link', value, isTrackLink)
+							updateDynamicVariables('link', value, isTrackLink, dynamicProductFallbackURL)
 						}
 						setLandPage={(value: string) =>
 							updateDynamicVariables('landingPage', value)
@@ -310,8 +333,27 @@ const DynamicModal = ({
 						personalFields={personalFields}
 						landingPageData={landingPageData}
 						isTrackLink={isTrackLink}
+						dynamicProductType={dynamicProductType}
+						setDynamicProductType={(value: string) => {
+							setDynamicProductType(value);
+							updateDynamicVariables('link', value, isTrackLink, dynamicProductFallbackURL)
+						}}
+						dynamicProductFallbackURL={dynamicProductFallbackURL}
+						setDynamicProductFallbackURL={(val: string) => {
+							setDynamicProductFallbackURL(val);
+							updateDynamicVariables('link', dynamicProductType, isTrackLink, val)
+						}}
 					/>
 				</Grid>
+			</Box>
+			<Box>
+				<ul className={clsx(classes.noMargin, classes.mb20, classes.pt20)}>
+					{validationErrors?.map((requiredField: string, index: number) => (
+						<li key={index} className={clsx(classes.validationAlertModalLi, classes.errorLabel, classes.f16)}>
+							{requiredField}
+						</li>
+					))}
+				</ul>
 			</Box>
 			<DialogActions className={classes.pt25}>
 				<Button

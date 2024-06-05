@@ -813,5 +813,12 @@
   "pageViewed": "צפה בעמוד ב",
   "priceRangeError": "מחיר המקסימום גבוה ממחיר המינימום",
   "verifyByEmail": "אימות באימייל",
-  "verifyBySms": "אימות ב-SMS"
+  "verifyBySms": "אימות ב-SMS",
+  "dynamicProduct": "מוצר דינאמי",
+  "latestPurchase": "רכישה אחרונה",
+  "latestAbandonment": "נטישה אחרונה",
+  "dynamicProductRedirectURL": "לאן תרצו להפנות נמענים שקיבלו את ההודעה, אך לא ביצעו רכישה\\נטישה?",
+  "URL": "גיבוי",
+  "fallbackURL": "URL גיבוי",
+  "invalidURL": "אנא הכניסו קישור תקין"
 }

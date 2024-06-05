@@ -23,6 +23,7 @@ import SiteTrackAlert from './SiteTrackAlert';
 import { checkSiteTrackingLink } from '../../Common';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
+import { DynamicProductLink } from '../../../../Models/PushNotifications/Enums';
 
 const DynamicModalFields = ({
 	classes,
@@ -43,6 +44,10 @@ const DynamicModalFields = ({
 	personalFields,
 	landingPageData,
 	isTrackLink,
+	dynamicProductType,
+	setDynamicProductType,
+	dynamicProductFallbackURL,
+	setDynamicProductFallbackURL
 }: DynamicModalFieldsProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector((state: { core: coreProps }) => state.core);
@@ -52,7 +57,7 @@ const DynamicModalFields = ({
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
 	const [isSiteTrack, setIsSiteTrack] = useState(false);
-
+	
 	const onTrackLinkToggle = () => {
 		if (isTrackLink && checkSiteTrackingLink(SubAccountSettings, linkInput)) {
 			setIsSiteTrack(true);
@@ -67,6 +72,8 @@ const DynamicModalFields = ({
 	};
 
 	const onAddRemovalLinkClick = () => {
+		setDynamicProductType('');
+		setDynamicProductFallbackURL('');
 		onAddRemovalLink(true);
 	};
 
@@ -148,66 +155,131 @@ const DynamicModalFields = ({
 			)}
 
 			{activeDynamicButton?.includes('link') && (
-				<div className={classes.whatsappCampaignDynamicFieldLink}>
-					<Box className={classes.switchDiv}>
-						<FormGroup>
-							<Switch
-								className={
-									isRTL
-										? clsx(
-												classes.reactSwitchHe,
-												'react-switch',
-												'dynamic-link-switch'
-										  )
-										: clsx(
-												classes.reactSwitch,
-												'react-switch',
-												'dynamic-link-switch'
-										  )
+				<div className={clsx(classes.whatsappCampaignDynamicFieldLink, classes.pt10)}>
+					<Grid container className={clsx(classes.whatsappCampaignDynamicFieldLink)}>
+						<Grid item md={7}>
+							<TextField
+								required
+								variant='outlined'
+								placeholder={translator('whatsappCampaign.linkPlaceholder')}
+								className={clsx('link-input', classes.w100)}
+								onChange={(e: BaseSyntheticEvent) =>
+									setLinkInput(e.target.value, isTrackLink)
 								}
-								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
-								checked={isTrackLink}
-								onChange={() => onTrackLinkToggle()}
+								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || !!dynamicProductType}
+								value={linkInput?.includes('##WHATSAPPUnsubscribelink##') ? linkInput : ''}
 							/>
-						</FormGroup>
-						<Box>
-							<Typography className='keep-track'>
-								<>{translator('mainReport.keepTrack')}</>
-							</Typography>
-							<Typography className='keep-track-desc'>
-								<>{translator('mainReport.keepDesc')}</>
-							</Typography>
+						</Grid>
+						<Grid item md={5}>		
+							<Button
+								variant='outlined'
+								color='primary'
+								size='small'
+								className={clsx(
+									classes.btn,
+									classes.btnRounded,
+								)}
+								onClick={() => onAddRemovalLinkClick()}
+								style={{
+									marginLeft: windowSize == 'xs' ? 0 : 10,
+									marginTop: windowSize == 'xs' ? 10 : 5
+								}}
+							>
+								<>{translator('whatsappCampaign.removalLinkTooltip')}</>
+							</Button>
+						</Grid>
+					</Grid>
+					<Grid container className={classes.pt10}>
+						<Grid item md={7}>
+							<TextField
+								required
+								variant='outlined'
+								placeholder={translator('common.fallbackURL')}
+								className={clsx('link-input', classes.w100)}
+								onChange={(e: BaseSyntheticEvent) => {
+									setLinkInput(dynamicProductType, isTrackLink, e.target.value);
+									setDynamicProductFallbackURL(e.target.value)
+								}}
+								value={dynamicProductFallbackURL}
+								disabled={!dynamicProductType}
+							/>
+						</Grid>
+						<Grid item md={5}>
+							<Button
+								variant='outlined'
+								color='primary'
+								size='small'
+								className={clsx(
+									classes.btn,
+									classes.btnRounded,
+									dynamicProductType === DynamicProductLink.LATEST_PURCHASE ? classes.redButton : ''
+								)}
+								onClick={() => {
+									setDynamicProductType(DynamicProductLink.LATEST_PURCHASE);
+									setLinkInput(DynamicProductLink.LATEST_PURCHASE, isTrackLink);
+								}}
+								style={{
+									marginLeft: windowSize == 'xs' ? 0 : 10,
+									marginTop: windowSize == 'xs' ? 10 : 5
+								}}
+							>
+								{translator('common.latestPurchase')}
+							</Button>
+							<Button
+								variant='outlined'
+								color='primary'
+								size='small'
+								className={clsx(
+									classes.btn,
+									classes.btnRounded,
+									dynamicProductType === DynamicProductLink.LATEST_ABANDONMENT ? classes.redButton : ''
+								)}
+								onClick={() => {
+									setDynamicProductType(DynamicProductLink.LATEST_ABANDONMENT);
+									setLinkInput(DynamicProductLink.LATEST_ABANDONMENT, isTrackLink);
+								}}
+								style={{
+									marginLeft: windowSize == 'xs' ? 0 : 10,
+									marginTop: windowSize == 'xs' ? 10 : 5
+								}}
+							>
+								{translator('common.latestAbandonment')}
+							</Button>
+						</Grid>
+					</Grid>
+
+					<Grid>
+						<Box className={classes.switchDiv}>
+							<FormGroup>
+								<Switch
+									className={
+										isRTL
+											? clsx(
+													classes.reactSwitchHe,
+													'react-switch',
+													'dynamic-link-switch'
+												)
+											: clsx(
+													classes.reactSwitch,
+													'react-switch',
+													'dynamic-link-switch'
+												)
+									}
+									disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
+									checked={isTrackLink}
+									onChange={() => onTrackLinkToggle()}
+								/>
+							</FormGroup>
+							<Box>
+								<Typography className='keep-track'>
+									<>{translator('mainReport.keepTrack')}</>
+								</Typography>
+								<Typography className='keep-track-desc'>
+									<>{translator('mainReport.keepDesc')}</>
+								</Typography>
+							</Box>
 						</Box>
-					</Box>
-					<br />
-					<TextField
-						required
-						variant='outlined'
-						placeholder={translator('whatsappCampaign.linkPlaceholder')}
-						className='link-input'
-						onChange={(e: BaseSyntheticEvent) =>
-							setLinkInput(e.target.value, isTrackLink)
-						}
-						disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
-						value={linkInput}
-					/>
-					<Button
-						variant='outlined'
-						color='primary'
-						size='small'
-						className={clsx(
-							// classes.whatsappCampaignDynamicFieldLinkRemoval,
-							classes.btn,
-							classes.btnRounded
-						)}
-						onClick={() => onAddRemovalLinkClick()}
-						style={{
-							marginLeft: windowSize == 'xs' ? 0 : 10,
-							marginTop: windowSize == 'xs' ? 10 : 5
-						}}
-					>
-						<>{translator('whatsappCampaign.removalLinkTooltip')}</>
-					</Button>
+					</Grid>
 				</div>
 			)}
 

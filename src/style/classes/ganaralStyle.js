@@ -1057,10 +1057,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   redButton: {
     borderColor: '#FF3343',
-    backgroundColor: '#FF3343',
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
     color: '#fff',
     '&:hover': {
-      background: '#FF3343',
+      background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
     },
   },
   redButtonLink: {
@@ -1380,6 +1380,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginInlineEnd: 5,
     },
     "&:nth-child(2)": {
+      marginInlineStart: 0,
+      marginInlineEnd: 5,
+    },
+    "&:nth-child(3)": {
       marginInlineStart: 0,
       marginInlineEnd: 5,
     },
