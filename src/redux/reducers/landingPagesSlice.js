@@ -235,6 +235,16 @@ export const publish = createAsyncThunk(
     }
   });
 
+export const setWebformGroups = createAsyncThunk(
+  'landingpages/SetWebformGroups',
+  async (model, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`landingpages/SetWebformGroups`, model);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 
 

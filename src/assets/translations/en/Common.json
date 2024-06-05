@@ -820,5 +820,6 @@
   "priceRangeError": "Maximum price cannot be larger then Minimum Price",
   "verifyByEmail": "Via Email",
   "verifyBySms": "Via SMS",
-  "notSet": "Not set"
+  "notSet": "Not set",
+  "or": "Or"
 }

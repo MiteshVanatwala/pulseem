@@ -11,7 +11,7 @@ import ResponseModal from './modals/ResponseModal'
 import Toast from '../../components/Toast/Toast.component';
 import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
-import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish } from '../../redux/reducers/landingPagesSlice';
+import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups } from '../../redux/reducers/landingPagesSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/config';
 import { IoMdImages } from 'react-icons/io';
@@ -42,6 +42,7 @@ import { DemoModal } from '../HtmlCampaign/components/DemoModal';
 import { ClientForm } from '../../Models/BeeModels/BeeModel';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from '../../redux/reducers/smsSlice';
 import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
+import { PulseemResponse } from '../../Models/APIResponse';
 
 const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -464,7 +465,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const onAutoSavePage = debounce(() => {
     setSilentSave(true)
     saveDesign(false, null, false);
-  }, 5000);
+  }, 1000);
   const onDesignChange = async () => {
     onAutoSavePage();
   }
@@ -1043,8 +1044,17 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     return <></>
   }
 
-  const updateWebFormGroups = (list: Array<number>) => {
-    console.log(list);
+  const updateWebFormGroups = async (list: Array<number>) => {
+    const requestParams = { WebformID: params.id, GroupID: list };
+    // @ts-ignore
+    const response = await dispatch(setWebformGroups(requestParams)) as PulseemResponse;
+
+    if (response.StatusCode === 201) {
+      alert('saved');
+    }
+    else {
+      alert('error occured');
+    }
   }
   return (
     <DefaultScreen
@@ -1108,7 +1118,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         onConfirm={updateWebFormGroups}
         onClose={() => setShowGroupSelection(false)}
         onCancel={() => setShowGroupSelection(false)}
-        selectedGroups={landingPage?.Data?.WebForm?.SelectedGroupList}
+        selectedGroups={landingPage?.Data?.WebForm?.SelectedGroupList?.map((gid: any) => parseInt(gid))}
       />}
     </DefaultScreen>
   )
