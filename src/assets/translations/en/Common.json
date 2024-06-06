@@ -523,6 +523,7 @@
   "zip": "Zip Code",
   "minutes": "Minutes",
   "hours": "Hours",
+  "days": "Days",
   "requiredField": "Required Field",
   "continue": "Continue",
   "errorDetected": "Payment incomplete!",
