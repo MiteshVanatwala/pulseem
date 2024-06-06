@@ -79,6 +79,7 @@
     "subTitle": "Insert your eShop API key",
     "1To365": "Number of days should be between 1 and 365.",
     "nonZero": "Value should be more than 0.",
-    "fetchDataManually": "Fetch Data Manually"
+    "fetchDataManually": "Fetch Data Manually",
+    "fetchDataManualSuccess": "A request was sent to the store, the data will be fetched within the next 10 minutes"
   }
 }

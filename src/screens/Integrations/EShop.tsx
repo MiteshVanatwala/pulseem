@@ -23,6 +23,7 @@ const EShop = ({ classes }: any) => {
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   const [ showResetDialog, setShowResetDialog ] = useState(false);
+  const [ showManualFetchDialog, setManualFetchDialog ] = useState(false);
   const [ toastMessage, setToastMessage ] = useState(null);
   const [ showLoader, setShowLoader ] = useState(false);
   const [ isPageLoading, setIsPageLoading ] = useState(false);
@@ -74,7 +75,9 @@ const EShop = ({ classes }: any) => {
   useEffect(() => {
     if (insertCartAsAbandonedTimeType === TimeType.Minutes && storeRunInterval > 60) setStoreRunInterval(60); 
     else if (insertCartAsAbandonedTimeType === TimeType.Hours && storeRunInterval > 24) setStoreRunInterval(24); 
-  }, [ insertCartAsAbandonedTimeType ])
+
+    if (insertCartAsAbandonedTimeType === TimeType.Minutes && insertCartAsAbandonedTime < 10) setInsertCartAsAbandonedTime(10); 
+  }, [ insertCartAsAbandonedTimeType, insertCartAsAbandonedTime ])
 
   const initSettings = async () => {
     setShowLoader(true);
@@ -144,27 +147,31 @@ const EShop = ({ classes }: any) => {
       const response = await dispatch(
         isManualProcessing ? RunIntegrationService(request) : setIntegration(request)
       );
-      handleSubmitFormResponse(response);
+      handleSubmitFormResponse(response, isManualProcessing);
       setShowLoader(false);
     } else {
       setErrors(errorsObj);
     }
   }
 
-  const handleSubmitFormResponse = (response: any) => {
+  const handleSubmitFormResponse = (response: any, isManualProcessing: boolean = false) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        setMessages({
-          ...messages,
-          group_saved: t(`integrations.formSubmitResponses.201`),
-        });
-        setToastMessage({ severity: 'success', color: 'success', message: t(`integrations.formSubmitResponses.201`), showAnimtionCheck: false } as any);
-        setTimeout(() => {
+        if (isManualProcessing) {
+          setManualFetchDialog(true);
+        } else {
           setMessages({
-            ...errors,
-            group_saved: '',
+            ...messages,
+            group_saved: t(`integrations.formSubmitResponses.201`),
           });
-        }, 4000);
+          setToastMessage({ severity: 'success', color: 'success', message: t(`integrations.formSubmitResponses.201`), showAnimtionCheck: false } as any);
+          setTimeout(() => {
+            setMessages({
+              ...errors,
+              group_saved: '',
+            });
+          }, 4000);
+        }
         break;
       }
       case 401: {
@@ -290,6 +297,24 @@ const EShop = ({ classes }: any) => {
         <Box className={clsx(classes.bodyTextDialog, classes.pb25)}>
           <Typography>
             {t("integrations.resetConfirmation")}
+          </Typography>
+        </Box>
+      </BaseDialog>
+    )
+  }
+
+  const renderManualFetchDialog = () => {
+    return (
+      <BaseDialog
+        classes={classes}
+        open={showManualFetchDialog}
+        onClose={() => setManualFetchDialog(false)}
+        onConfirm={() => setManualFetchDialog(false)}
+        title={t('common.SentTo')}
+      >
+        <Box className={clsx(classes.bodyTextDialog, classes.pb25)}>
+          <Typography>
+            {t("integrations.eShop.fetchDataManualSuccess")}
           </Typography>
         </Box>
       </BaseDialog>
@@ -807,6 +832,7 @@ const EShop = ({ classes }: any) => {
       }
       <Loader isOpen={showLoader} showBackdrop={true} />
       {renderResetDialog()}
+      {renderManualFetchDialog()}
     </>
   );
 };
