@@ -878,7 +878,10 @@ const SmsCreator = ({ classes }) => {
                   >
                     <Button
                       className={clsx(classes.infoButtons, classes.bgGreen)}
-                      onClick={() => seteditmenuClick(!editmenuClick)}
+                      onClick={() => {
+                        seteditmenuClick(!editmenuClick);
+                        setDisplayDynamicProductOptions(false)
+                      }}
                       onBlur={() => setTimeout(() => { seteditmenuClick(false) }, 250)}
                     >
                       <AiOutlinePlusCircle className={classes.addOptionsIcon} />
@@ -916,32 +919,6 @@ const SmsCreator = ({ classes }) => {
                     </Button>
                   </Tooltip>
                   }
-                  {displayDynamicProductOptions ? (
-                    <Box className={clsx(classes.dropDiv )} style={{ top: -50, right: 10, left: 'unset' }}>
-                      <Button
-                        className={clsx(classes.dropCon, classes.redButtonLink)}
-                        onClick={() => {
-                          onAddText(DynamicProductLink.LATEST_PURCHASE);
-                          setDialogType({ type: 'dynamicProduct' });
-                          setDisplayDynamicProductOptions(false);
-                          setDynamicProductButtonDisabled(true);
-                        }}
-                      >
-                        {t("common.latestPurchase")}
-                      </Button>
-                      <Button
-                        className={clsx(classes.dropCon, classes.redButtonLink)}
-                        onClick={() => {
-                          onAddText(DynamicProductLink.LATEST_ABANDONMENT);
-                          setDialogType({ type: 'dynamicProduct' });
-                          setDisplayDynamicProductOptions(false);
-                          setDynamicProductButtonDisabled(true);
-                        }}
-                      >
-                        {t("common.latestAbandonment")}
-                      </Button>
-                    </Box>
-                  ) : null}
                   <Tooltip
                     disableFocusListener
                     title={t("common.dynamicProduct")}
@@ -951,7 +928,11 @@ const SmsCreator = ({ classes }) => {
                   >
                     <Button
                       className={clsx(classes.infoButtons, dynamicProductButtonDisabled ? classes.disabled : null)}
-                      onClick={() => setDisplayDynamicProductOptions(!displayDynamicProductOptions)}
+                      onClick={() => {
+                        seteditmenuClick(false);
+                        setDisplayDynamicProductOptions(!displayDynamicProductOptions)
+                      }}
+                      onBlur={() => setTimeout(() => { setDisplayDynamicProductOptions(false) }, 250)}
                     >
                       <Typography className={classes.editorLink}>+</Typography>
                       {t("common.dynamicProduct")}
@@ -989,6 +970,32 @@ const SmsCreator = ({ classes }) => {
                     }}
                   >
                     {t("mainReport.waize")}
+                  </Button>
+                </Box>
+              ) : null}
+              {displayDynamicProductOptions ? (
+                <Box className={clsx(classes.dropDiv )} style={{ top: windowSize !== 'xs' ? "-150px" : null }}>
+                  <Button
+                    className={clsx(classes.dropCon, classes.redButtonLink)}
+                    onClick={() => {
+                      onAddText(DynamicProductLink.LATEST_PURCHASE);
+                      setDialogType({ type: 'dynamicProduct' });
+                      setDisplayDynamicProductOptions(false);
+                      setDynamicProductButtonDisabled(true);
+                    }}
+                  >
+                    {t("common.latestPurchase")}
+                  </Button>
+                  <Button
+                    className={clsx(classes.dropCon, classes.redButtonLink)}
+                    onClick={() => {
+                      onAddText(DynamicProductLink.LATEST_ABANDONMENT);
+                      setDialogType({ type: 'dynamicProduct' });
+                      setDisplayDynamicProductOptions(false);
+                      setDynamicProductButtonDisabled(true);
+                    }}
+                  >
+                    {t("common.latestAbandonment")}
                   </Button>
                 </Box>
               ) : null}
