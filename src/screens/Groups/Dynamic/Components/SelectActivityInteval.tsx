@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { FormControl, MenuItem, Select } from '@material-ui/core'
+import { FormControl, Select } from '@material-ui/core'
 import 'moment/locale/he';
 import { IoIosArrowDown } from 'react-icons/io';
 import { ActivtyTimeInterval } from '../../../../Models/Groups/DynamicGroup';
@@ -49,6 +49,7 @@ const SelectActivityInteval = (args: IntervalArgs) => {
         <option value={ActivtyTimeInterval.LastYear}>{t('common.lastYear')}</option>
         <option value={ActivtyTimeInterval.SpecificDates}>{t('common.specificDates')}</option>
         <option value={ActivtyTimeInterval.Ever}>{t('common.allTheTimes')}</option>
+        <option value={ActivtyTimeInterval.DaysBack}>{t('common.daysBack')}</option>
       </Select>
     </FormControl>
   </>

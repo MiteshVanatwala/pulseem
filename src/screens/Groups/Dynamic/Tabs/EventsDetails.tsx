@@ -119,6 +119,27 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         </Grid>
                     )
                 }
+                {
+                    data.dynamicData?.MyActivities?.IsPurchasedInterval?.toString() === ActivtyTimeInterval.DaysBack && data.dynamicData?.MyActivities?.IsPurchased && (
+                        <Grid item xs={3} sm={3} md={2} className={classes.pt5}>
+                            <TextField
+                                label={t('common.typeDaysBack')}
+                                variant='standard'
+                                size='small'
+                                value={data.dynamicData?.MyActivities?.IsPurchasedDaysBack}
+                                onChange={(event: any) => onUpdate('IsPurchasedDaysBack', event.target.value)}
+                                className={clsx(classes.textField)}
+                                style={{ maxWidth: 200, marginTop: '0px !important', padding: '3px 0 2px 0 !important' }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: 17,
+                                        marginTop: '0px !important',
+                                    }
+                                }}
+                            />
+                        </Grid>
+                    )
+                }
                 <Grid item xs={6} sm={6} md={2}>
                     <SelectComparingType
                         Disabled={!data.dynamicData?.MyActivities.IsPurchased}
@@ -275,6 +296,27 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         </Grid>
                     )
                 }
+                {
+                    data.dynamicData?.MyActivities?.IsNotPurchasedInterval?.toString() === ActivtyTimeInterval.DaysBack && data.dynamicData?.MyActivities?.IsNotPurchased && (
+                        <Grid item xs={3} sm={3} md={2} className={classes.pt5}>
+                            <TextField
+                                label={t('common.typeDaysBack')}
+                                variant='standard'
+                                size='small'
+                                value={data.dynamicData?.MyActivities?.IsNotPurchasedDaysBack}
+                                onChange={(event: any) => onUpdate('IsNotPurchasedDaysBack', event.target.value)}
+                                className={clsx(classes.textField)}
+                                style={{ maxWidth: 200, marginTop: '0px !important', padding: '3px 0 2px 0 !important' }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: 17,
+                                        marginTop: '0px !important',
+                                    }
+                                }}
+                            />
+                        </Grid>
+                    )
+                }
                 <Grid item xs={6} sm={6} md={2}>
                     <SelectComparingType
                         Disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
@@ -428,6 +470,27 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                     }
                                 </Grid>
                             </Grid>
+                        </Grid>
+                    )
+                }
+                {
+                    data.dynamicData?.MyActivities?.IsAbandonedInterval?.toString() === ActivtyTimeInterval.DaysBack && data.dynamicData?.MyActivities?.IsAbandoned && (
+                        <Grid item xs={3} sm={3} md={2} className={classes.pt5}>
+                            <TextField
+                                label={t('common.typeDaysBack')}
+                                variant='standard'
+                                size='small'
+                                value={data.dynamicData?.MyActivities?.IsAbandonedDaysBack}
+                                onChange={(event: any) => onUpdate('IsAbandonedDaysBack', event.target.value)}
+                                className={clsx(classes.textField)}
+                                style={{ maxWidth: 200, marginTop: '0px !important', padding: '3px 0 2px 0 !important' }}
+                                InputLabelProps={{
+                                    style: {
+                                        fontSize: 17,
+                                        marginTop: '0px !important',
+                                    }
+                                }}
+                            />
                         </Grid>
                     )
                 }
