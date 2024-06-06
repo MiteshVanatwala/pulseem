@@ -107,15 +107,12 @@ const GroupSelectorPopUp = ({
                         return [...prevVal]
                     }
                 }, [])}
-                // getOptionSelected={(option: any, value: any) => option.Name === value.Name}
                 getOptionLabel={(group: any) => group.GroupName}
                 renderOption={(props, group, { selected }) => {
                     console.log(selected);
                     return (
                         <li {...props} style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '100%' }}>
                             <Checkbox
-                                // icon={<MdOutlineCheckBoxOutlineBlank />}
-                                // checkedIcon={<MdOutlineCheckBox />}
                                 style={{ marginRight: 8 }}
                                 checked={newSelection?.indexOf(group.GroupID) > -1}
                             />
