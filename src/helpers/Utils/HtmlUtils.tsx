@@ -1,3 +1,5 @@
+import { makeStyles } from "@material-ui/core";
+
 export const RenderHtml = (html: any) => {
     function createMarkup() {
         return { __html: html };
@@ -14,3 +16,15 @@ export const ConvertObjectToQueryString = (object: any) => {
     });
     return queryString;
 }
+
+export const useStylesBootstrapPasswordHint = makeStyles((theme) => ({
+    arrow: {
+      color: '#000 !important',
+    },
+    tooltip: {
+      backgroundColor: '#000 !important',
+      fontSize: '16px !important',
+      width: '350px !important',
+      maxWidth: "none !important",
+    },
+}));

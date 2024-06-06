@@ -213,6 +213,14 @@ export const FBBusiness = 'https://business.facebook.com/wa/manage/';
 export const SizeOptionsOfHandHeldDevices = ['xs', 'sm', 'md'];
 export const SizeOptions_XS_SM = ['xs', 'sm'];
 
+export const DynamicProductGrid: any = {
+    Item_1: { image: 4, content: 8 },
+    Item_2: { image: 2, content: 4 },
+    Item_3: { image: 2, content: 2 },
+    Item_4: { image: 1, content: 2 },
+    Item_5: { image: 1, content: 1 },
+    Item_6: { image: 1, content: 1 },
+}
 export const LandingPagesAnswerType = {
     SYSTEM_DEFAULT_MESSAGE: 1,
     POPUP_MESSAGE: 2,
@@ -235,3 +243,56 @@ export const BEE_EDITOR_TYPES = {
     CAMPAIGN: 'Campaign',
     LANDING_PAGE: 'LandingPages'
 }
+
+export const NO_IMAGE_URL = 'https://www.pulseem.co.il/Pulseem/images/productimage.png';
+export const NoAuthenticationAPIs = [
+    'User/Signup',
+    'User/ResendEmail'
+]
+
+export const FieldOfActivities = [
+    'Art',
+    'Ecommerce',
+    'EntertainmentAndEvents',
+    'Insurance',
+    'BlogsOnlineCommunities',
+    'ConstructionAndArchitecture',
+    'Health',
+    'RecruitmentAndPersonnel',
+    'Gaming',
+    'Religion',
+    'HigherEducation',
+    'Travel',
+    'Beauty',
+    'PublicRelations',
+    'Counseling',
+    'MediaAndAdvertising',
+    'HouseholdProducts',
+    'Government',
+    'Restaurants',
+    'Legal',
+    'RealEstate',
+    'SportsAndFitness',
+    'Politics',
+    'Finance',
+    'CoursesAndTrainings',
+    'Retail',
+    'Software',
+    'Transportation',
+    'Communication'
+]
+
+export const FieldOfInterest = [
+    'BulkEmail',
+    'BulkSMS',
+    'WhatsApp',
+    'LandingPages',
+    'Ecommerce',
+    'Notification',
+    'MarketingAutomation'
+]
+
+export const lowerCaseLetters = /[a-z]/g;
+export const upperCaseLetters = /[A-Z]/g;
+export const numbers = /[0-9]/g;
+export const specialLetters = /[!"#$%&'()*+.\/:;<=>?@\[\\\]^_`{|}~-]/g;

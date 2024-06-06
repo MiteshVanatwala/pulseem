@@ -45,3 +45,8 @@ export enum eResponseType {
     SUCCESS = 0,
     UNAUTHORIZED = 401
 }
+
+export enum EmailTemplateType {
+    PULSEEM_TEMPLATES = 0,
+    MY_TEMPLATES = 1
+}

@@ -28,6 +28,7 @@ import whatsappChat from './WhatsappChat.json';
 import settings from './Settings.he.json';
 import integrations from './Integrations.he.json';
 import WhatsappApiResponse from './WhatsappApiResponse.json';
+import SignUp from './SignUp.json';
 
 export const he = {
 	automations,
@@ -60,4 +61,5 @@ export const he = {
 	whatsappChat,
 	integrations,
 	WhatsappApiResponse,
+	SignUp
 };

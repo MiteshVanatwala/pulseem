@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@material-ui/core';
+import { Box, Button, Grid, Tooltip, Typography, makeStyles } from '@material-ui/core';
 import Icon from './Icon';
 import { Stack } from '@mui/material';
 import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
@@ -19,6 +19,27 @@ import {
 } from '../../Common';
 import { useSelector } from 'react-redux';
 
+const useStyles = makeStyles({
+	customWidth: {
+		maxWidth: 200,
+		backgroundColor: 'black',
+		fontSize: '14px',
+		textAlign: 'center',
+		"& span": {
+			color: '#000'
+		}
+	},
+	noMaxWidth: {
+		maxWidth: 'none',
+	},
+	root: {
+		'& .emoji-picker-react': {
+			top: 0
+		}
+
+	}
+});
+
 const ChatFooterContent = ({
 	classes,
 	updatedDynamicVariable,
@@ -38,6 +59,7 @@ const ChatFooterContent = ({
 	onChatTemplateDelete,
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
+	const localClasses = useStyles();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
 	const [textDirection, setTextDirection] = useState<string>('ltr');
@@ -123,22 +145,28 @@ const ChatFooterContent = ({
 											OnSelectEmoji={(emoji: string) => {
 												onEmojiClick(emoji);
 											}}
-											boxStyles={{ alignItems: 'center' }}
+											boxStyles={{ display: 'flex', alignItems: 'end' }}
 										/>
 									</button>
 								)}
-								<button
-									aria-label='chat'
-									onClick={() => setIsTemplateModal(true)}>
-									<Icon
-										id='chat'
-										className={`${classes.whatsappChat} chat__input-icon ${
-											showEmojis
+								<Tooltip
+									disableFocusListener
+									title={translator('whatsappManagement.templates')}
+									classes={{ tooltip: localClasses.customWidth }}
+									placement='top-start'
+									arrow>
+									<button
+										aria-label='chat'
+										onClick={() => setIsTemplateModal(true)}>
+										<Icon
+											id='chat'
+											className={`${classes.whatsappChat} chat__input-icon ${showEmojis
 												? `${classes.whatsappChat} chat__input-icon--highlight`
 												: ''
-											}`}
-									/>
-								</button>
+												}`}
+										/>
+									</button>
+								</Tooltip>
 								{savedTemplate?.length !== 0 ? (
 									<Box
 										className={`${classes.whatsappChat} chat__input m`}
@@ -172,7 +200,7 @@ const ChatFooterContent = ({
 											resize: 'none',
 											overflowY: 'auto',
 										}}
-										placeholder='Type a message'
+										placeholder={translator('whatsappChat.typeMessage')}
 										value={newMessage}
 										onChange={onEditableDivChange}
 									/>

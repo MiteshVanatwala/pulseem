@@ -176,6 +176,7 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
               className={clsx(classes.selectInputFormControl, classes.w100, classes.mt15)}
               style={{ maxWidth: 300 }}>
               <Select
+                native
                 variant="standard"
                 // disabled
                 autoWidth
@@ -197,30 +198,31 @@ const DisableOtpPopup = ({ classes, onClose, onConfirm }: any) => {
                   },
                 }}
               >
-                <MenuItem
+                <option
+                  disabled
                   key={''}
                   value={t('common.select')}
                 >
                   {t('common.select')}
-                </MenuItem>
+                </option>
                 {selectedOption === '7' && emailList?.map((item: any, index) => {
                   return (
-                    <MenuItem
+                    <option
                       key={index}
                       value={item?.AuthValue}
                     >
                       {t(item?.AuthValue)}
-                    </MenuItem>
+                    </option>
                   );
                 })}
                 {selectedOption === '6' && cellphoneList?.map((item: any, index) => {
                   return (
-                    <MenuItem
+                    <option
                       key={index}
                       value={item?.AuthValue}
                     >
                       {t(item?.AuthValue)}
-                    </MenuItem>
+                    </option>
                   );
                 })}
               </Select>
