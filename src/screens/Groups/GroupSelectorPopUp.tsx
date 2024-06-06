@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Divider, Grid, Input, ListItemText, MenuItem, Select, TextField, Typography } from "@material-ui/core";
+import { Box, Button, Checkbox, Divider, TextField, Typography } from "@material-ui/core";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,9 +9,6 @@ import clsx from 'clsx';
 import { createGroup } from "../../redux/reducers/groupSlice";
 import { DEFAULT_NEW_GROUP } from "../../helpers/Constants";
 import { Autocomplete } from "@mui/material";
-import { MdOutlineCheckBox } from "react-icons/md";
-import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
-
 
 interface GroupSelection {
     classes: any;
@@ -76,13 +73,19 @@ const GroupSelectorPopUp = ({
     }
 
     const onGroupSelect = (a: any, groups: any, eventType: any, item: any) => {
+
         let tempSelection: any[] = [...newSelection];
 
-        if (tempSelection?.indexOf(item.option.GroupID) > -1) {
-            tempSelection = tempSelection?.filter((g: any) => { return g.GroupID !== item.GroupID });
+        if (eventType === 'clear') {
+            tempSelection = [];
         }
         else {
-            tempSelection = groups?.map((x: any) => x.GroupID);
+            if (tempSelection?.indexOf(item.option.GroupID) > -1) {
+                tempSelection = tempSelection?.filter((gid: any) => { return gid !== item.option.GroupID });
+            }
+            else {
+                tempSelection = groups?.map((x: any) => x.GroupID);
+            }
         }
 
         setNewSelection(tempSelection);
@@ -104,22 +107,27 @@ const GroupSelectorPopUp = ({
                         return [...prevVal]
                     }
                 }, [])}
+                // getOptionSelected={(option: any, value: any) => option.Name === value.Name}
                 getOptionLabel={(group: any) => group.GroupName}
-                renderOption={(props, group, { selected }) => (
-                    <li {...props} style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '100%' }}>
-                        <Checkbox
-                            icon={<MdOutlineCheckBoxOutlineBlank />}
-                            checkedIcon={<MdOutlineCheckBox />}
-                            style={{ marginRight: 8 }}
-                            checked={newSelection?.indexOf(group.GroupID) > -1}
-                        />
-                        {group.GroupName}
-                    </li>
-                )}
+                renderOption={(props, group, { selected }) => {
+                    console.log(selected);
+                    return (
+                        <li {...props} style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '100%' }}>
+                            <Checkbox
+                                // icon={<MdOutlineCheckBoxOutlineBlank />}
+                                // checkedIcon={<MdOutlineCheckBox />}
+                                style={{ marginRight: 8 }}
+                                checked={newSelection?.indexOf(group.GroupID) > -1}
+                            />
+                            {group.GroupName}
+                        </li>
+                    )
+                }}
                 onChange={onGroupSelect}
-                style={{ width: 500 }}
+                style={{ width: 400 }}
                 renderInput={(params) => (
-                    <TextField {...params} label={t('integrations.selectGroup')} placeholder={t('integrations.selectGroup')} />
+                    <TextField {...params}
+                        className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
                 )}
             />
         );

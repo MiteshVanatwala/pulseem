@@ -95,6 +95,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const [clientForm, setClientForm] = useState<ClientForm>({});
   const [reInit, setReinit] = useState<boolean>(false);
   const [showGroupSelection, setShowGroupSelection] = useState<boolean>(false);
+  const [selectedGroups, setSelectedGroups] = useState<any>([]);
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   const loadAccountExtraData = () => {
@@ -191,6 +192,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     }
   }, [language, landingPageUserBlocks]);
   //#region Check session token -> tokenAlive
+  useEffect(() => {
+    if (landingPage && landingPage?.Data?.WebForm?.SelectedGroupList.length > 0) {
+      const groups: [] = landingPage?.Data?.WebForm?.SelectedGroupList?.map((gid: any) => parseInt(gid));
+      setSelectedGroups(groups);
+    }
+  }, [landingPage]);
   useEffect(() => {
     setInterval(() => {
       if (tokenAlive) {
@@ -384,7 +391,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
-      if (finalHtml.indexOf('submithandler.axd') > -1 && landingPage?.Data?.WebForm?.SelectedGroupList?.length <= 0) {
+      if (finalHtml.indexOf('submithandler.axd') > -1 && (!selectedGroups || selectedGroups?.length <= 0)) {
         // show Popup
         setShowGroupSelection(true);
         return false;
@@ -1047,16 +1054,23 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
 
   const updateWebFormGroups = async (list: Array<number>) => {
+    setLoader(true);
     const requestParams = { WebformID: params.id, GroupID: list };
     // @ts-ignore
-    const response = await dispatch(setWebformGroups(requestParams)) as PulseemResponse;
+    const response = await dispatch(setWebformGroups(requestParams)) as any;
 
-    if (response.StatusCode === 201) {
-      alert('saved');
+    if (response.payload.StatusCode === 201) {
+      setShowGroupSelection(false);
+      const tempArr = [...selectedGroups, ...list];
+      setSelectedGroups(tempArr);
+      // @ts-ignore
+      await getData();
     }
     else {
-      alert('error occured');
+      // @ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: t('common.ErrorOccured'), showAnimtionCheck: false });
     }
+    setLoader(false);
   }
   return (
     <DefaultScreen
@@ -1120,7 +1134,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         onConfirm={updateWebFormGroups}
         onClose={() => setShowGroupSelection(false)}
         onCancel={() => setShowGroupSelection(false)}
-        selectedGroups={landingPage?.Data?.WebForm?.SelectedGroupList?.map((gid: any) => parseInt(gid))}
+        selectedGroups={selectedGroups}
       />}
     </DefaultScreen>
   )
