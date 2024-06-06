@@ -526,6 +526,7 @@ const EShop = ({ classes }: any) => {
                         InputProps={{
                           style: { paddingTop: 5, paddingBottom: 4 },
                         }}
+                        style={{ paddingTop: 5, paddingBottom: 5 }}
                       />
                     </Grid>
                     <Grid className={clsx(classes.pe10, classes.pr10)}>
@@ -592,6 +593,7 @@ const EShop = ({ classes }: any) => {
                     InputProps={{
                       style: { paddingTop: 5, paddingBottom: 4 },
                     }}
+                    style={{ paddingTop: 5, paddingBottom: 5 }}
                   />
                 </Box>
                 <Typography className={clsx(classes.pt10, classes.fBlack)}>
@@ -770,6 +772,7 @@ const EShop = ({ classes }: any) => {
                         InputProps={{
                           style: { paddingTop: 5, paddingBottom: 4 },
                         }}
+                        style={{ paddingTop: 5, paddingBottom: 5 }}
                       />
                     </Grid>
                     <Grid className={clsx(classes.pe10, classes.pr10)}>
