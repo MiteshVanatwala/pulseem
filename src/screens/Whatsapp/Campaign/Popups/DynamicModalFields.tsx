@@ -166,43 +166,26 @@ const DynamicModalFields = ({
 								onChange={(e: BaseSyntheticEvent) =>
 									setLinkInput(e.target.value, isTrackLink)
 								}
-								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || !!dynamicProductType}
-								value={linkInput?.includes('##WHATSAPPUnsubscribelink##') ? linkInput : ''}
+								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || linkInput?.includes('dynamicProduct')}
+								value={linkInput}
 							/>
-						</Grid>
-						<Grid item md={5}>		
-							<Button
-								variant='outlined'
-								color='primary'
-								size='small'
-								className={clsx(
-									classes.btn,
-									classes.btnRounded,
-								)}
-								onClick={() => onAddRemovalLinkClick()}
-								style={{
-									marginLeft: windowSize == 'xs' ? 0 : 10,
-									marginTop: windowSize == 'xs' ? 10 : 5
-								}}
-							>
-								<>{translator('whatsappCampaign.removalLinkTooltip')}</>
-							</Button>
-						</Grid>
-					</Grid>
-					<Grid container className={classes.pt10}>
-						<Grid item md={7}>
-							<TextField
-								required
-								variant='outlined'
-								placeholder={translator('common.fallbackURL')}
-								className={clsx('link-input', classes.w100)}
-								onChange={(e: BaseSyntheticEvent) => {
-									setLinkInput(dynamicProductType, isTrackLink, e.target.value);
-									setDynamicProductFallbackURL(e.target.value)
-								}}
-								value={dynamicProductFallbackURL}
-								disabled={!dynamicProductType}
-							/>
+
+							{
+								dynamicProductType && (
+									<TextField
+										required
+										variant='outlined'
+										placeholder={translator('common.fallbackURL')}
+										className={clsx('link-input', classes.w100, classes.mt10)}
+										onChange={(e: BaseSyntheticEvent) => {
+											setLinkInput(dynamicProductType, isTrackLink, e.target.value);
+											setDynamicProductFallbackURL(e.target.value)
+										}}
+										value={dynamicProductFallbackURL}
+										disabled={!dynamicProductType}
+									/>
+								)
+							}
 						</Grid>
 						<Grid item md={5}>
 							<Button
@@ -212,6 +195,26 @@ const DynamicModalFields = ({
 								className={clsx(
 									classes.btn,
 									classes.btnRounded,
+									classes.width160,
+									linkInput?.includes('##WHATSAPPUnsubscribelink##') ? classes.redButton : ''
+								)}
+								onClick={() => onAddRemovalLinkClick()}
+								style={{
+									marginLeft: windowSize == 'xs' ? 0 : 10,
+									marginTop: windowSize == 'xs' ? 10 : 0
+								}}
+							>
+								<>{translator('whatsappCampaign.removalLinkTooltip')}</>
+							</Button>
+
+							<Button
+								variant='outlined'
+								color='primary'
+								size='small'
+								className={clsx(
+									classes.btn,
+									classes.btnRounded,
+									classes.width160,
 									dynamicProductType === DynamicProductLink.LATEST_PURCHASE ? classes.redButton : ''
 								)}
 								onClick={() => {
@@ -232,6 +235,7 @@ const DynamicModalFields = ({
 								className={clsx(
 									classes.btn,
 									classes.btnRounded,
+									classes.width160,
 									dynamicProductType === DynamicProductLink.LATEST_ABANDONMENT ? classes.redButton : ''
 								)}
 								onClick={() => {
@@ -249,7 +253,7 @@ const DynamicModalFields = ({
 					</Grid>
 
 					<Grid>
-						<Box className={classes.switchDiv}>
+						<Box className={classes.switchDiv} style={{ marginInlineStart: 0 }}>
 							<FormGroup>
 								<Switch
 									className={
@@ -265,7 +269,7 @@ const DynamicModalFields = ({
 													'dynamic-link-switch'
 												)
 									}
-									disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
+									disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || linkInput?.includes('dynamicProduct')}
 									checked={isTrackLink}
 									onChange={() => onTrackLinkToggle()}
 								/>

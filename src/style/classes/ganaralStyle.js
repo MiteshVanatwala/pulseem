@@ -380,6 +380,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   maxWidth190: {
     maxWidth: 190,
   },
+  width160: {
+    width: 160,
+    maxWidth: 160,
+  },
   widthUnset: {
     width: "unset",
   },
