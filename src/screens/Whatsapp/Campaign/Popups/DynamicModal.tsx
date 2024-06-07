@@ -336,12 +336,12 @@ const DynamicModal = ({
 						dynamicProductType={dynamicProductType}
 						setDynamicProductType={(value: string) => {
 							setDynamicProductType(value);
-							updateDynamicVariables('link', value, isTrackLink, dynamicProductFallbackURL)
+							updateDynamicVariables('link', value, true, dynamicProductFallbackURL);
 						}}
 						dynamicProductFallbackURL={dynamicProductFallbackURL}
 						setDynamicProductFallbackURL={(val: string) => {
 							setDynamicProductFallbackURL(val);
-							updateDynamicVariables('link', dynamicProductType, isTrackLink, val)
+							updateDynamicVariables('link', dynamicProductType, true, val);
 						}}
 					/>
 				</Grid>

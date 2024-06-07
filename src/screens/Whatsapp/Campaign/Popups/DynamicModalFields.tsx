@@ -217,10 +217,7 @@ const DynamicModalFields = ({
 									classes.width160,
 									dynamicProductType === DynamicProductLink.LATEST_PURCHASE ? classes.redButton : ''
 								)}
-								onClick={() => {
-									setDynamicProductType(DynamicProductLink.LATEST_PURCHASE);
-									setLinkInput(DynamicProductLink.LATEST_PURCHASE, isTrackLink);
-								}}
+								onClick={() => setDynamicProductType(DynamicProductLink.LATEST_PURCHASE) }
 								style={{
 									marginLeft: windowSize == 'xs' ? 0 : 10,
 									marginTop: windowSize == 'xs' ? 10 : 5
@@ -238,10 +235,7 @@ const DynamicModalFields = ({
 									classes.width160,
 									dynamicProductType === DynamicProductLink.LATEST_ABANDONMENT ? classes.redButton : ''
 								)}
-								onClick={() => {
-									setDynamicProductType(DynamicProductLink.LATEST_ABANDONMENT);
-									setLinkInput(DynamicProductLink.LATEST_ABANDONMENT, isTrackLink);
-								}}
+								onClick={() => setDynamicProductType(DynamicProductLink.LATEST_ABANDONMENT)}
 								style={{
 									marginLeft: windowSize == 'xs' ? 0 : 10,
 									marginTop: windowSize == 'xs' ? 10 : 5
