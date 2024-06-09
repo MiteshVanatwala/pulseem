@@ -1,17 +1,22 @@
 {
   "title": "Integrations",
+  "signUp": "Sign Up",
   "purchase": "Purchase",
   "cartAbandonment": "Cart Abandonment",
   "authResponses": {
     "201": "Authentication Success",
     "400": "The store is related to another account",
+    "401": "Invalid API key",
     "403": "Invalid API key or access token (unrecognized login or wrong password)",
     "404": "Authentication Failed!"
   },
   "resetConfirmation": "Are you sure you want to reset authentication?",
   "selectGroup": "Select any group",
   "formSubmitResponses": {
-    "201": "Group has been saved."
+    "201": "Group has been saved.",
+    "401": "Invalid API key",
+    "402": "Group not saved",
+    "500": "Generic Error"
   },
   "connectStore": "Connect Store",
   "disconnectStore": "Disconnect Store",
@@ -61,5 +66,20 @@
     "title": "Ecwid",
     "description": "In order to integrate your Ecwid store to your Pulseem account please read the following guide:",
     "connectStore": "Connect your Ecwid Store"
+  },
+  "eShop": {
+    "title": "E-Shop",
+    "apiKey": "API Key",
+    "connectStore": "Connect store",
+    "fetchStore": "Fetch store every",
+    "hoursOrDays": "Hours/Days",
+    "fetchData": "Fetch data from",
+    "daysAgo": "days ago",
+    "cartAbandonedMinutesHours": "Insert cart as abandoned after",
+    "subTitle": "Insert your eShop API key",
+    "1To365": "Number of days should be between 1 and 365.",
+    "nonZero": "Value should be more than 0.",
+    "fetchDataManually": "Fetch Data Manually",
+    "fetchDataManualSuccess": "A request was sent to the store, the data will be fetched within the next 10 minutes"
   }
 }

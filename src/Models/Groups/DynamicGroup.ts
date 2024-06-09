@@ -20,7 +20,8 @@ export enum ActivtyTimeInterval {
     Last6Months = '4',
     LastYear = '5',
     SpecificDates = '6',
-    Ever = '7'
+    Ever = '7',
+    DaysBack = '8'
 }
 
 export enum ActivityEvent {
