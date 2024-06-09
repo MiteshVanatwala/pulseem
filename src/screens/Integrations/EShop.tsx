@@ -22,12 +22,12 @@ const EShop = ({ classes }: any) => {
   const dispatch = useDispatch();
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
-  const [ showResetDialog, setShowResetDialog ] = useState(false);
-  const [ showManualFetchDialog, setManualFetchDialog ] = useState(false);
-  const [ toastMessage, setToastMessage ] = useState(null);
-  const [ showLoader, setShowLoader ] = useState(false);
-  const [ isPageLoading, setIsPageLoading ] = useState(false);
-  const [ errors, setErrors ] = useState({
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showManualFetchDialog, setManualFetchDialog] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [showLoader, setShowLoader] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(false);
+  const [errors, setErrors] = useState({
     ApiKey: '',
     authentication_message: '',
     group_not_selected: '',
@@ -49,12 +49,12 @@ const EShop = ({ classes }: any) => {
     AbandonedEventActive: false,
     Groups: {} as IntegrationGroups,
   } as EShopModel);
-  const [ isAuthenticated, setAuthenticated ] = useState(false);
-  const [ storeRunInterval, setStoreRunInterval ] = useState<number>(0);
-  const [ storeRunIntervalType, setStoreRunIntervalType ] = useState<number>(TimeType.Hours);
-  const [ insertCartAsAbandonedTime, setInsertCartAsAbandonedTime ] = useState<number>(0);
-  const [ insertCartAsAbandonedTimeType, setInsertCartAsAbandonedTimeType ] = useState<number>(TimeType.Minutes);
-  
+  const [isAuthenticated, setAuthenticated] = useState(false);
+  const [storeRunInterval, setStoreRunInterval] = useState<number>(1);
+  const [storeRunIntervalType, setStoreRunIntervalType] = useState<number>(TimeType.Days);
+  const [insertCartAsAbandonedTime, setInsertCartAsAbandonedTime] = useState<number>(10);
+  const [insertCartAsAbandonedTimeType, setInsertCartAsAbandonedTimeType] = useState<number>(TimeType.Minutes);
+
   const renderToast = () => {
     setTimeout(() => {
       setToastMessage(null);
@@ -68,16 +68,16 @@ const EShop = ({ classes }: any) => {
   }, []);
 
   useEffect(() => {
-    if (storeRunIntervalType === TimeType.Days && storeRunInterval > 365) setStoreRunInterval(365); 
-    else if (storeRunIntervalType === TimeType.Hours && storeRunInterval > 24) setStoreRunInterval(24); 
-  }, [ storeRunIntervalType ])
+    if (storeRunIntervalType === TimeType.Days && storeRunInterval > 365) setStoreRunInterval(365);
+    else if (storeRunIntervalType === TimeType.Hours && storeRunInterval > 24) setStoreRunInterval(24);
+  }, [storeRunIntervalType])
 
   useEffect(() => {
-    if (insertCartAsAbandonedTimeType === TimeType.Minutes && storeRunInterval > 60) setStoreRunInterval(60); 
-    else if (insertCartAsAbandonedTimeType === TimeType.Hours && storeRunInterval > 24) setStoreRunInterval(24); 
+    if (insertCartAsAbandonedTimeType === TimeType.Minutes && storeRunInterval > 60) setStoreRunInterval(60);
+    else if (insertCartAsAbandonedTimeType === TimeType.Hours && storeRunInterval > 24) setStoreRunInterval(24);
 
-    if (insertCartAsAbandonedTimeType === TimeType.Minutes && insertCartAsAbandonedTime < 10) setInsertCartAsAbandonedTime(10); 
-  }, [ insertCartAsAbandonedTimeType, insertCartAsAbandonedTime ])
+    if (insertCartAsAbandonedTimeType === TimeType.Minutes && insertCartAsAbandonedTime < 10) setInsertCartAsAbandonedTime(10);
+  }, [insertCartAsAbandonedTimeType, insertCartAsAbandonedTime])
 
   const initSettings = async () => {
     setShowLoader(true);
@@ -93,11 +93,11 @@ const EShop = ({ classes }: any) => {
   const submitForm = async (isManualProcessing: boolean = false) => {
     let isValid = settings.RegisterEventActive || settings.PurchaseEventActive || settings.AbandonedEventActive;
     let errorsObj = JSON.parse(JSON.stringify(errors));
-    
+
     if (!isValid) {
       errorsObj = { ...errorsObj, group_not_selected: t(`integrations.selectGroup`) };
     }
-    
+
     if (settings.DaysBackwards < 0 || settings.DaysBackwards > 365) {
       errorsObj = { ...errorsObj, DaysBackwards: t('integrations.eShop.1To365') };
       isValid = false;
@@ -351,7 +351,12 @@ const EShop = ({ classes }: any) => {
       setStoreRunInterval(Number(Number(strSplit[0]) === 0 ? strSplit[1] : strSplit[0]));
       setStoreRunIntervalType(Number(strSplit[0]) === 0 ? TimeType.Hours : TimeType.Days);
     } else {
-      setInsertCartAsAbandonedTime(Number(Number(strSplit[0]) === 0 ? strSplit[1] : strSplit[0]));
+      if (strSplit?.length >= 1 && strSplit[1]) {
+        setInsertCartAsAbandonedTime(Number(Number(strSplit[0]) === 0 ? strSplit[1] : strSplit[0]));
+      }
+      else {
+        setInsertCartAsAbandonedTime(10);
+      }
       setInsertCartAsAbandonedTimeType(Number(strSplit[0]) === 0 ? TimeType.Minutes : TimeType.Hours);
     }
   }
@@ -795,8 +800,8 @@ const EShop = ({ classes }: any) => {
                             },
                           }}
                         >
-                            <MenuItem value={TimeType.Minutes}>{t("common.minutes")}</MenuItem>
-                            <MenuItem value={TimeType.Hours}>{t("common.hours")}</MenuItem>
+                          <MenuItem value={TimeType.Minutes}>{t("common.minutes")}</MenuItem>
+                          <MenuItem value={TimeType.Hours}>{t("common.hours")}</MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
