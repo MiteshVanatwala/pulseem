@@ -391,11 +391,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
-      if (finalHtml.indexOf('submithandler.axd') > -1 && (!selectedGroups || selectedGroups?.length <= 0)) {
-        // show Popup
-        setShowGroupSelection(true);
-        return false;
-      }
       //@ts-ignore
       let response: any = await dispatch(saveWebform({
         Name: '',
@@ -406,6 +401,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       }));
 
       if (response.payload.StatusCode === 201) {
+        if (finalHtml.indexOf('submithandler.axd') > -1 && (!selectedGroups || selectedGroups?.length <= 0)) {
+          // show Popup
+          setShowGroupSelection(true);
+          return false;
+        }
+
         //@ts-ignore
         if (saveRef.current?.isPublish) {
           //@ts-ignore
@@ -474,7 +475,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const onAutoSavePage = debounce(() => {
     setSilentSave(true)
     saveDesign(false, null, false);
-  }, 1000);
+  }, 100);
   const onDesignChange = async () => {
     onAutoSavePage();
   }

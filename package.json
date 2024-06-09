@@ -15,7 +15,7 @@
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@material-ui/pickers": "^3.3.10",
     "@mui/base": "^5.0.0-beta.40",
-    "@mui/material": "^5.15.18",
+    "@mui/material": "^5.15.19",
     "@mui/x-charts": "^7.5.1",
     "@reduxjs/toolkit": "^1.1.0",
     "@testing-library/jest-dom": "^4.2.4",

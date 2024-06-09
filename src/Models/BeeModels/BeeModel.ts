@@ -27,8 +27,6 @@ export class BeeFormModel {
     this.classes = _classes || '';
     this.attributes = {
       "class": `form-control ${_classes || ''}`,
-      "data-action": "submit",
-      "data-sitekey": isProdMode ? "6LcY9cwjAAAAAGxR66dKqOoLMGVPQ--8nRxWpHJl" : "6LcY9cwjAAAAAG5_zmvxFOEpAB20OEPaJRBWiSXe",
       ..._attr
     };
   }
