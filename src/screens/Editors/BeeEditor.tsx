@@ -29,7 +29,7 @@ import moment from 'moment';
 import Templates from './modals/Templates';
 /* END Bee */
 import { loginURL, sitePrefix } from '../../config';
-import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdOutlinePublic } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { BEE_EDITOR_TYPES } from '../../helpers/Constants';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
@@ -391,6 +391,18 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
+
+      // const formsCount = JSON.stringify(finalJson).indexOf('submithandler.axd');
+
+      // var userCommandCounts = JSON.parse(finalJson).page.rows[0].columns[0].modules.reduce(function (result: any, current: any) {
+      //   if (!result[current["form"]]) {
+      //     result[current["form"]] = 0;
+      //   }
+      //   result[current["form"]]++;
+      //   return result;
+      // }, {});
+
+      // console.log(userCommandCounts);
       //@ts-ignore
       let response: any = await dispatch(saveWebform({
         Name: '',
@@ -699,7 +711,21 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         startIcon={<BiSave />}
       >
         {t('common.saveTemplate')}
-      </Button></>
+      </Button>
+      <Button onClick={() => setShowGroupSelection(true)}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.btn,
+          classes.btnRounded,
+          classes.backButton
+        )}
+        style={{ margin: '8px' }}
+        startIcon={<MdGroups />}
+      >
+        {t('common.Groups')}
+      </Button>
+    </>
   }
   const renderButtons = () => {
     const wizardButtons = [];

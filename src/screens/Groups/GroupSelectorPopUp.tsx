@@ -99,7 +99,7 @@ const GroupSelectorPopUp = ({
                 id="groups-selection"
                 options={subAccountAllGroups}
                 disableCloseOnSelect
-                value={subAccountAllGroups.reduce((prevVal: any, newVal: any) => {
+                value={subAccountAllGroups?.reduce((prevVal: any, newVal: any) => {
                     if (newSelection.indexOf(newVal.GroupID) !== -1) {
                         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
                     }
@@ -123,6 +123,7 @@ const GroupSelectorPopUp = ({
                 onChange={onGroupSelect}
                 style={{ width: 400 }}
                 renderInput={(params) => (
+                    // @ts-ignore
                     <TextField {...params}
                         className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
                 )}
