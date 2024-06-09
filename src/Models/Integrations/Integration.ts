@@ -7,7 +7,8 @@ export interface IntegrationRequest {
 export enum LU_Plugin {
     CashCow = 1,
     Shopify = 2,
-    Isracard = 3
+    Isracard = 3,
+    EShop = 5
 }
 export enum LU_PluginGroupType {
     PURCHASED = 1,
@@ -30,4 +31,18 @@ export interface IntegrationGroups {
     RegisterGroups?: number[];
     PurchaseGroups?: number[];
     AbandonedGroups?: number[];
+}
+
+export interface EShopModel {
+    ApiKey: string;
+    UiApi_ApiKey?: string;
+    IntervalToRunService: string;
+    IntervalToProccessingAbandoned: string;
+    DaysBackwards: number;
+    RegisterEventActive?: boolean;
+    PurchaseEventActive: boolean;
+    AbandonedEventActive: boolean;
+    Groups?: IntegrationGroups;
+    IsDeleted?: boolean;
+    SubAccountID?: string;
 }

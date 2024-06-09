@@ -3420,7 +3420,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             fill: '#B3B3B3'
           }
         }
-      }
+      },
+      '& label + .MuiInput-formControl': {
+        marginTop: '10px',
+      },
+
     },
     // [theme.breakpoints.down('xs')]: {
     //   width: 'auto !important'
@@ -4126,12 +4130,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   autoComplete: {
     '& .MuiAutocomplete-endAdornment': {
-			right: isRTL ? 'unset' : '0px',
-			left: isRTL ? '0px' : 'unset',
-		},
-		'& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
-		{
-			paddingRight: isRTL ? '0px !important' : '0px',
-		}
+      right: isRTL ? 'unset' : '0px',
+      left: isRTL ? '0px' : 'unset',
+    },
+    '& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
+    {
+      paddingRight: isRTL ? '0px !important' : '0px',
+    }
   }
 });

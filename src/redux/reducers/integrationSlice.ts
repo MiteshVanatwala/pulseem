@@ -39,6 +39,18 @@ export const setIntegration = createAsyncThunk(
     }
 );
 
+export const RunIntegrationService = createAsyncThunk(
+    'Integrations/RunIntegrationService',
+    async (integrationRequest: IntegrationRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`Integrations/RunIntegrationService`, integrationRequest);
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
 export const resetIntegration = createAsyncThunk(
     'Integrations/Reset',
     async (integrationSource: LU_Plugin, thunkAPI) => {

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import {
-    Grid, Checkbox, FormControlLabel, Button
+    Grid, Checkbox, FormControlLabel, Button,
+    TextField
 } from '@material-ui/core'
 import 'moment/locale/he';
 import { ActivtyTimeInterval } from '../../../../Models/Groups/DynamicGroup';
@@ -93,6 +94,25 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                         </>
                     )
                 }
+                {
+                    data.dynamicData?.MyActivities?.IsOpenedInterval?.toString() === ActivtyTimeInterval.DaysBack && data.dynamicData?.MyActivities?.IsOpened && (
+                        <TextField
+                            label={t('common.typeDaysBack')}
+                            variant='standard'
+                            size='small'
+                            value={data.dynamicData?.MyActivities?.IsOpenedDaysBack}
+                            onChange={(event: any) => onUpdate('IsOpenedDaysBack', event.target.value)}
+                            className={clsx(classes.textField)}
+                            style={{ maxWidth: 200, marginTop: '0px !important', padding: '3px 0 2px 0 !important' }}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17,
+                                    marginTop: '0px !important',
+                                }
+                            }}
+                        />
+                    )
+                }
             </Grid>
             {/* Not Opened Email In */}
             <Grid item xs={6} sm={6} md={2} className={classes.pt5}>
@@ -171,6 +191,25 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                 </Grid>
                             </Grid>
                         </>
+                    )
+                }
+                {
+                    data.dynamicData?.MyActivities?.IsNotOpenedInterval?.toString() === ActivtyTimeInterval.DaysBack && data.dynamicData?.MyActivities?.IsNotOpened && (
+                        <TextField
+                            label={t('common.typeDaysBack')}
+                            variant='standard'
+                            size='small'
+                            value={data.dynamicData?.MyActivities?.IsNotOpenedDaysBack}
+                            onChange={(event: any) => onUpdate('IsNotOpenedDaysBack', event.target.value)}
+                            className={clsx(classes.textField)}
+                            style={{ maxWidth: 200, marginTop: '0px !important', padding: '3px 0 2px 0 !important' }}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17,
+                                    marginTop: '0px !important',
+                                }
+                            }}
+                        />
                     )
                 }
             </Grid>
@@ -253,6 +292,25 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                         </>
                     )
                 }
+                {
+                    data.dynamicData?.MyActivities?.IsClickedInterval?.toString() === ActivtyTimeInterval.DaysBack && data.dynamicData?.MyActivities?.IsClicked && (
+                        <TextField
+                            label={t('common.typeDaysBack')}
+                            variant='standard'
+                            size='small'
+                            value={data.dynamicData?.MyActivities?.IsClickedDaysBack}
+                            onChange={(event: any) => onUpdate('IsClickedDaysBack', event.target.value)}
+                            className={clsx(classes.textField)}
+                            style={{ maxWidth: 200, marginTop: '0px !important', padding: '3px 0 2px 0 !important' }}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17,
+                                    marginTop: '0px !important',
+                                }
+                            }}
+                        />
+                    )
+                }
             </Grid>
             {/* Not ckiecked on a link in */}
             <Grid item xs={6} sm={6} md={2} className={classes.pt5}>
@@ -331,6 +389,25 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                 </Grid>
                             </Grid>
                         </>
+                    )
+                }
+                {
+                    data.dynamicData?.MyActivities?.IsNotClickedInterval?.toString() === ActivtyTimeInterval.DaysBack && data.dynamicData?.MyActivities?.IsNotClicked && (
+                        <TextField
+                            label={t('common.typeDaysBack')}
+                            variant='standard'
+                            size='small'
+                            value={data.dynamicData?.MyActivities?.IsNotClickedDaysBack}
+                            onChange={(event: any) => onUpdate('IsNotClickedDaysBack', event.target.value)}
+                            className={clsx(classes.textField)}
+                            style={{ maxWidth: 200, marginTop: '0px !important', padding: '3px 0 2px 0 !important' }}
+                            InputLabelProps={{
+                                style: {
+                                    fontSize: 17,
+                                    marginTop: '0px !important',
+                                }
+                            }}
+                        />
                     )
                 }
             </Grid>
