@@ -114,7 +114,6 @@ const GroupSelectorPopUp = ({
                 }, [])}
                 getOptionLabel={(group: any) => group.GroupName}
                 renderOption={(props, group, { selected }) => {
-                    console.log(selected);
                     return (
                         <li {...props} style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '100%' }}>
                             <Checkbox
