@@ -268,6 +268,9 @@ export const landingPagesSlice = createSlice({
     }
   },
   extraReducers: builder => {
+    builder.addCase(saveWebform.fulfilled, (state, { payload }) => {
+      state.landingPage = payload;
+    })
     builder.addCase(getLandingPagesData.fulfilled, (state, { payload }) => {
       state.landingPagesData = payload.filter(row => !row.IsDeleted)
       state.landingPagesDeletedData = payload.filter(row => row.IsDeleted)

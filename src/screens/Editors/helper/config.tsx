@@ -16,7 +16,6 @@ export interface ConfigOptions {
   Save: save;
   AutoSave: Function,
   DesignChange: Function,
-  UndoLastChange: Function,
   DeleteBlock: Function;
   Id: Number;
   PulseemEditBlock: Function;
@@ -25,6 +24,7 @@ export interface ConfigOptions {
   handleEditRow: Function;
   t: any;
   form: any;
+  onFormAdded: Function;
 }
 export const BeeConfig = (Options: ConfigOptions) => {
   const {
@@ -40,14 +40,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
     Save,
     AutoSave,
     DesignChange,
-    UndoLastChange,
     getRows,
     handleEditRow,
     // HandleAutoSave,
     handleDeleteRow,
     PulseemEditBlock,
     t,
-    form
+    form,
+    onFormAdded
   } = Options;
 
   const layout = [];
@@ -270,15 +270,16 @@ export const BeeConfig = (Options: ConfigOptions) => {
     },
     onAutoSave: () => moduleType === BEE_EDITOR_TYPES.CAMPAIGN ? AutoSave() : {},
     onChange: (jsonFile: any, response: any) => {
-      if (response.code === "0900") {
-        const formsCount = getFormsCount(jsonFile);
-
-        if (formsCount > 1) {
-          UndoLastChange('duplicated_form');
-          return false;
+      switch (response.code) {
+        case "0900": {
+          const formsCount = getFormsCount(jsonFile);
+          onFormAdded(formsCount);
+          break;
+        }
+        default: {
+          DesignChange();
         }
       }
-      DesignChange();
     }
     //#endregion
   }

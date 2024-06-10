@@ -382,25 +382,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   //#endregion Init Bee Token & Configuration
 
-  const getFormsCount = (obj: any) => {
-    let formsCount: number = 0;
-    const json = JSON.parse(obj);
-    json?.page?.rows?.forEach((row: any, idx: any) => {
-      row?.columns.forEach((col: any, index: any) => {
-        col?.modules?.forEach((module: any, index: any) => {
-          if (module?.descriptor.form && module?.descriptor.form !== null && module?.descriptor.form !== undefined) {
-            formsCount++;
-            if (formsCount > 0) {
-              return false;
-            }
-          }
-        });
-      })
-    });
-
-    return formsCount;
-  }
-
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args: SaveLandingPageArguments) => {
     //@ts-ignore
@@ -421,12 +402,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
 
       if (response.payload.StatusCode === 201) {
-        // Update Local store with new changes before after saved.
-        const webForm = { Data: { ...landingPage.Data, WebForm: { ...landingPage?.Data?.WebForm, HtmlData: finalHtml, JsonData: finalJson } } };
-        const updated: any = Object.assign({}, landingPage, webForm);
-        dispatch(updateLandingPage(updated));
-        // end Update Local store
-
         if (finalHtml.indexOf('submithandler.axd') > -1 && (!selectedGroups || selectedGroups?.length <= 0)) {
           // show Popup
           setShowGroupSelection(true);
@@ -506,13 +481,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     onAutoSavePage();
   }
 
-  const onUndoLastChange = async (reason: string) => {
-    if (reason === 'duplicated_form') {
-      // @ts-ignore
-      setToastMessage(ToastMessages.MULTIPLE_FORMS_NOT_ALLOWED);
-      getData();
-    }
-  }
   const deleteCurrentLandingPage = async () => {
     //@ts-ignore
     await dispatch(deleteLandingPage(moduleId));
@@ -585,6 +553,17 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     })
   }
 
+  const onFormAdded = (formsCount: number) => {
+    if (formsCount > 1) {
+      // @ts-ignore
+      setToastMessage(ToastMessages.MULTIPLE_FORMS_NOT_ALLOWED);
+    }
+    else {
+      onAutoSavePage();
+    }
+    getData();
+  }
+
   const getConfig = () => {
     return BeeConfig({
       //@ts-ignore
@@ -597,7 +576,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       Save: onSave,
       AutoSave: onAutoSavePage,
       DesignChange: onDesignChange,
-      UndoLastChange: onUndoLastChange,
       SetDialog: setDialogType,
       //@ts-ignore
       Id: moduleId,
@@ -608,7 +586,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       handleEditRow,
       handleDeleteRow,
       t: t,
-      form: clientForm
+      form: clientForm,
+      onFormAdded: onFormAdded
     }) as any;
   }
   const config = getConfig();
@@ -1111,10 +1090,13 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
     if (response.payload.StatusCode === 201) {
       setShowGroupSelection(false);
-      const tempArr = [...selectedGroups, ...list];
-      setSelectedGroups(tempArr);
-      // @ts-ignore
-      await getData();
+      if (list?.length === 0) {
+        setSelectedGroups([]);
+      }
+      else {
+        const tempArr = [...selectedGroups, ...list];
+        setSelectedGroups(tempArr);
+      }
     }
     else {
       // @ts-ignore
