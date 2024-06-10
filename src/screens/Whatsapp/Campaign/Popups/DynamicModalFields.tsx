@@ -11,7 +11,7 @@ import {
 	TextField,
 	Typography,
 } from '@material-ui/core';
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
@@ -60,6 +60,12 @@ const DynamicModalFields = ({
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
 	const [isSiteTrack, setIsSiteTrack] = useState(false);
+
+	useEffect(() => {
+		setDynamicProductType('');
+		setDynamicProductFallbackURL('');
+		setLinkInput('', false);
+	}, [ activeDynamicButton ])
 	
 	const onTrackLinkToggle = () => {
 		if (isTrackLink && checkSiteTrackingLink(SubAccountSettings, linkInput)) {

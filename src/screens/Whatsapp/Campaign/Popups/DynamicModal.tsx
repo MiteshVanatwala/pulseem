@@ -50,6 +50,10 @@ const DynamicModal = ({
 	>(dynamicVariable || []);
 	const [dynamicProductType, setDynamicProductType] = useState<string>('');
 	const [dynamicProductFallbackURL, setDynamicProductFallbackURL] = useState<string>('');
+
+	useEffect(() => {
+		setValidationErrors([]);
+	}, [ activeDynamicButton ])
 	
 	useEffect(() => {
 		if (campaignID && !isDynamcVariableUpdated && dynamicVariable?.length > 0) {
