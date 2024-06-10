@@ -1102,6 +1102,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       // @ts-ignore
       setToastMessage({ severity: 'error', color: 'error', message: t('common.ErrorOccured'), showAnimtionCheck: false });
     }
+    getData();
     setLoader(false);
   }
   return (

@@ -100,6 +100,7 @@ const GroupSelectorPopUp = ({
         return (
             <Autocomplete
                 multiple
+                placeholder={t('integrations.selectGroup')}
                 className={classes.autoComplete}
                 id="groups-selection"
                 options={subAccountAllGroups}
