@@ -48,6 +48,11 @@ const GroupSelectorPopUp = ({
             getGroups();
         }
     });
+    useEffect(() => {
+        if (subAccountAllGroups?.length > 0) {
+            setShowLoader(false);
+        }
+    }, [subAccountAllGroups])
 
     const handleCreateGroup = async () => {
         const newGroupTemplate = DEFAULT_NEW_GROUP;
@@ -159,7 +164,7 @@ const GroupSelectorPopUp = ({
                     <Button className={clsx(classes.btn, classes.btnRounded, classes.mlr10, !inputGroup || inputGroup === '' ? classes.disabled : null)} onClick={handleCreateGroup}>
                         {t("mainReport.save")}
                     </Button>
-                    {groupNameExist ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#", groupValue)}</span> : null}
+                    {groupNameExist ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#", inputGroup)}</span> : null}
                 </Box>
             </Box>
         </Box>,
@@ -168,7 +173,7 @@ const GroupSelectorPopUp = ({
 
     return (<>
         {subAccountAllGroups && <BaseDialog classes={classes} {...options} disableBackdropClick={true} />}
-        <Loader isOpen={showLoader} showBackdrop={true} />
+        <Loader isOpen={showLoader} showBackdrop={true} zIndex={999999999} />
     </>
     );
 }

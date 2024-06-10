@@ -11,7 +11,7 @@ import ResponseModal from './modals/ResponseModal'
 import Toast from '../../components/Toast/Toast.component';
 import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
-import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups } from '../../redux/reducers/landingPagesSlice';
+import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups, updateLandingPage } from '../../redux/reducers/landingPagesSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/config';
 import { IoMdImages } from 'react-icons/io';
@@ -381,6 +381,26 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     }
   }
   //#endregion Init Bee Token & Configuration
+
+  const getFormsCount = (obj: any) => {
+    let formsCount: number = 0;
+    const json = JSON.parse(obj);
+    json?.page?.rows?.forEach((row: any, idx: any) => {
+      row?.columns.forEach((col: any, index: any) => {
+        col?.modules?.forEach((module: any, index: any) => {
+          if (module?.descriptor.form && module?.descriptor.form !== null && module?.descriptor.form !== undefined) {
+            formsCount++;
+            if (formsCount > 0) {
+              return false;
+            }
+          }
+        });
+      })
+    });
+
+    return formsCount;
+  }
+
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args: SaveLandingPageArguments) => {
     //@ts-ignore
@@ -391,28 +411,22 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
-
-      // const formsCount = JSON.stringify(finalJson).indexOf('submithandler.axd');
-
-      // var userCommandCounts = JSON.parse(finalJson).page.rows[0].columns[0].modules.reduce(function (result: any, current: any) {
-      //   if (!result[current["form"]]) {
-      //     result[current["form"]] = 0;
-      //   }
-      //   result[current["form"]]++;
-      //   return result;
-      // }, {});
-
-      // console.log(userCommandCounts);
       //@ts-ignore
       let response: any = await dispatch(saveWebform({
         Name: '',
         ID: args.campaignId,
         JsonData: finalJson,
         HtmlData: finalHtml,
-
       }));
 
+
       if (response.payload.StatusCode === 201) {
+        // Update Local store with new changes before after saved.
+        const webForm = { Data: { ...landingPage.Data, WebForm: { ...landingPage?.Data?.WebForm, HtmlData: finalHtml, JsonData: finalJson } } };
+        const updated: any = Object.assign({}, landingPage, webForm);
+        dispatch(updateLandingPage(updated));
+        // end Update Local store
+
         if (finalHtml.indexOf('submithandler.axd') > -1 && (!selectedGroups || selectedGroups?.length <= 0)) {
           // show Popup
           setShowGroupSelection(true);
@@ -490,6 +504,14 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }, 100);
   const onDesignChange = async () => {
     onAutoSavePage();
+  }
+
+  const onUndoLastChange = async (reason: string) => {
+    if (reason === 'duplicated_form') {
+      // @ts-ignore
+      setToastMessage(ToastMessages.MULTIPLE_FORMS_NOT_ALLOWED);
+      getData();
+    }
   }
   const deleteCurrentLandingPage = async () => {
     //@ts-ignore
@@ -575,6 +597,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       Save: onSave,
       AutoSave: onAutoSavePage,
       DesignChange: onDesignChange,
+      UndoLastChange: onUndoLastChange,
       SetDialog: setDialogType,
       //@ts-ignore
       Id: moduleId,
@@ -1022,24 +1045,24 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       content: <Typography>{RenderHtml(message)}</Typography>
     };
   }
-  const renderEditRowDialog = (message: string) => {
-    return {
-      showDivider: false,
-      title: t('common.Notice'),
-      showDefaultButtons: false,
-      content: (
-        <EditRow
-          classes={classes}
-          onClose={(resp: any) => {
-            console.log(resp);
-            setDialogType(null);
-          }}
-          save={() => { }}
-          args={{}}
-        />
-      )
-    };
-  }
+  // const renderEditRowDialog = (message: string) => {
+  //   return {
+  //     showDivider: false,
+  //     title: t('common.Notice'),
+  //     showDefaultButtons: false,
+  //     content: (
+  //       <EditRow
+  //         classes={classes}
+  //         onClose={(resp: any) => {
+  //           console.log(resp);
+  //           setDialogType(null);
+  //         }}
+  //         save={() => { }}
+  //         args={{}}
+  //       />
+  //     )
+  //   };
+  // }
 
   const renderDialog = () => {
     const { type, data } = dialogType || {}

@@ -470,5 +470,6 @@
   "groupsForSubscribers": "Group for Subscribers",
   "doubleOptIn": "Activate Subscriber with Double Opt In",
   "commentsToForm": "Comments to Form",
-  "facebookLikes": "Facebook Like"
+  "facebookLikes": "Facebook Like",
+  "multipleFormsBlocked": "Multiple Forms are currenly not allowed."
 }

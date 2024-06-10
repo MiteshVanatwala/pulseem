@@ -470,5 +470,6 @@
   "groupsForSubscribers": "קבוצות לשיוך נרשמים",
   "doubleOptIn": "הפעל נמען דרך אימייל - Double optin",
   "commentsToForm": "תגובות לטופס",
-  "facebookLikes": "לייק בפייסבוק"
+  "facebookLikes": "לייק בפייסבוק",
+  "multipleFormsBlocked": "Multiple Forms are currenly not allowed"
 }

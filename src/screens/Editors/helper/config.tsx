@@ -1,29 +1,28 @@
 import { v4 as uuidv4 } from 'uuid';
-import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translations/BeeEditor/Languages';
 import { FONTS } from '../../../helpers/Fonts/Init';
 import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
 import { isProdMode } from '../../../config';
 type dialog = (a: any) => void;
 type save = (a: any) => void;
-const AUTO_SAVE_SECONDS = 180; // 3 minutes
+
 export interface ConfigOptions {
   moduleType: string;
   classes: any;
   onSaveUserBlock: Function;
   IsRTL: Boolean;
   openModal: any;
-  SetDialog: dialog;
+  // SetDialog: dialog;
   EditRow: Function;
   Save: save;
   AutoSave: Function,
   DesignChange: Function,
+  UndoLastChange: Function,
   DeleteBlock: Function;
   Id: Number;
   PulseemEditBlock: Function;
   getRows: Function;
   handleDeleteRow: Function;
   handleEditRow: Function;
-  // HandleAutoSave: Function,
   t: any;
   form: any;
 }
@@ -35,12 +34,13 @@ export const BeeConfig = (Options: ConfigOptions) => {
     IsRTL,
     EditRow,
     openModal,
-    SetDialog,
+    // SetDialog,
     Id,
     DeleteBlock,
     Save,
     AutoSave,
     DesignChange,
+    UndoLastChange,
     getRows,
     handleEditRow,
     // HandleAutoSave,
@@ -269,10 +269,40 @@ export const BeeConfig = (Options: ConfigOptions) => {
       // console.log(jsonFile);
     },
     onAutoSave: () => moduleType === BEE_EDITOR_TYPES.CAMPAIGN ? AutoSave() : {},
-    onChange: () => DesignChange()
+    onChange: (jsonFile: any, response: any) => {
+      if (response.code === "0900") {
+        const formsCount = getFormsCount(jsonFile);
+
+        if (formsCount > 1) {
+          UndoLastChange('duplicated_form');
+        }
+      }
+      else {
+        DesignChange();
+      }
+    }
     //#endregion
   }
 };
+
+const getFormsCount = (obj: any) => {
+  let formsCount: number = 0;
+  const json = JSON.parse(obj);
+  json?.page?.rows?.forEach((row: any, idx: any) => {
+    row?.columns.forEach((col: any, index: any) => {
+      col?.modules?.forEach((module: any, index: any) => {
+        if (module?.descriptor.form && module?.descriptor.form !== null && module?.descriptor.form !== undefined) {
+          formsCount++;
+          if (formsCount > 0) {
+            return false;
+          }
+        }
+      });
+    })
+  });
+
+  return formsCount;
+}
 export const DefaultContent = (IsRTL: Boolean) => {
   return {
     titleDefaultStyles: {

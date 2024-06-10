@@ -259,9 +259,14 @@ export const landingPagesSlice = createSlice({
       LANDING_PAGE_SAVED: { severity: 'success', color: 'success', message: 'landingPages.landingPageSaved', showAnimtionCheck: true },
       TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
       USER_BLOCK_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
+      MULTIPLE_FORMS_NOT_ALLOWED: { severity: 'error', color: 'error', message: 'landingPages.multipleFormsBlocked', showAnimtionCheck: false },
     },
   },
-  reducers: {},
+  reducers: {
+    updateLandingPage: (state, action) => {
+      state.landingPage = action.payload;
+    }
+  },
   extraReducers: builder => {
     builder.addCase(getLandingPagesData.fulfilled, (state, { payload }) => {
       state.landingPagesData = payload.filter(row => !row.IsDeleted)
@@ -308,5 +313,5 @@ export const landingPagesSlice = createSlice({
 })
 
 
-
+export const { updateLandingPage } = landingPagesSlice.actions
 export default landingPagesSlice.reducer
