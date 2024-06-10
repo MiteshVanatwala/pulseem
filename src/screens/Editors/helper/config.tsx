@@ -275,11 +275,10 @@ export const BeeConfig = (Options: ConfigOptions) => {
 
         if (formsCount > 1) {
           UndoLastChange('duplicated_form');
+          return false;
         }
       }
-      else {
-        DesignChange();
-      }
+      DesignChange();
     }
     //#endregion
   }
