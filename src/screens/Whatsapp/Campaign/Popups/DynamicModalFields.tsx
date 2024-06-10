@@ -1,9 +1,11 @@
 import {
 	Box,
 	Button,
+	Divider,
 	FormControl,
 	FormGroup,
 	Grid,
+	InputAdornment,
 	MenuItem,
 	Switch,
 	TextField,
@@ -24,6 +26,7 @@ import { checkSiteTrackingLink } from '../../Common';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
 import { DynamicProductLink } from '../../../../Models/PushNotifications/Enums';
+import { MdClear } from 'react-icons/md';
 
 const DynamicModalFields = ({
 	classes,
@@ -156,7 +159,7 @@ const DynamicModalFields = ({
 
 			{activeDynamicButton?.includes('link') && (
 				<div className={clsx(classes.whatsappCampaignDynamicFieldLink, classes.pt10)}>
-					<Grid container className={clsx(classes.whatsappCampaignDynamicFieldLink)}>
+					<Grid container className={clsx(classes.whatsappCampaignDynamicFieldLink)} spacing={2}>
 						<Grid item md={7}>
 							<TextField
 								required
@@ -168,6 +171,13 @@ const DynamicModalFields = ({
 								}
 								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || linkInput?.includes('dynamicProduct')}
 								value={linkInput}
+								InputProps={{
+									endAdornment: (
+										<InputAdornment position="end" onClick={() => setLinkInput('', isTrackLink)} className={clsx(!linkInput ? classes.dNone : null)}>
+											<MdClear style={{ cursor: 'pointer' }} />
+										</InputAdornment>
+									)
+								}}
 							/>
 
 							{
@@ -186,6 +196,38 @@ const DynamicModalFields = ({
 									/>
 								)
 							}
+
+							{ dynamicProductType && <Divider className={classes.mt20} /> }
+							<Box className={clsx(classes.switchDiv, classes.pt14)} style={{ marginInlineStart: 0 }}>
+								<FormGroup>
+									<Switch
+										className={
+											isRTL
+												? clsx(
+														classes.reactSwitchHe,
+														'react-switch',
+														'dynamic-link-switch'
+													)
+												: clsx(
+														classes.reactSwitch,
+														'react-switch',
+														'dynamic-link-switch'
+													)
+										}
+										disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || linkInput?.includes('dynamicProduct')}
+										checked={isTrackLink}
+										onChange={() => onTrackLinkToggle()}
+									/>
+								</FormGroup>
+								<Box>
+									<Typography className='keep-track'>
+										<>{translator('mainReport.keepTrack')}</>
+									</Typography>
+									<Typography className='keep-track-desc'>
+										<>{translator('mainReport.keepDesc')}</>
+									</Typography>
+								</Box>
+							</Box>
 						</Grid>
 						<Grid item md={5}>
 							<Button
@@ -244,39 +286,6 @@ const DynamicModalFields = ({
 								{translator('common.latestAbandonment')}
 							</Button>
 						</Grid>
-					</Grid>
-
-					<Grid>
-						<Box className={classes.switchDiv} style={{ marginInlineStart: 0 }}>
-							<FormGroup>
-								<Switch
-									className={
-										isRTL
-											? clsx(
-													classes.reactSwitchHe,
-													'react-switch',
-													'dynamic-link-switch'
-												)
-											: clsx(
-													classes.reactSwitch,
-													'react-switch',
-													'dynamic-link-switch'
-												)
-									}
-									disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || linkInput?.includes('dynamicProduct')}
-									checked={isTrackLink}
-									onChange={() => onTrackLinkToggle()}
-								/>
-							</FormGroup>
-							<Box>
-								<Typography className='keep-track'>
-									<>{translator('mainReport.keepTrack')}</>
-								</Typography>
-								<Typography className='keep-track-desc'>
-									<>{translator('mainReport.keepDesc')}</>
-								</Typography>
-							</Box>
-						</Box>
 					</Grid>
 				</div>
 			)}
