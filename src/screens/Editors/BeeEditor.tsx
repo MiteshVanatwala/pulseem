@@ -561,7 +561,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     else {
       onAutoSavePage();
     }
-    getData();
+    setTimeout(() => {
+      getData();
+    }, 500);
+
   }
 
   const getConfig = () => {
