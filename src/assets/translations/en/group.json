@@ -44,5 +44,6 @@
     "404": "Not found",
     "incorrectValue": "One of the values or more are incorrect"
   },
-  "eCommerceEventNotice": "<b>Please notice:</b> These events will work only for accounts linked to eCommerce stores integrated with Pulseem."
+  "eCommerceEventNotice": "<b>Please notice:</b> These events will work only for accounts linked to eCommerce stores integrated with Pulseem.",
+  "typeGroupNameAutocomplete": "Type group name for Autocomplete"
 }

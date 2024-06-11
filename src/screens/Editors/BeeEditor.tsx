@@ -477,10 +477,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     setSilentSave(true)
     saveDesign(false, null, false);
   }, 100);
-  const onDesignChange = async () => {
-    onAutoSavePage();
-  }
-
   const deleteCurrentLandingPage = async () => {
     //@ts-ignore
     await dispatch(deleteLandingPage(moduleId));
@@ -518,9 +514,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     return null;
   }
   //#endregion Pulseem Methods (Save, Delete, Exit, Back, Test Send)
-  const handleCloseReponse = () => {
-    setIsResponseModal(false);
-  }
   const onSaveUserBlock = (json: any, block: any) => {
     setLoader(true);
     const blockRequest = {
@@ -552,45 +545,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       console.log(result);
     })
   }
-
-  const onFormAdded = (formsCount: number) => {
-    if (formsCount > 1) {
-      // @ts-ignore
-      setToastMessage(ToastMessages.MULTIPLE_FORMS_NOT_ALLOWED);
-    }
-    else {
-      onAutoSavePage();
-    }
-    getData();
-  }
-
-  const getConfig = () => {
-    return BeeConfig({
-      //@ts-ignore
-      moduleType,
-      classes,
-      onSaveUserBlock,
-      IsRTL: isRTL,
-      EditRow: EditRow,
-      openModal: openModal,
-      Save: onSave,
-      AutoSave: onAutoSavePage,
-      DesignChange: onDesignChange,
-      SetDialog: setDialogType,
-      //@ts-ignore
-      Id: moduleId,
-      PulseemEditBlock: onEditBlock,
-      DeleteBlock: handleDeleteBlock,
-      // HandleAutoSave: handleAutoSave,
-      getRows,
-      handleEditRow,
-      handleDeleteRow,
-      t: t,
-      form: clientForm,
-      onFormAdded: onFormAdded
-    }) as any;
-  }
-  const config = getConfig();
   const saveTemplate = async () => {
     //@ts-ignore
     saveRef.current = {
@@ -608,75 +562,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     //@ts-ignore
     await editorRef.current.save();
   }
-  const showGalleryModal = () => {
-    if (showGallery) {
-      let dialog = {
-        showDivider: false,
-        icon: (
-          <IoMdImages />
-        ),
-        title: t("common.imageGallery"),
-        content: (
-          <Gallery
-            classes={classes}
-            //@ts-ignore
-            style={{ minWidth: 400 }}
-            multiSelect={false}
-            forceReload={true}
-            folderType={PulseemFolderType.CLIENT_IMAGES} />
-        )
-      };
-      return (
-        <BaseDialog
-          maxHeight="calc(70vh)"
-          disableBackdropClick={true}
-          style={{ minHeight: 400 }}
-          //@ts-ignore
-          showDivider={false}
-          classes={classes}
-          open={showGallery}
-          onClose={() => { setShowGallery(false); }}
-          onCancel={() => { setShowGallery(false); }}
-          onConfirm={() => { setShowGallery(false); }}
-          {...dialog}>
-          {dialog.content}
-        </BaseDialog>
-      );
-    }
-  }
-  const showDocumentsModal = () => {
-    if (showDocs) {
-      let dialog = {
-        showDivider: false,
-        title: t("common.documentGallery"),
-        content: (
-          <Gallery
-            classes={classes}
-            //@ts-ignore
-            style={{ minWidth: 400 }}
-            multiSelect={false}
-            forceReload={true}
-            folderType={PulseemFolderType.DOCUMENT} />
-        )
-      };
-      return (
-        <BaseDialog
-          maxHeight="calc(70vh)"
-          disableBackdropClick={true}
-          style={{ minHeight: 400 }}
-          //@ts-ignore
-          showDivider={false}
-          classes={classes}
-          open={showDocs}
-          onClose={() => { setShowDocuments(false); }}
-          onCancel={() => { setShowDocuments(false); }}
-          onConfirm={() => { setShowDocuments(false); onBeforeReinit(); setReinit(true); }}
-          {...dialog}>
-          {dialog.content}
-        </BaseDialog>
-      );
-    }
-  }
+  //#region Wizard buttons
   const renderTemplateButtons = () => {
     return <>
       <Button onClick={() => {
@@ -825,6 +711,77 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         return 'landingPages.landingPages';
       default:
         return 'common.back'
+    }
+  }
+  //#endregion
+  //#region Dialogs
+  const showGalleryModal = () => {
+    if (showGallery) {
+      let dialog = {
+        showDivider: false,
+        icon: (
+          <IoMdImages />
+        ),
+        title: t("common.imageGallery"),
+        content: (
+          <Gallery
+            classes={classes}
+            //@ts-ignore
+            style={{ minWidth: 400 }}
+            multiSelect={false}
+            forceReload={true}
+            folderType={PulseemFolderType.CLIENT_IMAGES} />
+        )
+      };
+      return (
+        <BaseDialog
+          maxHeight="calc(70vh)"
+          disableBackdropClick={true}
+          style={{ minHeight: 400 }}
+          //@ts-ignore
+          showDivider={false}
+          classes={classes}
+          open={showGallery}
+          onClose={() => { setShowGallery(false); }}
+          onCancel={() => { setShowGallery(false); }}
+          onConfirm={() => { setShowGallery(false); }}
+          {...dialog}>
+          {dialog.content}
+        </BaseDialog>
+      );
+    }
+  }
+  const showDocumentsModal = () => {
+    if (showDocs) {
+      let dialog = {
+        showDivider: false,
+        title: t("common.documentGallery"),
+        content: (
+          <Gallery
+            classes={classes}
+            //@ts-ignore
+            style={{ minWidth: 400 }}
+            multiSelect={false}
+            forceReload={true}
+            folderType={PulseemFolderType.DOCUMENT} />
+        )
+      };
+      return (
+        <BaseDialog
+          maxHeight="calc(70vh)"
+          disableBackdropClick={true}
+          style={{ minHeight: 400 }}
+          //@ts-ignore
+          showDivider={false}
+          classes={classes}
+          open={showDocs}
+          onClose={() => { setShowDocuments(false); }}
+          onCancel={() => { setShowDocuments(false); }}
+          onConfirm={() => { setShowDocuments(false); onBeforeReinit(); setReinit(true); }}
+          {...dialog}>
+          {dialog.content}
+        </BaseDialog>
+      );
     }
   }
   const renderTemplateDialog = () => {
@@ -1024,25 +981,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       content: <Typography>{RenderHtml(message)}</Typography>
     };
   }
-  // const renderEditRowDialog = (message: string) => {
-  //   return {
-  //     showDivider: false,
-  //     title: t('common.Notice'),
-  //     showDefaultButtons: false,
-  //     content: (
-  //       <EditRow
-  //         classes={classes}
-  //         onClose={(resp: any) => {
-  //           console.log(resp);
-  //           setDialogType(null);
-  //         }}
-  //         save={() => { }}
-  //         args={{}}
-  //       />
-  //     )
-  //   };
-  // }
-
   const renderDialog = () => {
     const { type, data } = dialogType || {}
     let currentDialog = {};
@@ -1081,7 +1019,21 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     }
     return <></>
   }
+  //#endregion Dialogs
+  //#region Forms
+  const onFormAdded = (formsCount: number) => {
+    if (formsCount > 1) {
+      // @ts-ignore
+      setToastMessage(ToastMessages.MULTIPLE_FORMS_NOT_ALLOWED);
+    }
+    else {
+      onAutoSavePage();
+    }
+    setTimeout(() => {
+      getData();
+    }, 500);
 
+  }
   const updateWebFormGroups = async (list: Array<number>) => {
     setLoader(true);
     const requestParams = { WebformID: params.id, GroupID: list };
@@ -1105,6 +1057,34 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     getData();
     setLoader(false);
   }
+  //#endregion Forms 
+  const getConfig = () => {
+    return BeeConfig({
+      //@ts-ignore
+      moduleType,
+      classes,
+      onSaveUserBlock,
+      IsRTL: isRTL,
+      EditRow: EditRow,
+      openModal: openModal,
+      Save: onSave,
+      AutoSave: onAutoSavePage,
+      DesignChange: onAutoSavePage,
+      SetDialog: setDialogType,
+      //@ts-ignore
+      Id: moduleId,
+      PulseemEditBlock: onEditBlock,
+      DeleteBlock: handleDeleteBlock,
+      // HandleAutoSave: handleAutoSave,
+      getRows,
+      handleEditRow,
+      handleDeleteRow,
+      t: t,
+      form: clientForm,
+      onFormAdded: onFormAdded
+    }) as any;
+  }
+  const config = getConfig();
   return (
     <DefaultScreen
       showAppBar={false}
@@ -1120,9 +1100,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         classes={classes}
         //@ts-ignore
         isOpen={dialog && isResponseModal}
-        onClose={handleCloseReponse}
+        onClose={() => setIsResponseModal(false)}
         //@ts-ignore
-        onConfirm={handleCloseReponse}
+        onConfirm={() => setIsResponseModal(false)}
         summaryData={summaryData}
         message={dialog}
       />

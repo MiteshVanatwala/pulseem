@@ -100,7 +100,7 @@ const GroupSelectorPopUp = ({
         return (
             <Autocomplete
                 multiple
-                placeholder={t('integrations.selectGroup')}
+                placeholder={t(title)}
                 className={classes.autoComplete}
                 id="groups-selection"
                 options={subAccountAllGroups}
@@ -130,6 +130,7 @@ const GroupSelectorPopUp = ({
                 renderInput={(params) => (
                     // @ts-ignore
                     <TextField {...params}
+                    placeholder={t('group.typeGroupNameAutocomplete')}
                         className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
                 )}
             />
@@ -147,6 +148,7 @@ const GroupSelectorPopUp = ({
         renderButtons: false,
         showDefaultButtons: true,
         children: subAccountAllGroups && <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'column' }}>
+            <Box>{t(title)}</Box>
             <Box>{renderGroupList()}</Box>
             <Divider />
             <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 25 }}>- {t('common.or')} -</Box>
