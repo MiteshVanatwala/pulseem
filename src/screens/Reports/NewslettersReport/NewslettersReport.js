@@ -598,7 +598,7 @@ const NewslettersReport = ({ classes }) => {
         <>
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {
-              isParentCampaignWithChild && <>
+              isParent && isParentCampaignWithChild && <>
                 {
                   expandedIds.indexOf(row.CampaignID) === -1
                     ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.p5, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
@@ -628,15 +628,17 @@ const NewslettersReport = ({ classes }) => {
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>
         <Grid item className={clsx(classes.w30)}>
           {
-            <span style={{ opacity: (isParent && parentCampaignsWithChild.indexOf(row.CampaignID) > -1) ? 1 : 0 }}>
-              {
-                expandedIds.indexOf(row.CampaignID) === -1
-                  ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
-                  : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
-              }
-            </span>
+            isParent && isParentCampaignWithChild && (
+              <span>
+                {
+                  expandedIds.indexOf(row.CampaignID) === -1
+                    ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
+                    : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
+                }
+              </span>
+            )
           }
-          {isChecked && <Checkbox
+          {(!isParent || !isParentCampaignWithChild) && isChecked && <Checkbox
             color='primary'
             checked={toFileArray.includes(CampaignID)}
             onChange={() => {
@@ -946,7 +948,7 @@ const NewslettersReport = ({ classes }) => {
         {
           isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
             <>
-              {renderRow(row, false, false)}
+              {renderRow(row, false, isEven)}
               {childItems.map((campaign) => renderRow(campaign, false, isEven))}
             </>
           )
