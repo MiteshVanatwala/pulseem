@@ -545,51 +545,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       console.log(result);
     })
   }
-<<<<<<< HEAD
-=======
-
-  const onFormAdded = (formsCount: number) => {
-    if (formsCount > 1) {
-      // @ts-ignore
-      setToastMessage(ToastMessages.MULTIPLE_FORMS_NOT_ALLOWED);
-    }
-    else {
-      onAutoSavePage();
-    }
-    setTimeout(() => {
-      getData();
-    }, 500);
-
-  }
-
-  const getConfig = () => {
-    return BeeConfig({
-      //@ts-ignore
-      moduleType,
-      classes,
-      onSaveUserBlock,
-      IsRTL: isRTL,
-      EditRow: EditRow,
-      openModal: openModal,
-      Save: onSave,
-      AutoSave: onAutoSavePage,
-      DesignChange: onDesignChange,
-      SetDialog: setDialogType,
-      //@ts-ignore
-      Id: moduleId,
-      PulseemEditBlock: onEditBlock,
-      DeleteBlock: handleDeleteBlock,
-      // HandleAutoSave: handleAutoSave,
-      getRows,
-      handleEditRow,
-      handleDeleteRow,
-      t: t,
-      form: clientForm,
-      onFormAdded: onFormAdded
-    }) as any;
-  }
-  const config = getConfig();
->>>>>>> c97b5f1875521612a3b85c2dc297d6b560be2222
   const saveTemplate = async () => {
     //@ts-ignore
     saveRef.current = {
