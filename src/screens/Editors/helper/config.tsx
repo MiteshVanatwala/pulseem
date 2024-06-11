@@ -270,6 +270,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
     },
     onAutoSave: () => moduleType === BEE_EDITOR_TYPES.CAMPAIGN ? AutoSave() : {},
     onChange: (jsonFile: any, response: any) => {
+      // https://docs.beefree.io/beefree-sdk/tracking-message-changes#content-codes - Codes
+      // Every code should get "00" in the end
       switch (response.code) {
         case "0900": {
           const formsCount = getFormsCount(jsonFile);
