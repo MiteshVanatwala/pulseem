@@ -240,11 +240,25 @@ const SignUp = ({ classes }: any) => {
 				{RenderHtml(t('SignUp.ConfirmationMessage').replace(/{emailid}/g, userDetails.emailId))}
 			</Typography>
 		),
-		cancelText: t('common.No'),
-		confirmText: t('SignUp.ResendEmail'),
-    onClose: () => setDialogType(null),
-    onCancel: () => setDialogType(null),
-    onConfirm: () => sendEmail(),
+    showDefaultButtons: false,
+		renderButtons: () => (
+      <Grid
+        container
+        spacing={2}
+        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+      >
+        <Grid item>
+          <Button
+            onClick={sendEmail}
+            className={clsx(
+                classes.btn,
+                classes.btnRounded
+            )}>
+            {t('SignUp.ResendEmail')}
+          </Button>
+        </Grid>
+      </Grid>
+    )
 	})
 
   const displayInternalErrorPopup = () => ({
