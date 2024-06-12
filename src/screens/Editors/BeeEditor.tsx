@@ -404,7 +404,15 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       if (response.payload.StatusCode === 201) {
         if (finalHtml.indexOf('submithandler.axd') > -1 && (!selectedGroups || selectedGroups?.length <= 0)) {
           // show Popup
-          setShowGroupSelection(true);
+          //@ts-ignore
+          if (saveRef.current?.showGroupPopup) {
+            setShowGroupSelection(true);
+            saveRef.current = {
+              //@ts-ignore
+              ...saveRef.current,
+              showGroupPopup: false
+            }
+          }
           return false;
         }
 
@@ -464,7 +472,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false) => {
     //@ts-ignore
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish };
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish, showGroupPopup: saveRef.current?.showGroupPopup || false };
     //@ts-ignore
     await editorRef.current.save();
     setTimeout(() => {
@@ -473,7 +481,14 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       setSilentSave(false)
     }, 2000);
   }
-  const onAutoSavePage = debounce(() => {
+  const onAutoSavePage = debounce((showGroupPopup: boolean = false) => {
+    if (showGroupPopup) {
+      saveRef.current = {
+        //@ts-ignore
+        ...saveRef.current,
+        showGroupPopup: true
+      }
+    }
     setSilentSave(true)
     saveDesign(false, null, false);
   }, 100);
@@ -621,7 +636,14 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       wizardButtons.push(
         <>
           <Button
-            onClick={() => saveDesign(false, null, true)}
+            onClick={() => {
+              saveRef.current = {
+                //@ts-ignore
+                ...saveRef.current,
+                showGroupPopup: true
+              };
+              saveDesign(false, null, true)
+            }}
             className={clsx(
               classes.btn,
               classes.btnRounded,
@@ -637,7 +659,14 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             fromLink?.toLowerCase() !== 'autoresponder' && (
               <>
                 {/* @ts-ignore */}
-                <Button onClick={() => saveDesign(true, null, false, true)}
+                <Button onClick={() => {
+                  saveRef.current = {
+                    //@ts-ignore
+                    ...saveRef.current,
+                    showGroupPopup: true
+                  };
+                  saveDesign(true, null, false, true);
+                }}
                   variant='contained'
                   size='medium'
                   className={clsx(
@@ -653,6 +682,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                 </Button>
                 {/* @ts-ignore */}
                 <Button onClick={() => {
+                  saveRef.current = {
+                    //@ts-ignore
+                    ...saveRef.current,
+                    showGroupPopup: true
+                  };
                   saveDesign(true, `${sitePrefix}EditRegistrationPage`, false, landingPage.Status === 2);
                 }}
                   variant='contained'
@@ -1027,7 +1061,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       setToastMessage(ToastMessages.MULTIPLE_FORMS_NOT_ALLOWED);
     }
     else {
-      onAutoSavePage();
+      onAutoSavePage(true);
     }
     setTimeout(() => {
       getData();
