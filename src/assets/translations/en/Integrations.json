@@ -80,6 +80,12 @@
     "1To365": "Number of days should be between 1 and 365.",
     "nonZero": "Value should be more than 0.",
     "fetchDataManually": "Fetch Data Manually",
-    "fetchDataManualSuccess": "A request was sent to the store, the data will be fetched within the next 10 minutes"
+    "fetchDataManualSuccess": "A request was sent to the store, the data will be fetched within the next 10 minutes",
+    "howToConnect": "Learn how to connect E-Shop"
+  },
+  "wix": {
+    "title": "Wix",
+    "description": "In order to integrate your Wix store to your Pulseem account please read the following guide:",
+    "connectStore": "CONNECT YOUR WIX STORE"
   }
 }
