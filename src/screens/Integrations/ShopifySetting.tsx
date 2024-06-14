@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
@@ -16,17 +16,26 @@ import GroupTags from "../../components/Groups/GroupTags";
 import InputMask from 'react-input-mask';
 import { BiSave } from "react-icons/bi";
 import { URL_HELPER } from "../../helpers/Links/ExternalLink";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { SHOPIFY_SITE_TRACKING } from "../../helpers/Constants";
+import { getScript } from "../../redux/reducers/siteTrackingSlice";
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const refScriptCode = useRef(null);
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
+  const { siteScript } = useSelector((state: any) => state.siteTracking);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(false);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isShowCredentials, setIsShowCredentials] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
+  const [dialogType, setDialogType] = useState<{
+    type: string;
+  } | null>(null);
+  const [copyStatus, setCopyStatus] = useState<boolean>(false);
   const [errors, setErrors] = useState({
     api_key: '',
     api_access_token: '',
@@ -63,6 +72,7 @@ const Shopify = ({ classes }: any) => {
 
   const initSettings = async () => {
     setShowLoader(true);
+    await dispatch(getScript());
     const settingResponse = await dispatch(getIntegration(LU_Plugin.Shopify)) as any;
     setShowLoader(false);
     handleGetIntegrationResponse(settingResponse)
@@ -325,6 +335,142 @@ const Shopify = ({ classes }: any) => {
     )
   }
 
+  const handleCopyScript = () => {
+    setCopyStatus(true);
+    setTimeout(() => {
+      setCopyStatus(false);
+    }, 1000);
+  }
+
+  const scriptImplementationDialog = () => {
+    return {
+      title: null,
+      showDivider: false,
+      icon: (
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
+          {'\u005E'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Typography className={classes.f28}>
+            {t('integrations.beforeYouStarted')}
+          </Typography>
+          <Typography className={clsx(classes.f18, classes.pb10, classes.pt20)}>
+            {RenderHtml(t('integrations.scriptDescription'))}
+          </Typography>
+          <Typography className={clsx(classes.bold, classes.pb10, classes.f18, classes.mlr10)}>
+            <li>{RenderHtml(t('integrations.scriptPayAttention'))}</li>
+          </Typography>
+          <hr />
+          <Typography className={clsx(classes.bold, classes.pb10, classes.f18)}>
+            {RenderHtml(t('integrations.shopify.scripyTitle'))}
+          </Typography>
+          <Typography className={clsx(classes.pb10, classes.f18)}>
+            {RenderHtml(t('integrations.shopify.scriptDescription'))}
+          </Typography>
+          <Typography className={clsx(classes.pb10, classes.f18)}>
+            {RenderHtml(t('integrations.shopify.scriptDescription2'))}
+          </Typography>
+          <CopyToClipboard text={siteScript} onCopy={handleCopyScript}>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              startIcon={<div className={classes.copyIcon}>{copyStatus ? '\uE134' : '\ue0b0'}</div>}
+              className={classes.mb2}
+            >
+              {copyStatus ? t('notifications.copied') : t('notifications.copy')}
+            </Button>
+          </CopyToClipboard>
+          <Box style={{ direction: 'ltr' }}>
+            <Typography className={clsx(classes.bold, classes.f16)}>
+              {t('notifications.headTagOpenText')} {'<head>'}
+            </Typography>
+            <pre>
+              <div ref={refScriptCode} className={classes.scriptCode} style={{ padding: 5 }}>
+                {siteScript}
+              </div>
+            </pre>
+            <Typography className={clsx(classes.bold, classes.f16)}>
+              {t('notifications.headTagClosesText')} {'</head>'}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography className={clsx(classes.f18, classes.mt15, classes.mb15)}>
+              {t('siteTracking.scriptPageviewImplemented')}
+            </Typography>
+          </Box>
+          <hr />
+          <Typography className={clsx(classes.bold, classes.pb10, classes.f18)}>
+            {RenderHtml(t('integrations.shopify.purchaseTracking'))}
+          </Typography>
+          <Typography className={clsx(classes.pb10, classes.f18)}>
+            {RenderHtml(t('integrations.shopify.scriptDescription3'))}
+          </Typography>
+          <Typography className={clsx(classes.pb10, classes.f18)}>
+            {RenderHtml(t('integrations.shopify.scriptDescription4'))}
+          </Typography>
+          <Typography className={clsx(classes.pb10, classes.f18)}>
+            {RenderHtml(t('integrations.shopify.scriptDescription5'))}
+          </Typography>
+          <CopyToClipboard text={SHOPIFY_SITE_TRACKING} onCopy={handleCopyScript}>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              startIcon={<div className={classes.copyIcon}>{copyStatus ? '\uE134' : '\ue0b0'}</div>}
+            >
+              {copyStatus ? t('notifications.copied') : t('notifications.copy')}
+            </Button>
+          </CopyToClipboard>
+          <pre style={{ direction: 'ltr' }}>
+            <div ref={refScriptCode} className={clsx(classes.scriptCode, classes.p5)}>
+              {SHOPIFY_SITE_TRACKING}
+            </div>
+          </pre>
+          <Typography className={clsx(classes.pb10, classes.f18)}>
+            {RenderHtml(t('integrations.shopify.scriptDescription6'))}
+          </Typography>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          onClick={() => setDialogType(null)}
+          className={clsx(
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
+          )}
+        >
+          {t('common.Ok')}
+        </Button>
+      )
+    }
+  }
+
+  const renderDialog = () => {
+		const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'scriptImplementation') {
+			currentDialog = scriptImplementationDialog();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
+
   return (
     <>
       {toastMessage && renderToast()}
@@ -344,6 +490,12 @@ const Shopify = ({ classes }: any) => {
               color="primary"
             >
               {t(`integrations.shopify.connectStore`)}
+            </Button>
+            <Button
+              onClick={() => setDialogType({ type: 'scriptImplementation' })}
+              className={clsx(classes.btn, classes.btnRounded, classes.m10)}
+            >
+              {t("siteTracking.scriptImplementation")}
             </Button>
             <Box className={clsx(classes.dblock, classes.pb15)}>
               <Typography className={clsx(classes.bold)}>
@@ -698,6 +850,7 @@ const Shopify = ({ classes }: any) => {
         )
       }
       {renderResetDialog()}
+      {renderDialog()}
     </>
   );
 };

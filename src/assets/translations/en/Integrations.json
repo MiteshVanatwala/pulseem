@@ -16,6 +16,9 @@
   "connectStore": "Connect Store",
   "disconnectStore": "Disconnect Store",
   "apiKey": "API key",
+  "beforeYouStarted": "Before you get started...",
+  "scriptDescription": "In order to start tracking how your customers are interacting with your site, you must first implement the scripts below on your site.",
+  "scriptPayAttention": "Pay attention, Site tracking will only work on sites with an SSL certificate",
   "shopify": {
     "title": "Shopify",
     "authentication": "Authentication",
@@ -38,7 +41,16 @@
     "hideCredentials": "Hide Credentials",
     "apiVersion": "Webhook Verison",
     "apiVersionDesc": "Check your Webhook version in \"Configuration\" tab",
-    "connectStore": "Learn how to connect Shopify"
+    "connectStore": "Learn how to connect Shopify",
+    "scripyTitle": "Shopify Implementation:",
+    "scriptDescription": "Enter the management interface in Shopify, click on \"Online Store\", then on \"Themes\" and click on \"Edit Code\"",
+    "scriptDescription2": "Enter \"Liquid Theme\", embed the script between <script> and <head> tags and click save:",
+    "purchaseTracking": "Activate Purchase Tracking",
+    "scriptDescription3": "After implementing the script in the header, the following parameters must be reported using a Javascript function",
+    "scriptDescription4": "Return to the menu and go to the \"Settings\" menu and within it to \"Checkout\"",
+    "scriptDescription5": "Go down to the \"Order Status Page\", paste the script attached here and click Save:",
+    "shopifyReadyScript": "Shopify ready Script:",
+    "scriptDescription6": "After implementing this script, campaign reports will show the revenue from each campaign."
   },
   "wooCommerce": {
     "title": "WooCommerce",

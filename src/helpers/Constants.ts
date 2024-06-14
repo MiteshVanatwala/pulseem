@@ -245,3 +245,14 @@ export const BEE_EDITOR_TYPES = {
 }
 
 export const NO_IMAGE_URL = 'https://www.pulseem.co.il/Pulseem/images/productimage.png';
+
+export const SHOPIFY_SITE_TRACKING = `<script>
+    window.addEventListener("load", () => {
+        const orderId = "{{ order_number }}";
+        const grandTotal = "{{ line_items_subtotal_price | money_without_currency }}".replaceAll(',', '');
+        const shipping = 0;
+        const tax = 0;
+        const orderItems = [];
+        window.trackPurchase(orderId, grandTotal, shipping, tax, orderItems);
+    });
+</script>`;
