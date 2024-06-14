@@ -690,7 +690,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                   </Typography>
                 </Grid>
               ) : (
-                <div className={clsx(isParentCampaignWithChild ? classes.paddingInline30 : '', classes.bold, classes.pt5, classes.f16)}>
+                <div className={clsx(isParentCampaignWithChild ? classes.paddingInline30 : '', classes.bold, classes.pt5, classes.f16, classes.w100)}>
                   {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '') : row.Name}
                 </div>
               )
