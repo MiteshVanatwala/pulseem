@@ -26,7 +26,6 @@ import useModals from './hooks/useModals'
 import useMockAPI from './hooks/useMockAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-import Templates from './modals/Templates';
 /* END Bee */
 import { loginURL, sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos, MdCheck, MdGroups, MdOutlinePublic } from 'react-icons/md';
@@ -43,6 +42,7 @@ import { ClientForm } from '../../Models/BeeModels/BeeModel';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from '../../redux/reducers/smsSlice';
 import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
 import { PulseemResponse } from '../../Models/APIResponse';
+import LPTemplates from './modals/Templates';
 
 const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -461,6 +461,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           //@ts-ignore
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
         }
+        else {
+          setDialogType(null);
+        }
         dispatch(getAllLPTemplatesBySubaccountId());
       }
     } catch (e) {
@@ -581,7 +584,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const renderTemplateButtons = () => {
     return <>
       <Button onClick={() => {
-        setLoader(true);
+        // setLoader(true);
         setTimeout(() => {
           setDialogType({
             type: DialogType.Templates
@@ -589,7 +592,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         }, 1000);
         setTimeout(() => {
           setLoader(false);
-        }, 2000);
+        }, 3000);
       }}
         variant='contained'
         size='medium'
@@ -824,7 +827,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       title: t("common.SelectTemplate"),
       showDefaultButtons: false,
       content: (
-        <Templates
+        <LPTemplates
+          isOpen={dialogType?.type === DialogType.Templates}
           isCreateLandingPage={true}
           classes={classes}
           onClose={async (template: LandingPageTemplate) => {

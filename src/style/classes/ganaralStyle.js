@@ -1329,7 +1329,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: 'pointer',
     '& svg': {
       marginInline: 2,
-    }
+    },
+    zIndex: 100
   },
   baseButtons: {
     display: "flex",

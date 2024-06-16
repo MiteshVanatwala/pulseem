@@ -83,7 +83,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         fields: {
           ...form,
           confirmation: {
-            type: 'checkbox', label: IsRTL ? 'אני מאשר קבלת דיוור' : 'I agree to the TOS', canBeRemovedFromLayout: false, attributes: { dir: IsRTL ? 'right' : 'left' }
+            type: 'checkbox', label: IsRTL ? 'אני מאשר קבלת דיוור' : 'I agree to the TOS', canBeRemovedFromLayout: true, attributes: { dir: IsRTL ? 'right' : 'left' }
           },
           submit: {
             type: 'submit', label: '', canBeRemovedFromLayout: false,
