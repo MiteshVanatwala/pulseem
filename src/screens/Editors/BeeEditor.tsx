@@ -461,6 +461,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           //@ts-ignore
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
         }
+        else {
+          setDialogType(null);
+        }
         dispatch(getAllLPTemplatesBySubaccountId());
       }
     } catch (e) {
