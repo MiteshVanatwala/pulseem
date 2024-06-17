@@ -83,7 +83,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         fields: {
           ...form,
           confirmation: {
-            type: 'checkbox', label: IsRTL ? 'אני מאשר קבלת דיוור' : 'I agree to the TOS', canBeRemovedFromLayout: true, attributes: { dir: IsRTL ? 'right' : 'left' }
+            type: 'checkbox', label: IsRTL ? 'אני מאשר קבלת דיוור' : 'I agree to the [Privacy Policy](https://your_privacy_url)', canBeRemovedFromLayout: true, attributes: { dir: IsRTL ? 'right' : 'left' }
           },
           submit: {
             type: 'submit', label: '', canBeRemovedFromLayout: false,
@@ -274,7 +274,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
       // Every code should get "00" in the end
       switch (response.code) {
         case "0900": {
-          const formsCount = 1; //getFormsCount(jsonFile);
+          const formsCount = getFormsCount(jsonFile);
           onFormAdded(formsCount);
           break;
         }
