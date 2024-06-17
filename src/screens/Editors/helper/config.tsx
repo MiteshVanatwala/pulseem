@@ -274,7 +274,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
       // Every code should get "00" in the end
       switch (response.code) {
         case "0900": {
-          const formsCount = getFormsCount(jsonFile);
+          const formsCount = 1; //getFormsCount(jsonFile);
           onFormAdded(formsCount);
           break;
         }

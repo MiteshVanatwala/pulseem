@@ -278,6 +278,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     }
   }
   const initLPBeeEditor = (templateId: number | null = null) => {
+    let shouldReSave: boolean = false;
     initSpecialLinks().then(async (specialLinksFiles) => {
       const webform = landingPage?.Data?.WebForm;
       const isRtlLang = webform?.BaseLanguage === 0 || webform?.BaseLanguage === 8 ? true : false;
@@ -291,6 +292,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           const responseData = templateResponse?.payload?.Data;
           setNewTemplate(responseData)
           forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+          shouldReSave = true;
         } else {
           // @ts-ignore
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
@@ -359,6 +361,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         }
       }
       setLoader(false);
+
+      if (shouldReSave === true) {
+        setTimeout(() => {
+          onAutoSavePage(false);
+        }, 3000);
+      }
     })
   }
   useEffect(() => {
@@ -462,6 +470,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
         }
         dispatch(getAllLPTemplatesBySubaccountId());
+        setDialogType(null);
       }
     } catch (e) {
       console.error(e);
@@ -1065,7 +1074,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     }
     setTimeout(() => {
       getData();
-    }, 500);
+    }, 1000);
 
   }
   const updateWebFormGroups = async (list: Array<number>) => {
