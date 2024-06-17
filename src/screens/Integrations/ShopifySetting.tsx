@@ -495,7 +495,7 @@ const Shopify = ({ classes }: any) => {
               onClick={() => setDialogType({ type: 'scriptImplementation' })}
               className={clsx(classes.btn, classes.btnRounded, classes.m10)}
             >
-              {t("siteTracking.scriptImplementation")}
+              {t("siteTracking.viewSiteTrackingScript")}
             </Button>
             <Box className={clsx(classes.dblock, classes.pb15)}>
               <Typography className={clsx(classes.bold)}>

@@ -246,7 +246,18 @@ export const BEE_EDITOR_TYPES = {
 
 export const NO_IMAGE_URL = 'https://www.pulseem.co.il/Pulseem/images/productimage.png';
 
-export const SHOPIFY_SITE_TRACKING = `<script>
+export const SHOPIFY_SITE_TRACKING = `
+<script type="text/javascript">
+    (function (d, t) {
+        var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+        g.src = "https://webscript.prd.services.pulseem.com/main.js?v=" +
+        Math.floor(Date.now() / 1000);
+        s.parentNode.insertBefore(g, s);
+    })(document, "script");
+</script>
+
+<script>
     window.addEventListener("load", () => {
         const orderId = "{{ order_number }}";
         const grandTotal = "{{ line_items_subtotal_price | money_without_currency }}".replaceAll(',', '');
