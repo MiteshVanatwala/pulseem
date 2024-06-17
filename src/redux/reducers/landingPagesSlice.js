@@ -240,10 +240,28 @@ export const setWebformGroups = createAsyncThunk(
     }
   });
 
+export const deleteTemplateById = createAsyncThunk(
+  '/LandingPages/DeleteTemplateById/', async (id, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.delete(`/LandingPages/DeleteTemplateById/${id}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
+export const updateTemplateMeta = createAsyncThunk(
+  '/LandingPages/UpdateTemplateMeta', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`LandingPages/UpdateTemplateMeta`, data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 export const landingPagesSlice = createSlice({
-  name: 'newsletter',
+  name: 'landingPages',
   initialState: {
     LPBeeToken: null,
     landingPagesData: [],
