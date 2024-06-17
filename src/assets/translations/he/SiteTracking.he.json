@@ -9,6 +9,7 @@
     "pageUrl": "קישור לדף",
     "saved": "מעקב אתרים נשמר בהצלחה!",
     "scriptImplementation": "הצג סקריפט",
+    "viewSiteTrackingScript": "הצג סקריפטים למעקב אתרים",
     "scriptDescription": "על מנת להתחיל לעקוב אחר אינטראקציית הלקוחות עם האתר שלך, תחילה עליך להטמיע את הסקריפט המצורף מטה. <br />במידה והתקנת את הפלאגין שלנו ב-WooCommerce, סקריפטים אלה כבר מוטמעים בתוכו.",
     "scriptInstruction": "יש להעתיק את שורות הקוד הבאות ולהדביקן בשורה האחרונה לפני סגירת האלמנט \"head\" או ב Custom HTML Tag ב Google Tag Manager",
     "scriptPurchaseInstruction": "לאחר הטמעת הסקריפט ב-header, יש לדווח את הפרמטרים הבאים באמצעות פונקציה בJavascript: ",

@@ -9,6 +9,7 @@
   "pageUrl": "Page URL",
   "saved": "Event saved successfully!",
   "scriptImplementation": "View Script",
+  "viewSiteTrackingScript": "View Site Tracking Scripts",
   "scriptDescription": "In order to start tracking how your customers are interacting with your site, you must first implement the scripts below on your site. <br/>In case you use our WooCommerce plugin, these scripts are already implemented within the plugin.",
   "scriptInstruction": "Copy the following lines of code and paste them in the last line before \"head\" element OR in to the Custom HTML tag type in your Google Tag Manager account.",
   "scriptPurchaseInstruction": "After implementing the header script, please report the following parameters using the Javascirpt function below: ",
