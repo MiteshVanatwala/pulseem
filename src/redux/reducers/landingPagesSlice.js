@@ -319,7 +319,7 @@ export const landingPagesSlice = createSlice({
     builder.addCase(restoreLandingPages.fulfilled, () => console.log('api restoreLandingPages success'))
     builder.addCase(getLPPublicTemplates.fulfilled, (state, action) => {
       state.publicTemplates = action.payload.Data || []
-      state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
+      state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'CategoryList');
     })
     builder.addCase(getAllLPTemplatesBySubaccountId.fulfilled, (state, action) => {
       state.templatesBySubAccount = action.payload.Data || [];
