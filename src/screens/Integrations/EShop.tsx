@@ -16,6 +16,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { StateType } from "../../Models/StateTypes";
 import Select from '@mui/material/Select';
 import { TimeType } from "../../Models/PushNotifications/Enums";
+import { URL_HELPER } from "../../helpers/Links/ExternalLink";
 
 const EShop = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -430,7 +431,21 @@ const EShop = ({ classes }: any) => {
       {toastMessage && renderToast()}
       {
         !isPageLoading && (
-          <Box className={"formContainer"}>
+          <Box className={clsx(classes.containerBody)}>
+            <Button
+              onClick={() => window.open(URL_HELPER.Integrations.eShop.guide, '_blank')}
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.btn,
+                classes.btnRounded,
+                classes.mb20,
+                classes.mt20
+              )}
+              color="primary"
+            >
+              {t(`integrations.eShop.howToConnect`)}
+            </Button>
             <Box className={clsx(classes.dblock)}>
               <Typography className={clsx(classes.bold)}>
                 {t("integrations.apiKey")}

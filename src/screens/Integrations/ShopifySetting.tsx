@@ -330,7 +330,7 @@ const Shopify = ({ classes }: any) => {
       {toastMessage && renderToast()}
       {
         !isPageLoading && (
-          <Box className={clsx(classes.containerBody,)}>
+          <Box className={clsx(classes.containerBody)}>
             <Button
               onClick={() => window.open(URL_HELPER.Integrations.Shopify.guide, '_blank')}
               variant='contained'
