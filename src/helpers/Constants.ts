@@ -296,3 +296,25 @@ export const lowerCaseLetters = /[a-z]/g;
 export const upperCaseLetters = /[A-Z]/g;
 export const numbers = /[0-9]/g;
 export const specialLetters = /[!"#$%&'()*+.\/:;<=>?@\[\\\]^_`{|}~-]/g;
+
+export const SHOPIFY_SITE_TRACKING = `
+<script type="text/javascript">
+    (function (d, t) {
+        var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+        g.src = "https://webscript.prd.services.pulseem.com/main.js?v=" +
+        Math.floor(Date.now() / 1000);
+        s.parentNode.insertBefore(g, s);
+    })(document, "script");
+</script>
+
+<script>
+    window.addEventListener("load", () => {
+        const orderId = "{{ order_number }}";
+        const grandTotal = "{{ line_items_subtotal_price | money_without_currency }}".replaceAll(',', '');
+        const shipping = 0;
+        const tax = 0;
+        const orderItems = [];
+        window.trackPurchase(orderId, grandTotal, shipping, tax, orderItems);
+    });
+</script>`;
