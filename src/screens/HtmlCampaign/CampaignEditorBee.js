@@ -434,12 +434,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
+      let finalAmpData = args.AmpData;
 
       const response = await dispatch(saveCampaign({
         Name: campaign.Name,
         campaignId: args.campaignId,
         JsonData: finalJson,
         HTML: finalHtml,
+        AmpData: finalAmpData,
         IsAutoResponder: fromLink?.toLowerCase() === 'autoresponder'
       }));
 

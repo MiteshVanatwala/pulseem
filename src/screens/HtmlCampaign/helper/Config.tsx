@@ -192,7 +192,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
             await SaveCampaign({
                 campaignId: CampaignId,
                 JsonData: jsonFile,
-                HtmlData: ampHtml ?? htmlFile
+                HtmlData: htmlFile,
+                AmpData: ampHtml
             });
         },
         onSend: () => {
