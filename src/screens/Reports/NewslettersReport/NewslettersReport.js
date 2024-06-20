@@ -66,7 +66,7 @@ const NewslettersReport = ({ classes }) => {
 
   moment.locale(language)
 
-  const getHrefs = (id, revenue = 0) => ({
+  const getHrefs = (id, revenue = 0, isParent = false) => ({
     TotalSendCompleted: {
       href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -76,7 +76,8 @@ const NewslettersReport = ({ classes }) => {
           ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
           ResultTitle: t('common.Sent') + ' - ' + t('common.campaignID') + ' ' + id,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
     },
@@ -95,7 +96,8 @@ const NewslettersReport = ({ classes }) => {
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID,
           TestStatusOfEmailElseSms: 1,
           ResultTitle: t('common.OpensUnique') + ' - ' + t('common.campaignID') + ' ' + id,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
       clickable: true
@@ -123,7 +125,8 @@ const NewslettersReport = ({ classes }) => {
           TestStatusOfEmailElseSms: 1,
           Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Removed,
           ResultTitle: t('common.Removed') + ' - ' + t('common.campaignID') + ' ' + id,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
     },
@@ -169,7 +172,8 @@ const NewslettersReport = ({ classes }) => {
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.NotOpenedCampaignID,
           TestStatusOfEmailElseSms: 1,
           ResultTitle: t('common.NoOpened') + ' - ' + t('common.campaignID') + ' ' + id,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
     },
@@ -189,7 +193,8 @@ const NewslettersReport = ({ classes }) => {
           TestStatusOfEmailElseSms: 1,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
           ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
       textStyle: { fontWeight: 900 },
@@ -836,7 +841,7 @@ const NewslettersReport = ({ classes }) => {
       SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
     } = getParentChildSum(row);
 
-    const hrefs = getHrefs(CampaignID, Revenue)
+    const hrefs = getHrefs(CampaignID, Revenue, isParent)
     return (
       <>
         <TableRow
@@ -971,7 +976,7 @@ const NewslettersReport = ({ classes }) => {
       NotOpened,
       Revenue = 0
     } = row
-    const hrefs = getHrefs(CampaignID)
+    const hrefs = getHrefs(CampaignID, 0, isParent);
     const {
       SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
     } = getParentChildSum(row);
