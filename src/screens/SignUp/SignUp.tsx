@@ -48,8 +48,8 @@ const SignUp = ({ classes }: any) => {
     website: '',
     fieldOfActivity: '',
     fieldOfInterest: [],
-    chkUpdate: true,
-    chkPolicy: true
+    chkUpdate: false,
+    chkPolicy: false
   });
   const [ errors, setErrors ] = useState({
     firstName: '',
@@ -62,7 +62,8 @@ const SignUp = ({ classes }: any) => {
     companyName: '',
     fieldOfActivity: '',
     fieldOfInterest: '',
-    chkPolicy: ''
+    chkPolicy: '',
+    chkUpdate: '',
   });
   const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
     LowerChar: false,
@@ -151,6 +152,7 @@ const SignUp = ({ classes }: any) => {
     errorsTemp.fieldOfActivity = userDetails.fieldOfActivity ? '' : t('SignUp.FieldOfActivityRequired');
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('SignUp.FieldOfInterestRequired');
     errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.Required');
+    errorsTemp.chkUpdate = userDetails.chkUpdate ? '' : t('common.Required');
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     if (userDetails.password && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
@@ -163,7 +165,7 @@ const SignUp = ({ classes }: any) => {
       ...errorsTemp
     });
 
-    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
+    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.chkUpdate && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
       setLoader(true);
       const interests: any = [];
       userDetails.fieldOfInterest.map((item: any) => interests.push(t(`SignUp.${item}`)))
@@ -760,10 +762,15 @@ const SignUp = ({ classes }: any) => {
                   color="primary"
                 />
               }
-              label={
-                <span className={classes.f18}>
-                  {RenderHtml(t('SignUp.UpdateTrainingContentCheckbox'))}
-                </span>
+              label={<>
+                <span className={classes.f18}>{RenderHtml(t('SignUp.UpdateTrainingContentCheckbox'))}</span>
+                <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                {!!errors.chkUpdate && (
+                  <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                    {errors.chkUpdate}
+                  </Typography>
+                )}
+              </>
               }
             />
           </FormControl>
