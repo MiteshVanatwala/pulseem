@@ -260,6 +260,16 @@ export const updateTemplateMeta = createAsyncThunk(
     }
   })
 
+export const getLandingPagePreview = createAsyncThunk(
+  'landingpages/GetPreview', async (campaignId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`landingpages/GetPreview/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const landingPagesSlice = createSlice({
   name: 'landingPages',
   initialState: {

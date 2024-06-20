@@ -94,7 +94,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
     return null;
   }
-  
+
 
   const getData = async () => {
     await dispatch(getNewslatterData())
@@ -378,7 +378,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
+          const previewLink = `${sitePrefix}previewer/newsletter/${CampaignID}`;
+          window.open(previewLink, '_blank');
+          // pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
         }
       },
       {

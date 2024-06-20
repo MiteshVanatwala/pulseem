@@ -224,6 +224,16 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
     }
   });
 
+export const getNewsletterPreview = createAsyncThunk(
+  'email/GetPreview', async (campaignId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`email/GetPreview/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const newsletterSlice = createSlice({
   name: 'newsletter',
   initialState: {

@@ -303,6 +303,12 @@ export const getRoutes = (
           title: t("landingPages.editLandingPage"),
           href: ``,
           isShow: false
+        },
+        {
+          key: 'previewer',
+          title: t("landingPages.editLandingPage"),
+          href: ``,
+          isShow: false
         }
       ],
     },

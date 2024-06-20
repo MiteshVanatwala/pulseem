@@ -81,6 +81,7 @@ import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
 import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
+import HtmlPreview from './screens/Preview/HtmlPreview';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -543,6 +544,12 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}AccountSettings/ExtraFields`}
         element={<ExtraFields classes={classes} />}
       />
+      <Route
+        exact
+        path={`${sitePrefix}Previewer/:type/:id`}
+        element={<HtmlPreview classes={classes} />}
+      />
+
     </Routes>
   )
 }

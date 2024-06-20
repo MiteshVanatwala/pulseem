@@ -11,7 +11,7 @@ import Illustration_BG_BL from '../assets/images/Illustration_BG_BL';
 import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 import DomainVerification from '../Shared/Dialogs/DomainVerification';
 
-const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
+const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
   const { isAdmin, isAllowSwitchAccount, isRTL } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
@@ -76,10 +76,10 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         maxWidth='xl'
         className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null, customStyle)}
       >
-        <div className={classes.background}>
+        {!hideSideImages && <div className={classes.background}>
           <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
           <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
-        </div>
+        </div>}
         <DomainVerification classes={classes} domain={domainVerificationPopUp} />
         {children}
       </Container>

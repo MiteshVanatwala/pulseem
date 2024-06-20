@@ -300,7 +300,8 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         disable: !PageLink,
         rootClass: classes.paddingIcon,
         onClick: () => {
-          openInNewTab(PageLink)
+          const previewLink = `${sitePrefix}previewer/landingpage/${ID}`;
+          window.open(previewLink, '_blank');
         }
       },
       {
