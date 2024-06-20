@@ -77,7 +77,7 @@
   },
   "LoginDetails": "Login Details",
   "PasswordVerification": "Password Verification",
-  "Submit": "Submit",
+  "Submit": "Create Account",
   "EmailAddressRequired": "Email is required",
   "ConfirmationTitle": "Great! Now let's verify your email address.",
   "ConfirmationMessage": "To validate your registration, an email has been sent to <b>{emailid}</b> with a link to verify your account.",

@@ -151,8 +151,8 @@ const SignUp = ({ classes }: any) => {
     errorsTemp.companyName = userDetails.companyName ? '' : t('SignUp.BusinessNameRequired');
     errorsTemp.fieldOfActivity = userDetails.fieldOfActivity ? '' : t('SignUp.FieldOfActivityRequired');
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('SignUp.FieldOfInterestRequired');
-    errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.Required');
-    errorsTemp.chkUpdate = userDetails.chkUpdate ? '' : t('common.Required');
+    errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.requiredField');
+    errorsTemp.chkUpdate = userDetails.chkUpdate ? '' : t('common.requiredField');
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     if (userDetails.password && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
@@ -810,7 +810,7 @@ const SignUp = ({ classes }: any) => {
               classes.colorWhite,
               classes.gradientBackground
             )}
-            style={{ width: windowSize === 'xs' ? '100%' : '200px', height: '50px' }}
+            style={{ width: windowSize === 'xs' ? '100%' : '250px', height: '50px' }}
             onClick={saveSignup}
           >
             {t(`SignUp.Submit`)}
