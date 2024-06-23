@@ -108,7 +108,7 @@ const HtmlPreview = ({ classes }: any) => {
   >
     <Box className={'topSection'}>
       <Title isIcon={false} Element={C_Title} classes={classes} />
-      <Box style={{ maxWidth: 1540, margin: '0 auto', position: 'relative', direction: 'ltr' }} className={classes.p20}>
+      <Box style={{ maxWidth: 1540, margin: '0 auto', position: 'relative', direction: 'ltr', pointerEvents: 'none' }} className={classes.p20}>
         {RenderHtml(html)}
       </Box>
       <Loader isOpen={showLoader} showBackdrop={true} />
