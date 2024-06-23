@@ -66,7 +66,18 @@ const SendResponseDialog = ({
         classes={classes}
         open={isOpen}
         onConfirm={() => { setDialogType(null) }}
-        // onClose={() => { setDialogType(null) }}
+        onCancel={() => {
+            if (redirect && redirect !== '') {
+                navigate(redirect);
+            }
+            setDialogType(null)
+        }}
+        onClose={() => {
+            if (redirect && redirect !== '') {
+                navigate(redirect);
+            }
+            setDialogType(null)
+        }}
         {...currentDialog}>
         {currentDialog.content}
     </BaseDialog>
