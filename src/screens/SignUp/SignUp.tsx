@@ -48,8 +48,8 @@ const SignUp = ({ classes }: any) => {
     website: '',
     fieldOfActivity: '',
     fieldOfInterest: [],
-    chkUpdate: true,
-    chkPolicy: true
+    chkUpdate: false,
+    chkPolicy: false
   });
   const [ errors, setErrors ] = useState({
     firstName: '',
@@ -62,7 +62,8 @@ const SignUp = ({ classes }: any) => {
     companyName: '',
     fieldOfActivity: '',
     fieldOfInterest: '',
-    chkPolicy: ''
+    chkPolicy: '',
+    chkUpdate: '',
   });
   const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
     LowerChar: false,
@@ -150,7 +151,8 @@ const SignUp = ({ classes }: any) => {
     errorsTemp.companyName = userDetails.companyName ? '' : t('SignUp.BusinessNameRequired');
     errorsTemp.fieldOfActivity = userDetails.fieldOfActivity ? '' : t('SignUp.FieldOfActivityRequired');
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('SignUp.FieldOfInterestRequired');
-    errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.Required');
+    errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.requiredField');
+    errorsTemp.chkUpdate = userDetails.chkUpdate ? '' : t('common.requiredField');
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     if (userDetails.password && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
@@ -163,7 +165,7 @@ const SignUp = ({ classes }: any) => {
       ...errorsTemp
     });
 
-    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
+    if (!errorsTemp.firstName && !errorsTemp.lastName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.chkUpdate && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
       setLoader(true);
       const interests: any = [];
       userDetails.fieldOfInterest.map((item: any) => interests.push(t(`SignUp.${item}`)))
@@ -240,11 +242,25 @@ const SignUp = ({ classes }: any) => {
 				{RenderHtml(t('SignUp.ConfirmationMessage').replace(/{emailid}/g, userDetails.emailId))}
 			</Typography>
 		),
-		cancelText: t('common.No'),
-		confirmText: t('SignUp.ResendEmail'),
-    onClose: () => setDialogType(null),
-    onCancel: () => setDialogType(null),
-    onConfirm: () => sendEmail(),
+    showDefaultButtons: false,
+		renderButtons: () => (
+      <Grid
+        container
+        spacing={2}
+        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+      >
+        <Grid item>
+          <Button
+            onClick={sendEmail}
+            className={clsx(
+                classes.btn,
+                classes.btnRounded
+            )}>
+            {t('SignUp.ResendEmail')}
+          </Button>
+        </Grid>
+      </Grid>
+    )
 	})
 
   const displayInternalErrorPopup = () => ({
@@ -746,10 +762,15 @@ const SignUp = ({ classes }: any) => {
                   color="primary"
                 />
               }
-              label={
-                <span className={classes.f18}>
-                  {RenderHtml(t('SignUp.UpdateTrainingContentCheckbox'))}
-                </span>
+              label={<>
+                <span className={classes.f18}>{RenderHtml(t('SignUp.UpdateTrainingContentCheckbox'))}</span>
+                <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                {!!errors.chkUpdate && (
+                  <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                    {errors.chkUpdate}
+                  </Typography>
+                )}
+              </>
               }
             />
           </FormControl>
@@ -789,7 +810,7 @@ const SignUp = ({ classes }: any) => {
               classes.colorWhite,
               classes.gradientBackground
             )}
-            style={{ width: windowSize === 'xs' ? '100%' : '200px', height: '50px' }}
+            style={{ width: windowSize === 'xs' ? '100%' : '250px', height: '50px' }}
             onClick={saveSignup}
           >
             {t(`SignUp.Submit`)}

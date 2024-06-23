@@ -383,8 +383,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				variable?.IsStatastic
 			) {
 				if (
-					!variable.VariableValue.includes('ref') &&
-					checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
+					(!variable.VariableValue.includes('ref') || !variable.VariableValue.includes('dynamicProduct')) && checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
 				) {
 					return {
 						...variable,
@@ -396,14 +395,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				return variable;
 			} else {
 				if (
-					variable?.VariableValue.includes('ref') &&
+					(variable?.VariableValue.includes('ref') || variable?.VariableValue.includes('dynamicProduct')) &&
 					!checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
 				) {
 					return {
 						...variable,
 						VariableValue: variable?.VariableValue.includes('?')
-							? variable?.VariableValue?.replace('&ref=##ClientIDEnc##', '')
-							: variable?.VariableValue?.replace('?ref=##ClientIDEnc##', ''),
+							? variable?.VariableValue?.replace('&ref=##ClientIDEnc##', '').trim()
+							: variable?.VariableValue?.replace('?ref=##ClientIDEnc##', '').trim(),
 					};
 				}
 			}
