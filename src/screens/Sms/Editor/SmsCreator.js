@@ -974,7 +974,7 @@ const SmsCreator = ({ classes }) => {
                 </Box>
               ) : null}
               {displayDynamicProductOptions ? (
-                <Box className={clsx(classes.dropDiv )} style={{ top: windowSize !== 'xs' ? "-150px" : null }}>
+                <Box className={clsx(classes.dropDiv)} style={{ top: windowSize !== 'xs' ? "-150px" : null }}>
                   <Button
                     className={clsx(classes.dropCon, classes.redButtonLink)}
                     onClick={() => {
@@ -1668,16 +1668,15 @@ const SmsCreator = ({ classes }) => {
           <Typography className={clsx(classes.msgHead, classes.pb5, classes.f16)}>
             {t("common.dynamicProductRedirectURL")}
           </Typography>
-          <textarea
+          <TextField
+            style={{ direction: 'ltr' }}
+            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
             placeholder={t("common.fallbackURL")}
-            maxLength="1000"
             outlined=""
-            className={clsx(classes.textarea, classes.sidebar)}
-            style={{ textAlign: alignment, height: 100 }}
             onChange={(e) => setEditDynamicProductFallbackURL(e.target.value)}
             value={editDynamicProductFallbackURL}
             ref={smsMessageRef}
-          ></textarea>
+          ></TextField>
         </Box>
       ),
       showDefaultButtons: true,

@@ -65,8 +65,8 @@ const DynamicModalFields = ({
 		setDynamicProductType('');
 		setDynamicProductFallbackURL('');
 		setLinkInput('', false);
-	}, [ activeDynamicButton ])
-	
+	}, [activeDynamicButton])
+
 	const onTrackLinkToggle = () => {
 		if (isTrackLink && checkSiteTrackingLink(SubAccountSettings, linkInput)) {
 			setIsSiteTrack(true);
@@ -88,8 +88,7 @@ const DynamicModalFields = ({
 
 	const updateNavAddress = (navAddress: string) => {
 		setNavAddress(
-			`${
-				navApp === 'Waze' ? 'https://waze.to/?q=' : 'http://maps.google.com/?q='
+			`${navApp === 'Waze' ? 'https://waze.to/?q=' : 'http://maps.google.com/?q='
 			}${encodeURI(navAddress)}`
 		);
 	};
@@ -138,16 +137,16 @@ const DynamicModalFields = ({
 							{translator('whatsappCampaign.pFieldPlaceholder')}
 						</MenuItem>
 						{Object.keys(personalFields)
-						?.filter(
-							(personalField) =>
-								personalFields[personalField] &&
-								personalFields[personalField]?.length > 0
-						)
-						?.map((personalFieldKey: string, index: number) => (
-							<MenuItem key={index} value={personalFieldKey}>
-								{personalFields[personalFieldKey]}
-							</MenuItem>
-						))}
+							?.filter(
+								(personalField) =>
+									personalFields[personalField] &&
+									personalFields[personalField]?.length > 0
+							)
+							?.map((personalFieldKey: string, index: number) => (
+								<MenuItem key={index} value={personalFieldKey}>
+									{personalFields[personalFieldKey]}
+								</MenuItem>
+							))}
 					</Select>
 				</FormControl>
 			)}
@@ -203,22 +202,22 @@ const DynamicModalFields = ({
 								)
 							}
 
-							{ dynamicProductType && <Divider className={classes.mt20} /> }
+							{dynamicProductType && <Divider className={classes.mt20} />}
 							<Box className={clsx(classes.switchDiv, classes.pt14)} style={{ marginInlineStart: 0 }}>
 								<FormGroup>
 									<Switch
 										className={
 											isRTL
 												? clsx(
-														classes.reactSwitchHe,
-														'react-switch',
-														'dynamic-link-switch'
-													)
+													classes.reactSwitchHe,
+													'react-switch',
+													'dynamic-link-switch'
+												)
 												: clsx(
-														classes.reactSwitch,
-														'react-switch',
-														'dynamic-link-switch'
-													)
+													classes.reactSwitch,
+													'react-switch',
+													'dynamic-link-switch'
+												)
 										}
 										disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || linkInput?.includes('dynamicProduct')}
 										checked={isTrackLink}
@@ -265,7 +264,7 @@ const DynamicModalFields = ({
 									classes.width160,
 									dynamicProductType === DynamicProductLink.LATEST_PURCHASE ? classes.redButton : ''
 								)}
-								onClick={() => setDynamicProductType(DynamicProductLink.LATEST_PURCHASE) }
+								onClick={() => setDynamicProductType(DynamicProductLink.LATEST_PURCHASE)}
 								style={{
 									marginLeft: windowSize == 'xs' ? 0 : 10,
 									marginTop: windowSize == 'xs' ? 10 : 5
