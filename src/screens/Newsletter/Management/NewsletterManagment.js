@@ -380,7 +380,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
         onClick: () => {
           const previewLink = `${sitePrefix}previewer/newsletter/${CampaignID}`;
           window.open(previewLink, '_blank');
-          // pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
         }
       },
       {
