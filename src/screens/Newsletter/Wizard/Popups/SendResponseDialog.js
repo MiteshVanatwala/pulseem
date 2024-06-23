@@ -3,6 +3,7 @@ import { Box, Typography, Grid, Button } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils'
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { useNavigate } from "react-router-dom";
 
 const SendResponseDialog = ({
     isOpen = false,
@@ -11,7 +12,8 @@ const SendResponseDialog = ({
     setDialogType = () => null
 }) => {
     const { t } = useTranslation();
-    const { Title, Text, ShowContactSupport = false } = data;
+    const { Title, Text, ShowContactSupport = false, redirect = null } = data;
+    const navigate = useNavigate();
     const currentDialog = {
         style: { paddingBottom: 20 },
         showDefaultButtons: false,
@@ -45,7 +47,12 @@ const SendResponseDialog = ({
                         name="btnConfirm"
                         variant="contained"
                         size="small"
-                        onClick={() => setDialogType(null)}
+                        onClick={() => {
+                            if (redirect && redirect !== '') {
+                                navigate(redirect);
+                            }
+                            setDialogType(null)
+                        }}
                         className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
                     >
                         <>{t('common.Ok')}</>
