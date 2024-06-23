@@ -77,7 +77,7 @@
   },
   "LoginDetails": "פרטי התחברות",
   "PasswordVerification": "אימות סיסמא",
-  "Submit": "שלח",
+  "Submit": "יצירת חשבון",
   "EmailAddressRequired": "יש למלא אימייל",
   "ConfirmationTitle": "נהדר! כעת בוא נאמת את כתובת הדוא\"ל שלכם",
   "ConfirmationMessage": "כדי לאמת את הרישום שלכם, נשלח אימייל לכתובת <b>{emailid}</b> עם קישור לאימות חשבונכם.",
