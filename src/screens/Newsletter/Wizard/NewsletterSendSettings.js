@@ -423,7 +423,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         407: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.INVALID_CAMPAIGN_ID'), ShowContactSupport: false } },
         408: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.generalError'), ShowContactSupport: true } },
         409: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.MONTHLY_BULK_ENDED'), ShowContactSupport: true } },
-        410: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.FIRST_CAMPAIGN_RESTRICTIONS'), ShowContactSupport: false } },
+        410: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.FIRST_CAMPAIGN_RESTRICTIONS'), ShowContactSupport: false, redirect: `${sitePrefix}Campaigns/` } },
         411: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_RESTRICTED'), ShowContactSupport: true } },
     };
 
@@ -1319,36 +1319,36 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                     className={clsx(classes.dFlex, classes.flexWrap)}
                                                 >
                                                     {
-                                                        newsletterInfo?.IsFirstCampaign === false && (
-                                                            <>
-                                                                <Badge variant="dot" color="primary" invisible={!pulseIndication} className={clsx(classes.ml5, classes.mt1)}>
-                                                                    <Button
-                                                                        className={clsx(
-                                                                            classes.btn, classes.btnRounded,
-                                                                            selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0 || campaignValues.IsBestTime
-                                                                                || totalClientsToSend < 100
-                                                                                ? classes.disabled : null)}
-                                                                        onClick={() => {
-                                                                            handlePulseDialog();
-                                                                        }}
-                                                                    >
-                                                                        <FaRegCalendarAlt className={classes.pl5} />
-                                                                        {t("mainReport.pulseSend")}
-                                                                    </Button>
-                                                                </Badge>
-                                                                <Tooltip
-                                                                    disableFocusListener
-                                                                    style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
-                                                                    title={t("smsReport.pulseSendTip")}
-                                                                    classes={{ tooltip: styles.customWidth }}
-                                                                    className={clsx(classes.ml5, classes.mt1)}
+
+                                                        <>
+                                                            <Badge variant="dot" color="primary" invisible={!pulseIndication} className={clsx(classes.ml5, classes.mt1)}>
+                                                                <Button
+                                                                    className={clsx(
+                                                                        classes.btn, classes.btnRounded,
+                                                                        newsletterInfo?.IsFirstCampaign === true || selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0 || campaignValues.IsBestTime
+                                                                            || totalClientsToSend < 100
+                                                                            ? classes.disabled : null)}
+                                                                    onClick={() => {
+                                                                        handlePulseDialog();
+                                                                    }}
                                                                 >
-                                                                    <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
-                                                                        <BsInfoCircle />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                            </>
-                                                        )
+                                                                    <FaRegCalendarAlt className={classes.pl5} />
+                                                                    {t("mainReport.pulseSend")}
+                                                                </Button>
+                                                            </Badge>
+                                                            <Tooltip
+                                                                disableFocusListener
+                                                                style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
+                                                                title={t("smsReport.pulseSendTip")}
+                                                                classes={{ tooltip: styles.customWidth }}
+                                                                className={clsx(classes.ml5, classes.mt1)}
+                                                            >
+                                                                <IconButton style={{ padding: 0 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
+                                                                    <BsInfoCircle />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        </>
+
                                                     }
 
                                                     <Badge variant="dot" color="primary" invisible={!segmantIndication} className={clsx(classes.ml5, classes.mt1)}>
