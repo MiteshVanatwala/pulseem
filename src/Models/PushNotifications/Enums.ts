@@ -50,3 +50,8 @@ export enum EmailTemplateType {
     PULSEEM_TEMPLATES = 0,
     MY_TEMPLATES = 1
 }
+
+export enum DynamicProductLink {
+    LATEST_PURCHASE = 'https://dynamicProduct.com?Purchase',
+    LATEST_ABANDONMENT = 'https://dynamicProduct.com?Abandonment',
+}

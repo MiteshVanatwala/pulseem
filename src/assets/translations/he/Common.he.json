@@ -818,5 +818,13 @@
   "verifyByEmail": "אימות באימייל",
   "verifyBySms": "אימות ב-SMS",
   "notSet": "לא הוגדר",
-  "or": "או"
+  "or": "או",
+  "dynamicProduct": "מוצר דינאמי",
+  "latestPurchase": "רכישה אחרונה",
+  "latestAbandonment": "נטישה אחרונה",
+  "dynamicProductRedirectURL": "לאן תרצו להפנות נמענים שקיבלו את ההודעה, אך לא ביצעו רכישה\\נטישה?",
+  "dynamicProductRedirectURLNote": "שימו לב! הוספת \"מוצר דינאמי\" תעבוד רק במידה והחנות שלכם ממומשקת לחשבון",
+  "URL": "גיבוי",
+  "fallbackURL": "URL גיבוי",
+  "invalidURL": "אנא הכניסו קישור תקין"
 }
