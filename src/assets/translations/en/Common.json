@@ -822,5 +822,13 @@
   "pageViewed": "Page Viewed in",
   "priceRangeError": "Maximum price cannot be larger then Minimum Price",
   "verifyByEmail": "Via Email",
-  "verifyBySms": "Via SMS"
+  "verifyBySms": "Via SMS",
+  "dynamicProduct": "Dynamic Product",
+  "latestPurchase": "Latest Purchase",
+  "latestAbandonment": "Latest Abandonment",
+  "dynamicProductRedirectURL": "Where would you like to redirect recipients who did not make a purchase/abandoned a cart?",
+  "dynamicProductRedirectURLNote": "Please notice! Adding a \"Dynamic Product\" will work only if your store is integrated to your Pulseem account ",
+  "URL": "URL",
+  "fallbackURL": "Fallback URL",
+  "invalidURL": "Please enter valid fallback URL"
 }
