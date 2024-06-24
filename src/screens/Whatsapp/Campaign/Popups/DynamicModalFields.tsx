@@ -61,12 +61,6 @@ const DynamicModalFields = ({
 	);
 	const [isSiteTrack, setIsSiteTrack] = useState(false);
 
-	useEffect(() => {
-		setDynamicProductType('');
-		setDynamicProductFallbackURL('');
-		setLinkInput('', false);
-	}, [activeDynamicButton])
-
 	const onTrackLinkToggle = () => {
 		if (isTrackLink && checkSiteTrackingLink(SubAccountSettings, linkInput)) {
 			setIsSiteTrack(true);
