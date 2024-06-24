@@ -9,18 +9,24 @@ import { getById } from "../../../redux/reducers/landingPagesSlice";
 import DefaultScreen from "../../DefaultScreen";
 import { Title } from "../../../components/managment/Title";
 import clsx from 'clsx'
-import { Box, Divider, Grid, Typography } from "@material-ui/core";
+import { Box, Button, Divider, Grid, Typography } from "@material-ui/core";
 import { LangugeCode } from "../../../model/PulseemFields/Fields";
 import { getGroupsBySubAccountId } from "../../../redux/reducers/groupSlice";
 import { Loader } from "../../../components/Loader/Loader";
 import { WebformsToReportLeadByApi } from "../../../Models/LandingPage/WebformsToReportLeadByApi";
 import moment from "moment";
 import { DateFormats } from "../../../helpers/Constants";
+import WizardActions from "../../../components/Wizard/WizardActions";
+import useRedirect from "../../../helpers/Routes/Redirect";
+import { sitePrefix } from "../../../config";
+import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 
 const WebformSummary = ({ classes }: any) => {
     const { id } = useParams();
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const Redirect = useRedirect();
     const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
     const { subAccountAllGroups } = useSelector((state: StateType) => state.group);
     const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -152,6 +158,25 @@ const WebformSummary = ({ classes }: any) => {
             </Box>
         </Box>
         <Loader isOpen={showLoader} showBackdrop={true} />
+        <Box>
+            <WizardActions
+                classes={classes}
+                // @ts-ignore
+                onBack={{
+                    callback: () => Redirect({ url: `${sitePrefix}LandingPages/${id}` } as RedirectPropTypes)
+                }}
+                // @ts-ignore
+                additionalButtons={<Button onClick={() => { Redirect({ url: `${sitePrefix}EditRegistrationPage` } as RedirectPropTypes) }}
+                    className={clsx(
+                        classes.btn,
+                        classes.btnRounded,
+                        classes.backButton
+                    )}
+                    endIcon={!isRTL ? <MdArrowForwardIos /> : <MdArrowBackIos />}
+                    style={{ margin: '8px' }}
+                >{t('common.backToCampaigns')}</Button>}
+            />
+        </Box>
     </DefaultScreen>
 }
 

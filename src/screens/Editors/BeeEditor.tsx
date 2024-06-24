@@ -672,6 +672,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               <>
                 {/* @ts-ignore */}
                 <Button onClick={() => {
+                  setLoader(true);
                   saveRef.current = {
                     //@ts-ignore
                     ...saveRef.current,
