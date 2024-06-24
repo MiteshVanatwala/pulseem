@@ -303,6 +303,10 @@ const SmsCreator = ({ classes }) => {
 
   useEffect(() => {
     linkCalculation();
+    if (!smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) && !smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT)) {
+      setEditDynamicProductFallbackURL('');
+      setDynamicProductFallbackURL('');
+    }
   }, [smsModel, isSiteTracking, isLinksStatistics])
 
   useEffect(() => {
