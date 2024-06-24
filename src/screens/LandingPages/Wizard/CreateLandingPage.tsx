@@ -882,7 +882,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							errors={errors}
 						/>
 					</TabPanel>
-				</TabContext >
+				</TabContext>
 
 				<Box>
 					<WizardActions

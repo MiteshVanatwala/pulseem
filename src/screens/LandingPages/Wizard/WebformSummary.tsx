@@ -174,7 +174,7 @@ const WebformSummary = ({ classes }: any) => {
                     )}
                     endIcon={!isRTL ? <MdArrowForwardIos /> : <MdArrowBackIos />}
                     style={{ margin: '8px' }}
-                >{t('common.backToCampaigns')}</Button>}
+                >{t("master.RadMenuItemLandingManagement.Text")}</Button>}
             />
         </Box>
     </DefaultScreen>
