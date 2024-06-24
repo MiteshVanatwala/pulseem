@@ -118,6 +118,8 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     if (structure === Structure.Horizontal) dynamicRow['content']['style']['direction'] = direction;
     dynamicRow['metadata']["EventType"] = eventType.toString(); //getEventName(eventType);
     dynamicRow['metadata']["ProductCategory"] = category;
+    dynamicRow['metadata']["EventTypeEnabled"] = isFilterByEventType;
+    dynamicRow['metadata']["ProductCategoryEnabled"] = isFilterIsByProductCategory;
     dynamicRow['metadata']["NumOfProdcuts"] = uptoProducts;
     // dynamicRow['metadata']["direction"] = direction.toUpperCase();
     dynamicRow['metadata']["order"] = productOrder;
