@@ -1677,9 +1677,13 @@ const SmsCreator = ({ classes }) => {
             value={editDynamicProductFallbackURL}
             ref={smsMessageRef}
           ></TextField>
+          <Typography className={clsx(classes.msgHead, classes.f16, classes.errorLabel)}>
+            {t("common.dynamicProductRedirectURLNote")}
+          </Typography>
         </Box>
       ),
       showDefaultButtons: true,
+      contentStyle: classes.maxWidth400,
       onClose: () => { setDialogType(null) },
       onConfirm: () => {
         if (IsValidURL(editDynamicProductFallbackURL)) {
