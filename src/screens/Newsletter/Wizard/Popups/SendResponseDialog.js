@@ -5,6 +5,7 @@ import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils'
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { WhiteLabelObject } from "../../../../components/WhiteLabel/WhiteLabelMigrate";
 
 const SendResponseDialog = ({
     isOpen = false,
@@ -16,19 +17,6 @@ const SendResponseDialog = ({
     const { Title, Text, ShowContactSupport = false, redirect = null } = data;
     const { accountSettings } = useSelector((state) => state.common);
     const navigate = useNavigate();
-
-
-    const wl_renderContactUs = () => {
-        switch (accountSettings?.Account?.ReferrerID) {
-            case 4:
-            case '4': {
-                return "SimplyClub.contactUs"
-            }
-            default: {
-                return "campaigns.newsLetterEditor.errors.contactUs"
-            }
-        }
-    }
 
     const currentDialog = {
         style: { paddingBottom: 20 },
@@ -42,7 +30,7 @@ const SendResponseDialog = ({
                     {RenderHtml(Text)}
                 </Typography>
                 {ShowContactSupport && <Typography className={classes.f18}>
-                    {RenderHtml(t(wl_renderContactUs()))}
+                    {RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['ContactOnError']))}
                 </Typography>
                 }
             </Box>

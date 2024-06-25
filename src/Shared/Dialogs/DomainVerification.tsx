@@ -14,6 +14,7 @@ import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { IoIosArrowDown } from "react-icons/io";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 import { ValidateEmailAddress } from "../../helpers/Utils/common";
+import { WhiteLabelObject } from "../../components/WhiteLabel/WhiteLabelMigrate";
 
 interface ButtonOptions {
     text: string,
@@ -143,18 +144,6 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
         }
     }
 
-    const wl_renderVerificationText = () => {
-        switch (accountSettings?.Account?.ReferrerID) {
-            case 4:
-            case '4': {
-                return <Box className={classes.fullWidth}>{RenderHtml(t("SimplyClub.buyVerifiedDomain.text"))}</Box>
-            }
-            default: {
-                return <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.buyVerifiedDomain.text"))}</Box>
-            }
-        }
-    }
-
     return (domain?.display === true || forceShow === true) ? (<BaseDialog
         disableBackdropClick={false}
         classes={classes}
@@ -224,7 +213,8 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container>
-                        {wl_renderVerificationText()}
+                        {/* @ts-ignore */}
+                        {<Box className={classes.fullWidth}>{RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['buyVerifiedDomain']))}</Box>}
                     </Grid>
                 </AccordionDetails>
             </Accordion>}

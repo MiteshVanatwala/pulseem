@@ -10,6 +10,7 @@ import { getCommonFeatures } from '../../../../redux/reducers/commonSlice'
 import PurchaseWizard from '../../../../components/Balance/PaymentWizard/PurchaseWizard'
 import { GoPackage } from 'react-icons/go'
 import { getPackagesDetails } from '../../../../redux/reducers/dashboardSlice'
+import { WhiteLabelObject } from '../../../../components/WhiteLabel/WhiteLabelMigrate'
 
 const NoCreditDialog = ({
     classes,
@@ -58,18 +59,6 @@ const NoCreditDialog = ({
         };
     }
 
-    const wl_renderContactUs = () => {
-        switch (accountSettings?.Account?.ReferrerID) {
-            case 4:
-            case '4': {
-                return "SimplyClub.contactSupportForBilling"
-            }
-            default: {
-                return "common.contactSupportForBilling"
-            }
-        }
-    }
-
     const renderBillingSupportDialog = () => {
         return {
             showDivider: false,
@@ -80,7 +69,7 @@ const NoCreditDialog = ({
             content: (
                 <Grid item xs={12} style={{ paddingBottom: 5 }}>
                     <Typography className={classes.f20}>
-                        {RenderHtml(t(wl_renderContactUs()))}
+                        {RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID]['Contact']))}
                     </Typography>
                     <Box className={clsx(classes.mt25, classes.flexColCenter)}>
                         <Button

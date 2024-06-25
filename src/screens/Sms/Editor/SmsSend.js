@@ -55,6 +55,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import QuickManualUploadDialog from "../../Newsletter/Wizard/Popups/QuickManualUploadDialog";
 import { IsValidPhone } from "../../../helpers/Utils/Validations";
+import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -2209,28 +2210,6 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
 
-  const wl_renderNotEnoughCredits = () => {
-    switch (accountSettings?.Account?.ReferrerID) {
-      case 4:
-      case '4': {
-        return "SimplyClub.notEnoughCreditLeftDesc"
-      }
-      default: {
-        return "sms.notEnoughCreditLeftDesc"
-      }
-    }
-  }
-  const wl_renderNotApprovedDescription = () => {
-    switch (accountSettings?.Account?.ReferrerID) {
-      case 4:
-      case '4': {
-        return "SimplyClub.englishLetterNotApprovedDescription"
-      }
-      default: {
-        return "sms.englishLetterNotApprovedDescription"
-      }
-    }
-  }
   //#endregion
   //#region Dialogs
   const noCreditDialog = () => {
@@ -2244,7 +2223,7 @@ const SmsSend = ({ classes, ...props }) => {
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(wl_renderNotEnoughCredits()))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['NotEnoughCredits']))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               onClick={() => setDialogType(null)}
@@ -2775,7 +2754,7 @@ const SmsSend = ({ classes, ...props }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{RenderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(wl_renderNotApprovedDescription()))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['NotApprovedDesc']))))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               onClick={() => setDialogType(null)}

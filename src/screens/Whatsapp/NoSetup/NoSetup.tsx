@@ -5,35 +5,12 @@ import { Call, MailOutlineOutlined } from '@material-ui/icons';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { Link } from '@mui/material';
+import { WhiteLabelObject } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 
 const NoSetup = ({ classes, isCompact = false }: NoSetupProps) => {
 	const { t: translator } = useTranslation();
 
 	const { accountSettings } = useSelector((state: any) => state.common);
-
-	const wl_renderEmailElement = () => {
-		switch (accountSettings?.Account?.ReferrerID) {
-			case 4:
-			case '4': {
-				return <Link href={`mailto:${accountSettings?.Account?.Email}`}>{accountSettings?.Account?.Email}</Link>
-			}
-			default: {
-				return <Link href={`mailto:sales@pulseem.com`}>sales@pulseem.com</Link>
-			}
-		}
-	}
-
-	const wl_renderPhoneElement = () => {
-		switch (accountSettings?.Account?.ReferrerID) {
-			case 4:
-			case '4': {
-				return <Link href={`mailto:${accountSettings?.Account?.Telephone}`}>{accountSettings?.Account?.Telephone}</Link>
-			}
-			default: {
-				return <Link href={`tel:03-5240290`}>03-5240290</Link>
-			}
-		}
-	}
 
 	return (
 		<Grid container className={clsx(classes.whatsappNoSetupPage, isCompact ? classes.hAuto : '')}>
@@ -45,11 +22,13 @@ const NoSetup = ({ classes, isCompact = false }: NoSetupProps) => {
 				<Box className={classes.whatsappNoSetupContactWrapper}>
 					<Button className={classes.whatsappNoSetupContactButton}>
 						<MailOutlineOutlined />
-						{wl_renderEmailElement()}
+						{/* @ts-ignore */}
+						{<Link href={`mailto:${WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['Email']}`}>{WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['Email']}</Link>}
 					</Button>
 					<Button className={classes.whatsappNoSetupContactButton}>
 						<Call />
-						{wl_renderPhoneElement()}
+						{/* @ts-ignore */}
+						{<Link href={`tel:${WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['Telephone']}`}>{WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['Telephone']}</Link>}
 					</Button>
 				</Box>
 			</Box>

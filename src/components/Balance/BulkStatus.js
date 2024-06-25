@@ -15,6 +15,7 @@ import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
+import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -98,18 +99,6 @@ const BulkStatus = ({ classes }) => {
     }
   }
 
-  const wl_renderBillingTitle = () => {
-    switch (accountSettings?.Account?.ReferrerID) {
-      case 4:
-      case '4': {
-        return "SimplyClub.contactSupportForBilling"
-      }
-      default: {
-        return "common.contactSupportForBilling"
-      }
-    }
-  }
-
   const renderBillingSupportDialog = () => {
     return {
       showDivider: false,
@@ -120,7 +109,7 @@ const BulkStatus = ({ classes }) => {
       content: (
         <Grid item xs={12} style={{ paddingBottom: 5 }}>
           <Typography className={classes.f20}>
-            {RenderHtml(t(wl_renderBillingTitle()))}
+            {RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID]['BillingTitle']))}
           </Typography>
         </Grid >
       ),

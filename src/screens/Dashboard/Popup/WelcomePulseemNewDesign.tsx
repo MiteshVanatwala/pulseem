@@ -6,6 +6,7 @@ import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 import clsx from "clsx";
 import { MdCelebration } from "react-icons/md";
 import { useSelector } from "react-redux";
+import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 
 const WelcomePulseemNewDesign = ({ classes, isOpen, onClose }: any) => {
     const { t } = useTranslation();
@@ -16,23 +17,12 @@ const WelcomePulseemNewDesign = ({ classes, isOpen, onClose }: any) => {
         setCookie("popup_hide_NewDesign", cookie !== 'true' ? 'true' : 'false', { maxAge: 2147483647 });
     }
 
-    const wl_renderWelcomeDesignDesc = () => {
-        switch (accountSettings?.Account?.ReferrerID) {
-            case 4:
-            case '4': {
-                return "SimplyClub.welcomeNewDesignDesc"
-            }
-            default: {
-                return "dashboard.welcomeNewDesignDesc"
-            }
-        }
-    }
-
     return <BaseDialog
         icon={<MdCelebration />}
         title={t('dashboard.welcomeNewDesignTitle')}
         children={<>
-            {RenderHtml(t(wl_renderWelcomeDesignDesc()))}
+            {/* @ts-ignore */}
+            {RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID]['WelcomeMesasge']))}
             <FormControlLabel
                 style={{ marginTop: 15 }}
                 control={

@@ -14,6 +14,7 @@ import { Loader } from "../../../../components/Loader/Loader";
 import { AiOutlineStop } from "react-icons/ai";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
+import { WhiteLabelObject } from "../../../../components/WhiteLabel/WhiteLabelMigrate";
 const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) => {
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -99,18 +100,6 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
         });
     }
 
-    const wl_renderTooltipTitle = () => {
-        switch (accountSettings?.Account?.ReferrerID) {
-            case 4:
-            case '4': {
-                return <Typography className={classes.f16} noWrap={false}>{RenderHtml(t('SimplyClub.gmailVerificationDescription'))}</Typography>
-            }
-            default: {
-                return <Typography className={classes.f16} noWrap={false}>{RenderHtml(t('common.gmailVerificationDescription'))}</Typography>
-            }
-        }
-
-    }
     const VerificationResult = () => {
         const [showInnerLoader, setShowInnerLoader] = useState<boolean>(false);
         return <BaseDialog
@@ -139,7 +128,8 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                         classes={classes}
                                         interactive={true}
                                         placement={'top'}
-                                        title={wl_renderTooltipTitle()}
+                                        // @ts-ignore
+                                        title={<Typography className={classes.f16} noWrap={false}>{RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['GmailVerification']))}</Typography>}
                                         text={<Box className={classes.dFlex}><Typography noWrap={false} style={{ fontSize: 15, fontWeight: 500, marginTop: 1 }}>{t('common.gmailVerification')}</Typography><Box style={{ marginInline: 10 }} className={classes.tooltipIcon}>i</Box></Box>}
                                     />
                                 </TableCell>
