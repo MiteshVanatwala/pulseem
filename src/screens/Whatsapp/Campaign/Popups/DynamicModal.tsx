@@ -299,9 +299,12 @@ const DynamicModal = ({
 												? classes.whatsappCampaignDynamicFieldButtonActive
 												: classes.whatsappCampaignDynamicFieldButton
 										}
-										onClick={() =>
-											setActiveDynamicButton(button.buttonTitle)
-										}>
+										onClick={() => {
+											setActiveDynamicButton(button.buttonTitle);
+											setDynamicProductType('');
+											setDynamicProductFallbackURL('');
+											updateDynamicVariables('link', '');
+										}}>
 										<>{translator(button.buttonTitle)}</>
 									</Button>
 								)
