@@ -87,6 +87,7 @@ const DashboardScreen = ({ classes }) => {
                 windowSize={windowSize}
                 t={t}
                 isRTL={isRTL}
+                isWhiteLabel={accountSettings?.Account?.ReferrerID > 0}
               />
             </Grid>
           </Grid>

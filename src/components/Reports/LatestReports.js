@@ -15,7 +15,7 @@ import { userPhoneNumbers } from '../../redux/reducers/whatsappSlice';
 import { apiStatus } from '../../screens/Whatsapp/Constant';
 import NoSetup from '../../screens/Whatsapp/NoSetup/NoSetup';
 
-const LatestReports = ({ classes, t, isRTL }) => {
+const LatestReports = ({ classes, t, isRTL, isWhiteLabel }) => {
   const { windowSize } = useSelector(state => state.core);
   const { lastCampaignReport } = useSelector(state => state.dashboard);
   const dispatch = useDispatch();
@@ -91,8 +91,8 @@ const LatestReports = ({ classes, t, isRTL }) => {
           });
         },
         ticks: {
-          font: { size: 12 },
-          color: 'black',
+          font: { size: isWhiteLabel ? 16 : 12 },
+          color: 'black'
         },
         grid: {
           drawOnChartArea: false,
@@ -106,7 +106,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
           callback: function (value, index, values) {
             return `${value}%`;
           },
-          font: { size: 18 },
+          font: { size: isWhiteLabel ? 22 : 18 },
           color: 'black',
           drawTicks: true,
         },
