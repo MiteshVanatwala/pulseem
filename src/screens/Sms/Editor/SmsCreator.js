@@ -1010,18 +1010,18 @@ const SmsCreator = ({ classes }) => {
                 </Box>
               ) : null}
               {
-              dynamicProductFallbackURL && (
-                <div className={clsx(classes.dInlineBlock, classes.pt5)}>
-                  <Box className={clsx(classes.p5, classes.dInlineBlock)}>
-                    {t('common.fallbackURL')}&nbsp;:&nbsp;{dynamicProductFallbackURL}
-                  </Box>
-                  <span className={clsx(classes.paddingInline25, classes.underline, classes.colorBlue)} onClick={() => {
-                    setDialogType({ type: 'dynamicProduct' });
-                    setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
-                  }}>Edit</span>
-                </div>
-              )
-            }
+                dynamicProductFallbackURL && (
+                  <div className={clsx(classes.dInlineBlock, classes.pt5)}>
+                    <Box className={clsx(classes.p5, classes.dInlineBlock)}>
+                      {t('common.fallbackURL')}&nbsp;:&nbsp;{dynamicProductFallbackURL}
+                    </Box>
+                    <span className={clsx(classes.paddingInline25, classes.underline, classes.colorBlue)} onClick={() => {
+                      setDialogType({ type: 'dynamicProduct' });
+                      setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
+                    }}>Edit</span>
+                  </div>
+                )
+              }
             </Box>
           </Grid>
           <Grid item xs={12} md={4} sm={12} className={classes.pr15}>
@@ -1888,6 +1888,31 @@ const SmsCreator = ({ classes }) => {
       onConfirm: () => { handlecaution() }
     }
   }
+
+  const wl_renderNotEnoughCredits = () => {
+    switch (accountSettings?.Account?.ReferrerID) {
+      case 4:
+      case '4': {
+        return "SimplyClub.notEnoughCreditLeftDesc"
+      }
+      default: {
+        return "sms.notEnoughCreditLeftDesc"
+      }
+    }
+  }
+
+  const wl_renderNotApprovedDescription = () => {
+    switch (accountSettings?.Account?.ReferrerID) {
+      case 4:
+      case '4': {
+        return "SimplyClub.englishLetterNotApprovedDescription"
+      }
+      default: {
+        return "sms.englishLetterNotApprovedDescription"
+      }
+    }
+  }
+
   const noCreditDialog = () => {
     return {
       showDivider: false,
@@ -1899,7 +1924,7 @@ const SmsCreator = ({ classes }) => {
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(wl_renderNotEnoughCredits()))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               size='small'
@@ -1940,6 +1965,7 @@ const SmsCreator = ({ classes }) => {
       }
     }
   }
+
   const englishLetterNotAllowed = () => {
     return {
       showDivider: false,
@@ -1950,7 +1976,7 @@ const SmsCreator = ({ classes }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{RenderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.englishLetterNotApprovedDescription"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(wl_renderNotApprovedDescription()))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               size='small'

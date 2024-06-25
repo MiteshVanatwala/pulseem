@@ -98,6 +98,18 @@ const BulkStatus = ({ classes }) => {
     }
   }
 
+  const wl_renderBillingTitle = () => {
+    switch (accountSettings?.Account?.ReferrerID) {
+      case 4:
+      case '4': {
+        return "SimplyClub.contactSupportForBilling"
+      }
+      default: {
+        return "common.contactSupportForBilling"
+      }
+    }
+  }
+
   const renderBillingSupportDialog = () => {
     return {
       showDivider: false,
@@ -108,7 +120,7 @@ const BulkStatus = ({ classes }) => {
       content: (
         <Grid item xs={12} style={{ paddingBottom: 5 }}>
           <Typography className={classes.f20}>
-            {RenderHtml(t("common.contactSupportForBilling"))}
+            {RenderHtml(t(wl_renderBillingTitle()))}
           </Typography>
         </Grid >
       ),

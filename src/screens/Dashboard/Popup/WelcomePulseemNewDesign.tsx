@@ -1,24 +1,38 @@
 import { useTranslation } from "react-i18next";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
-import { Button, Checkbox, FormControlLabel, Grid} from "@material-ui/core";
+import { Button, Checkbox, FormControlLabel, Grid } from "@material-ui/core";
 import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 import clsx from "clsx";
 import { MdCelebration } from "react-icons/md";
+import { useSelector } from "react-redux";
 
 const WelcomePulseemNewDesign = ({ classes, isOpen, onClose }: any) => {
     const { t } = useTranslation();
+    const { accountSettings } = useSelector((state: any) => state.common);
 
     const handleShowDomainCookie = () => {
         const cookie = getCookie("popup_hide_NewDesign");
         setCookie("popup_hide_NewDesign", cookie !== 'true' ? 'true' : 'false', { maxAge: 2147483647 });
     }
 
+    const wl_renderWelcomeDesignDesc = () => {
+        switch (accountSettings?.Account?.ReferrerID) {
+            case 4:
+            case '4': {
+                return "SimplyClub.welcomeNewDesignDesc"
+            }
+            default: {
+                return "dashboard.welcomeNewDesignDesc"
+            }
+        }
+    }
+
     return <BaseDialog
         icon={<MdCelebration />}
         title={t('dashboard.welcomeNewDesignTitle')}
         children={<>
-            {RenderHtml(t("dashboard.welcomeNewDesignDesc"))}
+            {RenderHtml(t(wl_renderWelcomeDesignDesc()))}
             <FormControlLabel
                 style={{ marginTop: 15 }}
                 control={

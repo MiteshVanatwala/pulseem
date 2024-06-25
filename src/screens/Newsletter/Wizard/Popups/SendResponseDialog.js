@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils'
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const SendResponseDialog = ({
     isOpen = false,
@@ -13,7 +14,22 @@ const SendResponseDialog = ({
 }) => {
     const { t } = useTranslation();
     const { Title, Text, ShowContactSupport = false, redirect = null } = data;
+    const { accountSettings } = useSelector((state) => state.common);
     const navigate = useNavigate();
+
+
+    const wl_renderContactUs = () => {
+        switch (accountSettings?.Account?.ReferrerID) {
+            case 4:
+            case '4': {
+                return "SimplyClub.contactUs"
+            }
+            default: {
+                return "campaigns.newsLetterEditor.errors.contactUs"
+            }
+        }
+    }
+
     const currentDialog = {
         style: { paddingBottom: 20 },
         showDefaultButtons: false,
@@ -22,14 +38,11 @@ const SendResponseDialog = ({
         disableBackdropClick: true,
         content: (
             <Box>
-                {/* <Typography className={clsx(classes.f18, classes.textCenter)}>
-                    {RenderHtml(`${Text} ${!ShowContactSupport ? null : t('campaigns.newsLetterEditor.errors.contactUs')}`)}
-                </Typography> */}
                 <Typography className={clsx(classes.f18, classes.textCenter)}>
                     {RenderHtml(Text)}
                 </Typography>
                 {ShowContactSupport && <Typography className={classes.f18}>
-                    {RenderHtml(t('campaigns.newsLetterEditor.errors.contactUs'))}
+                    {RenderHtml(t(wl_renderContactUs()))}
                 </Typography>
                 }
             </Box>

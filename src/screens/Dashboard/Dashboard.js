@@ -74,14 +74,14 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
-            <Grid item xs={12} sm={12} md={12} lg={4}>
+            {(!accountSettings.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0) && <Grid item xs={12} sm={12} md={12} lg={4}>
               <PulseemTips
                 classes={classes}
                 t={t}
                 isRTL={isRTL}
               />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={8}>
+            </Grid>}
+            <Grid item xs={12} sm={12} md={12} lg={(!accountSettings.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0) ? 8 : 12}>
               <LatestReports
                 classes={classes}
                 windowSize={windowSize}

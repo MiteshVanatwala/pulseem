@@ -17,7 +17,7 @@ import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) => {
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState<boolean>(true);
-    const { verifiedEmails } = useSelector((state: StateType) => state.common);
+    const { verifiedEmails, accountSettings } = useSelector((state: StateType) => state.common);
     const { isRTL } = useSelector((state: StateType) => state.core);
     const [showVerificationResponse, setShowVerificationResponse] = useState<boolean>(false);
     const [domainResponse, setDomainResponse] = useState<any>(null);
@@ -98,6 +98,19 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
             </Box>
         });
     }
+
+    const wl_renderTooltipTitle = () => {
+        switch (accountSettings?.Account?.ReferrerID) {
+            case 4:
+            case '4': {
+                return <Typography className={classes.f16} noWrap={false}>{RenderHtml(t('SimplyClub.gmailVerificationDescription'))}</Typography>
+            }
+            default: {
+                return <Typography className={classes.f16} noWrap={false}>{RenderHtml(t('common.gmailVerificationDescription'))}</Typography>
+            }
+        }
+
+    }
     const VerificationResult = () => {
         const [showInnerLoader, setShowInnerLoader] = useState<boolean>(false);
         return <BaseDialog
@@ -126,7 +139,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                         classes={classes}
                                         interactive={true}
                                         placement={'top'}
-                                        title={<Typography className={classes.f16} noWrap={false}>{RenderHtml(t('common.gmailVerificationDescription'))}</Typography>}
+                                        title={wl_renderTooltipTitle()}
                                         text={<Box className={classes.dFlex}><Typography noWrap={false} style={{ fontSize: 15, fontWeight: 500, marginTop: 1 }}>{t('common.gmailVerification')}</Typography><Box style={{ marginInline: 10 }} className={classes.tooltipIcon}>i</Box></Box>}
                                     />
                                 </TableCell>

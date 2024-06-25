@@ -142,6 +142,19 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
             setSharedDomain(event.target.value);
         }
     }
+
+    const wl_renderVerificationText = () => {
+        switch (accountSettings?.Account?.ReferrerID) {
+            case 4:
+            case '4': {
+                return <Box className={classes.fullWidth}>{RenderHtml(t("SimplyClub.buyVerifiedDomain.text"))}</Box>
+            }
+            default: {
+                return <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.buyVerifiedDomain.text"))}</Box>
+            }
+        }
+    }
+
     return (domain?.display === true || forceShow === true) ? (<BaseDialog
         disableBackdropClick={false}
         classes={classes}
@@ -211,7 +224,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container>
-                        <Box className={classes.fullWidth}>{RenderHtml(t("common.domainVerification.popup.sections.buyVerifiedDomain.text"))}</Box>
+                        {wl_renderVerificationText()}
                     </Grid>
                 </AccordionDetails>
             </Accordion>}

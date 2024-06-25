@@ -67,6 +67,8 @@ const SmsSend = ({ classes, ...props }) => {
   const Redirect = useRedirect();
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
   const { subAccountAllGroups } = useSelector((state) => state.group);
+  const { accountSettings } = useSelector((state) => state.common);
+
 
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector(
@@ -2206,6 +2208,29 @@ const SmsSend = ({ classes, ...props }) => {
       })
     }
   }
+
+  const wl_renderNotEnoughCredits = () => {
+    switch (accountSettings?.Account?.ReferrerID) {
+      case 4:
+      case '4': {
+        return "SimplyClub.notEnoughCreditLeftDesc"
+      }
+      default: {
+        return "sms.notEnoughCreditLeftDesc"
+      }
+    }
+  }
+  const wl_renderNotApprovedDescription = () => {
+    switch (accountSettings?.Account?.ReferrerID) {
+      case 4:
+      case '4': {
+        return "SimplyClub.englishLetterNotApprovedDescription"
+      }
+      default: {
+        return "sms.englishLetterNotApprovedDescription"
+      }
+    }
+  }
   //#endregion
   //#region Dialogs
   const noCreditDialog = () => {
@@ -2219,7 +2244,7 @@ const SmsSend = ({ classes, ...props }) => {
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(wl_renderNotEnoughCredits()))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               onClick={() => setDialogType(null)}
@@ -2750,7 +2775,7 @@ const SmsSend = ({ classes, ...props }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{RenderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.englishLetterNotApprovedDescription"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(wl_renderNotApprovedDescription()))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               onClick={() => setDialogType(null)}
