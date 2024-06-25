@@ -29,7 +29,7 @@ import settings from './Settings.he.json';
 import integrations from './Integrations.he.json';
 import WhatsappApiResponse from './WhatsappApiResponse.json';
 import SignUp from './SignUp.json';
-import SimplyClub from './SimplyClub.he.json';
+import SimplyClub from './WhiteLabel/SimplyClub.he.json';
 
 export const he = {
 	automations,
