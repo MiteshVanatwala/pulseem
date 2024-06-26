@@ -1,7 +1,8 @@
 {
   "logPageHeaderResource1": {
     "Text": "ניהול קבוצות נמענים",
-    "Dynamic": "ניהול קבוצות דינמיות"
+    "Dynamic": "ניהול קבוצות דינאמיות",
+    "Edit": "ערוך קבוצה דינאמית"
   },
   "deleteRecipient": "מחק מקבוצה",
   "unsubscribe": "הסר מחשבון",
@@ -23,7 +24,7 @@
   "emailStatus": "סטאטוס מייל",
   "smaStatus": "סטאטוס סמס ",
   "creationDate": "תאריך יצירה",
-  "firstName": "שם פרטיlast ",
+  "firstName": "שם פרטי",
   "lastName": "שם משפחה",
   "name": "שם משפחה",
   "email": "מייל",

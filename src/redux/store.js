@@ -24,6 +24,7 @@ import whatsappReducer from './reducers/whatsappSlice'
 import AccountSettingsSlice from './reducers/AccountSettingsSlice';
 import DynamicGroupsSlice from './reducers/DynamicGroupsSlice';
 import DomainVerificationSlice from './reducers/DomainVerificationSlice';
+import productSlice from './reducers/productSlice';
 import ExtraFieldsSlice from './reducers/ExtraFieldsSlice';
 
 export default configureStore({
@@ -53,6 +54,7 @@ export default configureStore({
     accountSettings: AccountSettingsSlice,
     dynamicGroups: DynamicGroupsSlice,
     domainVerification: DomainVerificationSlice,
+    product: productSlice,
     extraFields: ExtraFieldsSlice
   },
 });

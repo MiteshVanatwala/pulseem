@@ -189,7 +189,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "0px !important",
   },
   noMargin: {
-    margin: 0,
+    margin: '0px !important',
   },
   wizardFlex: {
     flex: 1,
@@ -230,6 +230,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   paddingSides5: {
     paddingRight: 5,
     paddingLeft: 5,
+  },
+  pl10: {
+    paddingLeft: 10,
+  },
+  pl30: {
+    paddingLeft: 30,
   },
   paddingSides10: {
     paddingRight: 10,
@@ -320,6 +326,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dBlock: {
     display: "block !important",
   },
+  dInlineBlock: {
+    display: "inline-block !important",
+  },
   dNone: {
     display: "none",
   },
@@ -370,6 +379,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxWidth190: {
     maxWidth: 190,
+  },
+  width160: {
+    width: 160,
+    maxWidth: 160,
   },
   widthUnset: {
     width: "unset",
@@ -432,7 +445,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingInlineStart: 25,
   },
   pt0: {
-    paddingTop: 0,
+    paddingTop: '0px !important',
   },
   pt2rem: {
     paddingTop: "2rem",
@@ -458,11 +471,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt50: {
     paddingTop: 50
   },
+  pt90: {
+    paddingTop: 90
+  },
   pt2: {
     paddingTop: 1.4,
   },
   pb0: {
     paddingBottom: 0
+  },
+  pb5: {
+    paddingBottom: 5,
   },
   pb10: {
     paddingBottom: 10,
@@ -492,7 +511,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 20,
   },
   ml25: {
-    marginInlineStart: 25,
+    marginInlineStart: '25px !important',
   },
   mtNeg15: {
     marginTop: -15,
@@ -609,6 +628,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   bgLightGray: {
     backgroundColor: "rgba(242, 242, 242, 1)",
   },
+  borderRadius30: {
+    borderRadius: "30px",
+  },
   justifyBetween: {
     display: "flex",
     justifyContent: "space-between",
@@ -690,6 +712,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   posRelative: {
     position: "relative",
+  },
+  posAbsolute: {
+    position: "absolute",
   },
   iconsFont: {
     fontFamily: "pulseemicons",
@@ -818,6 +843,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   font30: {
     fontSize: 30,
   },
+  w30: {
+    width: '30%'
+  },
+  w35: {
+    width: '35%'
+  },
   w50: {
     width: '50%'
   },
@@ -827,8 +858,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w70: {
     width: '70%'
   },
+  directionRTL: {
+    direction: 'rtl',
+  },
+  wAuto: {
+    width: 'auto'
+  },
   w100: {
-    width: '100%'
+    width: '100% !important'
   },
   h100: {
     height: '100%'
@@ -1024,10 +1061,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   redButton: {
     borderColor: '#FF3343',
-    backgroundColor: '#FF3343',
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
     color: '#fff',
     '&:hover': {
-      background: '#FF3343',
+      background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
     },
   },
   redButtonLink: {
@@ -1283,6 +1320,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       border: "solid 5px #ff3343"
     }
   },
+  removeTemplateItem: {
+    position: 'absolute',
+    top: 6,
+    color: '#FFF',
+    right: isRTL ? 'auto' : 15,
+    left: isRTL ? 25 : 'auto',
+    background: 'red',
+    padding: '2px 5px 0px 5px',
+    borderRadius: 5,
+    fontSize: '1.2rem',
+    cursor: 'pointer',
+    '& svg': {
+      marginInline: 2,
+    }
+  },
   baseButtons: {
     display: "flex",
     alignItems: "center",
@@ -1332,6 +1384,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginInlineEnd: 5,
     },
     "&:nth-child(2)": {
+      marginInlineStart: 0,
+      marginInlineEnd: 5,
+    },
+    "&:nth-child(3)": {
       marginInlineStart: 0,
       marginInlineEnd: 5,
     },
@@ -2289,6 +2345,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "bold",
     maxWidth: graphTextWidth[windowSize],
   },
+  greyButtonWithRoundCorder: {
+    background: '#535353',
+    color: '#fff',
+    borderRadius: '20px'
+  },
   mt24: {
     marginTop: 24,
   },
@@ -2567,7 +2628,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   //#endregion
   textCenter: {
-    textAlign: "center",
+    textAlign: "center !important",
   },
   marginBlock10: {
     marginBlock: 10,
@@ -3355,7 +3416,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       },
       '& input': {
-        padding: '3px 0 7px 0'
+        padding: '3px 0 7px 0',
+        minHeight: 25,
       },
       '& fieldset': {
         border: 'none',
@@ -3366,7 +3428,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             fill: '#B3B3B3'
           }
         }
-      }
+      },
+      '& label + .MuiInput-formControl': {
+        marginTop: '10px',
+      },
+
     },
     // [theme.breakpoints.down('xs')]: {
     //   width: 'auto !important'
@@ -4023,8 +4089,64 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingInline: '15px !important',
     paddingBlock: '10px !important'
   },
+  productCatalogDialog: {
+    '& .MuiPaper-root': {
+      maxWidth: '70% !important',
+      width: '70% !important',
+      padding: '10px !important'
+    }
+  },
   selectField: {
     borderBottom: '1px solid #D6D1E6',
     height: 46
+  },
+  pageContainer: {
+    marginLeft: '7rem',
+    marginRight: '7rem',
+  },
+  fieldOfInterestButton: {
+    borderRadius: 10,
+    paddingInline: 20,
+    textTransform: 'none',
+    '& .MuiButton-startIcon': {
+      marginRight: 0,
+      marginLeft: 0,
+      paddingInline: 5,
+    },
+    [theme.breakpoints.down('xs')]: {
+      display: 'inline-flex',
+      marginBottom: 0,
+    },
+  },
+  SignUpLanguageDropdown: {
+    width: 150,
+    borderRadius: 5,
+    '& .MuiSelect-select': {
+      padding: '5px 7px !important',
+    },
+    '& img': {
+      height: 20,
+    },
+    '& .cname': {
+      paddingInline: 10,
+    }
+  },
+  gradientBackground: {
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+  },
+  passwordVisibilityToggle: {
+    top: 0,
+    right: isRTL ? 'initial' : 0,
+    left: isRTL ? 0 : 'initial'
+  },
+  autoComplete: {
+    '& .MuiAutocomplete-endAdornment': {
+      right: isRTL ? 'unset' : '0px',
+      left: isRTL ? '0px' : 'unset',
+    },
+    '& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
+    {
+      paddingRight: isRTL ? '0px !important' : '0px',
+    }
   }
 });

@@ -9,7 +9,8 @@ const TemplatePreview = ({
   classes,
   isOpen = false,
   templateDetails = {},
-  onClose = () => null
+  onClose = () => null,
+  isMyTemplate = false
 }: any) => {
   const { t } = useTranslation();
   const renderHtml = (html: any) => {
@@ -37,8 +38,21 @@ const TemplatePreview = ({
     title={t('common.Preview')}
     confirmText={t('common.loadTemplate')}
   >
-    <Box className={clsx(classes.templateModal)}>
-      {renderHtml(templateDetails.Html)}
+    <Box className={clsx(classes.templateModal)} style={{ direction: 'ltr' }}>
+      {isMyTemplate
+        ? renderHtml(templateDetails.Html)
+        : (
+          <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
+            style={{
+              width: '100%',
+              height: 'auto',
+              overflowY: 'auto'
+            }}
+            alt={templateDetails.Name}
+            title={templateDetails.Name}
+          />
+        )
+      }
     </Box>
   </BaseDialog>
 }

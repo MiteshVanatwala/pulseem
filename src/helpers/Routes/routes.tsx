@@ -22,6 +22,7 @@ import { logout } from "../Api/PulseemReactAPI";
 import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
+import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
 
@@ -93,9 +94,14 @@ export const getRoutes = (
         {
           key: "dynamicGroups",
           title: t("master.RadMenuItemResourceDynamicGroups.Text"),
-          href: `${rootDomain}/DynamicGroups.aspx?fromreact=true`,
-          // href: `${sitePrefix}Groups/Dynamic`,
+          href: `${sitePrefix}Groups/Dynamic`,
           isShow: true,
+        },
+        {
+          key: 'EditDynamicGroup',
+          title: t("recipient.logPageHeaderResource1.Edit"),
+          href: ``,
+          isShow: false,
         },
         {
           title: t("master.RadMenuItemResourceFileUploads.Text"),
@@ -281,6 +287,18 @@ export const getRoutes = (
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
           isShow: true,
         },
+        {
+          key: 'CreateLandingPage',
+          title: t("landingPages.createLandingPage"),
+          href: ``,
+          isShow: false,
+        },
+        {
+          key: 'EditLandingPage',
+          title: t("landingPages.editLandingPage"),
+          href: ``,
+          isShow: false,
+        }
       ],
     },
     {
@@ -292,6 +310,16 @@ export const getRoutes = (
       isShow: true,
       icon: <img alt="Automations" src={AutomationsIcon} />,
       options: [
+        {
+          title: t("master.createTemplate"),
+          href: `${rootDomain}/CreateAutomations.aspx?fromreact=true&template=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+          isShow: features && features?.indexOf(PulseemFeatures.AUTOMATION_TEMPLATE) > -1,
+        },
+        {
+          title: t("master.manageTemplate"),
+          href: `${rootDomain}/AutomationTemplates.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+          isShow: features && features?.indexOf(PulseemFeatures.AUTOMATION_TEMPLATE) > -1,
+        },
         {
           title: t("master.RadMenuItemCreateAutomationResource.Text"),
           href: `${rootDomain}/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,

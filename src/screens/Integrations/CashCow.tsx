@@ -8,7 +8,7 @@ const CashCow = ({ classes }: any) => {
   const { t } = useTranslation();
   return (
     <>
-      <div>{t('integrations.wooCommerce.description')}</div>
+      <div>{t('integrations.cashCow.description')}</div>
       <Button
         onClick={() => window.open(URL_HELPER.Integrations.CashCow.guide, '_blank')}
         variant='contained'

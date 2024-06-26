@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { getCookie, setCookie } from '../Functions/cookies';
 import { apiURL, actionURL, isProdMode } from '../../config/index'
+import { NoAuthenticationAPIs } from '../Constants';
 
 const refreshTokenURL = `${actionURL}RefreshToken.ashx`
 const logoutURL = `${actionURL}LogoutSession.ashx`
@@ -33,7 +34,7 @@ PulseemReactInstance.interceptors.request.use(async config => {
     try {
         const jtoken = getCookie('jtoken')
         let token = jtoken
-        if (isProdMode) {
+        if (isProdMode && NoAuthenticationAPIs.indexOf(config?.url || '') === -1) {
             if (!jtoken) {
                 redirectToLogin()
                 return Promise.reject('Unautorized')

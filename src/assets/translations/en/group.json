@@ -38,10 +38,11 @@
   "maxGroupsExceeded": "Maximum of group creation exceeded for this account",
   "updateGroup": "Update Group",
   "saveDynamicGroupResponse": {
-    "201": "Dynamic Group settings successfully saved! Number of recipients in the group:: {0}",
+    "201": "Dynamic Group settings successfully saved! Number of recipients in the group: {0}",
     "400": "Group does not updated due to incorrect data",
     "402": "Group does not updated due to broken request",
-    "404": "Not found"
+    "404": "Not found",
+    "incorrectValue": "One"
   },
   "updateFrequency": "Update Frequency",
   "results": "Results",
@@ -51,5 +52,6 @@
   "on": "On",
   "weekly": "Weekly",
   "daily": "Daily",
-  "deleteGroupConfirmation": "Are you sure you want to delete group?"
+  "deleteGroupConfirmation": "Are you sure you want to delete group?",
+  "eCommerceEventNotice": "<b>Please notice:</b> These events will work only for accounts linked to eCommerce stores integrated with Pulseem."
 }

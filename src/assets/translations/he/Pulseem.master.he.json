@@ -383,5 +383,7 @@
   "download": "לחץ להורדה",
   "fileDownload": "הורדת קבצים",
   "recipientManagement": "Recipient Management",
-  "recipientManagementDesc": "Use this page to manage recipient groups."
+  "recipientManagementDesc": "Use this page to manage recipient groups.",
+  "manageTemplate": "צור תבנית",
+  "createTemplate": "נהל תבנית"
 }

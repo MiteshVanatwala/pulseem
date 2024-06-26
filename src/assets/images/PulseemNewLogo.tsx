@@ -3,15 +3,15 @@ import React from "react";
 const PulseemNewLogo = (props: any) => {
   return (
     <svg
-      width="139"
-      height="26"
-      viewBox="0 0 139 26"
+      width="155"
+      height="30"
+      viewBox="0 0 155 30"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       {...props}
     >
-      <rect width="139" height="26" fill="url(#pattern0)" />
+      <rect width="155" height="30" fill="url(#pattern0)" />
       <defs>
         <pattern
           id="pattern0"

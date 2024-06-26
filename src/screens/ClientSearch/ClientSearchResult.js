@@ -1337,12 +1337,6 @@ const ClientSearchResult = ({ classes }) => {
               data={revenueSummary} />
             }
           </Grid>},
-        {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
-          {revenueSummary && <SummaryRow
-            data={revenueSummary}
-            classes={classes} />
-          }
-        </Grid>}
       </Grid>
     );
   };
@@ -1353,7 +1347,7 @@ const ClientSearchResult = ({ classes }) => {
     let date = null;
     const { FirstName, LastName, CreationDate } = row;
     let text = t("common.UpdatedOn");
-    date = CreationDate ? moment(CreationDate, dateFormat) :  null;
+    date = CreationDate ? moment(CreationDate, dateFormat) : null;
     return (
       <>
         {
@@ -1658,7 +1652,7 @@ const ClientSearchResult = ({ classes }) => {
       LastSendDate,
       snt_OpeningDate
     } = row;
-    
+
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
         return t(ConvertClientStatus(SourceType.EMAIL, Status))

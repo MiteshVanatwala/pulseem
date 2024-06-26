@@ -11,7 +11,7 @@
   "testGroupInfo": "קבוצות ניסיון מאפשרת שליחת נסיון לקבוצה ממסך יצירת קמפיין",
   "created": "הקבוצה נוצרה בהצלחה",
   "updated": "הקבוצה עודכנה בהצלחה",
-  "deleted": "Group deleted successfully",
+  "deleted": "הקבוצה נמחקה בהצלחה",
   "zeroSelected": "לא נבחרה קבוצה",
   "inputIncorrect": "אחד מהנתונים לא נכון או שם קבוצה לא סופק",
   "invalidApi": "מפתח API לא תקין",
@@ -38,10 +38,11 @@
   "maxGroupsExceeded": "חשבון זה הגיע למקסימום קבוצות שניתן ליצור",
   "updateGroup": "עדכון קבוצה",
   "saveDynamicGroupResponse": {
-    "201": "הנתונים נשמרו בהצלחה! (מספר הנמענים בקבוצה:: {0})",
-    "400": "הקבוצה לא עודכנה, אנא וודא שקבוצה זו דינמית",
+    "201": "הנתונים נשמרו בהצלחה! (מספר הנמענים בקבוצה: {0})",
+    "400": "הקבוצה לא עודכנה, אנא וודא שקבוצה זו דינאמית",
     "402": "הקבוצה לא עודכנה, בדוק את הנתונים ונסה שוב",
-    "404": "קבוצה לא נמצאה"
+    "404": "קבוצה לא נמצאה",
+    "incorrectValue": "אחד מהנתונים או יותר שהוגדרו לא תקין"
   },
   "updateFrequency": "Update Frequency",
   "results": "Results",
@@ -51,5 +52,6 @@
   "on": "On",
   "weekly": "Weekly",
   "daily": "Daily",
-  "deleteGroupConfirmation": "Are you sure you want to delete group?"
+  "deleteGroupConfirmation": "Are you sure you want to delete group?",
+  "eCommerceEventNotice": "<b>שימו לב:</b> אירועים אלה יעבדו רק בחשבונות המקושרים לחנות אינטרנטית דרך אינטגרציה של פולסים."
 }

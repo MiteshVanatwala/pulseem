@@ -19,7 +19,8 @@ export enum NotificationStatus {
 
 export enum TimeType {
     Minutes = 1,
-    Hours = 2
+    Hours = 2,
+    Days = 3
 }
 export enum SendType {
     Immediate = 1,
@@ -43,4 +44,14 @@ export enum eResponseType {
     ERROR = -1,
     SUCCESS = 0,
     UNAUTHORIZED = 401
+}
+
+export enum EmailTemplateType {
+    PULSEEM_TEMPLATES = 0,
+    MY_TEMPLATES = 1
+}
+
+export enum DynamicProductLink {
+    LATEST_PURCHASE = 'https://dynamicProduct.com?Purchase',
+    LATEST_ABANDONMENT = 'https://dynamicProduct.com?Abandonment',
 }

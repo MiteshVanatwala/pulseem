@@ -39,7 +39,7 @@ export enum fieldIDs {
 	'text' = 2,
 	'link' = 3,
 	'landingPage' = 4,
-	'navigation' = 5,
+	'navigation' = 5
 }
 
 export enum fieldNames {
@@ -47,7 +47,7 @@ export enum fieldNames {
 	TEXT = 'text',
 	LINK = 'link',
 	LANDINGPAGE = 'landingPage',
-	NAVIGATION = 'navigation',
+	NAVIGATION = 'navigation'
 }
 
 export enum fieldNameIds {
@@ -55,7 +55,7 @@ export enum fieldNameIds {
 	TEXT = 2,
 	LINK = 3,
 	LANDINGPAGE = 4,
-	NAVIGATION = 5,
+	NAVIGATION = 5
 }
 
 export enum fileTypes {

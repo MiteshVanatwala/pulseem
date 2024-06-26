@@ -10,11 +10,15 @@ import CashCow from "./CashCow";
 import ShopifyIcon from '../../assets/images/shopify.png';
 import WooCommerceIcon from '../../assets/images/woocommerce.png';
 import CashCowIcon from '../../assets/images/cashCow.png';
+import EShopIcon from '../../assets/images/e-shop.jpg';
 import { Title } from "../../components/managment/Title";
 import IsraCardIcon from '../../assets/images/isracard.png';
+import WixIcon from '../../assets/images/wix.png';
 import Istores from "./Istores";
 import EcwidIcon from '../../assets/images/ecwid.png';
 import Ecwid from "./Ecwid";
+import EShop from "./EShop";
+import Wix from "./Wix";
 
 
 const Integrations = ({ classes }: any) => {
@@ -46,6 +50,7 @@ const Integrations = ({ classes }: any) => {
           classes={{ indicator: classes.hideIndicator }}
         >
           <Tab
+            // @ts-ignore
             label={t('integrations.shopify.title')}
             icon={<img src={ShopifyIcon} alt="אייקון של Shopify" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -54,6 +59,16 @@ const Integrations = ({ classes }: any) => {
           />
 
           <Tab
+            // @ts-ignore
+            label={t('integrations.wix.title')}
+            icon={<img src={WixIcon} alt="אייקון של Wix" />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='6'
+          />
+
+          <Tab
+            // @ts-ignore
             label={t('integrations.wooCommerce.title')}
             icon={<img src={WooCommerceIcon} alt="אייקון של WooCommerce" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -62,6 +77,7 @@ const Integrations = ({ classes }: any) => {
           />
 
           <Tab
+            // @ts-ignore
             label={t('integrations.cashCow.title')}
             icon={<img src={CashCowIcon} alt="אייקון של CashCow" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -70,6 +86,7 @@ const Integrations = ({ classes }: any) => {
           />
 
           <Tab
+            // @ts-ignore
             label={t('integrations.Istores.title')}
             icon={<img src={IsraCardIcon} alt="אייקון של Isracard" />}
             classes={{ root: classes.tabText, selected: classes.activeTab }}
@@ -82,6 +99,13 @@ const Integrations = ({ classes }: any) => {
             classes={{ root: classes.tabText, selected: classes.activeTab }}
             className={classes.iconTab}
             value='4'
+          />
+          <Tab
+            label={t('integrations.eShop.title')}
+            icon={<img src={EShopIcon} alt={t('integrations.eShop.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='5'
           />
         </Tabs>
         <TabContext value={`${tabValue}`}>
@@ -100,8 +124,17 @@ const Integrations = ({ classes }: any) => {
           <TabPanel value='3'>
             <Istores classes={classes} />
           </TabPanel>
+
           <TabPanel value='4'>
             <Ecwid classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='5' className={clsx(classes.pt0)}>
+            <EShop classes={classes} />
+          </TabPanel>
+
+          <TabPanel value='6'>
+            <Wix classes={classes} />
           </TabPanel>
         </TabContext>
       </Box>

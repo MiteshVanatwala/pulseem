@@ -1,21 +1,29 @@
 {
   "title": "אינטגרציות",
+  "signUp": "הרשמה",
   "purchase": "רכישה",
   "cartAbandonment": "נטישת עגלה",
   "authResponses": {
     "201": "החנות אומתה בהצלחה",
     "400": "שם החנות שייך לחשבון אחר",
+    "401": "מפתח API או מפתח גישה שגוי",
     "403": "מפתח API או מפתח גישה שגוי",
     "404": "החיבור נכשל!"
   },
   "resetConfirmation": "אתם בטוחים שברצונכם לאפס את החיבור?",
   "selectGroup": "בחר קבוצה",
   "formSubmitResponses": {
-    "201": "קבוצה נשמרה"
+    "201": "חנות חוברה בהצלחה",
+    "401": "מפתח API או מפתח גישה שגוי",
+    "402": "קבוצה לא נשמרה",
+    "500": "שגיאה כללית"
   },
   "connectStore": "חבר חנות",
   "disconnectStore": "נתק חנות",
   "apiKey": "מפתח API",
+  "beforeYouStarted": "לפני שאתם מתחילים...",
+  "scriptDescription": "על מנת להתחיל לעקוב אחר אינטראקציית הלקוחות עם האתר שלכם, תחילה עליכם להטמיע את הסקריפט המצורף מטה.",
+  "scriptPayAttention": "שימו לב. מעקב אתרים יעבוד רק באתרים עם תעודת SSL",
   "shopify": {
     "title": "Shopify",
     "authentication": "חיבור",
@@ -38,7 +46,16 @@
     "hideCredentials": "הסתר פרטי התחברות",
     "apiVersion": "גרסת וובהוק",
     "apiVersionDesc": "בדקו את גרסאת הוובהוק בעמוד \"Configuration\"",
-    "connectStore": "מדריך לחיבור החנות שלכם"
+    "connectStore": "מדריך לחיבור החנות שלכם",
+    "scripyTitle": "הטמעה בשופיפיי:",
+    "scriptDescription": "היכנסו לממשק הניהול בשופיפיי, לחצו על-Online Store, לאחר מכן ל-Themes ולחצו על \"Edit Code\"",
+    "scriptDescription2": "היכנסו ל-Theme Liquid,הטמיעו את הסקריפט בין תגיות <script> ל- <head> ולחצו Save:",
+    "purchaseTracking": "הפעלת מעקב הכנסות",
+    "scriptDescription3": "לאחר הטמעת הסקריפט ב-header, יש לדווח את הפרמטרים הבאים באמצעות פונקציה בJavascript",
+    "scriptDescription4": "חזרו לתפריט ולכו לתפריט Settings ובתוכו ל- Checkout",
+    "scriptDescription5": "רדו עד “Order Status Page” ,הדביקו בתוכו את הסקריפט המצורף כאן ולחצו Save:",
+    "shopifyReadyScript": "סקריפט מוכן לשופיפיי:",
+    "scriptDescription6": "לאחר הטמעת מתודה זו , דו\"חות הקמפיינים יציגו נתונים על ההכנסות שלך מכל קמפיין."
   },
   "wooCommerce": {
     "title": "WooCommerce",
@@ -47,7 +64,7 @@
   },
   "cashCow": {
     "title": "CashCow",
-    "description": "על מנת לחבר את החנות שלכם בקאשקאו לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
+    "description": "על מנת לחבר את חנות הקאשקאו שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
     "connectStore": "חברו חנות CashCow"
   },
   "Istores": {
@@ -59,7 +76,28 @@
   },
   "ecwid": {
     "title": "Ecwid",
-    "description": "על מנת לחבר את חנות הווקומרס שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
+    "description": "על מנת לחבר את חנות האקוויד שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
     "connectStore": "חברו חנות Ecwid"
+  },
+  "eShop": {
+    "title": "E-Shop",
+    "apiKey": "מפתח API",
+    "connectStore": "חבר חנות",
+    "fetchStore": "דגום חנות כל",
+    "hoursOrDays": "שעות\\ימים",
+    "fetchData": "דגום נתונים",
+    "daysAgo": "ימים אחורה",
+    "cartAbandonedMinutesHours": "הכנס עגלה כנטושה לאחר",
+    "subTitle": "הכניסו את מפתח ה-API שקיבלתם מ-E Shop",
+    "1To365": "מספר הימים צריך להיות בין 1 ל-365",
+    "nonZero": "על הערך להיות יותר מ-0",
+    "fetchDataManually": "משוך נתונים ידנית",
+    "fetchDataManualSuccess": "נשלחה בקשה לחנות, הסנכרון יתבצע ב-10 הדקות הקרובות",
+    "howToConnect": "מדריך לחיבור החנות שלכם"
+  },
+  "wix": {
+    "title": "Wix",
+    "description": "על מנת לחבר את החנות שלכם ב-Wix שלכם לחשבון זה בפולסים, אנא קראו את המדריך הבא:",
+    "connectStore": "חברו חנות WIX"
   }
 }
