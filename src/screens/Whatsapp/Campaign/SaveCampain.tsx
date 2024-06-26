@@ -383,8 +383,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				variable?.IsStatastic
 			) {
 				if (
-					!variable.VariableValue.includes('ref') &&
-					checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
+					(!variable.VariableValue.includes('ref') || !variable.VariableValue.includes('dynamicProduct')) && checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
 				) {
 					return {
 						...variable,
@@ -396,32 +395,35 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				return variable;
 			} else {
 				if (
-					variable?.VariableValue.includes('ref') &&
+					(variable?.VariableValue.includes('ref') || variable?.VariableValue.includes('dynamicProduct')) &&
 					!checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
 				) {
 					return {
 						...variable,
 						VariableValue: variable?.VariableValue.includes('?')
-							? variable?.VariableValue?.replace('&ref=##ClientIDEnc##', '')
-							: variable?.VariableValue?.replace('?ref=##ClientIDEnc##', ''),
+							? variable?.VariableValue?.replace('&ref=##ClientIDEnc##', '').trim()
+							: variable?.VariableValue?.replace('?ref=##ClientIDEnc##', '').trim(),
 					};
 				}
 			}
 			return variable;
 		});
 
-		const consolidatedVars = updatedVariableWithSiteLink.reduce((result: any, newVar: updatedVariable) => {
-			updatedDynamicVariable.map((existingVar: updatedVariable) => {
-				if (newVar.VariableIndex !== existingVar.VariableIndex) {
-					result.push(existingVar);
-					return result;
-				}
-			});
-			result.push(newVar);
-			return result;
-		}, []);
+		// const consolidatedVars = updatedVariableWithSiteLink.reduce((result: any, newVar: updatedVariable) => {
+		// 	console.log(newVar)
+		// 	updatedDynamicVariable.map((existingVar: updatedVariable) => {
+		// 		console.log(existingVar)
+		// 		if (newVar.VariableIndex !== existingVar.VariableIndex) {
+		// 			result.push(existingVar);
+		// 			return result;
+		// 		}
+		// 	});
+		// 	result.push(newVar);
+		// 	return result;
+		// }, []);
 
-		setUpdatedDynamicVariable(consolidatedVars.length ? consolidatedVars : updatedVariableWithSiteLink);
+		// setUpdatedDynamicVariable(consolidatedVars.length ? consolidatedVars : updatedVariableWithSiteLink);
+		setUpdatedDynamicVariable(updatedVariableWithSiteLink);
 	};
 
 	const setCampaignDetail = (templateList: savedTemplateListProps[]) => {

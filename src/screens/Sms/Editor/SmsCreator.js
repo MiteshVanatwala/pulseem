@@ -58,6 +58,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCampaign } from "react-icons/md";
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import { CgWebsite } from "react-icons/cg";
+import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
+import { IsValidURL } from "../../../helpers/Utils/Validations";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -171,6 +173,10 @@ const SmsCreator = ({ classes }) => {
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [showRemovalLink, setShowRemovalLink] = useState(false);
   const [reInitFromNumber, setInitFromNumber] = useState(false);
+  const [displayDynamicProductOptions, setDisplayDynamicProductOptions] = useState(false);
+  const [dynamicProductFallbackURL, setDynamicProductFallbackURL] = useState('');
+  const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
+  const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -297,6 +303,10 @@ const SmsCreator = ({ classes }) => {
 
   useEffect(() => {
     linkCalculation();
+    if (!smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) && !smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT)) {
+      setEditDynamicProductFallbackURL('');
+      setDynamicProductFallbackURL('');
+    }
   }, [smsModel, isSiteTracking, isLinksStatistics])
 
   useEffect(() => {
@@ -416,6 +426,8 @@ const SmsCreator = ({ classes }) => {
         setSmsModel(response.payload);
         setIsLinksStatistics(response.payload.IsLinksStatistics);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
+        setEditDynamicProductFallbackURL(response.payload.FallbackUrl);
+        setDynamicProductFallbackURL(response.payload.FallbackUrl);
         return response.payload;
       }
       else {
@@ -534,6 +546,10 @@ const SmsCreator = ({ classes }) => {
     }
     if (!isValid) {
       setDialogType({ type: "valiateError" })
+    } else if ((smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT)) && !IsValidURL(editDynamicProductFallbackURL)) {
+      setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
+      setDialogType({ type: 'dynamicProduct' });
+      return false;
     }
     return isValid;
   };
@@ -758,6 +774,7 @@ const SmsCreator = ({ classes }) => {
     else {
       setremovalLinkDisabled(false);
     }
+    setDynamicProductButtonDisabled(smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT));
   }
 
   const renderMsg = () => {
@@ -871,7 +888,10 @@ const SmsCreator = ({ classes }) => {
                   >
                     <Button
                       className={clsx(classes.infoButtons, classes.bgGreen)}
-                      onClick={() => seteditmenuClick(!editmenuClick)}
+                      onClick={() => {
+                        seteditmenuClick(!editmenuClick);
+                        setDisplayDynamicProductOptions(false)
+                      }}
                       onBlur={() => setTimeout(() => { seteditmenuClick(false) }, 250)}
                     >
                       <AiOutlinePlusCircle className={classes.addOptionsIcon} />
@@ -909,6 +929,25 @@ const SmsCreator = ({ classes }) => {
                     </Button>
                   </Tooltip>
                   }
+                  <Tooltip
+                    disableFocusListener
+                    title={t("common.dynamicProduct")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top"
+                    arrow
+                  >
+                    <Button
+                      className={clsx(classes.infoButtons, dynamicProductButtonDisabled ? classes.disabled : null)}
+                      onClick={() => {
+                        seteditmenuClick(false);
+                        setDisplayDynamicProductOptions(!displayDynamicProductOptions)
+                      }}
+                      onBlur={() => setTimeout(() => { setDisplayDynamicProductOptions(false) }, 250)}
+                    >
+                      <Typography className={classes.editorLink}>+</Typography>
+                      {t("common.dynamicProduct")}
+                    </Button>
+                  </Tooltip>
                 </Grid>
               </Grid>
               {editmenuClick ? (
@@ -944,6 +983,45 @@ const SmsCreator = ({ classes }) => {
                   </Button>
                 </Box>
               ) : null}
+              {displayDynamicProductOptions ? (
+                <Box className={clsx(classes.dropDiv)} style={{ top: windowSize !== 'xs' ? "-150px" : null }}>
+                  <Button
+                    className={clsx(classes.dropCon, classes.redButtonLink)}
+                    onClick={() => {
+                      onAddText(DynamicProductLink.LATEST_PURCHASE);
+                      setDialogType({ type: 'dynamicProduct' });
+                      setDisplayDynamicProductOptions(false);
+                      setDynamicProductButtonDisabled(true);
+                    }}
+                  >
+                    {t("common.latestPurchase")}
+                  </Button>
+                  <Button
+                    className={clsx(classes.dropCon, classes.redButtonLink)}
+                    onClick={() => {
+                      onAddText(DynamicProductLink.LATEST_ABANDONMENT);
+                      setDialogType({ type: 'dynamicProduct' });
+                      setDisplayDynamicProductOptions(false);
+                      setDynamicProductButtonDisabled(true);
+                    }}
+                  >
+                    {t("common.latestAbandonment")}
+                  </Button>
+                </Box>
+              ) : null}
+              {
+              dynamicProductFallbackURL && (
+                <div className={clsx(classes.dInlineBlock, classes.pt5)}>
+                  <Box className={clsx(classes.p5, classes.dInlineBlock)}>
+                    {t('common.fallbackURL')}&nbsp;:&nbsp;{dynamicProductFallbackURL}
+                  </Box>
+                  <span className={clsx(classes.paddingInline25, classes.underline, classes.colorBlue)} onClick={() => {
+                    setDialogType({ type: 'dynamicProduct' });
+                    setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
+                  }}>Edit</span>
+                </div>
+              )
+            }
             </Box>
           </Grid>
           <Grid item xs={12} md={4} sm={12} className={classes.pr15}>
@@ -1170,7 +1248,7 @@ const SmsCreator = ({ classes }) => {
 
   const onSave = async (isSave, returnToAutomation = false) => {
     linkCalculation();
-    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: accountSettings.AccountID, SubAccountID: accountSettings.SubAccountId, SmsCampaignID: smsCampaignId }
+    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: accountSettings.AccountID, SubAccountID: accountSettings.SubAccountId, SmsCampaignID: smsCampaignId, FallbackURL: dynamicProductFallbackURL }
     setLoader(true);
     let r = await dispatch(smsSave(payloadToPush));
     const campaignId = r.payload.Message;
@@ -1598,6 +1676,41 @@ const SmsCreator = ({ classes }) => {
       onConfirm: () => { onLocation() }
     }
   }
+  const dynamicProductDialog = () => {
+    return {
+      title: t('common.fallbackURL'),
+      content: (
+        <Box>
+          <Typography className={clsx(classes.msgHead, classes.pb5, classes.f16)}>
+            {t("common.dynamicProductRedirectURL")}
+          </Typography>
+          <TextField
+            style={{ direction: 'ltr' }}
+            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+            placeholder={t("common.fallbackURL")}
+            outlined=""
+            onChange={(e) => setEditDynamicProductFallbackURL(e.target.value)}
+            value={editDynamicProductFallbackURL}
+            ref={smsMessageRef}
+          ></TextField>
+          <Typography className={clsx(classes.msgHead, classes.f16, classes.errorLabel)}>
+            {t("common.dynamicProductRedirectURLNote")}
+          </Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      contentStyle: classes.maxWidth400,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => {
+        if (IsValidURL(editDynamicProductFallbackURL)) {
+          setDynamicProductFallbackURL(editDynamicProductFallbackURL);
+          setDialogType(null)
+        } else {
+          setToastMessage(ToastMessages.INVALID_URL);
+        }
+      }
+    }
+  }
   const deleteDialog = () => {
     return {
       title: t('mainReport.deleteSms'),
@@ -1871,7 +1984,8 @@ const SmsCreator = ({ classes }) => {
       alert: alertDialog(),
       noCredit: noCreditDialog(),
       linkStatisticAlert: siteTrackingLinkDialog(data),
-      englishLetterDialog: englishLetterNotAllowed()
+      englishLetterDialog: englishLetterNotAllowed(),
+      dynamicProduct: dynamicProductDialog()
     }
 
     const currentDialog = dialogContent[type] || {}

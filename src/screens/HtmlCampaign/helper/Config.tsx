@@ -115,7 +115,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     if (newRow === '') reject();
                     else {
                         newRow['uuid'] = uuidv4();
+                        newRow['container']['style']['event-type-enabled'] = newRow?.metadata?.EventTypeEnabled;
                         newRow['container']['style']['event-type'] = newRow?.metadata?.EventType;
+                        newRow['container']['style']['category-enabled'] = newRow?.metadata?.ProductCategoryEnabled;
                         newRow['container']['style']['category'] = newRow?.metadata?.ProductCategory;
                         newRow['container']['style']['product-count'] = newRow?.metadata?.NumOfProdcuts;
                         newRow['metadata']['uuid'] = uuidv4();

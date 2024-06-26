@@ -262,13 +262,17 @@ export type DynamicModalFieldsProps = {
 	setTextInput: (value: string) => void;
 	setPersonalField: (value: string) => void;
 	onAddRemovalLink: (isTrackLink: boolean) => void;
-	setLinkInput: (value: string, isTrackLink: boolean) => void;
+	setLinkInput: (value: string, isTrackLink: boolean, fallbackUrl?: string) => void;
 	setLandPage: (value: string) => void;
 	setNavApp: (value: string) => void;
 	setNavAddress: (value: string) => void;
 	personalFields: personalFieldDataProps;
 	landingPageData: landingPageDataProps[];
 	isTrackLink: boolean;
+	dynamicProductType: string,
+	setDynamicProductType: (value: string) => void,
+	dynamicProductFallbackURL: string,
+	setDynamicProductFallbackURL: (value: string) => void
 };
 
 export type TestGroupModalRowsProps = {
@@ -312,6 +316,7 @@ export type updatedVariable = {
 	VariableIndex: number;
 	VariableValue: string;
 	IsStatastic: boolean;
+	FallbackUrl?: string;
 };
 
 export type smsReducerProps = {
