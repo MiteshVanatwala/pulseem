@@ -188,6 +188,12 @@ const SignUp = ({ classes }: any) => {
       if (status === 200) {
         if (Message === 'ok') {
           setDialogType({ type: 'confirmation'});
+          // @ts-ignore
+          window?.dataLayer?.push({
+            'event': 'formSubmission',
+            'formType': 'Registraion Complete',
+            'formPosition': 'Footer'
+          });
         } else if (Message === 'internalerror') {
           setDialogType({ type: 'internalError'});
         } else {
