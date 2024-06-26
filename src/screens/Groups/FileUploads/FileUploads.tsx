@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-    Box, Button, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography
+  Box, Button, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -21,6 +21,7 @@ import { DeleteIcon } from '../../../assets/images/managment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import GroupSummary from '../../../components/GroupSummary/GroupSummary';
 import { Summary } from '../../../model/Groups/GroupSummary.types';
+import { getFiles } from '../../../redux/reducers/fileUploadSlice';
 
 const FileUploads = ({ classes }: ClassesType) => {
   const { windowSize, rowsPerPage } = useSelector((state: any) => state.core)
@@ -40,26 +41,26 @@ const FileUploads = ({ classes }: ClassesType) => {
     SearchTerm: "",
     IsDynamic: true
   });
-  const [ uploadedFileList, setUploadedFileList ] = useState<UploadedFile[]>([]);
-  
+  const [uploadedFileList, setUploadedFileList] = useState<UploadedFile[]>([]);
+
   useEffect(() => {
     getFileUploadList();
   }, [])
 
   const renderToast = () => {
     setTimeout(() => {
-        setToastMessage(null);
+      setToastMessage(null);
     }, 4000);
     return <Toast data={toastMessage} />;
   };
 
   const getFileUploadList = async () => {
-    // const response = await PulseemReactInstance.get(`/FileUploads/Get`);
-    // console.log(response);
-    const data = [ 
+    const response: any = await dispatch(getFiles());
+    console.log(response?.payload?.Data);
+    const data = [
       {
         ID: 1,
-        uploadType: 1,
+        UploadType: 1,
         FileSize: 14124,
         Status: 'Pending',
         UploadedBy: '',
@@ -75,7 +76,7 @@ const FileUploads = ({ classes }: ClassesType) => {
         UploadTypeTitle: '',
       }
     ];
-    setUploadedFileList(data);
+    setUploadedFileList(response?.payload?.Data);
   }
 
   const getGroups = async (ID: number) => {
@@ -124,13 +125,13 @@ const FileUploads = ({ classes }: ClassesType) => {
       <TableBody>
         {
           uploadedFileList.length ? uploadedFileList.map(windowSize === 'xs' ? renderPhoneRow : renderRow)
-          : (
-            <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
-              <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
-                {t('common.NoDataTryFilter')}
-              </Grid>
-            </Box>
-          )
+            : (
+              <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
+                <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+                  {t('common.NoDataTryFilter')}
+                </Grid>
+              </Box>
+            )
         }
       </TableBody>
     )
@@ -167,17 +168,17 @@ const FileUploads = ({ classes }: ClassesType) => {
         <TableCell classes={cellStyle} align='center' className={classes.flex2}>
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
-          <DeleteIcon width={18} height={20} className={clsx('rowIcon', classes.underline)}  onClick={() => {
+          <DeleteIcon width={18} height={20} className={clsx('rowIcon', classes.underline)} onClick={() => {
             setDialogType({
               type: 'delete',
               data: row.ID
             })
-          }}/>
+          }} />
         </TableCell>
-    </TableRow>
+      </TableRow>
     )
   }
-  
+
   const renderPhoneRow = (row: any) => {
     return (
       <></>

@@ -1,6 +1,6 @@
 export type UploadedFile = {
   ID: number;
-  uploadType: number;
+  UploadType: number;
   FileSize: number;
   Status: string;
   UploadedBy: string;
