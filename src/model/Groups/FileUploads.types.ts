@@ -14,4 +14,5 @@ export type UploadedFile = {
   RunDateEnd: string;
   StatusTitle: string;
   UploadTypeTitle: string;
+  UploadResultsData: any;
 };

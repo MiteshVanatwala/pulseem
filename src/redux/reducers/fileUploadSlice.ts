@@ -15,6 +15,19 @@ export const getFiles = createAsyncThunk(
   }
 );
 
+export const cancelUpload = createAsyncThunk(
+  'FileUploads/CancelUpload',
+  async (id, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.put(`FileUploads/CancelUpload/${id}`);
+      return response.data
+    } catch (error) {
+      return console.log(error);
+    }
+  }
+);
+
+
 const fileUploadsSlice = createSlice({
   name: 'fileUploads',
   initialState: {

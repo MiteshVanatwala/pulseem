@@ -2,7 +2,7 @@
 
 export interface PulseemFile {
     ID: number;
-    UploadType: number;
+    UploadType: eUploadType;
     FileSize: number;
     SubAccountID: number;
     Status: UploadFileStatus;
@@ -15,6 +15,7 @@ export interface PulseemFile {
     LastUpdated: Date | string;
     RunDateStart: Date | string;
     RunDateEnd: Date | string;
+    UploadResultsData?: never | any;
 
     fieldsMappingData: FieldsMapper;
     resultsData: UploadResults;
@@ -59,3 +60,8 @@ export interface UploadResults {
     PhoneDuplicates: number;
     PhoneExists: number;
 }
+
+export enum eUploadType {
+    Direct = 0,
+    System = 1
+  }

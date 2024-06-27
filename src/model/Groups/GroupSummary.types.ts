@@ -1,4 +1,4 @@
-export type Summary  = {
+export type Summary = {
   TotalValidUploadedRecords: string;
   TotalInvalidOrEmptyAddresses: string;
   TotalDuplicates: string;
@@ -9,6 +9,16 @@ export type Summary  = {
   InvalidOrEmptyCellphones: string;
   DuplicateCellphones: string;
   ExistingCellphones: string;
+  TotalUploaded: string;
+  TotalErrors: string;
+  EmailSuccess: string;
+  EmailInvalid: string;
+  EmailDuplicates: string;
+  EmailExists: string;
+  PhoneSuccess: string;
+  PhoneInvalid: string;
+  PhoneDuplicates: string;
+  PhoneExists: string;
 }
 
 export type GroupSummaryProps = {

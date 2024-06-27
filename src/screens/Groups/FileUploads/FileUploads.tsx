@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Box, Button, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography
+  Box, Button, Grid, MenuItem, MenuList, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -12,22 +12,25 @@ import { ClassesType } from '../../Classes.types';
 import { ERROR_TYPE } from '../../../helpers/Types/common';
 import Toast from '../../../components/Toast/Toast.component';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { rowsOptions } from '../../../helpers/Constants';
+// import { rowsOptions } from '../../../helpers/Constants';
 import { PageProperty, SetPageState } from '../../../helpers/UI/SessionStorageManager';
-import { TablePagination } from '../../../components/managment';
-import { PulseemReactInstance } from '../../../helpers/Api/PulseemReactAPI';
-import { UploadedFile } from '../../../model/Groups/FileUploads.types';
+// import { TablePagination } from '../../../components/managment';
+// import { UploadedFile } from '../../../model/Groups/FileUploads.types';
 import { DeleteIcon } from '../../../assets/images/managment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import GroupSummary from '../../../components/GroupSummary/GroupSummary';
 import { Summary } from '../../../model/Groups/GroupSummary.types';
-import { getFiles } from '../../../redux/reducers/fileUploadSlice';
+import { cancelUpload, getFiles } from '../../../redux/reducers/fileUploadSlice';
+import { PulseemFile, eUploadType } from '../../../Models/Files/FileUpload';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import moment from 'moment';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const FileUploads = ({ classes }: ClassesType) => {
   const { windowSize, rowsPerPage } = useSelector((state: any) => state.core)
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [showLoader, setLoader] = useState(false);
+  const [showLoader, setLoader] = useState(true);
   const [dialogType, setDialogType] = useState<{
     type: string;
     data: any
@@ -41,7 +44,8 @@ const FileUploads = ({ classes }: ClassesType) => {
     SearchTerm: "",
     IsDynamic: true
   });
-  const [uploadedFileList, setUploadedFileList] = useState<UploadedFile[]>([]);
+  const [uploadedFileList, setUploadedFileList] = useState<PulseemFile[]>([]);
+  const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
 
   useEffect(() => {
     getFileUploadList();
@@ -56,52 +60,28 @@ const FileUploads = ({ classes }: ClassesType) => {
 
   const getFileUploadList = async () => {
     const response: any = await dispatch(getFiles());
-    console.log(response?.payload?.Data);
-    const data = [
-      {
-        ID: 1,
-        UploadType: 1,
-        FileSize: 14124,
-        Status: 'Pending',
-        UploadedBy: '',
-        FileName: "1_2_2024 5_27_00 AM-784648.XLSX",
-        Results: "",
-        ErrorData: "",
-        FieldsMapping: '',
-        CreatedDate: '',
-        LastUpdated: '',
-        RunDateStart: '',
-        RunDateEnd: '',
-        StatusTitle: '',
-        UploadTypeTitle: '',
-      }
-    ];
     setUploadedFileList(response?.payload?.Data);
+    setLoader(false);
   }
 
-  const getGroups = async (ID: number) => {
-    // const response = await PulseemReactInstance.get(`/FileUploads/GetGroups/${ID}`);
-    // console.log(response);
-  }
-
-  const getUploadResult = async (ID: number) => {
-    // const response = await PulseemReactInstance.get(`/FileUploads/UploadResult/${ID}`);
-    // console.log(response);
-  }
-
-  const cancelUpload = async (ID: number) => {
-    // const response = await PulseemReactInstance.put(`/FileUploads/Cancel/${ID}`);
+  const resetUpload = async (ID: number) => {
+    // @ts-ignore
+    const cReq: any = await dispatch(cancelUpload(ID));
+    if (cReq?.payload?.Data === true) {
+      getFileUploadList();
+    }
+    setLoader(false);
   }
 
   const renderTableHead = () => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3}>{t("common.GroupName")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("group.updateFrequency")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex4}>{t("common.GroupName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("group.updateFrequency")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.Status")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Groups")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("group.results")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.UploadResults")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("group.totalRecipients")}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("group.deleteGroup")}</TableCell>
         </TableRow>
@@ -124,7 +104,7 @@ const FileUploads = ({ classes }: ClassesType) => {
     return (
       <TableBody>
         {
-          uploadedFileList.length ? uploadedFileList.map(windowSize === 'xs' ? renderPhoneRow : renderRow)
+          uploadedFileList?.length ? uploadedFileList.map(windowSize === 'xs' ? renderPhoneRow : renderRow)
             : (
               <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
                 <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
@@ -137,43 +117,74 @@ const FileUploads = ({ classes }: ClassesType) => {
     )
   }
 
-  const renderRow = (row: UploadedFile) => {
+  const renderNameCell = (row: PulseemFile) => {
+    let date = null
+    let text: any = ''
+    let separator = windowSize === 'xs' ? ":" : "";
+
+    date = moment(row.LastUpdated, dateFormat)
+    text = row.Status === 4 ? `${t('FileUploads.cancelledBy')} <b>${row?.UploadedBy}</b>` : `${t('group.uploadedBy')} <b>${row?.UploadedBy}</b>`
+    return (
+      <>
+        {/* @ts-ignore */}
+        <CustomTooltip
+          isSimpleTooltip={false}
+          classes={classes}
+          interactive={true}
+          arrow={true}
+          placement={'top'}
+          title={<Typography noWrap={false}>{`${row.FileName} (${row.FileSize} KB)`}</Typography>}
+          style={{ fontSize: 16 }}
+          text={`${row.FileName} (${row.FileSize} KB)`}
+        />
+        <Typography
+          className={clsx(classes.grayTextCell)} style={{ fontSize: 12 }}>
+          {RenderHtml(`${text}${separator}  ${t('common.OnDate')} <b>${date.format('DD/MM/YYYY')} ${date.format('LT')}</b>`)}
+        </Typography>
+      </>
+    )
+  }
+
+  const renderStatus = (status: number) => {
+    const colors: any = ['#0371AD', '#E74C3C', '#27AE60', '#E74C3C', '#F59A23'];
+    return <Typography style={{ color: colors[status] }}>{t(`group.uploadFiles.statuses.${status}`)}</Typography>
+
+  }
+
+  const renderRow = (row: PulseemFile) => {
     return (
       <TableRow
         key={row.ID}
         classes={rowStyle}>
-        <TableCell classes={cellStyle} align='left' className={clsx(classes.flex3, classes.alignItemsStart)}>
-          {row.FileName}
-          ({row.FileSize} KB)
+        <TableCell classes={cellStyle} align='left' className={clsx(classes.flex4, classes.alignItemsStart)}>
+          {renderNameCell(row)}
+        </TableCell>
+        <TableCell classes={cellStyle} align='center' className={classes.flex1}>
+          {row.UploadType === eUploadType.Direct ? t('FileUploads.directUpload') : t('FileUploads.systemUpload')}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={classes.flex2}>
-          {t(`group.${row.uploadType === 1 ? 'weekly' : 'Daily'}`)}
-        </TableCell>
-        <TableCell classes={cellStyle} align='center' className={classes.flex2}>
-          {/* {moment(row.CreationDate).format("DD/MM/YYYY HH:mm")} */}
-          {row.Status}
+          {renderStatus(row?.Status)}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.underline)} onClick={() => {
-          getGroups(row.ID);
-          setDialogType({ type: 'group', data: row.ID })
+          setDialogType({ type: 'groups', data: row?.UploadResultsData })
         }}>
           {t('common.Groups')}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex2, classes.underline)} onClick={() => {
-          getUploadResult(row.ID);
-          setDialogType({ type: 'results', data: row.ID })
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.underline)} onClick={() => {
+          setDialogType({ type: 'results', data: row.UploadResultsData })
         }}>
           {t('group.results')}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={classes.flex2}>
+          {row?.UploadResultsData?.TotalRecords.toLocaleString()}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
-          <DeleteIcon width={18} height={20} className={clsx('rowIcon', classes.underline)} onClick={() => {
+          {row.Status === 0 && <DeleteIcon width={18} height={20} className={clsx('rowIcon', classes.underline)} onClick={() => {
             setDialogType({
               type: 'delete',
               data: row.ID
             })
-          }} />
+          }} />}
         </TableCell>
       </TableRow>
     )
@@ -203,32 +214,34 @@ const FileUploads = ({ classes }: ClassesType) => {
     setSearchData({ ...serachData, PageIndex: val });
   }
 
-  const renderTablePagination = () => {
-    return (
-      // @ts-ignore
-      <TablePagination
-        classes={classes}
-        // rows={groupData ? groupData.RecordCount : 0}
-        rows={20}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleRowsPerPageChange}
-        rowsPerPageOptions={rowsOptions}
-        page={serachData.PageIndex}
-        onPageChange={handlePageChange}
-      />
-    )
-  }
+  // const renderTablePagination = () => {
+  //   return (
+  //     // @ts-ignore
+  //     <TablePagination
+  //       classes={classes}
+  //       // rows={groupData ? groupData.RecordCount : 0}
+  //       rows={20}
+  //       rowsPerPage={rowsPerPage}
+  //       onRowsPerPageChange={handleRowsPerPageChange}
+  //       rowsPerPageOptions={rowsOptions}
+  //       page={serachData.PageIndex}
+  //       onPageChange={handlePageChange}
+  //     />
+  //   )
+  // }
 
   const getDeleteDialog = (ID: number) => ({
     title: t('group.delete'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }}>
-        {t('group.deleteGroupConfirmation')}
+        {t('group.deleteUploadConfirmation')}
       </Typography>
     ),
     onConfirm: async () => {
-      await cancelUpload(ID);
+      setLoader(true);
+      await resetUpload(ID);
+      setDialogType(null);
     }
   })
 
@@ -258,10 +271,14 @@ const FileUploads = ({ classes }: ClassesType) => {
   })
 
   const getGroupDialog = (data: any) => ({
-    title: t('group.delete'),
+    title: t('common.Groups'),
     showDivider: false,
     content: (
-      <></>
+      <MenuList>
+        {data?.groups && data?.groups?.map((g: any) => {
+          return <MenuItem>{g.Title}</MenuItem>
+        })}
+      </MenuList>
     ),
     renderButtons: () => (
       <Grid
@@ -316,13 +333,13 @@ const FileUploads = ({ classes }: ClassesType) => {
       <Box className={classes.mb50}>
         <Box className={'topSection onlyTitleBar'}>
           <Title
-            Text={t('master.recipientManagement')}
+            Text={t("master.RadMenuItemResourceFileUploads.Text")}
             classes={classes}
             ContainerStyle={{ border: 'none !important' }}
           />
         </Box>
         {renderTable()}
-        {renderTablePagination()}
+        {/* {renderTablePagination()} */}
 
         <Loader isOpen={showLoader} />
         {toastMessage && renderToast()}
