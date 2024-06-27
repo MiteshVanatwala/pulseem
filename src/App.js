@@ -146,10 +146,6 @@ const renderRoutes = (classes, redirect) => {
         path={`/ClientSearch`}
         component={transferUrl('/Pulseem/ClientSearch.aspx')}
       />
-      <Route
-        path={`/FileUploads`}
-        component={transferUrl('/Pulseem/FileUploads.aspx')}
-      />
       {/* Newsletter */}
       <Route
         exact
