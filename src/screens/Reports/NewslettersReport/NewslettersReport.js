@@ -111,7 +111,7 @@ const NewslettersReport = ({ classes }) => {
       title: t('common.Unique'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
       clickable: true,
-      onClick: () => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      onClick: (isParent = false) => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true`
       // onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
     },
     RemovedClients: {
@@ -133,7 +133,7 @@ const NewslettersReport = ({ classes }) => {
     SendError: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
-      onClick: () => { window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true` }
+      onClick: (isParent = false) => { window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true` }
       // onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
       //   state: {
       //     ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -717,7 +717,7 @@ const NewslettersReport = ({ classes }) => {
     )
   }
 
-  const renderDataTooltip = (value, type, data = {}, tooltip) => {
+  const renderDataTooltip = (value, type, data = {}, tooltip, isParent) => {
     const { title = t("notifications.tblBody.total"), textStyle = null, onClick } = data
     const isLink = onClick && onClick !== null && value > 0;
     return (
@@ -731,7 +731,7 @@ const NewslettersReport = ({ classes }) => {
         }}>
         <Box className={classes.cellText}
           style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}
-          onClick={isLink ? onClick : VoidFunction}>
+          onClick={() => isLink ? onClick(isParent) : VoidFunction}>
           <Typography
             // component={clickable && value > 0 ? 'a' : 'p'}
             component={'p'}
@@ -750,12 +750,12 @@ const NewslettersReport = ({ classes }) => {
     );
   }
 
-  const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
+  const renderIntData = (value, type, data = {}, clickable, innerTitle = '', isParent = false) => {
     const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? '' : t("notifications.tblBody.total"), onClick, textStyle = null, isRevenueCol = false } = data
     const isLink = (value > 0 && clickable) || isRevenueCol;
     return (
       <Box className={classes.cellText}
-        onClick={isLink ? onClick : VoidFunction}
+        onClick={() => isLink ? onClick(isParent) : VoidFunction}
         style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}>
         <Typography component={isLink ? 'a' : 'p'}
           style={{ textDecoration: isLink ? 'underline' : null }}
@@ -897,7 +897,7 @@ const NewslettersReport = ({ classes }) => {
                 {renderDataTooltip(isParent ? SumClickCount : row.ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderDataTooltip(isParent ? SumClickCountUnique : row.ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
+                {renderDataTooltip(isParent ? SumClickCountUnique : row.ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text', isParent)}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderPercetangeData(isParent ? SumPercetangeClicks : row.PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
@@ -911,7 +911,7 @@ const NewslettersReport = ({ classes }) => {
             className={classes.flex3}>
             <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'))}
+                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'), isParent)}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderIntData(isParent ? SumRemovedClients : row.RemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
