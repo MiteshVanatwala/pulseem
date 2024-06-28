@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 import { coreProps } from '../../Campaign/Types/WhatsappCampaign.types';
 import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 const SideBarContactList = ({
 	classes,
@@ -124,9 +125,10 @@ const SideBarContactList = ({
 														</Select>
 													</span>
 
-													{formatTime(
-														contact.LastMessageDate.split('T')[1].split('.')[0]
-													)}
+													<div className={classes.whatsappDateTime}>
+														<div>{moment(contact.LastMessageDate).format('HH:mm')}</div>
+														<div>{moment(contact.LastMessageDate).format('DD/MM/YYYY')}</div>
+													</div>
 												</span>
 											</div>
 											<div
