@@ -1,0 +1,15 @@
+clone:
+  depth: full
+
+definitions:
+  steps:
+    - step: &audit
+        name: Audit Packages
+        image: node:lts
+        script:
+          - corepack enable
+          - yarn dlx audit-ci@^7 --config ./audit-ci.jsonc
+pipelines:
+  default:
+    - step:
+        <<: *audit
