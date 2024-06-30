@@ -89,8 +89,7 @@
     "build": "react-scripts --max_old_space_size=8000 build",
     "build-ssl": "react-scripts --openssl-legacy-provider  --max_old_space_size=8000 build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "ci-audit": "audit-ci --config ./audit-ci.jsonc"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
