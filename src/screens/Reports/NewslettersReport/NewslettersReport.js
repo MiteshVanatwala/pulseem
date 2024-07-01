@@ -854,7 +854,7 @@ const NewslettersReport = ({ classes }) => {
             align='center'
             className={classes.flex4}
           >
-            {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status, LastEditDate }, isParent)}
+            {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status, LastEditDate }, childItems.length > 0 ? isParent : false)}
           </TableCell>
           <TableCell
             align='center'
@@ -897,7 +897,7 @@ const NewslettersReport = ({ classes }) => {
                 {renderDataTooltip(isParent ? SumClickCount : row.ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderDataTooltip(isParent ? SumClickCountUnique : row.ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text', isParent)}
+                {renderDataTooltip(isParent ? SumClickCountUnique : row.ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text', childItems.length > 0 ? isParent : false)}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderPercetangeData(isParent ? SumPercetangeClicks : row.PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
@@ -911,7 +911,7 @@ const NewslettersReport = ({ classes }) => {
             className={classes.flex3}>
             <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'), isParent)}
+                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'), childItems.length > 0 ? isParent : false)}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderIntData(isParent ? SumRemovedClients : row.RemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
@@ -937,10 +937,12 @@ const NewslettersReport = ({ classes }) => {
             component="th"
             scope="row"
             classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
-            className={classes.flex1}>
+            className={classes.flex1}
+          >
             {renderCellIcons(ReportsIcon, row, null, {
               lable: t('mainReport.locGraph.HeaderText'),
-              href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`
+              href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`,
+              disable: childItems.length > 0 && isParent
             })}
           </TableCell>
           {hasRevenue && <TableCell
