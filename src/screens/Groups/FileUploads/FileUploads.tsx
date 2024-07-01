@@ -147,7 +147,7 @@ const FileUploads = ({ classes }: ClassesType) => {
 
   const renderStatus = (status: number) => {
     const colors: any = ['#0371AD', '#E74C3C', '#27AE60', '#E74C3C', '#F59A23'];
-    return <Typography style={{ color: colors[status] }}>{t(`group.uploadFiles.statuses.${status}`)}</Typography>
+    return <Typography style={{ color: colors[status] }} className={clsx(classes.bold, classes.font16)}>{t(`group.uploadFiles.statuses.${status}`)}</Typography>
 
   }
 
@@ -159,24 +159,28 @@ const FileUploads = ({ classes }: ClassesType) => {
         <TableCell classes={cellStyle} align='left' className={clsx(classes.flex4, classes.alignItemsStart)}>
           {renderNameCell(row)}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={classes.flex1}>
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.font16)}>
           {row.UploadType === eUploadType.Direct ? t('FileUploads.directUpload') : t('FileUploads.systemUpload')}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={classes.flex2}>
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex2)}>
           {renderStatus(row?.Status)}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.underline)} onClick={() => {
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.underline, classes.font16)} onClick={() => {
           setDialogType({ type: 'groups', data: row?.UploadResultsData })
         }}>
           {t('common.Groups')}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.underline)} onClick={() => {
-          setDialogType({ type: 'results', data: row.UploadResultsData })
-        }}>
+        <TableCell
+          classes={cellStyle}
+          align='center'
+          className={clsx(classes.flex1, classes.underline, row.Status !== 2 && classes.disabled, classes.font16)}
+          onClick={() => {
+            setDialogType({ type: 'results', data: row.UploadResultsData })
+          }}>
           {t('group.results')}
         </TableCell>
-        <TableCell classes={cellStyle} align='center' className={classes.flex2}>
-          {row?.UploadResultsData?.TotalRecords.toLocaleString()}
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex2, classes.bold, classes.font16)}>
+          {row?.UploadResultsData?.TotalRecords?.toLocaleString()}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
           {row.Status === 0 && <DeleteIcon width={18} height={20} className={clsx('rowIcon', classes.underline)} onClick={() => {
