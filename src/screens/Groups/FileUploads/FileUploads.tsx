@@ -11,9 +11,9 @@ import { Loader } from '../../../components/Loader/Loader';
 import { ClassesType } from '../../Classes.types';
 import { ERROR_TYPE } from '../../../helpers/Types/common';
 import Toast from '../../../components/Toast/Toast.component';
-import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+// import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 // import { rowsOptions } from '../../../helpers/Constants';
-import { PageProperty, SetPageState } from '../../../helpers/UI/SessionStorageManager';
+// import { PageProperty, SetPageState } from '../../../helpers/UI/SessionStorageManager';
 // import { TablePagination } from '../../../components/managment';
 // import { UploadedFile } from '../../../model/Groups/FileUploads.types';
 import { DeleteIcon } from '../../../assets/images/managment';
@@ -25,6 +25,7 @@ import { PulseemFile, eUploadType } from '../../../Models/Files/FileUpload';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import moment from 'moment';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { eFileStatus } from '../../../Models/Files/FileUpload';
 
 const FileUploads = ({ classes }: ClassesType) => {
   const { windowSize, rowsPerPage } = useSelector((state: any) => state.core)
@@ -38,12 +39,12 @@ const FileUploads = ({ classes }: ClassesType) => {
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
-  const [serachData, setSearchData] = useState<any>({
-    PageIndex: 1,
-    PageSize: rowsPerPage,
-    SearchTerm: "",
-    IsDynamic: true
-  });
+  // const [serachData, setSearchData] = useState<any>({
+  //   PageIndex: 1,
+  //   PageSize: rowsPerPage,
+  //   SearchTerm: "",
+  //   IsDynamic: true
+  // });
   const [uploadedFileList, setUploadedFileList] = useState<PulseemFile[]>([]);
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
 
@@ -77,7 +78,8 @@ const FileUploads = ({ classes }: ClassesType) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex4}>{t("common.GroupName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex4}>{t("FileUploads.fileName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("FileUploads.fileSize")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("group.updateFrequency")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.Status")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Groups")}</TableCell>
@@ -123,7 +125,7 @@ const FileUploads = ({ classes }: ClassesType) => {
     let separator = windowSize === 'xs' ? ":" : "";
 
     date = moment(row.LastUpdated, dateFormat)
-    text = row.Status === 4 ? `${t('FileUploads.cancelledBy')} <b>${row?.UploadedBy}</b>` : `${t('group.uploadedBy')} <b>${row?.UploadedBy}</b>`
+    text = row?.Status === eFileStatus.CANCELLED ? `${t('FileUploads.cancelledBy')} <b>${row?.UploadedBy}</b>` : `${t('group.uploadedBy')} <b>${row?.UploadedBy}</b>`
     return (
       <>
         {/* @ts-ignore */}
@@ -133,9 +135,9 @@ const FileUploads = ({ classes }: ClassesType) => {
           interactive={true}
           arrow={true}
           placement={'top'}
-          title={<Typography noWrap={false}>{`${row.FileName} (${row.FileSize} KB)`}</Typography>}
+          title={<Typography noWrap={false}>{row.FileName}</Typography>}
           style={{ fontSize: 16 }}
-          text={`${row.FileName} (${row.FileSize} KB)`}
+          text={row.FileName}
         />
         <Typography
           className={clsx(classes.grayTextCell)} style={{ fontSize: 12 }}>
@@ -159,6 +161,9 @@ const FileUploads = ({ classes }: ClassesType) => {
         <TableCell classes={cellStyle} align='left' className={clsx(classes.flex4, classes.alignItemsStart)}>
           {renderNameCell(row)}
         </TableCell>
+        <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1)} style={{ direction: 'ltr' }}>
+          {`${row.FileSize?.toLocaleString()} KB`}
+        </TableCell>
         <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.font16)}>
           {row.UploadType === eUploadType.Direct ? t('FileUploads.directUpload') : t('FileUploads.systemUpload')}
         </TableCell>
@@ -173,17 +178,17 @@ const FileUploads = ({ classes }: ClassesType) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex1, classes.underline, row.Status !== 2 && classes.disabled, classes.font16)}
+          className={clsx(classes.flex1, classes.font16)}
           onClick={() => {
-            setDialogType({ type: 'results', data: row.UploadResultsData })
+            row?.Status === eFileStatus.SUCCESSFULLY_COMPLETED && setDialogType({ type: 'results', data: row.UploadResultsData })
           }}>
-          {t('group.results')}
+          {row?.Status === eFileStatus.SUCCESSFULLY_COMPLETED && <Typography className={classes.underline}>{t('group.results')}</Typography>}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={clsx(classes.flex2, classes.bold, classes.font16)}>
           {row?.UploadResultsData?.TotalRecords?.toLocaleString()}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
-          {row.Status === 0 && <DeleteIcon width={18} height={20} className={clsx('rowIcon', classes.underline)} onClick={() => {
+          {row?.Status === eFileStatus.WAITTING_FOR_UPLOAD && <DeleteIcon width={18} height={20} className={clsx('rowIcon', classes.underline)} onClick={() => {
             setDialogType({
               type: 'delete',
               data: row.ID
@@ -200,23 +205,23 @@ const FileUploads = ({ classes }: ClassesType) => {
     )
   }
 
-  const handleRowsPerPageChange = (val: Number) => {
-    dispatch(setRowsPerPage(val))
-  }
+  // const handleRowsPerPageChange = (val: Number) => {
+  //   dispatch(setRowsPerPage(val))
+  // }
 
-  const handlePageChange = (val: Number) => {
-    SetPageState({
-      "PageName": "groups",
-      "PageNumber": val,
-      "SearchTerm": serachData.SearchTerm,
-      "SearchData": (serachData.SearchTerm !== '') ? {
-        SearchTerm: serachData.SearchTerm,
-        PageIndex: val
-      } : null,
-      "IsDynamic": true
-    } as PageProperty);
-    setSearchData({ ...serachData, PageIndex: val });
-  }
+  // const handlePageChange = (val: Number) => {
+  //   SetPageState({
+  //     "PageName": "groups",
+  //     "PageNumber": val,
+  //     "SearchTerm": serachData.SearchTerm,
+  //     "SearchData": (serachData.SearchTerm !== '') ? {
+  //       SearchTerm: serachData.SearchTerm,
+  //       PageIndex: val
+  //     } : null,
+  //     "IsDynamic": true
+  //   } as PageProperty);
+  //   setSearchData({ ...serachData, PageIndex: val });
+  // }
 
   // const renderTablePagination = () => {
   //   return (

@@ -5,7 +5,7 @@ export interface PulseemFile {
     UploadType: eUploadType;
     FileSize: number;
     SubAccountID: number;
-    Status: UploadFileStatus;
+    Status: eFileStatus;
     UploadedBy: string;
     FileName: string;
     Results: string;
@@ -20,7 +20,15 @@ export interface PulseemFile {
     fieldsMappingData: FieldsMapper;
     resultsData: UploadResults;
 }
-export enum UploadFileStatus { Pending, Uploading, Success, Fail, Cancel }
+// export enum UploadFileStatus { Pending, Uploading, Success, Fail, Cancel }
+
+export enum eFileStatus {
+    WAITTING_FOR_UPLOAD = 0,
+    ERROR_OCCURED = 1,
+    SUCCESSFULLY_COMPLETED = 2,
+    GENERIC_ERROR = 3,
+    CANCELLED = 4
+}
 
 export interface UploadGroup {
     ID: number;
@@ -64,4 +72,4 @@ export interface UploadResults {
 export enum eUploadType {
     Direct = 0,
     System = 1
-  }
+}
