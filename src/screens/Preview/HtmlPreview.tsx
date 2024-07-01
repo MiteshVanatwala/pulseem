@@ -64,7 +64,7 @@ const HtmlPreview = ({ classes }: any) => {
     const response = await dispatch(getNewsletterPreview(id)) as any;
 
     implementAmpScripts(response?.payload?.Data?.AmpData !== null).then(() => {
-      setHtml(response?.payload?.Data?.HTMLtoSend);
+      setHtml(response?.payload?.Data?.AmpData || response?.payload?.Data?.HTMLtoSend || response?.payload?.Data?.HTML);
       const d = {
         PageName: response?.payload?.Data?.Name,
         ID: response?.payload?.Data?.CampaignID,
