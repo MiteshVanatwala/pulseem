@@ -26,19 +26,55 @@ const HtmlPreview = ({ classes }: any) => {
   const [html, setHtml] = useState<string>('');
   const dispatch = useDispatch();
 
+
+  const implementAmpScripts = async (isAmp: boolean) => {
+
+    return new Promise((resolve: any) => {
+      if (isAmp) {
+        const script = document.createElement("script");
+        script.src = "https://cdn.ampproject.org/rtv/012406131415000/v0/amp-loader-0.1.js";
+        script.setAttribute('custom-element', 'amp-loader');
+        script.setAttribute('data-script', 'amp-loader');
+        script.setAttribute('i-amphtml-inserted', '');
+        script.setAttribute('crossorigin', 'anonymous');
+        script.async = true;
+        document.getElementsByTagName('head')[0].appendChild(script);
+        const script1 = document.createElement("script");
+        script1.src = "https://cdn.ampproject.org/v0.js";
+        document.getElementsByTagName('head')[0].appendChild(script1);
+
+        const script2 = document.createElement("script");
+        script2.src = "https://cdn.ampproject.org/v0/amp-selector-0.1.js";
+        script2.setAttribute('custom-element', 'amp-selector');
+        document.getElementsByTagName('head')[0].appendChild(script2);
+
+        const script3 = document.createElement("script");
+        script3.src = "https://cdn.ampproject.org/v0/amp-carousel-0.1.js";
+        script3.setAttribute('custom-element', 'amp-carousel');
+        document.getElementsByTagName('head')[0].appendChild(script3);
+      }
+
+      resolve();
+    });
+
+  }
+
   const getNewsletterHtml = async () => {
     // @ts-ignore
     const response = await dispatch(getNewsletterPreview(id)) as any;
-    setHtml(response?.payload?.Data?.HTMLtoSend);
-    const d = {
-      PageName: response?.payload?.Data?.Name,
-      ID: response?.payload?.Data?.CampaignID,
-      FromEmail: response?.payload?.Data?.FromEmail,
-      FromName: response?.payload?.Data?.FromName,
-      PageUrl: response?.payload?.Data?.PageUrl
-    }
-    setDetails(d);
-    setShowLoader(false);
+
+    implementAmpScripts(response?.payload?.Data?.AmpData !== null).then(() => {
+      setHtml(response?.payload?.Data?.HTMLtoSend);
+      const d = {
+        PageName: response?.payload?.Data?.Name,
+        ID: response?.payload?.Data?.CampaignID,
+        FromEmail: response?.payload?.Data?.FromEmail,
+        FromName: response?.payload?.Data?.FromName,
+        PageUrl: response?.payload?.Data?.PageUrl
+      }
+      setDetails(d);
+      setShowLoader(false);
+    });
   }
   const getLandingPageHtml = async () => {
     // @ts-ignore
