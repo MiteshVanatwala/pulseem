@@ -245,7 +245,8 @@ const ClientSearchResult = ({ classes }) => {
           CampaignID: searchParams.get("CampaignID") ? parseInt(searchParams.get("CampaignID")) : null,
           FromDate: searchParams.get("FromDate"),
           ToDate: searchParams.get("ToDate"),
-          ResultTitle: searchParams.get("ResultTitle")
+          ResultTitle: searchParams.get("ResultTitle"),
+          IsParent: searchParams.get("IsParent")
         }
       }
 
