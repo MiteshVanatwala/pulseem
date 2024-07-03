@@ -98,6 +98,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   greyBackground: {
     background: '#F0F5FF',
   },
+  evenRowBackground: {
+    backgroundColor: "#f7faff",
+  },
   sidebar: {
     paddingRight: '0 !important',
     "&::-webkit-scrollbar": {
@@ -365,8 +368,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w20: {
     width: "20%",
   },
+  w30: {
+    width: "30%",
+  },
+  w40: {
+    width: "40%",
+  },
   w80: {
     width: "80%",
+  },
+  w70: {
+    width: "70%",
+  },
+  w60: {
+    width: "60%",
   },
   minWidth100: {
     minWidth: 100,
@@ -3791,6 +3806,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   paddingInline25: {
     paddingInline: 25
   },
+  paddingInline30: {
+    paddingInline: 30
+  },
   desktop: {
     boxSizing: 'border-box',
     '& .ep_container': {
@@ -4006,6 +4024,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   verticalAlignTop: {
     verticalAlign: 'top'
   },
+  verticalAlignMiddle: {
+    verticalAlign: 'middle'
+  },
   messageButtons: {
     display: 'contents'
   },
@@ -4145,5 +4166,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     {
       paddingRight: isRTL ? '0px !important' : '0px',
     }
-  }
+  },
+  highlightExpandedRow: {
+    backgroundColor: '#dbdbdb !important',
+    borderLeft: 'solid 2px #797979',
+    borderRight: 'solid 2px #797979',
+    '&.last': {
+      borderBottom: 'solid 2px #797979 !important',
+    },
+    '&.first': {
+      borderTop: 'solid 2px #797979 !important',
+    },
+  },
 });
