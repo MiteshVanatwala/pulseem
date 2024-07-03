@@ -1010,18 +1010,18 @@ const SmsCreator = ({ classes }) => {
                 </Box>
               ) : null}
               {
-              dynamicProductFallbackURL && (
-                <div className={clsx(classes.dInlineBlock, classes.pt5)}>
-                  <Box className={clsx(classes.p5, classes.dInlineBlock)}>
-                    {t('common.fallbackURL')}&nbsp;:&nbsp;{dynamicProductFallbackURL}
-                  </Box>
-                  <span className={clsx(classes.paddingInline25, classes.underline, classes.colorBlue)} onClick={() => {
-                    setDialogType({ type: 'dynamicProduct' });
-                    setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
-                  }}>Edit</span>
-                </div>
-              )
-            }
+                dynamicProductFallbackURL && (
+                  <div className={clsx(classes.dInlineBlock, classes.pt5)}>
+                    <Box className={clsx(classes.p5, classes.dInlineBlock)}>
+                      {t('common.fallbackURL')}&nbsp;:&nbsp;{dynamicProductFallbackURL}
+                    </Box>
+                    <span className={clsx(classes.paddingInline25, classes.underline, classes.colorBlue)} onClick={() => {
+                      setDialogType({ type: 'dynamicProduct' });
+                      setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
+                    }}>Edit</span>
+                  </div>
+                )
+              }
             </Box>
           </Grid>
           <Grid item xs={12} md={4} sm={12} className={classes.pr15}>
@@ -1225,7 +1225,7 @@ const SmsCreator = ({ classes }) => {
           const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
           const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
           let originUrl = originalLink[0];
-          let newUrl = originUrl.trim();
+          let newUrl = originUrl.trim().replaceAll('#', '');
           newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
           text = smsModel.Text.replace(originUrl, newUrl);
           setSmsModel((currentState) => {
