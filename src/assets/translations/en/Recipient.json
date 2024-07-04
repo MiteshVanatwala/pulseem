@@ -74,7 +74,7 @@
   "importResponses": {
     "noFolderFound": "No folder has been found.",
     "genericError": "Generic error. Please contact support.",
-    "fileUploaded": "The file was successfully recorded on our system!<br />The upload will take place the next few minutes.<br />You can track the file upload status on the <a href='/Pulseem/FileUploads.aspx' target='_blank'>Upload History</a> page under Groups menu.",
+    "fileUploaded": "The file was successfully recorded on our system!<br />The upload will take place the next few minutes.<br />You can track the file upload status on the <a href='/react/Groups/FileUploads' target='_blank'>Upload History</a> page under Groups menu.",
     "inputIncorrect": "The input is in incorrect format, invalid columns",
     "listEmptyOrClientInvalid": "List is empty or Client information is invalid, for instance -  Cellphone column assigned to an Email property, etc."
   },

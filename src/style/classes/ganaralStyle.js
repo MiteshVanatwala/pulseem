@@ -4034,6 +4034,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textDecoration: 'underline',
     cursor: 'pointer',
   },
+  alignItemsStart: {
+    alignItems: "start",
+  },
   fullFlexColumn: {
     width: '100%',
     display: 'flex',

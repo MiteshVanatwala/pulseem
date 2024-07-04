@@ -28,7 +28,8 @@ import whatsappReport from './WhatsappReport.json';
 import whatsappChat from './WhatsappChat.json';
 import integrations from './Integrations.json'
 import WhatsappApiResponse from './WhatsappApiResponse.json'
-import SignUp from './SignUp.json'
+import SignUp from './SignUp.json';
+import FileUploads from './FileUploads.json';
 
 export const en = {
 	automations,
@@ -61,5 +62,6 @@ export const en = {
 	whatsappReport,
 	whatsappChat,
 	WhatsappApiResponse,
-	SignUp
+	SignUp,
+	FileUploads
 };

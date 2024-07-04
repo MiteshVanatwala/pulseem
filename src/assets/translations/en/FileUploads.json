@@ -1,0 +1,7 @@
+{
+    "directUpload": "Daily",
+    "systemUpload": "Weekly",
+    "cancelledBy": "Cancelled By",
+    "fileName": "File Name",
+    "fileSize": "File Size"
+}
