@@ -78,14 +78,14 @@ const FileUploads = ({ classes }: ClassesType) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex4}>{t("FileUploads.fileName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex3}>{t("FileUploads.fileName")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("FileUploads.fileSize")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("group.updateFrequency")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.Status")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Groups")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.UploadResults")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.UploadResults")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("group.totalRecipients")}</TableCell>
-          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("group.deleteGroup")}</TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("common.cancel")}</TableCell>
         </TableRow>
       </TableHead>
     )
@@ -158,7 +158,7 @@ const FileUploads = ({ classes }: ClassesType) => {
       <TableRow
         key={row.ID}
         classes={rowStyle}>
-        <TableCell classes={cellStyle} align='left' className={clsx(classes.flex4, classes.alignItemsStart)}>
+        <TableCell classes={cellStyle} align='left' className={clsx(classes.flex3, classes.alignItemsStart)}>
           {renderNameCell(row)}
         </TableCell>
         <TableCell classes={cellStyle} align='center' className={clsx(classes.flex1)} style={{ direction: 'ltr' }}>
@@ -178,7 +178,7 @@ const FileUploads = ({ classes }: ClassesType) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex1, classes.font16)}
+          className={clsx(classes.flex2, classes.font16)}
           onClick={() => {
             row?.Status === eFileStatus.SUCCESSFULLY_COMPLETED && setDialogType({ type: 'results', data: row.UploadResultsData })
           }}>
