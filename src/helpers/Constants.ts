@@ -319,3 +319,4 @@ export const SHOPIFY_SITE_TRACKING = `
     });
 </script>`;
 export const SEND_1 = '_Send_1';
+export const PULSE_1 = '_Pulse_1';

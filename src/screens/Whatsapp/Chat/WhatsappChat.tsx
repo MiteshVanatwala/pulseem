@@ -256,13 +256,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		 * This will check that is current user is allowed to send freeform message
 		 * or not every 3 second.
 		 */
-		if (activeChatContacts && activeChatContacts?.PhoneNumber?.length > 0) {
-			let ChatStatusTimer = setInterval(
-				async () => await setAPIInboundChatStatus(),
-				3000
-			);
-			return () => clearInterval(ChatStatusTimer);
-		}
+		let ChatStatusTimer = setInterval(
+			async () => await setAPIInboundChatStatus(),
+			3000
+		);
+		return () => clearInterval(ChatStatusTimer);
 	});
 
 	useEffect(() => {
@@ -330,30 +328,32 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	};
 
 	const setAPIInboundChatStatus = async () => {
-		const { payload: whatsAppChatSessionStatus }: APIWhatsappChatSession =
-			await dispatch<any>(
-				getInboundWhatsappChatStatus({
-					activePhoneNumber: activePhoneNumber,
-					activeUserNumber: activeChatContacts.PhoneNumber,
-				})
-			);
-		if (whatsAppChatSessionStatus?.Status === apiStatus.SUCCESS) {
-			setWhatsappChatSession(whatsAppChatSessionStatus?.Data);
-		} else {
-			setWhatsappChatSession({
-				IsIn24Window: false,
-				ExpiryTime: '',
-				Hour: '0',
-				Minute: '0',
-				Second: '0',
-				IsNewMessage: false,
-			});
-			whatsAppChatSessionStatus?.Message
-				? setToastMessage({
-					...ToastMessages.ERROR,
-					message: whatsAppChatSessionStatus?.Message,
-				})
-				: setToastMessage(ToastMessages.ERROR);
+		if (activeChatContacts && activeChatContacts?.PhoneNumber?.length > 0) {
+			const { payload: whatsAppChatSessionStatus }: APIWhatsappChatSession =
+				await dispatch<any>(
+					getInboundWhatsappChatStatus({
+						activePhoneNumber: activePhoneNumber,
+						activeUserNumber: activeChatContacts.PhoneNumber,
+					})
+				);
+			if (whatsAppChatSessionStatus?.Status === apiStatus.SUCCESS) {
+				setWhatsappChatSession(whatsAppChatSessionStatus?.Data);
+			} else {
+				setWhatsappChatSession({
+					IsIn24Window: false,
+					ExpiryTime: '',
+					Hour: '0',
+					Minute: '0',
+					Second: '0',
+					IsNewMessage: false,
+				});
+				whatsAppChatSessionStatus?.Message
+					? setToastMessage({
+						...ToastMessages.ERROR,
+						message: whatsAppChatSessionStatus?.Message,
+					})
+					: setToastMessage(ToastMessages.ERROR);
+			}
 		}
 	};
 
