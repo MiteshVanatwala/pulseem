@@ -297,7 +297,7 @@ const NewslettersReport = ({ classes }) => {
 
     let parentChildCampaigns = [];
     listToExport.map((campaign) => {
-      if (parentCampaignsWithChild.indexOf(campaign.CampaignID)) {
+      if (parentCampaignsWithChild.indexOf(campaign.CampaignID) > -1) {
         const {
           SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
         } = getParentChildSum(campaign);
