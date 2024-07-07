@@ -17,7 +17,7 @@ import { getGetEmailReportsManagement, getNewsletterReports } from '../../../red
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus, SEND_1, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
+import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
@@ -611,7 +611,7 @@ const NewslettersReport = ({ classes }) => {
                 }
               </>
             }
-            {isParent ? Name.replace(SEND_1, '') : Name}
+            {isParent ? Name.replace(SEND_1, '').replace(PULSE_1, '') : Name}
           </Typography>
           {Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           {SendDate !== null && SendDate !== '' ?
@@ -658,7 +658,7 @@ const NewslettersReport = ({ classes }) => {
         <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? classes.w70 : '', 'rowTitle')}>
           <Tooltip
             arrow
-            title={isParent ? row.Name.replace(SEND_1, '') : row.Name}
+            title={isParent ? row.Name.replace(SEND_1, '').replace(PULSE_1, '') : row.Name}
             placement={'top'}
             classes={{
               tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
@@ -666,7 +666,7 @@ const NewslettersReport = ({ classes }) => {
             }}
           >
             <Typography noWrap={false} className={classes.nameEllipsis}>
-              {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '') : row.Name}
+              {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '').replace(PULSE_1, '') : row.Name}
               {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
             </Typography>
           </Tooltip>

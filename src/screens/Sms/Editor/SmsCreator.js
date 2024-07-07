@@ -1010,18 +1010,18 @@ const SmsCreator = ({ classes }) => {
                 </Box>
               ) : null}
               {
-              dynamicProductFallbackURL && (
-                <div className={clsx(classes.dInlineBlock, classes.pt5)}>
-                  <Box className={clsx(classes.p5, classes.dInlineBlock)}>
-                    {t('common.fallbackURL')}&nbsp;:&nbsp;{dynamicProductFallbackURL}
-                  </Box>
-                  <span className={clsx(classes.paddingInline25, classes.underline, classes.colorBlue)} onClick={() => {
-                    setDialogType({ type: 'dynamicProduct' });
-                    setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
-                  }}>Edit</span>
-                </div>
-              )
-            }
+                dynamicProductFallbackURL && (
+                  <div className={clsx(classes.dInlineBlock, classes.pt5)}>
+                    <Box className={clsx(classes.p5, classes.dInlineBlock)}>
+                      {t('common.fallbackURL')}&nbsp;:&nbsp;{dynamicProductFallbackURL}
+                    </Box>
+                    <span className={clsx(classes.paddingInline25, classes.underline, classes.colorBlue)} onClick={() => {
+                      setDialogType({ type: 'dynamicProduct' });
+                      setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
+                    }}>{t('common.edit')}</span>
+                  </div>
+                )
+              }
             </Box>
           </Grid>
           <Grid item xs={12} md={4} sm={12} className={classes.pr15}>

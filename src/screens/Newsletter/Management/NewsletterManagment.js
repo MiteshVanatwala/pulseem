@@ -41,7 +41,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
-import { SEND_1 } from '../../../helpers/Constants';
+import { SEND_1, PULSE_1 } from '../../../helpers/Constants';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
@@ -664,7 +664,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           arrow={true}
           placement={'top'}
           title={<Typography noWrap={false}>{row.Name}</Typography>}
-          text={!(expandedIds.indexOf(row.CampaignID) > -1 && isParent) && <div>{isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '') : row.Name}</div>}
+          text={!(expandedIds.indexOf(row.CampaignID) > -1 && isParent) && <div>{isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '').replace(PULSE_1, '') : row.Name}</div>}
         />
           <Grid container wrap="nowrap">
             <Grid item md={1}>
@@ -691,7 +691,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 </Grid>
               ) : (
                 <div className={clsx(isParentCampaignWithChild ? classes.paddingInline30 : '', classes.bold, classes.pt5, classes.f16, classes.w100)}>
-                  {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '') : row.Name}
+                  {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '').replace(PULSE_1, '') : row.Name}
                 </div>
               )
             }
