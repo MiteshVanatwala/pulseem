@@ -841,7 +841,9 @@ const NewslettersReport = ({ classes }) => {
       SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
     } = getParentChildSum(row);
 
-    const hrefs = getHrefs(CampaignID, Revenue, isParent)
+    const hasChildren = isParent && newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID)?.length > 0;
+    
+    const hrefs = getHrefs(CampaignID, Revenue, hasChildren)
     return (
       <>
         <TableRow
