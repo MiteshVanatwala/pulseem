@@ -91,7 +91,7 @@ const ChatUi = ({
 					activeUserNumber: chatContacts?.PhoneNumber,
 				})
 			);
-			await setAPIInboundChatStatus();
+			// await setAPIInboundChatStatus();
 			setUpdatedDynamicVariable([]);
 			setDynamicVariable([]);
 			setNewMessage('');
