@@ -917,7 +917,7 @@ const NewslettersReport = ({ classes }) => {
                 {renderIntData(isParent ? SumRemovedClients : row.RemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderIntData(isParent ? SumNotOpened : rowsPerPage.NotOpened, 'red', hrefs.NotOpened, true, t("mainReport.GridButtonColumnResource3.HeaderText"))}
+                {renderIntData(isParent ? SumNotOpened : row.NotOpened, 'red', hrefs.NotOpened, true, t("mainReport.GridButtonColumnResource3.HeaderText"))}
               </Grid>
             </Grid>
           </TableCell>
