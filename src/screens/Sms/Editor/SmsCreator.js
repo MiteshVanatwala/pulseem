@@ -1225,7 +1225,7 @@ const SmsCreator = ({ classes }) => {
           const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
           const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
           let originUrl = originalLink[0];
-          let newUrl = originUrl.trim().split('#')[0];
+          let newUrl = originUrl.trim();
           newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
           text = smsModel.Text.replace(originUrl, newUrl);
           setSmsModel((currentState) => {
