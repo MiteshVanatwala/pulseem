@@ -16,7 +16,7 @@ const uploaderInstance = axios.create({
     timeout: 900000
 })
 
-uploaderInstance.interceptors.request.use(async config => {
+uploaderInstance.interceptors.request.use(async (config: any) => {
     try {
         const jtoken = getCookie('jtoken')
         let token = jtoken

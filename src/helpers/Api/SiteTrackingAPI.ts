@@ -29,7 +29,7 @@ const SiteTrackingInstance = axios.create({
     timeout: 300000
 });
 
-SiteTrackingInstance.interceptors.request.use(async config => {
+SiteTrackingInstance.interceptors.request.use(async (config: any) => {
     try {
         const jtoken = getCookie('jtoken')
         let token = jtoken

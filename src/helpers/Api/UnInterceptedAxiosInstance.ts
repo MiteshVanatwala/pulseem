@@ -26,7 +26,7 @@ const UnInterceptedAxiosInstance = axios.create({
     timeout: 300000
 })
 
-UnInterceptedAxiosInstance.interceptors.request.use(async config => {
+UnInterceptedAxiosInstance.interceptors.request.use(async (config: any) => {
     try {
         const jtoken = getCookie('jtoken')
         config.headers.Authorization = `Bearer ${jtoken}`
