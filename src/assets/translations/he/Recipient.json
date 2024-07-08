@@ -74,7 +74,7 @@
   "importResponses": {
     "noFolderFound": "לא נמצאה תיקייה.",
     "genericError": "שגיאה כללית. יש ליצור קשר עם התמיכה.",
-    "fileUploaded": "הקובץ נשמר בהצלחה במערכת.<br />העלאת הנמענים תתבצע בדקות הקרובות.<br />באפשרותך לעקוב אחר סטטוס ההעלאה ב<a href='/Pulseem/FileUploads.aspx' target='_blank'>הסטורית העלאת נמענים</a> תחת תפריט קבוצות.",
+    "fileUploaded": "הקובץ נשמר בהצלחה במערכת.<br />העלאת הנמענים תתבצע בדקות הקרובות.<br />באפשרותך לעקוב אחר סטטוס ההעלאה ב<a href='/react/Groups/FileUploads' target='_blank'>הסטורית העלאת נמענים</a> תחת תפריט קבוצות.",
     "inputIncorrect": "The input is in incorrect format, invalid columns",
     "listEmptyOrClientInvalid": "הרשימה שהעלית ריקה, או שאחד הפרמטרים ששייכת לנתונים אינו תקין - למשל, שיוך מספר טלפון בעמודה של דואר אלקטרוני וכד'."
   },

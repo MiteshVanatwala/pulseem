@@ -42,8 +42,26 @@
     "400": "Group does not updated due to incorrect data",
     "402": "Group does not updated due to broken request",
     "404": "Not found",
-    "incorrectValue": "One of the values or more are incorrect"
+    "incorrectValue": "One"
   },
+  "updateFrequency": "Update Frequency",
+  "results": "Results",
+  "totalRecipients": "Total Recipients",
+  "deleteGroup": "Cancel upload",
+  "uploadedBy": "Uploaded By",
+  "on": "On",
+  "weekly": "Weekly",
+  "daily": "Daily",
+  "deleteUploadConfirmation": "Are you sure you want to cancel this upload?",
   "eCommerceEventNotice": "<b>Please notice:</b> These events will work only for accounts linked to eCommerce stores integrated with Pulseem.",
-  "typeGroupNameAutocomplete": "Type group name for Autocomplete"
+  "typeGroupNameAutocomplete": "Type group name for Autocomplete",
+  "uploadFiles": {
+    "statuses": {
+      "0": "Waiting For Upload",
+      "1": "Error Occured",
+      "2": "Successfully Completed",
+      "3": "Error Occured",
+      "4": "cancelled"
+    }
+  }
 }

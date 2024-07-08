@@ -82,6 +82,7 @@ import SignUp from './screens/SignUp/SignUp.tsx';
 import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 import HtmlPreview from './screens/Preview/HtmlPreview';
+import FileUploads from './screens/Groups/FileUploads/FileUploads';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -147,10 +148,6 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`/ClientSearch`}
         component={transferUrl('/Pulseem/ClientSearch.aspx')}
-      />
-      <Route
-        path={`/FileUploads`}
-        component={transferUrl('/Pulseem/FileUploads.aspx')}
       />
       {/* Newsletter */}
       <Route
@@ -515,6 +512,11 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}reports/Inbound/:type/:id`}
         element={<InboundMessages classes={classes} key="byTypeId" />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Groups/FileUploads`}
+        element={<FileUploads classes={classes} />}
       />
       <Route
         exact

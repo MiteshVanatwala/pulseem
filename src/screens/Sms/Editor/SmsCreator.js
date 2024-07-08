@@ -303,6 +303,10 @@ const SmsCreator = ({ classes }) => {
 
   useEffect(() => {
     linkCalculation();
+    if (!smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) && !smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT)) {
+      setEditDynamicProductFallbackURL('');
+      setDynamicProductFallbackURL('');
+    }
   }, [smsModel, isSiteTracking, isLinksStatistics])
 
   useEffect(() => {
@@ -422,6 +426,8 @@ const SmsCreator = ({ classes }) => {
         setSmsModel(response.payload);
         setIsLinksStatistics(response.payload.IsLinksStatistics);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
+        setEditDynamicProductFallbackURL(response.payload.FallbackUrl);
+        setDynamicProductFallbackURL(response.payload.FallbackUrl);
         return response.payload;
       }
       else {
@@ -540,6 +546,10 @@ const SmsCreator = ({ classes }) => {
     }
     if (!isValid) {
       setDialogType({ type: "valiateError" })
+    } else if ((smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT)) && !IsValidURL(editDynamicProductFallbackURL)) {
+      setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
+      setDialogType({ type: 'dynamicProduct' });
+      return false;
     }
     return isValid;
   };
@@ -999,14 +1009,20 @@ const SmsCreator = ({ classes }) => {
                   </Button>
                 </Box>
               ) : null}
+              {
+                dynamicProductFallbackURL && (
+                  <div className={clsx(classes.dInlineBlock, classes.pt5)}>
+                    <Box className={clsx(classes.p5, classes.dInlineBlock)}>
+                      {t('common.fallbackURL')}&nbsp;:&nbsp;{dynamicProductFallbackURL}
+                    </Box>
+                    <span className={clsx(classes.paddingInline25, classes.underline, classes.colorBlue)} onClick={() => {
+                      setDialogType({ type: 'dynamicProduct' });
+                      setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
+                    }}>{t('common.edit')}</span>
+                  </div>
+                )
+              }
             </Box>
-            {
-              dynamicProductFallbackURL && (
-                <Box className={clsx(classes.p5)}>
-                  {t('common.fallbackURL')}&nbsp;:&nbsp;{dynamicProductFallbackURL}
-                </Box>
-              )
-            }
           </Grid>
           <Grid item xs={12} md={4} sm={12} className={classes.pr15}>
             <Box className={classes.switchDiv}>
