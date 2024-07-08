@@ -17,7 +17,6 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';
 import { IsValidURL } from '../../helpers/Utils/Validations';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
-import { createTheme } from '@material-ui/core/styles'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
