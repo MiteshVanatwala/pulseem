@@ -345,7 +345,7 @@ export const newsletterSlice = createSlice({
       state.campaignInfo = payload?.Message;
     })
     builder.addCase(getNewslatterParentChildData.fulfilled, (state, { payload }) => {
-      const { MainList, ChildList } = payload;
+      const { MainList = [], ChildList = [] } = payload;
       state.newslettersParentCampaigns = MainList.filter(row => !row.IsDeleted);
       state.newslettersChildCampaigns = ChildList.filter(row => !row.IsDeleted);
       state.newslettersDeletedData = [
@@ -354,7 +354,7 @@ export const newsletterSlice = createSlice({
       ]
     })
     builder.addCase(getGetEmailReportsManagement.fulfilled, (state, { payload }) => {
-      const { MainList, ChildList } = payload;
+      const { MainList = [], ChildList = [] } = payload;
       state.newslettersReportsParentCampaigns = MainList;
       state.newslettersReportsChildCampaigns = ChildList;
     })
