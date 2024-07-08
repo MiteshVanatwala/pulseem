@@ -8,7 +8,9 @@ definitions:
         image: node:lts
         script:
           - corepack enable
-          - yarn dlx audit-ci@^7 --config ./audit-ci.jsonc
+          - yarn dlx audit-ci@^7 --config ./audit-ci.jsonc | tee audit-report.json
+        artifacts:
+          - audit-report.json
 pipelines:
   default:
     - step:
