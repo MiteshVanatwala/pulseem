@@ -27,7 +27,6 @@ import {
 	TablePagination,
 	ManagmentIcon,
 	DateField,
-	SearchField,
 	RestorDialogContent,
 } from '../../../components/managment/index';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
@@ -57,7 +56,6 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import { FaEye } from 'react-icons/fa';
-import { GrDuplicate } from 'react-icons/gr';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 
 const SmsManagnentScreen = ({ classes }) => {
@@ -159,12 +157,6 @@ const SmsManagnentScreen = ({ classes }) => {
 			setSearchResults(sortData);
 			setSearching(true);
 			setPage(1);
-		};
-
-		const handleKeyPress = (e) => {
-			if (e.charCode === 13 || e.code === 'Enter') {
-				handleSearch();
-			}
 		};
 
 		const handleFromDateChange = (value) => {
