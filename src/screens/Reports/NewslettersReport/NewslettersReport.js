@@ -297,23 +297,24 @@ const NewslettersReport = ({ classes }) => {
 
     let parentChildCampaigns = [];
     listToExport.map((campaign) => {
-      if (parentCampaignsWithChild.indexOf(campaign.CampaignID)) {
-        const {
-          SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
-        } = getParentChildSum(campaign);
+      if (parentCampaignsWithChild.indexOf(campaign.CampaignID) > -1) {
+        // const {
+        //   SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks, SumRevenue
+        // } = getParentChildSum(campaign);
         parentChildCampaigns.push({
           ...campaign,
-          TotalSendPlan: SumTotalSendPlan,
-          TotalSendCompleted: SumTotalSendCompleted,
-          OpenCount: SumOpenCount,
-          OpenCountUnique: SumOpenCountUnique,
-          PercentageOpens: SumPercentageOpens,
-          ClickCount: SumClickCount,
-          ClickCountUnique: SumClickCountUnique,
-          PercetangeClicks: SumPercetangeClicks,
-          SendError: SumSendError,
-          RemovedClients: SumRemovedClients,
-          NotOpened: SumNotOpened,
+          // TotalSendPlan: SumTotalSendPlan,
+          // TotalSendCompleted: SumTotalSendCompleted,
+          // OpenCount: SumOpenCount,
+          // OpenCountUnique: SumOpenCountUnique,
+          // PercentageOpens: SumPercentageOpens,
+          // ClickCount: SumClickCount,
+          // ClickCountUnique: SumClickCountUnique,
+          // PercetangeClicks: SumPercetangeClicks,
+          // SendError: SumSendError,
+          // RemovedClients: SumRemovedClients,
+          // NotOpened: SumNotOpened,
+          // Revenue: SumRevenue
         });
         const childCampaigns = newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === campaign?.CampaignID);
         parentChildCampaigns = [
@@ -772,28 +773,19 @@ const NewslettersReport = ({ classes }) => {
     )
 
   }
-  const renderRevenueData = (value, type, data = {}) => {
+  const renderRevenueData = (value, type, data = {}, isRootElement) => {
     const { textStyle = null, isRevenueCol = false, onClick = () => null } = data
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : VoidFunction}>
+      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0 && !isRootElement) ? onClick : VoidFunction}>
         <Typography
           component={'p'}
-          style={{ ...textStyle, textDecoration: (value > 0 || (isRevenueCol && value > 0)) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) ? 'pointer' : null }}
+          style={{ ...textStyle, 
+            pointerEvents: isRootElement && 'none',
+            textDecoration: ((value > 0 || (isRevenueCol && value > 0)) && !isRootElement) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) && !isRootElement ? 'pointer' : null }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">
           {(value && value.toLocaleString()) || '0'}  {t("common.NIS")}
         </Typography>
-        {/* <Typography
-          onClick={() => {
-            onClick()
-          }}
-          component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
-          href={href !== '' ? href : ''}
-          className={clsx(classes.middleText, colorTextStyle[type] || '')}
-          style={textStyle}
-        >
-          {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
-        </Typography> */}
       </Box>
     )
   }
@@ -809,6 +801,7 @@ const NewslettersReport = ({ classes }) => {
     const SumSendError = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.SendError, row.SendError);
     const SumRemovedClients = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.RemovedClients, row.RemovedClients);
     const SumNotOpened = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.NotOpened, row.NotOpened);
+    const SumRevenue = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.Revenue, row.Revenue);
     const divider = SumTotalSendCompleted - SumSendError;
 
     let SumPercentageOpens = 0, SumPercetangeClicks = 0;
@@ -821,7 +814,7 @@ const NewslettersReport = ({ classes }) => {
     }
 
     return {
-      SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
+      SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks, SumRevenue
     }
   }
 
@@ -838,10 +831,12 @@ const NewslettersReport = ({ classes }) => {
     } = row;
 
     const {
-      SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
+      SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks, SumRevenue
     } = getParentChildSum(row);
 
-    const hrefs = getHrefs(CampaignID, Revenue, isParent)
+    const hasChildren = isParent && newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID)?.length > 0;
+    
+    const hrefs = getHrefs(CampaignID, Revenue, hasChildren)
     return (
       <>
         <TableRow
@@ -911,13 +906,13 @@ const NewslettersReport = ({ classes }) => {
             className={classes.flex3}>
             <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'), childItems.length > 0 ? isParent : false)}
+                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, !isParent, t('mainReport.GridButtonColumnResource4.HeaderText'), childItems.length > 0 ? isParent : false)}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderIntData(isParent ? SumRemovedClients : row.RemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderIntData(isParent ? SumNotOpened : rowsPerPage.NotOpened, 'red', hrefs.NotOpened, true, t("mainReport.GridButtonColumnResource3.HeaderText"))}
+                {renderIntData(isParent ? SumNotOpened : row.NotOpened, 'red', hrefs.NotOpened, true, t("mainReport.GridButtonColumnResource3.HeaderText"))}
               </Grid>
             </Grid>
           </TableCell>
@@ -948,8 +943,8 @@ const NewslettersReport = ({ classes }) => {
           {hasRevenue && <TableCell
             classes={noBorderCellStyle}
             align='center'
-            className={classes.flex1}>
-            {renderRevenueData(Revenue, '', hrefs.Revenue)}
+            className={clsx(classes.flex1)}>
+            {renderRevenueData(isParent ? SumRevenue : Revenue, '', hrefs.Revenue, (isParent && hasChildren))}
           </TableCell>}
         </TableRow >
         {
