@@ -773,28 +773,19 @@ const NewslettersReport = ({ classes }) => {
     )
 
   }
-  const renderRevenueData = (value, type, data = {}) => {
+  const renderRevenueData = (value, type, data = {}, isRootElement) => {
     const { textStyle = null, isRevenueCol = false, onClick = () => null } = data
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : VoidFunction}>
+      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0 && !isRootElement) ? onClick : VoidFunction}>
         <Typography
           component={'p'}
-          style={{ ...textStyle, textDecoration: (value > 0 || (isRevenueCol && value > 0)) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) ? 'pointer' : null }}
+          style={{ ...textStyle, 
+            pointerEvents: isRootElement && 'none',
+            textDecoration: ((value > 0 || (isRevenueCol && value > 0)) && !isRootElement) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) && !isRootElement ? 'pointer' : null }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">
           {(value && value.toLocaleString()) || '0'}  {t("common.NIS")}
         </Typography>
-        {/* <Typography
-          onClick={() => {
-            onClick()
-          }}
-          component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
-          href={href !== '' ? href : ''}
-          className={clsx(classes.middleText, colorTextStyle[type] || '')}
-          style={textStyle}
-        >
-          {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
-        </Typography> */}
       </Box>
     )
   }
@@ -952,8 +943,8 @@ const NewslettersReport = ({ classes }) => {
           {hasRevenue && <TableCell
             classes={noBorderCellStyle}
             align='center'
-            className={classes.flex1}>
-            {renderRevenueData(isParent ? SumRevenue : Revenue, '', hrefs.Revenue)}
+            className={clsx(classes.flex1)}>
+            {renderRevenueData(isParent ? SumRevenue : Revenue, '', hrefs.Revenue, (isParent && hasChildren))}
           </TableCell>}
         </TableRow >
         {
