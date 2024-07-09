@@ -420,8 +420,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               ...saveRef.current,
               showGroupPopup: false
             }
+            return false;
           }
-          return false;
         }
 
         //@ts-ignore
@@ -753,9 +753,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     return wizardButtons.map((b) => b);
   }
   const getBackButtonText = () => {
-    switch (moduleType) {
-      case BEE_EDITOR_TYPES.LANDING_PAGE:
-        return 'landingPages.landingPages';
+    switch (moduleType?.toLowerCase()) {
+      case BEE_EDITOR_TYPES.LANDING_PAGE.toLowerCase():
+        return 'common.backToSettings';
       default:
         return 'common.back'
     }
