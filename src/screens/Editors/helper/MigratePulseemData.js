@@ -75,7 +75,7 @@ export const initClientForm = (extraFields, t, isRTL) => {
                     const val = extraFields[key];
                     if (val !== '') {
                         const _type = key?.toLowerCase()?.indexOf('date') > -1 ? ElementTypes.date : ElementTypes.text;
-                        clientForm[key] = new BeeFormModel(_type, val, true, { ...fieldDirection, placeholder: t('landingPages.placeholder.typeHere') + ' ' + val });
+                        clientForm[key] = new BeeFormModel(_type, val, true, { ...fieldDirection, placeholder: t('landingPages.placeholder.typeHere') + ' ' + val, name: key });
                     }
                 });
             }

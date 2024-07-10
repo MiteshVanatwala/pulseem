@@ -54,7 +54,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
   Object.keys(form).forEach((key, index) => {
     layout.push([`${key}`]);
   });
-  layout.push(['confirmation']);
+  layout.push(['optIn']);
   layout.push(['submit']);
 
 
@@ -83,7 +83,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         fields: {
           ...form,
           optIn: {
-            type: 'checkbox', label: IsRTL ? 'אני מאשר קבלת דיוור' : 'I confirm receipt of mailing', canBeRemovedFromLayout: false, attributes: { dir: IsRTL ? 'right' : 'left' }
+            type: 'checkbox', label: IsRTL ? 'אני מאשר/ת קבלת דיוור' : 'I agree to receiving marketing content', canBeRemovedFromLayout: false, attributes: { dir: IsRTL ? 'right' : 'left' }
           },
           submit: {
             type: 'submit', label: '', canBeRemovedFromLayout: false,
