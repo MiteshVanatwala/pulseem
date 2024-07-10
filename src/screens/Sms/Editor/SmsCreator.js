@@ -1019,7 +1019,7 @@ const SmsCreator = ({ classes }) => {
                     <span className={clsx(classes.paddingInline25, classes.underline, classes.colorBlue)} onClick={() => {
                       setDialogType({ type: 'dynamicProduct' });
                       setEditDynamicProductFallbackURL(dynamicProductFallbackURL);
-                    }}>Edit</span>
+                    }}>{t('common.edit')}</span>
                   </div>
                 )
               }

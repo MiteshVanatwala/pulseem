@@ -13,11 +13,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import 'moment/locale/he';
-import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
+import { getGetEmailReportsManagement, getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
+import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
@@ -28,7 +28,7 @@ import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadio
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlineAddCircleOutline, MdOutlineRemoveCircleOutline } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
@@ -39,7 +39,7 @@ const NewslettersReport = ({ classes }) => {
 
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
   const { accountFeatures } = useSelector(state => state.common);
-  const { newslettersReports } = useSelector(state => state.newsletter)
+  const { newslettersReportsParentCampaigns, newslettersReportsChildCampaigns } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null);
@@ -61,11 +61,12 @@ const NewslettersReport = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const [hasRevenue, setHasRevenue] = useState(false);
   const [dialogType, setDialog] = useState(null);
-
+  const [expandedIds, setExpandedIds] = useState([]);
+  const [parentCampaignsWithChild, setParentCampaignsWithChild] = useState([]);
 
   moment.locale(language)
 
-  const getHrefs = (id, revenue = 0) => ({
+  const getHrefs = (id, revenue = 0, isParent = false) => ({
     TotalSendCompleted: {
       href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -75,7 +76,8 @@ const NewslettersReport = ({ classes }) => {
           ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
           ResultTitle: t('common.Sent') + ' - ' + t('common.campaignID') + ' ' + id,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
     },
@@ -94,7 +96,8 @@ const NewslettersReport = ({ classes }) => {
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID,
           TestStatusOfEmailElseSms: 1,
           ResultTitle: t('common.OpensUnique') + ' - ' + t('common.campaignID') + ' ' + id,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
       clickable: true
@@ -108,7 +111,7 @@ const NewslettersReport = ({ classes }) => {
       title: t('common.Unique'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
       clickable: true,
-      onClick: () => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      onClick: (isParent = false) => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true`
       // onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
     },
     RemovedClients: {
@@ -122,14 +125,15 @@ const NewslettersReport = ({ classes }) => {
           TestStatusOfEmailElseSms: 1,
           Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Removed,
           ResultTitle: t('common.Removed') + ' - ' + t('common.campaignID') + ' ' + id,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
     },
     SendError: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
-      onClick: () => { window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true` }
+      onClick: (isParent = false) => { window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true` }
       // onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
       //   state: {
       //     ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -168,7 +172,8 @@ const NewslettersReport = ({ classes }) => {
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.NotOpenedCampaignID,
           TestStatusOfEmailElseSms: 1,
           ResultTitle: t('common.NoOpened') + ' - ' + t('common.campaignID') + ' ' + id,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
     },
@@ -188,7 +193,8 @@ const NewslettersReport = ({ classes }) => {
           TestStatusOfEmailElseSms: 1,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
           ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-          PageProperty: GetPageNyName('reports/NewsletterReports')
+          PageProperty: GetPageNyName('reports/NewsletterReports'),
+          IsParent: isParent
         }
       }),
       textStyle: { fontWeight: 900 },
@@ -219,6 +225,7 @@ const NewslettersReport = ({ classes }) => {
   const getData = async () => {
     setLoader(true);
     await dispatch(getNewsletterReports(isDemoSend));
+    await dispatch(getGetEmailReportsManagement(isDemoSend));
     setLoader(false);
     const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
     if (queryState) {
@@ -253,7 +260,18 @@ const NewslettersReport = ({ classes }) => {
 
   useEffect(() => {
     handleSearch();
-  }, [newslettersReports, isSearching])
+  }, [newslettersReportsParentCampaigns, isSearching])
+
+  useEffect(() => {
+    let ids = [];
+    if (newslettersReportsChildCampaigns.length > 0) {
+      ids = newslettersReportsParentCampaigns.reduce((prevVal, campaign) => {
+        const isExist = newslettersReportsChildCampaigns.filter((childCampaign) => childCampaign?.ParentCampaignId === campaign?.CampaignID).length;
+        return isExist ? [...prevVal, campaign?.CampaignID] : prevVal;
+      }, []);
+    }
+    setParentCampaignsWithChild(ids);
+  }, [newslettersReportsParentCampaigns, newslettersReportsChildCampaigns]);
 
   const clearSearch = () => {
     setNotificationNameSearch('')
@@ -271,14 +289,44 @@ const NewslettersReport = ({ classes }) => {
     let listToExport = null;
 
     if (toFileArray.length > 0) {
-      listToExport = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
+      listToExport = newslettersReportsParentCampaigns.filter(a => toFileArray.includes(a.CampaignID));
     }
     else {
-      listToExport = searchResults || newslettersReports;
+      listToExport = searchResults || newslettersReportsParentCampaigns;
     }
 
-    const fields = { ...exportColumnHeader };
+    let parentChildCampaigns = [];
+    listToExport.map((campaign) => {
+      if (parentCampaignsWithChild.indexOf(campaign.CampaignID) > -1) {
+        // const {
+        //   SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks, SumRevenue
+        // } = getParentChildSum(campaign);
+        parentChildCampaigns.push({
+          ...campaign,
+          // TotalSendPlan: SumTotalSendPlan,
+          // TotalSendCompleted: SumTotalSendCompleted,
+          // OpenCount: SumOpenCount,
+          // OpenCountUnique: SumOpenCountUnique,
+          // PercentageOpens: SumPercentageOpens,
+          // ClickCount: SumClickCount,
+          // ClickCountUnique: SumClickCountUnique,
+          // PercetangeClicks: SumPercetangeClicks,
+          // SendError: SumSendError,
+          // RemovedClients: SumRemovedClients,
+          // NotOpened: SumNotOpened,
+          // Revenue: SumRevenue
+        });
+        const childCampaigns = newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === campaign?.CampaignID);
+        parentChildCampaigns = [
+          ...parentChildCampaigns,
+          ...childCampaigns
+        ]
+      } else {
+        parentChildCampaigns.push(campaign);
+      }
+    })
 
+    const fields = { ...exportColumnHeader };
     const exportOptions = {
       OrderItems: true,
       FormatDate: true,
@@ -288,9 +336,8 @@ const NewslettersReport = ({ classes }) => {
       DeleteProperties: ["Status"]
     };
 
-
     try {
-      const result = await HandleExportData(listToExport, exportOptions);
+      const result = await HandleExportData(parentChildCampaigns, exportOptions);
       delete fields["Status"];
 
       ExportFile({
@@ -354,12 +401,12 @@ const NewslettersReport = ({ classes }) => {
       }
     }
 
-    let sortData = newslettersReports;
+    let sortData = newslettersReportsParentCampaigns;
     searchArray.forEach(values => {
       sortData = sortData.filter(row => filtersObject[values.type](row, values))
     });
     setSearchResults(sortData);
-    if (newslettersReports.length !== sortData.length) {
+    if (newslettersReportsParentCampaigns.length !== sortData.length) {
       setSearching(true);
       setPage(1);
     }
@@ -482,7 +529,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderManagmentLine = () => {
-    const dataLength = isSearching ? (searchResults?.length ?? 0) : (newslettersReports?.length ?? 0);
+    const dataLength = isSearching ? (searchResults?.length ?? 0) : (newslettersReportsParentCampaigns?.length ?? 0);
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
         {/* {windowSize !== 'xs' && <Grid item>
@@ -513,8 +560,8 @@ const NewslettersReport = ({ classes }) => {
           <TableCell classes={cellStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t('campaigns.camapignName')}</TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.locTotalSendPlan.HeaderText")}</span></TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen, classes.f16)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={clsx(classes.flex4, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex3, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex3, classes.f16)} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex3, classes.f16)} align='center'></TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen, classes.f16)} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
@@ -541,7 +588,7 @@ const NewslettersReport = ({ classes }) => {
     )
   }
 
-  const renderNameCell = (row) => {
+  const renderNameCell = (row, isParent) => {
     const { CampaignID, Name, SendDate, isChecked = false, Status, LastEditDate } = row
 
     const date = SendDate ? moment(SendDate) : ''
@@ -550,22 +597,32 @@ const NewslettersReport = ({ classes }) => {
     const udate = LastEditDate ? moment(LastEditDate) : '';
     const showUpdateDate = LastEditDate ? udate.format('L') : '';
     const showTimeUpdate = LastEditDate ? udate.format('LT') : '';
+    const isParentCampaignWithChild = parentCampaignsWithChild.indexOf(row.CampaignID) > -1;
 
     if (SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1) {
       return (
         <>
           <Typography noWrap={false} className={classes.nameEllipsis}>
-            {Name}
+            {
+              isParent && isParentCampaignWithChild && <>
+                {
+                  expandedIds.indexOf(row.CampaignID) === -1
+                    ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.p5, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
+                    : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.p5, classes.verticalAlignMiddle)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
+                }
+              </>
+            }
+            {isParent ? Name.replace(SEND_1, '').replace(PULSE_1, '') : Name}
           </Typography>
           {Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           {SendDate !== null && SendDate !== '' ?
             (
-              <Typography className={classes.grayTextCell}>
+              <Typography className={clsx(classes.grayTextCell)}>
                 {t("common.SentOn")} {`${showDate} ${showTime}`}
               </Typography>
             ) :
             (
-              <Typography className={classes.grayTextCell}>
+              <Typography className={clsx(classes.grayTextCell)}>
                 {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
               </Typography>
             )
@@ -575,8 +632,19 @@ const NewslettersReport = ({ classes }) => {
     }
     return (
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && classes.w20)}>
-          {isChecked && <Checkbox
+        <Grid item className={clsx(classes.w30)}>
+          {
+            isParent && isParentCampaignWithChild && (
+              <span>
+                {
+                  expandedIds.indexOf(row.CampaignID) === -1
+                    ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
+                    : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.cursorPointer, classes.verticalAlignMiddle)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
+                }
+              </span>
+            )
+          }
+          {(!isParent || !isParentCampaignWithChild) && isChecked && <Checkbox
             color='primary'
             checked={toFileArray.includes(CampaignID)}
             onChange={() => {
@@ -588,10 +656,10 @@ const NewslettersReport = ({ classes }) => {
             }}
           />}
         </Grid>
-        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? classes.w80 : '', 'rowTitle')}>
+        <Grid item className={clsx(SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? classes.w70 : '', 'rowTitle')}>
           <Tooltip
             arrow
-            title={row.Name}
+            title={isParent ? row.Name.replace(SEND_1, '').replace(PULSE_1, '') : row.Name}
             placement={'top'}
             classes={{
               tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
@@ -599,7 +667,7 @@ const NewslettersReport = ({ classes }) => {
             }}
           >
             <Typography noWrap={false} className={classes.nameEllipsis}>
-              {row.Name}
+              {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '').replace(PULSE_1, '') : row.Name}
               {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
             </Typography>
           </Tooltip>
@@ -650,7 +718,7 @@ const NewslettersReport = ({ classes }) => {
     )
   }
 
-  const renderDataTooltip = (value, type, data = {}, tooltip) => {
+  const renderDataTooltip = (value, type, data = {}, tooltip, isParent) => {
     const { title = t("notifications.tblBody.total"), textStyle = null, onClick } = data
     const isLink = onClick && onClick !== null && value > 0;
     return (
@@ -664,7 +732,7 @@ const NewslettersReport = ({ classes }) => {
         }}>
         <Box className={classes.cellText}
           style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}
-          onClick={isLink ? onClick : VoidFunction}>
+          onClick={() => isLink ? onClick(isParent) : VoidFunction}>
           <Typography
             // component={clickable && value > 0 ? 'a' : 'p'}
             component={'p'}
@@ -683,12 +751,12 @@ const NewslettersReport = ({ classes }) => {
     );
   }
 
-  const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
+  const renderIntData = (value, type, data = {}, clickable, innerTitle = '', isParent = false) => {
     const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? '' : t("notifications.tblBody.total"), onClick, textStyle = null, isRevenueCol = false } = data
     const isLink = (value > 0 && clickable) || isRevenueCol;
     return (
       <Box className={classes.cellText}
-        onClick={isLink ? onClick : VoidFunction}
+        onClick={() => isLink ? onClick(isParent) : VoidFunction}
         style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}>
         <Typography component={isLink ? 'a' : 'p'}
           style={{ textDecoration: isLink ? 'underline' : null }}
@@ -705,161 +773,194 @@ const NewslettersReport = ({ classes }) => {
     )
 
   }
-  const renderRevenueData = (value, type, data = {}) => {
+  const renderRevenueData = (value, type, data = {}, isRootElement) => {
     const { textStyle = null, isRevenueCol = false, onClick = () => null } = data
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : VoidFunction}>
+      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0 && !isRootElement) ? onClick : VoidFunction}>
         <Typography
           component={'p'}
-          style={{ ...textStyle, textDecoration: (value > 0 || (isRevenueCol && value > 0)) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) ? 'pointer' : null }}
+          style={{ ...textStyle, 
+            pointerEvents: isRootElement && 'none',
+            textDecoration: ((value > 0 || (isRevenueCol && value > 0)) && !isRootElement) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) && !isRootElement ? 'pointer' : null }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">
           {(value && value.toLocaleString()) || '0'}  {t("common.NIS")}
         </Typography>
-        {/* <Typography
-          onClick={() => {
-            onClick()
-          }}
-          component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
-          href={href !== '' ? href : ''}
-          className={clsx(classes.middleText, colorTextStyle[type] || '')}
-          style={textStyle}
-        >
-          {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
-        </Typography> */}
       </Box>
     )
   }
 
-  const renderRow = (row, index) => {
+  const getParentChildSum = (row) => {
+    const childItems = newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID);
+    const SumTotalSendPlan = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.TotalSendPlan, row.TotalSendPlan);
+    const SumTotalSendCompleted = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.TotalSendCompleted, row.TotalSendCompleted);
+    const SumOpenCount = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.OpenCount, row.OpenCount);
+    const SumOpenCountUnique = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.OpenCountUnique, row.OpenCountUnique);
+    const SumClickCount = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.ClickCount, row.ClickCount);
+    const SumClickCountUnique = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.ClickCountUnique, row.ClickCountUnique);
+    const SumSendError = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.SendError, row.SendError);
+    const SumRemovedClients = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.RemovedClients, row.RemovedClients);
+    const SumNotOpened = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.NotOpened, row.NotOpened);
+    const SumRevenue = childItems.reduce((sum, childCampaign) => sum = sum + childCampaign.Revenue, row.Revenue);
+    const divider = SumTotalSendCompleted - SumSendError;
+
+    let SumPercentageOpens = 0, SumPercetangeClicks = 0;
+    if (divider >= 1) {
+      SumPercentageOpens = (SumOpenCountUnique / (SumTotalSendCompleted - SumSendError)) * 100;
+      SumPercetangeClicks = (SumClickCountUnique / (SumTotalSendCompleted - SumSendError)) * 100;
+    } else if (SumTotalSendCompleted >= 1) {
+      SumPercentageOpens = SumOpenCountUnique / SumTotalSendCompleted * 100;
+      SumPercetangeClicks = SumClickCountUnique / SumTotalSendCompleted * 100;
+    }
+
+    return {
+      SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks, SumRevenue
+    }
+  }
+
+  const renderRow = (row, isParent = true, isEven = false) => {
+    const childItems = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
     const {
       CampaignID,
       Name,
       SendDate,
       LastEditDate,
-      TotalSendPlan,
-      TotalSendCompleted,
-      OpenCount,
-      OpenCountUnique,
-      ClickCount,
-      ClickCountUnique,
       RemovedClients,
-      SendError,
       Status,
-      PercentageOpens,
-      PercetangeClicks,
-      NotOpened,
       Revenue = 0
-    } = row
-    const hrefs = getHrefs(CampaignID, Revenue)
+    } = row;
+
+    const {
+      SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks, SumRevenue
+    } = getParentChildSum(row);
+
+    const hasChildren = isParent && newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID)?.length > 0;
+    
+    const hrefs = getHrefs(CampaignID, Revenue, hasChildren)
     return (
-      <TableRow
-        key={CampaignID}
-        classes={rowStyle}
-        className={clsx(classes.maxHeight87, classes.maxHeightReponsive)}
-      >
-        <TableCell
-          classes={cellBodyStyle}
-          align='center'
-          className={clsx(classes.flex4)}>
-          {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status, LastEditDate })}
-        </TableCell>
-        <TableCell
-          align='center'
-          classes={noBorderCellStyle}
-          className={classes.flex1}>
-          {renderIntData(TotalSendPlan, '', row, false, t("mainReport.totalSendPlan"))}
-        </TableCell>
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderIntData(TotalSendCompleted, '', hrefs.TotalSendCompleted, windowSize !== 'xs', t("mainReport.ToalSent"))}
-        </TableCell>
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex4}>
-          <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(OpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
+      <>
+        <TableRow
+          key={CampaignID}
+          classes={rowStyle}
+          className={clsx(classes.maxHeight87, classes.maxHeightReponsive, isEven ? classes.evenRowBackground : classes.bgWhite)}
+        >
+          <TableCell
+            classes={cellBodyStyle}
+            align='center'
+            className={classes.flex4}
+          >
+            {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status, LastEditDate }, childItems.length > 0 ? isParent : false)}
+          </TableCell>
+          <TableCell
+            align='center'
+            classes={noBorderCellStyle}
+            className={classes.flex1}>
+            {
+              renderIntData(isParent ? SumTotalSendPlan : row.TotalSendPlan, '', row, false, t("mainReport.totalSendPlan"))
+            }
+          </TableCell>
+          <TableCell
+            classes={borderCellStyle}
+            align='center'
+            className={classes.flex1}>
+            {renderIntData(isParent ? SumTotalSendCompleted : row.TotalSendCompleted, '', hrefs.TotalSendCompleted, windowSize !== 'xs', t("mainReport.ToalSent"))}
+          </TableCell>
+          <TableCell
+            classes={borderCellStyle}
+            align='center'
+            className={classes.flex3}>
+            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
+              <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+                {renderDataTooltip(isParent ? SumOpenCount : row.OpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
+              </Grid>
+              <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+                {renderDataTooltip(isParent ? SumOpenCountUnique : row.OpenCountUnique, 'green', hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text', row.CampaignID)}
+              </Grid>
+              <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+                {renderPercetangeData(isParent ? SumPercentageOpens : row.PercentageOpens, 'green', hrefs.PercentageOpens, row.CampaignID)}
+              </Grid>
             </Grid>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(OpenCountUnique, 'green', hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text', row.CampaignID)}
-            </Grid>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderPercetangeData(PercentageOpens, 'green', hrefs.PercentageOpens, row.CampaignID)}
-            </Grid>
-          </Grid>
-        </TableCell>
+          </TableCell>
 
 
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex4}>
-          <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
+          <TableCell
+            classes={borderCellStyle}
+            align='center'
+            className={classes.flex3}>
+            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
+              <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+                {renderDataTooltip(isParent ? SumClickCount : row.ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
+              </Grid>
+              <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+                {renderDataTooltip(isParent ? SumClickCountUnique : row.ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text', childItems.length > 0 ? isParent : false)}
+              </Grid>
+              <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+                {renderPercetangeData(isParent ? SumPercetangeClicks : row.PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
+              </Grid>
             </Grid>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
-            </Grid>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
-            </Grid>
-          </Grid>
-        </TableCell>
+          </TableCell>
 
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex3}>
-          <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderIntData(SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'))}
+          <TableCell
+            classes={borderCellStyle}
+            align='center'
+            className={classes.flex3}>
+            <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
+              <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, isParent && childItems.length > 0 ? false : true, t('mainReport.GridButtonColumnResource4.HeaderText'), childItems.length > 0 ? isParent : false)}
+              </Grid>
+              <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+                {renderIntData(isParent ? SumRemovedClients : row.RemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
+              </Grid>
+              <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+                {renderIntData(isParent ? SumNotOpened : row.NotOpened, 'red', hrefs.NotOpened, true, t("mainReport.GridButtonColumnResource3.HeaderText"))}
+              </Grid>
             </Grid>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderIntData(RemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
-            </Grid>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderIntData(NotOpened, 'red', hrefs.NotOpened, true, t("mainReport.GridButtonColumnResource3.HeaderText"))}
-            </Grid>
-          </Grid>
-        </TableCell>
-        <TableCell classes={borderCellStyle}
-          align='center'
-          className={clsx(classes.flex1, classes.hideOnSmallScreen)}>
-          {renderCellIcons(GroupRemoval, row, index, {
-            lable: hrefs.RemoveReasons.title,
-            href: hrefs.RemoveReasons.href,
-            onClick: () => {
-              setCookie('newsletterReportlastPage', page)
-            },
-            disable: !RemovedClients || RemovedClients === 0,
-          })}
-        </TableCell>
-        <TableCell
-          component="th"
-          scope="row"
-          classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
-          className={classes.flex1}>
-          {renderCellIcons(ReportsIcon, row, index, {
-            lable: t('mainReport.locGraph.HeaderText'),
-            href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`
-          })}
-        </TableCell>
-        {hasRevenue && <TableCell
-          classes={noBorderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderRevenueData(Revenue, '', hrefs.Revenue)}
-        </TableCell>}
-      </TableRow>
+          </TableCell>
+          <TableCell classes={borderCellStyle}
+            align='center'
+            className={clsx(classes.flex1, classes.hideOnSmallScreen)}>
+            {renderCellIcons(GroupRemoval, row, null, {
+              lable: hrefs.RemoveReasons.title,
+              href: hrefs.RemoveReasons.href,
+              onClick: () => {
+                setCookie('newsletterReportlastPage', page)
+              },
+              disable: !RemovedClients || RemovedClients === 0,
+            })}
+          </TableCell>
+          <TableCell
+            component="th"
+            scope="row"
+            classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
+            className={classes.flex1}
+          >
+            {renderCellIcons(ReportsIcon, row, null, {
+              lable: t('mainReport.locGraph.HeaderText'),
+              href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`,
+              disable: childItems.length > 0 && isParent
+            })}
+          </TableCell>
+          {hasRevenue && <TableCell
+            classes={noBorderCellStyle}
+            align='center'
+            className={clsx(classes.flex1)}>
+            {renderRevenueData(isParent ? SumRevenue : Revenue, '', hrefs.Revenue, (isParent && hasChildren))}
+          </TableCell>}
+        </TableRow >
+        {
+          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
+            <>
+              {renderRow(row, false, isEven)}
+              {childItems.map((campaign) => renderRow(campaign, false, isEven))}
+            </>
+          )
+        }
+      </>
     )
   }
 
-  const renderPhoneRow = (row) => {
+  const renderPhoneRow = (row, isParent = true, isEven = false) => {
+    const childItems = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
     const {
       CampaignID,
       TotalSendPlan,
@@ -872,100 +973,116 @@ const NewslettersReport = ({ classes }) => {
       NotOpened,
       Revenue = 0
     } = row
-    const hrefs = getHrefs(CampaignID)
+    const hrefs = getHrefs(CampaignID, 0, isParent);
+    const {
+      SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks
+    } = getParentChildSum(row);
+
     return (
-      <TableRow
-        key={row.ID}
-        component='div'
-        classes={rowStyle}>
-        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} >
-          <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
-            {renderNameCell(row)}
-          </Box>
-          <Box className={classes.ml10}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
+      <>
+        <TableRow
+          key={row.ID}
+          component='div'
+          classes={rowStyle}
+          className={isEven ? classes.evenRowBackground : classes.bgWhite}
+        >
+          <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} >
+            <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
+              {renderNameCell(row, isParent)}
+            </Box>
+            <Box className={classes.ml10}>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                    {t("mainReport.GridButtonColumnResource1.HeaderText")}
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      {renderIntData(isParent ? SumOpenCount : OpenCount, 'green', hrefs.OpenCount, false)}
+                    </Grid>
+                    <Grid item xs={6}>
+                      {renderIntData(isParent ? SumOpenCountUnique : OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                    {t("mainReport.GridButtonColumnResource2.HeaderText")}
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      {renderIntData(isParent ? SumClickCount : ClickCount, 'blue', hrefs.ClickCount, false)}
+                    </Grid>
+                    <Grid item xs={6}>
+                      {renderIntData(isParent ? SumClickCountUnique : ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Box>
+            <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
+              <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                  {t("mainReport.GridButtonColumnResource1.HeaderText")}
+                  {t("common.Sent")}
                 </Typography>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    {renderIntData(OpenCount, 'green', hrefs.OpenCount, false)}
-                  </Grid>
-                  <Grid item xs={6}>
-                    {renderIntData(OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
+                  <Grid item>
+                    {renderIntData(isParent ? SumTotalSendPlan : TotalSendPlan, '')}
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={3}>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                  {t("mainReport.GridButtonColumnResource2.HeaderText")}
+                  {t("mainReport.GridButtonColumnResource4.HeaderText")}
+                </Typography>
+                {renderIntData(isParent ? SumSendError : SendError, 'red', hrefs.SendError, false)}
+              </Grid>
+              <Grid item xs={3}>
+                <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                  {t("mainReport.removals")}
+                </Typography>
+                {renderIntData(isParent ? SumRemovedClients : RemovedClients, 'red', hrefs.RemovedClients, false)}
+              </Grid>
+              <Grid item xs={3}>
+                <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                  {t("mainReport.GridButtonColumnResource3.HeaderText")}
+                </Typography>
+                {renderIntData(isParent ? SumNotOpened : NotOpened, 'red', hrefs.NotOpened, false)}
+              </Grid>
+              {hasRevenue && <Grid item xs={3}>
+                <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                  {t("common.revenue")}
                 </Typography>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    {renderIntData(ClickCount, 'blue', hrefs.ClickCount, false)}
-                  </Grid>
-                  <Grid item xs={6}>
-                    {renderIntData(ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
+                  <Grid item>
+                    {renderIntData(Revenue, 'black', hrefs.Revenue, true)}
                   </Grid>
                 </Grid>
-              </Grid>
+              </Grid>}
             </Grid>
-          </Box>
-          <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
-            <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("common.Sent")}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item>
-                  {renderIntData(TotalSendPlan, '')}
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("mainReport.GridButtonColumnResource4.HeaderText")}
-              </Typography>
-              {renderIntData(SendError, 'red', hrefs.SendError, false)}
-            </Grid>
-            <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("mainReport.removals")}
-              </Typography>
-              {renderIntData(RemovedClients, 'red', hrefs.RemovedClients, false)}
-            </Grid>
-            <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("mainReport.GridButtonColumnResource3.HeaderText")}
-              </Typography>
-              {renderIntData(NotOpened, 'red', hrefs.NotOpened, false)}
-            </Grid>
-            {hasRevenue && <Grid item xs={3}>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("common.revenue")}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item>
-                  {renderIntData(Revenue, 'black', hrefs.Revenue, true)}
-                </Grid>
-              </Grid>
-            </Grid>}
-          </Grid>
-        </TableCell>
-      </TableRow>
+          </TableCell>
+        </TableRow>
+        {
+          isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
+            <>
+              {renderPhoneRow(row, false, isEven)}
+              {childItems.map((campaign) => renderPhoneRow(campaign, false, isEven))}
+            </>
+          )
+        }
+      </>
     )
   }
 
   const renderTableBody = () => {
-    let rowData = searchResults || newslettersReports;
+    let rowData = searchResults || newslettersReportsParentCampaigns;
     if (rowData.length > 0) {
       let rpp = parseInt(rowsPerPage)
       rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
       return (
         <TableBody>
           {rowData
-            .map(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
+            .map((item, index) => SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow(item, true, index % 2) : renderRow(item, true, index % 2))}
         </TableBody>
       )
     }
@@ -996,7 +1113,7 @@ const NewslettersReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? (searchResults?.length ?? 0) : (newslettersReports?.length ?? 0)}
+        rows={isSearching ? (searchResults?.length ?? 0) : (newslettersReportsParentCampaigns?.length ?? 0)}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}

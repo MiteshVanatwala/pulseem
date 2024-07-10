@@ -24,6 +24,17 @@ export const getNewsletterReports = createAsyncThunk(
   }
 )
 
+export const getGetEmailReportsManagement = createAsyncThunk(
+  'reports/GetEmailReportsManagement', async (demo = false, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`reports/GetEmailReportsManagement?includeTestCampaign=${demo}`)
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
 export const getNewsletterDirectReport = createAsyncThunk(
   'directReport/GetEmailDirectReport', async (data, thunkAPI) => {
     try {
@@ -224,6 +235,17 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
     }
   });
 
+export const getNewslatterParentChildData = createAsyncThunk(
+  'email/GetEmailCampaignsManagement', async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`email/GetEmailCampaignsManagement`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 export const newsletterSlice = createSlice({
   name: 'newsletter',
   initialState: {
@@ -240,6 +262,10 @@ export const newsletterSlice = createSlice({
     campaignInfo: [],
     newsletterInfo: [],
     groupData: null,
+    newslettersParentCampaigns: [],
+    newslettersChildCampaigns: [],
+    newslettersReportsParentCampaigns: [],
+    newslettersReportsChildCampaigns: [],
     ToastMessages: {
       SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
       INVALID_API_MISSING_KEY: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invaliApiKey', showAnimtionCheck: false },
@@ -317,6 +343,20 @@ export const newsletterSlice = createSlice({
     })
     builder.addCase(getCreditsByFileTotalBytes.fulfilled, (state, { payload }) => {
       state.campaignInfo = payload?.Message;
+    })
+    builder.addCase(getNewslatterParentChildData.fulfilled, (state, { payload }) => {
+      const { MainList = [], ChildList = [] } = payload;
+      state.newslettersParentCampaigns = MainList.filter(row => !row.IsDeleted);
+      state.newslettersChildCampaigns = ChildList.filter(row => !row.IsDeleted);
+      state.newslettersDeletedData = [
+        ...MainList.filter(row => row.IsDeleted),
+        ...ChildList.filter(row => row.IsDeleted)
+      ]
+    })
+    builder.addCase(getGetEmailReportsManagement.fulfilled, (state, { payload }) => {
+      const { MainList = [], ChildList = [] } = payload;
+      state.newslettersReportsParentCampaigns = MainList;
+      state.newslettersReportsChildCampaigns = ChildList;
     })
     builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
     builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })

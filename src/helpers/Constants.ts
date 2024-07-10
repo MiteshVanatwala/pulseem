@@ -318,3 +318,5 @@ export const SHOPIFY_SITE_TRACKING = `
         window.trackPurchase(orderId, grandTotal, shipping, tax, orderItems);
     });
 </script>`;
+export const SEND_1 = '_Send_1';
+export const PULSE_1 = '_Pulse_1';

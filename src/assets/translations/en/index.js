@@ -26,9 +26,10 @@ import whatsappCampaign from './WhatsappCampaign.json';
 import whatsappManagement from './WhatsappManagement.json';
 import whatsappReport from './WhatsappReport.json';
 import whatsappChat from './WhatsappChat.json';
-import integrations from './Integrations.json';
-import WhatsappApiResponse from './WhatsappApiResponse.json';
+import integrations from './Integrations.json'
+import WhatsappApiResponse from './WhatsappApiResponse.json'
 import SignUp from './SignUp.json';
+import FileUploads from './FileUploads.json';
 import SimplyClub from './WhiteLabel/SimplyClub.json';
 
 export const en = {
@@ -63,5 +64,6 @@ export const en = {
 	whatsappChat,
 	WhatsappApiResponse,
 	SignUp,
+	FileUploads,
 	SimplyClub
 };

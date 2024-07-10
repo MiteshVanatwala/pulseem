@@ -2653,6 +2653,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			fontWeight: '500',
 		},
 	},
+	whatsappDateTime: {
+		display: 'inline-grid',
+		textAlign: isRTL ? 'left' : 'right'
+	},
 	whatsappChatBarButton: {
 		'& svg': { color: '#848484' },
 		'@media screen and (min-width: 760px)': {

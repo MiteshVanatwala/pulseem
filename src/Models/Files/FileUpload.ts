@@ -2,10 +2,10 @@
 
 export interface PulseemFile {
     ID: number;
-    UploadType: number;
+    UploadType: eUploadType;
     FileSize: number;
     SubAccountID: number;
-    Status: UploadFileStatus;
+    Status: eFileStatus;
     UploadedBy: string;
     FileName: string;
     Results: string;
@@ -15,11 +15,20 @@ export interface PulseemFile {
     LastUpdated: Date | string;
     RunDateStart: Date | string;
     RunDateEnd: Date | string;
+    UploadResultsData?: never | any;
 
     fieldsMappingData: FieldsMapper;
     resultsData: UploadResults;
 }
-export enum UploadFileStatus { Pending, Uploading, Success, Fail, Cancel }
+// export enum UploadFileStatus { Pending, Uploading, Success, Fail, Cancel }
+
+export enum eFileStatus {
+    WAITTING_FOR_UPLOAD = 0,
+    ERROR_OCCURED = 1,
+    SUCCESSFULLY_COMPLETED = 2,
+    GENERIC_ERROR = 3,
+    CANCELLED = 4
+}
 
 export interface UploadGroup {
     ID: number;
@@ -58,4 +67,9 @@ export interface UploadResults {
     PhoneInvalid: number;
     PhoneDuplicates: number;
     PhoneExists: number;
+}
+
+export enum eUploadType {
+    Direct = 0,
+    System = 1
 }
