@@ -906,7 +906,7 @@ const NewslettersReport = ({ classes }) => {
             className={classes.flex3}>
             <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, !isParent, t('mainReport.GridButtonColumnResource4.HeaderText'), childItems.length > 0 ? isParent : false)}
+                {renderIntData(isParent ? SumSendError : row.SendError, 'red', hrefs.SendError, isParent && childItems.length > 0 ? false : true, t('mainReport.GridButtonColumnResource4.HeaderText'), childItems.length > 0 ? isParent : false)}
               </Grid>
               <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
                 {renderIntData(isParent ? SumRemovedClients : row.RemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
