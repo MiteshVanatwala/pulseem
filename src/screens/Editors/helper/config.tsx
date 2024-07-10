@@ -82,8 +82,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         description: "טופס הרשמה",
         fields: {
           ...form,
-          confirmation: {
-            type: 'checkbox', label: IsRTL ? 'אני מאשר קבלת דיוור' : 'I agree to the [Privacy Policy](https://your_privacy_url)', canBeRemovedFromLayout: true, attributes: { dir: IsRTL ? 'right' : 'left' }
+          optIn: {
+            type: 'checkbox', label: IsRTL ? 'אני מאשר קבלת דיוור' : 'I confirm receipt of mailing', canBeRemovedFromLayout: false, attributes: { dir: IsRTL ? 'right' : 'left' }
           },
           submit: {
             type: 'submit', label: '', canBeRemovedFromLayout: false,
