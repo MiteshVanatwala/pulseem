@@ -57,8 +57,8 @@ export const initClientForm = (extraFields, t, isRTL) => {
                 Country: new BeeFormModel(ElementTypes.text, t('common.country'), true, { ...fieldDirection, maxlength: '100', placeholder: t('landingPages.placeholder.country') }),
                 Address: new BeeFormModel(ElementTypes.text, t('common.address'), true, { ...fieldDirection, maxlength: '100', placeholder: t('landingPages.placeholder.address') }),
                 Telephone: new BeeFormModel(ElementTypes.number, t('common.telephone'), true, { ...fieldDirection, size: '100', pattern: '\\d*', placeholder: t('landingPages.placeholder.telephone') }),
-                BirthDate: new BeeFormModel(ElementTypes.date, t('common.birth_date'), true, { ...fieldDirection, placeholder: t('landingPages.placeholder.birth_date') }),
-                ReminderDate: new BeeFormModel(ElementTypes.date, t('common.reminder_date'), true, { ...fieldDirection, placeholder: t('landingPages.placeholder.reminder_date') }),
+                BirthDate: new BeeFormModel(ElementTypes.text, t('common.birth_date'), true, { ...fieldDirection, placeholder: t('landingPages.placeholder.birth_date') }, 'frm-1 hasDatepicker'),
+                ReminderDate: new BeeFormModel(ElementTypes.text, t('common.reminder_date'), true, { ...fieldDirection, placeholder: t('landingPages.placeholder.reminder_date') }, 'frm-1 hasDatepicker'),
                 PulseemSurvey1: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion'), name: "PulseemSurvey1" }, 'PulseemSurvey'),
                 PulseemSurvey2: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion2'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion'), name: "PulseemSurvey2" }, 'PulseemSurvey'),
                 PulseemSurvey3: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion3'), true, { ...fieldDirection, required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion'), name: "PulseemSurvey3" }, 'PulseemSurvey'),
@@ -74,8 +74,7 @@ export const initClientForm = (extraFields, t, isRTL) => {
                 Object.keys(extraFields).forEach((key) => {
                     const val = extraFields[key];
                     if (val !== '') {
-                        const _type = key?.toLowerCase()?.indexOf('date') > -1 ? ElementTypes.date : ElementTypes.text;
-                        clientForm[key] = new BeeFormModel(_type, val, true, { ...fieldDirection, placeholder: t('landingPages.placeholder.typeHere') + ' ' + val, name: key });
+                        clientForm[key] = new BeeFormModel(ElementTypes.text, val, true, { ...fieldDirection, placeholder: t('landingPages.placeholder.typeHere') + ' ' + val, name: key }, key?.toLowerCase()?.indexOf('date') > -1 && 'frm-1 hasDatepicker');
                     }
                 });
             }
