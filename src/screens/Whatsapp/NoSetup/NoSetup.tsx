@@ -28,7 +28,7 @@ const NoSetup = ({ classes, isCompact = false }: NoSetupProps) => {
 					<Button className={classes.whatsappNoSetupContactButton}>
 						<Call />
 						{/* @ts-ignore */}
-						{<Link href={`tel:${WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['Telephone']}`}>{WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['Telephone']}</Link>}
+						{<Link href={`tel:${WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['Phone']}`}>{WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['Phone']}</Link>}
 					</Button>
 				</Box>
 			</Box>

@@ -61,6 +61,7 @@ const LatestReports = ({ classes, t, isRTL, isWhiteLabel }) => {
 
   const barOptions = {
     responsive: true,
+    aspectRatio: isWhiteLabel ? 4 : 2,
     legend: {
       display: false
     },
@@ -86,12 +87,12 @@ const LatestReports = ({ classes, t, isRTL, isWhiteLabel }) => {
       x: {
         beforeCalculateLabelRotation: (event) => {
           event.ticks.forEach((t) => {
-            if (t.label.length >= 8)
+            if (t.label.length >= 8 && !isWhiteLabel)
               t.label = `${t.label.substring(0, 8)}..`;
           });
         },
         ticks: {
-          font: { size: isWhiteLabel ? 16 : 12 },
+          font: { size: isWhiteLabel ? 14 : 12 },
           color: 'black'
         },
         grid: {
@@ -106,7 +107,7 @@ const LatestReports = ({ classes, t, isRTL, isWhiteLabel }) => {
           callback: function (value, index, values) {
             return `${value}%`;
           },
-          font: { size: isWhiteLabel ? 22 : 18 },
+          font: { size: isWhiteLabel ? 14 : 18 },
           color: 'black',
           drawTicks: true,
         },
