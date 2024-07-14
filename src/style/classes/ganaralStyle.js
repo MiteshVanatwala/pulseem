@@ -414,9 +414,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dInline: {
     display: "inline",
   },
-  dInlineBlock: {
-    display: "inline-block",
-  },
   pl25: {
     paddingInlineEnd: 25,
   },
@@ -861,20 +858,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   font30: {
     fontSize: 30,
   },
-  w30: {
-    width: '30%'
-  },
   w35: {
     width: '35%'
   },
   w50: {
     width: '50%'
-  },
-  w60: {
-    width: '60%'
-  },
-  w70: {
-    width: '70%'
   },
   directionRTL: {
     direction: 'rtl',
@@ -3543,7 +3531,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         minHeight: 25,
         display: 'flex',
         alignItems: 'center',
-        paddingInlineEnd: 40,
         '&:focus': {
           backgroundColor: '#fff !important'
         }

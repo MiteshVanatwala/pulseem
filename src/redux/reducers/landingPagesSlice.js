@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { apiURL } from '../../config/index';
 import { getUniqueValuesOfKey } from '../../helpers/Utils/common';
-import { publicTemplates } from "../../assets/data/LandingPageTemplates.json"
+// import { publicTemplates } from "../../assets/data/LandingPageTemplates.json"
 
 export const getLandingPagesData = createAsyncThunk(
   'landingpages/getLandingPages', async (_, thunkAPI) => {
