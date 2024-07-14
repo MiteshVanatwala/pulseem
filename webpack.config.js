@@ -25,5 +25,19 @@ module.exports = {
         minimizer: [new TerserPlugin({
             extractComments: false,
         })],
-    }
+    },
+    resolve: {
+        fallback: {
+            "os": require.resolve("os-browserify/browser"),
+            "fs": false,
+            "tls": false,
+            "net": false,
+            "path": false,
+            "zlib": false,
+            "http": false,
+            "https": false,
+            "stream": false,
+            "crypto": false
+        }
+    },
 };

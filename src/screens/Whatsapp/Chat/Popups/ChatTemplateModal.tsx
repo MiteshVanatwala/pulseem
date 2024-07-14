@@ -29,9 +29,8 @@ const ChatTemplateModal = ({
 	onChoose,
 	savedTemplateList,
 }: chatModalProps) => {
-	const theme = useTheme();
 	const { t: translator } = useTranslation();
-	const [ expandedTemplate, setExpandedTemplate ] = useState<any>([]);
+	const [expandedTemplate, setExpandedTemplate] = useState<any>([]);
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
 		switch (buttonType) {
@@ -279,14 +278,14 @@ const ChatTemplateModal = ({
 							<h2 className='handle'>
 								<label htmlFor={template?.TemplateId}>
 									{
-										expandedTemplate.indexOf(template?.TemplateId) != -1 ? (
+										expandedTemplate.indexOf(template?.TemplateId) !== -1 ? (
 											<FaChevronDown
-													style={{
-														marginRight: '10px',
-														fontSize: '0.7rem',
-														fontFamily: 'fontawesome',
-													}}
-												/>
+												style={{
+													marginRight: '10px',
+													fontSize: '0.7rem',
+													fontFamily: 'fontawesome',
+												}}
+											/>
 										) : (
 											<FaChevronRight
 												style={{

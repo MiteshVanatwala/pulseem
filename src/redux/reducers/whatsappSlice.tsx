@@ -641,7 +641,7 @@ export const addRecipients = createAsyncThunk(
 		try {
 			const response = await uploaderInstance.put(`Client/Upload`, payload, {
 				onUploadProgress: (progressEvent) => {
-					const { loaded, total } = progressEvent;
+					const { loaded, total = 0 } = progressEvent;
 					let percent = Math.floor((loaded * 100) / total);
 					thunkAPI.dispatch(setUploadProgress(percent));
 				},

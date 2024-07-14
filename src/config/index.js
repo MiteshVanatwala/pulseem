@@ -1,5 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config();
+// import dotenv from "dotenv";
+// dotenv.config();
 
 const apiURL = process.env.REACT_APP_API_URL;
 const isProdMode = process.env.REACT_APP_MODE === "PROD";

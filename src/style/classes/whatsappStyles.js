@@ -3102,12 +3102,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		display: 'flex',
 		alignItems: 'center',
 	},
-	greenTextColor: {
-		'& p': {
-			color: '#27AE60 !important',
-			textDecorationColor: '#25af60 !important',
-		},
-	},
+	// greenTextColor: {
+	// 	'& p': {
+	// 		color: '#27AE60 !important',
+	// 		textDecorationColor: '#25af60 !important',
+	// 	},
+	// },
 	whatsappTextEditorWrapper: {
 		width: '62.49%',
 		'@media screen and (max-width: 1279px)': {
