@@ -241,8 +241,8 @@ const DynamicModalFields = ({
 								)}
 								onClick={() => onAddRemovalLinkClick()}
 								style={{
-									marginLeft: windowSize == 'xs' ? 0 : 10,
-									marginTop: windowSize == 'xs' ? 10 : 0
+									marginLeft: windowSize === 'xs' ? 0 : 10,
+									marginTop: windowSize === 'xs' ? 10 : 0
 								}}
 							>
 								<>{translator('whatsappCampaign.removalLinkTooltip')}</>
@@ -260,8 +260,8 @@ const DynamicModalFields = ({
 								)}
 								onClick={() => setDynamicProductType(DynamicProductLink.LATEST_PURCHASE)}
 								style={{
-									marginLeft: windowSize == 'xs' ? 0 : 10,
-									marginTop: windowSize == 'xs' ? 10 : 5
+									marginLeft: windowSize === 'xs' ? 0 : 10,
+									marginTop: windowSize === 'xs' ? 10 : 5
 								}}
 							>
 								{translator('common.latestPurchase')}
@@ -278,8 +278,8 @@ const DynamicModalFields = ({
 								)}
 								onClick={() => setDynamicProductType(DynamicProductLink.LATEST_ABANDONMENT)}
 								style={{
-									marginLeft: windowSize == 'xs' ? 0 : 10,
-									marginTop: windowSize == 'xs' ? 10 : 5
+									marginLeft: windowSize === 'xs' ? 0 : 10,
+									marginTop: windowSize === 'xs' ? 10 : 5
 								}}
 							>
 								{translator('common.latestAbandonment')}

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { apiURL } from '../../config/index';
 import { getUniqueValuesOfKey } from '../../helpers/Utils/common';
-import { publicTemplates } from "../../assets/data/LandingPageTemplates.json"
+// import { publicTemplates } from "../../assets/data/LandingPageTemplates.json"
 
 export const getLandingPagesData = createAsyncThunk(
   'landingpages/getLandingPages', async (_, thunkAPI) => {
@@ -103,7 +103,7 @@ export const getLPPublicTemplates = createAsyncThunk(
     try {
       // const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
       // return response.data
-      return { Data: publicTemplates };
+      return { Data: [] };
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -114,7 +114,7 @@ export const getAllLPTemplatesBySubaccountId = createAsyncThunk(
     try {
       // const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
       // return response.data
-      return { Data: publicTemplates };
+      return { Data: [] };
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

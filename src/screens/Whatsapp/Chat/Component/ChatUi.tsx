@@ -6,7 +6,7 @@ import {
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
 } from '../Types/WhatsappChat.type';
-import { Box, IconButton, makeStyles, MenuItem } from '@material-ui/core';
+import { Box, IconButton, MenuItem } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';

@@ -1,0 +1,21 @@
+{
+  // $schema provides code completion hints to IDEs.
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  // issue level to throw error
+  "low": false,
+  "moderate": false,
+  "high": false,
+  "critical": true,
+  // list of ignored vulnerabilities (e.g: GHSA-2p57-rm9w-gvfp)
+  "allowlist": [
+    "GHSA-33f9-j839-rf8h",
+    "GHSA-67hx-6x53-jw92",
+    "GHSA-6h5x-7c5m-7cr7",
+    "GHSA-76p3-8jx3-jpfq",
+    "GHSA-g4rg-993r-mgx7",
+    "GHSA-h755-8qp9-cq85",
+    "GHSA-phwq-j96m-2c2q",
+    "GHSA-xvch-5gv4-984h",
+    "GHSA-xwcq-pm8m-c4vf"
+  ]
+}

@@ -30,7 +30,7 @@ const PulseemReactInstance = axios.create({
     timeout: 300000
 })
 
-PulseemReactInstance.interceptors.request.use(async config => {
+PulseemReactInstance.interceptors.request.use(async (config: any) => {
     try {
         const jtoken = getCookie('jtoken')
         let token = jtoken
