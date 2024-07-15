@@ -212,7 +212,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const { username } = useSelector(state => state.user)
   const routes = getRoutes(t, isClal, accountFeatures, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
-    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL)
+    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL, accountSettings)
 
   const returnToAdmin = () => {
     window.location = '/Pulseem/ReactRedirect.aspx';

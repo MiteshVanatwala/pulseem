@@ -60,6 +60,7 @@ import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import { CgWebsite } from "react-icons/cg";
 import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
 import { IsValidURL } from "../../../helpers/Utils/Validations";
+import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -1888,7 +1889,9 @@ const SmsCreator = ({ classes }) => {
       onConfirm: () => { handlecaution() }
     }
   }
+
   const noCreditDialog = () => {
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
     return {
       showDivider: false,
       icon: (
@@ -1899,7 +1902,7 @@ const SmsCreator = ({ classes }) => {
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['NotEnoughCredits']))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               size='small'
@@ -1940,7 +1943,9 @@ const SmsCreator = ({ classes }) => {
       }
     }
   }
+
   const englishLetterNotAllowed = () => {
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== null;
     return {
       showDivider: false,
       icon: (
@@ -1950,7 +1955,7 @@ const SmsCreator = ({ classes }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{RenderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.englishLetterNotApprovedDescription"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['NotApprovedDesc']))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               size='small'

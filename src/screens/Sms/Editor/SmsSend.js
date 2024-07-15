@@ -55,6 +55,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 import QuickManualUploadDialog from "../../Newsletter/Wizard/Popups/QuickManualUploadDialog";
 import { IsValidPhone } from "../../../helpers/Utils/Validations";
+import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -67,6 +68,8 @@ const SmsSend = ({ classes, ...props }) => {
   const Redirect = useRedirect();
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
   const { subAccountAllGroups } = useSelector((state) => state.group);
+  const { accountSettings } = useSelector((state) => state.common);
+
 
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector(
@@ -2206,9 +2209,11 @@ const SmsSend = ({ classes, ...props }) => {
       })
     }
   }
+
   //#endregion
   //#region Dialogs
   const noCreditDialog = () => {
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
     return {
       showDivider: false,
       icon: (
@@ -2219,7 +2224,7 @@ const SmsSend = ({ classes, ...props }) => {
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['NotEnoughCredits']))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               onClick={() => setDialogType(null)}
@@ -2741,6 +2746,7 @@ const SmsSend = ({ classes, ...props }) => {
     return <></>
   }
   const englishLetterNotAllowed = () => {
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== null;
     return {
       showDivider: false,
       icon: (
@@ -2750,7 +2756,7 @@ const SmsSend = ({ classes, ...props }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{RenderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.englishLetterNotApprovedDescription"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['NotApprovedDesc']))))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               onClick={() => setDialogType(null)}

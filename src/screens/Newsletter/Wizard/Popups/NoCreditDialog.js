@@ -10,6 +10,7 @@ import { getCommonFeatures } from '../../../../redux/reducers/commonSlice'
 import PurchaseWizard from '../../../../components/Balance/PaymentWizard/PurchaseWizard'
 import { GoPackage } from 'react-icons/go'
 import { getPackagesDetails } from '../../../../redux/reducers/dashboardSlice'
+import { WhiteLabelObject } from '../../../../components/WhiteLabel/WhiteLabelMigrate'
 
 const NoCreditDialog = ({
     classes,
@@ -59,6 +60,7 @@ const NoCreditDialog = ({
     }
 
     const renderBillingSupportDialog = () => {
+        const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
         return {
             showDivider: false,
             icon: (
@@ -68,7 +70,7 @@ const NoCreditDialog = ({
             content: (
                 <Grid item xs={12} style={{ paddingBottom: 5 }}>
                     <Typography className={classes.f20}>
-                        {RenderHtml(t("common.contactSupportForBilling"))}
+                        {RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['Contact']))}
                     </Typography>
                     <Box className={clsx(classes.mt25, classes.flexColCenter)}>
                         <Button

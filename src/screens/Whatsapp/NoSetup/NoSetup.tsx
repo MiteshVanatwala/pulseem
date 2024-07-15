@@ -3,9 +3,22 @@ import { useTranslation } from 'react-i18next';
 import { NoSetupProps } from './Types/NoSetup.types';
 import { Call, MailOutlineOutlined } from '@material-ui/icons';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
+import { Link } from '@mui/material';
+import { WhiteLabelObject } from '../../../components/WhiteLabel/WhiteLabelMigrate';
+import { useEffect, useState } from 'react';
 
 const NoSetup = ({ classes, isCompact = false }: NoSetupProps) => {
 	const { t: translator } = useTranslation();
+
+	const { accountSettings } = useSelector((state: any) => state.common);
+	const [isWhiteLabel, setIsWhiteLabel] = useState<boolean>(false);
+
+	useEffect(() => {
+		//@ts-ignore
+		setIsWhiteLabel(accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined);
+	}, [accountSettings])
+
 	return (
 		<Grid container className={clsx(classes.whatsappNoSetupPage, isCompact ? classes.hAuto : '')}>
 			<Box>
@@ -16,11 +29,13 @@ const NoSetup = ({ classes, isCompact = false }: NoSetupProps) => {
 				<Box className={classes.whatsappNoSetupContactWrapper}>
 					<Button className={classes.whatsappNoSetupContactButton}>
 						<MailOutlineOutlined />
-						<a href='mailto: sales@pulseem.com'>sales@pulseem.com</a>
+						{/* @ts-ignore */}
+						{<Link href={`mailto:${WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['Email']}`}>{WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['Email']}</Link>}
 					</Button>
 					<Button className={classes.whatsappNoSetupContactButton}>
 						<Call />
-						<a href='tel:03-5240290'>03-5240290</a>
+						{/* @ts-ignore */}
+						{<Link href={`tel:${WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['Phone']}`}>{WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['Phone']}</Link>}
 					</Button>
 				</Box>
 			</Box>

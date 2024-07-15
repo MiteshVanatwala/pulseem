@@ -23,6 +23,7 @@ import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
+import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
 
@@ -31,7 +32,8 @@ export const getSettingsItem = (
   style: string = '',
   isAllowSwitchAccount: Boolean = false,
   title: string = "Settings",
-  isRTL: Boolean = false
+  isRTL: Boolean = false,
+  accountSettings: any
 ) => ({
   key: "settings",
   title: title,
@@ -42,7 +44,8 @@ export const getSettingsItem = (
     { title: t('master.RadMenuItemResource3.Text'), href: `${rootDomain}/AccountUsers.aspx?fromreact=true`, iconSrc: GroupMenuIcon, isShow: isAllowSwitchAccount },
     { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount },
     { title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
-    { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: true },
+    //@ts-ignore
+    { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0) ? true : false },
     { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: true },
     { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: true },
     { title: t("appBar.logout"), onClick: logout, iconSrc: isRTL ? HiArrowLeft : HiArrowRight, isFaIcon: true, isShow: true },
