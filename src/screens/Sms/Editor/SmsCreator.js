@@ -1891,6 +1891,7 @@ const SmsCreator = ({ classes }) => {
   }
 
   const noCreditDialog = () => {
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
     return {
       showDivider: false,
       icon: (
@@ -1901,7 +1902,7 @@ const SmsCreator = ({ classes }) => {
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
           <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['NotEnoughCredits']))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['NotEnoughCredits']))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               size='small'
@@ -1944,6 +1945,7 @@ const SmsCreator = ({ classes }) => {
   }
 
   const englishLetterNotAllowed = () => {
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== null;
     return {
       showDivider: false,
       icon: (
@@ -1953,7 +1955,7 @@ const SmsCreator = ({ classes }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{RenderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['NotApprovedDesc']))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['NotApprovedDesc']))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               size='small'

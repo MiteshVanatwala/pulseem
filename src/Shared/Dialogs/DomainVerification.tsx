@@ -77,6 +77,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
     const [activeAccordion, setActiveAccordion] = useState<number>(0);
     const [sharedDomain, setSharedDomain] = useState<string>('');
     const [replyTo, setReplyTo] = useState<string>('');
+    const [isWhiteLabel, setIsWhiteLabel] = useState<boolean>(false);
     const callbackResponse = {
         SourceID: 0,
         IsSPFApproved: false,
@@ -86,6 +87,11 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
         FromEmail: null,
         Skip: null
     } as any;
+    useEffect(() => {
+        //@ts-ignore
+        setIsWhiteLabel(accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined);
+    }, [accountSettings])
+
 
     const DOMAIN_EMAIL_SUFFIX = '@pulseem.co';
     const handleCopyRecord = () => {
@@ -214,7 +220,7 @@ const DomainVerification = ({ classes, domain, forceShow, onClose }: DomainVerif
                 <AccordionDetails>
                     <Grid container>
                         {/* @ts-ignore */}
-                        {<Box className={classes.fullWidth}>{RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['buyVerifiedDomain']))}</Box>}
+                        {<Box className={classes.fullWidth}>{RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['buyVerifiedDomain']))}</Box>}
                     </Grid>
                 </AccordionDetails>
             </Accordion>}

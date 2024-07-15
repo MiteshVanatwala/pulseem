@@ -6,6 +6,7 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { WhiteLabelObject } from "../../../../components/WhiteLabel/WhiteLabelMigrate";
+import { useEffect, useState } from "react";
 
 const SendResponseDialog = ({
     isOpen = false,
@@ -17,6 +18,13 @@ const SendResponseDialog = ({
     const { Title, Text, ShowContactSupport = false, redirect = null } = data;
     const { accountSettings } = useSelector((state) => state.common);
     const navigate = useNavigate();
+    const [isWhiteLabel, setIsWhiteLabel] = useState(false);
+
+    useEffect(() => {
+        const refId = accountSettings?.Account?.ReferrerID;
+        // @ts-ignore
+        setIsWhiteLabel(refId > 0 && WhiteLabelObject[refId] !== undefined);
+    }, [accountSettings])
 
     const currentDialog = {
         style: { paddingBottom: 20 },
@@ -30,7 +38,7 @@ const SendResponseDialog = ({
                     {RenderHtml(Text)}
                 </Typography>
                 {ShowContactSupport && <Typography className={classes.f18}>
-                    {RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['ContactOnError']))}
+                    {RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['ContactOnError']))}
                 </Typography>
                 }
             </Box>

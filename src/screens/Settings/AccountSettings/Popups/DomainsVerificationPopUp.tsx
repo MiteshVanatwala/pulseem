@@ -101,6 +101,8 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
     }
 
     const VerificationResult = () => {
+        //@ts-ignore
+        const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
         const [showInnerLoader, setShowInnerLoader] = useState<boolean>(false);
         return <BaseDialog
             disableBackdropClick={false}
@@ -129,7 +131,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                                         interactive={true}
                                         placement={'top'}
                                         // @ts-ignore
-                                        title={<Typography className={classes.f16} noWrap={false}>{RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0]['GmailVerification']))}</Typography>}
+                                        title={<Typography className={classes.f16} noWrap={false}>{RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['GmailVerification']))}</Typography>}
                                         text={<Box className={classes.dFlex}><Typography noWrap={false} style={{ fontSize: 15, fontWeight: 500, marginTop: 1 }}>{t('common.gmailVerification')}</Typography><Box style={{ marginInline: 10 }} className={classes.tooltipIcon}>i</Box></Box>}
                                     />
                                 </TableCell>

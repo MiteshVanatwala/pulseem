@@ -60,6 +60,7 @@ const NoCreditDialog = ({
     }
 
     const renderBillingSupportDialog = () => {
+        const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
         return {
             showDivider: false,
             icon: (
@@ -69,7 +70,7 @@ const NoCreditDialog = ({
             content: (
                 <Grid item xs={12} style={{ paddingBottom: 5 }}>
                     <Typography className={classes.f20}>
-                        {RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID]['Contact']))}
+                        {RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['Contact']))}
                     </Typography>
                     <Box className={clsx(classes.mt25, classes.flexColCenter)}>
                         <Button

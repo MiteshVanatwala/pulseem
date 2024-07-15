@@ -100,6 +100,7 @@ const BulkStatus = ({ classes }) => {
   }
 
   const renderBillingSupportDialog = () => {
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID > 0]?.length > 0;
     return {
       showDivider: false,
       icon: (
@@ -109,7 +110,7 @@ const BulkStatus = ({ classes }) => {
       content: (
         <Grid item xs={12} style={{ paddingBottom: 5 }}>
           <Typography className={classes.f20}>
-            {RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID]['BillingTitle']))}
+            {RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['BillingTitle']))}
           </Typography>
         </Grid >
       ),

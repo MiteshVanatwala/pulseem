@@ -16,6 +16,7 @@ import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import DahsboardDomainVerificationPopup from './Popup/DahsboardDomainVerificationPopup';
 import WelcomePulseemNewDesign from './Popup/WelcomePulseemNewDesign';
+import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
@@ -58,6 +59,8 @@ const DashboardScreen = ({ classes }) => {
     return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange ?? ''))
   }
 
+  const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
+
   return (
     <DefaultScreen
       currentPage='dashboard'
@@ -74,20 +77,20 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
-            {(!accountSettings.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0) && <Grid item xs={12} sm={12} md={12} lg={4}>
+            {!isWhiteLabel && <Grid item xs={12} sm={12} md={12} lg={4}>
               <PulseemTips
                 classes={classes}
                 t={t}
                 isRTL={isRTL}
               />
             </Grid>}
-            <Grid item xs={12} sm={12} md={12} lg={(!accountSettings.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0) ? 8 : 12}>
+            <Grid item xs={12} sm={12} md={12} lg={!isWhiteLabel ? 8 : 12}>
               <LatestReports
                 classes={classes}
                 windowSize={windowSize}
                 t={t}
                 isRTL={isRTL}
-                isWhiteLabel={accountSettings?.Account?.ReferrerID > 0}
+                isWhiteLabel={isWhiteLabel}
               />
             </Grid>
           </Grid>

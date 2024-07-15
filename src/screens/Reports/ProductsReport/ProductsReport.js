@@ -494,7 +494,8 @@ const ProductsReport = ({ classes }) => {
     }
 
     const wl_renderContact = (param) => {
-        return WhiteLabelObject[accountSettings?.Account?.ReferrerID || 0][param];
+        const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
+        return WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0][param];
     }
 
     return (

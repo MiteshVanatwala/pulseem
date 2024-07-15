@@ -7,10 +7,22 @@ import clsx from "clsx";
 import { MdCelebration } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
+import { useEffect, useState } from "react";
 
 const WelcomePulseemNewDesign = ({ classes, isOpen, onClose }: any) => {
     const { t } = useTranslation();
     const { accountSettings } = useSelector((state: any) => state.common);
+    const [isWhiteLabel, setIsWhiteLabel] = useState<boolean>(false);
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (accountSettings && WhiteLabelObject !== null) {
+            const refId: any = accountSettings?.Account?.ReferrerID;
+            // @ts-ignore
+            setIsWhiteLabel(WhiteLabelObject[refId] !== undefined);
+            setIsLoaded(true);
+        }
+    }, [accountSettings])
 
     const handleShowDomainCookie = () => {
         const cookie = getCookie("popup_hide_NewDesign");
@@ -22,7 +34,7 @@ const WelcomePulseemNewDesign = ({ classes, isOpen, onClose }: any) => {
         title={t('dashboard.welcomeNewDesignTitle')}
         children={<>
             {/* @ts-ignore */}
-            {RenderHtml(t(WhiteLabelObject[accountSettings?.Account?.ReferrerID]['WelcomeMesasge']))}
+            {isLoaded && RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['WelcomeMesasge']))}
             <FormControlLabel
                 style={{ marginTop: 15 }}
                 control={
