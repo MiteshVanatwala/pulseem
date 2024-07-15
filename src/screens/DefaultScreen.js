@@ -16,6 +16,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   const { isAdmin, isAllowSwitchAccount, isRTL } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
+  const { accountSettings } = useSelector(state => state.common);
 
   let route, title;
 
@@ -40,7 +41,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   title = title ? `${title} | ${t('master.pulseemSystem')}` : t('master.pulseemSystem');
 
   useEffect(() => {
-    if (process.env.REACT_APP_MODE === "PROD") {
+    if (process.env.REACT_APP_MODE === "PROD" && accountSettings?.Account?.ReferrerID === 0) {
       const liveChat = document.createElement("script");
       liveChat.type = 'text/javascript';
       liveChat.async = true;

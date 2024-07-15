@@ -15,7 +15,7 @@ import { userPhoneNumbers } from '../../redux/reducers/whatsappSlice';
 import { apiStatus } from '../../screens/Whatsapp/Constant';
 import NoSetup from '../../screens/Whatsapp/NoSetup/NoSetup';
 
-const LatestReports = ({ classes, t, isRTL }) => {
+const LatestReports = ({ classes, t, isRTL, isWhiteLabel }) => {
   const { windowSize } = useSelector(state => state.core);
   const { lastCampaignReport } = useSelector(state => state.dashboard);
   const dispatch = useDispatch();
@@ -61,6 +61,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
 
   const barOptions = {
     responsive: true,
+    aspectRatio: isWhiteLabel ? 4 : 2,
     legend: {
       display: false
     },
@@ -86,13 +87,13 @@ const LatestReports = ({ classes, t, isRTL }) => {
       x: {
         beforeCalculateLabelRotation: (event) => {
           event.ticks.forEach((t) => {
-            if (t.label.length >= 8)
+            if (t.label.length >= 8 && !isWhiteLabel)
               t.label = `${t.label.substring(0, 8)}..`;
           });
         },
         ticks: {
-          font: { size: 12 },
-          color: 'black',
+          font: { size: isWhiteLabel ? 14 : 12 },
+          color: 'black'
         },
         grid: {
           drawOnChartArea: false,
@@ -106,7 +107,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
           callback: function (value, index, values) {
             return `${value}%`;
           },
-          font: { size: 18 },
+          font: { size: isWhiteLabel ? 14 : 18 },
           color: 'black',
           drawTicks: true,
         },

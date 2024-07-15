@@ -23,7 +23,7 @@
     "@types/react": "^18.0.19",
     "@types/react-highlight-words": "^0.16.4",
     "@types/uniqid": "^5.3.2",
-    "axios": "^1.7.2",
+    "axios": "^0.21.1",
     "chart.js": "^3.3.2",
     "dotenv": "^10.0.0",
     "emoji-picker-react": "^3.4.8",

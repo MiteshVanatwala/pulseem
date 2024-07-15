@@ -15,6 +15,7 @@ import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
+import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -99,6 +100,7 @@ const BulkStatus = ({ classes }) => {
   }
 
   const renderBillingSupportDialog = () => {
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID > 0]?.length > 0;
     return {
       showDivider: false,
       icon: (
@@ -108,7 +110,7 @@ const BulkStatus = ({ classes }) => {
       content: (
         <Grid item xs={12} style={{ paddingBottom: 5 }}>
           <Typography className={classes.f20}>
-            {RenderHtml(t("common.contactSupportForBilling"))}
+            {RenderHtml(t(WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0]['BillingTitle']))}
           </Typography>
         </Grid >
       ),

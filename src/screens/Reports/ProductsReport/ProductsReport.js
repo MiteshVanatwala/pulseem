@@ -25,6 +25,7 @@ import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { WhiteLabelObject } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -38,7 +39,7 @@ const DEFAULT_FILTER = {
 
 const ProductsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures } = useSelector(state => state.common);
+    const { accountFeatures, accountSettings } = useSelector(state => state.common);
     const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
     const { t } = useTranslation()
@@ -417,14 +418,14 @@ const ProductsReport = ({ classes }) => {
                                         {renderIntData(Purchased, Purchased > 0 && hrefs.Purchased, 'blue')}
                                     </Typography>
                                 </Grid>
-                                
+
                                 <Grid item xs={6} sm={6}>
                                     <Typography className={clsx(classes.f14, classes.bold)}>{t("report.ProductsReport.abandoned")}</Typography>
                                     <Typography className={clsx(colorTextStyle.red, classes.elipsis)}>
                                         {renderIntData(Abandoned, Abandoned > 0 && hrefs.Abandoned, 'red')}
                                     </Typography>
                                 </Grid>
-                                
+
                                 <Grid item xs={6} sm={6} className={classes.pt5}>
                                     <Typography className={clsx(classes.f14, classes.bold)}>{t("client.totalRevenue")}</Typography>
                                     <Typography className={clsx(classes.elipsis)}>
@@ -492,6 +493,11 @@ const ProductsReport = ({ classes }) => {
         )
     }
 
+    const wl_renderContact = (param) => {
+        const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
+        return WhiteLabelObject[isWhiteLabel ? accountSettings?.Account?.ReferrerID : 0][param];
+    }
+
     return (
         <DefaultScreen
             classes={classes}
@@ -504,9 +510,9 @@ const ProductsReport = ({ classes }) => {
                     <Grid item xs={12} className={classes.mt2} style={{ paddingInline: 31 }}>
                         <Typography>{RenderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
                         <Typography display='inline'>{t('common.ForSupport')}: </Typography>
-                        <Typography display='inline' className={clsx(classes.link, classes.colrPrimary)} component='a' href="tel:035240290">035240290</Typography>
+                        <Typography display='inline' className={clsx(classes.link, classes.colrPrimary)} component='a' href={`tel:${wl_renderContact('Phone')}`}>{wl_renderContact('Phone')}</Typography>
                         <Typography display='inline' className={classes.colrPrimary}> / </Typography>
-                        <Typography display='inline' className={clsx(classes.link, classes.colrPrimary)} component='a' href="mailto:support@pulseem.com">support@pulseem.com</Typography>
+                        <Typography display='inline' className={clsx(classes.link, classes.colrPrimary)} component='a' href={`mailto:${wl_renderContact('Email')}`}>{wl_renderContact('Email')}</Typography>
                     </Grid>
                     {renderFilter()}
                 </Box>

@@ -30,6 +30,7 @@ import integrations from './Integrations.json'
 import WhatsappApiResponse from './WhatsappApiResponse.json'
 import SignUp from './SignUp.json';
 import FileUploads from './FileUploads.json';
+import SimplyClub from './WhiteLabel/SimplyClub.json';
 
 export const en = {
 	automations,
@@ -63,5 +64,6 @@ export const en = {
 	whatsappChat,
 	WhatsappApiResponse,
 	SignUp,
-	FileUploads
+	FileUploads,
+	SimplyClub
 };
