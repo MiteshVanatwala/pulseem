@@ -345,7 +345,8 @@ export const newsletterSlice = createSlice({
       state.campaignInfo = payload?.Message;
     })
     builder.addCase(getNewslatterParentChildData.fulfilled, (state, { payload }) => {
-      const { MainList = [], ChildList = [] } = payload;
+      const MainList = payload.MainList === null ? [] : payload.MainList;
+      const ChildList = payload.ChildList === null ? [] : payload.ChildList;
       state.newslettersParentCampaigns = MainList.filter(row => !row.IsDeleted);
       state.newslettersChildCampaigns = ChildList.filter(row => !row.IsDeleted);
       state.newslettersDeletedData = [
@@ -354,9 +355,8 @@ export const newsletterSlice = createSlice({
       ]
     })
     builder.addCase(getGetEmailReportsManagement.fulfilled, (state, { payload }) => {
-      const { MainList = [], ChildList = [] } = payload;
-      state.newslettersReportsParentCampaigns = MainList;
-      state.newslettersReportsChildCampaigns = ChildList;
+      state.newslettersReportsParentCampaigns = payload.MainList === null ? [] : payload.MainList;
+      state.newslettersReportsChildCampaigns = payload.ChildList === null ? [] : payload.ChildList;
     })
     builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
     builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })
