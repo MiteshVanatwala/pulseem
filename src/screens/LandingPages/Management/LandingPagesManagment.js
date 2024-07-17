@@ -309,7 +309,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         uIcon: EditIcon,
         lable: t('landingPages.EditResource1.HeaderText'),
         remove: windowSize === 'xs',
-        href: IsNewEditor ? `${sitePrefix}${BEE_EDITOR_TYPES.LANDING_PAGE}/${ID}` : `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
+        href: IsNewEditor ? `${sitePrefix}editor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${ID}` : `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {

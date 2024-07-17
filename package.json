@@ -17,6 +17,7 @@
     "@mui/material": "^5.15.19",
     "@mui/x-charts": "^7.5.1",
     "@reduxjs/toolkit": "^1.1.0",
+    "@tawk.to/tawk-messenger-react": "^2.0.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@types/papaparse": "^5.3.14",

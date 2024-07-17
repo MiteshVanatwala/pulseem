@@ -174,7 +174,7 @@ const renderRoutes = (classes, redirect) => {
         element={<CampaignEditorBee classes={classes} />}
       />
       <Route
-        path={`${sitePrefix}:type/:id`}
+        path={`${sitePrefix}editor/:type/:id`}
         element={<BeeEditor classes={classes} />}
       />
       <Route
