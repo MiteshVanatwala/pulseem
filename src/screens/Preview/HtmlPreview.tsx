@@ -53,10 +53,8 @@ const HtmlPreview = ({ classes }: any) => {
         script3.setAttribute('custom-element', 'amp-carousel');
         document.getElementsByTagName('head')[0].appendChild(script3);
       }
-
       resolve();
     });
-
   }
 
   const getNewsletterHtml = async () => {
@@ -77,6 +75,10 @@ const HtmlPreview = ({ classes }: any) => {
     });
   }
   const getLandingPageHtml = async () => {
+    const bootstrap_css = document.createElement("link");
+    bootstrap_css.rel = 'stylesheet'
+    bootstrap_css.href = "https://www.dgpul.site:9999/pulseem/Content/bootstrap-rtl.css?v1";
+    document.getElementsByTagName('head')[0].appendChild(bootstrap_css);
     // @ts-ignore
     const response = await dispatch(getLandingPagePreview(id)) as any;
     const d = {
@@ -112,8 +114,8 @@ const HtmlPreview = ({ classes }: any) => {
 
   const C_Title = () => {
     return <Box style={{ width: '100%' }}>
-      <Box style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-        <>{t('notifications.preview')}</>
+      <Box style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: 16, alignItems: 'center' }}>
+        <Typography style={{ fontSize: 18, fontWeight: 600 }}>{t('notifications.preview')}</Typography>
         <><CopyToClipboard text={details?.PageUrl} onCopy={handleCopyScript}>
           <Button
             variant="outlined"
@@ -121,7 +123,9 @@ const HtmlPreview = ({ classes }: any) => {
             size="small"
             startIcon={<div className={classes.copyIcon}>{copyStatus ? '\uE134' : '\ue0b0'}</div>}
           >
-            {copyStatus ? t('notifications.copied') : t('notifications.copy')}
+            <Typography style={{ fontSize: 14 }}>
+              {copyStatus ? t('notifications.copied') : t('notifications.copy')}
+            </Typography>
           </Button>
         </CopyToClipboard></>
       </Box>
@@ -142,9 +146,9 @@ const HtmlPreview = ({ classes }: any) => {
     hideSideImages={true}
     containerClass={clsx(classes.mb50, classes.mt50)}
   >
-    <Box className={'topSection'}>
+    <Box className={clsx('topSection')}>
       <Title isIcon={false} Element={C_Title} classes={classes} />
-      <Box style={{ maxWidth: 1540, margin: '0 auto', position: 'relative', direction: 'ltr', pointerEvents: 'none' }} className={classes.p20}>
+      <Box style={{ maxWidth: 1540, margin: '0 auto', position: 'relative', direction: 'ltr', pointerEvents: 'none' }} className={clsx(classes.p20, classes.renderHtml)}>
         {RenderHtml(html)}
       </Box>
       <Loader isOpen={showLoader} showBackdrop={true} />

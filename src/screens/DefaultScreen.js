@@ -41,7 +41,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   title = title ? `${title} | ${t('master.pulseemSystem')}` : t('master.pulseemSystem');
 
   useEffect(() => {
-    if (process.env.REACT_APP_MODE === "PROD" && accountSettings?.Account?.ReferrerID === 0) {
+    if (process.env.REACT_APP_MODE === "PROD" && (accountSettings?.Account?.ReferrerID === 0 || !accountSettings?.Account?.ReferrerID)) {
       const liveChat = document.createElement("script");
       liveChat.type = 'text/javascript';
       liveChat.async = true;

@@ -57,7 +57,6 @@ import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
 import { getCategories } from '../../redux/reducers/productSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { NO_IMAGE_URL } from '../../helpers/Constants';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State

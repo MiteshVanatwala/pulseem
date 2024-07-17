@@ -4172,4 +4172,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderTop: 'solid 2px #797979 !important',
     },
   },
+  renderHtml: {
+    '& label': {
+      display: 'block !important'
+    }
+  }
 });
