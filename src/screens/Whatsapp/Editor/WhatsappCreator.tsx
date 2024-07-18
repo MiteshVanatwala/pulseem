@@ -115,7 +115,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
-		setSavedTemplateList(savedTemplate.payload?.Data?.Items === null ? [] : savedTemplate.payload?.Data?.Items);
+		setSavedTemplateList(savedTemplate.payload?.Data?.Items || []);
 	};
 	useEffect(() => {
 		(async () => {
