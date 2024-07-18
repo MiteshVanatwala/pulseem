@@ -8,47 +8,33 @@ import { useLocation } from 'react-router-dom';
 const TawkToContainer = ({ itemId }: any) => {
   const { accountSettings } = useSelector((state: any) => state.common);
   const tawkMessengerRef: any = useRef();
-
   const location = useLocation();
 
-
   const onTawkToLoaded = () => {
-    if (tawkMessengerRef.current.onBeforeLoaded()) {
-      tawkMessengerRef?.current?.hideWidget();
-      tawkMessengerRef?.current?.showWidget();
-    }
+    console.log('loaded')
   }
 
   useEffect(() => {
-    tawkMessengerRef.current.onBeforeLoaded();
+    const node: any = document.querySelector('[title="chat widget"]');
+
+    if (node && node?.style) {
+      if (location.pathname.toLowerCase().indexOf('editor/landingpages') > -1) {
+        node.style.bottom = '75px';
+      }
+      else {
+        node.style.bottom = '15px';
+      }
+    }
   }, [location]);
 
 
-  const style = {
-    visibility: {
-      desktop: {
-        xOffset: '15',
-        yOffset: location.pathname.toLowerCase().indexOf('edit') > -1 ? '75' : '15',
-        position: 'br'
-      },
-      mobile: {
-        xOffset: 15,
-        yOffset: 15,
-        position: 'br'
-      }
-    }
-  };
 
-
-
-  // return (process.env.REACT_APP_MODE === "PROD" && (accountSettings?.Account?.ReferrerID === 0 || !accountSettings?.Account?.ReferrerID)) ?
-  return (accountSettings?.Account?.ReferrerID === 0 || !accountSettings?.Account?.ReferrerID) ?
+  return (process.env.REACT_APP_MODE === "PROD" && accountSettings?.Account?.ReferrerID === 0) ?
     <>
       <TawkMessengerReact
         onLoad={onTawkToLoaded}
         propertyId={tawkToPropertyId}
         widgetId="default"
-        customStyle={style}
         ref={tawkMessengerRef} />
     </>
     : (<></>)
