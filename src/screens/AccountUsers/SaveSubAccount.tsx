@@ -1,0 +1,704 @@
+import { useEffect, useState } from 'react';
+import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
+import { Box, Button, Divider, FormControlLabel, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography, Zoom } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux';
+import { Loader } from '../../components/Loader/Loader';
+import { useNavigate, useParams } from 'react-router-dom';
+// import { TabContext, TabPanel } from '@material-ui/lab';
+import { PulseemResponse } from '../../Models/APIResponse';
+import { logout } from '../../helpers/Api/PulseemReactAPI';
+import Toast from '../../components/Toast/Toast.component';
+import { coreProps } from '../../model/Core/corePros.types';
+import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
+import { useStylesBootstrapPasswordHint } from '../../helpers/Utils/HtmlUtils';
+import PasswordHint from '../Settings/AccountSettings/Password/PasswordHint';
+import { ValidPassword } from '../Settings/AccountSettings/Password/Types';
+import { DateFormats, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from '../../helpers/Constants';
+import Groups from '../../components/Groups/GroupsHandler/Groups';
+import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
+import { DateField } from '../../components/managment';
+import moment from 'moment';
+import { Stack } from '@mui/material';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+
+const SaveSubAccount = ({ classes, isOpen = false, onClose }: any) => {
+	const { id } = useParams();
+	const dispatch: any = useDispatch();
+	const navigate = useNavigate();
+	const { t } = useTranslation();
+	const { isRTL, windowSize } = useSelector(
+		(state: { core: coreProps }) => state.core
+	);
+	const { isGlobal } = useSelector((state: any) => state.subAccount);
+	const { subAccountAllGroups } = useSelector((state: any) => state.group);
+	const { testGroups } = useSelector((state: any) => state.sms);
+	const [selectedGroups, setSelectedGroups] = useState<any>([]);
+	const [showTestGroups, setShowTestGroups] = useState(false);
+	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [toastMessage, setToastMessage] = useState(null);
+	const [errors, setErrors] = useState({
+		subAccountName: '',
+		cellPhone: '',
+		emailAddress: '',
+		loginUserName: '',
+		password: '',
+		confirmPassword: '',
+	});
+	const [tabValue, setTabValue] = useState<string>('1');
+	const [ showPasswordTip, setShowPasswordTip ] = useState<boolean>(false);
+	const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
+    LowerChar: false,
+    SpecialChar: false,
+    UpperChar: false,
+    PasswordLength: 0,
+    NumberChar: false,
+  } as ValidPassword);
+	const [ subAccountDetails, setSubAccountDetails ] = useState<any>({
+		emailBulk: '',
+		SMSBulk: '',
+		MMSBulk: '',
+		subAccountName: '',
+		cellPhone: '',
+		accountManager: '',
+		addEmailBulk: false,
+		addSMSBulk: false,
+		addMMSBulk: false,
+		emailBulkAmount: '',
+		SMSBulkAmount: '',
+		MMSBulkAmount: '',
+		emailAddress: '',
+		loginUserName: '',
+		password: '',
+		confirmPassword: '',
+		isPasswordVisible: false,
+		automaticUserLock: null,
+		balance: '',
+	})
+
+	useEffect(() => {
+		if (subAccountAllGroups.length === 0) {
+			dispatch(getGroupsBySubAccountId());
+		}
+	}, []);
+
+	const saveSubAccount = () => {
+		
+	}
+
+	// const save = async (redirectToNewEditor: number) => {
+	// 	const errorDump = {
+	// 		...errors,
+	// 		PageName: !landingPageModel.PageName?.trim() ? t('landingPages.formNameRequired') : '',
+	// 		shortURL: !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
+	// 		answerMessage: [
+	// 			LandingPagesAnswerType.POPUP_MESSAGE,
+	// 			LandingPagesAnswerType.REDIRECT_URL
+	// 		].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.answerMessageRequired') : '',
+	// 		// paymentURL: [
+	// 		// 	LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+	// 		// ].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.URLRequired') : '',
+	// 		// paymentAPIUsername: [
+	// 		// 	LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+	// 		// ].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.APIUserName?.trim() ? t('landingPages.APIUsernameRequired') : '',
+	// 		// paymentTerminalNumber: [
+	// 		// 	LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
+	// 		// ].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? t('landingPages.terminalNumberRequired') : '',
+	// 		offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : '' //,
+	// 		// DownloadUrl: [LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.DownloadUrl?.trim() ? t('landingPages.invalidDownloadURL') : ''
+	// 	};
+	// 	setErrors(errorDump);
+	// 	if (Object.values(errorDump).filter(x => x !== '').length <= 0) {
+	// 		setIsLoader(true);
+	// 		let headScript, bodyScript = '';
+
+	// 		headScript = prepareHeadScript();
+	// 		bodyScript = prepareBodyScript();
+
+	// 		const req = {
+	// 			...landingPageModel,
+	// 			SelectedGroupList: null,
+	// 			EmailsToReport: landingPageModel?.EmailsToReport?.join(','),
+	// 			GroupIDs: landingPageModel?.GroupIDs?.join(','),
+	// 			ClientJavaScript: headScript,
+	// 			ClientBodyScript: bodyScript
+	// 		};
+	// 		//@ts-ignore
+	// 		const response = await dispatch(saveLandingPage(req));
+	// 		handleSaveResponse(response?.payload, redirectToNewEditor);
+	// 		setIsLoader(false);
+	// 		return true;
+	// 	} else {
+	// 		setDialogType({ type: 'validationDialog' })
+	// 	}
+	// }
+
+	// const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
+
+	// const handleSaveResponse = (response: any, redirectToNewEditor: number) => {
+	// 	switch (response.StatusCode) {
+	// 		case 201: {
+	// 			handleContinueToEditor(redirectToNewEditor, response.Data.ID);
+	// 			break;
+	// 		}
+	// 		case 400: {
+	// 			showErrorToast(t('common.Error'));
+	// 			break;
+	// 		}
+	// 		case 401: {
+	// 			logout();
+	// 			break;
+	// 		}
+	// 		case 402: {
+	// 			showErrorToast(t('common.Error'));
+	// 			break;
+	// 		}
+	// 		case 404: {
+	// 			showErrorToast(t('common.Error'));
+	// 			break;
+	// 		}
+	// 		case 405: {
+	// 			showErrorToast(t('landingPages.shortUrlExist'));
+	// 			setErrors({
+	// 				...errors,
+	// 				shortURL: t('landingPages.shortURLExist')
+	// 			})
+	// 			break;
+	// 		}
+	// 		case 500:
+	// 		default: {
+	// 			showErrorToast(t('common.Error'));
+	// 			break;
+	// 		}
+	// 	}
+	// }
+
+	const renderToast = () => {
+		setTimeout(() => {
+			setToastMessage(null);
+		}, 2000);
+		return <Toast customData={null} data={toastMessage} />;
+	};
+
+	const handleChange = (e: any) => {
+    setSubAccountDetails({
+      ...subAccountDetails,
+      password: e?.target?.value.trim()
+    });
+    let trimValue = e?.target?.value.trim();
+    const validPass = {
+      LowerChar: !!trimValue?.match(lowerCaseLetters),
+      SpecialChar: !!trimValue?.match(specialLetters),
+      UpperChar: !!trimValue?.match(upperCaseLetters),
+      PasswordLength: trimValue.length,
+      NumberChar: !!trimValue?.match(numbers),
+    } as ValidPassword;
+
+    setPasswordValidation(validPass);
+  };
+
+	return (
+		<BaseDialog
+			classes={classes}
+			open={isOpen}
+			title={t('SubAccount.addSubAccount')}
+			icon={<div className={classes.dialogIconContent}>
+				{'\uE0D5'}
+			</div>}
+			showDivider={false}
+			onClose={onClose}
+			onCancel={onClose}
+			onConfirm={() => {}}
+			reduceTitle
+			style={{ minWidth: 240 }}
+			renderButtons={() => (
+				<Grid
+					container
+					spacing={2}
+					className={clsx(
+						classes.dialogButtonsContainer,
+						isRTL ? classes.rowReverse : null
+					)}
+				>
+					<Grid item>
+						<Button
+							onClick={(e: React.MouseEvent<Element, MouseEvent>) => {}}
+							className={clsx(
+								classes.btn,
+								classes.btnRounded,
+								"saveFixedDetails"
+							)}
+						>
+							{t("common.Save")}
+						</Button>
+					</Grid>
+					<Grid item>
+						<Button
+							variant='contained'
+							size='small'
+							onClick={onClose}
+							className={clsx(classes.btn, classes.btnRounded)}
+						>
+							{t("common.cancel")}
+						</Button>
+					</Grid>
+				</Grid>
+			)}
+		>
+			<>
+				{
+					!isGlobal && (
+						<>
+							<Grid container className={classes.pb15}>
+								<Grid item md={4}>
+									{t("SubAccount.emailBulk")}: {subAccountDetails.emailBulk}
+								</Grid>
+								<Grid item md={4}>
+									{t("SubAccount.SMSBulk")}: {subAccountDetails.SMSBulk}
+								</Grid>
+								<Grid item md={4}>
+									{t("SubAccount.MMSBulk")}: {subAccountDetails.MMSBulk}
+								</Grid>
+							</Grid>
+						</>
+					)
+				}
+				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt10)}>{t('SubAccount.subAccountSetting')}</div>
+				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
+				<Grid container className={clsx(classes.pb15)} spacing={3}>
+					<Grid item md={4}>
+						<Typography title={t("SubAccount.subAccountName")} className={classes.alignDir}>
+							{t("SubAccount.subAccountName")}
+						</Typography>
+						<TextField
+							id="subAccountName"
+							label=""
+							variant="outlined"
+							name="subAccountName"
+							value={subAccountDetails.subAccountName}
+							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+							autoComplete="off"
+							onChange={(e: any) => setSubAccountDetails({
+								...subAccountDetails,
+								subAccountName: e.target.value.trim()
+							})}
+						/>
+						<Box className='textBoxWrapper'>
+							<Typography className={clsx(errors.subAccountName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+								{errors.subAccountName}
+							</Typography>
+						</Box>
+					</Grid>
+					<Grid item md={4}>
+						<Typography title={t("common.Cellphone")} className={classes.alignDir}>
+							{t("common.Cellphone")}
+						</Typography>
+						<TextField
+							id="cellPhone"
+							label=""
+							variant="outlined"
+							name="cellPhone"
+							value={subAccountDetails.cellPhone}
+							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+							autoComplete="off"
+							onChange={(e: any) => setSubAccountDetails({
+								...subAccountDetails,
+								cellPhone: e.target.value.trim()
+							})}
+						/>
+						<Box className='textBoxWrapper'>
+							<Typography className={clsx(errors.cellPhone ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+								{errors.cellPhone}
+							</Typography>
+						</Box>
+					</Grid>
+
+					<Grid item md={4}>
+						<Typography title={t("SubAccount.accountManager")} className={classes.alignDir}>
+							{t("SubAccount.accountManager")}
+						</Typography>
+						<TextField
+							id="accountManager"
+							label=""
+							variant="outlined"
+							name="accountManager"
+							value={subAccountDetails.accountManager}
+							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+							autoComplete="off"
+							onChange={(e: any) => setSubAccountDetails({
+								...subAccountDetails,
+								accountManager: e.target.value.trim()
+							})}
+						/>
+					</Grid>
+
+
+					{
+						!isGlobal && (
+							<>		
+								<Grid item md={4}>
+									<FormControlLabel
+										control={
+											<PulseemSwitch
+												id="1"
+												switchType='ios'
+												classes={classes}
+												onColor="#0371ad"
+												handleDiameter={20}
+												boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+												height={15}
+												className={clsx({ [classes.rtlSwitch]: isRTL })}
+												checked={subAccountDetails.emailBulk}
+												onChange={(e: any) => setSubAccountDetails({
+													...subAccountDetails,
+													emailBulk: !subAccountDetails.emailBulk
+												})}
+											/>
+										}
+										label={t('SubAccount.addEmailBulk')}
+									/>
+									{
+										subAccountDetails.emailBulk && (
+											<>
+												<Typography title={t("SubAccount.emailBulkAmount")} className={clsx(classes.alignDir, classes.pt10)}>
+													{t("SubAccount.emailBulkAmount")}
+												</Typography>
+												<TextField
+													id="emailBulkAmount"
+													label=""
+													variant="outlined"
+													name="emailBulkAmount"
+													value={subAccountDetails.emailBulkAmount}
+													className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+													autoComplete="off"
+													onChange={(e: any) => setSubAccountDetails({
+														...subAccountDetails,
+														emailBulkAmount: e.target.value.trim()
+													})}
+												/>
+											</>
+										)
+									}
+								</Grid>
+								
+								<Grid item md={4}>
+									<FormControlLabel
+										control={
+											<PulseemSwitch
+												id="1"
+												switchType='ios'
+												classes={classes}
+												onColor="#0371ad"
+												handleDiameter={20}
+												boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+												height={15}
+												className={clsx({ [classes.rtlSwitch]: isRTL })}
+												checked={subAccountDetails.SMSBulk}
+												onChange={(e: any) => setSubAccountDetails({
+													...subAccountDetails,
+													SMSBulk: !subAccountDetails.SMSBulk
+												})}
+											/>
+										}
+										label={t('SubAccount.addSMSBulk')}
+									/>
+									{
+										subAccountDetails.SMSBulk && (
+											<>
+												<Typography title={t("SubAccount.SMSBulkAmount")} className={clsx(classes.alignDir, classes.pt10)}>
+													{t("SubAccount.SMSBulkAmount")}
+												</Typography>
+												<TextField
+													id="SMSBulkAmount"
+													label=""
+													variant="outlined"
+													name="SMSBulkAmount"
+													value={subAccountDetails.SMSBulkAmount}
+													className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+													autoComplete="off"
+													onChange={(e: any) => setSubAccountDetails({
+														...subAccountDetails,
+														SMSBulkAmount: e.target.value.trim()
+													})}
+												/>
+											</>
+										)
+									}
+								</Grid>
+
+								<Grid item md={4}>
+									<FormControlLabel
+										control={
+											<PulseemSwitch
+												id="1"
+												switchType='ios'
+												classes={classes}
+												onColor="#0371ad"
+												handleDiameter={20}
+												boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+												height={15}
+												className={clsx({ [classes.rtlSwitch]: isRTL })}
+												checked={subAccountDetails.MMSBulk}
+												onChange={() => setSubAccountDetails({
+													...subAccountDetails,
+													MMSBulk: !subAccountDetails.MMSBulk
+												})}
+											/>
+										}
+										label={t('SubAccount.addMMSBulk')}
+									/>
+									{
+										subAccountDetails.MMSBulk && (
+											<>
+												<Typography title={t("SubAccount.MMSBulkAmount")} className={clsx(classes.alignDir, classes.pt10)}>
+													{t("SubAccount.MMSBulkAmount")}
+												</Typography>
+												<TextField
+													id="MMSBulkAmount"
+													label=""
+													variant="outlined"
+													name="MMSBulkAmount"
+													value={subAccountDetails.MMSBulkAmount}
+													className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+													autoComplete="off"
+													onChange={(e: any) => setSubAccountDetails({
+														...subAccountDetails,
+														MMSBulkAmount: e.target.value.trim()
+													})}
+												/>
+											</>
+										)
+									}
+								</Grid>
+							</>
+						)
+					}
+
+					{
+						isGlobal && (
+							<>
+								<Grid item md={4}>
+									<Typography title={t("SubAccount.balance")} className={clsx(classes.alignDir, classes.pt10)}>
+										{t("SubAccount.balance")}
+									</Typography>
+									<TextField
+										id="balance"
+										label=""
+										variant="outlined"
+										name="balance"
+										value={subAccountDetails.balance}
+										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+										autoComplete="off"
+										onChange={(e: any) => setSubAccountDetails({
+											...subAccountDetails,
+											balance: e.target.value.trim()
+										})}
+									/>
+								</Grid>
+							</>
+						)
+					}
+					
+					<Grid item md={4}>
+						<Typography title={t("SubAccount.automaticUserLock")} className={clsx(classes.alignDir, classes.pt10)}>
+							{t("SubAccount.automaticUserLock")}
+						</Typography>
+						{/* @ts-ignore */}
+						<DateField
+							toolbarDisabled={false}
+							classes={classes}
+							placeholder={t('notifications.date')}
+							value={subAccountDetails.automaticUserLock}
+							onChange={(value: any) =>
+								setSubAccountDetails({
+									...subAccountDetails,
+									automaticUserLock: moment(value).format(DateFormats.DATE_ONLY)
+								})
+							}
+							timePickerOpen={true}
+							dateActive={true}
+							minDate={undefined}
+							onTimeChange={() => { }}
+							timeActive={false}
+							buttons={{
+								ok: t("common.confirm"),
+								cancel: t("common.cancel"),
+							} as any}
+							removePadding={true}
+							hideInvalidDateMessage={true}
+						/>
+					</Grid>
+				</Grid>
+
+				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.loginInformation')}</div>
+				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
+				<Grid container spacing={3}>
+					<Grid item md={4}>
+						<Typography title={t("SubAccount.subAccountName")} className={classes.alignDir}>
+							{t("common.Email")}
+							<span className={clsx(classes.errorLabel, classes.pr10, classes.pe10)}>* {t("SubAccount.email2FA")}</span>
+						</Typography>
+						<TextField
+							id="emailAddress"
+							label=""
+							variant="outlined"
+							name="Name"
+							value={subAccountDetails.emailAddress}
+							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+							autoComplete="off"
+							onChange={(e: any) => setSubAccountDetails({
+								...subAccountDetails,
+								emailAddress: e.target.value.trim()
+							})}
+						/>
+						<Box className='textBoxWrapper'>
+							<Typography className={clsx(errors.emailAddress ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+								{errors.emailAddress}
+							</Typography>
+						</Box>
+					</Grid>
+				</Grid>
+
+				<Grid container className={clsx(classes.pb15)} spacing={3}>
+					<Grid item md={4}>
+						<Typography title={t("SubAccount.loginUserName")} className={classes.alignDir}>
+							{t("SubAccount.loginUserName")}
+						</Typography>
+						<TextField
+							id="loginUserName"
+							label=""
+							variant="outlined"
+							name="loginUserName"
+							value={subAccountDetails.loginUserName}
+							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+							autoComplete="off"
+							onChange={(e: any) => setSubAccountDetails({
+								...subAccountDetails,
+								loginUserName: e.target.value.trim()
+							})}
+						/>
+						<Box className='textBoxWrapper'>
+							<Typography className={clsx(errors.loginUserName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+								{errors.loginUserName}
+							</Typography>
+						</Box>
+					</Grid>
+
+					<Grid item md={4}>
+						<Typography title={t("common.password")} className={classes.alignDir}>
+							{t("common.password")}
+						</Typography>
+						<Box className={classes.posRelative}>
+							<Tooltip
+								TransitionComponent={Zoom}
+								interactive={true}
+								title={<PasswordHint
+									Password={passwordValidation}
+									classes={classes}
+								/>}
+								arrow
+								open={showPasswordTip}
+								classes={useStylesBootstrapPasswordHint()}
+							>
+								<TextField
+									onFocus={() => setShowPasswordTip(true)}
+									onBlur={() => setShowPasswordTip(false)}
+									type={subAccountDetails.isPasswordVisible ? "text" : "password"}
+									variant="outlined"
+									size="small"
+									name="Password"
+									value={subAccountDetails.password}
+									onChange={handleChange}
+									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+									error={!!errors.password}
+									inputProps={{ maxWidth: 50 }}
+									InputProps={{
+										endAdornment: (
+											<></>
+											// <span onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })}>
+											// 	{
+											// 		userDetails.isPasswordVisible
+											// 		? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} /> 
+											// 		: <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
+											// 	}
+											// </span>
+										),
+									}}
+								/>
+							</Tooltip>
+						</Box>
+						<Box className='textBoxWrapper'>
+							<Typography className={clsx(errors.password ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+								{errors.password}
+							</Typography>
+						</Box>
+					</Grid>
+
+					<Grid item md={4}>
+						<Typography title={t("SubAccount.confirmPassword")} className={classes.alignDir}>
+							{t("SubAccount.confirmPassword")}
+						</Typography>
+						<TextField
+							type="password"
+							id="confirmPassword"
+							label=""
+							variant="outlined"
+							name="confirmPassword"
+							value={subAccountDetails.confirmPassword}
+							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+							autoComplete="off"
+							onChange={(e: any) => setSubAccountDetails({
+								...subAccountDetails,
+								confirmPassword: e.target.value.trim()
+							})}
+						/>
+						<Box className='textBoxWrapper'>
+							<Typography className={clsx(errors.confirmPassword ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+								{errors.confirmPassword}
+							</Typography>
+						</Box>
+					</Grid>
+				</Grid>
+
+				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.addGroupsToSubAccount')}</div>
+				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
+				<Grid container>
+					<Grid item>
+						<Groups
+							classes={classes}
+							list={
+								showTestGroups ? [...subAccountAllGroups, ...testGroups] : [...subAccountAllGroups]
+							}
+							// test={showTestGroups}
+							selectedList={selectedGroups}
+							callbackSelectedGroups={() => {}}
+							callbackUpdateGroups={() => {}} //onUpdateGroups
+							callbackSelectAll={() => {}}
+							callbackReciFilter={() => { }} // onReciFilter
+							callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+							key={"dynuacGroups"}
+							uniqueKey={'groups_4'}
+							innerHeight={325}
+							showSortBy={true}
+							showFilter={false}
+							showSelectAll={true}
+							bsDot={null}
+							isNotifications={false}
+							isSms={true}
+							isCampaign={false}
+							noSelectionText={''}
+							// isFilterSelected={false}
+						/>
+					</Grid>
+				</Grid>
+				<Loader isOpen={isLoader} />
+				{toastMessage && renderToast()}
+			</>
+		</BaseDialog>
+	);
+};
+
+export default SaveSubAccount;

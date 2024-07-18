@@ -57,3 +57,10 @@ export interface SubAccount {
     SubAccountSettings: SubAccountSetting;
     DefaultLinkChars: number;
 }
+
+export interface SubAccountUsers {
+    SubAccountId: number;
+    SubAccountName: string;
+    SubAccountManager: string;
+    Balance: number;
+}

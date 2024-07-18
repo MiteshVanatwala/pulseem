@@ -82,6 +82,7 @@ import SignUp from './screens/SignUp/SignUp.tsx';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
+import AccountUsers from './screens/AccountUsers/AccountUsers';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -452,8 +453,10 @@ const renderRoutes = (classes, redirect) => {
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
       <Route
-        path={`/AccountUsers`}
-        component={transferUrl('/Pulseem/AccountUsers.aspx')}
+        exact
+        path={`${sitePrefix}AccountUsers`}
+        element={<AccountUsers classes={classes} />}
+        // component={transferUrl('/Pulseem/AccountUsers.aspx')}
       />
       <Route
         path={`/AccountUsersReport`}
