@@ -267,7 +267,7 @@
 		"100": "Inetrnal Error"
 	},
 	"common": {
-		"error": "Something went wrong"
+		"error": "תקלה כללית, אנא פנו לתמיכה הטכנית  035240290"
 	},
 	"templateError": {
 		"invalidTemplateName": "שם תבנית אינו תקין",
@@ -1276,7 +1276,7 @@
 		},
 		"63016": {
 			"code": 63016,
-			"message": "Failed to send freeform message because you are outside the allowed window. If you are using WhatsApp, please use a Message Template.",
+			"message": "לא ניתן לשלוח תגובה חופשית מחוץ לחלון הסשן",
 			"docs": "## ERROR - 63016\r\n\r\n### Failed to send freeform message because you are outside the allowed window. If you are using WhatsApp, please use a Message Template.\r\n\r\n \r\n\r\n#### Possible Causes\r\n* This message failed to be delivered to the user because it was sent outside the messaging channel's allowed conversation window. For WhatsApp messages initiated by the business, you must use a pre-defined template. \r\n* For Facebook Messenger messages initiated by the business, only publishers registered with the Facebook News Page Index (NPI) are allowed to send notification messages outside the 24-hour window.\r\n\r\n#### Possible Solutions\r\n* [Send a WhatsApp message using a template](https://www.twilio.com/docs/sms/whatsapp/api#send-a-whatsapp-message-using-a-template)\r\n* If you are a publisher, register your Facebook Page with the [Facebook News Page Index](https://www.facebook.com/business/help/316333835842972?id=644465919618833)",
 			"causes": "* This message failed to be delivered to the user because it was sent outside the messaging channel's allowed conversation window. For WhatsApp messages initiated by the business, you must use a pre-defined template. \r\n* For Facebook Messenger messages initiated by the business, only publishers registered with the Facebook News Page Index (NPI) are allowed to send notification messages outside the 24-hour window.",
 			"solutions": "* [Send a WhatsApp message using a template](https://www.twilio.com/docs/sms/whatsapp/api#send-a-whatsapp-message-using-a-template)\r\n* If you are a publisher, register your Facebook Page with the [Facebook News Page Index](https://www.facebook.com/business/help/316333835842972?id=644465919618833)",
@@ -8548,7 +8548,7 @@
 		},
 		"63003": {
 			"code": 63003,
-			"message": "Channel could not find To address",
+			"message": "לא היה ניתן למצוא את הנמען",
 			"docs": "## ERROR - 63003\r\n\r\n### Channel could not find To address\r\n\r\n You have tried to send a message to a To address that is inactive or invalid.\r\n\r\n#### Possible Causes\r\n* The To address is no invalid or longer belongs to a mobile user\r\n* The To address was entered or formatted incorrectly\r\n\r\n#### Possible Solutions\r\n* Ensure you have provided the correct To address for the user you are trying to reach\r\n* Ensure that the To address is still active",
 			"causes": "* The To address is no invalid or longer belongs to a mobile user\r\n* The To address was entered or formatted incorrectly",
 			"solutions": "* Ensure you have provided the correct To address for the user you are trying to reach\r\n* Ensure that the To address is still active",
@@ -10252,7 +10252,7 @@
 		},
 		"63019": {
 			"code": 63019,
-			"message": "Media failed to download",
+			"message": "לא ניתן להוריד את המדיה",
 			"docs": "## ERROR - 63019\r\n\r\n### Media failed to download\r\n\r\n \r\n\r\n#### Possible Causes\r\n* Twilio failed to download the media from the sender. \r\n* Attempt to retrieve the media returned 0 bytes. \r\n\r\n#### Possible Solutions\r\nPlease check the media content before retrying",
 			"causes": "* Twilio failed to download the media from the sender. \r\n* Attempt to retrieve the media returned 0 bytes. ",
 			"solutions": "Please check the media content before retrying",
@@ -10684,7 +10684,7 @@
 		},
 		"63021": {
 			"code": 63021,
-			"message": "Channel invalid content error",
+			"message": "תוכן אינו תקין",
 			"docs": "### Channel invalid content error\r\n\r\n#### Possible Causes \r\n* Message has invalid content. Please verify the content and re send the message",
 			"causes": null,
 			"solutions": null,
@@ -11284,7 +11284,7 @@
 		},
 		"63018": {
 			"code": 63018,
-			"message": "Rate limit exceeded for Channel",
+			"message": "השליחה עברה את מכסת השליחה היומית של החשבון",
 			"docs": "### Rate limit exceeded for Channel\r\n\r\n#### Possible Causes \r\n* Your account is sending messages at a higher combined rate than configured for your account.\r\n* Your WhatsApp number has exceeded the rate limit imposed by WhatsApp. For more information, see [WhatsApp Rate Limiting](https://support.twilio.com/hc/en-us/articles/360024008153-WhatsApp-Rate-Limiting)",
 			"causes": null,
 			"solutions": null,
@@ -11924,7 +11924,7 @@
 		},
 		"63005": {
 			"code": 63005,
-			"message": "Channel did not accept given content. Please see Channel specific error message for more information",
+			"message": "התוכן אינו תקין",
 			"docs": "### Channel did not accept given content\r\n\r\n#### Possible Causes \r\n*   The content you are trying to send was rejected by the Channel. Please see Channel specific error message for more information. ",
 			"causes": null,
 			"solutions": null,
@@ -11932,7 +11932,7 @@
 		},
 		"63013": {
 			"code": 63013,
-			"message": "Channel policy violation",
+			"message": "ההודעה עברה על תקנות השימוש ",
 			"docs": "## ERROR - 63013\r\n\r\n### Channel policy violation\r\n\r\nThis message send failed because it violates Channel provider's policy. \r\n\r\n\r\n\r\n#### Possible Causes\r\nThis message send failed because it violates Channel provider's policy. Please see Channel specific error message for more information. \r\n*  This error may also be seen if more than 4 consecutive whitespaces replace a placeholder in a WhatsApp message body.\r\n\r\n#### Possible Solutions\r\nCheck content is in compliance with Channel providers policy.",
 			"causes": "This message send failed because it violates Channel provider's policy. Please see Channel specific error message for more information. \r\n*  This error may also be seen if more than 4 consecutive whitespaces replace a placeholder in a WhatsApp message body.",
 			"solutions": "Check content is in compliance with Channel providers policy.",
@@ -12748,7 +12748,7 @@
 		},
 		"63032": {
 			"code": 63032,
-			"message": "We cannot send this message to this user because of a WhatsApp limitation. ",
+			"message": "לא ניתן לשלוח הודעות וואטסאפ למספר זה בגלל חסימה של מטא",
 			"docs": "## ERROR - 63032\r\n\r\n### We cannot send this message to this user because of a WhatsApp limitation. \r\n\r\nUser's number is part of an experiment. User's number is part of an experiment\r\n\r\n#### Possible Causes\r\nFailed to send message because this user's phone number is part of an experiment.\r\n\r\n#### Possible Solutions\r\nSkip sending messages to this user.",
 			"causes": "Failed to send message because this user's phone number is part of an experiment.",
 			"solutions": "Skip sending messages to this user.",
@@ -13372,7 +13372,7 @@
 		},
 		"63024": {
 			"code": 63024,
-			"message": "Invalid message recipient",
+			"message": "נמען אינו תקין",
 			"docs": "### Invalid message recipient\r\n\r\n#### Possible Causes \r\n* Message recipient could not be verified",
 			"causes": null,
 			"solutions": null,
@@ -15788,7 +15788,7 @@
 		},
 		"21617": {
 			"code": 21617,
-			"message": "The concatenated message body exceeds the 1600 character limit",
+			"message": "גוף ההודעה עבר את מגבלת 1600 תווים",
 			"docs": "## Error - 21617\n\n### The concatenated message body exceeds the 1600 character limit.\n\nThe maximum allowable body text length is generally 1600 characters,\nbut some glyphs such as Emoji, Emoticons or other special characters\nwill be counted as multiple.\n",
 			"causes": null,
 			"solutions": null,
@@ -15922,5 +15922,27 @@
 			"solutions": "Please ensure From FromBundleSid is Copy of the provisioning Bundle.",
 			"description": "From FromBundleSid cannot be the same Bundle as in URI request."
 		}
-	}
+	},
+	"63005": {
+		"message": "טקסט אינו יכול להכיל שורה חדשה\\טאב או יותר מ-4 רווחים רציפים"
+	},
+	"63013": {
+		"message": "ההודעה עברה על תקנות השימוש "
+	},
+	"63019": {
+		"message": "לא ניתן להוריד את המדיה"
+	},
+	"63027": {
+		"message": "שם התבנית אינו קיים בשפה שהוגשה"
+	},
+	"63041": {
+		"message": "התבנית הושהתה באופן זמני"
+	},
+	"bodyOrMediaURLMustBeSpecified": "גוף הודעה או קישור לקובץ מדיה חסרים",
+	"internalServerError": "תקלת שרת פנימית",
+	"authenticate": "אימות נדרש",
+	"invalidMediaURL": "קישור למדיה אינו תקין",
+	"contentVariablesParameterInvalid": "משתנה דינאמי אינו תקין",
+	"messagingServiceKeyInvalid": "מפתח Messaging Service אינו תקין",
+	"NoWhatsApp": "מספר הנמען אינו תקין או לא קיים בוואטסאפ"
 }

@@ -267,7 +267,7 @@
 		"100": "Inetrnal Error"
 	},
 	"common": {
-		"error": "Something went wrong"
+		"error": "General error, please contact support 035240290"
 	},
 	"templateError": {
 		"invalidTemplateName": "Template name is invalid",
@@ -1276,7 +1276,7 @@
 		},
 		"63016": {
 			"code": 63016,
-			"message": "Failed to send freeform message because you are outside the allowed window. If you are using WhatsApp, please use a Message Template.",
+			"message": "Failed to send freeform message because you are outside the allowed window",
 			"docs": "## ERROR - 63016\r\n\r\n### Failed to send freeform message because you are outside the allowed window. If you are using WhatsApp, please use a Message Template.\r\n\r\n \r\n\r\n#### Possible Causes\r\n* This message failed to be delivered to the user because it was sent outside the messaging channel's allowed conversation window. For WhatsApp messages initiated by the business, you must use a pre-defined template. \r\n* For Facebook Messenger messages initiated by the business, only publishers registered with the Facebook News Page Index (NPI) are allowed to send notification messages outside the 24-hour window.\r\n\r\n#### Possible Solutions\r\n* [Send a WhatsApp message using a template](https://www.twilio.com/docs/sms/whatsapp/api#send-a-whatsapp-message-using-a-template)\r\n* If you are a publisher, register your Facebook Page with the [Facebook News Page Index](https://www.facebook.com/business/help/316333835842972?id=644465919618833)",
 			"causes": "* This message failed to be delivered to the user because it was sent outside the messaging channel's allowed conversation window. For WhatsApp messages initiated by the business, you must use a pre-defined template. \r\n* For Facebook Messenger messages initiated by the business, only publishers registered with the Facebook News Page Index (NPI) are allowed to send notification messages outside the 24-hour window.",
 			"solutions": "* [Send a WhatsApp message using a template](https://www.twilio.com/docs/sms/whatsapp/api#send-a-whatsapp-message-using-a-template)\r\n* If you are a publisher, register your Facebook Page with the [Facebook News Page Index](https://www.facebook.com/business/help/316333835842972?id=644465919618833)",
@@ -11924,7 +11924,7 @@
 		},
 		"63005": {
 			"code": 63005,
-			"message": "Channel did not accept given content. Please see Channel specific error message for more information",
+			"message": "Channel did not accept given content",
 			"docs": "### Channel did not accept given content\r\n\r\n#### Possible Causes \r\n*   The content you are trying to send was rejected by the Channel. Please see Channel specific error message for more information. ",
 			"causes": null,
 			"solutions": null,
@@ -12748,7 +12748,7 @@
 		},
 		"63032": {
 			"code": 63032,
-			"message": "We cannot send this message to this user because of a WhatsApp limitation. ",
+			"message": "We cannot send this message to this user because of a WhatsApp limitation",
 			"docs": "## ERROR - 63032\r\n\r\n### We cannot send this message to this user because of a WhatsApp limitation. \r\n\r\nUser's number is part of an experiment. User's number is part of an experiment\r\n\r\n#### Possible Causes\r\nFailed to send message because this user's phone number is part of an experiment.\r\n\r\n#### Possible Solutions\r\nSkip sending messages to this user.",
 			"causes": "Failed to send message because this user's phone number is part of an experiment.",
 			"solutions": "Skip sending messages to this user.",
@@ -15788,7 +15788,7 @@
 		},
 		"21617": {
 			"code": 21617,
-			"message": "The concatenated message body exceeds the 1600 character limit",
+			"message": "The message body exceeds the 1600 character limit",
 			"docs": "## Error - 21617\n\n### The concatenated message body exceeds the 1600 character limit.\n\nThe maximum allowable body text length is generally 1600 characters,\nbut some glyphs such as Emoji, Emoticons or other special characters\nwill be counted as multiple.\n",
 			"causes": null,
 			"solutions": null,
@@ -15922,5 +15922,27 @@
 			"solutions": "Please ensure From FromBundleSid is Copy of the provisioning Bundle.",
 			"description": "From FromBundleSid cannot be the same Bundle as in URI request."
 		}
-	}
+	},
+	"63005": {
+		"message": "Text cannot have new-line/tab characters or more than 4 consecutive spaces"
+	},
+	"63013": {
+		"message": "Channel policy violation"
+	},
+	"63019": {
+		"message": "Media failed to download"
+	},
+	"63027": {
+		"message": "Template name does not exist in the submitted language"
+	},
+	"63041": {
+		"message": "The template has been temporarily paused"
+	},
+	"bodyOrMediaURLMustBeSpecified": "A text message body or media urls must be specified.",
+	"internalServerError": "An internal server error has occurred",
+	"authenticate": "authenticate",
+	"invalidMediaURL": "Invalid media URL(s)",
+	"contentVariablesParameterInvalid": "The Content Variables parameter is invalid.",
+	"messagingServiceKeyInvalid": "The Messaging Service Key is invalid.",
+	"NoWhatsApp": "The recipient number is invalid or doesn't have WhatsApp"
 }
