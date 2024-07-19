@@ -15938,11 +15938,25 @@
 	"63041": {
 		"message": "The template has been temporarily paused"
 	},
-	"bodyOrMediaURLMustBeSpecified": "A text message body or media urls must be specified.",
-	"internalServerError": "An internal server error has occurred",
-	"authenticate": "authenticate",
-	"invalidMediaURL": "Invalid media URL(s)",
-	"contentVariablesParameterInvalid": "The Content Variables parameter is invalid.",
-	"messagingServiceKeyInvalid": "The Messaging Service Key is invalid.",
-	"NoWhatsApp": "The recipient number is invalid or doesn't have WhatsApp"
+	"bodyOrMediaURLMustBeSpecified": {
+		"message": "A text message body or media urls must be specified."
+	},
+	"internalServerError": {
+		"message": "An internal server error has occurred"
+	},
+	"authenticate": {
+		"message": "authenticate"
+	},
+	"invalidMediaURL": {
+		"message": "Invalid media URL(s)"
+	},
+	"contentVariablesParameterInvalid": {
+		"message": "The Content Variables parameter is invalid."
+	},
+	"messagingServiceKeyInvalid": {
+		"message": "The Messaging Service Key is invalid."
+	},
+	"NoWhatsApp": {
+		"message": "The recipient number is invalid or doesn't have WhatsApp"
+	}
 }
