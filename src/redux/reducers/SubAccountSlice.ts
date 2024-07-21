@@ -19,7 +19,7 @@ export const GetSubAccountList = createAsyncThunk(
 export const SubAccountSlice = createSlice({
   name: "SubAccount",
   initialState: {
-    isGlobal: false,
+    isGlobal: true,
     subAccountList: [
       {
         SubAccountId: 1,

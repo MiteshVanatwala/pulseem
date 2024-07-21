@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Divider, FormControlLabel, Grid, IconButton, Tab, Tabs, TextField, Tooltip, Typography, Zoom } from '@material-ui/core';
+import { Box, Button, Divider, FormControlLabel, Grid, TextField, Tooltip, Typography, Zoom } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../components/Loader/Loader';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -19,11 +19,10 @@ import Groups from '../../components/Groups/GroupsHandler/Groups';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { DateField } from '../../components/managment';
 import moment from 'moment';
-import { Stack } from '@mui/material';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { ValidateEmailAddress } from '../../helpers/Utils/common';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose }: any) => {
-	const { id } = useParams();
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
 	const { t } = useTranslation();
@@ -45,7 +44,6 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose }: any) => {
 		password: '',
 		confirmPassword: '',
 	});
-	const [tabValue, setTabValue] = useState<string>('1');
 	const [ showPasswordTip, setShowPasswordTip ] = useState<boolean>(false);
 	const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
     LowerChar: false,
@@ -82,8 +80,39 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose }: any) => {
 		}
 	}, []);
 
-	const saveSubAccount = () => {
-		
+	const validateForm = () => {
+		let errorsTemp = JSON.parse(JSON.stringify(errors))
+		errorsTemp = {
+			subAccountName: subAccountDetails.subAccountName.trim() === '' ? t('common.requiredField') : '',
+			cellPhone: subAccountDetails.cellPhone.trim() === '' ? t('common.requiredField') : '',
+			emailAddress: subAccountDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
+			loginUserName: subAccountDetails.loginUserName.trim() === '' ? t('common.requiredField') : '',
+			password: subAccountDetails.password.trim() === '' ? t('common.requiredField') : '',
+			confirmPassword: subAccountDetails.confirmPassword.trim() === '' ? t('common.requiredField') : '',
+		};
+
+		if (subAccountDetails.password !== subAccountDetails.confirmPassword) {
+			errorsTemp = {
+				...errorsTemp,
+				confirmPassword: t('common.confirmPasswordNotMatch')
+			}
+		}
+
+		if (!ValidateEmailAddress(subAccountDetails.emailAddress)) {
+			errorsTemp = {
+				...errorsTemp,
+				emailAddress: t('common.invalidEmail')
+			}
+		}
+
+		setErrors(errorsTemp);
+		return errorsTemp.subAccountName === '' || errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '';
+	}
+
+	const saveSubAccountDetils = () => {
+		if (validateForm()) {
+
+		}
 	}
 
 	// const save = async (redirectToNewEditor: number) => {
@@ -222,7 +251,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose }: any) => {
 				>
 					<Grid item>
 						<Button
-							onClick={(e: React.MouseEvent<Element, MouseEvent>) => {}}
+							onClick={saveSubAccountDetils}
 							className={clsx(
 								classes.btn,
 								classes.btnRounded,

@@ -32,6 +32,7 @@ const AccountUsers = ({ classes }: any) => {
   const [ showLoader, setShowLoader ] = useState<boolean>(false);
   const [ toastMessage, setToastMessage ] = useState<toastProps['SUCCESS']>(resetToastData);
   const [ accountSearch, setAccountSearch ] = useState('');
+  const [ selectedAccountId, setSelectedAccountId ] = useState('');
   const [ serachData, setSearchData ] = useState<any>({
     PageIndex: 1,
     PageSize: rowsPerPage,
@@ -310,7 +311,7 @@ const AccountUsers = ({ classes }: any) => {
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
-        {windowSize !== 'xs' && !isGlobal && <Grid item>
+        {windowSize !== 'xs' && !isGlobal && selectedAccountId && <Grid item>
           <Button
             component="a"
             onClick={() => {
@@ -340,7 +341,7 @@ const AccountUsers = ({ classes }: any) => {
           </Button>
         </Grid>}
         {
-          !isGlobal && (
+          !isGlobal && selectedAccountId && (
             <Grid item xs={windowSize === 'xs' && 12}>
               <Button
                 component="a"
@@ -361,7 +362,7 @@ const AccountUsers = ({ classes }: any) => {
           )
         }
         {
-          !isGlobal && (
+          !isGlobal && selectedAccountId && (
             <Grid item xs={windowSize === 'xs' && 12}>
               <Button
                 className={clsx(
@@ -389,7 +390,7 @@ const AccountUsers = ({ classes }: any) => {
           </Button>
         </Grid>
         {
-          !isGlobal && (
+          !isGlobal && selectedAccountId && (
           <Grid item xs={windowSize === 'xs' && 12}>
             <Button
               className={clsx(
@@ -417,7 +418,11 @@ const AccountUsers = ({ classes }: any) => {
     return (
       <TableRow
         key={row.ID}
-        classes={rowStyle}>
+        classes={rowStyle}
+        onClick={() => setSelectedAccountId(row.SubAccountId)}
+        hover={!isGlobal}
+        selected={!isGlobal && row.SubAccountId === selectedAccountId}
+      >
         <TableCell
           classes={cellBodyStyle}
           align='center'

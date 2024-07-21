@@ -723,6 +723,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
           '& *.MuiTypography-root': {
             fontSize: 16,
           }
+        },
+        '&.MuiTableRow-hover': {
+          cursor: "pointer"
+        },
+        '&.Mui-selected': {
+          backgroundColor: '#ff434466 !important',
         }
       }
     }

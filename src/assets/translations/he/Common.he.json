@@ -824,5 +824,6 @@
   "dynamicProductRedirectURLNote": "שימו לב! הוספת \"מוצר דינאמי\" תעבוד רק במידה והחנות שלכם ממומשקת לחשבון",
   "URL": "גיבוי",
   "fallbackURL": "URL גיבוי",
-  "invalidURL": "אנא הכניסו קישור תקין"
+  "invalidURL": "אנא הכניסו קישור תקין",
+  "confirmPasswordNotMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה"
 }
