@@ -105,7 +105,7 @@ const TemplateFields = ({
 						</Typography>
 					</Grid>
 
-					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
+					<Grid item xs={12} md={6} sm={12} className={clsx(classes.buttonForm, savedTemplateList !== null && savedTemplateList?.length === 0 ? classes.disabled : null)}>
 						<Typography className={classes.buttonHead}>
 							<>{translator('whatsapp.selectSavedTemplate')}</>
 						</Typography>
