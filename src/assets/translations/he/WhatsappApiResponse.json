@@ -13372,7 +13372,7 @@
 		},
 		"63024": {
 			"code": 63024,
-			"message": "נמען אינו תקין",
+			"message": "מספר הנמען אינו תקין או לא קיים בוואטסאפ",
 			"docs": "### Invalid message recipient\r\n\r\n#### Possible Causes \r\n* Message recipient could not be verified",
 			"causes": null,
 			"solutions": null,
@@ -15938,11 +15938,25 @@
 	"63041": {
 		"message": "התבנית הושהתה באופן זמני"
 	},
-	"bodyOrMediaURLMustBeSpecified": "גוף הודעה או קישור לקובץ מדיה חסרים",
-	"internalServerError": "תקלת שרת פנימית",
-	"authenticate": "אימות נדרש",
-	"invalidMediaURL": "קישור למדיה אינו תקין",
-	"contentVariablesParameterInvalid": "משתנה דינאמי אינו תקין",
-	"messagingServiceKeyInvalid": "מפתח Messaging Service אינו תקין",
-	"NoWhatsApp": "מספר הנמען אינו תקין או לא קיים בוואטסאפ"
+	"bodyOrMediaURLMustBeSpecified": {
+		"message": "גוף הודעה או קישור לקובץ מדיה חסרים"
+	},
+	"internalServerError": {
+		"message": "תקלת שרת פנימית"
+	},
+	"authenticate": {
+		"message": "אימות נדרש"
+	},
+	"invalidMediaURL": {
+		"message": "קישור למדיה אינו תקין"
+	},
+	"contentVariablesParameterInvalid": {
+		"message": "משתנה דינאמי אינו תקין"
+	},
+	"messagingServiceKeyInvalid": {
+		"message": "מפתח Messaging Service אינו תקין"
+	},
+	"NoWhatsApp": {
+		"message": "מספר הנמען אינו תקין או לא קיים בוואטסאפ"
+	}
 }
