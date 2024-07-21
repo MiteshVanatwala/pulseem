@@ -244,7 +244,7 @@ export const getTemplatePreviewData = (
 
 	const saveCardTemplate = (templateData: savedTemplateTypesProps) => {
 		const cardData: savedTemplateCardProps = templateData?.['card'];
-		templatePreviewData.templateData.templateText = cardData?.title;
+		templatePreviewData.templateData.templateText = `${cardData?.title}${cardData?.subtitle && cardData?.subtitle !== '' ? "\n" + cardData?.subtitle : ''}`;
 		if (cardData?.actions?.length > 0) {
 			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
 				templatePreviewData.buttonType = buttonTypes.CALL_TO_ACTION;
