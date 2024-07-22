@@ -61,6 +61,7 @@ import { CgWebsite } from "react-icons/cg";
 import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
 import { IsValidURL } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
+import { URL_REGEX } from "../../../helpers/Constants";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -455,9 +456,7 @@ const SmsCreator = ({ classes }) => {
 
     if (t && t.length > 0) {
       const res = t.replace('\r\n', ' ');
-      // eslint-disable-next-line
-      const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\??(?:[\-\+=&;%@\.\w_]*)##?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;
-      const links = res.match(regex);
+      const links = res.match(URL_REGEX);
 
       if (links && links.length > 0) {
         setlinkCount(links.length);

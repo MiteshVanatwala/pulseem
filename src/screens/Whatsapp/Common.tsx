@@ -244,7 +244,7 @@ export const getTemplatePreviewData = (
 
 	const saveCardTemplate = (templateData: savedTemplateTypesProps) => {
 		const cardData: savedTemplateCardProps = templateData?.['card'];
-		templatePreviewData.templateData.templateText = cardData?.title;
+		templatePreviewData.templateData.templateText = `${cardData?.title}${cardData?.subtitle && cardData?.subtitle !== '' ? "\n" + cardData?.subtitle : ''}`;
 		if (cardData?.actions?.length > 0) {
 			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
 				templatePreviewData.buttonType = buttonTypes.CALL_TO_ACTION;
@@ -432,6 +432,37 @@ export const getApiErrorResponseMessage = (
 	} else {
 		return 'WhatsappApiResponse.common.error';
 	}
+};
+
+export const getWhatsappError = (message: string): string => {
+	const initialCode = message.substring(0, 5);
+	const initialCodeList = [
+		'63005', '63013', '63019', '63027', '63041'
+	]
+	if (message.indexOf('https://www.twilio.com/docs/api/errors') > -1) {
+		const errorCode = message?.split('/');
+		return getApiErrorResponseMessage(
+			'twilio',
+			Number(errorCode[errorCode?.length - 1])
+		);
+	} else if (initialCodeList.indexOf(initialCode) > -1) {
+		return `WhatsappApiResponse.${initialCode}.message`;
+	} else if(message.indexOf('message body or media urls must be specified') > -1) {
+		return `WhatsappApiResponse.bodyOrMediaURLMustBeSpecified.message`;
+	} else if(message.indexOf('internal server error has occurred') > -1) {
+		return `WhatsappApiResponse.internalServerError.message`;
+	} else if(message.indexOf('Authenticate') > -1) {
+		return `WhatsappApiResponse.authenticate.message`;
+	} else if(message.indexOf('Invalid media URL') > -1) {
+		return `WhatsappApiResponse.invalidMediaURL.message`;
+	} else if(message.indexOf('The Content Variables parameter is invalid') > -1) {
+		return `WhatsappApiResponse.contentVariablesParameterInvalid.message`;
+	} else if(message.indexOf('The Messaging Service Sid') > -1) {
+		return `WhatsappApiResponse.messagingServiceKeyInvalid.message`;
+	} else if(message.indexOf('The \'To\' number whatsapp') > -1) {
+		return `WhatsappApiResponse.NoWhatsApp.message`;
+	}
+	return 'WhatsappApiResponse.common.error';
 };
 
 export const getErrorMessageFromTwilioLink = (link: string): string => {
