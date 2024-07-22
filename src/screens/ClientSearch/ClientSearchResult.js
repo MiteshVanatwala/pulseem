@@ -62,7 +62,7 @@ import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
-import { getErrorMessageFromTwilioLink } from "../Whatsapp/Common";
+import { getWhatsappError } from "../Whatsapp/Common";
 import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 const useStyles = makeStyles({
   groupName: {
@@ -753,13 +753,13 @@ const ClientSearchResult = ({ classes }) => {
           </Typography>
           <Typography className={classes.whatsappReportErrorCell}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(getWhatsappError(LogSms_ErrorType))}
           </Typography>
         </>),
         web: ({ LogSms_ErrorType = '', ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(getWhatsappError(LogSms_ErrorType))}
           </Typography>
         )
       },

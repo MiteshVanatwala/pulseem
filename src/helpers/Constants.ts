@@ -343,3 +343,5 @@ export const SHOPIFY_SITE_TRACKING = `
 </script>`;
 export const SEND_1 = '_Send_1';
 export const PULSE_1 = '_Pulse_1';
+
+export const URL_REGEX = /(((?:www\.)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;
