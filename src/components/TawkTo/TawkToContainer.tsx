@@ -16,9 +16,10 @@ const TawkToContainer = ({ itemId }: any) => {
 
   useEffect(() => {
     const node: any = document.querySelector('[title="chat widget"]');
+    const affectedPages = ['campaigns/editor', 'editor/landingpages'];
 
     if (node && node?.style) {
-      if (location.pathname.toLowerCase().indexOf('editor/landingpages') > -1) {
+      if (affectedPages.indexOf(location.pathname.toLowerCase()) > -1) {
         node.style.bottom = '75px';
       }
       else {
@@ -29,7 +30,7 @@ const TawkToContainer = ({ itemId }: any) => {
 
 
 
-  return (process.env.REACT_APP_MODE === "PROD" && accountSettings?.Account?.ReferrerID === 0) ?
+  return (accountSettings?.Account?.ReferrerID === 0) ?
     <>
       <TawkMessengerReact
         onLoad={onTawkToLoaded}
