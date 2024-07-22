@@ -83,7 +83,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
         fields: {
           ...form,
           optIn: {
-            type: 'checkbox', label: IsRTL ? 'אני מאשר/ת קבלת דיוור' : 'I agree to receiving marketing content', canBeRemovedFromLayout: false, attributes: { dir: IsRTL ? 'right' : 'left' }
+            type: 'checkbox', label: IsRTL ? 'אני מאשר/ת קבלת דיוור' : 'I agree to receiving marketing content',
+            canBeRemovedFromLayout: true,
+            attributes: { dir: IsRTL ? 'right' : 'left' }
           },
           submit: {
             type: 'submit', label: '', canBeRemovedFromLayout: false,
