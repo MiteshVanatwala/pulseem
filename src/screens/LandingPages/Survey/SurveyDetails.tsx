@@ -165,6 +165,7 @@ const SurveyDetails = ({ classes }: any) => {
                   <MdQuestionAnswer />
                 </ListItemAvatar>
                 <ListItemText
+                  className={classes.font16}
                   primary={t('landingPages.survey.surveyAnswer')}
                   secondary={answer}
                 />
@@ -284,14 +285,14 @@ const SurveyDetails = ({ classes }: any) => {
               return <Grid item xs={gridSize || 0} key={`grid_${idx}`}>
                 <Paper elevation={2} key={idx} className={classes.surveyPapaerContainer}>
                   {item.QuestionType === eQuestionType.Text ? (
-                    <ListSubheader className={clsx(classes.textAnswerDirection, classes.subHeaderInherit)}>
-                      <b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})
-                      <Box>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
+                    <ListSubheader className={clsx(classes.textAnswerDirection, classes.subHeaderInherit, classes.font16)}>
+                      <b className={classes.font16}>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})
+                      <Box className={classes.font16}>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
                     </ListSubheader>
                   ) : (
                     <Box className={classes.p15}>
                       <Box className={clsx(classes.dFlex, classes.justifySpaceBetween)}>
-                        <Box><b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})</Box>
+                        <Box className={classes.font16}><b>{item?.Question}</b>&nbsp;({renderQuestionType(item.QuestionType)})</Box>
                         {(item.QuestionType === eQuestionType.MultipleSelect ||
                           item.QuestionType === eQuestionType.SingleSelect) &&
                           <Box className={classes.dFlex}>
@@ -332,7 +333,7 @@ const SurveyDetails = ({ classes }: any) => {
                           </Box>
                         }
                       </Box>
-                      <Box>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
+                      <Box className={classes.font16}>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
                     </Box>
                   )}
                   <Divider className={classes.mt15} />

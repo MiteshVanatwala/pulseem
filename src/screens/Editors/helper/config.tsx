@@ -100,7 +100,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         layout: layout,
         attributes: {
           "accept-charset": "UTF-8",
-          action: isProdMode ? "https://secure.pulseem.com/submithandler.axd" : "https://l-p.site/submithandler.axd",
+          action: "https://stage.l-p.site/submithandler.axd",
           autocomplete: "on",
           enctype: "multipart/form-data",
           method: "post",
