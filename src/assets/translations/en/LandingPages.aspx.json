@@ -471,5 +471,8 @@
   "doubleOptIn": "Activate Subscriber with Double Opt In",
   "commentsToForm": "Comments to Form",
   "facebookLikes": "Facebook Like",
-  "multipleFormsBlocked": "Multiple Forms are currenly not allowed."
+  "multipleFormsBlocked": "Multiple Forms are currenly not allowed.",
+  "isOptIn": "Mailing Approval",
+  "approved": "Approved",
+  "notApproved": "Not Approved"
 }

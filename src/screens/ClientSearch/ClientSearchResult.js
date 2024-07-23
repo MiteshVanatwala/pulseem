@@ -812,6 +812,12 @@ const ClientSearchResult = ({ classes }) => {
       className: classes.flex3,
       align: "center",
     },
+    searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID && {
+      label: t('landingPages.isOptIn'),
+      classes: cellStyle,
+      className: classes.flex2,
+      align: "center",
+    },
   ];
   const getData = async () => {
     setLoader(true);
@@ -1389,9 +1395,10 @@ const ClientSearchResult = ({ classes }) => {
   };
   const renderWebNameCell = (row, fullwidth) => {
     let date = null;
-    const { FirstName, LastName, CreationDate } = row;
+    const { FirstName, LastName, CreationDate, RegistrationOn } = row;
     let text = t("common.UpdatedOn");
-    date = CreationDate ? moment(CreationDate, dateFormat) : null;
+    const d = RegistrationOn || CreationDate;
+    date = d ? moment(d, dateFormat) : null;
     return (
       <Grid container spacing={1}>
         <Grid item sm={12} style={{ textAlign: 'start' }}>
@@ -1436,7 +1443,9 @@ const ClientSearchResult = ({ classes }) => {
       LastSendDate,
       snt_OpeningDate,
       ErrorTypeText,
-      OpenTime
+      OpenTime,
+      RegistrationOn,
+      IsOptIn
     } = row;
     let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
       return e === true
@@ -1559,7 +1568,7 @@ const ClientSearchResult = ({ classes }) => {
           <Grid container direction="row">
             <Grid item sm={12 - iconsCells}>
               {/* {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })} */}
-              {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate })}
+              {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate, RegistrationOn, IsOptIn })}
             </Grid>
           </Grid>
         </TableCell>
@@ -1616,7 +1625,7 @@ const ClientSearchResult = ({ classes }) => {
             align="center"
           />
         </TableCell>
-        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: 'none' }}>
+        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FormID ? 'none' : null }}>
           <FlexGrid
             customStyle={{ justifyContent: 'space-between' }}
             gridArr={[
@@ -1637,6 +1646,9 @@ const ClientSearchResult = ({ classes }) => {
             align="center"
           />
         </TableCell>
+        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID && <TableCell classes={cellStyle} align="center" className={classes.flex2} style={{ border: 'none' }}>
+          {IsOptIn ? <Typography className={clsx(classes.sendIconText, classes.bold)}>{t('landingPages.approved')}</Typography> : <Typography className={clsx(classes.grayTextCell, classes.bold)}>{t('landingPages.notApproved')}</Typography>}
+        </TableCell>}
       </TableRow>
     );
   };
