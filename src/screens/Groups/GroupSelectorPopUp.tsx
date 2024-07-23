@@ -73,6 +73,10 @@ const GroupSelectorPopUp = ({
                 })
                 break;
             }
+            case 422: {
+                setGroupNameExist(true);
+                break;
+            }
         }
         setShowLoader(false);
     }
@@ -130,7 +134,7 @@ const GroupSelectorPopUp = ({
                 renderInput={(params) => (
                     // @ts-ignore
                     <TextField {...params}
-                    placeholder={t('group.typeGroupNameAutocomplete')}
+                        placeholder={t('group.typeGroupNameAutocomplete')}
                         className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
                 )}
             />
@@ -166,9 +170,11 @@ const GroupSelectorPopUp = ({
                     <Button className={clsx(classes.btn, classes.btnRounded, classes.mlr10, !inputGroup || inputGroup === '' ? classes.disabled : null)} onClick={handleCreateGroup}>
                         {t("mainReport.save")}
                     </Button>
-                    {groupNameExist ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#", inputGroup)}</span> : null}
                 </Box>
             </Box>
+            {groupNameExist ? <Box>
+                <span style={{ marginTop: "8px", color: "red", fontSize: "14px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#", inputGroup)}</span>
+            </Box> : null}
         </Box>,
         paperStyle: classes.packageDialogPpaper
     }

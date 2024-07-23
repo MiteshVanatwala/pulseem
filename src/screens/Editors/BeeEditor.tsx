@@ -1077,10 +1077,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     else {
       onAutoSavePage(true);
     }
-    setTimeout(() => {
-      getData();
-    }, 1000);
-
   }
   const updateWebFormGroups = async (list: Array<number>) => {
     setLoader(true);

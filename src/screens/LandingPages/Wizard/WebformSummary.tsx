@@ -163,7 +163,7 @@ const WebformSummary = ({ classes }: any) => {
                 classes={classes}
                 // @ts-ignore
                 onBack={{
-                    callback: () => Redirect({ url: `${sitePrefix}LandingPages/${id}` } as RedirectPropTypes)
+                    callback: () => Redirect({ url: `${sitePrefix}editor/LandingPages/${id}` } as RedirectPropTypes)
                 }}
                 // @ts-ignore
                 additionalButtons={<Button onClick={() => { Redirect({ url: `${sitePrefix}EditRegistrationPage` } as RedirectPropTypes) }}
