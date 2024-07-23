@@ -22,7 +22,7 @@ import moment from 'moment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { ValidateEmailAddress } from '../../helpers/Utils/common';
 
-const SaveSubAccount = ({ classes, isOpen = false, onClose }: any) => {
+const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetails = {} }: any) => {
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
 	const { t } = useTranslation();
@@ -111,56 +111,15 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose }: any) => {
 
 	const saveSubAccountDetils = () => {
 		if (validateForm()) {
-
+			//@ts-ignore
+			// const response = await dispatch(saveLandingPage(subAccountDetails));
+			// handleSaveResponse(response?.payload, redirectToNewEditor);
+			setIsLoader(false);
+			return true;
+		} else {
+			// setDialogType({ type: 'validationDialog' })
 		}
 	}
-
-	// const save = async (redirectToNewEditor: number) => {
-	// 	const errorDump = {
-	// 		...errors,
-	// 		PageName: !landingPageModel.PageName?.trim() ? t('landingPages.formNameRequired') : '',
-	// 		shortURL: !landingPageModel.PageUrl?.trim() ? t('landingPages.shortURLRequired') : '',
-	// 		answerMessage: [
-	// 			LandingPagesAnswerType.POPUP_MESSAGE,
-	// 			LandingPagesAnswerType.REDIRECT_URL
-	// 		].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.answerMessageRequired') : '',
-	// 		// paymentURL: [
-	// 		// 	LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-	// 		// ].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.AnswerData?.trim() ? t('landingPages.URLRequired') : '',
-	// 		// paymentAPIUsername: [
-	// 		// 	LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-	// 		// ].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.APIUserName?.trim() ? t('landingPages.APIUsernameRequired') : '',
-	// 		// paymentTerminalNumber: [
-	// 		// 	LandingPagesAnswerType.TRANSFER_TO_PAYMENT_PAGE
-	// 		// ].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.TerminalNumber?.trim() ? t('landingPages.terminalNumberRequired') : '',
-	// 		offlineURL: landingPageModel?.OfflineDate && !isValidHttpUrl(landingPageModel.OfflineUrl) ? t('landingPages.invalidRedirectURLWhenOffline') : '' //,
-	// 		// DownloadUrl: [LandingPagesAnswerType.DOWNLOAD_FILE].indexOf(landingPageModel.AnswerType) > -1 && !landingPageModel.DownloadUrl?.trim() ? t('landingPages.invalidDownloadURL') : ''
-	// 	};
-	// 	setErrors(errorDump);
-	// 	if (Object.values(errorDump).filter(x => x !== '').length <= 0) {
-	// 		setIsLoader(true);
-	// 		let headScript, bodyScript = '';
-
-	// 		headScript = prepareHeadScript();
-	// 		bodyScript = prepareBodyScript();
-
-	// 		const req = {
-	// 			...landingPageModel,
-	// 			SelectedGroupList: null,
-	// 			EmailsToReport: landingPageModel?.EmailsToReport?.join(','),
-	// 			GroupIDs: landingPageModel?.GroupIDs?.join(','),
-	// 			ClientJavaScript: headScript,
-	// 			ClientBodyScript: bodyScript
-	// 		};
-	// 		//@ts-ignore
-	// 		const response = await dispatch(saveLandingPage(req));
-	// 		handleSaveResponse(response?.payload, redirectToNewEditor);
-	// 		setIsLoader(false);
-	// 		return true;
-	// 	} else {
-	// 		setDialogType({ type: 'validationDialog' })
-	// 	}
-	// }
 
 	// const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
 

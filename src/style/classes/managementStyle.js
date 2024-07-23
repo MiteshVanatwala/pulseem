@@ -113,6 +113,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginBlock: 0,
     borderBottom: 0,
     padding: "16px 10px!important",
+    '&:nth-child(1)': {
+      borderTopLeftRadius: 10,
+    },
+    '&:last-child': {
+      borderTopRightRadius: 10,
+    }
   },
   tableCellBody: {
     borderInlineEnd: "2px solid #F0F5FF",
@@ -605,6 +611,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       '& .MuiTableRow-root': {
         borderColor: 'transparent',
         backgroundColor: '#F0F5FF',
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
       }
     },
     '& .tableBodyContainer': {

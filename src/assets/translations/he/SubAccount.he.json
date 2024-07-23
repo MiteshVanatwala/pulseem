@@ -19,6 +19,7 @@
 	"addGroupsToSubAccount": "Add groups to sub account",
 	"contactName": "Contact Name",
 	"creditHistory": "Credit History",
+	"type": "Type",
 	"accountType": "Account Type",
 	"showPulseemCreditsOnly": "show pulseem credits only",
 	"transferringFromAccount": "Transferring From Account",
@@ -37,5 +38,18 @@
 	"emailBulkAmount": "Email Bulk Amount",
 	"SMSBulkAmount": "SMS Bulk Amount",
 	"MMSBulkAmount": "MMS Bulk Amount",
-	"email2FA": "This Email will be used for 2FA"
+	"email2FA": "This Email will be used for 2FA",
+	"accountDetails": "Account Details",
+	"creditDetails": "Credit Details",
+	"addBulkEmails": "Add Bulk Emails",
+	"addSMS": "Add SMS",
+	"addMMS": "Add MMS",
+	"lastEmailBulkAdded": "Last Email Bulk",
+	"lastSMSBulkAdded": "Last SMS Bulk Added",
+	"lastMMSBulkAdded": "Last MMS Bulk Added",
+	"lastBalanceAdded": "Last Balance Added",
+	"createAccount": "Create Account",
+	"standard": "Standard",
+	"direct": "Direct",
+	"amount": "Amount"
 }

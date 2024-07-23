@@ -21,6 +21,8 @@ import { SubAccountUsers } from '../../Models/SubAccount/SubAccounts';
 import { DeleteIcon, EditIcon, PreviewIcon, SendIcon, ShareIcon } from '../../assets/images/managment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import SaveSubAccount from './SaveSubAccount';
+import DirectAccount from './DirectAccount';
+import CreditHistory from './CreditHistory';
 
 const AccountUsers = ({ classes }: any) => {
   const { windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
@@ -118,7 +120,10 @@ const AccountUsers = ({ classes }: any) => {
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs' || !isGlobal,
         onClick: () => {
-          setDialogType({ type: 'Preview', data: {} });
+          setDialogType({
+            type: 'SaveSubAccount',
+            data: row
+          })
         },
         rootClass: classes.paddingIcon,
       },
@@ -351,8 +356,10 @@ const AccountUsers = ({ classes }: any) => {
                   classes.btnRounded,
                 )}
                 onClick={(e) => {
-                  e.preventDefault();
-                  // navigate(`${sitePrefix}Campaigns/Archive`)
+                  setDialogType({
+                    type: 'SaveSubAccount',
+                    data: {}
+                  })
                 }}
                 endIcon={<MdModeEditOutline />}
               >
@@ -547,47 +554,12 @@ const AccountUsers = ({ classes }: any) => {
     )
   }
 
-  const renderSubAccountFormDialog = () => {
-		return {
-			showDivider: false,
-			title: t("SubAccount.addSubAccount"),
-      showDefaultButtons: true,
-			content: (
-				<SaveSubAccount classes={classes} />
-			),
-			onConfirm: () => {
-				// setIsFileSelected(true);
-			},
-			onCancel: () => setDialogType(null)
-		};
-	}
-
   const renderHistoryDialog = () => {
 		return {
 			showDivider: false,
 			title: t("SubAccount.showHistory"),
-			content: (
-				<>
-          This is renderHistoryDialog
-        </>
-			),
+			content: <CreditHistory classes={classes} />,
 			onConfirm: () => setDialogType(null),
-			onCancel: () => setDialogType(null)
-		};
-	}
-
-  const renderDirectAccountDialog = () => {
-		return {
-			showDivider: false,
-			title: t("common.documentGallery"),
-			content: (
-				<>
-          This is renderDirectAccountDialog
-        </>
-			),
-			onConfirm: () => {
-				// setIsFileSelected(true);
-			},
 			onCancel: () => setDialogType(null)
 		};
 	}
@@ -610,9 +582,7 @@ const AccountUsers = ({ classes }: any) => {
     let currentDialog: any = {};
 		if (type === 'HistoryDialog') {
 			currentDialog = renderHistoryDialog();
-		} else if (type === 'DirectAccount') {
-			currentDialog = renderDirectAccountDialog();
-		}else if (type === 'Preview') {
+    } else if (type === 'Preview') {
 			currentDialog = renderHistoryDialog();
 		} else if (type === 'Delete') {
 			currentDialog = getDeleteDialog();
@@ -621,7 +591,7 @@ const AccountUsers = ({ classes }: any) => {
     if (type) {
       return (
         dialogType && <BaseDialog
-          contentStyle={type === 'SaveSubAccount' ? clsx(classes.noMargin) : classes.maxWidth400}
+          contentStyle={type === 'HistoryDialog' ? clsx(classes.noMargin, classes.w70VW) : classes.maxWidth400}
           classes={classes}
           open={dialogType}
           // childrenStyle={classes.mb25}
@@ -652,6 +622,7 @@ const AccountUsers = ({ classes }: any) => {
       {renderDialog()}
       {renderToast()}
       <SaveSubAccount classes={classes} isOpen={dialogType?.type === 'SaveSubAccount'} onClose={() => setDialogType(null)} />
+      <DirectAccount classes={classes} isOpen={dialogType?.type === 'DirectAccount'} onClose={() => setDialogType(null)} />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

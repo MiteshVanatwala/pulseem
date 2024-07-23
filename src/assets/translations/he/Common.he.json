@@ -825,5 +825,7 @@
   "URL": "גיבוי",
   "fallbackURL": "URL גיבוי",
   "invalidURL": "אנא הכניסו קישור תקין",
-  "confirmPasswordNotMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה"
+  "confirmPasswordNotMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה",
+  "SMS": "SMS",
+  "MMS": "MMS"
 }
