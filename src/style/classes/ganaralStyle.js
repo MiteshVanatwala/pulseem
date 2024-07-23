@@ -4159,7 +4159,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
     {
       paddingRight: isRTL ? '0px !important' : '0px',
-    }
+      paddingInlineEnd: 40
+    },
   },
   highlightExpandedRow: {
     backgroundColor: '#dbdbdb !important',
