@@ -342,3 +342,18 @@ export async function SwitchStatusByCondition(data: ExportData | any, statuses: 
     });
     return retValData as ExportData;
 }
+
+export async function SwitchIsOptIn(data: ExportData | any) {
+    const retValData: any = [];
+    data.forEach((o: any) => {
+        const tempData = { ...o } as any;
+        if (o?.IsOptIn && (o?.IsOptIn === true || o?.IsOptIn?.toLowerCase() === 'true')) {
+            tempData.IsOptIn = i18n.t('landingPages.approved');
+        }
+        else {
+            tempData.IsOptIn = i18n.t('landingPages.notApproved');
+        }
+        retValData.push(tempData);
+    });
+    return retValData as ExportData;
+}

@@ -48,7 +48,7 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition, FlatObject } from '../../helpers/Export/ExportHelper';
+import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition, FlatObject, SwitchIsOptIn } from '../../helpers/Export/ExportHelper';
 import { ClientStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
@@ -291,7 +291,7 @@ const ClientSearchResult = ({ classes }) => {
       let updatingObject = {
         "Status": t('common.Status'),
         "SmsStatus": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ? t('common.smsStatus') : t('common.whatsappStatus'),
-        "CreationDate": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
+        "CreationDate": t('common.CreationDate'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
         "Email": t("common.Mail"),
@@ -318,6 +318,10 @@ const ClientSearchResult = ({ classes }) => {
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID ||
         (searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID) {
         updatingObject["SentDate"] = t('sms.sendingTime');
+      }
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID) {
+        updatingObject["RegistrationOn"] = t('client.subscribedOn');
+        updatingObject["IsOptIn"] = t('landingPages.isOptIn');
       }
       updatingObject = {
         ...updatingObject,
@@ -447,6 +451,7 @@ const ClientSearchResult = ({ classes }) => {
               // CSV not supporting numeric extra fields order.
               result = await SwitchStatusByCondition(result, ClientStatus.Email, true);
               result = await SwitchStatusByCondition(result, ClientStatus.Sms, false);
+              result = await SwitchIsOptIn(result);
 
               ExportFile({
                 data: result,
