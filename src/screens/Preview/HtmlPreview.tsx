@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import clsx from "clsx";
-import { Box, Tab, Grid, Tabs, Typography, Button, Tooltip, Divider } from "@material-ui/core";
+import { Box, Typography, Button, Divider } from "@material-ui/core";
 import "moment/locale/he";
 import { Loader } from '../../components/Loader/Loader';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { useParams } from 'react-router-dom';
 import DefaultScreen from '../DefaultScreen';
@@ -11,8 +11,6 @@ import { getNewsletterPreview } from '../../redux/reducers/newsletterSlice';
 import { getLandingPagePreview } from '../../redux/reducers/landingPagesSlice';
 import { useTranslation } from 'react-i18next';
 import { Title } from '../../components/managment/Title';
-import { PopMassage } from '../../components/managment';
-import { CopyIcon } from '../../assets/images/managment';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 

@@ -616,12 +616,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("sms.sendingTime")}
           </Typography>
           <Typography>
-            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FormID && CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : moment(rest?.RegistrationOn).format('DD/MM/YYYY HH:mm')}
           </Typography>
         </>),
         web: ({ CreationDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FormID && CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : moment(rest?.RegistrationOn).format('DD/MM/YYYY HH:mm')}
           </Typography>
         )
       },
