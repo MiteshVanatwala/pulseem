@@ -451,7 +451,9 @@ const ClientSearchResult = ({ classes }) => {
               // CSV not supporting numeric extra fields order.
               result = await SwitchStatusByCondition(result, ClientStatus.Email, true);
               result = await SwitchStatusByCondition(result, ClientStatus.Sms, false);
-              result = await SwitchIsOptIn(result);
+              if (searchData.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID) {
+                result = await SwitchIsOptIn(result);
+              }
 
               ExportFile({
                 data: result,

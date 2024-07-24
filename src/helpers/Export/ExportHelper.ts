@@ -353,6 +353,7 @@ export async function SwitchIsOptIn(data: ExportData | any) {
         else {
             tempData.IsOptIn = i18n.t('landingPages.notApproved');
         }
+        delete tempData.StatusName
         retValData.push(tempData);
     });
     return retValData as ExportData;
