@@ -12,22 +12,14 @@ export const ampApproval = createAsyncThunk(
     }
   })
 
-const AmpSlice = createSlice({
-  name: 'Amp',
+const ampSlice = createSlice({
+  name: 'amp',
   initialState: {
     account: {
       StatusCode: 200,
       Message: '',
       Data: {} as any,
-    } as PulseemResponse,
-    ToastMessages: {
-      GENERAL_ERROR: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false },
-      RESPONSES: {
-        201: { severity: 'success', color: 'success', message: 'settings.changePassword.responses.201', showAnimtionCheck: false },
-        401: { severity: 'error', color: 'error', message: 'integrations.authResponses.401', showAnimtionCheck: false },
-        500: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false }
-      }
-    }
+    } as PulseemResponse
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -37,4 +29,4 @@ const AmpSlice = createSlice({
   }
 })
 
-export default AmpSlice.reducer
+export default ampSlice.reducer

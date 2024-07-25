@@ -14,7 +14,8 @@ import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { ampApproval } from '../../../redux/reducers/AmpSlice';
 import Toast from '../../../components/Toast/Toast.component';
-import { ERROR_TYPE } from '../../../helpers/Types/common';
+import moment from 'moment';
+import 'moment/locale/he';
 
 const AmpRegistration = ({ classes }: any) => {
     const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -23,9 +24,13 @@ const AmpRegistration = ({ classes }: any) => {
     const dispatch = useDispatch();
     const { verifiedEmails, accountSettings, accountFeatures } = useSelector((state: StateType) => state.common);
     const { isRTL } = useSelector((state: StateType) => state.core);
-    const { ToastMessages } = useSelector((state: StateType) => state.amp);
+    const ToastMessages = {
+        201: { severity: 'success', color: 'success', message: 'settings.changePassword.responses.201', showAnimtionCheck: false },
+        401: { severity: 'error', color: 'error', message: 'integrations.authResponses.401', showAnimtionCheck: false },
+        500: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false }
+    } as any;
 
-    const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
+    const [toastMessage, setToastMessage] = useState<any>(null);
 
     const init = async () => {
         await dispatch(getAuthorizedEmails());
@@ -44,7 +49,7 @@ const AmpRegistration = ({ classes }: any) => {
 
     const sendApprovalRequest = async () => {
         const response: any = await dispatch(ampApproval(selectedEmail));
-        setToastMessage(ToastMessages.RESPONSES[response.payload.StatusCode])
+        setToastMessage(ToastMessages[response?.payload?.StatusCode])
         console.log(selectedEmail);
     }
 
@@ -93,15 +98,15 @@ const AmpRegistration = ({ classes }: any) => {
                                         }}
                                     >
                                         {verifiedEmails?.filter((email: any) => { return email.IsVerified === true }).map((item: any, index: number) => {
-                                            return <MenuItem key={index} value={item.Number} style={{ paddingInline: 15 }}>
+                                            return <MenuItem key={index} value={item.Number} style={{ paddingInline: 15, direction: isRTL ? 'rtl' : 'ltr' }}>
                                                 <Checkbox checked={selectedEmail.indexOf(item.Number) > -1} disabled={selectedEmail.indexOf(item.Number) === -1 && selectedEmail.length > 4} />
                                                 <ListItemText primary={item.Number} style={{ marginInline: 15 }} />
+                                                {item.RequestsCount > 0 && <>
+                                                    <Box className={clsx(classes.font12, classes.colorGray)} style={{ marginInline: 5 }}>{t('campaigns.lastRequestTime')} <b>{moment(item?.LastRequestTime).format('DD-MM-YYYY HH:mm:ss')}</b></Box>
+                                                    <Box className={clsx(classes.font12, classes.colorGray)} style={{ marginInline: 5 }}>{t('campaigns.requestsCount')} <b>{item?.RequestsCount}</b></Box>
+                                                </>}
                                             </MenuItem>
                                         })}
-                                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem key={verifiedEmails.length + 1} value={accountSettings?.SubAccountSettings?.SharedEmailDomain} style={{ paddingInline: 15 }}>
-                                            <Checkbox checked={selectedEmail.indexOf(accountSettings?.SubAccountSettings?.SharedEmailDomain) > -1} disabled={selectedEmail.indexOf(accountSettings?.SubAccountSettings?.SharedEmailDomain) === -1 && selectedEmail.length > 4} />
-                                            <ListItemText primary={accountSettings?.SubAccountSettings?.SharedEmailDomain} style={{ marginInline: 15 }} />
-                                        </MenuItem>}
                                     </Select>
                                 </FormControl>
                             </Box>
