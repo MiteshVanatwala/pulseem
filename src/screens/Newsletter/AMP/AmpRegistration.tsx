@@ -1,10 +1,9 @@
 import clsx from 'clsx'
 import DefaultScreen from '../../DefaultScreen';
-import { Box, Checkbox, FormControl, ListItemText, MenuItem, Select, Typography } from '@material-ui/core';
+import { Box, Button, Checkbox, FormControl, Grid, InputLabel, ListItemText, MenuItem, Select, Typography } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Loader } from '../../../components/Loader/Loader';
 import { useEffect, useState } from 'react';
-import WizardActions from '../../../components/Wizard/WizardActions';
 import { useTranslation } from 'react-i18next';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,6 +11,10 @@ import { StateType } from '../../../Models/StateTypes';
 import { IoIosArrowDown } from 'react-icons/io';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { ampApproval } from '../../../redux/reducers/AmpSlice';
+import Toast from '../../../components/Toast/Toast.component';
+import { ERROR_TYPE } from '../../../helpers/Types/common';
 
 const AmpRegistration = ({ classes }: any) => {
     const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -19,6 +22,10 @@ const AmpRegistration = ({ classes }: any) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const { verifiedEmails, accountSettings, accountFeatures } = useSelector((state: StateType) => state.common);
+    const { isRTL } = useSelector((state: StateType) => state.core);
+    const { ToastMessages } = useSelector((state: StateType) => state.amp);
+
+    const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
 
     const init = async () => {
         await dispatch(getAuthorizedEmails());
@@ -27,6 +34,19 @@ const AmpRegistration = ({ classes }: any) => {
     useEffect(() => {
         init();
     }, []);
+
+    const renderToast = () => {
+        setTimeout(() => {
+            setToastMessage(null);
+        }, 4000);
+        return <Toast data={toastMessage} />;
+    };
+
+    const sendApprovalRequest = async () => {
+        const response: any = await dispatch(ampApproval(selectedEmail));
+        setToastMessage(ToastMessages.RESPONSES[response.payload.StatusCode])
+        console.log(selectedEmail);
+    }
 
     return (
         <DefaultScreen
@@ -41,72 +61,63 @@ const AmpRegistration = ({ classes }: any) => {
                     <Title Text={t('master.ampRegistration')} classes={classes} />
                 </Box>
                 <Box className={"containerBody"}>
-                    <Typography>{t('campaigns.selectUptoFiveEmails')}</Typography>
-                    <Box className='selectWrapper'>
-                        <FormControl
-                            className={clsx(classes.selectInputFormControl, classes.w100)}
-                        >
-                            <Select
-                                renderValue={() => {
-                                    return selectedEmail?.join(',')
-                                }}
-                                multiple
-                                variant="standard"
-                                name="FromEmail"
-                                value={selectedEmail}
-                                className={clsx(classes.pbt5, classes.fromEmailSelect)}
-                                onChange={(event: any) => {
-                                    if (event?.target?.value.length <= 5) {
-                                        setSelectedEmail(event?.target?.value);
-                                    }
-                                }}
-                                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                                MenuProps={{
-                                    PaperProps: {
-                                        style: {
-                                            maxHeight: 300,
-                                        },
-                                    },
-                                }}
-                            >
-                                <option
-                                    key='-1'
-                                    value='-1'
-                                    disabled
+                    <Grid container>
+                        <Grid item xs={4}>
+                            <Box className={clsx('selectWrapper', classes.mb50)}>
+                                <FormControl
+                                    className={clsx(classes.selectInputFormControl, classes.w100)}
                                 >
-                                    {t("common.select")}
-                                </option>
-                                {verifiedEmails?.filter((email: any) => { return email.IsVerified === true }).map((item: any, index: number) => {
-                                    return <MenuItem key={index} value={item.Number} style={{ paddingRight: 15 }}>
-                                        <Checkbox checked={selectedEmail.indexOf(item.Number) > -1} disabled={selectedEmail.indexOf(item.Number) === -1 && selectedEmail.length > 4} />
-                                        <ListItemText primary={item.Number} />
-                                    </MenuItem>
-                                })}
-                                {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <option
-                                    key={verifiedEmails.length + 1}
-                                    value={accountSettings?.SubAccountSettings?.SharedEmailDomain}
-                                    name={accountSettings?.SubAccountSettings?.SharedEmailDomain}
-                                >
-                                    {/* <ListItemIcon style={{ minWidth: 25 }}>
-                                                <MdOutlineVerified style={{ color: 'green', fontSize: 20 }} title={t('common.domainVerification.verifiedDomain')} />
-                                            </ListItemIcon> */}
-                                    {t(accountSettings?.SubAccountSettings?.SharedEmailDomain)}
-                                </option>}
-                            </Select>
-                        </FormControl>
-                    </Box>
+                                    <InputLabel htmlFor="FromEmail">{t('campaigns.selectUptoFiveEmails')}</InputLabel>
+                                    <Select
+                                        // label={t("common.select")}
+                                        renderValue={() => {
+                                            return <Box className={classes.elipsis} style={{ maxWidth: 'calc(100% - 30px)' }}>{selectedEmail?.join(',')}</Box>
+                                        }}
+                                        multiple
+                                        variant="standard"
+                                        id="FromEmail"
+                                        value={selectedEmail}
+                                        className={clsx(classes.pbt5, classes.fromEmailSelect)}
+                                        onChange={(event: any) => {
+                                            if (event?.target?.value.length <= 5) {
+                                                setSelectedEmail(event?.target?.value);
+                                            }
+                                        }}
+                                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    width: 250
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        {verifiedEmails?.filter((email: any) => { return email.IsVerified === true }).map((item: any, index: number) => {
+                                            return <MenuItem key={index} value={item.Number} style={{ paddingInline: 15 }}>
+                                                <Checkbox checked={selectedEmail.indexOf(item.Number) > -1} disabled={selectedEmail.indexOf(item.Number) === -1 && selectedEmail.length > 4} />
+                                                <ListItemText primary={item.Number} style={{ marginInline: 15 }} />
+                                            </MenuItem>
+                                        })}
+                                        {accountFeatures?.indexOf(PulseemFeatures.HIDE_SHARED_DOMAIN) === -1 && accountSettings?.SubAccountSettings?.SharedEmailDomain && <MenuItem key={verifiedEmails.length + 1} value={accountSettings?.SubAccountSettings?.SharedEmailDomain} style={{ paddingInline: 15 }}>
+                                            <Checkbox checked={selectedEmail.indexOf(accountSettings?.SubAccountSettings?.SharedEmailDomain) > -1} disabled={selectedEmail.indexOf(accountSettings?.SubAccountSettings?.SharedEmailDomain) === -1 && selectedEmail.length > 4} />
+                                            <ListItemText primary={accountSettings?.SubAccountSettings?.SharedEmailDomain} style={{ marginInline: 15 }} />
+                                        </MenuItem>}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button onClick={sendApprovalRequest}
+                                className={clsx(
+                                    classes.btn,
+                                    classes.btnRounded
+                                )}
+                                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                                style={{ margin: '8px' }}
+                            >{t('campaigns.sendAmpRequest')}</Button>
+                        </Grid>
+                    </Grid>
 
-                    {/* <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 15 }}>
-                        <WizardActions
-                            classes={classes}
-                            onBack={{
-                                callback: () => console.log('back')
-                            }}
-                            onDelete={() => { console.log('back') }}
-                            additionalButtons={() => { console.log('back') }}
-                            additionalButtonsOnStart={() => { console.log('back') }}
-                        />
-                    </Box> */}
                     <BaseDialog
                         classes={classes}
                         open={false}
@@ -124,9 +135,10 @@ const AmpRegistration = ({ classes }: any) => {
                             </Typography>
                         </Box>
                     </BaseDialog>
-                    <Loader isOpen={showLoader} />
                 </Box>
             </Box>
+            <Loader isOpen={showLoader} />
+            {toastMessage && renderToast()}
         </DefaultScreen>
     )
 }

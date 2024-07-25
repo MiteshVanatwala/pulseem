@@ -729,5 +729,6 @@
   "productOrder": "Product Order",
   "preview": "Preview",
   "addProductBlock": "Add Product Block",
-  "selectUptoFiveEmails": "Select up to 5 emails to approve"
+  "selectUptoFiveEmails": "Select up to 5 emails to approve",
+  "sendAmpRequest": "Send AMP approval"
 }
