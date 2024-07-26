@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
-import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography, FormControlLabel } from '@material-ui/core';
+import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { MdArrowBackIos, MdArrowForwardIos, MdInput, MdModeEditOutline, MdOutlinePersonAddAlt } from 'react-icons/md';
 import { FaHistory, FaTelegramPlane } from "react-icons/fa";
@@ -11,35 +11,37 @@ import { Loader } from '../../components/Loader/Loader';
 import { toastProps } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { resetToastData } from '../Whatsapp/Constant';
 import Toast from '../../components/Toast/Toast.component';
-import { PageProperty, SetPageState } from '../../helpers/UI/SessionStorageManager';
 import { sitePrefix } from '../../config';
-import { AiOutlineHistory, AiOutlineLogin, AiOutlineUserDelete } from 'react-icons/ai';
+import { AiOutlineLogin, AiOutlineUserDelete } from 'react-icons/ai';
 import { ManagmentIcon, TablePagination } from '../../components/managment';
-import { rowsOptions } from '../../helpers/Constants';
+import { DateFormats, rowsOptions } from '../../helpers/Constants';
 import { setRowsPerPage } from '../../redux/reducers/coreSlice';
 import { SubAccountUsers } from '../../Models/SubAccount/SubAccounts';
-import { DeleteIcon, EditIcon, PreviewIcon, SendIcon, ShareIcon } from '../../assets/images/managment';
+import { DeleteIcon, EditIcon, PreviewIcon, SendIcon } from '../../assets/images/managment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import SaveSubAccount from './SaveSubAccount';
 import DirectAccount from './DirectAccount';
 import CreditHistory from './CreditHistory';
+import { DeleteSubAccounts, GetAccountDetails, GetDirectAccountDetails, GetSubAccountList } from '../../redux/reducers/SubAccountSlice';
+import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 const AccountUsers = ({ classes }: any) => {
-  const { windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
-  const { subAccountList, isGlobal } = useSelector((state: any) => state.subAccount);
-  const ToastMessages = useSelector((state: { whatsapp: { ToastMessages: toastProps } }) => state.whatsapp.ToastMessages);
+  const navigate = useNavigate();
+  const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
+  const { accountId, subAccountList, isGlobal } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [ isSearching, setIsSearching ] = useState<boolean>(false);
-  const [ showLoader, setShowLoader ] = useState<boolean>(false);
+  const [ showLoader, setShowLoader ] = useState<boolean>(true);
   const [ toastMessage, setToastMessage ] = useState<toastProps['SUCCESS']>(resetToastData);
-  const [ accountSearch, setAccountSearch ] = useState('');
   const [ selectedAccountId, setSelectedAccountId ] = useState('');
-  const [ serachData, setSearchData ] = useState<any>({
-    PageIndex: 1,
+  const [ searchData, setSearchData ] = useState<any>({
+    PageNo: 1,
     PageSize: rowsPerPage,
-    SearchTerm: "",
-    IsDynamic: true
+    Search: "",
+    CompanyAdmin: 0,
+    IsPagination: true
   });
   const [ dialogType, setDialogType ] = useState<{
     type: string;
@@ -48,10 +50,50 @@ const AccountUsers = ({ classes }: any) => {
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
-  const [ page, setPage ] = useState(1);
+  const [ direct, setDirect ] = useState<{
+    emailDirect: null | number,
+    SMSDirect: null | number,
+    MMSDirect: null | number
+  }>({
+    emailDirect: null,
+    SMSDirect: null,
+    MMSDirect: null
+  })
+  moment.locale(language);
 
-  const getData = async (customSearch: any | never = null) => {
-    
+  useEffect(() => {
+    getInitialData();
+  }, []);
+  
+  useEffect(() => {
+    setSearchData({
+      ...searchData,
+      PageSize: rowsPerPage
+    });
+    getData();
+  }, [rowsPerPage]);
+
+  const getInitialData = async () => {
+    setShowLoader(true);
+    if (accountId === null) dispatch(GetAccountDetails());
+    const directData: any = await dispatch(GetDirectAccountDetails({
+      ...searchData,
+      CompanyAdmin: 1
+    }));
+    if ((directData?.payload?.Data?.Items || []).length > 0) {
+      setDirect({
+        emailDirect: directData?.payload?.Data?.Items[0]['DirectBulkEmails'],
+        SMSDirect: directData?.payload?.Data?.Items[0]['DirectSMSCredits'],
+        MMSDirect: directData?.payload?.Data?.Items[0]['DirectMmsCredits']
+      })
+    }
+    getData();
+  }
+  
+  const getData = async () => {
+    setShowLoader(true);
+    await dispatch(GetSubAccountList(searchData));
+    setShowLoader(false);
   }
 
   const renderToast = () => {
@@ -64,30 +106,7 @@ const AccountUsers = ({ classes }: any) => {
 		return null;
 	};
 
-  const initPageState = (pageSize: Number, pageIndex: Number, props: any = null) => {
-    const searchObject = {
-        PageIndex: pageIndex,
-        PageSize: pageSize,
-        SearchTerm: accountSearch,
-        IsDynamic: true
-    };
-    setSearchData(searchObject);
-
-    SetPageState({
-        "PageName": `${sitePrefix}Groups/Dynamic`,
-        "PageNumber": pageIndex,
-        "SearchData": (serachData.SearchTerm !== '') ? {
-            SearchTerm: serachData.SearchTerm,
-            PageIndex: pageIndex,
-            PageSize: pageSize
-        } : null,
-        "IsDynamic": true
-    } as PageProperty);
-  }
-
   const renderCellIcons = (row: SubAccountUsers) => {
-    const { SubAccountId, SubAccountName, SubAccountManager, Balance } = row
-
     const iconsMap = [[
       {
         key: 'preview',
@@ -97,8 +116,7 @@ const AccountUsers = ({ classes }: any) => {
         disable: false,
         rootClass: classes.paddingIcon,
         onClick: () => {
-          setDialogType({ type: 'preview', data: {} });
-          // pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
+          setDialogType({ type: 'HistoryDialog', data: row.CustomGuidEnc });
         }
       },
       {
@@ -108,10 +126,7 @@ const AccountUsers = ({ classes }: any) => {
         remove: windowSize === 'xs' || !isGlobal,
         disable: false,
         rootClass: clsx(classes.paddingIcon, classes.f18),
-        onClick: () => {
-          setDialogType({ type: 'login', data: {} });
-          // pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
-        }
+        onClick: () => navigate(`/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${row.CustomGuidEnc}`)
       },
       {
         key: 'edit',
@@ -128,14 +143,14 @@ const AccountUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
       },
       {
-        key: 'duplicate',
+        key: 'directAccount',
         uIcon: SendIcon,
         lable: t('SubAccount.directAccount'),
         rootClass: classes.paddingIcon,
         disable: false,
         remove: windowSize === 'xs' || !isGlobal,
         onClick: () => {
-          setDialogType({ type: 'DirectAccount', data: {} });
+          setDialogType({ type: 'DirectAccount', data: row.CustomGuidEnc });
         }
       },
       {
@@ -147,7 +162,7 @@ const AccountUsers = ({ classes }: any) => {
         showPhone: true,
         remove: windowSize === 'xs' || !isGlobal,
         onClick: () => {
-          setDialogType({ type: 'Delete', data: {} });
+          setDialogType({ type: 'Delete', data: row.CustomGuidEnc });
         }
       }
     ]]
@@ -190,9 +205,9 @@ const AccountUsers = ({ classes }: any) => {
 
   const renderSearchSection = () => {
     const handleKeyDown = (event: any) => {
-        if (event.keyCode === 13 || event.code === "Enter") {
-            initPageState(rowsPerPage, 1);
-        }
+      if (event.keyCode === 13 || event.code === "Enter") {
+        getData();
+      }
     };
 
     return (
@@ -201,50 +216,50 @@ const AccountUsers = ({ classes }: any) => {
             <TextField
               variant="outlined"
               size="small"
-              value={accountSearch}
+              value={searchData.Search}
               onKeyPress={handleKeyDown}
-              onChange={(e: any) => setAccountSearch(e.target.value)}
+              onChange={(e: any) => setSearchData({
+                ...searchData,
+                Search: e.target.value
+              })}
               className={clsx(classes.textField, classes.minWidth252)}
               placeholder={t("common.search")}
             />
           </Grid>
           <Grid item>
             <Button
-              onClick={() => initPageState(rowsPerPage, 1)}
+              onClick={() => {
+                getData();
+                setIsSearching(true);
+              }}
               className={clsx(classes.btn, classes.btnRounded)}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
               {t("campaigns.btnSearchResource1.Text")}
             </Button>
           </Grid>
-          {serachData.SearchTerm && (
+          {isSearching && (
             <Grid item>
               <Button
-                onClick={() => {
+                onClick={async () => {
                   const searchObject = {
-                    ...serachData,
-                    PageIndex: 1,
+                    PageNo: 1,
                     PageSize: rowsPerPage,
-                    SearchTerm: "",
-                    IsDynamic: true
+                    Search: "",
+                    CompanyAdmin: 0,
+                    IsPagination: true
                   };
                   setSearchData(searchObject);
 
-                  SetPageState({
-                    "PageName": `${sitePrefix}Groups/Dynamic`,
-                    "PageNumber": 1,
-                    "SearchData": searchObject,
-                    "SearchTerm": "",
-                    "IsDynamic": true
-                  } as PageProperty);
-
-                  setAccountSearch("");
-                  getData(searchObject);
+                  setShowLoader(true);
+                  setIsSearching(false);
+                  await dispatch(GetSubAccountList(searchObject));
+                  setShowLoader(false);
                 }}
                 className={clsx(classes.btn, classes.btnRounded)}
                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               >
-                  {t("common.clear")}
+                {t("common.clear")}
               </Button>
             </Grid>
           )}
@@ -320,7 +335,7 @@ const AccountUsers = ({ classes }: any) => {
           <Button
             component="a"
             onClick={() => {
-              // navigate(`${sitePrefix}Campaigns/Create`);
+              navigate(`/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${selectedAccountId}`);
             }}
             className={clsx(
               classes.btn,
@@ -349,16 +364,15 @@ const AccountUsers = ({ classes }: any) => {
           !isGlobal && selectedAccountId && (
             <Grid item xs={windowSize === 'xs' && 12}>
               <Button
-                component="a"
-                href={`${sitePrefix}Campaigns/Archive`}
                 className={clsx(
                   classes.btn,
                   classes.btnRounded,
                 )}
                 onClick={(e) => {
+                  const userDetails = subAccountList.filter((row: SubAccountUsers) => row.CustomGuidEnc === selectedAccountId);
                   setDialogType({
                     type: 'SaveSubAccount',
-                    data: {}
+                    data: userDetails.length > 0 ? userDetails[0] : {}
                   })
                 }}
                 endIcon={<MdModeEditOutline />}
@@ -377,7 +391,7 @@ const AccountUsers = ({ classes }: any) => {
                   classes.btnRounded,
                 )}
                 endIcon={<FaTelegramPlane />}
-                // onClick={() => setDialogType({ type: 'verifyEmail' })}
+                onClick={() => setDialogType({ type: 'DirectAccount', data: selectedAccountId })}
               >
                 {t('SubAccount.directAccount')}
               </Button>
@@ -405,7 +419,7 @@ const AccountUsers = ({ classes }: any) => {
                 classes.btnRounded,
               )}
               endIcon={<AiOutlineUserDelete />}
-              // onClick={() => setDialogType({ type: 'verifyEmail' })}
+              onClick={() => setDialogType({ type: 'Delete', data: selectedAccountId })}
             >
               {t('common.Delete')}
             </Button>
@@ -421,22 +435,22 @@ const AccountUsers = ({ classes }: any) => {
     )
   }
 
-  const renderRow = (row: any) => {
+  const renderRow = (row: SubAccountUsers) => {
     return (
       <TableRow
-        key={row.ID}
+        key={row.CustomGuidEnc}
         classes={rowStyle}
-        onClick={() => setSelectedAccountId(row.SubAccountId)}
+        onClick={() => setSelectedAccountId(row.CustomGuidEnc)}
         hover={!isGlobal}
-        selected={!isGlobal && row.SubAccountId === selectedAccountId}
+        selected={!isGlobal && row.CustomGuidEnc === selectedAccountId}
       >
         <TableCell
           classes={cellBodyStyle}
           align='center'
           className={isGlobal ? classes.flex1 : classes.flex2}>
-            {row.SubAccountName}
+            <b>{row.SubAccountName}</b>
             <div>
-              {t('common.CreationDate')}
+              {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.FULL_DATE)}</b>
             </div>
         </TableCell>
         <TableCell
@@ -451,7 +465,7 @@ const AccountUsers = ({ classes }: any) => {
               classes={cellBodyStyle}
               align='center'
               className={isGlobal ? classes.flex1 : classes.flex2}>
-                {row.Balance}
+                {row.FinalGlobalBalance}
             </TableCell>
           )
         }
@@ -462,49 +476,49 @@ const AccountUsers = ({ classes }: any) => {
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.Balance}
+                  {row.BulkEmail}
               </TableCell>
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.Balance}
+                  {row.BulkSMS}
               </TableCell>
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.Balance}
+                  {row.BulkMMS}
               </TableCell>
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.Balance}
+                  {row.MaxMailSendingForMonth}
               </TableCell>
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.Balance}
+                  {row.MaxSMSSendingForMonth}
               </TableCell>
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.Balance}
+                  {row.DirectBulkEmails}
               </TableCell>
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.Balance}
+                  {row.DirectSMSCredits}
               </TableCell>
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.Balance}
+                  {row.DirectSMSCredits}
               </TableCell>
             </>
           )
@@ -548,23 +562,26 @@ const AccountUsers = ({ classes }: any) => {
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={(val: any) => dispatch(setRowsPerPage(val))}
         rowsPerPageOptions={rowsOptions}
-        page={page}
-        onPageChange={(val: any) => setPage(val)}
+        page={searchData.PageNo}
+        onPageChange={(val: any) => setSearchData({
+          ...searchData,
+          PageNo: val
+        })}
       />
     )
   }
 
-  const renderHistoryDialog = () => {
+  const renderHistoryDialog = (id: string = '') => {
 		return {
 			showDivider: false,
 			title: t("SubAccount.showHistory"),
-			content: <CreditHistory classes={classes} />,
+			content: <CreditHistory classes={classes} id={id} />,
 			onConfirm: () => setDialogType(null),
 			onCancel: () => setDialogType(null)
 		};
 	}
 
-  const getDeleteDialog = () => ({
+  const getDeleteDialog = (id: string = '') => ({
 		title: t('common.Delete'),
 		showDivider: false,
 		content: (
@@ -573,7 +590,20 @@ const AccountUsers = ({ classes }: any) => {
 			</Typography>
 		),
 		cancelText: t('common.No'),
-		confirmText: t('common.Yes')
+		confirmText: t('common.Yes'),
+    onConfirm: async () => {
+      setDialogType(null);
+      setShowLoader(true);
+      const response: any = await dispatch(DeleteSubAccounts(id));
+      if (response?.payload?.StatusCode === 1) {
+        setToastMessage({ severity: 'success', color: 'success', message: t('SubAccount.subAccountDeleted'), showAnimtionCheck: false });  
+        getData();
+      } else {
+        setToastMessage({ severity: 'error', color: 'error', message: t('SubAccount.subAccountDeletionFailed'), showAnimtionCheck: false });  
+      }
+      setShowLoader(false);
+    },
+    onCancel: () => setDialogType(null)
 	})
 
   const renderDialog = () => {
@@ -581,11 +611,9 @@ const AccountUsers = ({ classes }: any) => {
 
     let currentDialog: any = {};
 		if (type === 'HistoryDialog') {
-			currentDialog = renderHistoryDialog();
-    } else if (type === 'Preview') {
-			currentDialog = renderHistoryDialog();
-		} else if (type === 'Delete') {
-			currentDialog = getDeleteDialog();
+			currentDialog = renderHistoryDialog(data);
+    } else if (type === 'Delete') {
+			currentDialog = getDeleteDialog(data);
 		}
 
     if (type) {
@@ -605,6 +633,15 @@ const AccountUsers = ({ classes }: any) => {
     return <></>
   }
 
+  const getDirectBox = (label: string, value: null | number) => {
+    return (
+      <div className={clsx(classes.whiteBox, classes.p20, classes.mlr10, classes.txtCenter, classes.w20VW)}>
+        <div className={classes.p10}>{t(label)}</div>
+        <div className={classes.pb10}>{value || 0}</div>
+      </div>
+    )
+  }
+
   return (
     <DefaultScreen
       currentPage='newsletter'
@@ -619,11 +656,20 @@ const AccountUsers = ({ classes }: any) => {
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
+      {
+        !isGlobal && (
+          <Box className={clsx(classes.justifyCenterOfCenter, classes.w100, classes.semibold)}>
+            {direct.emailDirect !== null && getDirectBox('SubAccount.emailDirect', direct.emailDirect)}
+            {direct.SMSDirect !== null && getDirectBox('SubAccount.SMSDirect', direct.SMSDirect)}
+            {direct.SMSDirect !== null && getDirectBox('SubAccount.MMSDirect', direct.SMSDirect)}
+          </Box>
+        )
+      }
       {renderDialog()}
       {renderToast()}
-      <SaveSubAccount classes={classes} isOpen={dialogType?.type === 'SaveSubAccount'} onClose={() => setDialogType(null)} />
+      <SaveSubAccount classes={classes} isOpen={dialogType?.type === 'SaveSubAccount'} onClose={() => setDialogType(null)} subAccountRecord={dialogType?.data} />
       <DirectAccount classes={classes} isOpen={dialogType?.type === 'DirectAccount'} onClose={() => setDialogType(null)} />
-      <Loader isOpen={showLoader} />
+      <Loader isOpen={showLoader} zIndex={9999} />
     </DefaultScreen>
   )
 }

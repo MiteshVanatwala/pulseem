@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import uniqid from 'uniqid';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core';
@@ -7,216 +8,227 @@ import { Loader } from '../../components/Loader/Loader';
 import { coreProps } from '../../model/Core/corePros.types';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Select } from '@mui/material';
-import { CreditHistoryAccountType, CreditHistoryType } from '../../config/enum';
 import { IoIosArrowDown } from 'react-icons/io';
 import { DateField } from '../../components/managment';
+import { CreditHistoryAccountType, CreditHistoryType, DateFormats, SizeOptionsOfHandHeldDevices } from '../../helpers/Constants';
+import { GetBulkHistory } from '../../redux/reducers/SubAccountSlice';
+import { BulkHistory } from '../../Models/SubAccount/SubAccounts';
 import moment from 'moment';
-import { DateFormats, SizeOptionsOfHandHeldDevices } from '../../helpers/Constants';
+import { get } from 'lodash';
 
-const CreditHistory = ({ classes }: any) => {
+const CreditHistory = ({ classes, id = '' }: any) => {
 	const dispatch: any = useDispatch();
 	const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot) }
 	const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
   const { t } = useTranslation();
-	const { isRTL, windowSize  } = useSelector(
+	const { isRTL, language, windowSize  } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { isGlobal } = useSelector((state: any) => state.subAccount);
-	const [ isLoader, setIsLoader ] = useState<boolean>(false);
-	const [ filter, setFilter ] = useState<any>({
-		type: -1,
-		accountType: -1,
+	const defaultFilter = {
+		type: '',
+		accountType: '',
 		fromDate: null,
 		toDate: null,
-		showPulseemCreditOnly: false,
-	});
-	const [ history, setHistory ] = useState<any>([]);
-
+		IsPulseemCreditsOnly: false,
+		IsGlobalAccount: isGlobal,
+		CustomGuidEnc: id
+	}
+	const [ isLoader, setIsLoader ] = useState<boolean>(false);
+	const [ filter, setFilter ] = useState<any>(defaultFilter);
+	const [ history, setHistory ] = useState<BulkHistory[]>([]);
+	moment.locale(language);
+	
 	useEffect(() => {
+		getData();
 	}, []);
 
-	const renderSearchSection = () => {
-    const handleKeyDown = (event: any) => {
-			if (event.keyCode === 13 || event.code === "Enter") {
-				// initPageState(rowsPerPage, 1);
-			}
-    };
+	const getData = async (isReset: boolean = false) => {
+		setIsLoader(true);
+		if (isReset) setFilter(defaultFilter);
+		const response = await dispatch(GetBulkHistory(isReset ? defaultFilter : filter));
+		setHistory(response.payload.Data || []);
+		setIsLoader(false);
+	}
 
+	const renderSearchSection = () => {
     return (
-        <Grid container spacing={2}>
+			<Grid container spacing={2}>
+				{
+					!isGlobal && (
+						<>
+							<Grid item md={3}>
+								<Typography>{t("SubAccount.type")}</Typography>
+								<FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
+									<Select
+										native
+										variant="standard"
+										value={filter.type}
+										onChange={(event: any) => setFilter({
+											...filter,
+											type: event.target.value
+										})}
+										IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+										MenuProps={{
+											PaperProps: {
+												style: {
+													maxHeight: 300,
+													direction: isRTL ? 'rtl' : 'ltr'
+												},
+											},
+										}}
+										style={{
+											padding: 2
+										}}
+									>
+										<option value=''>{t("common.all")}</option>
+										{
+											Object.keys(CreditHistoryType).map((item: any) => 
+												<option value={item}>{t(`${get(CreditHistoryType, item, '')}`)}</option>
+											)
+										}
+									</Select>
+								</FormControl>
+							</Grid>
+						
+							<Grid item md={3}>
+								<Typography>{t("SubAccount.accountType")}</Typography>
+								<FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
+									<Select
+										native
+										variant="standard"
+										value={filter.accountType}
+										onChange={(event: any) => setFilter({
+											...filter,
+											accountType: event.target.value
+										})}
+										IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+										MenuProps={{
+											PaperProps: {
+												style: {
+													maxHeight: 300,
+													direction: isRTL ? 'rtl' : 'ltr'
+												},
+											},
+										}}
+										style={{
+											padding: 2
+										}}
+									>
+										<option value=''>{t("common.all")}</option>
+										{
+											Object.keys(CreditHistoryAccountType).map((item: any) => 
+												<option value={item}>{t(`${get(CreditHistoryAccountType, item, '')}`)}</option>
+											)
+										}
+									</Select>
+								</FormControl>
+							</Grid>
+						</>
+					)
+				}
+				<Grid item md={3}>
+					<Typography>{t("common.FromDate")}</Typography>
+					{/* @ts-ignore */}
+					<DateField
+						toolbarDisabled={false}
+						classes={classes}
+						placeholder={t('notifications.date')}
+						value={filter.fromDate}
+						onChange={(value: any) =>
+							setFilter({
+								...filter,
+								fromDate: moment(value).format(DateFormats.DATE_ONLY)
+							})
+						}
+						timePickerOpen={true}
+						dateActive={true}
+						minDate={undefined}
+						timeActive={false}
+						buttons={{
+							ok: t("common.confirm"),
+							cancel: t("common.cancel"),
+						} as any}
+						removePadding={true}
+						hideInvalidDateMessage={true}
+					/>
+				</Grid>
+				<Grid item md={3}>
+					<Typography>{t("common.ToDate")}</Typography>
+					{/* @ts-ignore */}
+					<DateField
+						toolbarDisabled={false}
+						classes={classes}
+						placeholder={t('notifications.date')}
+						value={filter.toDate}
+						onChange={(value: any) =>
+							setFilter({
+								...filter,
+								toDate: moment(value).format(DateFormats.DATE_ONLY)
+							})
+						}
+						timePickerOpen={true}
+						dateActive={true}
+						minDate={filter.fromDate}
+						timeActive={false}
+						buttons={{
+							ok: t("common.confirm"),
+							cancel: t("common.cancel"),
+						} as any}
+						removePadding={true}
+						hideInvalidDateMessage={true}
+					/>
+				</Grid>
+				<Grid item md={12} className={clsx(classes.textRight)}>
 					{
 						!isGlobal && (
-							<>
-								<Grid item md={3}>
-									<Typography>{t("SubAccount.type")}</Typography>
-									<FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
-										<Select
-											native
-											variant="standard"
-											value={filter.type}
-											onChange={(event: any) => setFilter({
-												...filter,
-												type: event.target.value
-											})}
-											IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-											MenuProps={{
-												PaperProps: {
-													style: {
-														maxHeight: 300,
-														direction: isRTL ? 'rtl' : 'ltr'
-													},
-												},
-											}}
-											style={{
-												padding: 2
-											}}
-										>
-											<option value={CreditHistoryType.All}>{t("common.all")}</option>
-											<option value={CreditHistoryType.Email}>{t("common.Mail")}</option>
-											<option value={CreditHistoryType.SMS}>{t("common.SMS")}</option>
-											<option value={CreditHistoryType.MMS}>{t("common.MMS")}</option>
-										</Select>
-									</FormControl>
-								</Grid>
-							
-								<Grid item md={3}>
-									<Typography>{t("SubAccount.accountType")}</Typography>
-									<FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
-										<Select
-											native
-											variant="standard"
-											value={filter.accountType}
-											onChange={(event: any) => setFilter({
-												...filter,
-												accountType: event.target.value
-											})}
-											IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-											MenuProps={{
-												PaperProps: {
-													style: {
-														maxHeight: 300,
-														direction: isRTL ? 'rtl' : 'ltr'
-													},
-												},
-											}}
-											style={{
-												padding: 2
-											}}
-										>
-											<option value={CreditHistoryAccountType.All}>{t("common.all")}</option>
-											<option value={CreditHistoryAccountType.Standard}>{t("SubAccount.standard")}</option>
-											<option value={CreditHistoryAccountType.Direct}>{t("SubAccount.direct")}</option>
-										</Select>
-									</FormControl>
-								</Grid>
-							</>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={filter.IsPulseemCreditsOnly}
+										onChange={() => setFilter({
+											...filter,
+											IsPulseemCreditsOnly: !filter.IsPulseemCreditsOnly
+										})}
+										name="pulseemCredit"
+										color="primary"
+									/>
+								}
+								label={t('SubAccount.showPulseemCreditsOnly')}
+							/>
 						)
 					}
-					<Grid item md={3}>
-						<Typography>{t("common.FromDate")}</Typography>
-						{/* @ts-ignore */}
-						<DateField
-							toolbarDisabled={false}
-							classes={classes}
-							placeholder={t('notifications.date')}
-							value={filter.fromDate}
-							onChange={(value: any) =>
-								setFilter({
-									...filter,
-									fromDate: moment(value).format(DateFormats.DATE_ONLY)
-								})
-							}
-							timePickerOpen={true}
-							dateActive={true}
-							minDate={undefined}
-							onTimeChange={() => { }}
-							timeActive={false}
-							buttons={{
-								ok: t("common.confirm"),
-								cancel: t("common.cancel"),
-							} as any}
-							removePadding={true}
-							hideInvalidDateMessage={true}
-						/>
-					</Grid>
-					<Grid item md={3}>
-						<Typography>{t("common.ToDate")}</Typography>
-						{/* @ts-ignore */}
-						<DateField
-							toolbarDisabled={false}
-							classes={classes}
-							placeholder={t('notifications.date')}
-							value={filter.toDate}
-							onChange={(value: any) =>
-								setFilter({
-									...filter,
-									toDate: moment(value).format(DateFormats.DATE_ONLY)
-								})
-							}
-							timePickerOpen={true}
-							dateActive={true}
-							minDate={undefined}
-							onTimeChange={() => { }}
-							timeActive={false}
-							buttons={{
-								ok: t("common.confirm"),
-								cancel: t("common.cancel"),
-							} as any}
-							removePadding={true}
-							hideInvalidDateMessage={true}
-						/>
-					</Grid>
-          <Grid item md={12} className={clsx(classes.textRight)}>
-						{
-							!isGlobal && (
-								<FormControlLabel
-									control={
-										<Checkbox
-											checked={filter.showPulseemCreditOnly}
-											onChange={() => setFilter({
-												...filter,
-												showPulseemCreditOnly: !filter.showPulseemCreditOnly
-											})}
-											name="pulseemCredit"
-											color="primary"
-										/>
-									}
-									label={t('SubAccount.showPulseemCreditsOnly')}
-								/>
-							)
-						}
-            <Button
-              // onClick={() => initPageState(rowsPerPage, 1)}
-              className={clsx(classes.btn, classes.btnRounded)}
-              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-            >
-              {t("campaigns.btnSearchResource1.Text")}
-            </Button>
-						<Button
-							onClick={() => {}}
-							className={clsx(classes.btn, classes.btnRounded, classes.mlr10)}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-						>
-								{t("common.clear")}
-						</Button>
-						<Button
-							onClick={() => {}}
-							className={clsx(classes.btn, classes.btnRounded)}
-							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-						>
-							{t("common.Export")}
-						</Button>
-          </Grid>
-      </Grid>
-    );
+					<Button
+						onClick={() => getData(false)}
+						className={clsx(classes.btn, classes.btnRounded)}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
+						{t("campaigns.btnSearchResource1.Text")}
+					</Button>
+					<Button
+						onClick={() => getData(true)}
+						className={clsx(classes.btn, classes.btnRounded, classes.mlr10)}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
+							{t("common.clear")}
+					</Button>
+					<Button
+						onClick={() => {}}
+						className={clsx(classes.btn, classes.btnRounded)}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
+						{t("common.Export")}
+					</Button>
+				</Grid>
+		</Grid>);
   };
 
 	const renderTableHead = () => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('common.Dates')}1</TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('common.Dates')}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.amount')}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.type')}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.accountType')}</TableCell>
@@ -227,10 +239,10 @@ const CreditHistory = ({ classes }: any) => {
     )
   }
 
-	const renderRow = (row: any) => {
+	const renderRow = (row: BulkHistory) => {
 		return (
       <TableRow
-        key={row?.ID}
+        key={uniqid()}
         classes={rowStyle}
       >
 				<TableCell
@@ -238,42 +250,42 @@ const CreditHistory = ({ classes }: any) => {
 					align='center'
 					className={classes.flex2}
 				>
-					Test
+					{moment(row.Date).format(DateFormats.FULL_DATE)}
 				</TableCell>
 				<TableCell
 					classes={cellBodyStyle}
 					align='center'
 					className={classes.flex1}
 				>
-					Test
+					{row.Amount}
 				</TableCell>
 				<TableCell
 					classes={cellBodyStyle}
 					align='center'
 					className={classes.flex1}
 				>
-					Test
+					{t(`${get(CreditHistoryType, row.Type, '')}`)}
 				</TableCell>
 				<TableCell
 					classes={cellBodyStyle}
 					align='center'
 					className={classes.flex1}
 				>
-					Test
+					{t(`${get(CreditHistoryAccountType, row.AccountType ? 1 : 0, '')}`)}
 				</TableCell>
 				<TableCell
 					classes={cellBodyStyle}
 					align='center'
 					className={classes.flex2}
 				>
-					Test
+					{row.TransferedFromSubAccountName}
 				</TableCell>
 				<TableCell
 					classes={cellBodyStyle}
 					align='center'
 					className={classes.flex2}
 				>
-					Test
+					{row.TransferredToName}
 				</TableCell>
 			</TableRow>
 		);

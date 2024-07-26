@@ -21,8 +21,9 @@ import { DateField } from '../../components/managment';
 import moment from 'moment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { ValidateEmailAddress } from '../../helpers/Utils/common';
+import { get } from 'lodash';
 
-const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetails = {} }: any) => {
+const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
 	const { t } = useTranslation();
@@ -73,12 +74,41 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 		automaticUserLock: null,
 		balance: '',
 	})
+	const CustomGuidEnc = get(subAccountRecord, 'CustomGuidEnc', '');
 
 	useEffect(() => {
 		if (subAccountAllGroups.length === 0) {
 			dispatch(getGroupsBySubAccountId());
 		}
 	}, []);
+	
+	useEffect(() => {
+		if (isOpen && CustomGuidEnc !== '') {
+			console.log(subAccountRecord)
+			setSubAccountDetails({
+				...subAccountDetails,
+				emailBulk: get(subAccountRecord, 'BulkEmail', 0),
+				SMSBulk: get(subAccountRecord, 'BulkSMS', 0),
+				MMSBulk: get(subAccountRecord, 'BulkMMS', 0),
+				subAccountName: get(subAccountRecord, 'SubAccountName', ''),
+				cellPhone: get(subAccountRecord, 'CellPhone', ''),
+				accountManager: get(subAccountRecord, 'SubAccountManager', ''),
+				addEmailBulk: false,
+				addSMSBulk: false,
+				addMMSBulk: false,
+				emailBulkAmount: '',
+				SMSBulkAmount: '',
+				MMSBulkAmount: '',
+				emailAddress: get(subAccountRecord, 'Email', ''),
+				loginUserName: get(subAccountRecord, 'LoginUserName', ''),
+				password: '',
+				confirmPassword: '',
+				isPasswordVisible: false,
+				automaticUserLock: get(subAccountRecord, 'ExpiryDate', null),
+				balance: get(subAccountRecord, 'FinalGlobalBalance', ''),
+			})
+		}
+	}, [ isOpen ]);
 
 	const validateForm = () => {
 		let errorsTemp = JSON.parse(JSON.stringify(errors))
@@ -87,11 +117,11 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 			cellPhone: subAccountDetails.cellPhone.trim() === '' ? t('common.requiredField') : '',
 			emailAddress: subAccountDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
 			loginUserName: subAccountDetails.loginUserName.trim() === '' ? t('common.requiredField') : '',
-			password: subAccountDetails.password.trim() === '' ? t('common.requiredField') : '',
-			confirmPassword: subAccountDetails.confirmPassword.trim() === '' ? t('common.requiredField') : '',
+			password: CustomGuidEnc === '' && subAccountDetails.password.trim() === '' ? t('common.requiredField') : '',
+			confirmPassword: CustomGuidEnc === '' && subAccountDetails.confirmPassword.trim() === '' ? t('common.requiredField') : '',
 		};
 
-		if (subAccountDetails.password !== subAccountDetails.confirmPassword) {
+		if (CustomGuidEnc === '' && subAccountDetails.password !== subAccountDetails.confirmPassword) {
 			errorsTemp = {
 				...errorsTemp,
 				confirmPassword: t('common.confirmPasswordNotMatch')
@@ -106,7 +136,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 		}
 
 		setErrors(errorsTemp);
-		return errorsTemp.subAccountName === '' || errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '';
+		return errorsTemp.subAccountName === '' || errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && (CustomGuidEnc === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '');
 	}
 
 	const saveSubAccountDetils = () => {
@@ -337,17 +367,17 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
 												height={15}
 												className={clsx({ [classes.rtlSwitch]: isRTL })}
-												checked={subAccountDetails.emailBulk}
+												checked={subAccountDetails.addEmailBulk}
 												onChange={(e: any) => setSubAccountDetails({
 													...subAccountDetails,
-													emailBulk: !subAccountDetails.emailBulk
+													addEmailBulk: !subAccountDetails.addEmailBulk
 												})}
 											/>
 										}
 										label={t('SubAccount.addEmailBulk')}
 									/>
 									{
-										subAccountDetails.emailBulk && (
+										subAccountDetails.addEmailBulk && (
 											<>
 												<Typography title={t("SubAccount.emailBulkAmount")} className={clsx(classes.alignDir, classes.pt10)}>
 													{t("SubAccount.emailBulkAmount")}
@@ -383,17 +413,17 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
 												height={15}
 												className={clsx({ [classes.rtlSwitch]: isRTL })}
-												checked={subAccountDetails.SMSBulk}
+												checked={subAccountDetails.addSMSBulk}
 												onChange={(e: any) => setSubAccountDetails({
 													...subAccountDetails,
-													SMSBulk: !subAccountDetails.SMSBulk
+													addSMSBulk: !subAccountDetails.addSMSBulk
 												})}
 											/>
 										}
 										label={t('SubAccount.addSMSBulk')}
 									/>
 									{
-										subAccountDetails.SMSBulk && (
+										subAccountDetails.addSMSBulk && (
 											<>
 												<Typography title={t("SubAccount.SMSBulkAmount")} className={clsx(classes.alignDir, classes.pt10)}>
 													{t("SubAccount.SMSBulkAmount")}
@@ -429,17 +459,17 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
 												height={15}
 												className={clsx({ [classes.rtlSwitch]: isRTL })}
-												checked={subAccountDetails.MMSBulk}
+												checked={subAccountDetails.addMMSBulk}
 												onChange={() => setSubAccountDetails({
 													...subAccountDetails,
-													MMSBulk: !subAccountDetails.MMSBulk
+													addMMSBulk: !subAccountDetails.addMMSBulk
 												})}
 											/>
 										}
 										label={t('SubAccount.addMMSBulk')}
 									/>
 									{
-										subAccountDetails.MMSBulk && (
+										subAccountDetails.addMMSBulk && (
 											<>
 												<Typography title={t("SubAccount.MMSBulkAmount")} className={clsx(classes.alignDir, classes.pt10)}>
 													{t("SubAccount.MMSBulkAmount")}
@@ -550,7 +580,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 					</Grid>
 				</Grid>
 
-				<Grid container className={clsx(classes.pb15)} spacing={3}>
+				<Grid container className={clsx(classes.pb15, classes.pt10)} spacing={3}>
 					<Grid item md={4}>
 						<Typography title={t("SubAccount.loginUserName")} className={classes.alignDir}>
 							{t("SubAccount.loginUserName")}
@@ -567,6 +597,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 								...subAccountDetails,
 								loginUserName: e.target.value.trim()
 							})}
+							disabled={CustomGuidEnc !== ''}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.loginUserName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -615,6 +646,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 											// </span>
 										),
 									}}
+									disabled={CustomGuidEnc !== ''}
 								/>
 							</Tooltip>
 						</Box>
@@ -642,6 +674,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, editSubAccountDetail
 								...subAccountDetails,
 								confirmPassword: e.target.value.trim()
 							})}
+							disabled={CustomGuidEnc !== ''}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.confirmPassword ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

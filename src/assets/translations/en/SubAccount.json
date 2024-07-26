@@ -51,5 +51,10 @@
 	"createAccount": "Create Account",
 	"standard": "Standard",
 	"direct": "Direct",
-	"amount": "Amount"
+	"amount": "Amount",
+	"emailDirect": "Email Direct",
+	"SMSDirect": "SMS Direct",
+	"MMSDirect": "MMS Direct",
+	"subAccountDeleted": "Sub Account has been deleted successfully.",
+	"subAccountDeletionFailed": "Something went wrong while deleting Sub Account"
 }

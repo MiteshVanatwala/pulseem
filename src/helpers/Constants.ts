@@ -205,7 +205,8 @@ export const UploadSettings = {
 
 export const DateFormats = {
     REGULAR: 'YYYY-MM-DD HH:mm:ss',
-    DATE_ONLY: 'YYYY-MM-DD'
+    DATE_ONLY: 'YYYY-MM-DD',
+    FULL_DATE: 'MM/DD/YYYY HH:mm:ss A',
 }
 
 export const FBBusiness = 'https://business.facebook.com/wa/manage/';
@@ -324,3 +325,13 @@ export const SEND_1 = '_Send_1';
 export const PULSE_1 = '_Pulse_1';
 
 export const URL_REGEX = /(((?:www\.)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;
+export const CreditHistoryType = {
+    0: "common.Mail",
+    1: "common.SMS",
+    2: "common.MMS",
+};
+
+export const CreditHistoryAccountType = {
+    0: "SubAccount.standard",
+    1: "SubAccount.direct",
+}

@@ -383,6 +383,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w60: {
     width: "60%",
   },
+  w20VW: {
+    width: "20vw",
+  },
   w70VW: {
     width: "70vw",
   },
@@ -770,7 +773,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   whiteBox: {
     backgroundColor: "#fff",
-    boxShadow: "5px 3px 3px 1px rgba(0,0,0,.2)",
+    boxShadow: "0px 0px 10px 3px rgba(0, 0, 0, .2)",
     padding: 5,
   },
   packageBox: {

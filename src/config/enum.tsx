@@ -20,16 +20,3 @@ export enum EventTypes {
   Purchase = 1,
   CartAbandon = 2
 }
-
-export enum CreditHistoryType {
-  All = -1,
-  Email = 0,
-  SMS = 1,
-  MMS = 2
-}
-
-export enum CreditHistoryAccountType {
-  All = -1,
-  Standard = 0,
-  Direct = 1
-}
