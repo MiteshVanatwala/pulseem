@@ -100,7 +100,7 @@ const BulkStatus = ({ classes }) => {
   }
 
   const renderBillingSupportDialog = () => {
-    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID > 0]?.length > 0;
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
     return {
       showDivider: false,
       icon: (
