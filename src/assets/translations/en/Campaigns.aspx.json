@@ -732,5 +732,7 @@
   "selectUptoFiveEmails": "Select up to 5 emails to approve",
   "sendAmpRequest": "Send AMP approval",
   "lastRequestTime": "Last Attempt: ",
-  "requestsCount": "Attempts: "
+  "requestsCount": "Attempts: ",
+  "ampRegisterDesc": "In order to complete the registration process<br/>You should fill the AMP Registration Form By <a href='' target='_blank'>click here</a> For each and every Email address you applied with, separately<br/>Google aims to respond to most requests within 5 working days and in case the request was <b>accepted</b> - you could immediately send AMP content<br/>In case the request was <b>rejected</b> - you would receive an email explaining why it was rejected.",
+  "ampSelectEmail": "Select at least 1 email to AMP approval"
 }

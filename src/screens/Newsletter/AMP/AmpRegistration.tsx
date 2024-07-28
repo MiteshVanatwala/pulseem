@@ -9,28 +9,30 @@ import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { StateType } from '../../../Models/StateTypes';
 import { IoIosArrowDown } from 'react-icons/io';
-import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { ampApproval } from '../../../redux/reducers/AmpSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import moment from 'moment';
 import 'moment/locale/he';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const AmpRegistration = ({ classes }: any) => {
     const [showLoader, setShowLoader] = useState<boolean>(true);
     const [selectedEmail, setSelectedEmail] = useState<string[]>([]);
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { verifiedEmails, accountSettings, accountFeatures } = useSelector((state: StateType) => state.common);
+    const { verifiedEmails } = useSelector((state: StateType) => state.common);
     const { isRTL } = useSelector((state: StateType) => state.core);
     const ToastMessages = {
-        201: { severity: 'success', color: 'success', message: 'settings.changePassword.responses.201', showAnimtionCheck: false },
+        100: { severity: 'error', color: 'error', message: 'campaigns.ampSelectEmail', showAnimtionCheck: false },
+        201: { severity: 'success', color: 'success', message: 'campaigns.requestSent', showAnimtionCheck: false },
         401: { severity: 'error', color: 'error', message: 'integrations.authResponses.401', showAnimtionCheck: false },
         500: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false }
     } as any;
 
     const [toastMessage, setToastMessage] = useState<any>(null);
+    const [showAmpRegisterDesc, setShowAmpRegisterDesc] = useState<boolean>(false);
 
     const init = async () => {
         await dispatch(getAuthorizedEmails());
@@ -48,15 +50,24 @@ const AmpRegistration = ({ classes }: any) => {
     };
 
     const sendApprovalRequest = async () => {
-        const response: any = await dispatch(ampApproval(selectedEmail));
-        setToastMessage(ToastMessages[response?.payload?.StatusCode])
-        console.log(selectedEmail);
+        if (selectedEmail?.length > 0) {
+            const response: any = await dispatch(ampApproval(selectedEmail));
+            if (response?.payload?.StatusCode === 201) {
+                setShowAmpRegisterDesc(true);
+                setSelectedEmail([]);
+            }
+
+            setToastMessage(ToastMessages[response?.payload?.StatusCode])
+        }
+        else {
+            setToastMessage(ToastMessages[100])
+        }
     }
 
     return (
         <DefaultScreen
             currentPage="newsletter"
-            subPage={"newsletterInfo"}
+            subPage={"ampRegistration"}
             classes={classes}
             customPadding={true}
             containerClass={clsx(classes.mb50, classes.editorCont)}
@@ -67,7 +78,7 @@ const AmpRegistration = ({ classes }: any) => {
                 </Box>
                 <Box className={"containerBody"}>
                     <Grid container>
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             <Box className={clsx('selectWrapper', classes.mb50)}>
                                 <FormControl
                                     className={clsx(classes.selectInputFormControl, classes.w100)}
@@ -111,7 +122,7 @@ const AmpRegistration = ({ classes }: any) => {
                                 </FormControl>
                             </Box>
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} className={classes.mb50}>
                             <Button onClick={sendApprovalRequest}
                                 className={clsx(
                                     classes.btn,
@@ -125,18 +136,16 @@ const AmpRegistration = ({ classes }: any) => {
 
                     <BaseDialog
                         classes={classes}
-                        open={false}
-                        title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
+                        open={showAmpRegisterDesc}
+                        title={t("campaigns.sendAmpRequest")}
                         showDivider={true}
-                        onClose={() => { console.log('open') }}
-                        onCancel={() => { console.log('open') }}
-                        onConfirm={() => { console.log('open') }}
-                        cancelText="common.Cancel"
-                        confirmText="common.Ok"
+                        onClose={() => { setShowAmpRegisterDesc(false) }}
+                        onCancel={() => { setShowAmpRegisterDesc(false) }}
+                        showDefaultButtons={false}
                     >
                         <Box>
                             <Typography variant="subtitle1">
-                                {t("campaigns.GridButtonColumnResource2.ConfirmText")}
+                                {RenderHtml(t('campaigns.ampRegisterDesc'))}
                             </Typography>
                         </Box>
                     </BaseDialog>
