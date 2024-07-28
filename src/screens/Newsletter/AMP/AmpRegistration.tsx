@@ -78,6 +78,9 @@ const AmpRegistration = ({ classes }: any) => {
                 </Box>
                 <Box className={"containerBody"}>
                     <Grid container>
+                        <Grid item xs={12}>
+                            {RenderHtml(t('campaigns.ampPageText'))}
+                        </Grid>
                         <Grid item xs={6}>
                             <Box className={clsx('selectWrapper', classes.mb50)}>
                                 <FormControl
