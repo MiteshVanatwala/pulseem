@@ -18,13 +18,13 @@ const PulseemPie = ({ data, onChartClick, colorPalette }: any) => {
       colors={colorPalette}
       series={[
         {
-          arcLabel: (item) => `${item.value} (${item.percentage})`,
-          arcLabelMinAngle: 0,
+          arcLabel: (item) => `${item.percentage}`,
+          arcLabelMinAngle: 20,
           data: data,
-          innerRadius: 15,
+          innerRadius: 5,
           outerRadius: 125,
-          paddingAngle: 5,
-          cornerRadius: 5,
+          paddingAngle: 0.2,
+          cornerRadius: 2,
           highlightScope: { faded: 'global', highlighted: 'item' },
           faded: { innerRadius: 15, additionalRadius: -10, color: 'gray' },
         },
