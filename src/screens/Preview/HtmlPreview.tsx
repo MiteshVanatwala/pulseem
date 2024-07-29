@@ -73,10 +73,6 @@ const HtmlPreview = ({ classes }: any) => {
     });
   }
   const getLandingPageHtml = async () => {
-    const bootstrap_css = document.createElement("link");
-    bootstrap_css.rel = 'stylesheet'
-    bootstrap_css.href = "https://www.dgpul.site:9999/pulseem/Content/bootstrap-rtl.css?v1";
-    document.getElementsByTagName('head')[0].appendChild(bootstrap_css);
     // @ts-ignore
     const response = await dispatch(getLandingPagePreview(id)) as any;
     const d = {
