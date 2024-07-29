@@ -1596,6 +1596,7 @@ const ClientSearchResult = ({ classes }) => {
               CreationDate: CreationDate,
               LogSms_ErrorType: ErrorTypeText,
               OpenTime: OpenTime,
+              RegistrationOn: RegistrationOn
             })}
           </TableCell>}
         <TableCell classes={cellStyle} align="center" className={classes.flex4}>
@@ -1670,7 +1671,8 @@ const ClientSearchResult = ({ classes }) => {
       Cellphone,
       LogSms_ErrorType,
       LastSendDate,
-      snt_OpeningDate
+      snt_OpeningDate,
+      RegistrationOn
     } = row;
 
     const switchStatus = (isEmail) => {
@@ -1695,13 +1697,7 @@ const ClientSearchResult = ({ classes }) => {
               {renderPhoneNameCell(row)}
             </Box>
             <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
-              {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType, SentDate: SentDate })}
-              {/* <Typography className={classes.bold}>
-                {t("common.campaignRevenue")}
-              </Typography>
-              <Typography>
-                {Revenue}
-              </Typography> */}
+              {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType, SentDate: SentDate, RegistrationOn: RegistrationOn })}
             </Box>
           </Box>
           <Box className={clsx(classes.mt5)} style={{ maxWidth: '90%' }}>
