@@ -215,9 +215,9 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <SelectProductCategories
                         classes={classes}
                         disabled={!data.dynamicData?.MyActivities.IsPurchased}
-                        data={data.dynamicData?.MyActivities?.PurchasedProductCategory}
+                        data={data.dynamicData?.MyActivities?.PurchasedProductCategory?.split(',')}
                         onUpdate={(value: any) => {
-                            onUpdate('PurchasedProductCategory', value)
+                            onUpdate('PurchasedProductCategory', value.join(','))
                         }} />
                 </Grid>
             </Grid>
@@ -401,9 +401,9 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <SelectProductCategories
                         classes={classes}
                         disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
-                        data={data.dynamicData?.MyActivities?.NotPurchasedProductCategory}
+                        data={data.dynamicData?.MyActivities?.NotPurchasedProductCategory?.split(',')}
                         onUpdate={(value: any) => {
-                            onUpdate('NotPurchasedProductCategory', value)
+                            onUpdate('NotPurchasedProductCategory', value.join(','))
                         }} />
                 </Grid>
             </Grid>
@@ -587,9 +587,9 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <SelectProductCategories
                         classes={classes}
                         disabled={!data.dynamicData?.MyActivities.IsAbandoned}
-                        data={data.dynamicData?.MyActivities?.AbandonedProductCategory}
+                        data={data.dynamicData?.MyActivities?.AbandonedProductCategory?.split(',')}
                         onUpdate={(value: any) => {
-                            onUpdate('AbandonedProductCategory', value)
+                            onUpdate('AbandonedProductCategory', value.join(','))
                         }} />
                 </Grid>
             </Grid>
