@@ -21,7 +21,9 @@ import { DateField } from '../../components/managment';
 import moment from 'moment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { ValidateEmailAddress } from '../../helpers/Utils/common';
-import { get } from 'lodash';
+import { get, map } from 'lodash';
+import { AddEditSubAccounts, GetGroupsAccountSubUsers } from '../../redux/reducers/SubAccountSlice';
+import { Group } from '../../Models/Groups/Group';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -33,11 +35,12 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const { isGlobal } = useSelector((state: any) => state.subAccount);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { testGroups } = useSelector((state: any) => state.sms);
-	const [selectedGroups, setSelectedGroups] = useState<any>([]);
-	const [showTestGroups, setShowTestGroups] = useState(false);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
-	const [toastMessage, setToastMessage] = useState(null);
-	const [errors, setErrors] = useState({
+	const [ selectedGroups, setSelectedGroups ] = useState<any>([]);
+	const [ showTestGroups, setShowTestGroups ] = useState(false);
+	const [ allGroupsSelected, setAllGroupsSelected ] = useState(false);
+	const [ isLoader, setIsLoader ] = useState<boolean>(false);
+	const [ toastMessage, setToastMessage ] = useState(null);
+	const [ errors, setErrors ] = useState({
 		subAccountName: '',
 		cellPhone: '',
 		emailAddress: '',
@@ -46,6 +49,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		confirmPassword: '',
 	});
 	const [ showPasswordTip, setShowPasswordTip ] = useState<boolean>(false);
+	const [ groupList, setGroupList ] = useState<any>([]);
 	const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
     LowerChar: false,
     SpecialChar: false,
@@ -84,7 +88,6 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	
 	useEffect(() => {
 		if (isOpen && CustomGuidEnc !== '') {
-			console.log(subAccountRecord)
 			setSubAccountDetails({
 				...subAccountDetails,
 				emailBulk: get(subAccountRecord, 'BulkEmail', 0),
@@ -107,8 +110,17 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				automaticUserLock: get(subAccountRecord, 'ExpiryDate', null),
 				balance: get(subAccountRecord, 'FinalGlobalBalance', ''),
 			})
+
+			getGroupList();
 		}
 	}, [ isOpen ]);
+
+	const getGroupList = async () => {
+		const groupList = await dispatch(GetGroupsAccountSubUsers(CustomGuidEnc));
+		if (groupList?.payload?.Data.length > 0 && groupList?.payload?.StatusCode === 1) {
+			setSelectedGroups(groupList?.payload?.Data)
+		}
+	}
 
 	const validateForm = () => {
 		let errorsTemp = JSON.parse(JSON.stringify(errors))
@@ -139,57 +151,90 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		return errorsTemp.subAccountName === '' || errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && (CustomGuidEnc === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '');
 	}
 
-	const saveSubAccountDetils = () => {
+	const saveSubAccountDetils = async () => {
 		if (validateForm()) {
+			setIsLoader(true);
 			//@ts-ignore
-			// const response = await dispatch(saveLandingPage(subAccountDetails));
-			// handleSaveResponse(response?.payload, redirectToNewEditor);
+			const response = await dispatch(AddEditSubAccounts({
+				CustomGuidEnc,
+				SubAccountName: subAccountDetails.subAccountName,
+				ExpiryDate: subAccountDetails.automaticUserLock,
+				CellPhone: subAccountDetails.cellPhone,
+				AccountManager: subAccountDetails.accountManager,
+				AddEmailBulkAmount: subAccountDetails.emailBulkAmount,
+				AddSmsBulkAmount: subAccountDetails.SMSBulkAmount,
+				AddMmsBulkAmount: subAccountDetails.MMSBulkAmount,
+				FinalGlobalBalance: subAccountDetails.balance,
+				Email: subAccountDetails.emailAddress,
+				LoginUserName: subAccountDetails.loginUserName,
+				Password: subAccountDetails.password,
+				groupIds: map(selectedGroups, 'GroupID')
+			}));
+			handleSaveResponse(response?.payload?.StatusCode);
 			setIsLoader(false);
 			return true;
-		} else {
-			// setDialogType({ type: 'validationDialog' })
 		}
 	}
 
-	// const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
+	const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
 
-	// const handleSaveResponse = (response: any, redirectToNewEditor: number) => {
-	// 	switch (response.StatusCode) {
-	// 		case 201: {
-	// 			handleContinueToEditor(redirectToNewEditor, response.Data.ID);
-	// 			break;
-	// 		}
-	// 		case 400: {
-	// 			showErrorToast(t('common.Error'));
-	// 			break;
-	// 		}
-	// 		case 401: {
-	// 			logout();
-	// 			break;
-	// 		}
-	// 		case 402: {
-	// 			showErrorToast(t('common.Error'));
-	// 			break;
-	// 		}
-	// 		case 404: {
-	// 			showErrorToast(t('common.Error'));
-	// 			break;
-	// 		}
-	// 		case 405: {
-	// 			showErrorToast(t('landingPages.shortUrlExist'));
-	// 			setErrors({
-	// 				...errors,
-	// 				shortURL: t('landingPages.shortURLExist')
-	// 			})
-	// 			break;
-	// 		}
-	// 		case 500:
-	// 		default: {
-	// 			showErrorToast(t('common.Error'));
-	// 			break;
-	// 		}
-	// 	}
-	// }
+	const handleSaveResponse = (statusCode: number) => {
+		switch (statusCode) {
+			case 0: {
+				showErrorToast(t('SubAccount.subAccountNotFound'));
+				break;
+			}
+			case 1: {
+				setToastMessage({ severity: 'success', color: 'success', message: t('SubAccount.subAccountSaved'), showAnimtionCheck: false } as any)
+				setTimeout(() => {
+					onClose(true);
+				}, 2000);
+				break;
+			}
+			case 2: {
+				showErrorToast(t('common.invalidEmail'));
+				break;
+			}
+			case 3: {
+				showErrorToast(t('SubAccount.invalidLoginName'));
+				break;
+			}
+			case 4: {
+				showErrorToast(t('SubAccount.invalidPhoneNumber'));
+				break;
+			}
+			case 7: {
+				showErrorToast(t('SubAccount.userCreationFailed'));
+				break;
+			}
+			case 400: {
+				showErrorToast(t('common.Error'));
+				break;
+			}
+			case 401: {
+				logout();
+				break;
+			}
+			case 402: {
+				showErrorToast(t('common.Error'));
+				break;
+			}
+			case 404: {
+				showErrorToast(t('common.Error'));
+				break;
+			}
+			case 405: {
+				showErrorToast(t('landingPages.shortUrlExist'));
+				break;
+			}
+			case 100:
+			case 500:
+			default: {
+				showErrorToast(t('common.Error'));
+				break;
+			}
+		}
+	}
 
 	const renderToast = () => {
 		setTimeout(() => {
@@ -215,17 +260,54 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
     setPasswordValidation(validPass);
   };
 
+	const callbackUpdateGroups = (groups: any) => {
+		const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
+		const groupList: Group[] = found
+				? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
+				: [...selectedGroups, groups];
+		setSelectedGroups(groupList);
+	}
+
+	const callbackSelectAll = () => {
+		let groupList: Group[] = [];
+		if (!allGroupsSelected) {
+			groupList = showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups];
+		} else {
+			groupList = [];
+		}
+		setSelectedGroups(groupList);
+		setAllGroupsSelected(!allGroupsSelected);
+	}
+
+	const onRemoveGroup = (leftGroups: Group[]) => {
+		if (leftGroups && leftGroups?.length > 0) {
+			setSelectedGroups(leftGroups);
+		}
+		else {
+			setSelectedGroups([]);
+		}
+	}
+
+	const handleKeyPress = (event: any) => {
+    var isNumber = /^[0-9]*$/;
+		if (!event.key.match(isNumber) || event.key === 'e') {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+  }
+
 	return (
 		<BaseDialog
 			classes={classes}
 			open={isOpen}
-			title={t('SubAccount.addSubAccount')}
+			title={t(`SubAccount.${ CustomGuidEnc === '' ? 'addSubAccount' : 'editSubAccount'}`)}
 			icon={<div className={classes.dialogIconContent}>
 				{'\uE0D5'}
 			</div>}
 			showDivider={false}
-			onClose={onClose}
-			onCancel={onClose}
+			onClose={() => onClose(false)}
+			onCancel={() => onClose(false)}
 			onConfirm={() => {}}
 			reduceTitle
 			style={{ minWidth: 240 }}
@@ -254,7 +336,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 						<Button
 							variant='contained'
 							size='small'
-							onClick={onClose}
+							onClick={() => onClose(false)}
 							className={clsx(classes.btn, classes.btnRounded)}
 						>
 							{t("common.cancel")}
@@ -268,13 +350,13 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 					!isGlobal && (
 						<>
 							<Grid container className={classes.pb15}>
-								<Grid item md={4}>
+								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
 									{t("SubAccount.emailBulk")}: {subAccountDetails.emailBulk}
 								</Grid>
-								<Grid item md={4}>
+								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
 									{t("SubAccount.SMSBulk")}: {subAccountDetails.SMSBulk}
 								</Grid>
-								<Grid item md={4}>
+								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
 									{t("SubAccount.MMSBulk")}: {subAccountDetails.MMSBulk}
 								</Grid>
 							</Grid>
@@ -284,7 +366,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt10)}>{t('SubAccount.subAccountSetting')}</div>
 				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 				<Grid container className={clsx(classes.pb15)} spacing={3}>
-					<Grid item md={4}>
+					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.subAccountName")} className={classes.alignDir}>
 							{t("SubAccount.subAccountName")}
 						</Typography>
@@ -298,7 +380,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							autoComplete="off"
 							onChange={(e: any) => setSubAccountDetails({
 								...subAccountDetails,
-								subAccountName: e.target.value.trim()
+								subAccountName: e.target.value
 							})}
 						/>
 						<Box className='textBoxWrapper'>
@@ -307,7 +389,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							</Typography>
 						</Box>
 					</Grid>
-					<Grid item md={4}>
+					<Grid item md={4} xs={12}>
 						<Typography title={t("common.Cellphone")} className={classes.alignDir}>
 							{t("common.Cellphone")}
 						</Typography>
@@ -321,8 +403,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							autoComplete="off"
 							onChange={(e: any) => setSubAccountDetails({
 								...subAccountDetails,
-								cellPhone: e.target.value.trim()
+								cellPhone: e.target.value
 							})}
+							onKeyUp={handleKeyPress}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.cellPhone ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -331,7 +414,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 						</Box>
 					</Grid>
 
-					<Grid item md={4}>
+					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.accountManager")} className={classes.alignDir}>
 							{t("SubAccount.accountManager")}
 						</Typography>
@@ -345,7 +428,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							autoComplete="off"
 							onChange={(e: any) => setSubAccountDetails({
 								...subAccountDetails,
-								accountManager: e.target.value.trim()
+								accountManager: e.target.value
 							})}
 						/>
 					</Grid>
@@ -354,7 +437,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 					{
 						!isGlobal && (
 							<>		
-								<Grid item md={4}>
+								<Grid item md={4} xs={12}>
 									<FormControlLabel
 										control={
 											<PulseemSwitch
@@ -400,7 +483,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 									}
 								</Grid>
 								
-								<Grid item md={4}>
+								<Grid item md={4} xs={12}>
 									<FormControlLabel
 										control={
 											<PulseemSwitch
@@ -446,7 +529,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 									}
 								</Grid>
 
-								<Grid item md={4}>
+								<Grid item md={4} xs={12}>
 									<FormControlLabel
 										control={
 											<PulseemSwitch
@@ -498,7 +581,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 					{
 						isGlobal && (
 							<>
-								<Grid item md={4}>
+								<Grid item md={4} xs={12}>
 									<Typography title={t("SubAccount.balance")} className={clsx(classes.alignDir, classes.pt10)}>
 										{t("SubAccount.balance")}
 									</Typography>
@@ -520,7 +603,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 						)
 					}
 					
-					<Grid item md={4}>
+					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.automaticUserLock")} className={clsx(classes.alignDir, classes.pt10)}>
 							{t("SubAccount.automaticUserLock")}
 						</Typography>
@@ -554,7 +637,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.loginInformation')}</div>
 				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 				<Grid container spacing={3}>
-					<Grid item md={4}>
+					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.subAccountName")} className={classes.alignDir}>
 							{t("common.Email")}
 							<span className={clsx(classes.errorLabel, classes.pr10, classes.pe10)}>* {t("SubAccount.email2FA")}</span>
@@ -581,7 +664,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				</Grid>
 
 				<Grid container className={clsx(classes.pb15, classes.pt10)} spacing={3}>
-					<Grid item md={4}>
+					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.loginUserName")} className={classes.alignDir}>
 							{t("SubAccount.loginUserName")}
 						</Typography>
@@ -606,7 +689,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 						</Box>
 					</Grid>
 
-					<Grid item md={4}>
+					<Grid item md={4} xs={12}>
 						<Typography title={t("common.password")} className={classes.alignDir}>
 							{t("common.password")}
 						</Typography>
@@ -657,7 +740,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 						</Box>
 					</Grid>
 
-					<Grid item md={4}>
+					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.confirmPassword")} className={classes.alignDir}>
 							{t("SubAccount.confirmPassword")}
 						</Typography>
@@ -687,7 +770,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.addGroupsToSubAccount')}</div>
 				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 				<Grid container>
-					<Grid item>
+					<Grid item md={4} xs={12}>
 						<Groups
 							classes={classes}
 							list={
@@ -695,9 +778,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							}
 							// test={showTestGroups}
 							selectedList={selectedGroups}
-							callbackSelectedGroups={() => {}}
-							callbackUpdateGroups={() => {}} //onUpdateGroups
-							callbackSelectAll={() => {}}
+							callbackSelectedGroups={callbackUpdateGroups}
+							callbackUpdateGroups={onRemoveGroup} //onUpdateGroups
+							callbackSelectAll={callbackSelectAll}
 							callbackReciFilter={() => { }} // onReciFilter
 							callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
 							key={"dynuacGroups"}
@@ -711,6 +794,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							isSms={true}
 							isCampaign={false}
 							noSelectionText={''}
+							groupCompareKey='GroupName'
 							// isFilterSelected={false}
 						/>
 					</Grid>

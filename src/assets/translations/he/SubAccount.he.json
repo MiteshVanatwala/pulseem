@@ -9,6 +9,7 @@
 	"balance": "Balance",
 	"deleteSubAccount": "Are you sure you want to delete sub account?",
 	"addSubAccount": "Add Sub Account",
+	"editSubAccount": "Edit Sub Account",
 	"subAccountSetting": "Sub Account Setting",
 	"subAccountName": "Sub Account Name",
 	"automaticUserLock": "Automatic User Lock",
@@ -56,5 +57,12 @@
 	"SMSDirect": "SMS Direct",
 	"MMSDirect": "MMS Direct",
 	"subAccountDeleted": "Sub Account has been deleted successfully.",
-	"subAccountDeletionFailed": "Something went wrong while deleting Sub Account"
+	"subAccountDeletionFailed": "Something went wrong while deleting Sub Account",
+	"subAccountNotFound": "Sub Account Not Found",
+	"directAccountSaveFailed": "Something went wrong while saving Direct Sub Account",
+	"directAccountSaved": "Direct account has been saved",
+	"invalidLoginName": "Invalid Login Name",
+	"invalidPhoneNumber": "Invalid Phone Number",
+	"userCreationFailed": "User Creation Failed",
+	"subAccountSaved": "Sub Account has been saved."
 }

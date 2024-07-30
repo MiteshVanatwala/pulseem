@@ -11,7 +11,6 @@ import { Loader } from '../../components/Loader/Loader';
 import { toastProps } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { resetToastData } from '../Whatsapp/Constant';
 import Toast from '../../components/Toast/Toast.component';
-import { sitePrefix } from '../../config';
 import { AiOutlineLogin, AiOutlineUserDelete } from 'react-icons/ai';
 import { ManagmentIcon, TablePagination } from '../../components/managment';
 import { DateFormats, rowsOptions } from '../../helpers/Constants';
@@ -25,6 +24,7 @@ import CreditHistory from './CreditHistory';
 import { DeleteSubAccounts, GetAccountDetails, GetDirectAccountDetails, GetSubAccountList } from '../../redux/reducers/SubAccountSlice';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
@@ -133,7 +133,7 @@ const AccountUsers = ({ classes }: any) => {
         uIcon: EditIcon,
         disable: false,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        remove: windowSize === 'xs' || !isGlobal,
+        remove: windowSize !== 'xs' && !isGlobal,
         onClick: () => {
           setDialogType({
             type: 'SaveSubAccount',
@@ -150,7 +150,7 @@ const AccountUsers = ({ classes }: any) => {
         disable: false,
         remove: windowSize === 'xs' || !isGlobal,
         onClick: () => {
-          setDialogType({ type: 'DirectAccount', data: row.CustomGuidEnc });
+          setDialogType({ type: 'DirectAccount', data: row });
         }
       },
       {
@@ -170,7 +170,7 @@ const AccountUsers = ({ classes }: any) => {
       <Grid
         container
         direction={windowSize === 'sm' ? 'column' : 'row'}
-        justifyContent={!isGlobal ? 'center' : (windowSize === 'xs' ? 'flex-start' : 'flex-end')}
+        justifyContent={!isGlobal && windowSize !== 'xs' ? 'center' : (windowSize === 'xs' ? 'flex-start' : 'flex-end')}
       >
         {iconsMap.map((map, index) => (
           <Grid
@@ -331,42 +331,45 @@ const AccountUsers = ({ classes }: any) => {
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
-        {windowSize !== 'xs' && !isGlobal && selectedAccountId && <Grid item>
-          <Button
-            component="a"
-            onClick={() => {
-              navigate(`/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${selectedAccountId}`);
-            }}
-            className={clsx(
-              classes.btn,
-              classes.btnRounded,
-            )}
-            endIcon={<MdInput />}
-          >
-            {t('common.Login')}
-          </Button>
-        </Grid>}
-        {windowSize !== 'xs' && <Grid item>
-          <Button
-            className={clsx(
-              classes.btn,
-              classes.btnRounded,
-            )}
-            endIcon={<MdOutlinePersonAddAlt />}
-            onClick={() => setDialogType({
-              type: 'SaveSubAccount',
-              data: {}
-            })}>
-            {t('dashboard.add')}
-          </Button>
-        </Grid>}
-        {
-          !isGlobal && selectedAccountId && (
-            <Grid item xs={windowSize === 'xs' && 12}>
+        <Grid item md={8} xs={12} sm={12}>
+          {windowSize !== 'xs' && !isGlobal && selectedAccountId && <>
+            <Button
+              component="a"
+              onClick={() => {
+                navigate(`/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${selectedAccountId}`);
+              }}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded,
+                classes.marginInlineStart5
+              )}
+              endIcon={<MdInput />}
+            >
+              {t('common.Login')}
+            </Button>
+          </>}
+          {
+            <Button
+              className={clsx(
+                classes.btn,
+                classes.btnRounded,
+                classes.marginInlineStart5
+              )}
+              endIcon={<MdOutlinePersonAddAlt />}
+              onClick={() => setDialogType({
+                type: 'SaveSubAccount',
+                data: {}
+              })}>
+              {t('dashboard.add')}
+            </Button>
+          }
+          {
+            !isGlobal && selectedAccountId && (
               <Button
                 className={clsx(
                   classes.btn,
                   classes.btnRounded,
+                  classes.marginInlineStart5
                 )}
                 onClick={(e) => {
                   const userDetails = subAccountList.filter((row: SubAccountUsers) => row.CustomGuidEnc === selectedAccountId);
@@ -379,56 +382,59 @@ const AccountUsers = ({ classes }: any) => {
               >
                 {t('common.Edit')}
               </Button>
-            </Grid>
-          )
-        }
-        {
-          !isGlobal && selectedAccountId && (
-            <Grid item xs={windowSize === 'xs' && 12}>
+            )
+          }
+          {
+            !isGlobal && selectedAccountId && (
               <Button
                 className={clsx(
                   classes.btn,
                   classes.btnRounded,
+                  classes.marginInlineStart5
                 )}
                 endIcon={<FaTelegramPlane />}
-                onClick={() => setDialogType({ type: 'DirectAccount', data: selectedAccountId })}
+                onClick={() => {
+                  const userDetails = subAccountList.filter((row: SubAccountUsers) => row.CustomGuidEnc === selectedAccountId);
+                  setDialogType({
+                    type: 'DirectAccount',
+                    data: userDetails.length > 0 ? userDetails[0] : {}
+                  })
+                }}
               >
                 {t('SubAccount.directAccount')}
               </Button>
-            </Grid>
-          )
-        }
-        <Grid item xs={windowSize === 'xs' && 12}>
+            )
+          }
           <Button
             className={clsx(
               classes.btn,
               classes.btnRounded,
+              classes.marginInlineStart5
             )}
             endIcon={<FaHistory />}
             onClick={() => setDialogType({ type: 'HistoryDialog', data: {} })}
           >
             {t('SubAccount.showHistory')}
           </Button>
+          {
+            !isGlobal && selectedAccountId && (
+              <Button
+                className={clsx(
+                  classes.btn,
+                  classes.btnRounded,
+                  classes.marginInlineStart5
+                )}
+                endIcon={<AiOutlineUserDelete />}
+                onClick={() => setDialogType({ type: 'Delete', data: selectedAccountId })}
+              >
+                {t('common.Delete')}
+              </Button>
+            )
+          }
         </Grid>
-        {
-          !isGlobal && selectedAccountId && (
-          <Grid item xs={windowSize === 'xs' && 12}>
-            <Button
-              className={clsx(
-                classes.btn,
-                classes.btnRounded,
-              )}
-              endIcon={<AiOutlineUserDelete />}
-              onClick={() => setDialogType({ type: 'Delete', data: selectedAccountId })}
-            >
-              {t('common.Delete')}
-            </Button>
-          </Grid>
-          )
-        }
-        <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
+        <Grid item md={4} xs={12} sm={12} className={clsx(classes.groupsLableContainer)} >
           <Typography className={classes.groupsLable}>
-            {/* {`${isSearching ? searchResults.length : newslettersParentCampaigns.length} ${t('campaigns.newsletters')}`} */}
+            {`${subAccountList.length} ${t('SubAccount.title')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -533,22 +539,39 @@ const AccountUsers = ({ classes }: any) => {
     )
   }
 
-  const renderPhoneRow = (row: any) => {
+  const renderPhoneRow = (row: SubAccountUsers) => {
     return (
       <TableRow
-        key={row.ID}
+        key={row.CustomGuidEnc}
         component='div'
-        classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
-          <Box className={classes.justifyBetween}>
-            <Box className={classes.inlineGrid}>
-              {/* {renderNameCell(row)} */}
-            </Box>
-            <Box>
-              {/* {renderStatusCell(row.Status)} */}
-            </Box>
+        classes={rowStyle}
+      >
+        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }}>
+          <Box className={classes.inlineGrid}>
+            {/* @ts-ignore */}
+            <CustomTooltip
+              isSimpleTooltip={false}
+              classes={classes}
+              interactive={true}
+              arrow={true}
+              placement={'top'}
+              title={<Typography noWrap={false}>{row.SubAccountName}</Typography>}
+              text={row.SubAccountName}
+            >
+              <div className={clsx(classes.bold, classes.pt5, classes.f16, classes.w100)}>
+                {row.SubAccountName}
+              </div>
+            </CustomTooltip>
           </Box>
-          {/* {renderActionCell(row.Status)} */}
+          <Box className={clsx(classes.pt5)}>
+            {t("SubAccount.userManager")}: {row.SubAccountManager}
+          </Box>
+          <Box className={clsx(classes.pt5)}>
+            <Typography className={classes.grayTextCell}>
+              {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.FULL_DATE)}</b>
+            </Typography>
+          </Box>
+          {renderCellIcons(row)}
         </TableCell>
       </TableRow>
     )
@@ -619,7 +642,7 @@ const AccountUsers = ({ classes }: any) => {
     if (type) {
       return (
         dialogType && <BaseDialog
-          contentStyle={type === 'HistoryDialog' ? clsx(classes.noMargin, classes.w70VW) : classes.maxWidth400}
+          contentStyle={type === 'HistoryDialog' ? clsx(classes.noMargin, windowSize !== 'xs' ? classes.w70VW : '') : classes.maxWidth400}
           classes={classes}
           open={dialogType}
           // childrenStyle={classes.mb25}
@@ -661,14 +684,31 @@ const AccountUsers = ({ classes }: any) => {
           <Box className={clsx(classes.justifyCenterOfCenter, classes.w100, classes.semibold)}>
             {direct.emailDirect !== null && getDirectBox('SubAccount.emailDirect', direct.emailDirect)}
             {direct.SMSDirect !== null && getDirectBox('SubAccount.SMSDirect', direct.SMSDirect)}
-            {direct.SMSDirect !== null && getDirectBox('SubAccount.MMSDirect', direct.SMSDirect)}
+            {direct.MMSDirect !== null && getDirectBox('SubAccount.MMSDirect', direct.MMSDirect)}
           </Box>
         )
       }
       {renderDialog()}
       {renderToast()}
-      <SaveSubAccount classes={classes} isOpen={dialogType?.type === 'SaveSubAccount'} onClose={() => setDialogType(null)} subAccountRecord={dialogType?.data} />
-      <DirectAccount classes={classes} isOpen={dialogType?.type === 'DirectAccount'} onClose={() => setDialogType(null)} />
+      <SaveSubAccount
+        classes={classes}
+        isOpen={dialogType?.type === 'SaveSubAccount'}
+        onClose={(isReload: boolean = false) => {
+          console.log(isReload)
+          setDialogType(null);
+          if (isReload) getData();
+        }}
+        subAccountRecord={dialogType?.data}
+      />
+      <DirectAccount
+        classes={classes}
+        isOpen={dialogType?.type === 'DirectAccount'}
+        onClose={(isReload: boolean = false) => {
+          setDialogType(null);
+          if (isReload) getData();
+        }}
+        subAccountRecord={dialogType?.data}
+      />
       <Loader isOpen={showLoader} zIndex={9999} />
     </DefaultScreen>
   )

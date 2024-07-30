@@ -8,8 +8,11 @@ import Toast from '../../components/Toast/Toast.component';
 import { coreProps } from '../../model/Core/corePros.types';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { ValidateEmailAddress } from '../../helpers/Utils/common';
+import { get, isNull, isNumber } from 'lodash';
+import { AddEditDirectAccounts } from '../../redux/reducers/SubAccountSlice';
+import { logout } from '../../helpers/Api/PulseemReactAPI';
 
-const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
+const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
 	const { t } = useTranslation();
 	const { isRTL  } = useSelector(
@@ -20,13 +23,13 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 	const [ toastMessage, setToastMessage ] = useState(null);
 	const [errors, setErrors] = useState({
 		companyName: '',
-		contactNumber: '',
+		contactName: '',
 		emailAddress: '',
 		telephone: ''
 	});
 	const [ directAccountDetails, setDirectAccountDetails ] = useState<any>({
 		companyName: '',
-		contactNumber: '',
+		contactName: '',
 		emailAddress: '',
 		telephone: '',
 		emailBulk: '',
@@ -42,17 +45,34 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 		lastMMSBulkAddedOn: '',
 		lastBalanceBulkAddedOn: '',
 	})
+	const CustomGuidEnc = get(subAccountRecord, 'CustomGuidEnc', '');
 
 	useEffect(() => {
-	}, []);
+		if (isOpen && CustomGuidEnc !== '') {
+			setDirectAccountDetails({
+				...directAccountDetails,
+				companyName: isNull(get(subAccountRecord, 'DirectAccountCompanyName')) ? get(subAccountRecord, 'SubAccountName', '') : get(subAccountRecord, 'DirectAccountCompanyName', ''),
+				contactName: get(subAccountRecord, 'DirectAccountContactName', ''),
+				emailAddress: isNull(get(subAccountRecord, 'DirectAccountEmail')) ? get(subAccountRecord, 'Email', '') : get(subAccountRecord, 'DirectAccountEmail', ''),
+				telephone: get(subAccountRecord, 'DirectAccountTelephone', ''),
+				emailBulk: get(subAccountRecord, 'DirectBulkEmails', ''),
+				SMSBulk: get(subAccountRecord, 'DirectSMSCredits', ''),
+				MMSBulk: get(subAccountRecord, 'DirectMmsCredits', ''),
+			})
+		}
+	}, [ isOpen ]);
+
+	const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
+
+	const getTrimmedEmptyValue = (key: string) => isNull(get(directAccountDetails, key)) ? '' : get(directAccountDetails, key, '').trim();
 
 	const validateForm = () => {
 		let errorsTemp = JSON.parse(JSON.stringify(errors))
 		errorsTemp = {
-			companyName: directAccountDetails.companyName.trim() === '' ? t('common.requiredField') : '',
-			contactNumber: directAccountDetails.contactNumber.trim() === '' ? t('common.requiredField') : '',
-			emailAddress: directAccountDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
-			telephone: directAccountDetails.telephone.trim() === '' ? t('common.requiredField') : ''
+			companyName: getTrimmedEmptyValue('companyName') === '' ? t('common.requiredField') : '',
+			contactName: getTrimmedEmptyValue('contactName') === '' ? t('common.requiredField') : '',
+			emailAddress: getTrimmedEmptyValue('emailAddress') === '' ? t('common.requiredField') : '',
+			telephone: getTrimmedEmptyValue('telephone') === '' ? t('common.requiredField') : ''
 		};
 
 		if (!ValidateEmailAddress(directAccountDetails.emailAddress)) {
@@ -63,18 +83,67 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 		}
 
 		setErrors(errorsTemp);
-		return errorsTemp.companyName === '' || errorsTemp.contactNumber === '' && errorsTemp.emailAddress === '' && errorsTemp.telephone === '';
+		return errorsTemp.companyName === '' || errorsTemp.contactName === '' && errorsTemp.emailAddress === '' && errorsTemp.telephone === '';
+	}
+	
+	const handleSaveResponse = (statusCode: number) => {
+		switch (statusCode) {
+			case 0: {
+				showErrorToast(t('SubAccount.subAccountNotFound'));
+				break;
+			}
+			case 1: {
+				setToastMessage({ severity: 'success', color: 'success', message: t('SubAccount.directAccountSaved'), showAnimtionCheck: false } as any)
+				setTimeout(() => {
+					onClose(true);
+				}, 2000);
+				break;
+			}
+			case 2: {
+				showErrorToast(t('SubAccount.directAccountSaveFailed'));
+				break;
+			}
+			case 4: {
+				showErrorToast(t('common.invalidEmail'));
+				break;
+			}
+			case 401: {
+				logout();
+				break;
+			}
+			case 402: {
+				showErrorToast(t('common.Error'));
+				break;
+			}
+			case 404: {
+				showErrorToast(t('common.Error'));
+				break;
+			}
+			case 500:
+			default: {
+				showErrorToast(t('common.Error'));
+				break;
+			}
+		}
 	}
 
-	const saveSubAccountDetils = () => {
+	const saveSubAccountDetils = async () => {
 		if (validateForm()) {
+			setIsLoader(true);
 			//@ts-ignore
-			// const response = await dispatch(saveLandingPage(subAccountDetails));
-			// handleSaveResponse(response?.payload, redirectToNewEditor);
+			const response = await dispatch(AddEditDirectAccounts({
+				CustomGuidEnc,
+				CompanyName: directAccountDetails.companyName,
+				ContactName: directAccountDetails.contactName,
+				Telephone: directAccountDetails.telephone,
+				Email: directAccountDetails.emailAddress,
+				BulkEmail: directAccountDetails.addEmailBulk,
+				SMSCredits: directAccountDetails.addSMSBulk,
+				MmsCredits: directAccountDetails.addMMSBulk
+			}));
 			setIsLoader(false);
+			handleSaveResponse(response?.payload?.StatusCode);
 			return true;
-		} else {
-			// setDialogType({ type: 'validationDialog' })
 		}
 	}
 
@@ -86,8 +155,8 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 	};
 
 	const handleKeyPress = (event: any) => {
-    var isNumber = /^[0-9]*$/;
-    if (!event.key.match(isNumber) || event.key === 'e' || event.key === '.') {
+    var isNumber = /^[0-9].*$/;
+		if (!event.key.match(isNumber) || event.key === 'e') {
       event.preventDefault();
       event.stopPropagation();
       return false;
@@ -103,8 +172,8 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 				{'\uE0D5'}
 			</div>}
 			showDivider={false}
-			onClose={onClose}
-			onCancel={onClose}
+			onClose={() => onClose(false)}
+			onCancel={() => onClose(false)}
 			onConfirm={() => {}}
 			reduceTitle
 			style={{ minWidth: 240 }}
@@ -133,14 +202,14 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 						<Button
 							variant='contained'
 							size='small'
-							onClick={onClose}
+							onClick={() => onClose(false)}
 							className={clsx(classes.btn, classes.btnRounded)}
 						>
 							{t("common.cancel")}
 						</Button>
 					</Grid>
 
-					<Grid item>
+					{/* <Grid item>
 						<Button
 							variant='contained'
 							size='small'
@@ -149,7 +218,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 						>
 							{t("SubAccount.createAccount")}
 						</Button>
-					</Grid>
+					</Grid> */}
 				</Grid>
 			)}
 		>
@@ -185,21 +254,21 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 							{t("SubAccount.contactName")}
 						</Typography>
 						<TextField
-							id="contactNumber"
+							id="contactName"
 							label=""
 							variant="outlined"
-							name="contactNumber"
-							value={directAccountDetails.contactNumber}
+							name="contactName"
+							value={directAccountDetails.contactName}
 							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 							autoComplete="off"
 							onChange={(e: any) => setDirectAccountDetails({
 								...directAccountDetails,
-								contantNumber: e.target.value.trim()
+								contactName: e.target.value.trim()
 							})}
 						/>
 						<Box className='textBoxWrapper'>
-							<Typography className={clsx(errors.contactNumber ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-								{errors.contactNumber}
+							<Typography className={clsx(errors.contactName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+								{errors.contactName}
 							</Typography>
 						</Box>
 					</Grid>
@@ -259,16 +328,17 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 									{t("SubAccount.emailBulk")}: {directAccountDetails.emailBulk}
 								</Grid>
 								<Grid item md={4}>
-									{t("SubAccount.SMSBulk")}: {directAccountDetails.SMSBulk}
+									{t("SubAccount.directAccountSMSCredits")}: {directAccountDetails.SMSBulk}
 								</Grid>
 								<Grid item md={4}>
-									{t("SubAccount.MMSBulk")}: {directAccountDetails.MMSBulk}
+									{t("SubAccount.directAccountMMSCredits")}: {directAccountDetails.MMSBulk}
 								</Grid>
 								<Grid item md={4}>
 									<Typography title={t("SubAccount.addBulkEmails")} className={clsx(classes.alignDir)}>
 										{t("SubAccount.addBulkEmails")}
 									</Typography>
 									<TextField
+										type="number"
 										id="addEmailBulk"
 										label=""
 										variant="outlined"
@@ -280,7 +350,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 											...directAccountDetails,
 											addEmailBulk: e.target.value.trim()
 										})}
-										onKeyPress={handleKeyPress}
+										onKeyUp={handleKeyPress}
 									/>
 								</Grid>
 								
@@ -289,6 +359,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 										{t("SubAccount.addSMS")}
 									</Typography>
 									<TextField
+										type="number"
 										id="addSMSBulk"
 										label=""
 										variant="outlined"
@@ -300,7 +371,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 											...directAccountDetails,
 											addSMSBulk: e.target.value.trim()
 										})}
-										onKeyPress={handleKeyPress}
+										onKeyUp={handleKeyPress}
 									/>
 								</Grid>
 
@@ -309,22 +380,23 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 										{t("SubAccount.addMMS")}
 									</Typography>
 									<TextField
+										type="number"
 										id="MMSBulk"
 										label=""
 										variant="outlined"
 										name="MMSBulk"
-										value={directAccountDetails.MMSBulk}
+										value={directAccountDetails.addMMSBulk}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
 										onChange={(e: any) => setDirectAccountDetails({
 											...directAccountDetails,
-											MMSBulk: e.target.value.trim()
+											addMMSBulk: e.target.value.trim()
 										})}
-										onKeyPress={handleKeyPress}
+										onKeyUp={handleKeyPress}
 									/>
 								</Grid>
 
-								<Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
+								{/* <Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
 									{t("SubAccount.lastEmailBulkAdded")}: {directAccountDetails.lastEmailBulkAddedOn}
 								</Grid>
 								<Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
@@ -332,7 +404,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 								</Grid>
 								<Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
 									{t("SubAccount.lastMMSBulkAdded")}: {directAccountDetails.lastMMSBulkAddedOn}
-								</Grid>
+								</Grid> */}
 							</>
 						)
 					}
@@ -361,14 +433,14 @@ const DirectAccount = ({ classes, isOpen = false, onClose }: any) => {
 											...directAccountDetails,
 											addBalance: e.target.value.trim()
 										})}
-										onKeyPress={handleKeyPress}
+										onKeyUp={handleKeyPress}
 									/>
 								</Grid>
 								<Grid item md={8}></Grid>
 
-								<Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
+								{/* <Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
 									{t("SubAccount.lastBalanceAdded")}: {directAccountDetails.lastBalanceBulkAddedOn}
-								</Grid>
+								</Grid> */}
 								<Grid item md={8}></Grid>
 							</>
 						)

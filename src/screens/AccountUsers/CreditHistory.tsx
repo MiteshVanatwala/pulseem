@@ -58,7 +58,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 				{
 					!isGlobal && (
 						<>
-							<Grid item md={3}>
+							<Grid item md={3} xs={12}>
 								<Typography>{t("SubAccount.type")}</Typography>
 								<FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
 									<Select
@@ -92,7 +92,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 								</FormControl>
 							</Grid>
 						
-							<Grid item md={3}>
+							<Grid item md={3} xs={12}>
 								<Typography>{t("SubAccount.accountType")}</Typography>
 								<FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
 									<Select
@@ -128,7 +128,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 						</>
 					)
 				}
-				<Grid item md={3}>
+				<Grid item md={3} xs={12}>
 					<Typography>{t("common.FromDate")}</Typography>
 					{/* @ts-ignore */}
 					<DateField
@@ -154,7 +154,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 						hideInvalidDateMessage={true}
 					/>
 				</Grid>
-				<Grid item md={3}>
+				<Grid item md={3} xs={12}>
 					<Typography>{t("common.ToDate")}</Typography>
 					{/* @ts-ignore */}
 					<DateField
@@ -180,7 +180,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 						hideInvalidDateMessage={true}
 					/>
 				</Grid>
-				<Grid item md={12} className={clsx(classes.textRight)}>
+				<Grid item md={12} xs={12} className={clsx(classes.textRight)}>
 					{
 						!isGlobal && (
 							<FormControlLabel
@@ -291,8 +291,39 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 		);
 	}
 
-	const renderPhoneRow = (item: any) => {
-		return <></>;
+	const renderPhoneRow = (row: BulkHistory) => {
+		return (
+      <TableRow
+				key={uniqid()}
+        component='div'
+        classes={rowStyle}
+      >
+        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10, classes.f16) }}>
+          <Box className={classes.inlineGrid}>
+						<div className={clsx(classes.pt5)}>
+						{t("SubAccount.transferringFromAccount")}: {row.TransferedFromSubAccountName}
+						</div>
+          </Box>
+          <Box className={clsx(classes.pt5)}>
+            {t("SubAccount.transferredToAccount")}: {row.TransferredToName}
+          </Box>
+          <Box className={clsx(classes.pt5)}>
+            {t("SubAccount.type")}: {t(`${get(CreditHistoryType, row.Type, '')}`)}
+          </Box>
+          <Box className={clsx(classes.pt5)}>
+            {t("SubAccount.accountType")}: {t(`${get(CreditHistoryAccountType, row.AccountType ? 1 : 0, '')}`)}
+          </Box>
+          <Box className={clsx(classes.pt5)}>
+						{t('amount')}: <b>{row.Amount}</b>
+          </Box>
+          <Box className={clsx(classes.pt5)}>
+            <Typography className={classes.grayTextCell}>
+              {t('common.Dates')}: <b>{moment(row.Date).format(DateFormats.FULL_DATE)}</b>
+            </Typography>
+          </Box>
+        </TableCell>
+      </TableRow>
+    )
 	}
 
 	const renderTableBody = () => {

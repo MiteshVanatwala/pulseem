@@ -51,6 +51,18 @@ export const GetSubAccountList = createAsyncThunk(
   }
 );
 
+export const GetGroupsAccountSubUsers = createAsyncThunk(
+  'AccountSubUsers/GetGroupsAccountSubUsers',
+  async (CustomGuidEnc: string, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/GetGroupsAccountSubUsers`, { CustomGuidEnc });
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 export const GetBulkHistory = createAsyncThunk(
   'AccountSubUsers/GetBulkHistory',
   async (filters: any, thunkAPI) => {
@@ -67,6 +79,30 @@ export const GetBulkHistory = createAsyncThunk(
   }
 );
 
+export const AddEditDirectAccounts = createAsyncThunk(
+  'AccountSubUsers/AddEditDirectAccounts',
+  async (payload: any, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/AddEditDirectAccounts`, payload);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const AddEditSubAccounts = createAsyncThunk(
+  'AccountSubUsers/AddEditSubAccounts',
+  async (payload: any, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/AddEditSubAccounts`, payload);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 
 export const SubAccountSlice = createSlice({
   name: "SubAccount",
@@ -76,6 +112,8 @@ export const SubAccountSlice = createSlice({
     currencyId: null,
     currency: null,
     currencyDescription: null,
+    currencySymbol: '',
+    isCurrencySymbolPrefix: true,
     subAccountList: [] as SubAccountUsers[],
     bulkHistory: [] as BulkHistory[],
   },
@@ -91,6 +129,8 @@ export const SubAccountSlice = createSlice({
       state.currency = payload?.Data?.Currency;
       state.currencyDescription = payload?.Data?.CurrencyDescription;
       state.currencyId = payload?.Data?.CurrencyId;
+      state.currencySymbol = payload?.Data?.CurrencySymbol;
+      state.isCurrencySymbolPrefix = payload?.Data?.IsCurrencySymbolPrefix;
     });
     builder.addCase(GetSubAccountList.fulfilled, (state, { payload }) => {
       state.subAccountList = payload?.Data?.Items || [];
