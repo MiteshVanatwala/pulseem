@@ -141,6 +141,28 @@ export const sendOTP = createAsyncThunk(
   }
 );
 
+const wl_referrerObject = (account) => {
+  const retVal = {
+    Email: account?.Email,
+    Telephone: account?.Telephone,
+    ReferrerID: account?.ReferrerID
+
+  };
+  switch (account?.ReferrerID) {
+    case '4':
+    case 4: {
+      retVal.Email = 'Support@simplyclub.co.il';
+      retVal.Telephone = '03-9192513'
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+
+  return retVal;
+}
+
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
@@ -170,7 +192,8 @@ export const commonSlice = createSlice({
         state.accountSettings = {
           Account: {
             IsPaying: data?.Account?.IsPaying,
-            IsBillingAccount: data?.Account?.IsBillingAccount
+            IsBillingAccount: data?.Account?.IsBillingAccount,
+            ...wl_referrerObject(data?.Account)
           },
           SubAccountName: data?.SubAccountName,
           DefaultFromMail: data?.DefaultFromMail,

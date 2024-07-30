@@ -353,7 +353,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
-  const renderCellIcons = (row) => {
+  const renderCellIcons = (row, isParent) => {
     const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive, IsNewEditor, FromEmail, IsBasicEditor } = row
 
     const cautionPopup = getCookie('showCautionDuplicateCampaign');
@@ -500,7 +500,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {
         key: 'reports',
         uIcon: ReportsIcon,
-        disable: Status === 1,
+        disable: (Status === 1 || isParent),
         lable: t('campaigns.Reports'),
         remove: windowSize === 'xs',
         href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`,
@@ -735,7 +735,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             scope='row'
             classes={{ root: classes.tableCellRoot }}
             className={classes.flex6}>
-            {!(isExpanded && isParent) && accountFeatures && renderCellIcons(row)}
+            {!(isExpanded && isParent) && accountFeatures && renderCellIcons(row, (isParent && childItems?.length > 0))}
           </TableCell>
         </TableRow>
         {

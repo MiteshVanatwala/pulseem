@@ -29,7 +29,7 @@ const VerificationDialog = ({
     ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
-    const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
+    const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers, accountSettings } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState(true);
     const [verificationStep, setVerificationStep] = useState(step ?? 0)
@@ -346,6 +346,18 @@ const VerificationDialog = ({
         setShowConfirmDelete(false);
     }
 
+    const renderVerificationText = () => {
+        switch (accountSettings?.Account?.ReferrerID) {
+            case 4:
+            case '4': {
+                return <Typography variant='body1'>{RenderHtml(t('SimplyClub.contactUs'))}</Typography>
+            }
+            default: {
+                return <Typography variant='body1'>{RenderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
+            }
+        }
+    }
+
     const EMAIL_MODULE = () => {
         const EMAIL_SLIDE_1 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)}
@@ -461,7 +473,7 @@ const VerificationDialog = ({
                     </Box>
                     <Box>
                         <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
-                        <Typography variant='body1'>{RenderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
+                        {renderVerificationText()}
                     </Box>
                 </Box>
             </Box>
@@ -648,7 +660,7 @@ const VerificationDialog = ({
                     </Box>
                     <Box>
                         <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
-                        <Typography variant='body1'>{RenderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
+                        {renderVerificationText()}
                     </Box>
                 </Box>
             </Box>
@@ -845,7 +857,7 @@ const VerificationDialog = ({
                     </Box>
                     <Box>
                         <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
-                        <Typography variant='body1'>{RenderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
+                        {renderVerificationText()}
                     </Box>
                 </Box>
             </Box>
@@ -1054,7 +1066,7 @@ const VerificationDialog = ({
                     </Box>
                     <Box>
                         <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
-                        <Typography variant='body1'>{RenderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
+                        {renderVerificationText()}
                     </Box>
                 </Box>
             </Box>

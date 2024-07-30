@@ -1,6 +1,5 @@
 import {
 	LinearProgress,
-	makeStyles,
 	MenuItem
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -32,19 +31,6 @@ const SideBarContactList = ({
 	const { t: translator } = useTranslation();
 	const { contactID } = useParams();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const useStyles = makeStyles(() => ({
-		selectSection: {
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
-	}));
-	const muiclasses = useStyles();
-
-	const formatTime = (timeString: string) => {
-		let splitTimeString = timeString.split(':');
-		return `${splitTimeString[0]}:${splitTimeString[1]}`;
-	};
 
 	return (
 		<>
@@ -71,10 +57,9 @@ const SideBarContactList = ({
 									<Link
 										className={clsx(
 											`${classes.whatsappChat} sidebar-contact`,
-											`${
-												contactID &&
-												contact?.PhoneNumber === contactID &&
-												'active-contact'
+											`${contactID &&
+											contact?.PhoneNumber === contactID &&
+											'active-contact'
 											}`
 										)}
 										key={i}
@@ -143,23 +128,19 @@ const SideBarContactList = ({
 																	: 'doubleTick'
 															}
 															aria-label={lastMessage?.status}
-															className={`${
-																classes.whatsappChat
-															} sidebar-contact__message-icon ${
-																lastMessage?.status === 'read'
+															className={`${classes.whatsappChat
+																} sidebar-contact__message-icon ${lastMessage?.status === 'read'
 																	? `${classes.whatsappChat} sidebar-contact__message-icon--blue`
 																	: ''
-															}`}
+																}`}
 														/>
 													)}
 													<span
-														className={`${
-															classes.whatsappChat
-														} sidebar-contact__message ${
-															!!contact.Unread
+														className={`${classes.whatsappChat
+															} sidebar-contact__message ${!!contact.Unread
 																? `${classes.whatsappChat} sidebar-contact__message--unread`
 																: ''
-														}`}>
+															}`}>
 														{contact.LastMessage}
 													</span>
 												</p>
