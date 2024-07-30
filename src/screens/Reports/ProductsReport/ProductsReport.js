@@ -213,7 +213,7 @@ const ProductsReport = ({ classes }) => {
                             onChange={(e) => setSearchData({ ...searchData, CategoryID: typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value })}
                         >
                             {
-                                productCategories.map((obj, idx) =>
+                                productCategories?.map((obj, idx) =>
                                     <MenuItem key={`op${obj.CategoryId}`} value={obj.CategoryId}>
                                         <Checkbox size="small" color="primary" checked={searchData.CategoryID.indexOf(obj.CategoryId) > -1} />
                                         <ListItemText primary={t(obj.CategoryName)} />

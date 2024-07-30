@@ -830,5 +830,6 @@
   "dynamicProductRedirectURLNote": "Please notice! Adding a \"Dynamic Product\" will work only if your store is integrated to your Pulseem account ",
   "URL": "URL",
   "fallbackURL": "Fallback URL",
-  "invalidURL": "Please enter valid fallback URL"
+  "invalidURL": "Please enter valid fallback URL",
+  "searchInput": "Search..."
 }
