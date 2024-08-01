@@ -388,5 +388,6 @@
   "recipientManagement": "Recipient Management",
   "recipientManagementDesc": "Use this page to manage recipient groups.",
   "manageTemplate": "Manage Template",
-  "createTemplate": "Create Template"
+  "createTemplate": "Create Template",
+  "affiliateManagement": "Affiliate Management"
 }

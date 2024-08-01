@@ -385,5 +385,6 @@
   "recipientManagement": "Recipient Management",
   "recipientManagementDesc": "Use this page to manage recipient groups.",
   "manageTemplate": "צור תבנית",
-  "createTemplate": "נהל תבנית"
+  "createTemplate": "נהל תבנית",
+  "affiliateManagement": "תוכנית שותפים"
 }
