@@ -5,7 +5,6 @@
 	"showHistory": "Show History",
 	"userName": "User Name",
 	"userManager": "User Manager",
-	"transferHistory": "Transfer History",
 	"balance": "Balance",
 	"deleteSubAccount": "Are you sure you want to delete sub account?",
 	"addSubAccount": "Add Sub Account",
@@ -27,7 +26,9 @@
 	"transferredToAccount": "Transferred To Account",
 	"emailBulk": "Email Bulk",
 	"SMSBulk": "SMS Bulk",
+	"SMSCredit": "SMS Credit",
 	"MMSBulk": "MMS Bulk",
+	"MMSCredit": "MMS Credit",
 	"monthlyEmailLimit": "Monthly Email Limit",
 	"monthlySMSLimit": "Monthly SMS Limit",
 	"directAccountBulkEmails": "Direct Bulk Emails",
@@ -64,5 +65,7 @@
 	"invalidLoginName": "Invalid Login Name",
 	"invalidPhoneNumber": "Invalid Phone Number",
 	"userCreationFailed": "User Creation Failed",
-	"subAccountSaved": "Sub Account has been saved."
+	"subAccountSaved": "Sub Account has been saved.",
+	"credit": "Credit",
+	"messages": "Messages"
 }

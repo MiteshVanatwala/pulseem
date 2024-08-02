@@ -4,9 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { Box, Button, Divider, FormControlLabel, Grid, TextField, Tooltip, Typography, Zoom } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../components/Loader/Loader';
-import { useNavigate, useParams } from 'react-router-dom';
-// import { TabContext, TabPanel } from '@material-ui/lab';
-import { PulseemResponse } from '../../Models/APIResponse';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import Toast from '../../components/Toast/Toast.component';
 import { coreProps } from '../../model/Core/corePros.types';
@@ -27,9 +24,8 @@ import { Group } from '../../Models/Groups/Group';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
-	const navigate = useNavigate();
 	const { t } = useTranslation();
-	const { isRTL, windowSize } = useSelector(
+	const { isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { isGlobal } = useSelector((state: any) => state.subAccount);
@@ -49,7 +45,6 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		confirmPassword: '',
 	});
 	const [ showPasswordTip, setShowPasswordTip ] = useState<boolean>(false);
-	const [ groupList, setGroupList ] = useState<any>([]);
 	const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
     LowerChar: false,
     SpecialChar: false,
@@ -129,11 +124,17 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			cellPhone: subAccountDetails.cellPhone.trim() === '' ? t('common.requiredField') : '',
 			emailAddress: subAccountDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
 			loginUserName: subAccountDetails.loginUserName.trim() === '' ? t('common.requiredField') : '',
-			password: CustomGuidEnc === '' && subAccountDetails.password.trim() === '' ? t('common.requiredField') : '',
-			confirmPassword: CustomGuidEnc === '' && subAccountDetails.confirmPassword.trim() === '' ? t('common.requiredField') : '',
+			password: '',
+			confirmPassword: (CustomGuidEnc === '' || subAccountDetails.confirmPassword.trim() !== '') && subAccountDetails.confirmPassword.trim() === '' ? t('common.requiredField') : '',
 		};
 
-		if (CustomGuidEnc === '' && subAccountDetails.password !== subAccountDetails.confirmPassword) {
+		if ((CustomGuidEnc === '' || subAccountDetails.password.trim() !== '') && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
+      errorsTemp.password = t('SignUp.InvalidPassword');
+    } else if (CustomGuidEnc === '' && subAccountDetails.password.trim() === '') {
+      errorsTemp.password = t('SignUp.PasswordRequired');
+    }
+
+		if ((CustomGuidEnc === '' || subAccountDetails.password !== '' || subAccountDetails.confirmPassword !== '') && subAccountDetails.password !== subAccountDetails.confirmPassword) {
 			errorsTemp = {
 				...errorsTemp,
 				confirmPassword: t('common.confirmPasswordNotMatch')
@@ -148,7 +149,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		}
 
 		setErrors(errorsTemp);
-		return errorsTemp.subAccountName === '' || errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && (CustomGuidEnc === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '');
+		return errorsTemp.subAccountName === '' && errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '';
 	}
 
 	const saveSubAccountDetils = async () => {
@@ -351,13 +352,13 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 						<>
 							<Grid container className={classes.pb15}>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									{t("SubAccount.emailBulk")}: {subAccountDetails.emailBulk}
+									{t("SubAccount.emailBulk")}: {subAccountDetails.emailBulk} {t("SubAccount.credit")}
 								</Grid>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									{t("SubAccount.SMSBulk")}: {subAccountDetails.SMSBulk}
+									{t("SubAccount.SMSBulk")}: {subAccountDetails.SMSBulk} {t("SubAccount.messages")}
 								</Grid>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									{t("SubAccount.MMSBulk")}: {subAccountDetails.MMSBulk}
+									{t("SubAccount.MMSBulk")}: {subAccountDetails.MMSBulk} {t("SubAccount.messages")}
 								</Grid>
 							</Grid>
 						</>
@@ -680,7 +681,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 								...subAccountDetails,
 								loginUserName: e.target.value.trim()
 							})}
-							disabled={CustomGuidEnc !== ''}
+							// disabled={CustomGuidEnc !== ''}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.loginUserName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -717,19 +718,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 									error={!!errors.password}
 									inputProps={{ maxWidth: 50 }}
-									InputProps={{
-										endAdornment: (
-											<></>
-											// <span onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })}>
-											// 	{
-											// 		userDetails.isPasswordVisible
-											// 		? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} /> 
-											// 		: <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
-											// 	}
-											// </span>
-										),
-									}}
-									disabled={CustomGuidEnc !== ''}
+									// disabled={CustomGuidEnc !== ''}
 								/>
 							</Tooltip>
 						</Box>
@@ -757,7 +746,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 								...subAccountDetails,
 								confirmPassword: e.target.value.trim()
 							})}
-							disabled={CustomGuidEnc !== ''}
+							// disabled={CustomGuidEnc !== ''}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.confirmPassword ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -770,13 +759,12 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.addGroupsToSubAccount')}</div>
 				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 				<Grid container>
-					<Grid item md={4} xs={12}>
+					<Grid item md={12} xs={12}>
 						<Groups
 							classes={classes}
 							list={
 								showTestGroups ? [...subAccountAllGroups, ...testGroups] : [...subAccountAllGroups]
 							}
-							// test={showTestGroups}
 							selectedList={selectedGroups}
 							callbackSelectedGroups={callbackUpdateGroups}
 							callbackUpdateGroups={onRemoveGroup} //onUpdateGroups
@@ -795,7 +783,6 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							isCampaign={false}
 							noSelectionText={''}
 							groupCompareKey='GroupName'
-							// isFilterSelected={false}
 						/>
 					</Grid>
 				</Grid>

@@ -15,6 +15,10 @@ import { GetBulkHistory } from '../../redux/reducers/SubAccountSlice';
 import { BulkHistory } from '../../Models/SubAccount/SubAccounts';
 import moment from 'moment';
 import { get } from 'lodash';
+import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../model/Export/ExportFileTypes';
+import { HandleExportData } from '../../helpers/Export/ExportHelper';
+import { ExportFile } from '../../helpers/Export/ExportFile';
 
 const CreditHistory = ({ classes, id = '' }: any) => {
 	const dispatch: any = useDispatch();
@@ -25,7 +29,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 	const { isRTL, language, windowSize  } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal } = useSelector((state: any) => state.subAccount);
+	const { isGlobal, isCurrencySymbolPrefix, currencySymbol } = useSelector((state: any) => state.subAccount);
 	const defaultFilter = {
 		type: '',
 		accountType: '',
@@ -38,6 +42,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ filter, setFilter ] = useState<any>(defaultFilter);
 	const [ history, setHistory ] = useState<BulkHistory[]>([]);
+	const [ dialogType, setDialog ] = useState<string | null>(null);
 	moment.locale(language);
 	
 	useEffect(() => {
@@ -180,7 +185,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 						hideInvalidDateMessage={true}
 					/>
 				</Grid>
-				<Grid item md={12} xs={12} className={clsx(classes.textRight)}>
+				<Grid item md={12} xs={12} className={clsx(isRTL ? classes.textRight : classes.textLeft)}>
 					{
 						!isGlobal && (
 							<FormControlLabel
@@ -214,7 +219,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 							{t("common.clear")}
 					</Button>
 					<Button
-						onClick={() => {}}
+						onClick={() => setDialog('exportFormat')}
 						className={clsx(classes.btn, classes.btnRounded)}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 					>
@@ -257,7 +262,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					align='center'
 					className={classes.flex1}
 				>
-					{row.Amount}
+					{ isGlobal && isCurrencySymbolPrefix ? currencySymbol : '' } {row.Amount} { isGlobal && !isCurrencySymbolPrefix ? currencySymbol : '' }
 				</TableCell>
 				<TableCell
 					classes={cellBodyStyle}
@@ -311,9 +316,6 @@ const CreditHistory = ({ classes, id = '' }: any) => {
             {t("SubAccount.type")}: {t(`${get(CreditHistoryType, row.Type, '')}`)}
           </Box>
           <Box className={clsx(classes.pt5)}>
-            {t("SubAccount.accountType")}: {t(`${get(CreditHistoryAccountType, row.AccountType ? 1 : 0, '')}`)}
-          </Box>
-          <Box className={clsx(classes.pt5)}>
 						{t('amount')}: <b>{row.Amount}</b>
           </Box>
           <Box className={clsx(classes.pt5)}>
@@ -355,10 +357,77 @@ const CreditHistory = ({ classes, id = '' }: any) => {
     )
   }
 
+	const handleDownloadCsv = async (formatType: string) => {
+		setIsLoader(true);
+    setDialog(null);
+
+		const exportColumnHeader = {
+			"Date": t('common.Dates'),
+			"Amount": t('SubAccount.amount'),
+			"Type": t('SubAccount.type'),
+			"AccountType": t('SubAccount.accountType'),
+			"TransferedFromSubAccountName": t('SubAccount.transferringFromAccount'),
+			"TransferredToName": t('SubAccount.transferredToAccount')
+		}
+
+		let listToExport: any = [];
+		if (history.length > 0) {
+			history.map((record: BulkHistory) => {
+				listToExport.push({
+					Date: moment(record.Date).format(DateFormats.FULL_DATE),
+					Amount: `${isGlobal && isCurrencySymbolPrefix ? currencySymbol : ''} ${record.Amount} ${isGlobal && !isCurrencySymbolPrefix ? currencySymbol : ''}`,
+					Type: t(`${get(CreditHistoryType, record.Type, '')}`),
+					AccountType: t(`${get(CreditHistoryType, `${record.AccountType}`, '')}`),
+					TransferedFromSubAccountName: record.TransferedFromSubAccountName,
+					TransferredToName: record.TransferredToName
+				})
+			});
+    }
+
+		const fields = { ...exportColumnHeader };
+		const exportOptions = {
+      OrderItems: true,
+      FormatDate: true,
+      ConvertStatusToString: true,
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    };
+
+    try {
+			// @ts-ignore
+      const result = await HandleExportData(listToExport, exportOptions);
+      
+      ExportFile({
+        data: result,
+        fileName: 'transaction-history',
+        exportType: formatType,
+        fields: fields
+      });
+
+      setDialog(null)
+    } catch (error) {
+      console.log(error);
+    }
+    finally {
+      setIsLoader(false);
+    }
+	}
+
 	return (
 		<>
 			{renderSearchSection()}
 			{renderTable()}
+			<ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialogType === 'exportFormat'}
+        title={t('campaigns.exportFile')}
+        radioTitle={t('common.SelectFormat')}
+        onConfirm={(e: any) => handleDownloadCsv(e)}
+        onCancel={() => setDialog(null)}
+        cookieName={'exportFormat'}
+        defaultValue="xlsx"
+        options={ExportFileTypes}
+      />
 			<Loader isOpen={isLoader} />
 		</>
 	);

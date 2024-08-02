@@ -29,7 +29,7 @@ import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
-  const { accountId, subAccountList, isGlobal } = useSelector((state: any) => state.subAccount);
+  const { accountId, subAccountList, isGlobal, currencySymbol, isCurrencySymbolPrefix } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [ isSearching, setIsSearching ] = useState<boolean>(false);
@@ -282,8 +282,8 @@ const AccountUsers = ({ classes }: any) => {
             !isGlobal && (
               <>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.emailBulk")}</TableCell>
-                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.SMSBulk")}</TableCell>
-                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.MMSBulk")}</TableCell>
+                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.SMSCredit")}</TableCell>
+                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.MMSCredit")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlyEmailLimit")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlySMSLimit")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.directAccountBulkEmails")}</TableCell>
@@ -294,7 +294,6 @@ const AccountUsers = ({ classes }: any) => {
           }
           {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={clsx(isGlobal ? classes.flex3 : classes.flex1, classes.noBorderOnLastCell)} align='center'>
-            {/* {t("SubAccount.transferHistory")} */}
           </TableCell>
         </TableRow>
       </TableHead>
@@ -471,7 +470,7 @@ const AccountUsers = ({ classes }: any) => {
               classes={cellBodyStyle}
               align='center'
               className={isGlobal ? classes.flex1 : classes.flex2}>
-                {row.FinalGlobalBalance}
+                { isCurrencySymbolPrefix ? currencySymbol : '' } {row.FinalGlobalBalance} { !isCurrencySymbolPrefix ? currencySymbol : '' }
             </TableCell>
           )
         }
@@ -645,7 +644,6 @@ const AccountUsers = ({ classes }: any) => {
           contentStyle={type === 'HistoryDialog' ? clsx(classes.noMargin, windowSize !== 'xs' ? classes.w70VW : '') : classes.maxWidth400}
           classes={classes}
           open={dialogType}
-          // childrenStyle={classes.mb25}
           onClose={() => setDialogType(null)}
           onCancel={() => setDialogType(null)}
           {...currentDialog}>
@@ -694,7 +692,6 @@ const AccountUsers = ({ classes }: any) => {
         classes={classes}
         isOpen={dialogType?.type === 'SaveSubAccount'}
         onClose={(isReload: boolean = false) => {
-          console.log(isReload)
           setDialogType(null);
           if (isReload) getData();
         }}
