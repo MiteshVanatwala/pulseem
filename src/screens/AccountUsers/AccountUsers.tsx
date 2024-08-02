@@ -335,7 +335,7 @@ const AccountUsers = ({ classes }: any) => {
             <Button
               component="a"
               onClick={() => {
-                navigate(`/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${selectedAccountId}`);
+                window.location.href = `/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${selectedAccountId}`
               }}
               className={clsx(
                 classes.btn,
