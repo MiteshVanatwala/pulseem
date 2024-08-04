@@ -117,7 +117,7 @@ const AmpRegistration = ({ classes }: any) => {
                                             getContentAnchorEl: null
                                         }}
                                     >
-                                        {verifiedEmails?.filter((email: any) => { return email.IsVerified === true }).map((item: any, index: number) => {
+                                        {verifiedEmails?.filter((email: any) => { return email?.IsVerified === true && email?.IsOptIn === true }).map((item: any, index: number) => {
                                             return <MenuItem key={index} value={item.Number} style={{ paddingInline: 15, direction: isRTL ? 'rtl' : 'ltr' }}>
                                                 <Checkbox checked={selectedEmail.indexOf(item.Number) > -1} disabled={selectedEmail.indexOf(item.Number) === -1 && selectedEmail.length > 4} />
                                                 <ListItemText primary={item.Number} style={{ marginInline: 15 }} />
