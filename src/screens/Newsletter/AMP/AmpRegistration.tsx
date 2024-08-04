@@ -106,9 +106,15 @@ const AmpRegistration = ({ classes }: any) => {
                                         MenuProps={{
                                             PaperProps: {
                                                 style: {
-                                                    width: 250
+                                                    width: 250,
+                                                    maxHeight: 200
                                                 },
                                             },
+                                            anchorOrigin: {
+                                                vertical: "bottom",
+                                                horizontal: isRTL ? "right" : "left"
+                                            },
+                                            getContentAnchorEl: null
                                         }}
                                     >
                                         {verifiedEmails?.filter((email: any) => { return email.IsVerified === true }).map((item: any, index: number) => {
