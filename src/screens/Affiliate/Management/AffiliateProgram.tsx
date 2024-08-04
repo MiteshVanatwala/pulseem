@@ -14,10 +14,12 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { actionURL } from "../../../config";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ArrowDropDownCircleOutlined } from "@material-ui/icons";
+import { useNavigate } from "react-router-dom";
 
 const AffiliateProgram = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { windowSize, rowsPerPage, isRTL } = useSelector((state: StateType) => state.core);
   const { affiliateDetails } = useSelector((state: StateType) => state.affiliates);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
@@ -49,19 +51,35 @@ const AffiliateProgram = ({ classes }: any) => {
     getData();
   }, [, timeFrame]);
 
+  const handleAffilatePage = () => {
+    switch (affiliateDetails?.StatusCode) {
+      case 201: {
+        if (affiliateDetails?.Data[0]) {
+          const fee = ` - ${affiliateDetails?.Data[0]?.AffiliateFee * 100}%`
+          const paid = affiliateDetails?.Data[0]?.Paid;
+          const toPay = affiliateDetails?.Data.reduce((n: any, { ToPay }: any) => n + ToPay, 0);
+          const referralID = affiliateDetails?.Data[0]?.ReferralID;
+          setAffiliateFee(fee);
+          setPaid(paid);
+          setToBePaid(toPay);
+          setBalance(toPay - paid);
+          setRefId(referralID)
+        }
+        break;
+      }
+      case 406: {
+        navigate(-1);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+  }
 
   useEffect(() => {
-    if (affiliateDetails?.Data[0]) {
-      const fee = ` - ${affiliateDetails?.Data[0]?.AffiliateFee * 100}%`
-      const paid = affiliateDetails?.Data[0]?.Paid;
-      const toPay = affiliateDetails?.Data.reduce((n: any, { ToPay }: any) => n + ToPay, 0);
-      const referralID = affiliateDetails?.Data[0]?.ReferralID;
-      setAffiliateFee(fee);
-      setPaid(paid);
-      setToBePaid(toPay);
-      setBalance(toPay - paid);
-      setRefId(referralID)
-    }
+    handleAffilatePage();
   }, [affiliateDetails])
   const renderTable = () => {
     return (
@@ -359,7 +377,7 @@ const AffiliateProgram = ({ classes }: any) => {
   const renderGrandTotal = () => {
     if (affiliateDetails?.Data && affiliateDetails?.Data?.length > 0) {
       return <Box className={classes.dFlex} style={{ width: '100%', alignItems: 'flex-end', marginTop: 10, marginInlineEnd: 25 }}>
-        <b>{t('common.Total')}</b>: {toBePaid} {t('common.NIS')}
+        <b>{t('common.Total')}</b>: {toBePaid?.toLocaleString()} {t('common.NIS')}
       </Box>
     }
     return <></>
