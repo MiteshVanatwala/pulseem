@@ -110,6 +110,26 @@ const AffiliateProgram = ({ classes }: any) => {
       <Box className='tableBodyContainer'>
         <TableBody>
           {sortData?.length > 0 && sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+          {/* <TableRow
+            classes={rowStyle}>
+            <TableCell
+              classes={cellStyle}
+              align='center'
+              className={classes.flex1}>
+              {<Typography className={clsx(classes.font18, classes.bold)}>{t('common.Total')}</Typography>}
+            </TableCell>
+            <TableCell
+              classes={cellStyle}
+              align='center'
+              className={classes.flex2}>
+            </TableCell>
+            <TableCell
+              classes={cellStyle}
+              align='center'
+              className={classes.flex2}>
+              {renderGrandTotal()}
+            </TableCell>
+          </TableRow> */}
         </TableBody>
       </Box>
     )
@@ -177,8 +197,8 @@ const AffiliateProgram = ({ classes }: any) => {
           <TableHead>
             <TableRow classes={rowStyle}>
               <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("affiliate.OpenForPayment")}</TableCell>
-              <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("affiliate.paid")}</TableCell>
-              <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("affiliate.balance")}</TableCell>
+              <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("affiliate.paid")}</TableCell>
+              <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("affiliate.balance")}</TableCell>
             </TableRow>
           </TableHead>
           <Box className='tableBodyContainer'>
@@ -195,13 +215,13 @@ const AffiliateProgram = ({ classes }: any) => {
                 <TableCell
                   classes={cellStyle}
                   align='center'
-                  className={classes.flex1}>
+                  className={classes.flex2}>
                   <Typography className={classes.font18}>{paid?.toLocaleString()} {t('common.NIS')}</Typography>
                 </TableCell>
                 <TableCell
                   classes={cellStyle}
                   align='center'
-                  className={classes.flex1}>
+                  className={classes.flex2}>
                   <Typography className={classes.font18}>{balance?.toLocaleString()} {t('common.NIS')}</Typography>
 
                 </TableCell>
@@ -376,9 +396,9 @@ const AffiliateProgram = ({ classes }: any) => {
 
   const renderGrandTotal = () => {
     if (affiliateDetails?.Data && affiliateDetails?.Data?.length > 0) {
-      return <Box className={classes.dFlex} style={{ width: '100%', alignItems: 'flex-end', marginTop: 10, marginInlineEnd: 25 }}>
-        <b>{t('common.Total')}</b>: {toBePaid?.toLocaleString()} {t('common.NIS')}
-      </Box>
+      // return <Box className={classes.dFlex} style={{ width: '100%', alignItems: 'center', marginTop: 10, marginInlineEnd: 25 }}>
+      return <Typography className={clsx(classes.font18, classes.bold)}>{toBePaid?.toLocaleString()} {t('common.NIS')}</Typography>
+      // </Box>
     }
     return <></>
   }
@@ -387,18 +407,18 @@ const AffiliateProgram = ({ classes }: any) => {
     currentPage='newsletter'
     classes={classes}
     containerClass={clsx(classes.management, classes.mb50)}>
-    <Box className={clsx('topSection', classes.mb50)}>
+    <Box className={clsx('topSection', classes.mb4)}>
       <Title Text={t('affiliate.pageTitle')} classes={classes} />
       {renderSearchSection()}
     </Box>
-    <Box style={{ paddingInlineStart: 25, paddingBlock: 15 }} className={classes.dFlex}>
+    <Box style={{ paddingInlineStart: 25, paddingBlock: 20 }} className={classes.dFlex}>
       <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ width: 'auto', paddingInlineEnd: 15 }}>{t('affiliate.affiliatedAccounts')}</Typography>
       {renderTimeFrame()}
     </Box>
-    {renderTable()}
-    {renderGrandTotal()}
-    {renderTablePagination()}
     {renderBalance()}
+    {renderTable()}
+    {/* {renderGrandTotal()} */}
+    {renderTablePagination()}
   </DefaultScreen>
 }
 
