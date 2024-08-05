@@ -55,7 +55,7 @@ const AffiliateProgram = ({ classes }: any) => {
     switch (affiliateDetails?.StatusCode) {
       case 201: {
         if (affiliateDetails?.Data[0]) {
-          const fee = ` - ${affiliateDetails?.Data[0]?.AffiliateFee * 100}%`
+          const fee = ` - ${affiliateDetails?.Data[0]?.AffiliateFee}%`
           const paid = affiliateDetails?.Data[0]?.Paid;
           const toPay = affiliateDetails?.Data.reduce((n: any, { ToPay }: any) => n + ToPay, 0);
           const referralID = affiliateDetails?.Data[0]?.ReferralID;
