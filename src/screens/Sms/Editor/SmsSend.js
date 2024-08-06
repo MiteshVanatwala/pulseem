@@ -2746,7 +2746,7 @@ const SmsSend = ({ classes, ...props }) => {
     return <></>
   }
   const englishLetterNotAllowed = () => {
-    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== null;
+    const isWhiteLabel = accountSettings?.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings?.Account?.ReferrerID] !== undefined;
     return {
       showDivider: false,
       icon: (

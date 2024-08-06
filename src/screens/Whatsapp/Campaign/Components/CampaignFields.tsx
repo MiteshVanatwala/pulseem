@@ -159,6 +159,7 @@ const CampaignFields = ({
 					renderInput={(params: any) => <TextField {...params} />}
 					onChange={onTemplateChange}
 					value={getTemplateNameById(savedTemplateList, savedTemplate)}
+					disabled={savedTemplateList.length === 0}
 				/>
 
 				<Typography className={classes.WhatsappCampainButtonContent}>
