@@ -335,3 +335,7 @@ export const CreditHistoryAccountType = {
     0: "SubAccount.standard",
     1: "SubAccount.direct",
 }
+
+export const IsraelCurrencyId = 1;
+export const USDCurrencyId = 2;
+export const GlobalPackageId = 4;

@@ -26,10 +26,13 @@ const CreditHistory = ({ classes, id = '' }: any) => {
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot) }
 	const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
   const { t } = useTranslation();
-	const { isRTL, language, windowSize  } = useSelector(
+	const { isRTL, language, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, isCurrencySymbolPrefix, currencySymbol } = useSelector((state: any) => state.subAccount);
+	const { isGlobal, isCurrencySymbolPrefix, currencySymbol  } = useSelector(
+		(state: { common: any }) => state.common
+	);
+	const {  } = useSelector((state: any) => state.subAccount);
 	const defaultFilter = {
 		type: '',
 		accountType: '',

@@ -21,7 +21,7 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import SaveSubAccount from './SaveSubAccount';
 import DirectAccount from './DirectAccount';
 import CreditHistory from './CreditHistory';
-import { DeleteSubAccounts, GetAccountDetails, GetDirectAccountDetails, GetSubAccountList } from '../../redux/reducers/SubAccountSlice';
+import { DeleteSubAccounts, GetDirectAccountDetails, GetSubAccountList } from '../../redux/reducers/SubAccountSlice';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
@@ -29,7 +29,8 @@ import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
-  const { accountId, subAccountList, isGlobal, currencySymbol, isCurrencySymbolPrefix } = useSelector((state: any) => state.subAccount);
+  const { isGlobal, currencySymbol, isCurrencySymbolPrefix } = useSelector((state: any) => state.common);
+  const { subAccountList } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [ isSearching, setIsSearching ] = useState<boolean>(false);
@@ -75,7 +76,6 @@ const AccountUsers = ({ classes }: any) => {
 
   const getInitialData = async () => {
     setShowLoader(true);
-    if (accountId === null) dispatch(GetAccountDetails());
     const directData: any = await dispatch(GetDirectAccountDetails({
       ...searchData,
       CompanyAdmin: 1

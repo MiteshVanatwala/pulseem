@@ -467,6 +467,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													{t("SubAccount.emailBulkAmount")}
 												</Typography>
 												<TextField
+													type='number'
 													id="emailBulkAmount"
 													label=""
 													variant="outlined"
@@ -513,6 +514,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													{t("SubAccount.SMSBulkAmount")}
 												</Typography>
 												<TextField
+													type='number'
 													id="SMSBulkAmount"
 													label=""
 													variant="outlined"
@@ -559,6 +561,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													{t("SubAccount.MMSBulkAmount")}
 												</Typography>
 												<TextField
+													type='number'
 													id="MMSBulkAmount"
 													label=""
 													variant="outlined"

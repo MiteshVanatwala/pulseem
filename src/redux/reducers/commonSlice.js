@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
@@ -163,6 +164,30 @@ const wl_referrerObject = (account) => {
   return retVal;
 }
 
+export const GetAccountDetails = createAsyncThunk(
+  'AccountSubUsers/GetIsGlobalAndCurrencyOfAccount',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`AccountSubUsers/GetIsGlobalAndCurrencyOfAccount`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const GetGlobalAccountPackagesDetails = createAsyncThunk(
+  'dashboard/GetGlobalAccountPackagesDetails',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`dashboard/GetGlobalAccountPackagesDetails`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
@@ -175,7 +200,16 @@ export const commonSlice = createSlice({
     accountSettings: null,
     accountFeatures: null,
     isSweepingApproval: false,
-    subAccount: null
+    subAccount: null,
+    isGlobal: false,
+    currencyId: null,
+    currency: null,
+    currencyDescription: null,
+    currencySymbol: '',
+    isCurrencySymbolPrefix: true,
+    tranzilaCurrencyID: null,
+    finalGlobalBalance: 0,
+    VAT: null,
   },
   extraReducers: builder => {
     builder
@@ -220,6 +254,23 @@ export const commonSlice = createSlice({
       .addCase(isSweepingApprovalAccount.fulfilled, (state, { payload }) => {
         state.isSweepingApproval = payload
       })
+    builder
+      .addCase(GetAccountDetails.fulfilled, (state, { payload }) => {
+        state.isGlobal = get(payload, 'Data.IsGlobalAccount', false);
+        state.currency = get(payload, 'Data.Currency', '');
+        state.currencyDescription = get(payload, 'Data.CurrencyDescription', '');
+        state.currencyId = get(payload, 'Data.CurrencyId', null);
+        state.currencySymbol = get(payload, 'Data.CurrencySymbol', '');
+        state.isCurrencySymbolPrefix = get(payload, 'Data.IsCurrencySymbolPrefix', '');
+      });
+    builder
+      .addCase(GetGlobalAccountPackagesDetails.fulfilled, (state, { payload }) => {
+        console.log(payload)
+        console.log(get(payload, 'Data.balanceInfo.FinalGlobalBalance', 0))
+        state.tranzilaCurrencyID = get(payload, 'Data.balanceInfo.TranzilaCurrencyID', null)
+        state.finalGlobalBalance = get(payload, 'Data.balanceInfo.FinalGlobalBalance', 0);
+        state.VAT = get(payload, 'Data.balanceInfo.VAT', 0);
+      });
   },
   reducers: {
     updateDefaultFromEmail: (state, action) => {

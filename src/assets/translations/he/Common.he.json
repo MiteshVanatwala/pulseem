@@ -827,5 +827,19 @@
   "invalidURL": "אנא הכניסו קישור תקין",
   "confirmPasswordNotMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה",
   "SMS": "SMS",
-  "MMS": "MMS"
+  "MMS": "MMS",
+  "topUp": "טעינת יתרה",
+  "topUpBalance": "טעינת יתרה",
+  "selectPaymentMethod": "Select Payment Method",
+  "masterCard": "Master Card",
+  "visa": "Visa",
+  "diners": "Diners",
+  "americanExpress": "American Express",
+  "checkout": "Checkout",
+  "whatsappBalance": "יתרת וואטסאפ",
+  "americanExpressWarning": "When paying with American Express, you will be charged in USD. Transaction fees might be higher.",
+  "enterTopUpAmount": "Enter Top Up Amount",
+  "payment": "Payment",
+  "result": "Result",
+  "VATTax": "VAT"
 }

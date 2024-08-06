@@ -3,18 +3,6 @@ import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
 import { PulseemResponse } from "../../Models/APIResponse";
 import { BulkHistory, SubAccountUsers } from "../../Models/SubAccount/SubAccounts";
 
-export const GetAccountDetails = createAsyncThunk(
-  'AccountSubUsers/GetIsGlobalAndCurrencyOfAccount',
-  async (_, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.get(`AccountSubUsers/GetIsGlobalAndCurrencyOfAccount`);
-      return response.data as PulseemResponse;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  }
-);
-
 export const GetDirectAccountDetails = createAsyncThunk(
   'AccountSubUsers/GetAccountUsers',
   async (filters: any, thunkAPI) => {
@@ -123,15 +111,6 @@ export const SubAccountSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(GetAccountDetails.fulfilled, (state, { payload }) => {
-      state.accountId = payload?.Data?.AccountId;
-      state.isGlobal = payload?.Data?.IsGlobalAccount;
-      state.currency = payload?.Data?.Currency;
-      state.currencyDescription = payload?.Data?.CurrencyDescription;
-      state.currencyId = payload?.Data?.CurrencyId;
-      state.currencySymbol = payload?.Data?.CurrencySymbol;
-      state.isCurrencySymbolPrefix = payload?.Data?.IsCurrencySymbolPrefix;
-    });
     builder.addCase(GetSubAccountList.fulfilled, (state, { payload }) => {
       state.subAccountList = payload?.Data?.Items || [];
     });
