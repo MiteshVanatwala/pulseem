@@ -265,8 +265,6 @@ export const commonSlice = createSlice({
       });
     builder
       .addCase(GetGlobalAccountPackagesDetails.fulfilled, (state, { payload }) => {
-        console.log(payload)
-        console.log(get(payload, 'Data.balanceInfo.FinalGlobalBalance', 0))
         state.tranzilaCurrencyID = get(payload, 'Data.balanceInfo.TranzilaCurrencyID', null)
         state.finalGlobalBalance = get(payload, 'Data.balanceInfo.FinalGlobalBalance', 0);
         state.VAT = get(payload, 'Data.balanceInfo.VAT', 0);
