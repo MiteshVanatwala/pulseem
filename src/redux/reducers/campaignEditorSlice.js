@@ -156,6 +156,7 @@ export const campaignEditorSlice = createSlice({
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
             ERROR_OCCURED: { severity: 'error', color: 'error', message: 'common.ErrorOccured', showAnimtionCheck: false },
             WEBP_NOT_SUPPORTED: { severity: 'error', color: 'error', message: 'campaigns.webpNotSupport', showAnimtionCheck: false },
+            HTML_DOCTYPE_ERROR: { severity: 'error', color: 'error', message: 'campaigns.htmlDocTypeNotAllowed', showAnimtionCheck: false },
         },
         templateDetails: {},
         publicTemplates: [],

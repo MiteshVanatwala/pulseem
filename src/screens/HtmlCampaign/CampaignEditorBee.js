@@ -692,9 +692,18 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
-  // const handleAutoSave = () => {
-  //   saveDesign(false, null, false);
-  // }
+  const handleUndoChange = (code) => {
+    switch (code) {
+      case '0780': {
+        setToastMessage(ToastMessages.HTML_DOCTYPE_ERROR);
+        getData();
+        return false;
+      }
+      default: {
+        return false;
+      }
+    }
+  }
 
   const getConfig = () => {
     return BeeConfig({
@@ -714,7 +723,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       getRows,
       handleEditRow,
       handleDeleteRow,
-      t: t
+      t: t,
+      handleUndoChange
     });
   }
   const config = getConfig();
