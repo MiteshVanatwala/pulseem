@@ -18,7 +18,7 @@ export const saveCampaign = createAsyncThunk(
         return new Promise(async (resolve, reject) => {
             try {
                 const response = await PulseemReactInstance.post(`/CampaignEditor/SaveCampaign/`, campaign);
-                resolve(JSON.parse(response.data))
+                resolve(response.data)
             } catch (error) {
                 reject(thunkAPI.rejectWithValue({ error: error.message }));
             }
@@ -154,6 +154,8 @@ export const campaignEditorSlice = createSlice({
             RECIPIENT_BLOCKED: { severity: 'error', color: 'error', message: "campaigns.recipientBlocked", showAnimtionCheck: false },
             NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
+            ERROR_OCCURED: { severity: 'error', color: 'error', message: 'common.ErrorOccured', showAnimtionCheck: false },
+            WEBP_NOT_SUPPORTED: { severity: 'error', color: 'error', message: 'campaigns.webpNotSupport', showAnimtionCheck: false },
         },
         templateDetails: {},
         publicTemplates: [],

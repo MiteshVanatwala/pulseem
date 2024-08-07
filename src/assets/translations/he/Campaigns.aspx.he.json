@@ -720,5 +720,6 @@
   "vertical": "אנכי",
   "productOrder": "סדר מוצרים",
   "preview": "הצג",
-  "addProductBlock": "הוסף בלוק מוצר"
+  "addProductBlock": "הוסף בלוק מוצר",
+  "webpNotSupport": "סיומת קובץ webp לא נתמכת בשילוב קרוסלת AMP"
 }

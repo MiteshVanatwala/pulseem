@@ -728,5 +728,6 @@
   "vertical": "Vertical",
   "productOrder": "Product Order",
   "preview": "Preview",
-  "addProductBlock": "Add Product Block"
+  "addProductBlock": "Add Product Block",
+  "webpNotSupport": "webp is not supported in AMP"
 }
