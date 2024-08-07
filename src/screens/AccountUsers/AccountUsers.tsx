@@ -126,7 +126,7 @@ const AccountUsers = ({ classes }: any) => {
         remove: windowSize === 'xs' || !isGlobal,
         disable: false,
         rootClass: clsx(classes.paddingIcon, classes.f18),
-        onClick: () => navigate(`/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${row.CustomGuidEnc}`)
+        onClick: () => window.location.href = `/Pulseem/MiddleWareReactLogin.aspx?encSubAccountID=${row.CustomGuidEnc}`
       },
       {
         key: 'edit',

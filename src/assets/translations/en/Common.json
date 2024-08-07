@@ -846,6 +846,6 @@
   "americanExpressWarning": "When paying with American Express, you will be charged in USD. Transaction fees might be higher.",
   "enterTopUpAmount": "Enter Top Up Amount",
   "payment": "Payment",
-  "result": "Result",
+  "summary": "Summary",
   "VATTax": "VAT"
 }

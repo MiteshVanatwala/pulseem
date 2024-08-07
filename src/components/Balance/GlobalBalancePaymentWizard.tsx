@@ -11,7 +11,7 @@ import { getGlobalPaymentURL } from '../../redux/reducers/paymentSlice';
 import PaymentResult from './PaymentWizard/Dialogs/PaymentResult';
 import { IsraelCurrencyId, USDCurrencyId } from '../../helpers/Constants';
 
-const steps = ['common.enterTopUpAmount', 'common.selectPaymentMethod', 'common.payment', 'common.result'];
+const steps = ['common.enterTopUpAmount', 'common.selectPaymentMethod', 'common.payment', 'common.summary'];
 
 const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core)
@@ -50,13 +50,6 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
   }
   
   useEffect(() => {
-    if (activeStep === 2) {
-      // @ts-ignore
-      dispatch(getGlobalPaymentURL({ actualPrice: topUpAmount, Culture: isRTL ? 'he-IL' : 'en-US' }));
-    }
-  }, [activeStep]);
-
-  useEffect(() => {
     if (!isOpen) {
       setActiveStep(0);
       setTopUpAmount(null);
@@ -65,7 +58,11 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
   }, [isOpen])
 
   const topUpClick = () => {
-    if (topUpAmount !== null && topUpAmount > 0) setActiveStep(activeStep + 1);
+    if (topUpAmount !== null && topUpAmount > 0) {
+      setActiveStep(activeStep + 1);
+      // @ts-ignore
+      dispatch(getGlobalPaymentURL({ actualPrice: topUpAmount, Culture: isRTL ? 'he-IL' : 'en-US' }));
+    }
   }
 
   const onPaymentResult = (results?: any) => {

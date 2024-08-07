@@ -32,7 +32,6 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 	const { isGlobal, isCurrencySymbolPrefix, currencySymbol  } = useSelector(
 		(state: { common: any }) => state.common
 	);
-	const {  } = useSelector((state: any) => state.subAccount);
 	const defaultFilter = {
 		type: '',
 		accountType: '',
