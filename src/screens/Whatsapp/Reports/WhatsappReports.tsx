@@ -68,7 +68,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { isRTL, windowSize, rowsPerPage } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { accountFeatures } = useSelector(
+	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, isGlobal } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
@@ -692,7 +692,17 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							</Typography>
 							<Grid container spacing={2}>
 								<Grid item>
-									{getTableTypographyCells('', report?.Cost, reportCellNames.COST, report)}
+									<Typography className={clsx(classes.middleText)}>
+										{
+											isGlobal ? (
+												<>
+													{ isCurrencySymbolPrefix ? currencySymbol : '' } {report?.Cost} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+												</>
+											) : (
+												<>{ report?.Cost } { translator('common.NIS') }</>
+											)
+										}
+									</Typography>
 								</Grid>
 							</Grid>
 						</Grid>
@@ -854,12 +864,23 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						classes.flex1,
 						classes.revenueTableCell
 					)}>
-					{getTableTypographyCells(
+						<Typography className={clsx(classes.middleText)}>
+							{
+								isGlobal ? (
+									<>
+										{ isCurrencySymbolPrefix ? currencySymbol : '' } {report?.Cost} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+									</>
+								) : (
+									<>{ report?.Cost } { translator('common.NIS') }</>
+								)
+							}
+						</Typography>
+					{/* {getTableTypographyCells(
 						translator('whatsappReport.cost'),
 						report?.Cost,
 						reportCellNames.COST,
 						report
-					)}
+					)} */}
 				</TableCell>
 				{hasRevenue && (
 					<TableCell

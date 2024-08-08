@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import DefaultScreen from '../DefaultScreen';
 import { Title } from '../../components/managment/Title';
 import { Loader } from '../../components/Loader/Loader';
-import { toastProps } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
+import { CommonRedux, toastProps } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { resetToastData } from '../Whatsapp/Constant';
 import Toast from '../../components/Toast/Toast.component';
 import { AiOutlineLogin, AiOutlineUserDelete } from 'react-icons/ai';
@@ -29,7 +29,7 @@ import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
-  const { isGlobal, currencySymbol, isCurrencySymbolPrefix } = useSelector((state: any) => state.common);
+  const { isGlobal, currencySymbol, isCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
   const { subAccountList } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -470,7 +470,9 @@ const AccountUsers = ({ classes }: any) => {
               classes={cellBodyStyle}
               align='center'
               className={isGlobal ? classes.flex1 : classes.flex2}>
-                { isCurrencySymbolPrefix ? currencySymbol : '' } {row.FinalGlobalBalance} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+                <Typography className={clsx(classes.middleText, classes.bold)}>
+                  { isCurrencySymbolPrefix ? currencySymbol : '' } {row.FinalGlobalBalance} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+                </Typography>
             </TableCell>
           )
         }

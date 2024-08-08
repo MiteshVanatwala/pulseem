@@ -21,14 +21,15 @@ import { ValidateEmailAddress } from '../../helpers/Utils/common';
 import { get, map } from 'lodash';
 import { AddEditSubAccounts, GetGroupsAccountSubUsers } from '../../redux/reducers/SubAccountSlice';
 import { Group } from '../../Models/Groups/Group';
+import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
 	const { t } = useTranslation();
-	const { isRTL } = useSelector(
+	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal } = useSelector((state: any) => state.subAccount);
+	const { isGlobal } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { testGroups } = useSelector((state: any) => state.sms);
 	const [ selectedGroups, setSelectedGroups ] = useState<any>([]);
@@ -107,6 +108,31 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			})
 
 			getGroupList();
+		}
+
+		if (!isOpen) {
+			setSubAccountDetails({
+				...subAccountDetails,
+				emailBulk: 0,
+				SMSBulk: 0,
+				MMSBulk: 0,
+				subAccountName: '',
+				cellPhone: '',
+				accountManager: '',
+				addEmailBulk: false,
+				addSMSBulk: false,
+				addMMSBulk: false,
+				emailBulkAmount: '',
+				SMSBulkAmount: '',
+				MMSBulkAmount: '',
+				emailAddress: '',
+				loginUserName: '',
+				password: '',
+				confirmPassword: '',
+				isPasswordVisible: false,
+				automaticUserLock: null,
+				balance: '',
+			})
 		}
 	}, [ isOpen ]);
 
@@ -366,7 +392,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				}
 				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt10)}>{t('SubAccount.subAccountSetting')}</div>
 				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
-				<Grid container className={clsx(classes.pb15)} spacing={3}>
+				<Grid container className={clsx(classes.pb15)} spacing={ windowSize !== 'xs' ? 3 : 0}>
 					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.subAccountName")} className={classes.alignDir}>
 							{t("SubAccount.subAccountName")}
@@ -475,7 +501,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													value={subAccountDetails.emailBulkAmount}
 													className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 													autoComplete="off"
-													onChange={(e: any) => setSubAccountDetails({
+													onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
 														...subAccountDetails,
 														emailBulkAmount: e.target.value.trim()
 													})}
@@ -522,7 +548,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													value={subAccountDetails.SMSBulkAmount}
 													className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 													autoComplete="off"
-													onChange={(e: any) => setSubAccountDetails({
+													onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
 														...subAccountDetails,
 														SMSBulkAmount: e.target.value.trim()
 													})}
@@ -569,7 +595,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													value={subAccountDetails.MMSBulkAmount}
 													className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 													autoComplete="off"
-													onChange={(e: any) => setSubAccountDetails({
+													onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
 														...subAccountDetails,
 														MMSBulkAmount: e.target.value.trim()
 													})}
@@ -590,6 +616,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 										{t("SubAccount.balance")}
 									</Typography>
 									<TextField
+										type='number'
 										id="balance"
 										label=""
 										variant="outlined"
@@ -597,7 +624,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 										value={subAccountDetails.balance}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
-										onChange={(e: any) => setSubAccountDetails({
+										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
 											...subAccountDetails,
 											balance: e.target.value.trim()
 										})}
@@ -640,7 +667,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 
 				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.loginInformation')}</div>
 				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
-				<Grid container spacing={3}>
+				<Grid container spacing={ windowSize !== 'xs' ? 3 : 0}>
 					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.subAccountName")} className={classes.alignDir}>
 							{t("common.Email")}
@@ -667,7 +694,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 					</Grid>
 				</Grid>
 
-				<Grid container className={clsx(classes.pb15, classes.pt10)} spacing={3}>
+				<Grid container className={clsx(classes.pb15, classes.pt10)} spacing={ windowSize !== 'xs' ? 3 : 0}>
 					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.loginUserName")} className={classes.alignDir}>
 							{t("SubAccount.loginUserName")}

@@ -11,6 +11,7 @@ import { ValidateEmailAddress } from '../../helpers/Utils/common';
 import { get, isNull, isNumber } from 'lodash';
 import { AddEditDirectAccounts } from '../../redux/reducers/SubAccountSlice';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
+import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 
 const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -18,7 +19,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 	const { isRTL  } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal } = useSelector((state: any) => state.subAccount);
+	const { isGlobal } = useSelector((state: { common: CommonRedux }) => state.common);
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ toastMessage, setToastMessage ] = useState(null);
 	const [errors, setErrors] = useState({
@@ -346,7 +347,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										value={directAccountDetails.addEmailBulk}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
-										onChange={(e: any) => setDirectAccountDetails({
+										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
 											...directAccountDetails,
 											addEmailBulk: e.target.value.trim()
 										})}
@@ -367,7 +368,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										value={directAccountDetails.addSMSBulk}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
-										onChange={(e: any) => setDirectAccountDetails({
+										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
 											...directAccountDetails,
 											addSMSBulk: e.target.value.trim()
 										})}
@@ -388,23 +389,13 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										value={directAccountDetails.addMMSBulk}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
-										onChange={(e: any) => setDirectAccountDetails({
+										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
 											...directAccountDetails,
 											addMMSBulk: e.target.value.trim()
 										})}
 										onKeyUp={handleKeyPress}
 									/>
 								</Grid>
-
-								{/* <Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
-									{t("SubAccount.lastEmailBulkAdded")}: {directAccountDetails.lastEmailBulkAddedOn}
-								</Grid>
-								<Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
-									{t("SubAccount.lastSMSBulkAdded")}: {directAccountDetails.lastSMSBulkAddedOn}
-								</Grid>
-								<Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
-									{t("SubAccount.lastMMSBulkAdded")}: {directAccountDetails.lastMMSBulkAddedOn}
-								</Grid> */}
 							</>
 						)
 					}
@@ -422,6 +413,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										{t("SubAccount.balance")}
 									</Typography>
 									<TextField
+										type="number"
 										id="addBalance"
 										label=""
 										variant="outlined"
@@ -429,7 +421,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										value={directAccountDetails.addBalance}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
-										onChange={(e: any) => setDirectAccountDetails({
+										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
 											...directAccountDetails,
 											addBalance: e.target.value.trim()
 										})}

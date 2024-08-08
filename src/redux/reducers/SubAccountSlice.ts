@@ -95,13 +95,6 @@ export const AddEditSubAccounts = createAsyncThunk(
 export const SubAccountSlice = createSlice({
   name: "SubAccount",
   initialState: {
-    accountId: null,
-    isGlobal: false,
-    currencyId: null,
-    currency: null,
-    currencyDescription: null,
-    currencySymbol: '',
-    isCurrencySymbolPrefix: true,
     subAccountList: [] as SubAccountUsers[],
     bulkHistory: [] as BulkHistory[],
   },
