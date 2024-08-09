@@ -91,6 +91,18 @@ export const AddEditSubAccounts = createAsyncThunk(
   }
 );
 
+export const UpdateShowCurrencyReportCurrencyID = createAsyncThunk(
+  'AccountSubUsers/UpdateShowCurrencyReportCurrencyID',
+  async (payload: any, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/UpdateShowCurrencyReportCurrencyID`, payload);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 
 export const SubAccountSlice = createSlice({
   name: "SubAccount",

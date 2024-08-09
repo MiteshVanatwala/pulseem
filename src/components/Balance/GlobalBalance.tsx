@@ -1,33 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Grid, Paper, Typography, Box, Button } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { CardIcon } from '../../assets/images/dashboard/index'
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
-import { GoPackage } from 'react-icons/go';
-import PurchaseWizard from './PaymentWizard/PurchaseWizard';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import GlobalBalancePaymentWizard from './GlobalBalancePaymentWizard';
 
 const GlobalBalance = ({ classes }: any) => {
-  const { windowSize, isRTL } = useSelector((state: any) => state.core)
+  const { isRTL } = useSelector((state: any) => state.core)
   const { currencySymbol, isCurrencySymbolPrefix, finalGlobalBalance } = useSelector((state: any) => state.common)
   const { t } = useTranslation();
   const [dialogType, setDialogType] = useState<{
     type: string;
     data: any
   } | null>(null);
-  const dispatch = useDispatch();
-  
-  useEffect(() => {
-    const init = async () => {
-      await dispatch(GetGlobalAccountPackagesDetails());
-    }
-
-    init();
-  }, []);
 
   const renderPackagesListDialog = () => {
     return {
@@ -93,7 +81,6 @@ const GlobalBalance = ({ classes }: any) => {
         </Grid>
       </Paper>
       <GlobalBalancePaymentWizard classes={classes} isOpen={dialogType?.type === 'PaymentDialog'} onClose={() => setDialogType(null)} />
-      {/* {renderDialog()} */}
     </>
   )
 }

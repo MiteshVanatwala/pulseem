@@ -693,15 +693,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							<Grid container spacing={2}>
 								<Grid item>
 									<Typography className={clsx(classes.middleText)}>
-										{
-											isGlobal ? (
-												<>
-													{ isCurrencySymbolPrefix ? currencySymbol : '' } {report?.Cost} { !isCurrencySymbolPrefix ? currencySymbol : '' }
-												</>
-											) : (
-												<>{ report?.Cost } { translator('common.NIS') }</>
-											)
-										}
+										{ isCurrencySymbolPrefix ? currencySymbol : '' } {report?.Cost} { !isCurrencySymbolPrefix ? currencySymbol : '' }
 									</Typography>
 								</Grid>
 							</Grid>

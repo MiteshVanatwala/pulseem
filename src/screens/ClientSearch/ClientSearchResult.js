@@ -100,7 +100,7 @@ const ClientSearchResult = ({ classes }) => {
     rowsPerPage,
     isRTL
   } = useSelector((state) => state.core);
-  const { accountFeatures } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
@@ -669,12 +669,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.campaignRevenue")}
           </Typography>
           <Typography>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         </>),
         web: ({ Revenue = 0, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         )
       },
@@ -689,12 +689,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.campaignRevenue")}
           </Typography>
           <Typography>
-            {Revenue} {t("common.NIS")}
+          { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         </>),
         web: ({ Revenue = 0, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         )
       },
@@ -775,12 +775,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.campaignRevenue")}
           </Typography>
           <Typography>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         </>),
         web: ({ Revenue = 0, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         )
       },
@@ -830,8 +830,8 @@ const ClientSearchResult = ({ classes }) => {
       handleFilter();
       setRevenueSummary([
         { title: t('client.Purchased'), value: TotalCount },
-        { title: t('client.totalRevenue'), value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
-        { title: t('client.avgOrderRevenue'), value: `${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${t('common.NIS')}` },
+        { title: t('client.totalRevenue'), value: `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${TotalRevenue?.toLocaleString()} ${ !isCurrencySymbolPrefix ? currencySymbol : '' }` },
+        { title: t('client.avgOrderRevenue'), value: `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${ !isCurrencySymbolPrefix ? currencySymbol : '' }` },
         { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
       ]);
     }

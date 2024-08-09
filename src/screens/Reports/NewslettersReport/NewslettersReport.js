@@ -38,7 +38,7 @@ const NewslettersReport = ({ classes }) => {
   const from = state?.from || "/";
 
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
-  const { accountFeatures } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { newslettersReportsParentCampaigns, newslettersReportsChildCampaigns } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -784,7 +784,7 @@ const NewslettersReport = ({ classes }) => {
             textDecoration: ((value > 0 || (isRevenueCol && value > 0)) && !isRootElement) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) && !isRootElement ? 'pointer' : null }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">
-          {(value && value.toLocaleString()) || '0'}  {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {(value && value.toLocaleString()) || '0'} { !isCurrencySymbolPrefix ? currencySymbol : '' }
         </Typography>
       </Box>
     )

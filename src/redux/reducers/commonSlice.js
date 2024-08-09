@@ -176,6 +176,19 @@ export const GetAccountDetails = createAsyncThunk(
   }
 );
 
+export const GetCurrencyList = createAsyncThunk(
+  'AccountSubUsers/GetCurrency',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`AccountSubUsers/GetCurrency`);
+      return response.data;
+      return [];
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 export const GetGlobalAccountPackagesDetails = createAsyncThunk(
   'dashboard/GetGlobalAccountPackagesDetails',
   async (_, thunkAPI) => {
@@ -210,6 +223,8 @@ export const commonSlice = createSlice({
     tranzilaCurrencyID: null,
     finalGlobalBalance: 0,
     VAT: null,
+    showCurrencyReportCurrencyID: null,
+    currencyList: []
   },
   extraReducers: builder => {
     builder
@@ -268,6 +283,11 @@ export const commonSlice = createSlice({
         state.tranzilaCurrencyID = get(payload, 'Data.balanceInfo.TranzilaCurrencyID', null)
         state.finalGlobalBalance = get(payload, 'Data.balanceInfo.FinalGlobalBalance', 0);
         state.VAT = get(payload, 'Data.balanceInfo.VAT', 0);
+        state.showCurrencyReportCurrencyID = get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', null);
+      });
+    builder
+      .addCase(GetCurrencyList.fulfilled, (state, { payload }) => {
+        state.currencyList = get(payload, 'Data.Data', false);
       });
   },
   reducers: {

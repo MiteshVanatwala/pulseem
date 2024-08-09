@@ -39,7 +39,7 @@ const SmsReport = ({ classes }) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const from = state?.from || "/";
-  const { accountFeatures } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { language, windowSize, isRTL } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
@@ -569,7 +569,7 @@ const SmsReport = ({ classes }) => {
           }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           style={{ ...textStyle, textDecoration: value > 0 && 'underline', cursor: value > 0 && 'pointer' }}>
-          {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {(value && value.toLocaleString()) || '0'} { !isCurrencySymbolPrefix ? currencySymbol : '' }
         </Typography>
       </Box>
     )

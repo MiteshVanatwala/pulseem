@@ -48,7 +48,7 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, accountFeatures } = useSelector((state: any) => state.common);
+  const { accountSettings, accountFeatures, currencyList } = useSelector((state: any) => state.common);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -409,6 +409,42 @@ const FORM_COMPANY_DETAILS = ({
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
               />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
+              <Typography>
+                {t("settings.displayRevenueIn")}
+              </Typography>
+              <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+                <Select
+                  variant="standard"
+                  autoWidth
+                  value={`${companyDetails?.RevenueCurrencyId || 0}`}
+                  name="revenueCurrencyId"
+                  onChange={(e: SelectChangeEvent) => setCompanyDetails({
+                    ...companyDetails,
+                    RevenueCurrencyId: Number(e.target.value)
+                  } as AccountSettings)}
+                  IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        direction: isRTL ? 'rtl' : 'ltr'
+                      },
+                    },
+                  }}
+                >
+                  {currencyList.map((currency: any) => {
+                    return (
+                      <MenuItem
+                        key={currency?.ID}
+                        value={currency?.ID}
+                      >
+                        {currency?.Name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
         </Box>

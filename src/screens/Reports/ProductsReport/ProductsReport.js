@@ -39,7 +39,7 @@ const DEFAULT_FILTER = {
 
 const ProductsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures, accountSettings } = useSelector(state => state.common);
+    const { accountFeatures, accountSettings, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
     const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
     const { t } = useTranslation()
@@ -285,7 +285,7 @@ const ProductsReport = ({ classes }) => {
 
     const colorTextStyle = { red: classes.textColorRed, blue: classes.textColorBlue, green: classes.sendIconText, grey: classes.textColorGrey };
 
-    const renderIntData = (value, data = {}, type = null) => {
+    const renderIntData = (value, data = {}, type = null, displayCurrency = false) => {
         const {
             // title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), 
             // href = '', 
@@ -298,7 +298,7 @@ const ProductsReport = ({ classes }) => {
                     className={clsx(classes.middleText, colorTextStyle[type],
                         (onClick && value > 0) ? classes.link : '')}
                     target="_blank">
-                    {value?.toLocaleString() ?? '0'}
+                    { displayCurrency && isCurrencySymbolPrefix ? currencySymbol : '' } {value?.toLocaleString() ?? '0'} { displayCurrency && !isCurrencySymbolPrefix ? currencySymbol : '' }
                 </Typography>
             </Box>
         )
@@ -349,7 +349,7 @@ const ProductsReport = ({ classes }) => {
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderIntData(Price, '')}
+                    {renderIntData(Price, '', null, true)}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
@@ -367,7 +367,7 @@ const ProductsReport = ({ classes }) => {
                     classes={noBorderCellStyle}
                     align='center'
                     className={classes.flex2}>
-                    {renderIntData(TotalRevenue, hrefs.TotalRevenue)}
+                    {renderIntData(TotalRevenue, hrefs.TotalRevenue, null, true)}
                 </TableCell>
             </TableRow>
         )
@@ -408,7 +408,8 @@ const ProductsReport = ({ classes }) => {
                                 {ProductName}
                             </Typography>
                             <Typography className={clsx(classes.pt5, classes.f14, classes.semibold)}>
-                                <span className={classes.bold}>{t("report.ProductsReport.price")}:</span> {Price}
+                                <span className={classes.bold}>{t("report.ProductsReport.price")}:</span>
+                                { isCurrencySymbolPrefix ? currencySymbol : '' } {Price} { !isCurrencySymbolPrefix ? currencySymbol : '' }
                             </Typography>
 
                             <Grid container className={classes.pt5}>
@@ -429,7 +430,7 @@ const ProductsReport = ({ classes }) => {
                                 <Grid item xs={6} sm={6} className={classes.pt5}>
                                     <Typography className={clsx(classes.f14, classes.bold)}>{t("client.totalRevenue")}</Typography>
                                     <Typography className={clsx(classes.elipsis)}>
-                                        {renderIntData(TotalRevenue, hrefs.TotalRevenue, 'green')}
+                                        {renderIntData(TotalRevenue, hrefs.TotalRevenue, 'green', true)}
                                     </Typography>
                                 </Grid>
                             </Grid>
