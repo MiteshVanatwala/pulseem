@@ -26,7 +26,7 @@ import {
   setRowsPerPage,
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
-import { GetAccountDetails, getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, isClalAccount } from './redux/reducers/commonSlice';
+import { getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, isClalAccount } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
@@ -559,7 +559,7 @@ const App = ({ screenSize }) => {
   const dispatch = useDispatch();
 
   const { language, isRTL, windowSize, isClal } = useSelector(state => state.core)
-  const { accountSettings } = useSelector(state => state.common)
+  const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
@@ -571,6 +571,12 @@ const App = ({ screenSize }) => {
   useEffect(() => {
     screenSize && dispatch(setWindowSize(screenSize));
   }, [screenSize]);
+
+  useEffect(() => {
+    if (currencyList.length > 0) {
+      !isSignup && dispatch(GetGlobalAccountPackagesDetails());
+    }
+  }, [currencyList]);
 
   useEffect(() => {
     const initFeatures = async () => {
@@ -648,8 +654,6 @@ const App = ({ screenSize }) => {
     })
     !isSignup && updateToken()
     !isSignup && initFeatures()
-    !isSignup && dispatch(GetAccountDetails())
-    !isSignup && dispatch(GetGlobalAccountPackagesDetails());
     !isSignup && dispatch(GetCurrencyList());
   }, [dispatch])
 

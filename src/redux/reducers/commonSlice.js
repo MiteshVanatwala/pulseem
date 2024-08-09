@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { find, get } from 'lodash';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
@@ -164,18 +164,6 @@ const wl_referrerObject = (account) => {
   return retVal;
 }
 
-export const GetAccountDetails = createAsyncThunk(
-  'AccountSubUsers/GetIsGlobalAndCurrencyOfAccount',
-  async (_, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.get(`AccountSubUsers/GetIsGlobalAndCurrencyOfAccount`);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  }
-);
-
 export const GetCurrencyList = createAsyncThunk(
   'AccountSubUsers/GetCurrency',
   async (_, thunkAPI) => {
@@ -270,20 +258,18 @@ export const commonSlice = createSlice({
         state.isSweepingApproval = payload
       })
     builder
-      .addCase(GetAccountDetails.fulfilled, (state, { payload }) => {
-        state.isGlobal = get(payload, 'Data.IsGlobalAccount', false);
-        state.currency = get(payload, 'Data.Currency', '');
-        state.currencyDescription = get(payload, 'Data.CurrencyDescription', '');
-        state.currencyId = get(payload, 'Data.CurrencyId', null);
-        state.currencySymbol = get(payload, 'Data.CurrencySymbol', '');
-        state.isCurrencySymbolPrefix = get(payload, 'Data.IsCurrencySymbolPrefix', '');
-      });
-    builder
       .addCase(GetGlobalAccountPackagesDetails.fulfilled, (state, { payload }) => {
+        const currency = find(state.currencyList, { ID: get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', 1)});
+        state.currency = get(currency, 'Name', '');
+        state.currencyDescription = get(currency, 'Description', '');
+        state.currencyId = get(currency, 'ID', '');
+        state.currencySymbol = get(currency, 'CurrencySymbol', '');
+        state.isCurrencySymbolPrefix = get(currency, 'IsCurrencySymbolPrefix', false);
+        state.isGlobal = get(payload, 'Data.balanceInfo.IsGlobalAccount', null)
         state.tranzilaCurrencyID = get(payload, 'Data.balanceInfo.TranzilaCurrencyID', null)
-        state.finalGlobalBalance = get(payload, 'Data.balanceInfo.FinalGlobalBalance', 0);
-        state.VAT = get(payload, 'Data.balanceInfo.VAT', 0);
-        state.showCurrencyReportCurrencyID = get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', null);
+        state.finalGlobalBalance = get(payload, 'Data.balanceInfo.FinalGlobalBalance', 0)
+        state.VAT = get(payload, 'Data.balanceInfo.VAT', 0)
+        state.showCurrencyReportCurrencyID = get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', null)
       });
     builder
       .addCase(GetCurrencyList.fulfilled, (state, { payload }) => {

@@ -28,7 +28,7 @@ import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampai
 import { updateWhatsappTier } from '../../../redux/reducers/whatsappSlice';
 import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.types';
 import { apiStatus } from '../../Whatsapp/Constant';
-import { GetAccountDetails, getCommonFeatures, GetGlobalAccountPackagesDetails, updateDefaultFromEmail } from '../../../redux/reducers/commonSlice';
+import { getCommonFeatures, GetGlobalAccountPackagesDetails, updateDefaultFromEmail } from '../../../redux/reducers/commonSlice';
 import { ListIcon } from '../../../assets/images/managment';
 import DomainsVerificationPopUp from './Popups/DomainsVerificationPopUp';
 import queryString from 'query-string';
@@ -155,7 +155,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
 			finally {
 				handleResponses(response, updatedObject);
 				response = await dispatch(UpdateShowCurrencyReportCurrencyID({ CurrencyID: updatedObject.RevenueCurrencyId }));
-				await dispatch(GetAccountDetails())
     		await dispatch(GetGlobalAccountPackagesDetails());
 				setShowLoader(false);
 			}

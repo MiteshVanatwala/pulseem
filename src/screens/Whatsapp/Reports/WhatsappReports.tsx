@@ -306,9 +306,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						`${cellValue >= 1 && isClickable && 'value-cell'}`
 					)}>
 					{amountCell.includes(cellName)
-						? `${cellValue ? cellValue.toFixed(2) : '0'} ${translator(
-							'common.NIS'
-						)}`
+						? `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${cellValue ? cellValue.toFixed(2) : '0'}  ${ !isCurrencySymbolPrefix ? currencySymbol : '' }`
 						: cellValue || '0'}
 				</Typography>
 				{!amountCell.includes(cellName) && (
@@ -863,7 +861,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 										{ isCurrencySymbolPrefix ? currencySymbol : '' } {report?.Cost} { !isCurrencySymbolPrefix ? currencySymbol : '' }
 									</>
 								) : (
-									<>{ report?.Cost } { translator('common.NIS') }</>
+									<>{ isCurrencySymbolPrefix ? currencySymbol : '' } { report?.Cost } { !isCurrencySymbolPrefix ? currencySymbol : '' }</>
 								)
 							}
 						</Typography>

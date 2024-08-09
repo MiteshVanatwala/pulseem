@@ -23,6 +23,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { Title } from '../../../components/managment/Title';
 import { WhatsappTemplatePreview } from '../../../components/WhatsappTemplatePreview/WhatsappTemplatePreview';
 import TotalSection from '../../../components/managment/TotalSection';
+import { useSelector } from 'react-redux';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -45,6 +46,7 @@ const DirectWhatsappReportTab = ({
     const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
     const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
+    const { currencySymbol, isCurrencySymbolPrefix } = useSelector((state) => state.common);
     const { t } = useTranslation();
     const [showLoader, setLoader] = useState(false)
     const [page, setPage] = useState(1);
@@ -117,7 +119,9 @@ const DirectWhatsappReportTab = ({
         }
 
         return (
-            <Typography style={{ fontWeight: isBalanceCol ? 900 : null, wordBreak: dataType === 'content' ? 'break-word' : null }}>{isBalanceCol ? text?.toFixed(2) : text} {isBalanceCol && t("common.NIS")}</Typography>
+            <Typography style={{ fontWeight: isBalanceCol ? 900 : null, wordBreak: dataType === 'content' ? 'break-word' : null }}>
+                { isBalanceCol && isCurrencySymbolPrefix ? currencySymbol : '' } {isBalanceCol ? text?.toFixed(2) : text} { isBalanceCol && !isCurrencySymbolPrefix ? currencySymbol : '' }
+            </Typography>
         );
     }
 
@@ -648,7 +652,7 @@ const DirectWhatsappReportTab = ({
         {renderTablePagination()}
         {directWhatsappReport && <TotalSection classes={classes} TotalObject={{
             "TotalSent": directWhatsappReport?.Message?.TotalMessages,
-            "WhatsappBalance": `${directWhatsappReport?.Message?.WhatsappBalance || 0} ${t("common.NIS")}`
+            "WhatsappBalance": `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${directWhatsappReport?.Message?.WhatsappBalance || 0} ${ !isCurrencySymbolPrefix ? currencySymbol : '' }`
         }} callerType="whatsapp" />}
         <WhatsappTemplatePreview classes={classes} templateID={templateID} openPreview={openTemplatePreview} closeModel={() => setTemplatePreview(false)} />
         <Loader isOpen={showLoader} />
