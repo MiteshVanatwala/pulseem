@@ -1075,15 +1075,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	alertModalAction: {
+		paddingBottom: 15,
 		justifyContent: 'center',
 		'& button': {
-			width: '120px',
-			fontSize: '18px',
-			fontFamily: 'OpenSansHebrew',
-			borderRadius: '50px',
-			textTransform: 'capitalize',
-			margin: '6px 10px 0 10px',
-			padding: '2px 0px',
+			// width: '120px',
+			marginInlineEnd: 15
 		},
 		'& .ok-button': {
 			border: '1px solid #345233',
