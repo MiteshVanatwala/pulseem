@@ -385,5 +385,12 @@
   "recipientManagement": "Recipient Management",
   "recipientManagementDesc": "Use this page to manage recipient groups.",
   "manageTemplate": "צור תבנית",
-  "createTemplate": "נהל תבנית"
+  "createTemplate": "נהל תבנית",
+  "manageAutomationTemplate": "ניהול תבניות אוטומציה",
+  "description": "תיאור",
+  "deleteAutomationTemplate": "מחיקת תבנית",
+  "deleteAutomationTemplateDesc": "האם ברצונכם למחוק את התבנית?",
+  "automationTemplateDeleted": "תבנית נמחקה",
+  "automationTemplateDeleteFail": "משהו השתבש בזמן מחיקת התבנית, אנא המתינו מעט ונסו שוב",
+  "ampRegistration": "הרשמה ל-AMP"
 }

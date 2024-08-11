@@ -388,5 +388,12 @@
   "recipientManagement": "Recipient Management",
   "recipientManagementDesc": "Use this page to manage recipient groups.",
   "manageTemplate": "Manage Template",
-  "createTemplate": "Create Template"
+  "createTemplate": "Create Template",
+  "manageAutomationTemplate": "Manage Automation Template",
+  "description": "Description",
+  "deleteAutomationTemplate": "Delete Template",
+  "deleteAutomationTemplateDesc": "Do you want to delete template?",
+  "automationTemplateDeleted": "Template has been deleted.",
+  "automationTemplateDeleteFail": "Something went wrong while deleting template. Please try again after some time.",
+  "ampRegistration": "AMP Registration"
 }
