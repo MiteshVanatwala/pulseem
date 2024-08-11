@@ -765,7 +765,7 @@ const SummaryModal = ({
 						autoFocus
 						disabled={campaignSummary && campaignSummary?.FinalCount <= 0}
 						onClick={onConfirmOrYesClick}>
-						<>{translator('whatsapp.alertModal.okButtonText')}</>
+						<>{sendType === "1" ? translator('whatsapp.alertModal.okButtonText') : translator("common.scheduleSend")}</>
 					</Button>
 					<Button
 						className={clsx(classes.btn, classes.btnRounded)}
