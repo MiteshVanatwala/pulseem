@@ -53,4 +53,5 @@ export type StateType = {
     product: any;
     extraFields: any;
     affiliates: any;
+    amp: any;
 };

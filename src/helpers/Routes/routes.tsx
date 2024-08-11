@@ -177,6 +177,12 @@ export const getRoutes = (
           title: t("campaigns.newsLetterSendSettings.title"),
           href: `${sitePrefix}Campaigns/SendSettings`,
           isShow: false
+        },
+        {
+          key: 'ampRegistration',
+          title: t('master.ampRegistration'),
+          href: `${sitePrefix}Campaigns/AmpRegistration`,
+          isShow: features?.indexOf(PulseemFeatures.BEE_AMP) > -1
         }
       ],
     },
