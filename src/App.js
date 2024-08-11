@@ -83,6 +83,7 @@ import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
 import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 import HtmlPreview from './screens/Preview/HtmlPreview';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
+import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -548,10 +549,14 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
+        path={`${sitePrefix}Campaigns/AmpRegistration`}
+        element={<AmpRegistration classes={classes} />}
+      />
+      <Route
+        exact
         path={`${sitePrefix}Previewer/:type/:id`}
         element={<HtmlPreview classes={classes} />}
       />
-
     </Routes>
   )
 }

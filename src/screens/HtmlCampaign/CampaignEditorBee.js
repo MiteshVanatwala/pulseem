@@ -57,6 +57,8 @@ import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
 import { getCategories } from '../../redux/reducers/productSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { NO_IMAGE_URL } from '../../helpers/Constants';
+import { logout } from '../../helpers/Api/PulseemReactAPI';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -433,37 +435,56 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
+      let finalAmpData = args.AmpData;
 
       const response = await dispatch(saveCampaign({
         Name: campaign.Name,
         campaignId: args.campaignId,
         JsonData: finalJson,
         HTML: finalHtml,
+        AmpData: finalAmpData,
         IsAutoResponder: fromLink?.toLowerCase() === 'autoresponder'
       }));
 
-      if (response.payload === true) {
-        const now = moment();
-        setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
-        if (saveRef.current?.redirectAfterSave) {
-          const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
-          localStorage.setItem('reloadBeeEditor', 1);
+      switch (response?.payload?.StatusCode) {
+        case 201:
+        default: {
+          const now = moment();
+          setLastSaveText(`${t('common.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
+          if (saveRef.current?.redirectAfterSave) {
+            const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
+            localStorage.setItem('reloadBeeEditor', 1);
 
-          if (isAutoResponder || isFromAutomation) {
-            window.location.href = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
+            if (isAutoResponder || isFromAutomation) {
+              window.location.href = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
+            }
+            else {
+              navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`);
+            }
+            return false;
           }
-          else {
-            navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`);
+          else if (saveRef.current?.showAnimation) {
+            setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
           }
+
+          if (reInit) {
+            getData();
+          }
+          break;
+        }
+        case 401: {
+          logout();
           return false;
         }
-        else if (saveRef.current?.showAnimation) {
-          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
-          // setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+        case 500: {
+          setToastMessage(ToastMessages.ERROR_OCCURED);
+          return false;
         }
-
-        if (reInit) {
-          getData();
+        case 501: {
+          if (response?.payload?.Message === 'webp_not_allowd') {
+            setToastMessage(ToastMessages.WEBP_NOT_SUPPORTED);
+          }
+          return false;
         }
       }
 
@@ -599,7 +620,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (toastMessage) {
       setTimeout(() => {
         setToastMessage(null);
-      }, 2000);
+      }, 3000);
       return (
         <Toast data={toastMessage} />
       );
@@ -671,8 +692,17 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
-  // const handleAutoSave = () => {
-  //   saveDesign(false, null, false);
+  // const handleUndoChange = (code) => {
+  //   switch (code) {
+  //     case '0780': {
+  //       setToastMessage(ToastMessages.HTML_DOCTYPE_ERROR);
+  //       getData();
+  //       return false;
+  //     }
+  //     default: {
+  //       return false;
+  //     }
+  //   }
   // }
 
   const getConfig = () => {
@@ -694,6 +724,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       handleEditRow,
       handleDeleteRow,
       t: t
+      // handleUndoChange
     });
   }
   const config = getConfig();
