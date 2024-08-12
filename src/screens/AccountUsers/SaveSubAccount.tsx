@@ -73,6 +73,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		isPasswordVisible: false,
 		automaticUserLock: null,
 		balance: '',
+		addBalance: '',
 	})
 	const CustomGuidEnc = get(subAccountRecord, 'CustomGuidEnc', '');
 
@@ -105,6 +106,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				isPasswordVisible: false,
 				automaticUserLock: get(subAccountRecord, 'ExpiryDate', null),
 				balance: get(subAccountRecord, 'FinalGlobalBalance', ''),
+				addBalance: 0,
 			})
 
 			getGroupList();
@@ -132,6 +134,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				isPasswordVisible: false,
 				automaticUserLock: null,
 				balance: '',
+				addBalance: 0,
 			})
 		}
 	}, [ isOpen ]);
@@ -191,7 +194,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				AddEmailBulkAmount: subAccountDetails.emailBulkAmount,
 				AddSmsBulkAmount: subAccountDetails.SMSBulkAmount,
 				AddMmsBulkAmount: subAccountDetails.MMSBulkAmount,
-				FinalGlobalBalance: subAccountDetails.balance,
+				FinalGlobalBalance: subAccountDetails.addBalance,
 				Email: subAccountDetails.emailAddress,
 				LoginUserName: subAccountDetails.loginUserName,
 				Password: subAccountDetails.password,
@@ -252,6 +255,26 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			}
 			case 405: {
 				showErrorToast(t('landingPages.shortUrlExist'));
+				break;
+			}
+			case 1000: {
+				showErrorToast(t('SubAccount.notAllowed'));
+				break;
+			}
+			case 1001: {
+				showErrorToast(t('SubAccount.notEnoughGlobalBalance'));
+				break;
+			}
+			case 1002: {
+				showErrorToast(t('SubAccount.notEnoughEmailCreditInParentAccount'));
+				break;
+			}
+			case 1003: {
+				showErrorToast(t('SubAccount.notEnoughSMSCreditInParentAccount'));
+				break;
+			}
+			case 1004: {
+				showErrorToast(t('SubAccount.NotEnoughMMSCreditInParentAccount'));
 				break;
 			}
 			case 100:
@@ -373,23 +396,27 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			)}
 		>
 			<>
-				{
-					!isGlobal && (
-						<>
-							<Grid container className={classes.pb15}>
+				<Grid container className={classes.pb15}>
+					{
+						!isGlobal ? (
+							<>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									{t("SubAccount.emailBulk")}: {subAccountDetails.emailBulk} {t("SubAccount.credit")}
+									<b>{t("SubAccount.emailBulk")}:</b> {subAccountDetails.emailBulk} {t("SubAccount.credit")}
 								</Grid>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									{t("SubAccount.SMSBulk")}: {subAccountDetails.SMSBulk} {t("SubAccount.messages")}
+									<b>{t("SubAccount.SMSBulk")}:</b> {subAccountDetails.SMSBulk} {t("SubAccount.messages")}
 								</Grid>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									{t("SubAccount.MMSBulk")}: {subAccountDetails.MMSBulk} {t("SubAccount.messages")}
+									<b>{t("SubAccount.MMSBulk")}:</b> {subAccountDetails.MMSBulk} {t("SubAccount.messages")}
 								</Grid>
+							</>
+						) : (
+							<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
+								<b>{t("SubAccount.balance")}:</b> {subAccountDetails.balance} {t("SubAccount.credit")}
 							</Grid>
-						</>
-					)
-				}
+						)
+					}
+				</Grid>
 				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt10)}>{t('SubAccount.subAccountSetting')}</div>
 				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 				<Grid container className={clsx(classes.pb15)} spacing={ windowSize !== 'xs' ? 3 : 0}>
@@ -617,16 +644,16 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 									</Typography>
 									<TextField
 										type='number'
-										id="balance"
+										id="addBalance"
 										label=""
 										variant="outlined"
-										name="balance"
-										value={subAccountDetails.balance}
+										name="addBalance"
+										value={subAccountDetails.addBalance}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
 										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
 											...subAccountDetails,
-											balance: e.target.value.trim()
+											addBalance: e.target.value.trim()
 										})}
 									/>
 								</Grid>

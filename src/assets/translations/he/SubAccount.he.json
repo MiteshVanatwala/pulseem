@@ -67,5 +67,10 @@
 	"userCreationFailed": "יצירת חשבון נכשלה",
 	"subAccountSaved": "תת חשבון נשמר",
 	"credit": "הודעות",
-	"messages": "קרדיטים"
+	"messages": "קרדיטים",
+	"notAllowed": "You are not allowed to save sub account.",
+	"notEnoughGlobalBalance": "Unable to save due to insufficient balance",
+	"notEnoughEmailCreditInParentAccount": "Unable to save due to insufficient email credit in parent account",
+	"notEnoughSMSCreditInParentAccount": "Unable to save due to insufficient SMS credit in parent account",
+	"notEnoughMMSCreditInParentAccount": "Unable to save due to insufficient MMS credit in parent account"
 }

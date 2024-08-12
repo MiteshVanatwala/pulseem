@@ -1,7 +1,7 @@
 {
 	"title": "Sub Accounts",
 	"description": "Use this page to manage your account logins.",
-	"directAccount": "Direct Account",
+	"directAccount": "Edit Direct Account",
 	"showHistory": "Show History",
 	"userName": "User Name",
 	"userManager": "User Manager",
@@ -67,5 +67,10 @@
 	"userCreationFailed": "User Creation Failed",
 	"subAccountSaved": "Sub Account has been saved.",
 	"credit": "Credit",
-	"messages": "Messages"
+	"messages": "Messages",
+	"notAllowed": "You are not allowed to save sub account.",
+	"notEnoughGlobalBalance": "Unable to save due to insufficient balance",
+	"notEnoughEmailCreditInParentAccount": "Unable to save due to insufficient email credit in parent account",
+	"notEnoughSMSCreditInParentAccount": "Unable to save due to insufficient SMS credit in parent account",
+	"notEnoughMMSCreditInParentAccount": "Unable to save due to insufficient MMS credit in parent account"
 }

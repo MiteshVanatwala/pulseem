@@ -319,8 +319,14 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 					</Grid>
 				</Grid>
 
-				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.creditDetails')}</div>
-				<Divider className={clsx(classes.mb10, classes.bgBlack)} />
+				{
+					!isGlobal && (
+						<>
+							<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.creditDetails')}</div>
+							<Divider className={clsx(classes.mb10, classes.bgBlack)} />
+						</>
+					)
+				}
 				<Grid container className={clsx(classes.pb15, classes.pt10)} spacing={3}>
 					{
 						!isGlobal && (
@@ -400,7 +406,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 						)
 					}
 					
-					{
+					{/* {
 						isGlobal && (
 							<>
 								<Grid item md={4}>
@@ -430,13 +436,10 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 								</Grid>
 								<Grid item md={8}></Grid>
 
-								{/* <Grid item md={4} className={clsx(classes.f14, classes.pt0)}>
-									{t("SubAccount.lastBalanceAdded")}: {directAccountDetails.lastBalanceBulkAddedOn}
-								</Grid> */}
 								<Grid item md={8}></Grid>
 							</>
 						)
-					}
+					} */}
 				</Grid>
 
 				<Loader isOpen={isLoader} />
