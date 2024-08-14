@@ -24,7 +24,7 @@ import { addRecipient, deleteRecipients } from "../../../../redux/reducers/group
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
-import { IsValidPhone, IsValidEmail, IsNumberField } from "../../../../helpers/Utils/Validations";
+import { IsValidPhone, IsValidEmail, IsNumberField, IsValidPhoneNumberWithCountryCode, IsValidGlobalPhoneNumber } from "../../../../helpers/Utils/Validations";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
@@ -103,6 +103,7 @@ const AddRecipientPopup = ({ classes,
     const localClasses = useStyles()
     const { extraData } = useSelector((state) => state.sms);
     const { isRTL } = useSelector((state) => state.core);
+    const { countryCodeList } = useSelector((state) => state.common);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
     const [accountExtraFields, setAccountExtraFields] = useState(null);
@@ -169,10 +170,7 @@ const AddRecipientPopup = ({ classes,
             }
         }
         if (e.target.name === "Cellphone") {
-            if (e.target.value.length > 16 || e.target.value.length < 9) {
-                setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength) })
-            }
-            else if (!IsValidPhone(e.target.value)) {
+            if (!IsValidPhoneNumberWithCountryCode(e.target.value, countryCodeList)) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
             }
         }
@@ -481,16 +479,13 @@ const AddRecipientPopup = ({ classes,
                                 value={addRecipientData.Cellphone}
                                 className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onKeyPress={IsNumberField}
+                                onKeyPress={IsValidGlobalPhoneNumber}
                                 onChange={(e) => {
-                                    if (e.target.value.length === 1 && e.target.value === "-") {
-                                        return;
-                                    }
                                     let tempVal = e.target.value
                                     if (!tempVal) {
                                         handleChange(e)
                                     }
-                                    else if (IsValidPhone(tempVal)) {
+                                    else if (IsValidGlobalPhoneNumber(tempVal)) {
                                         handleChange(e)
                                     }
                                 }}

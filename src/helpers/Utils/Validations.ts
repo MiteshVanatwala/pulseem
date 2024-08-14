@@ -1,3 +1,7 @@
+import { map, sortBy } from "lodash";
+import { CountryCode } from "../../model/Common/commonProps.types";
+import { PhoneNumberRegEx } from "../Constants";
+
 export const IsValidEmail = (value: string) => {
   if (value === "" || value === undefined) {
     return false;
@@ -27,6 +31,10 @@ export const IsNumberField = (event: any) => {
 export const IsValidPhoneNumber = (number: string) => {
   var NumberRegEx = /^(\+\d{1,3}[- ]?)?\d{0,12}$/;
   return NumberRegEx.test(number);
+};
+
+export const IsValidGlobalPhoneNumber = (number: string) => {
+  return PhoneNumberRegEx.test(number);
 };
 
 export const IsValidURL = (value: string) => {
@@ -66,4 +74,19 @@ export const VerifyGetUrl = (value: string) => {
       reject(false);
     }
   });
+};
+
+export const IsValidPhoneNumberWithCountryCode = (phoneNumber: string, countryCodeList: CountryCode[] = []) => {
+  if (phoneNumber === "" || phoneNumber === undefined || phoneNumber.length < 10 || phoneNumber.length > 16 || !phoneNumber.match(PhoneNumberRegEx)) {
+    return false;
+  }
+  const countryCode = sortBy(countryCodeList, 'SmsCountryPhoneCode').reverse();
+  let isMatched = false;
+  map(countryCode, (code: CountryCode) => {
+    if (phoneNumber.replace('+', '').substring(0, code.SmsCountryPhoneCode.toString().length) === code.SmsCountryPhoneCode.toString()) {
+      isMatched = true;
+      return true;
+    }
+  })
+  return isMatched;
 };

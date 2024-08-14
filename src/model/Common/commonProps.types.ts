@@ -12,3 +12,9 @@ export interface VerifiedEmail {
     IsVerified: boolean,
     IsRestricted: boolean
 }
+
+export interface CountryCode {
+    ID: number,
+    SmsCountryName: string,
+    SmsCountryPhoneCode: number
+}
