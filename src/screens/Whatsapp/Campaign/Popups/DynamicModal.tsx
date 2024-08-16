@@ -230,7 +230,7 @@ const DynamicModal = ({
 			(updatedVariable: updatedVariable) =>
 				updatedVariable?.VariableIndex === dynamicModalVariable
 		);
-		if (field === 'link') {
+		if (field === 'link' || field === 'landingPage') {
 			setIsTrackLink(isTrackLink);
 		}
 		if (!!isVariableUpdated) {
@@ -243,7 +243,7 @@ const DynamicModal = ({
 						...updatedVariable,
 						VariableValue: field === 'text' ? RemoveNewLineAndConsecutiveSpaces(value) : value,
 						FieldTypeId: getfieldTypeId(field),
-						IsStatastic: field === 'link' ? isTrackLink : false,
+						IsStatastic: field === 'link' || field === 'landingPage' ? isTrackLink : false,
 						FallbackUrl: fallbackUrl
 					};
 				}
@@ -256,7 +256,7 @@ const DynamicModal = ({
 					FieldTypeId: getfieldTypeId(field),
 					VariableIndex: dynamicModalVariable,
 					VariableValue: field === 'text' ? RemoveNewLineAndConsecutiveSpaces(value) : value,
-					IsStatastic: field === 'link' ? isTrackLink : false,
+					IsStatastic: field === 'link' || field === 'landingPage' ? isTrackLink : false,
 					FallbackUrl: fallbackUrl
 				},
 			]);
@@ -330,9 +330,9 @@ const DynamicModal = ({
 						setLinkInput={(value, isTrackLink) =>
 							updateDynamicVariables('link', value, isTrackLink, dynamicProductFallbackURL)
 						}
-						setLandPage={(value: string) =>
-							updateDynamicVariables('landingPage', value)
-						}
+						setLandPage={(value: string, isTrackLink: boolean = false) =>{
+							updateDynamicVariables('landingPage', value, isTrackLink);
+						}}
 						setNavApp={setNavApp}
 						setNavAddress={(value: string) =>
 							updateDynamicVariables('navigation', value)

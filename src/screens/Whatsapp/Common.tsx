@@ -546,7 +546,7 @@ export const adjustTemplateVariablesForLink = (
 					) {
 						adjustedVariable = {
 							...variable,
-							VariableValue: `${adjustedVariable?.VariableValue} `,
+							VariableValue: `${adjustedVariable?.VariableValue}${variable?.FieldTypeId === 4 ? '' : ' '}`,
 						};
 					}
 				}
