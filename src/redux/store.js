@@ -26,6 +26,7 @@ import DynamicGroupsSlice from './reducers/DynamicGroupsSlice';
 import DomainVerificationSlice from './reducers/DomainVerificationSlice';
 import productSlice from './reducers/productSlice';
 import ExtraFieldsSlice from './reducers/ExtraFieldsSlice';
+import AffiliateSlice from './reducers/AffiliateSlice';
 
 export default configureStore({
   reducer: {
@@ -55,6 +56,7 @@ export default configureStore({
     dynamicGroups: DynamicGroupsSlice,
     domainVerification: DomainVerificationSlice,
     product: productSlice,
-    extraFields: ExtraFieldsSlice
+    extraFields: ExtraFieldsSlice,
+    affiliates: AffiliateSlice
   },
 });

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Grid, Box, Tab, Tabs } from '@material-ui/core'
 import clsx from 'clsx';
 import { FaDesktop, FaMobile } from 'react-icons/fa';
-import { RenderHtml } from '../helpers/Utils/HtmlUtils';
 import { actionURL } from '../config';
 
 
@@ -38,7 +37,7 @@ export const EmailPreview = ({
       setTimeout(() => {
         var meta = document.createElement('meta');
         meta.name = "viewport";
-        meta.content = "width=1280,initial-scale="+window.innerWidth/1280;
+        meta.content = "width=1280,initial-scale=" + window.innerWidth / 1280;
         const ele = document.querySelector('.mobileHTML')
         if (ele !== null) {
           ele.appendChild(meta);
@@ -46,7 +45,7 @@ export const EmailPreview = ({
       }, 1000);
     }
   }, [previewDeviceSelected])
-  
+
   const handleDeviceChange = (event, newValue) => {
     setPreviewDevice(newValue);
   };
@@ -80,7 +79,7 @@ export const EmailPreview = ({
                   <div class="ep_div ep_foot ep_bottom"></div>
                   <div class="ep_div ep_shadow"></div>
                 </div>
-              </div>    
+              </div>
             </div>
           </div>
         </div>
@@ -124,7 +123,7 @@ export const EmailPreview = ({
 
   return (
     <>
-      <Grid className={classes.beeTemplate} style={{ minWidth: 'calc(50vw)'}}>
+      <Grid className={classes.beeTemplate} style={{ minWidth: 'calc(50vw)' }}>
         <Box className={clsx(classes.mt2, classes.dBlock)}>
           <Tabs
             value={previewDeviceSelected}

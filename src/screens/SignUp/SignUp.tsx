@@ -31,9 +31,9 @@ const SignUp = ({ classes }: any) => {
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
-  const [ showLoader, setLoader ] = useState(false);
+  const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
-  const [ userDetails, setUserDetails ] = useState({
+  const [userDetails, setUserDetails] = useState({
     firstName: '',
     lastName: '',
     emailId: qs?.emailid || '',
@@ -49,9 +49,10 @@ const SignUp = ({ classes }: any) => {
     fieldOfActivity: '',
     fieldOfInterest: [],
     chkUpdate: false,
-    chkPolicy: false
+    chkPolicy: false,
+    referralID: qs?.refId || ''
   });
-  const [ errors, setErrors ] = useState({
+  const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
     emailId: '',
@@ -65,19 +66,19 @@ const SignUp = ({ classes }: any) => {
     chkPolicy: '',
     chkUpdate: '',
   });
-  const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
+  const [passwordValidation, setPasswordValidation] = useState<ValidPassword>({
     LowerChar: false,
     SpecialChar: false,
     UpperChar: false,
     PasswordLength: 0,
     NumberChar: false,
   } as ValidPassword);
-  const [ toastMessage, setToastMessage ] = useState<any | never>(null);
-  const [ filterFieldOfActivity, setFilterFieldOfActivity ] = useState<string[]>([]);
-  const [ dialogType, setDialogType ] = useState<{
-		type: string;
-	} | null>(null);
-  const [ showPasswordTip, setShowPasswordTip ] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<any | never>(null);
+  const [filterFieldOfActivity, setFilterFieldOfActivity] = useState<string[]>([]);
+  const [dialogType, setDialogType] = useState<{
+    type: string;
+  } | null>(null);
+  const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(setLanguage(qs?.culture || 'he'));
@@ -115,22 +116,22 @@ const SignUp = ({ classes }: any) => {
 
       case 'BulkSMS':
         return <MdMobileFriendly className={clsx(classes.p5)} />;
-    
+
       case 'WhatsApp':
         return <MdOutlineWhatsapp className={clsx(classes.p5)} />;
 
       case 'LandingPages':
         return <MdDvr className={clsx(classes.p5)} />;
-      
+
       case 'Ecommerce':
         return <MdOutlineAddShoppingCart className={clsx(classes.p5)} />;
-      
+
       case 'Notification':
         return <MdNotifications className={clsx(classes.p5)} />;
 
       case 'MarketingAutomation':
         return <MdOutlineAutoMode className={clsx(classes.p5)} />;
-      
+
       default:
         return <></>;
     }
@@ -182,12 +183,13 @@ const SignUp = ({ classes }: any) => {
         ProductType: interests.join(','),
         UserID: qs?.id,
         chkMailingApproval: userDetails.chkUpdate,
-        Email: userDetails.emailId
+        Email: userDetails.emailId,
+        ReferralID: qs?.refId
       });
       setLoader(false);
       if (status === 200) {
         if (Message === 'ok') {
-          setDialogType({ type: 'confirmation'});
+          setDialogType({ type: 'confirmation' });
           // @ts-ignore
           window?.dataLayer?.push({
             'event': 'formSubmission',
@@ -195,12 +197,12 @@ const SignUp = ({ classes }: any) => {
             'formPosition': 'Footer'
           });
         } else if (Message === 'internalerror') {
-          setDialogType({ type: 'internalError'});
+          setDialogType({ type: 'internalError' });
         } else {
           showMessage(`SignUp.Message.${Message}`);
         }
       } else {
-        setDialogType({ type: 'internalError'});
+        setDialogType({ type: 'internalError' });
         // showMessage(`SignUp.Message.internalerror`);
       }
     }
@@ -241,15 +243,15 @@ const SignUp = ({ classes }: any) => {
   }
 
   const displayConfirmationPopup = () => ({
-		title: t('SignUp.ConfirmationTitle'),
-		showDivider: false,
-		content: (
-			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				{RenderHtml(t('SignUp.ConfirmationMessage').replace(/{emailid}/g, userDetails.emailId))}
-			</Typography>
-		),
+    title: t('SignUp.ConfirmationTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {RenderHtml(t('SignUp.ConfirmationMessage').replace(/{emailid}/g, userDetails.emailId))}
+      </Typography>
+    ),
     showDefaultButtons: false,
-		renderButtons: () => (
+    renderButtons: () => (
       <Grid
         container
         spacing={2}
@@ -259,53 +261,53 @@ const SignUp = ({ classes }: any) => {
           <Button
             onClick={sendEmail}
             className={clsx(
-                classes.btn,
-                classes.btnRounded
+              classes.btn,
+              classes.btnRounded
             )}>
             {t('SignUp.ResendEmail')}
           </Button>
         </Grid>
       </Grid>
     )
-	})
+  })
 
   const displayInternalErrorPopup = () => ({
-		title: t('common.ErrorTitle'),
-		showDivider: false,
+    title: t('common.ErrorTitle'),
+    showDivider: false,
     showDefaultButtons: false,
-		content: (
-			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				{RenderHtml(t('SignUp.Message.contactSupport'))}
-			</Typography>
-		),
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {RenderHtml(t('SignUp.Message.contactSupport'))}
+      </Typography>
+    ),
     onClose: () => setDialogType(null)
-	})
+  })
 
   const renderDialog = () => {
-		const { type } = dialogType || {}
-		let currentDialog: any = {};
-		if (type === 'confirmation') {
-			currentDialog = displayConfirmationPopup();
-		} else if (type === 'internalError') {
-			currentDialog = displayInternalErrorPopup();
-		}
+    const { type } = dialogType || {}
+    let currentDialog: any = {};
+    if (type === 'confirmation') {
+      currentDialog = displayConfirmationPopup();
+    } else if (type === 'internalError') {
+      currentDialog = displayInternalErrorPopup();
+    }
 
-		if (type) {
-			return (
-				dialogType && <BaseDialog
+    if (type) {
+      return (
+        dialogType && <BaseDialog
           contentStyle={classes.maxWidth540}
-					classes={classes}
-					open={dialogType}
-					onCancel={() => setDialogType(null)}
-					onClose={() => setDialogType(null)}
-					renderButtons={currentDialog?.renderButtons || null}
-					{...currentDialog}>
-					{currentDialog?.content}
-				</BaseDialog>
-			)
-		}
-	}
-  
+          classes={classes}
+          open={dialogType}
+          onCancel={() => setDialogType(null)}
+          onClose={() => setDialogType(null)}
+          renderButtons={currentDialog?.renderButtons || null}
+          {...currentDialog}>
+          {currentDialog?.content}
+        </BaseDialog>
+      )
+    }
+  }
+
   return (
     <Container
       maxWidth='xl'
@@ -319,11 +321,11 @@ const SignUp = ({ classes }: any) => {
       <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground, windowSize === 'xl' ? classes.p10 : '')}>
         <Grid container>
           <Grid md={2}></Grid>
-          
+
           <Grid md={8}>
             <PulseemNewLogo />
             <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
-            -&nbsp;&nbsp;{t('SignUp.Header')}
+              -&nbsp;&nbsp;{t('SignUp.Header')}
             </span>
           </Grid>
 
@@ -364,7 +366,7 @@ const SignUp = ({ classes }: any) => {
           </Grid>
         </Grid>
       </AppBar>
-      
+
       <Box className={clsx(classes.pt50, windowSize !== 'sm' && windowSize !== 'xs' ? classes.pageContainer : '', windowSize === 'xs' || windowSize === 'sm' ? classes.pt90 : '')}>
         <Box className={clsx(windowSize === 'xs' ? classes.pt50 : classes.pt20)}>
           <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
@@ -473,7 +475,7 @@ const SignUp = ({ classes }: any) => {
                   </Typography>
                 )}
               </Grid>
-              
+
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
                 <Typography className={clsx(classes.f18)}>
                   {t("SignUp.Phone")}
@@ -503,7 +505,7 @@ const SignUp = ({ classes }: any) => {
           <Box className={"formContainer"} style={{ marginBottom: 10 }}>
             <Grid container className={clsx("form")} spacing={3}>
               <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
-              <Typography className={clsx(classes.f18)}>
+                <Typography className={clsx(classes.f18)}>
                   {t("SignUp.UserName")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
@@ -562,8 +564,8 @@ const SignUp = ({ classes }: any) => {
                           <span onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })}>
                             {
                               userDetails.isPasswordVisible
-                              ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} /> 
-                              : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
+                                ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
+                                : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
                             }
                           </span>
                         ),
@@ -602,8 +604,8 @@ const SignUp = ({ classes }: any) => {
                         <span onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })}>
                           {
                             userDetails.isConfirmPasswordVisible
-                            ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} /> 
-                            : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
+                              ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
+                              : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
                           }
                         </span>
                       ),
@@ -690,15 +692,15 @@ const SignUp = ({ classes }: any) => {
                     renderInput={(params) => {
                       //@ts-ignore
                       return (<TextField
-                          {...params}
-                          color="primary" className={clsx(classes.textField, classes.w100)}
+                        {...params}
+                        color="primary" className={clsx(classes.textField, classes.w100)}
                       />)
                     }}
                     onChange={(event: any, value: any) => {
                       setUserDetails({
                         ...userDetails,
                         fieldOfActivity: value
-                      })                      
+                      })
                     }}
                     popupIcon={<IoIosArrowDown size={20} className={classes.colrPrimary} />}
                   />
@@ -791,14 +793,14 @@ const SignUp = ({ classes }: any) => {
                 />
               }
               label={<>
-                  <span className={classes.f18}>{RenderHtml(t('SignUp.PrivacyPolicyCheckbox'))}</span>
-                  <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
-                  {!!errors.chkPolicy && (
-                    <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
-                      {errors.chkPolicy}
-                    </Typography>
-                  )}
-                </>
+                <span className={classes.f18}>{RenderHtml(t('SignUp.PrivacyPolicyCheckbox'))}</span>
+                <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                {!!errors.chkPolicy && (
+                  <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                    {errors.chkPolicy}
+                  </Typography>
+                )}
+              </>
               }
             />
           </FormControl>
