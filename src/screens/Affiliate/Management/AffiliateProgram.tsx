@@ -261,8 +261,8 @@ const AffiliateProgram = ({ classes }: any) => {
     };
 
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
-        <Grid item>
+      <Grid container>
+        <Grid item style={{ marginInline: 15 }}>
           <TextField
             variant="outlined"
             size="small"
@@ -284,7 +284,7 @@ const AffiliateProgram = ({ classes }: any) => {
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
         </Grid>
-        {isSearching && <Grid item>
+        {isSearching && <Grid item className={classes.mInline15}>
           <Button
             onClick={() => {
               setSearchStr("");
@@ -297,7 +297,6 @@ const AffiliateProgram = ({ classes }: any) => {
             {t("common.clear")}
           </Button>
         </Grid>}
-        <Grid item xs={12}>{renderManagementLine()}</Grid>
       </Grid>
     );
   }
@@ -310,6 +309,7 @@ const AffiliateProgram = ({ classes }: any) => {
           aria-label="Button group with a nested menu"
           //@ts-ignore
           color={'primary'}
+          style={{ maxHeight: 50, alignSelf: 'center' }}
         >
           <Button onClick={handleClick}>
             {timeFrame === eTimeFrame.ALL_TIME && t('affiliate.allTime')}
@@ -409,13 +409,26 @@ const AffiliateProgram = ({ classes }: any) => {
     containerClass={clsx(classes.management, classes.mb50)}>
     <Box className={clsx('topSection', classes.mb4)}>
       <Title Text={t('affiliate.pageTitle')} classes={classes} />
-      {renderSearchSection()}
+      <Box style={{ paddingInlineStart: 25, paddingBlockStart: 20 }} className={classes.dFlex}>
+        {renderManagementLine()}
+      </Box>
     </Box>
-    <Box style={{ paddingInlineStart: 25, paddingBlock: 20 }} className={classes.dFlex}>
-      <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ width: 'auto', paddingInlineEnd: 15 }}>{t('affiliate.affiliatedAccounts')}</Typography>
-      {renderTimeFrame()}
-    </Box>
-    {renderBalance()}
+    <Grid item xs={12} style={{ marginBlock: 25, paddingInlineStart: 25 }}>
+      <Box style={{ alignItems: "center", width: '100%' }} className={classes.dFlex}>
+        <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ whiteSpace: 'nowrap', width: 'auto', paddingInlineEnd: 15 }}>{t('affiliate.affiliatedAccounts')}</Typography>
+        <Box className={classes.flexContainerGap25}>
+          <Box>
+            {renderTimeFrame()}
+          </Box>
+          <Box>
+            {renderSearchSection()}
+          </Box>
+        </Box>
+      </Box>
+    </Grid>
+    <Grid item xs={12} style={{ marginBlock: 25 }}>
+      {renderBalance()}
+    </Grid>
     {renderTable()}
     {/* {renderGrandTotal()} */}
     {renderTablePagination()}
