@@ -419,6 +419,9 @@ const AffiliateProgram = ({ classes }: any) => {
         {renderManagementLine()}
       </Box>
     </Box>
+    <Grid item xs={12} style={{ marginBlock: 25 }}>
+      {renderBalance()}
+    </Grid>
     <Grid item xs={12} style={{ marginBlock: 25, paddingInlineStart: 25 }}>
       <Box style={{ alignItems: "center", width: '100%' }} className={classes.dFlex}>
         <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ whiteSpace: 'nowrap', width: 'auto', paddingInlineEnd: 15 }}>{t('affiliate.affiliatedAccounts')}</Typography>
@@ -431,9 +434,6 @@ const AffiliateProgram = ({ classes }: any) => {
           </Box>
         </Box>
       </Box>
-    </Grid>
-    <Grid item xs={12} style={{ marginBlock: 25 }}>
-      {renderBalance()}
     </Grid>
     {renderTable()}
     {/* {renderGrandTotal()} */}
