@@ -15,6 +15,7 @@ import { actionURL } from "../../../config";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ArrowDropDownCircleOutlined } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "../../../components/Loader/Loader";
 
 const AffiliateProgram = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ const AffiliateProgram = ({ classes }: any) => {
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
 
+  const [showLoader, setShowLoader] = useState<boolean>(true);
   const [timeFrame, setTimeFrame] = useState<eTimeFrame>(eTimeFrame.ALL_TIME);
   const [isSearching, setSearching] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<any>(null);
@@ -43,6 +45,7 @@ const AffiliateProgram = ({ classes }: any) => {
 
 
   const getData = async () => {
+    setShowLoader(true);
     // @ts-ignore
     await dispatch(getDetails(timeFrame))
   }
@@ -52,30 +55,33 @@ const AffiliateProgram = ({ classes }: any) => {
   }, [, timeFrame]);
 
   const handleAffilatePage = () => {
-    switch (affiliateDetails?.StatusCode) {
-      case 201: {
-        if (affiliateDetails?.Data[0]) {
-          const fee = ` - ${affiliateDetails?.Data[0]?.AffiliateFee}%`
-          const paid = affiliateDetails?.Data[0]?.Paid;
-          const toPay = affiliateDetails?.Data.reduce((n: any, { ToPay }: any) => n + ToPay, 0);
-          const referralID = affiliateDetails?.Data[0]?.ReferralID;
-          setAffiliateFee(fee);
-          setPaid(paid);
-          setToBePaid(toPay);
-          setBalance(toPay - paid);
-          setRefId(referralID)
+    if (affiliateDetails?.Data && affiliateDetails?.Data[0]) {
+      switch (affiliateDetails?.StatusCode) {
+        case 201: {
+          if (affiliateDetails?.Data[0]) {
+            const fee = ` - ${affiliateDetails?.Data[0]?.AffiliateFee}%`
+            const paid = affiliateDetails?.Data[0]?.Paid;
+            const toPay = affiliateDetails?.Data.reduce((n: any, { ToPay }: any) => n + ToPay, 0);
+            const referralID = affiliateDetails?.Data[0]?.ReferralID;
+            setAffiliateFee(fee);
+            setPaid(paid);
+            setToBePaid(toPay);
+            setBalance(toPay - paid);
+            setRefId(referralID);
+            setShowLoader(false);
+          }
+          break;
         }
-        break;
-      }
-      case 406: {
-        navigate(-1);
-        break;
-      }
-      default: {
-        break;
+        case 406: {
+          navigate(-1);
+          break;
+        }
+        default: {
+          setShowLoader(false);
+          break;
+        }
       }
     }
-
   }
 
   useEffect(() => {
@@ -261,8 +267,8 @@ const AffiliateProgram = ({ classes }: any) => {
     };
 
     return (
-      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
-        <Grid item>
+      <Grid container>
+        <Grid item style={{ marginInline: 15 }}>
           <TextField
             variant="outlined"
             size="small"
@@ -284,7 +290,7 @@ const AffiliateProgram = ({ classes }: any) => {
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
         </Grid>
-        {isSearching && <Grid item>
+        {isSearching && <Grid item className={classes.mInline15}>
           <Button
             onClick={() => {
               setSearchStr("");
@@ -297,7 +303,6 @@ const AffiliateProgram = ({ classes }: any) => {
             {t("common.clear")}
           </Button>
         </Grid>}
-        <Grid item xs={12}>{renderManagementLine()}</Grid>
       </Grid>
     );
   }
@@ -310,6 +315,7 @@ const AffiliateProgram = ({ classes }: any) => {
           aria-label="Button group with a nested menu"
           //@ts-ignore
           color={'primary'}
+          style={{ maxHeight: 50, alignSelf: 'center' }}
         >
           <Button onClick={handleClick}>
             {timeFrame === eTimeFrame.ALL_TIME && t('affiliate.allTime')}
@@ -409,16 +415,30 @@ const AffiliateProgram = ({ classes }: any) => {
     containerClass={clsx(classes.management, classes.mb50)}>
     <Box className={clsx('topSection', classes.mb4)}>
       <Title Text={t('affiliate.pageTitle')} classes={classes} />
-      {renderSearchSection()}
+      <Box style={{ paddingInlineStart: 25, paddingBlockStart: 20 }} className={classes.dFlex}>
+        {renderManagementLine()}
+      </Box>
     </Box>
-    <Box style={{ paddingInlineStart: 25, paddingBlock: 20 }} className={classes.dFlex}>
-      <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ width: 'auto', paddingInlineEnd: 15 }}>{t('affiliate.affiliatedAccounts')}</Typography>
-      {renderTimeFrame()}
-    </Box>
-    {renderBalance()}
+    <Grid item xs={12} style={{ marginBlock: 25 }}>
+      {renderBalance()}
+    </Grid>
+    <Grid item xs={12} style={{ marginBlock: 25, paddingInlineStart: 25 }}>
+      <Box style={{ alignItems: "center", width: '100%' }} className={classes.dFlex}>
+        <Typography className={clsx(classes.managementTitle, "mgmtTitle")} style={{ whiteSpace: 'nowrap', width: 'auto', paddingInlineEnd: 15 }}>{t('affiliate.affiliatedAccounts')}</Typography>
+        <Box className={classes.flexContainerGap25}>
+          <Box>
+            {renderTimeFrame()}
+          </Box>
+          <Box>
+            {renderSearchSection()}
+          </Box>
+        </Box>
+      </Box>
+    </Grid>
     {renderTable()}
     {/* {renderGrandTotal()} */}
     {renderTablePagination()}
+    <Loader isOpen={showLoader} showBackdrop={true} />
   </DefaultScreen>
 }
 

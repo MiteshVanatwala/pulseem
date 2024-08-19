@@ -4168,4 +4168,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderTop: 'solid 2px #797979 !important',
     },
   },
+  flexContainerGap25: {
+    gap: 25,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  mInline15: {
+    marginInline: 15
+  }
 });
