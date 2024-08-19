@@ -15,6 +15,7 @@ import { actionURL } from "../../../config";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ArrowDropDownCircleOutlined } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "../../../components/Loader/Loader";
 
 const AffiliateProgram = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ const AffiliateProgram = ({ classes }: any) => {
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
 
+  const [showLoader, setShowLoader] = useState<boolean>(true);
   const [timeFrame, setTimeFrame] = useState<eTimeFrame>(eTimeFrame.ALL_TIME);
   const [isSearching, setSearching] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<any>(null);
@@ -43,6 +45,7 @@ const AffiliateProgram = ({ classes }: any) => {
 
 
   const getData = async () => {
+    setShowLoader(true);
     // @ts-ignore
     await dispatch(getDetails(timeFrame))
   }
@@ -52,30 +55,33 @@ const AffiliateProgram = ({ classes }: any) => {
   }, [, timeFrame]);
 
   const handleAffilatePage = () => {
-    switch (affiliateDetails?.StatusCode) {
-      case 201: {
-        if (affiliateDetails?.Data[0]) {
-          const fee = ` - ${affiliateDetails?.Data[0]?.AffiliateFee}%`
-          const paid = affiliateDetails?.Data[0]?.Paid;
-          const toPay = affiliateDetails?.Data.reduce((n: any, { ToPay }: any) => n + ToPay, 0);
-          const referralID = affiliateDetails?.Data[0]?.ReferralID;
-          setAffiliateFee(fee);
-          setPaid(paid);
-          setToBePaid(toPay);
-          setBalance(toPay - paid);
-          setRefId(referralID)
+    if (affiliateDetails?.Data && affiliateDetails?.Data[0]) {
+      switch (affiliateDetails?.StatusCode) {
+        case 201: {
+          if (affiliateDetails?.Data[0]) {
+            const fee = ` - ${affiliateDetails?.Data[0]?.AffiliateFee}%`
+            const paid = affiliateDetails?.Data[0]?.Paid;
+            const toPay = affiliateDetails?.Data.reduce((n: any, { ToPay }: any) => n + ToPay, 0);
+            const referralID = affiliateDetails?.Data[0]?.ReferralID;
+            setAffiliateFee(fee);
+            setPaid(paid);
+            setToBePaid(toPay);
+            setBalance(toPay - paid);
+            setRefId(referralID);
+            setShowLoader(false);
+          }
+          break;
         }
-        break;
-      }
-      case 406: {
-        navigate(-1);
-        break;
-      }
-      default: {
-        break;
+        case 406: {
+          navigate(-1);
+          break;
+        }
+        default: {
+          setShowLoader(false);
+          break;
+        }
       }
     }
-
   }
 
   useEffect(() => {
@@ -432,6 +438,7 @@ const AffiliateProgram = ({ classes }: any) => {
     {renderTable()}
     {/* {renderGrandTotal()} */}
     {renderTablePagination()}
+    <Loader isOpen={showLoader} showBackdrop={true} />
   </DefaultScreen>
 }
 
