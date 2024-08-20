@@ -26,6 +26,7 @@ import i18n from "../../i18n";
 import { IsValidEmail, IsValidPhoneNumber } from "../../helpers/Utils/Validations";
 import { Autocomplete } from "@mui/material";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
+import { CompanyWebsiteRequest, CompanyWebsiteApiResponse } from "../../Models/CompanyWebsite/CompanyWebSite";
 
 const SignUp = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -79,11 +80,27 @@ const SignUp = ({ classes }: any) => {
     type: string;
   } | null>(null);
   const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
+  const [emailRequest, setEmailRequest] = useState<CompanyWebsiteRequest>({
+    Email: null,
+    AdName: null,
+    AdSetName: null,
+    CampaignName: null,
+    GCLID: null,
+    RequestUrl: null,
+    UtmCampaign: null,
+    UtmMedium: null,
+    UtmSource: null,
+    WebFormPosition: null
+  });
 
   useEffect(() => {
     dispatch(setLanguage(qs?.culture || 'he'));
     i18n.changeLanguage('he-IL');
     populateFieldOfActivities();
+
+    if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailId || qs?.emailId === '') || !qs?.id)) {
+      setDialogType({ type: 'emailDialog' });
+    }
   }, []);
 
   useEffect(() => {
@@ -283,6 +300,65 @@ const SignUp = ({ classes }: any) => {
     onClose: () => setDialogType(null)
   })
 
+  const displayEmailPopup = () => ({
+    title: t('common.ErrorTitle'),
+    showDivider: false,
+    showDefaultButtons: false,
+    disableBackdropClick: true,
+    content: (
+      <>
+        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+          Type your email
+        </Typography>
+        <TextField
+          onChange={(e: any) => {
+            setEmailRequest({ ...emailRequest, Email: e?.target?.value });
+          }}
+          value={emailRequest.Email}
+        >
+        </TextField>
+        <Button onClick={() => handleConfirmEmailDialog()}>Submit</Button>
+      </>
+    ),
+    onClose: () => {
+      return false;
+    },
+    onCancel: () => {
+      return false;
+    }
+  })
+
+  const handleConfirmEmailDialog = async () => {
+    const response: any = await PulseemReactInstance.post(`User/SetupNewEmail`, emailRequest);
+    const { Data = null, StatusCode = 200, Message = '' } = response?.data;
+
+    const errorResponses: any = {
+      "0": "Internal Error",
+      "7": "Email Is Empty!",
+      "8": "Email Is Not Valid",
+      "13": "Email Already Exist"
+    };
+
+    switch (StatusCode) {
+      case 201: {
+        window.location.href = Data?.redirectLink;
+        break;
+      }
+      case 404: {
+        alert(errorResponses[Data[0]])
+        break;
+      }
+      case 401: {
+        alert('invalid api');
+        break;
+      }
+      default: {
+        alert(Message);
+        break;
+      }
+    }
+  }
+
   const renderDialog = () => {
     const { type } = dialogType || {}
     let currentDialog: any = {};
@@ -290,6 +366,9 @@ const SignUp = ({ classes }: any) => {
       currentDialog = displayConfirmationPopup();
     } else if (type === 'internalError') {
       currentDialog = displayInternalErrorPopup();
+    }
+    else if (type === 'emailDialog') {
+      currentDialog = displayEmailPopup();
     }
 
     if (type) {
