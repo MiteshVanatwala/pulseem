@@ -83,5 +83,7 @@
   "ConfirmationMessage": "To validate your registration, an email has been sent to <b>{emailid}</b> with a link to verify your account.",
   "ResendEmail": "Resend Email",
   "EmailSent": "Email has been sent successfully.",
-  "EmailNotSent": "There is an issue while sending an email. Please try after some time."
+  "EmailNotSent": "There is an issue while sending an email. Please try after some time.",
+  "typeEmailForSignUp": "Type Email Address",
+  "typeEmailForSignUpDesc": "Type email address for Account Creation process"
 }

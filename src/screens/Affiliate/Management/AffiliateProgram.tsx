@@ -410,7 +410,9 @@ const AffiliateProgram = ({ classes }: any) => {
   }
 
   return <DefaultScreen
-    currentPage='newsletter'
+    key="affiliateManagement"
+    currentPage='settings'
+    subPage='affiliateManagement'
     classes={classes}
     containerClass={clsx(classes.management, classes.mb50)}>
     <Box className={clsx('topSection', classes.mb4)}>

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { AppBar, Box, Button, Checkbox, Container, FormControl, FormControlLabel, Grid, MenuItem, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
+import { AppBar, Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, MenuItem, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -27,6 +27,7 @@ import { IsValidEmail, IsValidPhoneNumber } from "../../helpers/Utils/Validation
 import { Autocomplete } from "@mui/material";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { CompanyWebsiteRequest, CompanyWebsiteApiResponse } from "../../Models/CompanyWebsite/CompanyWebSite";
+import { actionURL } from "../../config";
 
 const SignUp = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -92,13 +93,14 @@ const SignUp = ({ classes }: any) => {
     UtmSource: null,
     WebFormPosition: null
   });
+  const [invalidEmail, setInvalidEmail] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(setLanguage(qs?.culture || 'he'));
     i18n.changeLanguage('he-IL');
     populateFieldOfActivities();
 
-    if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailId || qs?.emailId === '') || !qs?.id)) {
+    if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
       setDialogType({ type: 'emailDialog' });
     }
   }, []);
@@ -301,24 +303,43 @@ const SignUp = ({ classes }: any) => {
   })
 
   const displayEmailPopup = () => ({
-    title: t('common.ErrorTitle'),
+    title: t('SignUp.typeEmailForSignUp'),
     showDivider: false,
     showDefaultButtons: false,
     disableBackdropClick: true,
     content: (
-      <>
-        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-          Type your email
+      <Box style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter, classes.mb15)}>
+          {t('SignUp.typeEmailForSignUpDesc')}
         </Typography>
-        <TextField
-          onChange={(e: any) => {
-            setEmailRequest({ ...emailRequest, Email: e?.target?.value });
-          }}
-          value={emailRequest.Email}
-        >
-        </TextField>
-        <Button onClick={() => handleConfirmEmailDialog()}>Submit</Button>
-      </>
+        <FormControl>
+          <TextField
+            id='txtEmailAddress'
+            onFocus={(event: any) => {
+              event.target.style.direction = isRTL && event.target.value === '' ? 'rtl' : 'ltr';
+            }}
+            onBlur={(event: any) => {
+              event.target.style.direction = isRTL && event.target.value === '' ? 'rtl' : 'ltr';
+            }}
+            placeholder={t('SignUp.typeEmailForSignUp')}
+            className={clsx(classes.pl5, classes.pr10, classes.textField, invalidEmail && classes.error)}
+            onChange={(e: any) => {
+              setInvalidEmail(false);
+              const email = e?.target?.value;
+              e.target.style.direction = isRTL && email === '' ? 'rtl' : 'ltr';
+              setEmailRequest({ ...emailRequest, Email: email });
+            }}
+            value={emailRequest.Email}
+            aria-describedby="component-helper-text"
+          >
+          </TextField>
+          {invalidEmail && <FormHelperText style={{ color: 'red', textAlign: isRTL ? 'right' : 'left' }} id='component-helper-text'>{t('common.invalidEmail')}</FormHelperText>}
+          <Button
+            className={clsx(classes.mt15, classes.btn, classes.btnRounded)}
+            style={{ width: 100, alignSelf: 'center' }}
+            onClick={() => handleConfirmEmailDialog()}>{t('common.Send1')}</Button>
+        </FormControl>
+      </Box >
     ),
     onClose: () => {
       return false;
@@ -329,6 +350,12 @@ const SignUp = ({ classes }: any) => {
   })
 
   const handleConfirmEmailDialog = async () => {
+    setLoader(true);
+    if ((!emailRequest.Email || emailRequest.Email === '') || !IsValidEmail(emailRequest.Email)) {
+      setInvalidEmail(true);
+      return false;
+    }
+
     const response: any = await PulseemReactInstance.post(`User/SetupNewEmail`, emailRequest);
     const { Data = null, StatusCode = 200, Message = '' } = response?.data;
 
@@ -341,7 +368,11 @@ const SignUp = ({ classes }: any) => {
 
     switch (StatusCode) {
       case 201: {
-        window.location.href = Data?.redirectLink;
+        // for stage
+        const newUrl = Data?.RedirectLink.replace('https://www.pulseem.co.il', actionURL?.replace('/Pulseem/', ''));
+        window.location.href = `${newUrl}&refId=${qs?.refId}&culture=${isRTL ? 'he' : 'en'}`;
+        // for production
+        // window.location.href = `${Data?.RedirectLink}&refId=${qs?.refId}`;
         break;
       }
       case 404: {
@@ -357,6 +388,7 @@ const SignUp = ({ classes }: any) => {
         break;
       }
     }
+    setLoader(false);
   }
 
   const renderDialog = () => {
