@@ -374,7 +374,7 @@ const Groups = ({ classes }) => {
                         </Button>
                     </Grid>
                 )}
-                <Grid item className={classes.marginLeftAuto}>
+                <Grid item className={isRTL ? classes.marginRightAuto : classes.marginLeftAuto} style={{ paddingInline: 25 }}>
                     <Sort
                         sortItems={groupSortOptions}
                         sortBySelected={sortBySelected}

@@ -6,6 +6,8 @@ import clsx from 'clsx';
 import { Select } from '@mui/material';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { SortDirection } from '../../Models/PushNotifications/Enums';
+import { IoIosArrowDown } from 'react-icons/io';
+import { useSelector } from 'react-redux';
 
 const Sort = ({
   classes,
@@ -15,9 +17,10 @@ const Sort = ({
   handleSortDirection,
   handleSortBySelected
 }: any) => {
+  const { isRTL } = useSelector((state: any) => state.core)
   const renderSortItems = () => {
     return sortItems.map((sortBy: any) => {
-        return (<MenuItem key={sortBy.value} value={sortBy.value}>{sortBy.text}</MenuItem>)
+      return (<MenuItem key={sortBy.value} value={sortBy.value}>{sortBy.text}</MenuItem>)
     });
   }
 
@@ -25,17 +28,26 @@ const Sort = ({
     <>
       <FormControl className={clsx(classes.dropDown)} style={{ height: 'auto' }}>
         <Select
-            id="groupOrder"
-            value={sortBySelected}
-            className={clsx(classes.sortBySelect)}
-            onChange={handleSortBySelected}
+          id="groupOrder"
+          value={sortBySelected}
+          className={clsx(classes.sortBySelect)}
+          onChange={handleSortBySelected}
+          IconComponent={() => <IoIosArrowDown size={20} className={clsx(classes.dropdownIconComponent, isRTL ? classes.left10 : classes.right10)} />}
+          MenuProps={{
+            PaperProps: {
+              style: {
+                maxHeight: 300,
+                direction: isRTL ? 'rtl' : 'ltr'
+              },
+            },
+          }}
         >
-            {renderSortItems()}
+          {renderSortItems()}
         </Select>
       </FormControl>
       <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={handleSortDirection} style={{ height: 40 }}>
-          {sortDirection === SortDirection.DESC ? <BiSortDown /> : <BiSortUp />}
-      </Button>  
+        {sortDirection === SortDirection.DESC ? <BiSortDown /> : <BiSortUp />}
+      </Button>
     </>
   )
 }

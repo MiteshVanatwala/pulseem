@@ -1470,7 +1470,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   sortBySelect: {
     width: 200,
     paddingLeft: 5,
-    color: '#1c82b2 !important',
+    color: '#000 !important',
     '& #groupOrder': {
       padding: '5px !important',
       border: 'none',
@@ -4180,4 +4180,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderTop: 'solid 2px #797979 !important',
     },
   },
+  left10: {
+    left: 10,
+    right: 'auto'
+  },
+  right10: {
+    right: 10,
+    left: 'auto'
+  },
+  left15: {
+    left: 15,
+    right: 'auto'
+  },
+  right15: {
+    right: 15,
+    left: 'auto'
+  }
 });
