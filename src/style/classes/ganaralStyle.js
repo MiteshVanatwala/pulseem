@@ -1467,6 +1467,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginTop: "8px",
     },
   },
+  sortBySelect: {
+    width: 200,
+    paddingLeft: 5,
+    color: '#1c82b2 !important',
+    '& #groupOrder': {
+      padding: '5px !important',
+      border: 'none',
+    },
+    '& fieldset': {
+      border: 'none',
+    }
+  },
   addDiv: {
     display: "flex",
     alignItems: "center",

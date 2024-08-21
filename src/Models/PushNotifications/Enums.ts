@@ -53,5 +53,15 @@ export enum EmailTemplateType {
 
 export enum DynamicProductLink {
     LATEST_PURCHASE = 'https://dynamicProduct.com?Purchase',
-    LATEST_ABANDONMENT = 'https://dynamicProduct.com?Abandonment',
+    LATEST_ABANDONMENT = 'https://dynamicProduct.com?Abandonment'
+}
+
+export enum SortDirection {
+    DESC = 0,
+    ASC = 1
+}
+export enum SortColumns {
+    GROUP_NAME = 'GroupName',
+    CREATION_DATE = 'CreationDate',
+    UPDATE_DATE = 'UpdateDate'
 }
