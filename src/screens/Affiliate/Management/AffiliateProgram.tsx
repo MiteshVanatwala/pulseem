@@ -244,7 +244,7 @@ const AffiliateProgram = ({ classes }: any) => {
         <b style={{ marginInlineEnd: 15 }}>{t('affiliate.referralLink')}: </b>
         <a title={t('affiliate.referralLink')} rel="noreferrer" href={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`} target="_blank">{`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`}</a>
         <Box style={{ marginInlineStart: 15 }}>
-          <CopyToClipboard text={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`} onCopy={handleCopyScript}>
+          <CopyToClipboard text={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&culture=${isRTL ? 'he' : 'en'}`} onCopy={handleCopyScript}>
             <Button
               variant="outlined"
               color="primary"
