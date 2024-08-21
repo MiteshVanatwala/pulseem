@@ -26,7 +26,7 @@ const Sort = ({
 
   return (
     <>
-      <FormControl className={clsx(classes.dropDown)} style={{ height: 'auto' }}>
+      <FormControl className={clsx(classes.dropDown)} style={{ border: '2px solid #F65026', borderRadius: 25, paddingBottom: 5, paddingInline: 10 }}>
         <Select
           id="groupOrder"
           value={sortBySelected}
@@ -45,7 +45,7 @@ const Sort = ({
           {renderSortItems()}
         </Select>
       </FormControl>
-      <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={handleSortDirection} style={{ height: 40 }}>
+      <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={handleSortDirection} style={{ height: 40, border: '2px solid #F65026', borderRadius: 25 }}>
         {sortDirection === SortDirection.DESC ? <BiSortDown /> : <BiSortUp />}
       </Button>
     </>
