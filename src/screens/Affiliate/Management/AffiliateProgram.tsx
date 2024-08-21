@@ -242,7 +242,7 @@ const AffiliateProgram = ({ classes }: any) => {
     return <Box>
       <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
         <b style={{ marginInlineEnd: 15 }}>{t('affiliate.referralLink')}: </b>
-        <a title={t('affiliate.referralLink')} rel="noreferrer" href={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`} target="_blank">{`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`}</a>
+        <a title={t('affiliate.referralLink')} rel="noreferrer" href={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&culture=${isRTL ? 'he' : 'en'}`} target="_blank">{`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}`}</a>
         <Box style={{ marginInlineStart: 15 }}>
           <CopyToClipboard text={`${actionURL?.replace('/Pulseem/', '/react/')}sign-up?refId=${refId}&culture=${isRTL ? 'he' : 'en'}`} onCopy={handleCopyScript}>
             <Button
