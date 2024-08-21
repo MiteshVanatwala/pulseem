@@ -22,6 +22,7 @@ import { get, map } from 'lodash';
 import { AddEditSubAccounts, GetGroupsAccountSubUsers } from '../../redux/reducers/SubAccountSlice';
 import { Group } from '../../Models/Groups/Group';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
+import { IsValidGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -29,7 +30,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, countryCodeList } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { testGroups } = useSelector((state: any) => state.sms);
 	const [ selectedGroups, setSelectedGroups ] = useState<any>([]);
@@ -150,7 +151,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		let errorsTemp = JSON.parse(JSON.stringify(errors))
 		errorsTemp = {
 			subAccountName: subAccountDetails.subAccountName.trim() === '' ? t('common.requiredField') : '',
-			cellPhone: subAccountDetails.cellPhone.trim() === '' ? t('common.requiredField') : '',
+			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(subAccountDetails.cellPhone.trim(), countryCodeList ) : !IsValidGlobalPhoneNumber(subAccountDetails.cellPhone.trim())) ? t('recipient.errors.cellPhone') : '',
 			emailAddress: subAccountDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
 			loginUserName: subAccountDetails.loginUserName.trim() === '' ? t('common.requiredField') : '',
 			password: '',
@@ -459,7 +460,10 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 								...subAccountDetails,
 								cellPhone: e.target.value
 							})}
-							onKeyUp={handleKeyPress}
+							// onKeyUp={handleKeyPress}
+							// @ts-ignore
+							onKeyPress={isGlobal ? IsValidGlobalPhoneNumber : null}
+							inputProps={{ maxlength: 16 }}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.cellPhone ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

@@ -134,7 +134,8 @@ export type CommonRedux = {
 	};
 	currencySymbol?: string;
 	isCurrencySymbolPrefix?: boolean;
-	isGlobal?: boolean
+	isGlobal?: boolean,
+	countryCodeList?: any
 };
 
 export type actionButtonProps = {

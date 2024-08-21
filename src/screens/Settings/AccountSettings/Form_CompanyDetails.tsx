@@ -23,6 +23,8 @@ import { DateField } from "../../../components/managment";
 import {
   IsNumberField,
   IsValidEmail,
+  IsValidGlobalPhoneNumber,
+  IsValidPhoneNumberWithCountryCode,
 } from "../../../helpers/Utils/Validations";
 import {
   CompDtlPropTypes
@@ -48,7 +50,7 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, accountFeatures, currencyList } = useSelector((state: any) => state.common);
+  const { accountSettings, accountFeatures, currencyList, countryCodeList, isGlobal } = useSelector((state: any) => state.common);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -99,8 +101,7 @@ const FORM_COMPANY_DETAILS = ({
         CellPhone: t("settings.accountSettings.fixedComDetails.errors.reqMobile"),
       };
     } else if (
-      companyDetails?.CellPhone.length > 16 ||
-      companyDetails?.CellPhone.length < 9
+      isGlobal ? !IsValidPhoneNumberWithCountryCode(companyDetails?.CellPhone, countryCodeList) : !IsValidGlobalPhoneNumber(companyDetails?.CellPhone)
     ) {
       isValid = false;
       tempErrors = {
@@ -343,7 +344,7 @@ const FORM_COMPANY_DETAILS = ({
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
                 error={!!errors.CellPhone}
-                inputProps={{ maxLength: 13 }}
+                inputProps={{ maxLength: 16 }}
               />
               {!!errors.CellPhone && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>

@@ -103,7 +103,7 @@ const AddRecipientPopup = ({ classes,
     const localClasses = useStyles()
     const { extraData } = useSelector((state) => state.sms);
     const { isRTL } = useSelector((state) => state.core);
-    const { countryCodeList } = useSelector((state) => state.common);
+    const { countryCodeList, isGlobal } = useSelector((state) => state.common);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
     const [accountExtraFields, setAccountExtraFields] = useState(null);
@@ -170,7 +170,7 @@ const AddRecipientPopup = ({ classes,
             }
         }
         if (e.target.name === "Cellphone") {
-            if (!IsValidPhoneNumberWithCountryCode(e.target.value, countryCodeList)) {
+            if (isGlobal ? !IsValidPhoneNumberWithCountryCode(e.target.value, countryCodeList) : !IsValidGlobalPhoneNumber(e.target.value)) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
             }
         }

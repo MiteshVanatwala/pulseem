@@ -26,7 +26,7 @@ import {
   setRowsPerPage,
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
-import { getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, isClalAccount } from './redux/reducers/commonSlice';
+import { getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
@@ -655,6 +655,7 @@ const App = ({ screenSize }) => {
     !isSignup && updateToken()
     !isSignup && initFeatures()
     !isSignup && dispatch(GetCurrencyList());
+    !isSignup && dispatch(GetSmsCountries());
   }, [dispatch])
 
 

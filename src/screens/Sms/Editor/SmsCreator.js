@@ -135,7 +135,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures, countryCodeList } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -554,7 +554,7 @@ const SmsCreator = ({ classes }) => {
     return isValid;
   };
   const handleSend = async () => {
-    if (phone !== "" && IsValidPhoneNumberWithCountryCode(phone, countryCodeList)) {
+    if (phone !== "" && (isGlobal ? IsValidPhoneNumberWithCountryCode(phone, countryCodeList) : IsValidGlobalPhoneNumber(phone))) {
       if (id) {
         const smsQuickSendData = {
           ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
