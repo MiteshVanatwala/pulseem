@@ -31,7 +31,6 @@ const AddGroupPopUp = ({
     isOpen = false,
     onCancel,
     onClose,
-    windowSize,
     ToastMessages,
     setToastMessage,
     addClientByQuery = false,

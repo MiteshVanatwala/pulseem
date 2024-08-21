@@ -361,10 +361,7 @@ const Groups = ({ classes }) => {
                     <Button
                         variant="contained"
                         size="medium"
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen
-                        )}
+                        className={clsx(classes.btn, classes.btnRounded, selectedGroups.length < 2 ? classes.disabled : null)}
                         onClick={() => {
                             setIsCombinedRequest(true);
                             setDialog(DialogType.MERGE_GROUP)
