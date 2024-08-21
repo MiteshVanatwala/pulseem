@@ -350,11 +350,12 @@ const SignUp = ({ classes }: any) => {
   })
 
   const handleConfirmEmailDialog = async () => {
-    setLoader(true);
     if ((!emailRequest.Email || emailRequest.Email === '') || !IsValidEmail(emailRequest.Email)) {
       setInvalidEmail(true);
       return false;
     }
+
+    setLoader(true);
 
     const response: any = await PulseemReactInstance.post(`User/SetupNewEmail`, emailRequest);
     const { Data = null, StatusCode = 200, Message = '' } = response?.data;
