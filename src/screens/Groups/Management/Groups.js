@@ -359,14 +359,12 @@ const Groups = ({ classes }) => {
                 </Grid>
                 <Grid item xs={colSize}>
                     <Button
-                        variant="contained"
-                        size="medium"
                         className={clsx(classes.btn, classes.btnRounded, selectedGroups.length < 2 ? classes.disabled : null)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         onClick={() => {
                             setIsCombinedRequest(true);
                             setDialog(DialogType.MERGE_GROUP)
                         }}
-                        disabled={selectedGroups.length < 2}
                     >
                         {t("group.mergeGroup")}
                     </Button>
