@@ -17,7 +17,7 @@ import "moment/locale/he";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircle } from "react-icons/bs";
 import {
-    createCombinedGroupV2,
+    combinedGroup,
     createGroup
 } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
@@ -93,7 +93,7 @@ const AddGroupPopUp = ({
                     IsTestGroup: newGroupData.IsTestGroup,
                 };
 
-                response = await dispatch(createCombinedGroupV2(payload));
+                response = await dispatch(combinedGroup(payload));
             }
             else {
                 response = await dispatch(createGroup(payload));
