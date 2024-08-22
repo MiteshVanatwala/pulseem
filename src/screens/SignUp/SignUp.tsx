@@ -101,7 +101,9 @@ const SignUp = ({ classes }: any) => {
     populateFieldOfActivities();
 
     if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
-      setDialogType({ type: 'emailDialog' });
+      onInitRef().then(() => {
+        setDialogType({ type: 'emailDialog' });
+      });
     }
   }, []);
 
@@ -392,6 +394,24 @@ const SignUp = ({ classes }: any) => {
     setLoader(false);
   }
 
+  const onInitRef = async () => {
+    setLoader(true);
+
+    const response: any = await PulseemReactInstance.get(`User/CheckRef/${qs?.refId}`);
+    const { StatusCode = 200 } = response?.data;
+
+    switch (StatusCode) {
+      case 201: {
+        setLoader(false);
+        break;
+      }
+      case 406: {
+        window.location.href = 'https://www.pulseem.co.il/';
+        break;
+      }
+    }
+    return;
+  }
   const renderDialog = () => {
     const { type } = dialogType || {}
     let currentDialog: any = {};
