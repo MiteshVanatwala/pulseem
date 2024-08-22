@@ -93,7 +93,7 @@ const Groups = ({ classes }) => {
     const qs = (window.location.search && queryString.parse(window.location.search)) || state;
     const exportColumnHeader = useRef(null);
     const [sortDirection, setSortDirection] = useState(SortDirection.DESC);
-    const [sortBySelected, setSortBy] = useState(SortColumns.CREATION_DATE);
+    const [sortBySelected, setSortBy] = useState(SortColumns.UPDATE_DATE);
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -185,17 +185,17 @@ const Groups = ({ classes }) => {
 
     const groupSortOptions = [
         {
+            value: SortColumns.UPDATE_DATE,
+            text: t("notifications.sort_by_updated"),
+        },
+        {
             value: SortColumns.GROUP_NAME,
             text: t("notifications.sort_by_group"),
         },
         {
             value: SortColumns.CREATION_DATE,
             text: t("notifications.sort_by_creation"),
-        },
-        {
-            value: SortColumns.UPDATE_DATE,
-            text: t("notifications.sort_by_updated"),
-        },
+        }
     ];
 
     const renderToast = () => {
