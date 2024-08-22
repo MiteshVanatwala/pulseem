@@ -17,20 +17,20 @@ import "moment/locale/he";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircle } from "react-icons/bs";
 import {
-    createGroup,
-    getGroupsBySubAccountId
+    combinedGroup,
+    createGroup
 } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { getTestGroups } from "../../../../redux/reducers/smsSlice";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
+import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 
 const AddGroupPopUp = ({
     classes,
     isOpen = false,
     onCancel,
     onClose,
-    windowSize,
     ToastMessages,
     setToastMessage,
     addClientByQuery = false,
@@ -38,6 +38,8 @@ const AddGroupPopUp = ({
     addAnotherRecCallback,
     getData,
     isDynamic = false,
+    isCombinedRequest = false,
+    selectedGroupId,
     handleResponses }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -68,6 +70,7 @@ const AddGroupPopUp = ({
     const [saveDisabled, setSaveDisabled] = useState(false);
     const [showLoader, setLoader] = useState(false);
     const { isRTL } = useSelector((state) => state.core);
+    const { CoreToastMessages, windowSize } = useSelector(state => state.core);
 
     const handleAddGroup = async (data, callback) => {
         setSaveDisabled(true);
@@ -78,7 +81,24 @@ const AddGroupPopUp = ({
         }
         try {
             setLoader(true);
-            const response = await dispatch(createGroup(data));
+
+            let payload = data;
+            let response = null;
+
+            if (isCombinedRequest) {
+                payload = {
+                    SubAccountID: -1,
+                    GroupName: newGroupData.GroupName,
+                    GroupIds: selectedGroupId,
+                    IsTestGroup: newGroupData.IsTestGroup,
+                };
+
+                response = await dispatch(combinedGroup(payload));
+            }
+            else {
+                response = await dispatch(createGroup(payload));
+            }
+
             setLoader(false);
             handleResponses(response, {
                 S_201: {
@@ -106,6 +126,11 @@ const AddGroupPopUp = ({
                     message: ToastMessages.GROUP_INVALID_API,
                     Func: () => null
                 },
+                S_403: {
+                    code: 403,
+                    message: CoreToastMessages?.XSS_ERROR,
+                    Func: () => null
+                },
                 S_405: {
                     code: 405,
                     message: ToastMessages.MAX_GROUPS_EXCEEDED,
@@ -124,8 +149,8 @@ const AddGroupPopUp = ({
 
         } catch (err) {
             dispatch(sendToTeamChannel({
-                MethodName: 'init2FA',
-                ComponentName: 'Dashboard.js',
+                MethodName: 'handleAddGroup',
+                ComponentName: 'AddGroupPopUp.js',
                 Text: err
             }));
             return false;
@@ -138,7 +163,7 @@ const AddGroupPopUp = ({
             <BaseDialog
                 classes={classes}
                 open={isOpen}
-                title={t("group.createNew")}
+                title={isCombinedRequest ? t("group.mergeGroup") : t("group.createNew")}
                 icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div>}
@@ -172,7 +197,7 @@ const AddGroupPopUp = ({
                                 {t("group.cancel")}
                             </Button>
                         </Grid>
-                        {!addClientByQuery && !isDynamic && <Grid
+                        {!addClientByQuery && !isDynamic && !isCombinedRequest && <Grid
                             item
                             xs={windowSize === "xs" && 12}
                             sm={4}
@@ -233,6 +258,9 @@ const AddGroupPopUp = ({
                 cancelText="common.Cancel"
                 confirmText="common.Ok"
             >
+                {isCombinedRequest && <Box>
+                    <Typography>{RenderHtml(t("group.mergeGroupDesc"))}</Typography>
+                </Box>}
                 <Box
                     className={clsx(
                         classes.customDialogContentBox,
@@ -273,35 +301,35 @@ const AddGroupPopUp = ({
                         />
                     </Box>
                 </Box>
-                    <Box className={clsx(classes.pt5, isRTL ? classes.textLeft : classes.textRight)}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox checked={newGroupData.IsTestGroup} onClick={() => { setNewGroupData({ ...newGroupData, IsTestGroup: !newGroupData.IsTestGroup, IsDynamic: isDynamic }) }} name="testGroup" size="small" color="primary" />
-                            }
-                            label={t("group.testGroup")}
-                        />
-                        <CustomTooltip
-                            isSimpleTooltip={false}
-                            interactive={true}
-                            classes={{
-                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                                arrow: classes.fBlack,
-                            }}
-                            arrow={true}
-                            style={{ fontSize: 18, fontWeight: "bold" }}
-                            placement={"top"}
-                            title={
-                                <Typography noWrap={false}>
-                                    {t("group.testGroupInfo")}
-                                </Typography>
-                            }
-                            text={t("group.testGroupInfo")}
-                        >
-                            <IconButton className={classes.icon_Info} aria-label={t('group.testGroupInfo')}>
-                                <BsInfoCircle />
-                            </IconButton>
-                        </CustomTooltip>
-                    </Box>
+                <Box className={clsx(classes.pt5, isRTL ? classes.textLeft : classes.textRight)}>
+                    <FormControlLabel
+                        control={
+                            <Checkbox checked={newGroupData.IsTestGroup} onClick={() => { setNewGroupData({ ...newGroupData, IsTestGroup: !newGroupData.IsTestGroup, IsDynamic: isDynamic }) }} name="testGroup" size="small" color="primary" />
+                        }
+                        label={t("group.testGroup")}
+                    />
+                    <CustomTooltip
+                        isSimpleTooltip={false}
+                        interactive={true}
+                        classes={{
+                            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                            arrow: classes.fBlack,
+                        }}
+                        arrow={true}
+                        style={{ fontSize: 18, fontWeight: "bold" }}
+                        placement={"top"}
+                        title={
+                            <Typography noWrap={false}>
+                                {t("group.testGroupInfo")}
+                            </Typography>
+                        }
+                        text={t("group.testGroupInfo")}
+                    >
+                        <IconButton className={classes.icon_Info} aria-label={t('group.testGroupInfo')}>
+                            <BsInfoCircle />
+                        </IconButton>
+                    </CustomTooltip>
+                </Box>
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </BaseDialog>
         </>
@@ -312,7 +340,6 @@ AddGroupPopUp.propTypes = {
     classes: PropTypes.object,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    windowSize: PropTypes.string.isRequired,
     ToastMessages: PropTypes.object.isRequired,
     setToastMessage: PropTypes.func.isRequired,
 }

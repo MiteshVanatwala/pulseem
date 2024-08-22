@@ -76,6 +76,7 @@ const Groups = ({ classes }) => {
     const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [dialog, setDialog] = useState(null);
+    const [isCombinedRequest, setIsCombinedRequest] = useState(false);
     const [searchStr, setSearchStr] = useState("");
     const [serachData, setSearchData] = useState({
         PageIndex: 1,
@@ -150,7 +151,8 @@ const Groups = ({ classes }) => {
         EXPORT_ALL: "EXPORT_ALL",
         EXPORT_SELECTED: "EXPORT_SELECTED",
         SIMPLY_CLUB: "SIMPLY_CLUB",
-        EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
+        EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS",
+        MERGE_GROUP: "MERGE_GROUP",
     };
     const TABLE_HEAD = [
         {
@@ -353,6 +355,18 @@ const Groups = ({ classes }) => {
 
                     >
                         {t("group.new")}
+                    </Button>
+                </Grid>
+                <Grid item xs={colSize}>
+                    <Button
+                        className={clsx(classes.btn, classes.btnRounded, selectedGroups.length < 2 ? classes.disabled : null)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                        onClick={() => {
+                            setIsCombinedRequest(true);
+                            setDialog(DialogType.MERGE_GROUP)
+                        }}
+                    >
+                        {t("group.mergeGroup")}
                     </Button>
                 </Grid>
                 {windowSize !== "xs" && (
@@ -1886,6 +1900,7 @@ const Groups = ({ classes }) => {
             switch (dialog) {
                 case DialogType.ADD_GROUP: {
                     return <AddGroupPopUp
+                        isCombinedRequest={false}
                         isDynamic={false}
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_GROUP}
@@ -1905,6 +1920,20 @@ const Groups = ({ classes }) => {
                             setSelectedGroups([...selectedGroups, groupId]);
                             setDialog(DialogType.ADD_RECIPIENTS)
                         }}
+                        getData={() => getData(null)}
+                        handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions) }}
+                    />
+                }
+                case DialogType.MERGE_GROUP: {
+                    return <AddGroupPopUp
+                        classes={classes}
+                        isCombinedRequest={true}
+                        selectedGroupId={selectedGroups}
+                        isOpen={dialog === DialogType.MERGE_GROUP}
+                        onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                        setLoader={setLoader}
+                        ToastMessages={ToastMessages}
+                        setToastMessage={setToastMessage}
                         getData={() => getData(null)}
                         handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions) }}
                     />

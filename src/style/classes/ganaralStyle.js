@@ -1237,6 +1237,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomLeftRadius: ".25rem",
     borderBottomRightRadius: ".25rem",
   },
+  mergeGroup: {
+    '& .MuiPaper-root': {
+      maxWidth: 'calc(40vw)',
+      width: 'calc(40vw)',
+    }
+  },
   templateModal: {
     // minWidth: "900px",
     minWidth: '60vw',
