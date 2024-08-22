@@ -4175,7 +4175,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   renderHtml: {
     '& label': {
-      display: 'block !important'
-    }
+      display: 'block !important',
+      '& select': {
+        backgroundPosition: isRTL ? 'left center' : 'right-center'
+      }
+    },
   }
 });
