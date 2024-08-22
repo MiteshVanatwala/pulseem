@@ -1942,6 +1942,19 @@ const Groups = ({ classes }) => {
         getData(null);
         setLoader(false);
     };
+
+    const handleCombinedResponses = (response, action) => {
+        console.log(action);
+        if (response?.payload?.GroupID && response?.payload?.GroupID > 0) {
+            setToastMessage(ToastMessages.GROUP_CREATED);
+            getData(null);
+        }
+        else {
+            setToastMessage(ToastMessages.ERROR_OCCURED);
+        }
+        setSelectedGroups([])
+    }
+
     const showDialog = () => {
         if (dialog !== null) {
             switch (dialog) {
@@ -1982,7 +1995,7 @@ const Groups = ({ classes }) => {
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
                         getData={() => getData(null)}
-                        handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions) }}
+                        handleResponses={(response, actions) => { setDialog(null); handleCombinedResponses(response, actions) }}
                     />
                 }
                 case DialogType.EDIT_GROUP: {
