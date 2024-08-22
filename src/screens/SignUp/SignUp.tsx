@@ -91,7 +91,8 @@ const SignUp = ({ classes }: any) => {
     UtmCampaign: null,
     UtmMedium: null,
     UtmSource: null,
-    WebFormPosition: null
+    WebFormPosition: null,
+    ReferralID: qs?.refId
   });
   const [invalidEmail, setInvalidEmail] = useState<boolean>(false);
 
