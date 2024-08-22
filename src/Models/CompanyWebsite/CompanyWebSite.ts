@@ -9,6 +9,7 @@ export interface CompanyWebsiteRequest {
   AdSetName: string | any | null;
   AdName: string | any | null;
   WebFormPosition: string | any | null;
+  ReferralID: string | any | null;
 }
 
 export interface CompanyWebsiteApiResponse {
