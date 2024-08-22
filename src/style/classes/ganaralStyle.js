@@ -1473,6 +1473,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginTop: "8px",
     },
   },
+  sortBySelect: {
+    width: 200,
+    paddingLeft: 5,
+    color: '#000 !important',
+    '& #groupOrder': {
+      padding: '5px !important',
+      border: 'none',
+    },
+    '& fieldset': {
+      border: 'none',
+    }
+  },
   addDiv: {
     display: "flex",
     alignItems: "center",
@@ -4183,5 +4195,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mInline15: {
     marginInline: 15
+  },
+  left10: {
+    left: 10,
+    right: 'auto'
+  },
+  right10: {
+    right: 10,
+    left: 'auto'
+  },
+  left15: {
+    left: 15,
+    right: 'auto'
+  },
+  right15: {
+    right: 15,
+    left: 'auto'
   }
 });

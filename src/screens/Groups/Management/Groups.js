@@ -50,6 +50,8 @@ import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { ClientStatus } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
+import Sort from '../../../components/Sort/Sort';
+import { SortColumns, SortDirection } from '../../../Models/PushNotifications/Enums';
 
 // very first structure for next refactor
 // import { GetExtraFields } from '../../../redux/reducers/ExtraFieldsSlice';
@@ -91,6 +93,8 @@ const Groups = ({ classes }) => {
     const pageProperty = useRef();
     const qs = (window.location.search && queryString.parse(window.location.search)) || state;
     const exportColumnHeader = useRef(null);
+    const [sortDirection, setSortDirection] = useState(SortDirection.DESC);
+    const [sortBySelected, setSortBy] = useState(SortColumns.UPDATE_DATE);
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -180,6 +184,22 @@ const Groups = ({ classes }) => {
             align: "center",
         },
     ];
+
+    const groupSortOptions = [
+        {
+            value: SortColumns.UPDATE_DATE,
+            text: t("notifications.sort_by_updated"),
+        },
+        {
+            value: SortColumns.GROUP_NAME,
+            text: t("notifications.sort_by_group"),
+        },
+        {
+            value: SortColumns.CREATION_DATE,
+            text: t("notifications.sort_by_creation"),
+        }
+    ];
+
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -192,7 +212,7 @@ const Groups = ({ classes }) => {
         dispatch(getGroupsBySubAccountId());
     }
     const getData = async (customSearch = null) => {
-        const search = { ...serachData, PageSize: rowsPerPage, ...customSearch };
+        const search = { ...serachData, PageSize: rowsPerPage, ...customSearch, SortByField: sortBySelected, SortDirection: sortDirection };
         setLoader(true);
         await dispatch(getGroups(search));
         if (!extraData || extraData.length === 0) {
@@ -225,7 +245,7 @@ const Groups = ({ classes }) => {
     }
     useEffect(() => {
         reSearch();
-    }, [dispatch, serachData.PageIndex, rowsPerPage]);
+    }, [dispatch, serachData.PageIndex, rowsPerPage, sortBySelected, sortDirection]);
 
     useEffect(() => {
         if (serachData.SearchTerm !== '') {
@@ -237,7 +257,24 @@ const Groups = ({ classes }) => {
         if (qs?.NewGroup === 'true') {
             setDialog(DialogType.ADD_GROUP)
         }
-    }, [])
+    }, []);
+
+    const handleSortBySelected = (event) => {
+        setSearchData({
+            ...serachData,
+            PageIndex: 1
+        });
+        setSortBy(event.target.value);
+    };
+
+    const handleSortDirection = () => {
+        setSearchData({
+            ...serachData,
+            PageIndex: 1
+        });
+        const selected = sortDirection === SortDirection.ASC ? SortDirection.DESC : SortDirection.ASC;
+        setSortDirection(selected);
+    }
 
     const renderSearchSection = () => {
         const handleKeyDown = (event) => {
@@ -339,6 +376,16 @@ const Groups = ({ classes }) => {
                         </Button>
                     </Grid>
                 )}
+                <Grid item className={isRTL ? classes.marginRightAuto : classes.marginLeftAuto} style={{ paddingInline: 25 }}>
+                    <Sort
+                        sortItems={groupSortOptions}
+                        sortBySelected={sortBySelected}
+                        sortDirection={sortDirection}
+                        handleSortDirection={handleSortDirection}
+                        handleSortBySelected={handleSortBySelected}
+                        classes={classes}
+                    />
+                </Grid>
             </Grid>
         );
     };
