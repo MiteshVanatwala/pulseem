@@ -1237,6 +1237,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomLeftRadius: ".25rem",
     borderBottomRightRadius: ".25rem",
   },
+  mergeGroup: {
+    '& .MuiPaper-root': {
+      maxWidth: 'calc(40vw)',
+      width: 'calc(40vw)',
+    }
+  },
   templateModal: {
     // minWidth: "900px",
     minWidth: '60vw',
@@ -1466,6 +1472,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: "100%",
       marginTop: "8px",
     },
+  },
+  sortBySelect: {
+    width: 200,
+    paddingLeft: 5,
+    color: '#000 !important',
+    '& #groupOrder': {
+      padding: '5px !important',
+      border: 'none',
+    },
+    '& fieldset': {
+      border: 'none',
+    }
   },
   addDiv: {
     display: "flex",
@@ -4168,4 +4186,30 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderTop: 'solid 2px #797979 !important',
     },
   },
+  flexContainerGap25: {
+    gap: 25,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  mInline15: {
+    marginInline: 15
+  },
+  left10: {
+    left: 10,
+    right: 'auto'
+  },
+  right10: {
+    right: 10,
+    left: 'auto'
+  },
+  left15: {
+    left: 15,
+    right: 'auto'
+  },
+  right15: {
+    right: 15,
+    left: 'auto'
+  }
 });
