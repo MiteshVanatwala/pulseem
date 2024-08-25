@@ -1823,7 +1823,6 @@ const DynamicGroups = ({ classes }: any) => {
                             setDialog(null);
                             setSelectedGroups([])
                         }}
-                        windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
                         addClientByQuery={false}
