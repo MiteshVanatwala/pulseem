@@ -84,6 +84,7 @@ import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
 import HtmlPreview from './screens/Preview/HtmlPreview';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
+import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -556,6 +557,11 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}Previewer/:type/:id`}
         element={<HtmlPreview classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}AffiliateManagement`}
+        element={<AffiliateProgram classes={classes} />}
       />
     </Routes>
   )

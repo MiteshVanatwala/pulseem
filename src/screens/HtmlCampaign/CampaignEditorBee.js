@@ -437,6 +437,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       let finalJson = args.JsonData;
       let finalAmpData = args.AmpData;
 
+      if (finalJson.indexOf('!DOCTYPE') > -1 || finalJson.indexOf('<body') > -1 || finalJson.indexOf('<html') > -1) {
+        setToastMessage(ToastMessages.HTML_DOCTYPE_ERROR);
+        return false;
+      }
+
       const response = await dispatch(saveCampaign({
         Name: campaign.Name,
         campaignId: args.campaignId,

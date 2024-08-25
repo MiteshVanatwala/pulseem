@@ -71,7 +71,7 @@ export const BaseDialog = ({
   const RenderTitleDefault = () => (
     <>
       <Typography
-        style={{width: '100%'}}
+        style={{ width: '100%' }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
