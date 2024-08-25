@@ -248,7 +248,8 @@ export const NO_IMAGE_URL = 'https://www.pulseem.co.il/Pulseem/images/productima
 export const NoAuthenticationAPIs = [
     'User/Signup',
     'User/ResendEmail',
-    'User/CheckRef'
+    'User/CheckRef',
+    'User/SetupNewEmail'
 ]
 
 export const FieldOfActivities = [
