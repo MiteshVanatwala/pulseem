@@ -17,7 +17,7 @@ import Illustration_BG_BL from "../../assets/images/Illustration_BG_BL";
 import Illustration_BG_BR from "../../assets/images/Illustration_BG_BR";
 import PasswordHint from "../Settings/AccountSettings/Password/PasswordHint";
 import { ValidPassword } from "../Settings/AccountSettings/Password/Types";
-// import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
+import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
 import Toast from "../../components/Toast/Toast.component";
 import queryString from 'query-string';
 import { setLanguage } from "../../redux/reducers/coreSlice";
@@ -28,7 +28,6 @@ import { Autocomplete } from "@mui/material";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { CompanyWebsiteRequest, CompanyWebsiteApiResponse } from "../../Models/CompanyWebsite/CompanyWebSite";
 import { actionURL } from "../../config";
-import { UnInterceptedAxiosInstance } from "../../helpers/Api/UnInterceptedAxiosInstance";
 
 const SignUp = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -193,7 +192,7 @@ const SignUp = ({ classes }: any) => {
       setLoader(true);
       const interests: any = [];
       userDetails.fieldOfInterest.map((item: any) => interests.push(t(`SignUp.${item}`)))
-      const { data: { Message }, status } = await UnInterceptedAxiosInstance.post(`User/Signup`, {
+      const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
         FirstName: userDetails.firstName,
         LastName: userDetails.lastName,
         Mobile: userDetails.cellPhone,
@@ -250,7 +249,7 @@ const SignUp = ({ classes }: any) => {
 
   const sendEmail = async () => {
     setLoader(true);
-    const { data: { Message }, status } = await UnInterceptedAxiosInstance.post(`User/ResendEmail`, {
+    const { data: { Message }, status } = await PulseemReactInstance.post(`User/ResendEmail`, {
       UserID: qs?.id
     });
     setLoader(false);
@@ -361,7 +360,7 @@ const SignUp = ({ classes }: any) => {
 
     setLoader(true);
 
-    const response: any = await UnInterceptedAxiosInstance.post(`User/SetupNewEmail`, emailRequest);
+    const response: any = await PulseemReactInstance.post(`User/SetupNewEmail`, emailRequest);
     const { Data = null, StatusCode = 200, Message = '' } = response?.data;
 
     const errorResponses: any = {
@@ -399,7 +398,7 @@ const SignUp = ({ classes }: any) => {
   const onInitRef = async () => {
     setLoader(true);
 
-    const response: any = await UnInterceptedAxiosInstance.get(`User/CheckRef/${qs?.refId}`);
+    const response: any = await PulseemReactInstance.get(`User/CheckRef/${qs?.refId}`);
     const { StatusCode = 200 } = response?.data;
 
     switch (StatusCode) {
