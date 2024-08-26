@@ -80,12 +80,12 @@ const AffiliateProgram = ({ classes }: any) => {
           break;
         }
         default: {
+          setShowLoader(false);
           break;
         }
       }
     }
 
-    setShowLoader(false);
   }
 
   useEffect(() => {
