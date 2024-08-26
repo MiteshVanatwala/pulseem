@@ -398,7 +398,7 @@ const SignUp = ({ classes }: any) => {
   const onInitRef = async () => {
     setLoader(true);
 
-    const response: any = await PulseemReactInstance.get(`User/CheckRef/${qs?.refId}`);
+    const response: any = await PulseemReactInstance.post(`User/CheckRef`, { RefferalID: qs?.refId });
     const { StatusCode = 200 } = response?.data;
 
     switch (StatusCode) {
