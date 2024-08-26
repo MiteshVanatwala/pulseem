@@ -305,6 +305,12 @@ const SignUp = ({ classes }: any) => {
     onClose: () => setDialogType(null)
   })
 
+  const keyPress = (e: any) => {
+    if (e.keyCode === 13) {
+      handleConfirmEmailDialog()
+    }
+  }
+
   const displayEmailPopup = () => ({
     title: t('SignUp.typeEmailForSignUp'),
     showDivider: false,
@@ -317,6 +323,7 @@ const SignUp = ({ classes }: any) => {
         </Typography>
         <FormControl>
           <TextField
+            onKeyDown={keyPress}
             id='txtEmailAddress'
             onFocus={(event: any) => {
               event.target.style.direction = isRTL && event.target.value === '' ? 'rtl' : 'ltr';
