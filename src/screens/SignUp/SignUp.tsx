@@ -306,7 +306,7 @@ const SignUp = ({ classes }: any) => {
   })
 
   const keyPress = (e: any) => {
-    if (e.keyCode === 13) {
+    if (e?.keyCode === 13) {
       handleConfirmEmailDialog()
     }
   }
