@@ -55,7 +55,7 @@ const AffiliateProgram = ({ classes }: any) => {
   }, [, timeFrame]);
 
   const handleAffilatePage = () => {
-    if (affiliateDetails?.Data && affiliateDetails?.Data[0]) {
+    if (affiliateDetails?.Data) {
       switch (affiliateDetails?.StatusCode) {
         case 201: {
           if (affiliateDetails?.Data[0]) {
@@ -70,6 +70,9 @@ const AffiliateProgram = ({ classes }: any) => {
             setRefId(referralID);
             setShowLoader(false);
           }
+          else if (affiliateDetails?.Message !== '') {
+            setRefId(affiliateDetails?.Message);
+          }
           break;
         }
         case 406: {
@@ -77,11 +80,12 @@ const AffiliateProgram = ({ classes }: any) => {
           break;
         }
         default: {
-          setShowLoader(false);
           break;
         }
       }
     }
+
+    setShowLoader(false);
   }
 
   useEffect(() => {
@@ -115,27 +119,13 @@ const AffiliateProgram = ({ classes }: any) => {
     return (
       <Box className='tableBodyContainer'>
         <TableBody>
-          {sortData?.length > 0 && sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-          {/* <TableRow
-            classes={rowStyle}>
-            <TableCell
-              classes={cellStyle}
-              align='center'
-              className={classes.flex1}>
-              {<Typography className={clsx(classes.font18, classes.bold)}>{t('common.Total')}</Typography>}
-            </TableCell>
-            <TableCell
-              classes={cellStyle}
-              align='center'
-              className={classes.flex2}>
-            </TableCell>
-            <TableCell
-              classes={cellStyle}
-              align='center'
-              className={classes.flex2}>
-              {renderGrandTotal()}
-            </TableCell>
-          </TableRow> */}
+          {sortData?.length > 0 ? sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow) : (
+            <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
+              <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+                {t('common.NoDataTryFilter')}
+              </Grid>
+            </Box>
+          )}
         </TableBody>
       </Box>
     )
