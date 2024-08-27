@@ -263,7 +263,7 @@ export type DynamicModalFieldsProps = {
 	setPersonalField: (value: string) => void;
 	onAddRemovalLink: (isTrackLink: boolean) => void;
 	setLinkInput: (value: string, isTrackLink: boolean, fallbackUrl?: string) => void;
-	setLandPage: (value: string) => void;
+	setLandPage: (value: string, isTrackLink?: boolean) => void;
 	setNavApp: (value: string) => void;
 	setNavAddress: (value: string) => void;
 	personalFields: personalFieldDataProps;
