@@ -406,6 +406,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         ID: args.campaignId,
         JsonData: finalJson,
         HtmlData: finalHtml,
+        GroupIds: selectedGroups?.join(',')
       }));
 
 
@@ -452,6 +453,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         if (reInit) {
           getData();
         }
+      }
+      if (response.payload.StatusCode === 406) {
+        setToastMessage({ severity: 'error', color: 'error', message: t('landingPages.selectAtleastOneGroup'), showAnimtionCheck: false } as any);
+        setShowGroupSelection(true);
       }
       //@ts-ignore
       if (saveRef.current?.saveTemplate) {

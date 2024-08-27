@@ -37,6 +37,7 @@ const GroupSelectorPopUp = ({
     const [newSelection, setNewSelection] = useState<any[]>(selectedGroups)
     const [inputGroup, setInputGroup] = useState<string>('');
     const [groupNameExist, setGroupNameExist] = useState<boolean>(false);
+    const [isRequired, setIsRequired] = useState<boolean>(false);
 
     const getGroups = async () => {
         setShowLoader(true);
@@ -135,7 +136,7 @@ const GroupSelectorPopUp = ({
                     // @ts-ignore
                     <TextField {...params}
                         placeholder={t('group.typeGroupNameAutocomplete')}
-                        className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
+                        className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar, isRequired && classes.error)} style={{ maxHeight: 45 }}></TextField>
                 )}
             />
         );
@@ -147,6 +148,10 @@ const GroupSelectorPopUp = ({
         onCancel,
         onClose,
         onConfirm: () => {
+            if (newSelection.length === 0) {
+                setIsRequired(true);
+                return false;
+            }
             onConfirm(newSelection);
         },
         renderButtons: false,
