@@ -80,6 +80,8 @@ import { isSignupPage } from './helpers/Utils/common';
 import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
+import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
+import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -534,6 +536,16 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}AccountSettings/ExtraFields`}
         element={<ExtraFields classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Campaigns/AmpRegistration`}
+        element={<AmpRegistration classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}AffiliateManagement`}
+        element={<AffiliateProgram classes={classes} />}
       />
     </Routes>
   )

@@ -33,7 +33,8 @@ export const getSettingsItem = (
   isAllowSwitchAccount: Boolean = false,
   title: string = "Settings",
   isRTL: Boolean = false,
-  accountSettings: any
+  accountSettings: any,
+  features: any = null,
 ) => ({
   key: "settings",
   title: title,
@@ -41,6 +42,7 @@ export const getSettingsItem = (
   options: [
     { key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: `${sitePrefix}AccountSettings`, iconSrc: SettingsMenuIcon, isShow: true },
     { title: t('master.linkAccountBilling.Text'), href: `${rootDomain}/AccountBilling.aspx?fromreact=true`, iconSrc: DolarMenuIcon, isShow: true },
+    { key: 'affiliateManagement', title: t('master.affiliateManagement'), href: `${sitePrefix}AffiliateManagement`, iconSrc: DolarMenuIcon, isShow: features && features?.indexOf(PulseemFeatures.AFFILIATE) > -1, },
     { title: t('master.RadMenuItemResource3.Text'), href: `${rootDomain}/AccountUsers.aspx?fromreact=true`, iconSrc: GroupMenuIcon, isShow: isAllowSwitchAccount },
     { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount },
     { title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
@@ -175,6 +177,12 @@ export const getRoutes = (
           title: t("campaigns.newsLetterSendSettings.title"),
           href: `${sitePrefix}Campaigns/SendSettings`,
           isShow: false
+        },
+        {
+          key: 'ampRegistration',
+          title: t('master.ampRegistration'),
+          href: `${sitePrefix}Campaigns/AmpRegistration`,
+          isShow: features?.indexOf(PulseemFeatures.BEE_AMP) > -1
         }
       ],
     },

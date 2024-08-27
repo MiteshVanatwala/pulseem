@@ -31,6 +31,7 @@ import WhatsappApiResponse from './WhatsappApiResponse.json';
 import SignUp from './SignUp.json';
 import SimplyClub from './WhiteLabel/SimplyClub.he.json';
 import FileUploads from './FileUploads.he.json';
+import affiliate from './Affiliate.he.json';
 
 export const he = {
 	automations,
@@ -65,5 +66,6 @@ export const he = {
 	WhatsappApiResponse,
 	SignUp,
 	FileUploads,
-	SimplyClub
+	SimplyClub,
+	affiliate
 };

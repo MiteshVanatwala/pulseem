@@ -52,4 +52,6 @@ export type StateType = {
     whatsapp: any;
     product: any;
     extraFields: any;
+    affiliates: any;
+    amp: any;
 };
