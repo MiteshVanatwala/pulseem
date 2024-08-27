@@ -247,7 +247,9 @@ export const BEE_EDITOR_TYPES = {
 export const NO_IMAGE_URL = 'https://www.pulseem.co.il/Pulseem/images/productimage.png';
 export const NoAuthenticationAPIs = [
     'User/Signup',
-    'User/ResendEmail'
+    'User/ResendEmail',
+    'User/CheckRef',
+    'User/SetupNewEmail'
 ]
 
 export const FieldOfActivities = [
