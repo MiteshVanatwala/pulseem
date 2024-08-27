@@ -66,6 +66,7 @@ const DynamicModalFields = ({
 			setIsSiteTrack(true);
 		} else {
 			setLinkInput(linkInput, !isTrackLink);
+			if (activeDynamicButton?.includes('lPage')) setLandPage(landPage, !isTrackLink)
 		}
 	};
 
@@ -156,28 +157,32 @@ const DynamicModalFields = ({
 				/>
 			)}
 
-			{activeDynamicButton?.includes('link') && (
+			{(activeDynamicButton?.includes('link') || activeDynamicButton?.includes('lPage')) && (
 				<div className={clsx(classes.whatsappCampaignDynamicFieldLink, classes.pt10)}>
 					<Grid container className={clsx(classes.whatsappCampaignDynamicFieldLink)} spacing={2}>
 						<Grid item md={7}>
-							<TextField
-								required
-								variant='outlined'
-								placeholder={translator('whatsappCampaign.linkPlaceholder')}
-								className={clsx('link-input', classes.w100)}
-								onChange={(e: BaseSyntheticEvent) =>
-									setLinkInput(e.target.value, isTrackLink)
-								}
-								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || linkInput?.includes('dynamicProduct')}
-								value={linkInput}
-								InputProps={{
-									endAdornment: (
-										<InputAdornment position="end" onClick={() => setLinkInput('', isTrackLink)} className={clsx(!linkInput ? classes.dNone : null)}>
-											<MdClear style={{ cursor: 'pointer' }} />
-										</InputAdornment>
-									)
-								}}
-							/>
+							{
+								activeDynamicButton?.includes('link') && (
+									<TextField
+										required
+										variant='outlined'
+										placeholder={translator('whatsappCampaign.linkPlaceholder')}
+										className={clsx('link-input', classes.w100)}
+										onChange={(e: BaseSyntheticEvent) =>
+											setLinkInput(e.target.value, isTrackLink)
+										}
+										disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##') || linkInput?.includes('dynamicProduct')}
+										value={linkInput}
+										InputProps={{
+											endAdornment: (
+												<InputAdornment position="end" onClick={() => setLinkInput('', isTrackLink)} className={clsx(!linkInput ? classes.dNone : null)}>
+													<MdClear style={{ cursor: 'pointer' }} />
+												</InputAdornment>
+											)
+										}}
+									/>
+								)
+							}
 
 							{
 								dynamicProductType && (
@@ -195,6 +200,39 @@ const DynamicModalFields = ({
 									/>
 								)
 							}
+
+							{activeDynamicButton?.includes('lPage') && (
+								<FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.mt10)}>
+									<Select
+										variant="standard"
+										value={landPage}
+										className={clsx(classes.pbt5, classes.w100)}
+										onChange={(event: any) => {
+											// @ts-ignore
+											setLandPage(event.target.value, !!event.target.value);
+										}}
+										IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+										MenuProps={{
+											PaperProps: {
+												style: {
+													maxHeight: 300,
+													direction: isRTL ? 'rtl' : 'ltr',
+												},
+											},
+										}}
+										displayEmpty={true}
+									>
+										<MenuItem value={''}>
+											{translator('whatsappCampaign.lPagePlaceholder')}
+										</MenuItem>
+										{landingPageData?.map((landingPage: landingPageDataProps) => (
+											<MenuItem key={landingPage.CampaignID} value={landingPage.PageHref}>
+												{landingPage.CampaignName}
+											</MenuItem>
+										))}
+									</Select>
+								</FormControl>
+							)}
 
 							{dynamicProductType && <Divider className={classes.mt20} />}
 							<Box className={clsx(classes.switchDiv, classes.pt14)} style={{ marginInlineStart: 0 }}>
@@ -229,94 +267,70 @@ const DynamicModalFields = ({
 							</Box>
 						</Grid>
 						<Grid item md={5}>
-							<Button
-								variant='outlined'
-								color='primary'
-								size='small'
-								className={clsx(
-									classes.btn,
-									classes.btnRounded,
-									classes.width160,
-									linkInput?.includes('##WHATSAPPUnsubscribelink##') ? classes.redButton : ''
-								)}
-								onClick={() => onAddRemovalLinkClick()}
-								style={{
-									marginLeft: windowSize === 'xs' ? 0 : 10,
-									marginTop: windowSize === 'xs' ? 10 : 0
-								}}
-							>
-								<>{translator('whatsappCampaign.removalLinkTooltip')}</>
-							</Button>
+							{
+								activeDynamicButton?.includes('link') && (
+									<>
+										<Button
+											variant='outlined'
+											color='primary'
+											size='small'
+											className={clsx(
+												classes.btn,
+												classes.btnRounded,
+												classes.width160,
+												linkInput?.includes('##WHATSAPPUnsubscribelink##') ? classes.redButton : ''
+											)}
+											onClick={() => onAddRemovalLinkClick()}
+											style={{
+												marginLeft: windowSize === 'xs' ? 0 : 10,
+												marginTop: windowSize === 'xs' ? 10 : 0
+											}}
+										>
+											<>{translator('whatsappCampaign.removalLinkTooltip')}</>
+										</Button>
 
-							<Button
-								variant='outlined'
-								color='primary'
-								size='small'
-								className={clsx(
-									classes.btn,
-									classes.btnRounded,
-									classes.width160,
-									dynamicProductType === DynamicProductLink.LATEST_PURCHASE ? classes.redButton : ''
-								)}
-								onClick={() => setDynamicProductType(DynamicProductLink.LATEST_PURCHASE)}
-								style={{
-									marginLeft: windowSize === 'xs' ? 0 : 10,
-									marginTop: windowSize === 'xs' ? 10 : 5
-								}}
-							>
-								{translator('common.latestPurchase')}
-							</Button>
-							<Button
-								variant='outlined'
-								color='primary'
-								size='small'
-								className={clsx(
-									classes.btn,
-									classes.btnRounded,
-									classes.width160,
-									dynamicProductType === DynamicProductLink.LATEST_ABANDONMENT ? classes.redButton : ''
-								)}
-								onClick={() => setDynamicProductType(DynamicProductLink.LATEST_ABANDONMENT)}
-								style={{
-									marginLeft: windowSize === 'xs' ? 0 : 10,
-									marginTop: windowSize === 'xs' ? 10 : 5
-								}}
-							>
-								{translator('common.latestAbandonment')}
-							</Button>
+										<Button
+											variant='outlined'
+											color='primary'
+											size='small'
+											className={clsx(
+												classes.btn,
+												classes.btnRounded,
+												classes.width160,
+												dynamicProductType === DynamicProductLink.LATEST_PURCHASE ? classes.redButton : ''
+											)}
+											onClick={() => setDynamicProductType(DynamicProductLink.LATEST_PURCHASE)}
+											style={{
+												marginLeft: windowSize === 'xs' ? 0 : 10,
+												marginTop: windowSize === 'xs' ? 10 : 5
+											}}
+										>
+											{translator('common.latestPurchase')}
+										</Button>
+										<Button
+											variant='outlined'
+											color='primary'
+											size='small'
+											className={clsx(
+												classes.btn,
+												classes.btnRounded,
+												classes.width160,
+												dynamicProductType === DynamicProductLink.LATEST_ABANDONMENT ? classes.redButton : ''
+											)}
+											onClick={() => setDynamicProductType(DynamicProductLink.LATEST_ABANDONMENT)}
+											style={{
+												marginLeft: windowSize === 'xs' ? 0 : 10,
+												marginTop: windowSize === 'xs' ? 10 : 5
+											}}
+										>
+											{translator('common.latestAbandonment')}
+										</Button>
+									</>
+								)
+							}
 						</Grid>
 					</Grid>
 				</div>
-			)}
-
-			{activeDynamicButton?.includes('lPage') && (
-				<FormControl className={clsx(classes.selectInputFormControl, windowSize === 'xs' ? classes.w100 : classes.w50, classes.mt10)}>
-					<Select
-						variant="standard"
-						value={landPage}
-						className={clsx(classes.pbt5, classes.w100)}
-						onChange={(event: any) => setLandPage(event.target.value)}
-						IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-						MenuProps={{
-							PaperProps: {
-								style: {
-									maxHeight: 300,
-									direction: isRTL ? 'rtl' : 'ltr',
-								},
-							},
-						}}
-						displayEmpty={true}
-					>
-						<MenuItem value={''}>
-							{translator('whatsappCampaign.lPagePlaceholder')}
-						</MenuItem>
-						{landingPageData?.map((landingPage: landingPageDataProps) => (
-							<MenuItem key={landingPage.CampaignID} value={landingPage.PageHref}>
-								{landingPage.CampaignName}
-							</MenuItem>
-						))}
-					</Select>
-				</FormControl>
 			)}
 
 			{activeDynamicButton?.includes('navigation') && (
