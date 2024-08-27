@@ -409,54 +409,63 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         GroupIds: selectedGroups?.join(',')
       }));
 
-
-      if (response.payload.StatusCode === 201) {
-        if (finalHtml.indexOf('submithandler.axd') > -1 && (!selectedGroups || selectedGroups?.length <= 0)) {
-          // show Popup
-          //@ts-ignore
-          if (saveRef.current?.showGroupPopup) {
-            setShowGroupSelection(true);
-            saveRef.current = {
-              //@ts-ignore
-              ...saveRef.current,
-              showGroupPopup: false
+      switch (response.payload.StatusCode) {
+        case 201: {
+          if (finalHtml.indexOf('submithandler.axd') > -1 && (!selectedGroups || selectedGroups?.length <= 0)) {
+            // show Popup
+            //@ts-ignore
+            if (saveRef.current?.showGroupPopup) {
+              setShowGroupSelection(true);
+              saveRef.current = {
+                //@ts-ignore
+                ...saveRef.current,
+                showGroupPopup: false
+              }
+              return false;
             }
+          }
+
+          //@ts-ignore
+          if (saveRef.current?.isPublish) {
+            //@ts-ignore
+            response = await dispatch(publish(args?.campaignId));
+
+            if (response.payload?.StatusCode === 201) {
+              navigate(`${sitePrefix}landingpages/LandingPages/Summary/${args?.campaignId}`)
+            }
+            else {
+              // TODO: Handle publish response
+            }
+          }
+
+          //@ts-ignore
+          if (saveRef.current?.redirectAfterSave) {
+            localStorage.setItem('reloadLPBeeEditor', '1');
+            //@ts-ignore
+            navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`);
             return false;
           }
-        }
-
-        //@ts-ignore
-        if (saveRef.current?.isPublish) {
           //@ts-ignore
-          response = await dispatch(publish(args?.campaignId));
-
-          if (response.payload?.StatusCode === 201) {
-            navigate(`${sitePrefix}landingpages/LandingPages/Summary/${args?.campaignId}`)
+          else if (saveRef.current?.showAnimation) {
+            //@ts-ignore
+            setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.LANDING_PAGE_SAVED);
           }
-          else {
-            // TODO: Handle publish response
+          if (reInit) {
+            getData();
           }
+          break;
         }
-
-        //@ts-ignore
-        if (saveRef.current?.redirectAfterSave) {
-          localStorage.setItem('reloadLPBeeEditor', '1');
-          //@ts-ignore
-          navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`);
+        case 405: {
+          setLoader(false);
+          // @ts-ignore
+          setToastMessage(ToastMessages.MULTIPLE_FORMS_NOT_ALLOWED);
           return false;
         }
-        //@ts-ignore
-        else if (saveRef.current?.showAnimation) {
-          //@ts-ignore
-          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.LANDING_PAGE_SAVED);
-        }
-        if (reInit) {
-          getData();
-        }
-      }
-      if (response.payload.StatusCode === 406) {
-        setToastMessage({ severity: 'error', color: 'error', message: t('landingPages.selectAtleastOneGroup'), showAnimtionCheck: false } as any);
+        case 406: {
+          setToastMessage({ severity: 'error', color: 'error', message: t('landingPages.selectAtleastOneGroup'), showAnimtionCheck: false } as any);
         setShowGroupSelection(true);
+          break;
+        }
       }
       //@ts-ignore
       if (saveRef.current?.saveTemplate) {
