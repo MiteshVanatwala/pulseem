@@ -9,7 +9,7 @@ export const surveyStyle = (windowSize, isRTL, theme) => ({
     height: 400, overflow: 'hidden auto', margin: 15
   },
   surveyResults: {
-    direction: 'ltr', display: 'flex', alignItems: 'flex-end', flexDirection: 'column'
+    direction: 'ltr', display: 'flex', alignItems: 'center', flexDirection: 'column'
   },
   textAnswerContainer: {
     width: '100%', height: '50%', overflow: 'hidden', overflowY: 'auto'

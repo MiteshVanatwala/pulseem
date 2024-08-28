@@ -145,6 +145,7 @@ const SurveyDetails = ({ classes }: any) => {
         arr = item.ShowAsPie ? createPieObject(item, true) : createBarChartObject(item, true);
 
         return !item.ShowAsPie ? (<PulseemBarChart
+          gridSize={gridSize}
           key={item.ID || uuidv4()}
           data={arr}
           labels={[...Object.values(item.AnswerAndCount)]}
@@ -154,6 +155,7 @@ const SurveyDetails = ({ classes }: any) => {
           (<PulseemPie
             key={item.ID || uuidv4()}
             data={arr}
+            gridSize={gridSize}
             onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />)
       }
       case eQuestionType.Text: {
@@ -244,26 +246,24 @@ const SurveyDetails = ({ classes }: any) => {
                 style={{ width: 'auto' }}>{`${t('landingPages.SurveyExportTitle')} - ${webForm?.PageName && webForm?.PageName}`}
               </Typography>
               <Box className={classes.dFlex}>
-                {surveyResult && surveyResult?.length > 1 &&
-                  <Box className={clsx(classes.dFlex, classes.surveySettingContainer)}>
-                    <ColorPaletteView selected={selectedPalette} onSelected={(selectedPlt: any) => {
-                      setCookie('chartsColorPalette', selectedPlt, { maxAge: 36000000000 });
-                      setSelectedPallete(selectedPlt);
-                    }} />
-                    {windowSize !== 'sm' && windowSize !== 'xs' && <><Select native onChange={(event: any) => {
-                      setCookie('surveyGridSize', event.target.value, { maxAge: 36000000000 });
-                      setGridSize(event.target.value)
-                    }} value={gridSize}>
-                      <option value={12}>1</option>
-                      <option value={6}>2</option>
-                      <option value={4}>3</option>
-                      <option value={3}>4</option>
-                    </Select>
-                      &nbsp;<Typography>{t('landingPages.survey.surveysPerLine')}</Typography>
-                    </>
-                    }
-                  </Box>
-                }
+                <Box className={clsx(classes.dFlex, classes.surveySettingContainer)}>
+                  <ColorPaletteView selected={selectedPalette} onSelected={(selectedPlt: any) => {
+                    setCookie('chartsColorPalette', selectedPlt, { maxAge: 36000000000 });
+                    setSelectedPallete(selectedPlt);
+                  }} />
+                  {windowSize !== 'sm' && windowSize !== 'xs' && <><Select native onChange={(event: any) => {
+                    setCookie('surveyGridSize', event.target.value, { maxAge: 36000000000 });
+                    setGridSize(event.target.value)
+                  }} value={gridSize}>
+                    <option value={12}>1</option>
+                    <option value={6}>2</option>
+                    <option value={4}>3</option>
+                    <option value={3}>4</option>
+                  </Select>
+                    &nbsp;<Typography>{t('landingPages.survey.surveysPerLine')}</Typography>
+                  </>
+                  }
+                </Box>
                 <Button
                   onClick={onExportSurvey}
                   className={clsx(

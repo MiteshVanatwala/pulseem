@@ -4,10 +4,14 @@ import { StateType } from '../../Models/StateTypes';
 import { Box } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { AxisValueFormatterContext } from '@mui/x-charts/internals';
 
-const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels }: any) => {
+const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gridSize }: any) => {
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
+
+  const widthSizes: any = { 12: 850, 6: 600, 3: 300, 4: 400 };
+  const heightSizes: any = { 12: 280, 6: 280, 3: 280, 4: 280 };
 
   const chartSetting = {
     xAxis: [
@@ -25,8 +29,8 @@ const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels }: a
         tickPlacement: 'middle',
       },
     ],
-    width: windowSize !== 'sm' && windowSize !== 'xs' ? 450 : 250,
-    height: 280,
+    width: windowSize !== 'sm' && windowSize !== 'xs' ? widthSizes[gridSize] : 250,
+    height: heightSizes[gridSize],
   };
 
   // const onItemClick = (
