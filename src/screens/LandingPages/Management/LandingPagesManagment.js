@@ -91,7 +91,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           handleSearch();
         }
         setPage((lastSearch?.SearchTerm && landingPageNameSearch) === '' ? lastSearch.PageNumber : 1);
-        ClearPageState();
       });
     }
     else {
