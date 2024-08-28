@@ -9,7 +9,7 @@ import { getSurveyDetailsByWebformId } from "../../../redux/reducers/SurveyRepor
 import { useDispatch, useSelector } from "react-redux";
 import { PulseemResponse } from "../../../Models/APIResponse";
 import { logout } from "../../../helpers/Api/PulseemReactAPI";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { LandingPageModel, SurveyResponse, eQuestionType } from "../../../Models/LandingPage/LandingPage";
 import PulseemPie from "../../../components/Chart/PieChart";
 import { StateType } from "../../../Models/StateTypes";
@@ -18,20 +18,22 @@ import { ExportFile } from "../../../helpers/Export/ExportFile";
 import { FaFileExcel } from "react-icons/fa";
 import { ColorPalettes } from "../../../helpers/UI/ColorPalettes";
 import ColorPaletteView from "../../../components/Chart/ColorPalette";
-import { MdQuestionAnswer } from "react-icons/md";
+import { MdArrowBackIos, MdArrowForwardIos, MdQuestionAnswer } from "react-icons/md";
 import { getCookie, setCookie } from "../../../helpers/Functions/cookies";
 import PulseemBarChart from "../../../components/Chart/BarChart";
 import { v4 as uuidv4 } from 'uuid';
 import IconSwitch from "../../../components/Controlls/IconSwitch";
 import { FaChartPie } from "react-icons/fa";
 import { PiChartBarHorizontalFill } from "react-icons/pi";
+import { sitePrefix } from "../../../config";
 
 
 
 const SurveyDetails = ({ classes }: any) => {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { windowSize } = useSelector((state: StateType) => state.core);
+  const navigate = useNavigate();
+  const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const cookie_colorPalette = getCookie('chartsColorPalette');
   const cookie_surveyGridSize = getCookie('surveyGridSize');
@@ -273,6 +275,26 @@ const SurveyDetails = ({ classes }: any) => {
                   style={{ alignSelf: 'flex-end' }}
                   endIcon={<FaFileExcel className={clsx(classes.f25)} />}>
                   {t('master.download')}
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate(`${sitePrefix}EditRegistrationPage`, {
+                      state: {
+                        from: 'surveydetails',
+                        PageProperty: 'landingPagesManagement'
+                      }
+                    })
+                  }}
+                  className={clsx(
+                    classes.mr10,
+                    classes.ml10,
+                    windowSize !== "xs" ? classes.implementButtonFlex : classes.mt10,
+                    classes.btn, classes.btnRounded,
+                  )}
+                  endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                  style={{ alignSelf: 'flex-end' }}
+                >
+                  {t('common.back')}
                 </Button>
               </Box>
             </Box>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
@@ -16,8 +16,7 @@ import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
   duplicteLandingPage, downloadReport, getPageHeight
 } from '../../../redux/reducers/landingPagesSlice'
-import { openInNewTab } from '../../../helpers/Functions/functions'
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Loader } from '../../../components/Loader/Loader';
@@ -34,6 +33,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { sitePrefix } from '../../../config';
 import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
 import { FaChartPie } from "react-icons/fa";
+import { ClearPageState, GetPageNyName, SetPageState } from '../../../helpers/UI/SessionStorageManager';
 
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
@@ -56,6 +56,10 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   const dispatch = useDispatch()
   const [showLoader, setLoader] = useState(true);
 
+  const { state } = useLocation();
+  const from = state?.from || "/";
+  const pageProperty = useRef();
+
   const getData = async () => {
     await dispatch(getLandingPagesData())
     setLoader(false);
@@ -63,13 +67,58 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
   useEffect(() => {
     setLoader(true);
-    getData();
+    reSearch();
   }, [dispatch])
+
+  useEffect(() => {
+    reSearch();
+  }, [rowsPerPage]);
+
+  const reSearch = () => {
+    const queryState = from?.toLowerCase().indexOf('surveydetails') > -1;
+    pageProperty.current = GetPageNyName('landingPagesManagement');
+    let lastSearch = { PageSize: rowsPerPage };
+    if (queryState && pageProperty.current) {
+      let tempSearchData = pageProperty.current;
+      lastSearch = {
+        ...tempSearchData,
+        PageNumber: tempSearchData.SearchTerm !== '' ? 1 : (pageProperty.current?.PageNumber || 1)
+      };
+
+      getData().then(() => {
+        setLandingPageNameSearch(lastSearch.SearchTerm || landingPageNameSearch);
+        if (lastSearch.SearchTerm && lastSearch.SearchTerm !== '') {
+          handleSearch();
+        }
+        setPage((lastSearch?.SearchTerm && landingPageNameSearch) === '' ? lastSearch.PageNumber : 1);
+        ClearPageState();
+      });
+    }
+    else {
+      getData();
+    }
+  }
 
   const clearSearch = () => {
     setLandingPageNameSearch('');
     setSearchResults(null);
     setSearching(false);
+    ClearPageState();
+  }
+
+  const handleSearch = () => {
+    ClearPageState();
+    const searchTxt = landingPageNameSearch !== '' ? landingPageNameSearch : (pageProperty.current && pageProperty.current?.SearchTerm);
+    let sortData = landingPagesData?.filter((lp) => { return lp.Name.toLowerCase().indexOf(searchTxt) > -1 });
+    setSearchResults(sortData);
+    setSearching(true);
+    setPage(1);
+
+    SetPageState({
+      "PageName": "landingPagesManagement",
+      "PageNumber": 1,
+      "SearchTerm": searchTxt
+    });
   }
 
   const renderSearchLine = () => {
@@ -78,26 +127,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         handleSearch();
       }
     }
-    const handleSearch = () => {
-      const searchArray = [{
-        type: 'name',
-        campaignName: landingPageNameSearch
-      }];
 
-      const filtersObject = {
-        name: (row, values) => {
-          return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
-        }
-      }
-
-      let sortData = landingPagesData
-      searchArray.forEach(values => {
-        sortData = sortData.filter(row => filtersObject[values.type](row, values))
-      });
-      setSearchResults(sortData);
-      setSearching(true);
-      setPage(1);
-    }
 
     const handleKeyPress = (e) => {
       if (e.charCode === 13) {
@@ -169,7 +199,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching ? searchResults.length : landingPagesData.length} ${t('landingPages.landingPages')}`}
+            {`${isSearching ? searchResults?.length : landingPagesData?.length} ${t('landingPages.landingPages')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -259,7 +289,11 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         lable: t('landingPages.SurveyExportTitle'),
         remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
         onClick: () => {
-          navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`)
+          navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`, {
+            state: {
+              PageProperty: GetPageNyName('landingPagesManagement'),
+            }
+          })
         },
         rootClass: classes.paddingIcon,
       },
@@ -445,7 +479,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
   const seperateGroupNames = (groups) => {
     const splittedGroups = groups.split('##', -1);
-    if (splittedGroups.length === 1) {
+    if (splittedGroups?.length === 1) {
       return splittedGroups.join().replace('#', '');
     }
     return splittedGroups.join(', ').replace('#', '');
@@ -465,7 +499,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         />
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{seperateGroupNames(row.GroupNames)}</b></span>}
+          {row.GroupNames && row.GroupNames?.length > 0 && <span>{renderGroupNames()}<b>{seperateGroupNames(row.GroupNames)}</b></span>}
         </Typography>
       </>
 
@@ -581,10 +615,9 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-    let sortData = isSearching ? searchResults : landingPagesData;
     let rpp = parseInt(rowsPerPage)
-    sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
-    if (!sortData.length) {
+    const sortData = (isSearching ? searchResults : landingPagesData)?.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
+    if (!sortData?.length) {
       return (
         <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }} >
           <Typography>{t('common.NoDataTryFilter')}</Typography>
@@ -619,12 +652,19 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? searchResults.length : landingPagesData.length}
+        rows={isSearching ? searchResults?.length : landingPagesData?.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
-        onPageChange={setPage}
+        onPageChange={(e) => {
+          SetPageState({
+            "PageName": "landingPagesManagement",
+            "PageNumber": e,
+            "SearchTerm": landingPageNameSearch
+          });
+          setPage(e)
+        }}
       />
     )
   }
