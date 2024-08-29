@@ -26,7 +26,7 @@ export class BeeFormModel {
     this.removeFromLayout = _removeFromLayout ?? false
     this.classes = _classes || '';
     this.attributes = {
-      "class": `form-control ${_classes || ''}`,
+      "class": _type !== ElementTypes.checkbox && _type !== ElementTypes.radio && `form-control ${_classes || ''}`,
       ..._attr
     };
   }
