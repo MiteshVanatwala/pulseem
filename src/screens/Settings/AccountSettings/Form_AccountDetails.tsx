@@ -101,9 +101,14 @@ const FORM_ACCOUNT_DETAILS = ({
 		} as AccountSettings);
 	};
 
-	const handleSave = () => {
+	const handleSave = (overwriteDetails: AccountSettings | null | never) => {
 		if (isValidPayload()) {
-			OnUpdate(accountDetails);
+			if (overwriteDetails !== null) {
+				OnUpdate(overwriteDetails);
+			}
+			else {
+				OnUpdate(accountDetails);
+			}
 		}
 	};
 
@@ -123,8 +128,6 @@ const FORM_ACCOUNT_DETAILS = ({
 	}
 
 	const handleConfirmOtpRegulation = async (req: any) => {
-		setErrorMessage('');
-		setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
 		// @ts-ignore
 		const response = await dispatch(confimrOtp({ ...req, otpRequestFor: OtpRequestFor.eDisablePendingOptIn })) as any;
 
@@ -132,10 +135,8 @@ const FORM_ACCOUNT_DETAILS = ({
 
 		switch (results?.StatusCode) {
 			case 201: {
-				setAccountDetails({
-					...accountDetails,
-					UnsubscribeType: unsubscribeType === '0' ? true : false,
-				} as AccountSettings);
+				setErrorMessage('');
+				setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
 
 				setShowOtpRegulationDialog(false);
 				break;
@@ -165,13 +166,11 @@ const FORM_ACCOUNT_DETAILS = ({
 
 		switch (results?.StatusCode) {
 			case 201: {
-				setAccountDetails({
-					...accountDetails,
-					UnsubscribeType: unsubscribeType === '0' ? true : false,
-				} as AccountSettings);
-
 				setShowUnsubscribeOtpDialog(false);
-				handleSave();
+				handleSave({
+					...accountDetails,
+					UnsubscribeType: unsubscribeType === '1'
+				} as AccountSettings);
 				break;
 			}
 			case 401: {
@@ -262,10 +261,10 @@ const FORM_ACCOUNT_DETAILS = ({
 							<RadioGroup
 								aria-label='UnsubscribeType'
 								name='UnsubscribeType'
-								value={!accountDetails?.UnsubscribeType ? '0' : '1'}
+								value={accountDetails?.UnsubscribeType === true ? '1' : '0'}
 								onChange={() => {
 									setShowUnsubscribeOtpDialog(true);
-									setUnsubscribeType(accountDetails?.UnsubscribeType ? '0' : '1')
+									setUnsubscribeType(accountDetails?.UnsubscribeType === true ? '0' : '1')
 								}}>
 								<FormControlLabel
 									value='0'
@@ -375,7 +374,7 @@ const FORM_ACCOUNT_DETAILS = ({
 						<Button
 							variant='contained'
 							size='medium'
-							onClick={handleSave}
+							onClick={() => handleSave(null)}
 							endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
 							className={clsx(
 								classes.mt5,
