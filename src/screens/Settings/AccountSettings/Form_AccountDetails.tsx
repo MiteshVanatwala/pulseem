@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	Box,
 	Button,
@@ -24,14 +24,15 @@ import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
 import { IoIosArrowDown } from 'react-icons/io';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
-import DisableOtpPopup from './Popups/DisableOtpPopup';
-import { cancelDisablePluginOTP } from '../../../redux/reducers/AccountSettingsSlice';
+import { cancelDisablePluginOTP, confimrOtp } from '../../../redux/reducers/AccountSettingsSlice';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import OTP from '../../../components/OneTimePassword/OTP';
+import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import { OtpRequestFor } from '../../../Models/Authorization/AuthorizationModels';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
-	setToastMessage,
-	ToastMessages,
 	Settings,
 	OnUpdate,
 	selectedTier,
@@ -51,6 +52,19 @@ const FORM_ACCOUNT_DETAILS = ({
 		DisablePluginOTP: false
 	} as AccountSettings);
 	const [showOtpRegulationDialog, setShowOtpRegulationDialog] = useState<boolean>(false);
+	const [showUnsubscribeOtpDialog, setShowUnsubscribeOtpDialog] = useState<boolean>(false);
+	const [errorMessage, setErrorMessage] = useState<string>('');
+	const [userCodeConfirmed, setUserCodeConfirmed] = useState<boolean>(false);
+	const [unsubscribeType, setUnsubscribeType] = useState<string>('0');
+
+	const errorMessages = {
+		401: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.email_error_abused'),
+		404: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_not_match'),
+		405: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_tooMuchAttempts'),
+		409: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired'),
+		500: t('common.ErrorOccured'),
+		501: t('common.ErrorOccured')
+	} as any;
 
 	const isValidPayload = () => {
 		if (!accountDetails?.DefaultFromMail) {
@@ -94,9 +108,71 @@ const FORM_ACCOUNT_DETAILS = ({
 		}
 	}
 
-	const handleConfirmOtpRegulation = async () => {
+	const handleConfirmOtpRegulation = async (req: any) => {
+		setErrorMessage('');
 		setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
-		setShowOtpRegulationDialog(false);
+		// @ts-ignore
+		const response = await dispatch(confimrOtp({ ...req, otpRequestFor: OtpRequestFor.eDisablePendingOptIn })) as any;
+
+		const results = response?.payload;
+
+		switch (results?.StatusCode) {
+			case 201: {
+				setAccountDetails({
+					...accountDetails,
+					UnsubscribeType: unsubscribeType === '0' ? true : false,
+				} as AccountSettings);
+
+				setShowOtpRegulationDialog(false);
+				break;
+			}
+			case 401: {
+				logout();
+				break;
+			}
+			case 404:
+			case 406:
+			case 501:
+			default: {
+				setErrorMessage(errorMessages[results?.StatusCode]);
+				setUserCodeConfirmed(false);
+				break;
+			}
+		}
+	}
+
+	const handleConfirmUnsubscribe = async (req: any) => {
+		setErrorMessage('');
+		const fullRequest = { ...req, UpdatedValue: unsubscribeType, otpRequestFor: OtpRequestFor.eUnsubscribeType }
+		// @ts-ignore
+		const response = await dispatch(confimrOtp(fullRequest)) as any;
+
+		const results = response?.payload;
+
+		switch (results?.StatusCode) {
+			case 201: {
+				setAccountDetails({
+					...accountDetails,
+					UnsubscribeType: unsubscribeType === '0' ? true : false,
+				} as AccountSettings);
+
+				setShowUnsubscribeOtpDialog(false);
+				handleSave();
+				break;
+			}
+			case 401: {
+				logout();
+				break;
+			}
+			case 404:
+			case 406:
+			case 501:
+			default: {
+				setErrorMessage(errorMessages[results?.StatusCode]);
+				setUserCodeConfirmed(false);
+				break;
+			}
+		}
 	}
 
 	return (
@@ -174,11 +250,8 @@ const FORM_ACCOUNT_DETAILS = ({
 								name='UnsubscribeType'
 								value={!accountDetails?.UnsubscribeType ? '0' : '1'}
 								onChange={() => {
-									setAccountDetails({
-										...accountDetails,
-										UnsubscribeType:
-											accountDetails?.UnsubscribeType === false ? true : false,
-									} as AccountSettings);
+									setShowUnsubscribeOtpDialog(true);
+									setUnsubscribeType(accountDetails?.UnsubscribeType ? '0' : '1')
 								}}>
 								<FormControlLabel
 									value='0'
@@ -302,12 +375,22 @@ const FORM_ACCOUNT_DETAILS = ({
 					</Grid>
 				</Grid>
 			</Box>
-			{showOtpRegulationDialog && <DisableOtpPopup
+			{showOtpRegulationDialog && <OTP
 				classes={classes}
 				onClose={() => { setShowOtpRegulationDialog(false) }}
 				onConfirm={handleConfirmOtpRegulation}
+				userCodeConfirmed={userCodeConfirmed}
+				preText={RenderHtml(t("settings.accountSettings.bypassOtp.regulationPopup.text"))}
+				responseError={errorMessage}
 			/>}
-			{/* {otpRegulationDialog()} */}
+			{showUnsubscribeOtpDialog && <OTP
+				classes={classes}
+				onClose={() => { setShowUnsubscribeOtpDialog(false) }}
+				onConfirm={handleConfirmUnsubscribe}
+				userCodeConfirmed={userCodeConfirmed}
+				preText={RenderHtml(t("settings.accountSettings.unsubscribeOtp.popup.text"))}
+				responseError={errorMessage}
+			/>}
 		</Box>
 	);
 };

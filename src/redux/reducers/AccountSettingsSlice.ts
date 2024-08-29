@@ -145,6 +145,18 @@ export const cancelDisablePluginOTP = createAsyncThunk(
     }
 );
 
+export const confimrOtp = createAsyncThunk(
+    'AccountSettings/ConfirmOtp',
+    async (request: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AccountSettings/ConfirmOtp`, request);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
+
 
 
 interface AuthorizationValues {
