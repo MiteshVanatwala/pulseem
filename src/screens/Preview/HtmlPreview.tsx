@@ -12,6 +12,7 @@ import { getLandingPagePreview } from '../../redux/reducers/landingPagesSlice';
 import { useTranslation } from 'react-i18next';
 import { Title } from '../../components/managment/Title';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { actionURL } from '../../config';
 
 
 const HtmlPreview = ({ classes }: any) => {
@@ -55,6 +56,17 @@ const HtmlPreview = ({ classes }: any) => {
     });
   }
 
+  const implementBeeFixCss = async () => {
+    return new Promise((resolve: any) => {
+      const beeFixCss = document.createElement("link");
+      beeFixCss.rel = 'stylesheet'
+      beeFixCss.href = `${actionURL}Content/bee-fix.css`;
+      document.getElementsByTagName('head')[0].appendChild(beeFixCss);
+
+      resolve();
+    })
+  }
+
   const getNewsletterHtml = async () => {
     // @ts-ignore
     const response = await dispatch(getNewsletterPreview(id)) as any;
@@ -75,14 +87,18 @@ const HtmlPreview = ({ classes }: any) => {
   const getLandingPageHtml = async () => {
     // @ts-ignore
     const response = await dispatch(getLandingPagePreview(id)) as any;
-    const d = {
-      PageName: response?.payload?.Data?.PageName,
-      ID: response?.payload?.Data?.ID,
-      PageUrl: response?.payload?.Data?.PageUrl
-    }
-    setDetails(d);
-    setHtml(response?.payload?.Data?.HtmlData);
-    setShowLoader(false);
+
+    implementBeeFixCss().then(() => {
+      const d = {
+        PageName: response?.payload?.Data?.PageName,
+        ID: response?.payload?.Data?.ID,
+        PageUrl: response?.payload?.Data?.PageUrl
+      }
+      setDetails(d);
+      setHtml(response?.payload?.Data?.HtmlData);
+      setShowLoader(false);
+    });
+
   }
 
   const handleCopyScript = () => {
