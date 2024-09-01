@@ -24,12 +24,13 @@ import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
 import { IoIosArrowDown } from 'react-icons/io';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
-import { cancelDisablePluginOTP, confimrOtp } from '../../../redux/reducers/AccountSettingsSlice';
+import { cancelDisablePluginOTP, confimrOtp, setAuditLog } from '../../../redux/reducers/AccountSettingsSlice';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import OTP from '../../../components/OneTimePassword/OTP';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { OtpRequestFor } from '../../../Models/Authorization/AuthorizationModels';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { AuditLog, eAuditActionType } from '../../../Models/AuditLog/AuditLog';
 
 const FORM_ACCOUNT_DETAILS = ({
 	classes,
@@ -82,6 +83,7 @@ const FORM_ACCOUNT_DETAILS = ({
 	};
 
 	useEffect(() => {
+		setUnsubscribeType(Settings?.UnsubscribeType ? '1' : '0');
 		setAccountDetails(Settings);
 	}, [Settings]);
 
@@ -102,6 +104,7 @@ const FORM_ACCOUNT_DETAILS = ({
 	};
 
 	const handleSave = (overwriteDetails: AccountSettings | null | never) => {
+		console.log(overwriteDetails);
 		if (isValidPayload()) {
 			if (overwriteDetails !== null) {
 				OnUpdate(overwriteDetails);
@@ -166,10 +169,11 @@ const FORM_ACCOUNT_DETAILS = ({
 
 		switch (results?.StatusCode) {
 			case 201: {
+				setUnsubscribeType('0')
 				setShowUnsubscribeOtpDialog(false);
 				handleSave({
 					...accountDetails,
-					UnsubscribeType: unsubscribeType === '1'
+					UnsubscribeType: false
 				} as AccountSettings);
 				break;
 			}
@@ -261,14 +265,34 @@ const FORM_ACCOUNT_DETAILS = ({
 							<RadioGroup
 								aria-label='UnsubscribeType'
 								name='UnsubscribeType'
-								value={accountDetails?.UnsubscribeType === true ? '1' : '0'}
-								onChange={() => {
-									setShowUnsubscribeOtpDialog(true);
-									setUnsubscribeType(accountDetails?.UnsubscribeType === true ? '0' : '1')
+								value={unsubscribeType}
+								onChange={(e: any) => {
+									if (e?.target?.value === '0') {
+										setShowUnsubscribeOtpDialog(true);
+									}
+									else {
+										const updatedAccountDetails = {
+											...accountDetails,
+											UnsubscribeType: true
+										} as AccountSettings;
+
+										setUnsubscribeType('1');
+										setAccountDetails(updatedAccountDetails);
+										OnUpdate(updatedAccountDetails);
+										//@ts-ignore
+										dispatch(setAuditLog({
+											ActionName: 'UnsubscribeByEmailAndSms',
+											AuditActionType: eAuditActionType.Update,
+											RequestSourceValue: '',
+											ResponseValue: '',
+											RequestValue: ''
+										} as AuditLog));
+										handleSave(updatedAccountDetails);
+									}
 								}}>
 								<FormControlLabel
 									value='0'
-									control={<Radio color='primary' />}
+									control={<Radio color='primary' value={'0'} />}
 									label={
 										<>
 											{t(
@@ -279,7 +303,7 @@ const FORM_ACCOUNT_DETAILS = ({
 								/>
 								<FormControlLabel
 									value='1'
-									control={<Radio color='primary' />}
+									control={<Radio color='primary' value={'1'} />}
 									label={
 										<>
 											{t(
