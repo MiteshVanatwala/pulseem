@@ -10,7 +10,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { StateType } from "../../Models/StateTypes";
 import { sendOTP } from "../../redux/reducers/commonSlice";
 
-const OTP = ({ classes, preText, onClose, onConfirm, userCodeConfirmed, responseError }: any) => {
+const OTP = ({ classes, preText, onClose, onConfirm, userCodeConfirmed, responseError, actionName }: any) => {
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
   const [emailList, setEmailList] = useState([]);
@@ -82,7 +82,8 @@ const OTP = ({ classes, preText, onClose, onConfirm, userCodeConfirmed, response
       Device: '',
       Agent: navigator.userAgent,
       Cellphone: authSelected.indexOf('@') > -1 ? '' : authSelected,
-      Email: authSelected.indexOf('@') > -1 ? authSelected : ''
+      Email: authSelected.indexOf('@') > -1 ? authSelected : '',
+      ActionName: actionName
     })) as any;
 
     if (response?.payload?.StatusCode === 201) {

@@ -395,6 +395,7 @@ const FORM_ACCOUNT_DETAILS = ({
 				userCodeConfirmed={userCodeConfirmed}
 				preText={RenderHtml(t("settings.accountSettings.bypassOtp.regulationPopup.text"))}
 				responseError={errorMessage}
+				actionName='DisablePendingFeature'
 			/>}
 			{showUnsubscribeOtpDialog && <OTP
 				classes={classes}
@@ -403,6 +404,7 @@ const FORM_ACCOUNT_DETAILS = ({
 				userCodeConfirmed={userCodeConfirmed}
 				preText={RenderHtml(t("settings.accountSettings.unsubscribeOtp.popup.text"))}
 				responseError={errorMessage}
+				actionName='UnsubscribeSettings'
 			/>}
 		</Box>
 	);
