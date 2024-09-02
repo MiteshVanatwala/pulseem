@@ -130,35 +130,32 @@ const FORM_ACCOUNT_DETAILS = ({
 	}
 
 	const handleConfirmOtpRegulation = async (req: any) => {
+		setErrorMessage('')
+		if (!req?.Code || req?.Code === '') {
+			setErrorMessage(t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2'));
+			return false;
+		}
 		// @ts-ignore
 		const response = await dispatch(confimrOtp({ ...req, otpRequestFor: OtpRequestFor.eDisablePendingOptIn })) as any;
 
 		const results = response?.payload;
 
-		switch (results?.StatusCode) {
-			case 201: {
-				setErrorMessage('');
-				setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
-
-				setShowOtpRegulationDialog(false);
-				break;
-			}
-			case 401: {
-				logout();
-				break;
-			}
-			case 404:
-			case 406:
-			case 501:
-			default: {
-				setErrorMessage(errorMessages[results?.StatusCode]);
-				setUserCodeConfirmed(false);
-				break;
-			}
+		if (results?.StatusCode === 201) {
+			setErrorMessage('');
+			setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
+			setShowOtpRegulationDialog(false);
+		}
+		else {
+			handleErrorOTPResponse(results?.StatusCode);
 		}
 	}
 
 	const handleConfirmUnsubscribe = async (req: any) => {
+		setErrorMessage('')
+		if (!req?.Code || req?.Code === '') {
+			setErrorMessage(t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2'));
+			return false;
+		}
 		setUnsubscribeType('0')
 		setErrorMessage('');
 		const fullRequest = { ...req, UpdatedValue: '0', otpRequestFor: OtpRequestFor.eUnsubscribeType }
@@ -167,15 +164,20 @@ const FORM_ACCOUNT_DETAILS = ({
 
 		const results = response?.payload;
 
-		switch (results?.StatusCode) {
-			case 201: {
-				setShowUnsubscribeOtpDialog(false);
-				handleSave({
-					...accountDetails,
-					UnsubscribeType: false
-				} as AccountSettings);
-				break;
-			}
+		if (results?.StatusCode === 201) {
+			setShowUnsubscribeOtpDialog(false);
+			handleSave({
+				...accountDetails,
+				UnsubscribeType: false
+			} as AccountSettings);
+		}
+		else {
+			handleErrorOTPResponse(results?.StatusCode);
+		}
+	}
+
+	const handleErrorOTPResponse = (statusCode: number) => {
+		switch (statusCode) {
 			case 401: {
 				logout();
 				break;
@@ -184,7 +186,7 @@ const FORM_ACCOUNT_DETAILS = ({
 			case 406:
 			case 501:
 			default: {
-				setErrorMessage(errorMessages[results?.StatusCode]);
+				setErrorMessage(errorMessages[statusCode]);
 				setUserCodeConfirmed(false);
 				break;
 			}
@@ -413,7 +415,7 @@ const FORM_ACCOUNT_DETAILS = ({
 			</Box>
 			{showOtpRegulationDialog && <OTP
 				classes={classes}
-				onClose={() => { setShowOtpRegulationDialog(false) }}
+				onClose={() => { setShowOtpRegulationDialog(false); setErrorMessage('') }}
 				onConfirm={handleConfirmOtpRegulation}
 				userCodeConfirmed={userCodeConfirmed}
 				preText={RenderHtml(t("settings.accountSettings.bypassOtp.regulationPopup.text"))}
@@ -422,7 +424,7 @@ const FORM_ACCOUNT_DETAILS = ({
 			/>}
 			{showUnsubscribeOtpDialog && <OTP
 				classes={classes}
-				onClose={() => { setShowUnsubscribeOtpDialog(false) }}
+				onClose={() => { setShowUnsubscribeOtpDialog(false); setErrorMessage('') }}
 				onConfirm={handleConfirmUnsubscribe}
 				userCodeConfirmed={userCodeConfirmed}
 				preText={RenderHtml(t("settings.accountSettings.unsubscribeOtp.popup.text"))}

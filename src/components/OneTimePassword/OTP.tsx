@@ -20,7 +20,6 @@ const OTP = ({ classes, preText, onClose, onConfirm, userCodeConfirmed, response
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const [otpCode, setOtpCode] = useState<string>('');
   const [codeResend, setCodeResend] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string>(responseError);
   const [resendDisabled, setResendDisalbed] = useState(false);
   const [resendInterval, setResendInterval] = useState(10);
   const [showError, setShowError] = useState<boolean>(false);
@@ -94,8 +93,6 @@ const OTP = ({ classes, preText, onClose, onConfirm, userCodeConfirmed, response
     }
   }
   const handleConfirmOtp = async () => {
-    setErrorMessage('');
-
     onConfirm({
       AuthType: parseInt(selectedOption),
       Value: authSelected,
@@ -227,30 +224,22 @@ const OTP = ({ classes, preText, onClose, onConfirm, userCodeConfirmed, response
             className={clsx(classes.textField, classes.maxWidth400, classes.p10)}
             onChange={(e) => {
               if (!e.target.value || /^[0-9]+$/.test(e.target.value.trim())) {
-                setErrorMessage('');
                 setOtpCode(e.target.value);
               }
             }}
             placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
-            error={!!errorMessage}
+            error={!!responseError}
             value={otpCode}
           />
         </Box>
         <Box mt={2}>
           <Button
             className={clsx(classes.btn, classes.btnRounded, userCodeConfirmed ? classes.disabled : null)}
-            onClick={() => {
-              if (otpCode) {
-                handleConfirmOtp();
-              }
-              else {
-                setErrorMessage(t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2'))
-              }
-            }}
+            onClick={handleConfirmOtp}
           >
             {userCodeConfirmed ? <CircularProgress size={31} style={{ color: '#FFF' }} /> : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
           </Button>
-          {errorMessage !== '' && <Typography className='error' variant="body1">{errorMessage}</Typography>}
+          {responseError !== '' && <Typography className='error' variant="body1">{responseError}</Typography>}
         </Box>
       </Box>
       <Box>
