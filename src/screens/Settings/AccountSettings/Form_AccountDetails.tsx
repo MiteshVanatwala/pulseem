@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
 import { AccDtlPropTypes } from '../../../Models/Settings/AccountDetails';
-import { IsNumberField } from '../../../helpers/Utils/Validations';
+import { IsNumberField, IsValidEmail, IsValidPhoneNumber } from '../../../helpers/Utils/Validations';
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { tierSetting } from '../../Whatsapp/Constant';
 import Illustration_app_Settings from '../../../assets/images/settings/Illustration_app_Settings';
@@ -41,6 +41,9 @@ const FORM_ACCOUNT_DETAILS = ({
 	const { t } = useTranslation();
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
 	const { accountFeatures } = useSelector((state: any) => state.common);
+	const [fromEmailError, setFromEmailError] = useState<boolean>(false);
+	const [fromCellphonError, setFromCellphonError] = useState<boolean>(false);
+
 
 	const [accountDetails, setAccountDetails] = useState<AccountSettings | null>({
 		DefaultFromMail: '',
@@ -53,7 +56,12 @@ const FORM_ACCOUNT_DETAILS = ({
 	const [showOtpRegulationDialog, setShowOtpRegulationDialog] = useState<boolean>(false);
 
 	const isValidPayload = () => {
-		if (!accountDetails?.DefaultFromMail) {
+		if (accountDetails?.DefaultFromMail && accountDetails?.DefaultFromMail !== '' && !IsValidEmail(accountDetails?.DefaultFromMail)) {
+			setFromEmailError(true);
+			return false;
+		}
+		else if (accountDetails?.DefaultCellNumber && accountDetails?.DefaultCellNumber !== '' && !IsValidPhoneNumber(accountDetails?.DefaultCellNumber)) {
+			setFromCellphonError(true);
 			return false;
 		}
 		return true;
@@ -66,6 +74,12 @@ const FORM_ACCOUNT_DETAILS = ({
 	const handleChange = (e: any, name = '') => {
 		let actualValue = e?.target?.value;
 		let trimValue = e?.target?.value.trim();
+		if (e?.target?.name === 'DefaultFromMail') {
+			setFromEmailError(false);
+		}
+		if (e?.target?.name === 'DefaultCellNumber') {
+			setFromCellphonError(false);
+		}
 		setAccountDetails({
 			...accountDetails,
 			[e?.target?.name]:
@@ -137,7 +151,7 @@ const FORM_ACCOUNT_DETAILS = ({
 							name='DefaultFromMail'
 							value={accountDetails?.DefaultFromMail}
 							onChange={handleChange}
-							className={clsx(classes.textField, classes.minWidth252)}
+							className={clsx(classes.textField, classes.minWidth252, fromEmailError && classes.error)}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6} md={4} className={'textBoxWrapper'}>
@@ -155,7 +169,7 @@ const FORM_ACCOUNT_DETAILS = ({
 							value={accountDetails?.DefaultCellNumber}
 							onKeyPress={IsNumberField}
 							onChange={handleChange}
-							className={clsx(classes.textField, classes.minWidth252)}
+							className={clsx(classes.textField, classes.minWidth252, fromCellphonError && classes.error)}
 						/>
 					</Grid>
 					<Grid container>
