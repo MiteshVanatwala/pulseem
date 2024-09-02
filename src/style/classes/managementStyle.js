@@ -1364,6 +1364,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     margin: '0 5px',
     cursor: 'pointer',
     textUnderlineOffset: '4px',
+    backgroundColor: 'transparent',
     "&:hover": {
       textDecoration: 'none',
     }

@@ -2896,8 +2896,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           paddingLeft: 15,
           paddingRight: 15,
           paddingBottom: 10,
-          // paddingLeft: isRTL ? 0 : 15,
-          // paddingRight: isRTL ? 15 : 0,
           [theme.breakpoints.down("xs")]: {
             paddingLeft: 0,
             paddingRight: 0,
@@ -2912,8 +2910,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             position: 'absolute',
             right: isRTL ? 'auto' : 85,
             left: isRTL ? 85 : 'auto',
-            // right: isRTL ? 'auto' : 86.44,
-            // left: isRTL ? 86.44 : 'auto',
             top: 49.17,
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
           },
@@ -2922,8 +2918,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             top: 121.3,
             right: isRTL ? 'auto' : 90,
             left: isRTL ? 90 : 'auto',
-            // right: isRTL ? 'auto' : 93.14,
-            // left: isRTL ? 93.14 : 'auto',
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
           },
           '& .subHeading': {

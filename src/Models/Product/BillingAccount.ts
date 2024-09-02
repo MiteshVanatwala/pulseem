@@ -1,8 +1,8 @@
 ﻿export interface BillingAccount {
-    SubAccountID: number | null;
-    AccountID: number | null;
-    SubAccountName: string;
-    IsPaying: boolean;
+    SubAccountID?: number | null | never;
+    AccountID?: number | null | never;
+    SubAccountName?: string | null | never;
+    IsPaying?: boolean | null | never;
     CompanyName: string;
     ContactName: string;
     City: string;
@@ -11,14 +11,14 @@
     StreetAndNumber: string;
     OfficePhoneNumber: string;
     CellPhone: string;
-    TokenNumber: string;
+    TokenNumber?: string | null | never;
     Email: string;
     CorporationNumber: string;
-    PaymentType: number;
-    InvoiceRecieptType: number;
-    AutomaticBilling: boolean;
-    CreditDaysID: number;
-    Refund: number;
-    BillingLanguage: number;
+    PaymentType?: number | null | never;
+    InvoiceRecieptType?: number | null | never;
+    AutomaticBilling?: boolean | null | never;
+    CreditDaysID?: number | null | never;
+    Refund?: number | null | never;
+    BillingLanguage: string;
     CompanyNameForInvoice: string;
 }

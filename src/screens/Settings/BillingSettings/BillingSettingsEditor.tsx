@@ -28,10 +28,12 @@ import {
 } from "../../../Models/Settings/BillingSettings";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
 import { IsNumberField } from "../../../helpers/Utils/Validations";
+import { ListIcon } from "../../../assets/images/managment";
+import { BillingAccount } from "../../../Models/Product/BillingAccount";
 
 const BillingSettingsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
-  const { isRTL } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize } = useSelector((state: any) => state.core);
   const [cardDetails, setCardDetails] = useState<CardDetailsTypes>({
     CardNumber: "",
     ExpMonth: "",
@@ -40,18 +42,19 @@ const BillingSettingsEditor = ({ classes }: any) => {
     Id: "",
   });
   const [billingInfoValues, setBillingInfoValues] =
-    useState<BillingInfoValuesTypes>({
+    useState<BillingAccount>({
       CompanyName: "",
       ContactName: "",
-      Cellphone: "",
-      Phone: "",
-      EmailForInvoices: "",
-      Address: "",
+      CellPhone: "",
+      OfficePhoneNumber: "",
+      CompanyNameForInvoice: "",
+      StreetAndNumber: "",
       City: "",
-      Zip: "",
+      ZipCode: "",
       Country: "",
-      CompRegNumber: "",
-      InvoiceLang: "",
+      CorporationNumber: "",
+      BillingLanguage: '-1',
+      Email: ""
     });
 
   const [errors, setErrors] = useState<BillingErrorTypes>({
@@ -74,7 +77,6 @@ const BillingSettingsEditor = ({ classes }: any) => {
   });
 
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
-
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
 
   const handleChange = (e: any) => {
@@ -170,13 +172,6 @@ const BillingSettingsEditor = ({ classes }: any) => {
     <Box
       className={"settingsWrapper"}
     >
-      <Title
-        Text={t("settings.billingSettings.titleBillingInfo")}
-        classes={classes}
-        ContainerStyle={{
-          padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"}`,
-        }}
-      />
       <Box className={"formContainer"}>
         <Grid container className={"form"}>
           <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
@@ -231,7 +226,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
               variant="outlined"
               size="small"
               name="Address"
-              value={billingInfoValues.Address}
+              value={billingInfoValues.StreetAndNumber}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />
@@ -257,7 +252,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
               variant="outlined"
               size="small"
               name="Zip"
-              value={billingInfoValues.Zip}
+              value={billingInfoValues.ZipCode}
               onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
@@ -272,7 +267,6 @@ const BillingSettingsEditor = ({ classes }: any) => {
               size="small"
               name="Country"
               value={billingInfoValues.Country}
-              // onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />
@@ -285,7 +279,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
               variant="outlined"
               size="small"
               name="Cellphone"
-              value={billingInfoValues.Cellphone}
+              value={billingInfoValues.CellPhone}
               onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
@@ -299,7 +293,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
               variant="outlined"
               size="small"
               name="Phone"
-              value={billingInfoValues.Phone}
+              value={billingInfoValues.OfficePhoneNumber}
               onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
@@ -319,7 +313,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
               variant="outlined"
               size="small"
               name="CompRegNumber"
-              value={billingInfoValues.CompRegNumber}
+              value={billingInfoValues.CorporationNumber}
               onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
@@ -339,7 +333,7 @@ const BillingSettingsEditor = ({ classes }: any) => {
               variant="outlined"
               size="small"
               name="EmailForInvoices"
-              value={billingInfoValues.EmailForInvoices}
+              value={billingInfoValues.Email}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
               error={!!errors.EmailForInvoices}
@@ -358,20 +352,20 @@ const BillingSettingsEditor = ({ classes }: any) => {
               <Select
                 variant="standard"
                 autoWidth
-                value={billingInfoValues.InvoiceLang}
+                value={billingInfoValues.BillingLanguage}
                 IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                 MenuProps={{
-									PaperProps: {
-										style: {
-											direction: isRTL ? 'rtl' : 'ltr'
-										},
-									},
-								}}
+                  PaperProps: {
+                    style: {
+                      direction: isRTL ? 'rtl' : 'ltr'
+                    },
+                  },
+                }}
                 name="InvoiceLang"
                 onChange={(e: SelectChangeEvent) => handleChange(e)}
               >
-                <MenuItem value="" className={classes.dropDownItem}>{t("common.Status")}</MenuItem>
-                {["עברית", "English"].map((so, index) => {
+                <MenuItem value={-1} className={classes.dropDownItem} disabled={true}>{t("common.select")}</MenuItem>
+                {[t('languages.langCodes.hebrew'), t('languages.langCodes.english')].map((so, index) => {
                   return (
                     <MenuItem
                       key={index}
@@ -385,45 +379,22 @@ const BillingSettingsEditor = ({ classes }: any) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            className={clsx(
-              classes.dFlex,
-              classes.flexWrap,
-              classes.spaceBetween
-            )}
-          >
-            <Button
-              className={clsx(
-                classes.btn,
-                classes.btnNohover,
-                classes.noBorder,
-                classes.link,
-                classes.textCapitalize,
-                "link"
-              )}
-              onClick={() => setAddCardDialog(true)}
-              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-            >
-              <>{t("settings.billingSettings.btnAddCard")}</>
-            </Button>
-          </Grid>
-          <Grid item xs={12} className={classes.justifyContentEnd}>
-            <Button
-              className={clsx(
-                classes.mt5,
-                classes.btn,
-                classes.btnRounded,
-                "saveFixedDetails"
-              )}
-              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-              onClick={handleSaveBillingInfo}
-            >
-              <>{t("settings.billingSettings.btnUpdate")}</>
-            </Button>
-          </Grid>
         </Grid>
+        <Box className={clsx(classes.dFlex, classes.w100)}>
+          <Button
+            className={clsx(
+              classes.mt5,
+              classes.btn,
+              classes.btnRounded,
+              "saveFixedDetails"
+            )}
+            style={{ marginRight: isRTL && 'auto', marginLeft: !isRTL ? 'auto' : 0 }}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            onClick={handleSaveBillingInfo}
+          >
+            <>{t("settings.billingSettings.btnUpdate")}</>
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
@@ -611,7 +582,32 @@ const BillingSettingsEditor = ({ classes }: any) => {
       {toastMessage && renderToast()}
       <Box className={classes.settingsContainer}>
         <Box className="head">
-          <Title Text={t("settings.billingSettings.title")} classes={classes} />
+          <Title
+            classes={classes}
+            Element={
+              <Box className={clsx(classes.flex, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexWrap)}>
+                {
+                  windowSize === 'xs' && <ListIcon className={classes.mr15} />
+                }
+                <Typography
+                  style={{ width: 'auto' }}
+                  className={clsx(classes.managementTitle, "mgmtTitle")}
+                >
+                  {t("settings.billingSettings.title")}
+                </Typography>
+                <Button
+                  className={clsx(
+                    classes.btn,
+                    classes.btnRounded
+                  )}
+                  onClick={() => setAddCardDialog(true)}
+                  endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                >
+                  <>{t("settings.billingSettings.btnAddCard")}</>
+                </Button>
+              </Box>
+            }
+          />
         </Box>
         <Box className={"containerBody"}>{FormBillingInformation()}</Box>
       </Box>
