@@ -104,7 +104,6 @@ const FORM_ACCOUNT_DETAILS = ({
 	};
 
 	const handleSave = (overwriteDetails: AccountSettings | null | never) => {
-		console.log(overwriteDetails);
 		if (isValidPayload()) {
 			if (overwriteDetails !== null) {
 				OnUpdate(overwriteDetails);
@@ -160,8 +159,9 @@ const FORM_ACCOUNT_DETAILS = ({
 	}
 
 	const handleConfirmUnsubscribe = async (req: any) => {
+		setUnsubscribeType('0')
 		setErrorMessage('');
-		const fullRequest = { ...req, UpdatedValue: unsubscribeType, otpRequestFor: OtpRequestFor.eUnsubscribeType }
+		const fullRequest = { ...req, UpdatedValue: '0', otpRequestFor: OtpRequestFor.eUnsubscribeType }
 		// @ts-ignore
 		const response = await dispatch(confimrOtp(fullRequest)) as any;
 
@@ -169,7 +169,6 @@ const FORM_ACCOUNT_DETAILS = ({
 
 		switch (results?.StatusCode) {
 			case 201: {
-				setUnsubscribeType('0')
 				setShowUnsubscribeOtpDialog(false);
 				handleSave({
 					...accountDetails,
