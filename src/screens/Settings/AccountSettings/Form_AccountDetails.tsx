@@ -144,6 +144,13 @@ const FORM_ACCOUNT_DETAILS = ({
 			setErrorMessage('');
 			setAccountDetails({ ...accountDetails, DisablePluginOTP: true } as AccountSettings);
 			setShowOtpRegulationDialog(false);
+			dispatch(setAuditLog({
+				ActionName: 'DisablePendingFeature',
+				AuditActionType: eAuditActionType.Enable,
+				RequestSourceValue: '',
+				ResponseValue: '',
+				RequestValue: ''
+			} as AuditLog))
 		}
 		else {
 			handleErrorOTPResponse(results?.StatusCode);
@@ -170,6 +177,14 @@ const FORM_ACCOUNT_DETAILS = ({
 				...accountDetails,
 				UnsubscribeType: false
 			} as AccountSettings);
+
+			dispatch(setAuditLog({
+				ActionName: 'UnsubscribeByEmailOrSms',
+				AuditActionType: eAuditActionType.Update,
+				RequestSourceValue: '',
+				ResponseValue: '',
+				RequestValue: ''
+			} as AuditLog))
 		}
 		else {
 			handleErrorOTPResponse(results?.StatusCode);
