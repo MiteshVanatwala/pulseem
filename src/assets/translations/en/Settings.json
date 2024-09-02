@@ -114,7 +114,7 @@
 		},
 		"unsubscribeOtp": {
 			"popup": {
-				"text": "<b>Please note,</b> you are about to change the default recipient removal settings.<br/>The change of settings you intend to make will mean that when a recipient requests to remove himself from the distribution list,<br/>only the means of communication through which the recipient requested the removal will be removed - the phone number or the email address, as opposed to removing any means of communication provided by the recipient. <br/><br/><b>Changing the aforementioned settings is done at your sole responsibility,</b> and by doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or Pulseem as a result and they will apply only to you."
+				"text": "<b>Please note,</b> you are about to change the default recipient removal settings.<br/>The change of settings you intend to make will mean that when a recipient requests to remove himself from the distribution list, only the means of communication through which the recipient requested the removal will be removed - the phone number or the email address, as opposed to removing any means of communication provided by the recipient. <br/><br/><b>Changing the aforementioned settings is done at your sole responsibility,</b> and by doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or Pulseem as a result and they will apply only to you."
 			}
 		}
 	},
