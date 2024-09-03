@@ -85,3 +85,8 @@ export interface AuthorizationValuesLog {
     CreateDate: Date | string | null;
     CreatedDateTime: Date | string | null;
 }
+
+export enum OtpRequestFor {
+    eDisablePendingOptIn = 0,
+    eUnsubscribeType = 1
+}
