@@ -2,6 +2,8 @@ import LazyBackground from './Lazy/LazyBackground';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { Typography, Grid, Box } from '@material-ui/core'
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
+import { BsFiletypeMp3 } from "react-icons/bs";
+
 import {
     Word,
     File,
@@ -34,7 +36,9 @@ export const Image = ({
         pdf: Pdf,
         ppt: Ppt,
         txt: Txt,
-        '': File
+        '': File,
+        mp3: File,
+        wav: File
     }
 
     const imageEnter = (fileId) => () => {

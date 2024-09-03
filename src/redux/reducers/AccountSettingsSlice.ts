@@ -4,6 +4,7 @@ import { AccountSettings } from '../../Models/Account/AccountSettings';
 import { LoginPassword } from '../../Models/Account/Password';
 import { TwoFactorAuthAllowed } from '../../Models/Auth/TwoFactorAuth';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { AuditLog } from '../../Models/AuditLog/AuditLog';
 
 export const getAccountSettings = createAsyncThunk(
     'AccountSettings/Get',
@@ -144,6 +145,30 @@ export const cancelDisablePluginOTP = createAsyncThunk(
         }
     }
 );
+
+export const confimrOtp = createAsyncThunk(
+    'AccountSettings/ConfirmOtp',
+    async (request: any, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`AccountSettings/ConfirmOtp`, request);
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+export const setAuditLog = createAsyncThunk(
+    'setAuditLog',
+    async (request: AuditLog, thunkAPI) => {
+      try {
+        const response = await PulseemReactInstance.post(`setAuditLog`, request);
+        return response.data;
+      } catch (error: any) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    }
+  );
 
 
 
