@@ -139,7 +139,9 @@
 			"invalidId": "מספר תעודת זהות לא תקין בצע"
 		},
 		"btnUpdate": "עדכן פרטי חיוב",
-		"btnAddCard": "הוסף כרטיס אשראי"
+		"btnAddCard": "הוסף כרטיס אשראי",
+		"lastPurchases": "רכישות אחרונות",
+		"openInvoices": "חשבוניות פתוחות"
 	},
 	"changePassword": {
 		"title": "שנה סיסמא",

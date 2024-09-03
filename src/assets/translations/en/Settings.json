@@ -139,7 +139,9 @@
 			"invalidId": "Invalid ID number"
 		},
 		"btnUpdate": "Update billing",
-		"btnAddCard": "Add credit card"
+		"btnAddCard": "Add credit card",
+		"lastPurchases": "Last Purchases",
+		"openInvoices": "Open Invoices"
 	},
 	"changePassword": {
 		"title": "Change Password",

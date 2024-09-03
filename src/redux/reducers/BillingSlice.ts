@@ -26,6 +26,18 @@ export const updateAccountBilling = createAsyncThunk(
     }
 );
 
+export const getCreditCardIframe = createAsyncThunk(
+    'AccountBilling/GetAddCreditCardIframeURL',
+    async (culture: string, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`AccountBilling/GetAddCreditCardIframeURL/${culture}`);
+            return response.data as PulseemResponse
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
 const BillingSlice = createSlice({
     name: 'AccountSettings',
     initialState: {
