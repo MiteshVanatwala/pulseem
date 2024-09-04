@@ -25,8 +25,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 	const [errors, setErrors] = useState({
 		companyName: '',
 		contactName: '',
-		emailAddress: '',
-		telephone: ''
+		emailAddress: ''
 	});
 	const [ directAccountDetails, setDirectAccountDetails ] = useState<any>({
 		companyName: '',
@@ -56,10 +55,16 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				contactName: get(subAccountRecord, 'DirectAccountContactName', ''),
 				emailAddress: isNull(get(subAccountRecord, 'DirectAccountEmail')) ? get(subAccountRecord, 'Email', '') : get(subAccountRecord, 'DirectAccountEmail', ''),
 				telephone: get(subAccountRecord, 'DirectAccountTelephone', ''),
-				emailBulk: get(subAccountRecord, 'DirectBulkEmails', ''),
-				SMSBulk: get(subAccountRecord, 'DirectSMSCredits', ''),
-				MMSBulk: get(subAccountRecord, 'DirectMmsCredits', ''),
-			})
+				emailBulk: get(subAccountRecord, 'DirectBulkEmails', 0),
+				SMSBulk: get(subAccountRecord, 'DirectSMSCredits', 0),
+				MMSBulk: get(subAccountRecord, 'DirectMmsCredits', 0),
+			});
+
+			setErrors({
+				companyName: '',
+				contactName: '',
+				emailAddress: ''
+			});
 		}
 	}, [ isOpen ]);
 
@@ -73,7 +78,6 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 			companyName: getTrimmedEmptyValue('companyName') === '' ? t('common.requiredField') : '',
 			contactName: getTrimmedEmptyValue('contactName') === '' ? t('common.requiredField') : '',
 			emailAddress: getTrimmedEmptyValue('emailAddress') === '' ? t('common.requiredField') : '',
-			telephone: getTrimmedEmptyValue('telephone') === '' ? t('common.requiredField') : ''
 		};
 
 		if (!ValidateEmailAddress(directAccountDetails.emailAddress)) {
@@ -84,7 +88,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		}
 
 		setErrors(errorsTemp);
-		return errorsTemp.companyName === '' || errorsTemp.contactName === '' && errorsTemp.emailAddress === '' && errorsTemp.telephone === '';
+		return errorsTemp.companyName === '' && errorsTemp.contactName === '' && errorsTemp.emailAddress === '';
 	}
 	
 	const handleSaveResponse = (statusCode: number) => {
@@ -118,6 +122,18 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 			}
 			case 404: {
 				showErrorToast(t('common.Error'));
+				break;
+			}
+			case 1002: {
+				showErrorToast(t('SubAccount.notEnoughEmailCreditInParentAccount'));
+				break;
+			}
+			case 1003: {
+				showErrorToast(t('SubAccount.notEnoughSMSCreditInParentAccount'));
+				break;
+			}
+			case 1004: {
+				showErrorToast(t('SubAccount.notEnoughMMSCreditInParentAccount'));
 				break;
 			}
 			case 500:
@@ -264,7 +280,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 							autoComplete="off"
 							onChange={(e: any) => setDirectAccountDetails({
 								...directAccountDetails,
-								contactName: e.target.value.trim()
+								contactName: e.target.value
 							})}
 						/>
 						<Box className='textBoxWrapper'>
@@ -313,9 +329,6 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 								telephone: e.target.value.trim()
 							})}
 						/>
-						<Typography className={clsx(errors.telephone ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-							{errors.telephone}
-						</Typography>
 					</Grid>
 				</Grid>
 
@@ -338,7 +351,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 									{t("SubAccount.directAccountSMSCredits")}: {directAccountDetails.SMSBulk}
 								</Grid>
 								<Grid item md={4}>
-									{t("SubAccount.directAccountMMSCredits")}: {directAccountDetails.MMSBulk}
+									{/* {t("SubAccount.directAccountMMSCredits")}: {directAccountDetails.MMSBulk} */}
 								</Grid>
 								<Grid item md={4}>
 									<Typography title={t("SubAccount.addBulkEmails")} className={clsx(classes.alignDir)}>
@@ -355,7 +368,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										autoComplete="off"
 										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
 											...directAccountDetails,
-											addEmailBulk: e.target.value.trim()
+											addEmailBulk: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
 										})}
 										onKeyUp={handleKeyPress}
 									/>
@@ -376,14 +389,14 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										autoComplete="off"
 										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
 											...directAccountDetails,
-											addSMSBulk: e.target.value.trim()
+											addSMSBulk: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
 										})}
 										onKeyUp={handleKeyPress}
 									/>
 								</Grid>
 
 								<Grid item md={4}>
-									<Typography title={t("SubAccount.addMMS")} className={clsx(classes.alignDir)}>
+									{/* <Typography title={t("SubAccount.addMMS")} className={clsx(classes.alignDir)}>
 										{t("SubAccount.addMMS")}
 									</Typography>
 									<TextField
@@ -397,49 +410,14 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										autoComplete="off"
 										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
 											...directAccountDetails,
-											addMMSBulk: e.target.value.trim()
+											addMMSBulk: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
 										})}
 										onKeyUp={handleKeyPress}
-									/>
+									/> */}
 								</Grid>
 							</>
 						)
 					}
-					
-					{/* {
-						isGlobal && (
-							<>
-								<Grid item md={4}>
-									{t("SubAccount.balance")}: {directAccountDetails.balance}
-								</Grid>
-								<Grid item md={8}></Grid>
-
-								<Grid item md={4}>
-									<Typography title={t("SubAccount.balance")} className={clsx(classes.alignDir)}>
-										{t("SubAccount.balance")}
-									</Typography>
-									<TextField
-										type="number"
-										id="addBalance"
-										label=""
-										variant="outlined"
-										name="addBalance"
-										value={directAccountDetails.addBalance}
-										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
-										autoComplete="off"
-										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
-											...directAccountDetails,
-											addBalance: e.target.value.trim()
-										})}
-										onKeyUp={handleKeyPress}
-									/>
-								</Grid>
-								<Grid item md={8}></Grid>
-
-								<Grid item md={8}></Grid>
-							</>
-						)
-					} */}
 				</Grid>
 
 				<Loader isOpen={isLoader} />

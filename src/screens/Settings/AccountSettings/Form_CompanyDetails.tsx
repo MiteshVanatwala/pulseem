@@ -23,7 +23,7 @@ import { DateField } from "../../../components/managment";
 import {
   IsNumberField,
   IsValidEmail,
-  IsValidGlobalPhoneNumber,
+  IsValidNonGlobalPhoneNumber,
   IsValidPhoneNumberWithCountryCode,
 } from "../../../helpers/Utils/Validations";
 import {
@@ -101,7 +101,7 @@ const FORM_COMPANY_DETAILS = ({
         CellPhone: t("settings.accountSettings.fixedComDetails.errors.reqMobile"),
       };
     } else if (
-      isGlobal ? !IsValidPhoneNumberWithCountryCode(companyDetails?.CellPhone, countryCodeList) : !IsValidGlobalPhoneNumber(companyDetails?.CellPhone)
+      isGlobal ? !IsValidPhoneNumberWithCountryCode(companyDetails?.CellPhone, countryCodeList) : !IsValidNonGlobalPhoneNumber(companyDetails?.CellPhone)
     ) {
       isValid = false;
       tempErrors = {

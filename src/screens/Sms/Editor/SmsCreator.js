@@ -59,7 +59,7 @@ import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCampaign } from "react-icon
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import { CgWebsite } from "react-icons/cg";
 import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
-import { IsValidGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode, IsValidURL } from "../../../helpers/Utils/Validations";
+import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode, IsValidURL } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import { URL_REGEX } from "../../../helpers/Constants";
 
@@ -554,7 +554,7 @@ const SmsCreator = ({ classes }) => {
     return isValid;
   };
   const handleSend = async () => {
-    if (phone !== "" && (isGlobal ? IsValidPhoneNumberWithCountryCode(phone, countryCodeList) : IsValidGlobalPhoneNumber(phone))) {
+    if (phone !== "" && (isGlobal ? IsValidPhoneNumberWithCountryCode(phone, countryCodeList) : IsValidNonGlobalPhoneNumber(phone))) {
       if (id) {
         const smsQuickSendData = {
           ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
@@ -1064,7 +1064,7 @@ const SmsCreator = ({ classes }) => {
   };
 
   const handleNumberChange = (e) => {
-    if (e.target.value === '' || IsValidGlobalPhoneNumber(e.target.value)) {
+    if (e.target.value === '' && (isGlobal ? IsValidPhoneNumberWithCountryCode(phone, countryCodeList) : IsValidNonGlobalPhoneNumber(phone))) {
       setphone(e.target.value);
     }
   };
@@ -1134,7 +1134,7 @@ const SmsCreator = ({ classes }) => {
                         maxLength: 16
                       }}
                       onChange={handleNumberChange}
-                      onKeyPress={IsValidGlobalPhoneNumber}
+                      onKeyPress={IsValidPhoneNumberKeyPress}
                     />
                     <Button className={clsx(classes.btn, classes.btnRounded, classes.ml5)} onClick={() => { validationCheckpoint(() => handleSend()) }}>
                       {t("mainReport.send")}

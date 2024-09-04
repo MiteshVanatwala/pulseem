@@ -72,5 +72,7 @@
 	"notEnoughGlobalBalance": "Unable to save due to insufficient balance",
 	"notEnoughEmailCreditInParentAccount": "Unable to save due to insufficient email credit in parent account",
 	"notEnoughSMSCreditInParentAccount": "Unable to save due to insufficient SMS credit in parent account",
-	"notEnoughMMSCreditInParentAccount": "Unable to save due to insufficient MMS credit in parent account"
+	"notEnoughMMSCreditInParentAccount": "Unable to save due to insufficient MMS credit in parent account",
+	"addBalance": "Add Balance",
+	"emailUserNameExist": "Oops! We encountered a problem while saving sub account.<br />The username or Email address might already be in use.<br />Please try a different username/Email address or contact our support team.<br />Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
 }

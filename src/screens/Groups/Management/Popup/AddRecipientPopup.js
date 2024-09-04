@@ -24,7 +24,7 @@ import { addRecipient, deleteRecipients } from "../../../../redux/reducers/group
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
-import { IsValidPhone, IsValidEmail, IsNumberField, IsValidPhoneNumberWithCountryCode, IsValidGlobalPhoneNumber } from "../../../../helpers/Utils/Validations";
+import { IsValidPhone, IsValidEmail, IsNumberField, IsValidPhoneNumberWithCountryCode, IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress } from "../../../../helpers/Utils/Validations";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
@@ -170,7 +170,7 @@ const AddRecipientPopup = ({ classes,
             }
         }
         if (e.target.name === "Cellphone") {
-            if (isGlobal ? !IsValidPhoneNumberWithCountryCode(e.target.value, countryCodeList) : !IsValidGlobalPhoneNumber(e.target.value)) {
+            if (isGlobal ? !IsValidPhoneNumberWithCountryCode(e.target.value, countryCodeList) : !IsValidNonGlobalPhoneNumber(e.target.value)) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
             }
         }
@@ -278,20 +278,23 @@ const AddRecipientPopup = ({ classes,
             setExpandedIndexes([0]);
 
             return;
-        } else if (data.ClientsData.Email && !IsValidEmail(data.ClientsData.Email)) {
+        }
+        
+        if (data.ClientsData.Email && !IsValidEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             setErrors({ ...tempError })
             setExpandedIndexes([0]);
             return
         }
-        else if (!data.ClientsData.Email && data.ClientsData.Cellphone &&
-            (data.ClientsData.Cellphone.length < 10 || data.ClientsData.Cellphone.length > 12)) {
-            tempError.Cellphone = t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength)
+        
+        if (data.ClientsData.Cellphone && (isGlobal ? !IsValidPhoneNumberWithCountryCode(data.ClientsData.Cellphone, countryCodeList) : !IsValidNonGlobalPhoneNumber(data.ClientsData.Cellphone))) {
+            tempError.Cellphone = t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone)
             setErrors({ ...tempError })
             setExpandedIndexes([0]);
             return
         }
-        else if (!recipientData && selectedGroups.length === 0 && selectedLocalGroups.length === 0) {
+        
+        if (!recipientData && selectedGroups.length === 0 && selectedLocalGroups.length === 0) {
             tempError.Groups = t(ADD_RECIPIENT_REQUIRED_ERRORS.Groups)
             setErrors({ ...tempError })
             setExpandedIndexes([4]);
@@ -479,13 +482,13 @@ const AddRecipientPopup = ({ classes,
                                 value={addRecipientData.Cellphone}
                                 className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onKeyPress={IsValidGlobalPhoneNumber}
+                                onKeyPress={IsValidPhoneNumberKeyPress}
                                 onChange={(e) => {
                                     let tempVal = e.target.value
                                     if (!tempVal) {
                                         handleChange(e)
                                     }
-                                    else if (IsValidGlobalPhoneNumber(tempVal)) {
+                                    else if (IsValidPhoneNumberKeyPress(tempVal)) {
                                         handleChange(e)
                                     }
                                 }}

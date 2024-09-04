@@ -237,7 +237,9 @@ const CreditHistory = ({ classes, id = '' }: any) => {
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('common.Dates')}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.amount')}</TableCell>
-          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.type')}</TableCell>
+          {
+						!isGlobal && <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.type')}</TableCell>
+					}
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.f16)} align='center'>{t('SubAccount.accountType')}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('SubAccount.transferringFromAccount')}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.f16)} align='center'>{t('SubAccount.transferredToAccount')}</TableCell>
@@ -266,13 +268,17 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 				>
 					{ isGlobal && isCurrencySymbolPrefix ? currencySymbol : '' } {row.Amount} { isGlobal && !isCurrencySymbolPrefix ? currencySymbol : '' }
 				</TableCell>
-				<TableCell
-					classes={cellBodyStyle}
-					align='center'
-					className={classes.flex1}
-				>
-					{t(`${get(CreditHistoryType, row.Type, '')}`)}
-				</TableCell>
+				{
+					!isGlobal && (
+						<TableCell
+							classes={cellBodyStyle}
+							align='center'
+							className={classes.flex1}
+						>
+							{t(`${get(CreditHistoryType, row.Type, '')}`)}
+						</TableCell>
+					)
+				}
 				<TableCell
 					classes={cellBodyStyle}
 					align='center'

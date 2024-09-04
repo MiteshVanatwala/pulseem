@@ -49,7 +49,7 @@ const AccountUsers = ({ classes }: any) => {
     data: any
   } | null>(null);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
-  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
+  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
   const [ direct, setDirect ] = useState<{
     emailDirect: null | number,
@@ -283,12 +283,12 @@ const AccountUsers = ({ classes }: any) => {
               <>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.emailBulk")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.SMSCredit")}</TableCell>
-                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.MMSCredit")}</TableCell>
+                {/* <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.MMSCredit")}</TableCell> */}
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlyEmailLimit")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlySMSLimit")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.directAccountBulkEmails")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.directAccountSMSCredits")}</TableCell>
-                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.directAccountMMSCredits")}</TableCell>
+                {/* <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.directAccountMMSCredits")}</TableCell> */}
               </>
             )
           }
@@ -411,7 +411,7 @@ const AccountUsers = ({ classes }: any) => {
               classes.marginInlineStart5
             )}
             endIcon={<FaHistory />}
-            onClick={() => setDialogType({ type: 'HistoryDialog', data: {} })}
+            onClick={() => setDialogType({ type: 'HistoryDialog', data: '' })}
           >
             {t('SubAccount.showHistory')}
           </Button>
@@ -491,12 +491,12 @@ const AccountUsers = ({ classes }: any) => {
                 className={classes.flex1}>
                   {row.BulkSMS}
               </TableCell>
-              <TableCell
+              {/* <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
                   {row.BulkMMS}
-              </TableCell>
+              </TableCell> */}
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
@@ -521,12 +521,12 @@ const AccountUsers = ({ classes }: any) => {
                 className={classes.flex1}>
                   {row.DirectSMSCredits}
               </TableCell>
-              <TableCell
+              {/* <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.DirectSMSCredits}
-              </TableCell>
+                  {row.DirectMmsCredits}
+              </TableCell> */}
             </>
           )
         }
@@ -601,7 +601,8 @@ const AccountUsers = ({ classes }: any) => {
 			title: t("SubAccount.showHistory"),
 			content: <CreditHistory classes={classes} id={id} />,
 			onConfirm: () => setDialogType(null),
-			onCancel: () => setDialogType(null)
+			onCancel: () => setDialogType(null),
+      showDefaultButtons: false
 		};
 	}
 

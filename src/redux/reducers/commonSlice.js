@@ -291,6 +291,11 @@ export const commonSlice = createSlice({
     builder
       .addCase(GetSmsCountries.fulfilled, (state, { payload }) => {
         state.countryCodeList = get(payload, 'Data.Data', []);
+        state.countryCodeList.push({
+          ID: 0,
+          Name: 'Default',
+          SmsCountryPhoneCode: '0'
+        })
       });
   },
   reducers: {

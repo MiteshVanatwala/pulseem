@@ -8,7 +8,7 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import Toast from '../../components/Toast/Toast.component';
 import { coreProps } from '../../model/Core/corePros.types';
 import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
-import { useStylesBootstrapPasswordHint } from '../../helpers/Utils/HtmlUtils';
+import { RenderHtml, useStylesBootstrapPasswordHint } from '../../helpers/Utils/HtmlUtils';
 import PasswordHint from '../Settings/AccountSettings/Password/PasswordHint';
 import { ValidPassword } from '../Settings/AccountSettings/Password/Types';
 import { DateFormats, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from '../../helpers/Constants';
@@ -22,7 +22,7 @@ import { get, map } from 'lodash';
 import { AddEditSubAccounts, GetGroupsAccountSubUsers } from '../../redux/reducers/SubAccountSlice';
 import { Group } from '../../Models/Groups/Group';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
-import { IsValidGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
+import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -30,7 +30,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, countryCodeList } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, countryCodeList, currencySymbol, isCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { testGroups } = useSelector((state: any) => state.sms);
 	const [ selectedGroups, setSelectedGroups ] = useState<any>([]);
@@ -38,6 +38,11 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const [ allGroupsSelected, setAllGroupsSelected ] = useState(false);
 	const [ isLoader, setIsLoader ] = useState<boolean>(false);
 	const [ toastMessage, setToastMessage ] = useState(null);
+	const [ dialogType, setDialogType ] = useState<{
+		type: string;
+	} | null>({
+		type: ''
+	});
 	const [ errors, setErrors ] = useState({
 		subAccountName: '',
 		cellPhone: '',
@@ -73,7 +78,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		confirmPassword: '',
 		isPasswordVisible: false,
 		automaticUserLock: null,
-		balance: '',
+		balance: 0,
 		addBalance: '',
 	})
 	const CustomGuidEnc = get(subAccountRecord, 'CustomGuidEnc', '');
@@ -106,9 +111,18 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				confirmPassword: '',
 				isPasswordVisible: false,
 				automaticUserLock: get(subAccountRecord, 'ExpiryDate', null),
-				balance: get(subAccountRecord, 'FinalGlobalBalance', ''),
+				balance: get(subAccountRecord, 'FinalGlobalBalance', 0),
 				addBalance: 0,
 			})
+
+			setErrors({
+				subAccountName: '',
+				cellPhone: '',
+				emailAddress: '',
+				loginUserName: '',
+				password: '',
+				confirmPassword: '',
+			});
 
 			getGroupList();
 		}
@@ -151,7 +165,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		let errorsTemp = JSON.parse(JSON.stringify(errors))
 		errorsTemp = {
 			subAccountName: subAccountDetails.subAccountName.trim() === '' ? t('common.requiredField') : '',
-			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(subAccountDetails.cellPhone.trim(), countryCodeList ) : !IsValidGlobalPhoneNumber(subAccountDetails.cellPhone.trim())) ? t('recipient.errors.cellPhone') : '',
+			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(subAccountDetails.cellPhone.trim(), countryCodeList ) : !IsValidNonGlobalPhoneNumber(subAccountDetails.cellPhone.trim())) ? t('recipient.errors.cellPhone') : '',
 			emailAddress: subAccountDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
 			loginUserName: subAccountDetails.loginUserName.trim() === '' ? t('common.requiredField') : '',
 			password: '',
@@ -275,15 +289,50 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				break;
 			}
 			case 1004: {
-				showErrorToast(t('SubAccount.NotEnoughMMSCreditInParentAccount'));
+				showErrorToast(t('SubAccount.notEnoughMMSCreditInParentAccount'));
 				break;
 			}
 			case 100:
 			case 500:
 			default: {
-				showErrorToast(t('common.Error'));
+				setDialogType({ type: 'internalError'});
 				break;
 			}
+		}
+	}
+
+	const displayInternalErrorPopup = () => ({
+		title: t('common.ErrorTitle'),
+		showDivider: false,
+    showDefaultButtons: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{RenderHtml(t('SubAccount.emailUserNameExist'))}
+			</Typography>
+		),
+    onClose: () => setDialogType(null)
+	})
+
+	const renderDialog = () => {
+		const { type } = dialogType || {}
+		let currentDialog: any = {};
+		if (type === 'internalError') {
+			currentDialog = displayInternalErrorPopup();
+		}
+
+		if (type) {
+			return (
+				dialogType && <BaseDialog
+          contentStyle={classes.maxWidth540}
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType(null)}
+					onClose={() => setDialogType(null)}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
 		}
 	}
 
@@ -402,18 +451,22 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 						!isGlobal ? (
 							<>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									<b>{t("SubAccount.emailBulk")}:</b> {subAccountDetails.emailBulk} {t("SubAccount.credit")}
+									<b>{t("SubAccount.emailBulk")}:</b> {subAccountDetails.emailBulk} {t("SubAccount.messages")}
 								</Grid>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									<b>{t("SubAccount.SMSBulk")}:</b> {subAccountDetails.SMSBulk} {t("SubAccount.messages")}
+									<b>{t("SubAccount.SMSBulk")}:</b> {subAccountDetails.SMSBulk} {t("SubAccount.credit")}
 								</Grid>
-								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									<b>{t("SubAccount.MMSBulk")}:</b> {subAccountDetails.MMSBulk} {t("SubAccount.messages")}
-								</Grid>
+								{/* {
+									subAccountDetails.MMSBulk !== null && (
+										<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
+											<b>{t("SubAccount.MMSBulk")}:</b> {subAccountDetails.MMSBulk} {t("SubAccount.messages")}
+										</Grid>
+									)
+								} */}
 							</>
 						) : (
 							<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-								<b>{t("SubAccount.balance")}:</b> {subAccountDetails.balance} {t("SubAccount.credit")}
+								<b>{t("SubAccount.balance")}:</b> { isCurrencySymbolPrefix ? currencySymbol : '' } {subAccountDetails.balance} { !isCurrencySymbolPrefix ? currencySymbol : '' }
 							</Grid>
 						)
 					}
@@ -458,11 +511,8 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							autoComplete="off"
 							onChange={(e: any) => setSubAccountDetails({
 								...subAccountDetails,
-								cellPhone: e.target.value
+								cellPhone: IsValidPhoneNumberKeyPress(e.target.value) ? e.target.value : ''
 							})}
-							// onKeyUp={handleKeyPress}
-							// @ts-ignore
-							onKeyPress={isGlobal ? IsValidGlobalPhoneNumber : null}
 							inputProps={{ maxlength: 16 }}
 						/>
 						<Box className='textBoxWrapper'>
@@ -534,8 +584,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													autoComplete="off"
 													onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
 														...subAccountDetails,
-														emailBulkAmount: e.target.value.trim()
+														emailBulkAmount: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
 													})}
+													inputProps={{ maxLength: 10 }}
 												/>
 											</>
 										)
@@ -581,8 +632,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													autoComplete="off"
 													onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
 														...subAccountDetails,
-														SMSBulkAmount: e.target.value.trim()
+														SMSBulkAmount: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
 													})}
+													inputProps={{ maxLength: 10 }}
 												/>
 											</>
 										)
@@ -590,50 +642,55 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 								</Grid>
 
 								<Grid item md={4} xs={12}>
-									<FormControlLabel
-										control={
-											<PulseemSwitch
-												id="1"
-												switchType='ios'
-												classes={classes}
-												onColor="#0371ad"
-												handleDiameter={20}
-												boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-												height={15}
-												className={clsx({ [classes.rtlSwitch]: isRTL })}
-												checked={subAccountDetails.addMMSBulk}
-												onChange={() => setSubAccountDetails({
-													...subAccountDetails,
-													addMMSBulk: !subAccountDetails.addMMSBulk
-												})}
+									{/* {
+										subAccountDetails.MMSBulk !== null && <>
+											<FormControlLabel
+												control={
+													<PulseemSwitch
+														id="1"
+														switchType='ios'
+														classes={classes}
+														onColor="#0371ad"
+														handleDiameter={20}
+														boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+														activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+														height={15}
+														className={clsx({ [classes.rtlSwitch]: isRTL })}
+														checked={subAccountDetails.addMMSBulk}
+														onChange={() => setSubAccountDetails({
+															...subAccountDetails,
+															addMMSBulk: !subAccountDetails.addMMSBulk
+														})}
+													/>
+												}
+												label={t('SubAccount.addMMSBulk')}
 											/>
-										}
-										label={t('SubAccount.addMMSBulk')}
-									/>
-									{
-										subAccountDetails.addMMSBulk && (
-											<>
-												<Typography title={t("SubAccount.MMSBulkAmount")} className={clsx(classes.alignDir, classes.pt10)}>
-													{t("SubAccount.MMSBulkAmount")}
-												</Typography>
-												<TextField
-													type='number'
-													id="MMSBulkAmount"
-													label=""
-													variant="outlined"
-													name="MMSBulkAmount"
-													value={subAccountDetails.MMSBulkAmount}
-													className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
-													autoComplete="off"
-													onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
-														...subAccountDetails,
-														MMSBulkAmount: e.target.value.trim()
-													})}
-												/>
-											</>
-										)
-									}
+											{
+												subAccountDetails.addMMSBulk && (
+													<>
+														<Typography title={t("SubAccount.MMSBulkAmount")} className={clsx(classes.alignDir, classes.pt10)}>
+															{t("SubAccount.MMSBulkAmount")}
+														</Typography>
+														<TextField
+															type='number'
+															id="MMSBulkAmount"
+															label=""
+															variant="outlined"
+															name="MMSBulkAmount"
+															value={subAccountDetails.MMSBulkAmount}
+															className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+															autoComplete="off"
+															onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
+																...subAccountDetails,
+																MMSBulkAmount: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
+															})}
+															inputProps={{ maxLength: 10 }}
+														/>
+													</>
+												)
+											}
+										</>
+									} */}
 								</Grid>
 							</>
 						)
@@ -644,7 +701,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							<>
 								<Grid item md={4} xs={12}>
 									<Typography title={t("SubAccount.balance")} className={clsx(classes.alignDir, classes.pt10)}>
-										{t("SubAccount.balance")}
+										{t("SubAccount.addBalance")}
 									</Typography>
 									<TextField
 										type='number'
@@ -657,8 +714,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 										autoComplete="off"
 										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
 											...subAccountDetails,
-											addBalance: e.target.value.trim()
+											addBalance: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
 										})}
+										inputProps={{ max: 9999999999, type:'number'}}
 									/>
 								</Grid>
 							</>
@@ -849,6 +907,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				</Grid>
 				<Loader isOpen={isLoader} />
 				{toastMessage && renderToast()}
+				{renderDialog()}
 			</>
 		</BaseDialog>
 	);

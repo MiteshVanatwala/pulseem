@@ -149,7 +149,7 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
               value={topUpAmount}
               className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField)}
               autoComplete="off"
-              onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setTopUpAmount(e.target.value)}
+              onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setTopUpAmount(Number(Math.max(0, parseInt(e.target.value)).toString().slice(0,10)))}
               InputProps={{
                 startAdornment: isCurrencySymbolPrefix === true ? <InputAdornment position="start">{currencySymbol}</InputAdornment> : null,
                 endAdornment: isCurrencySymbolPrefix === false ? <InputAdornment position="end">{currencySymbol}</InputAdornment> : null

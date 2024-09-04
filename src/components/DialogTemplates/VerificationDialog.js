@@ -18,7 +18,7 @@ import {
 } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { IsValidGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
+import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
 
 
 const VerificationDialog = ({
@@ -630,7 +630,7 @@ const VerificationDialog = ({
                                 }}
                                 onChange={(e) => {
                                     !!verificationError?.number && setVerificationError({ number: '' })
-                                    if (!e.target.value || IsValidGlobalPhoneNumber(e.target.value)) {
+                                    if (!e.target.value || IsValidPhoneNumberKeyPress(e.target.value)) {
                                         setSelectedVerificationContact(e.target.value?.trim())
                                     }
                                 }}
@@ -638,18 +638,18 @@ const VerificationDialog = ({
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('sms.enterNumberText')}
                                 error={!!verificationError?.Number}
-                                onKeyPress={isGlobal ? IsValidGlobalPhoneNumber : null}
+                                onKeyPress={isGlobal ? IsValidPhoneNumberKeyPress : null}
                             />
                         </Box>
                         <Box mt={2}>
                             <Button className={clsx(classes.btn, classes.btnRounded)}
                                 onClick={() => {
-                                    if (isGlobal ? IsValidPhoneNumberWithCountryCode(selectedVerificationContact, countryCodeList) : IsValidGlobalPhoneNumber(selectedVerificationContact)) {
+                                    if (isGlobal ? IsValidPhoneNumberWithCountryCode(selectedVerificationContact, countryCodeList) : IsValidNonGlobalPhoneNumber(selectedVerificationContact)) {
                                         handleSendCode(selectedVerificationContact)
                                         NextSlide()
                                     }
                                     else
-                                        setVerificationError({ Number: t('sms.numberError') })
+                                        setVerificationError({ Number: t('sms.invalidNumber') })
                                 }}
                             >{t('sms.verificationButtonText')}</Button>
                             <Typography className='error' variant="body1">{verificationError?.Number}</Typography>
@@ -813,7 +813,7 @@ const VerificationDialog = ({
                                 }}
                                 onChange={(e) => {
                                     !!verificationError?.number && setVerificationError({ number: '' })
-                                    if (!e.target.value || IsValidGlobalPhoneNumber(e.target.value)) {
+                                    if (!e.target.value || IsValidPhoneNumberKeyPress(e.target.value)) {
                                         setSelectedVerificationContact(e.target.value?.trim())
                                     }
                                 }}
@@ -821,13 +821,13 @@ const VerificationDialog = ({
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('sms.enterNumberText')}
                                 error={!!verificationError?.Number}
-                                onKeyPress={isGlobal ? IsValidGlobalPhoneNumber : null}
+                                onKeyPress={isGlobal ? IsValidPhoneNumberKeyPress : null}
                             />
                         </Box>
                         <Box mt={2}>
                             <Button className={clsx(classes.btn, classes.btnRounded)}
                                 onClick={() => {
-                                    if (isGlobal ? IsValidPhoneNumberWithCountryCode(selectedVerificationContact, countryCodeList) : IsValidGlobalPhoneNumber(selectedVerificationContact)) {
+                                    if (isGlobal ? IsValidPhoneNumberWithCountryCode(selectedVerificationContact, countryCodeList) : IsValidNonGlobalPhoneNumber(selectedVerificationContact)) {
                                         const cellphoneAuth = verifiedNumbers.find((v) => { return v?.Number === selectedVerificationContact });
 
                                         if (cellphoneAuth?.IsOptIn) {
@@ -842,7 +842,7 @@ const VerificationDialog = ({
                                         }
                                     }
                                     else
-                                        setVerificationError({ Number: t('sms.numberError') })
+                                        setVerificationError({ Number: t('sms.invalidNumber') })
                                 }}
                             >{t('sms.verificationButtonText')}</Button>
                             <Typography className='error' variant="body1">{verificationError?.Number}</Typography>
