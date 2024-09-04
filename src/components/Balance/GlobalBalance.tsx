@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { CardIcon } from '../../assets/images/dashboard/index'
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import GlobalBalancePaymentWizard from './GlobalBalancePaymentWizard';
 
 const GlobalBalance = ({ classes }: any) => {
@@ -16,38 +15,6 @@ const GlobalBalance = ({ classes }: any) => {
     type: string;
     data: any
   } | null>(null);
-
-  const renderPackagesListDialog = () => {
-    return {
-      title: t('common.topUp'),
-		  showDivider: false,
-      content: <GlobalBalancePaymentWizard classes={classes} />
-    };
-  }
-
-  const renderDialog = () => {
-    const { type, data } = dialogType || {}
-
-    let currentDialog: any = {};
-		if (type === 'PaymentDialog') {
-			currentDialog = renderPackagesListDialog();
-    }
-
-    if (type) {
-      return (
-        dialogType && <BaseDialog
-          contentStyle={classes.w70VW}
-          classes={classes}
-          open={dialogType}
-          onClose={() => setDialogType(null)}
-          onCancel={() => setDialogType(null)}
-          {...currentDialog}>
-          {currentDialog.content}
-        </BaseDialog>
-      )
-    }
-    return <></>
-  }
 
   return (
     <>

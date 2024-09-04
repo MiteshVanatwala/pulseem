@@ -644,7 +644,7 @@ const AccountUsers = ({ classes }: any) => {
     if (type) {
       return (
         dialogType && <BaseDialog
-          contentStyle={type === 'HistoryDialog' ? clsx(classes.noMargin, windowSize !== 'xs' ? classes.w70VW : '') : classes.maxWidth400}
+          contentStyle={type === 'HistoryDialog' ? clsx(classes.noMargin) : classes.maxWidth400}
           classes={classes}
           open={dialogType}
           onClose={() => setDialogType(null)}

@@ -73,7 +73,7 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
   return (
     <BaseDialog
       title={t('common.topUpBalance')}
-      contentStyle={windowSize === 'xs' ? clsx(classes.noMargin) : classes.w70VW}
+      contentStyle={windowSize === 'xs' ? clsx(classes.noMargin) : null}
       classes={classes}
       open={isOpen}
       disableBackdropClick={true}
@@ -126,7 +126,7 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
         </div>
       )}
     >
-      <Box sx={{ width: '100%' }}>
+      <Box sx={{ width: windowSize === 'xs' ? '100%' : '700px' }}>
         <Stepper activeStep={activeStep} alternativeLabel className={clsx(classes.nopadding)}>
           {steps.map((label) => (
             <Step key={label}>
