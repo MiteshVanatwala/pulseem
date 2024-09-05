@@ -48,9 +48,9 @@ const AccountUsers = ({ classes }: any) => {
     type: string;
     data: any
   } | null>(null);
-  const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
-  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
-  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
+  const rowStyle = { head: clsx(classes.tableRowHead, classes.pt5, classes.pb5), root: classes.tableRowRoot }
+  const cellStyle = { head: clsx(classes.tableCellHead, classes.noPadding, classes.f16), body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
+  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.noPadding) }
   const [ direct, setDirect ] = useState<{
     emailDirect: null | number,
     SMSDirect: null | number,
@@ -191,6 +191,7 @@ const AccountUsers = ({ classes }: any) => {
                   <ManagmentIcon
                     classes={classes}
                     {...icon}
+                    textClass={classes.f14}
                     uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                   />
                   {/* {icon.key === 'copy' && renderCopyToClipoard} */}
@@ -455,7 +456,7 @@ const AccountUsers = ({ classes }: any) => {
           className={isGlobal ? classes.flex1 : classes.flex2}>
             <b>{row.SubAccountName}</b>
             <div>
-              {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.FULL_DATE)}</b>
+              {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.REGULAR)}</b>
             </div>
         </TableCell>
         <TableCell
