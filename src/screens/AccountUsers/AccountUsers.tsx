@@ -456,7 +456,7 @@ const AccountUsers = ({ classes }: any) => {
           className={isGlobal ? classes.flex1 : classes.flex2}>
             <b>{row.SubAccountName}</b>
             <div>
-              {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.REGULAR)}</b>
+              {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}</b>
             </div>
         </TableCell>
         <TableCell
@@ -570,7 +570,7 @@ const AccountUsers = ({ classes }: any) => {
           </Box>
           <Box className={clsx(classes.pt5)}>
             <Typography className={classes.grayTextCell}>
-              {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.FULL_DATE)}</b>
+              {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}</b>
             </Typography>
           </Box>
           {renderCellIcons(row)}
@@ -679,7 +679,7 @@ const AccountUsers = ({ classes }: any) => {
       </Box>
 
       {renderManagmentLine()}
-      {renderTable()}
+      { isGlobal !== null && renderTable()}
       {renderTablePagination()}
       {
         !isGlobal && (

@@ -259,7 +259,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					align='center'
 					className={classes.flex2}
 				>
-					{moment(row.Date).format(DateFormats.FULL_DATE)}
+					{moment(row.Date).format(DateFormats.DATE_TIME_24)}
 				</TableCell>
 				<TableCell
 					classes={cellBodyStyle}
@@ -328,7 +328,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
           </Box>
           <Box className={clsx(classes.pt5)}>
             <Typography className={classes.grayTextCell}>
-              {t('common.Dates')}: <b>{moment(row.Date).format(DateFormats.FULL_DATE)}</b>
+              {t('common.Dates')}: <b>{moment(row.Date).format(DateFormats.DATE_TIME_24)}</b>
             </Typography>
           </Box>
         </TableCell>
@@ -382,7 +382,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 		if (history.length > 0) {
 			history.map((record: BulkHistory) => {
 				listToExport.push({
-					Date: moment(record.Date).format(DateFormats.FULL_DATE),
+					Date: moment(record.Date).format(DateFormats.DATE_TIME_24),
 					Amount: `${isGlobal && isCurrencySymbolPrefix ? currencySymbol : ''} ${record.Amount} ${isGlobal && !isCurrencySymbolPrefix ? currencySymbol : ''}`,
 					Type: t(`${get(CreditHistoryType, record.Type, '')}`),
 					AccountType: t(`${get(CreditHistoryType, `${record.AccountType}`, '')}`),

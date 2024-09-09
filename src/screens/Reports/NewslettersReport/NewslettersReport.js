@@ -17,7 +17,7 @@ import { getGetEmailReportsManagement, getNewsletterReports } from '../../../red
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
+import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices, DateFormats } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
@@ -592,11 +592,11 @@ const NewslettersReport = ({ classes }) => {
     const { CampaignID, Name, SendDate, isChecked = false, Status, LastEditDate } = row
 
     const date = SendDate ? moment(SendDate) : ''
-    const showDate = SendDate ? date.format('L') : ''
-    const showTime = SendDate ? date.format('LT') : ''
+    const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
+    const showTime = SendDate ? date.format(DateFormats.TIME_ONLY) : ''
     const udate = LastEditDate ? moment(LastEditDate) : '';
-    const showUpdateDate = LastEditDate ? udate.format('L') : '';
-    const showTimeUpdate = LastEditDate ? udate.format('LT') : '';
+    const showUpdateDate = LastEditDate ? udate.format(DateFormats.DATE_ONLY) : '';
+    const showTimeUpdate = LastEditDate ? udate.format(DateFormats.TIME_ONLY) : '';
     const isParentCampaignWithChild = parentCampaignsWithChild.indexOf(row.CampaignID) > -1;
 
     if (SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1) {
@@ -623,7 +623,7 @@ const NewslettersReport = ({ classes }) => {
             ) :
             (
               <Typography className={clsx(classes.grayTextCell)}>
-                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
               </Typography>
             )
           }
@@ -679,7 +679,7 @@ const NewslettersReport = ({ classes }) => {
             ) :
             (
               <Typography className={classes.grayTextCell}>
-                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
               </Typography>
             )}
         </Grid>

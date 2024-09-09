@@ -27,6 +27,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { DateFormats } from '../../../helpers/Constants';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -421,7 +422,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         />
         <Typography
           className={classes.grayTextCell}>
-          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+          {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
         </Typography>
       </>
     )

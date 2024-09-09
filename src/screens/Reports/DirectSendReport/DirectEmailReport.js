@@ -15,7 +15,7 @@ import { getNewsletterDirectReport, getArchiveDirectReport } from '../../../redu
 import { reactivateEmail } from '../../../redux/reducers/clientSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
-import { EmailStatus } from '../../../helpers/Constants';
+import { DateFormats, EmailStatus } from '../../../helpers/Constants';
 import { ConvertColorStatus, ConvertEmailStatusText, EllipsisText, SourceType } from '../../../helpers/UI/TableText';
 import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';
@@ -42,7 +42,7 @@ const RenderRow = ({
     let text = data;
     if (dataType === 'date') {
       text = moment(text);
-      text = `${text.format('DD/MM/YYYY')} ${text.format('LT')}`
+      text = `${text.format(DateFormats.DATE_TIME_24)}`
     }
     if (dataType === 'status') {
       text = t(ConvertEmailStatusText(`${data}`))
@@ -551,11 +551,11 @@ const DirectEmailReportTab = ({
 
     const date = SendDate ? moment(SendDate) : ''
     const udate = UpdateDate ? moment(UpdateDate) : '';
-    const showDate = SendDate ? date.format('L') : ''
-    const showTime = SendDate ? date.format('LT') : ''
+    const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
+    const showTime = SendDate ? date.format(DateFormats.TIME_ONLY) : ''
     const isSchedule = moment(SendDate) > moment();
-    const showUpdateDate = UpdateDate ? udate.format('L') : '';
-    const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
+    const showUpdateDate = UpdateDate ? udate.format(DateFormats.DATE_ONLY) : '';
+    const showTimeUpdate = UpdateDate ? udate.format(DateFormats.TIME_ONLY) : '';
 
     return (
       <>
@@ -565,12 +565,12 @@ const DirectEmailReportTab = ({
         {SendDate !== null ?
           (
             <Typography className={classes.grayTextCell}>
-              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
+              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format(DateFormats.DATE_ONLY)} ${showTime}`}
             </Typography>
           ) :
           (
             <Typography className={classes.grayTextCell}>
-              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
             </Typography>
           )
         }

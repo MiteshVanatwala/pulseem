@@ -214,7 +214,7 @@ export const commonSlice = createSlice({
     accountFeatures: null,
     isSweepingApproval: false,
     subAccount: null,
-    isGlobal: false,
+    isGlobal: null,
     currencyId: null,
     currency: null,
     currencyDescription: null,

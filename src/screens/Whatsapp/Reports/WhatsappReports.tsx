@@ -58,7 +58,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
 import { TablePagination } from '../../../components/managment';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { SizeOptions_XS_SM } from '../../../helpers/Constants';
+import { DateFormats, SizeOptions_XS_SM } from '../../../helpers/Constants';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
@@ -222,7 +222,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					icon={undefined}
 				/>
 				<Typography className={classes.grayTextCell}>
-					{`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+					{`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
 				</Typography>
 			</>
 		);
@@ -372,10 +372,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						Cost: row?.Cost,
 						Revenue: row?.Revenue,
 						CreateDate: row?.CreateDate
-							? moment(row?.CreateDate).format('DD/MM/YYYY')
+							? moment(row?.CreateDate).format(DateFormats.DATE_ONLY)
 							: '',
 						UpdateDate: row?.UpdateDate
-							? moment(row?.UpdateDate).format('DD/MM/YYYY')
+							? moment(row?.UpdateDate).format(DateFormats.DATE_ONLY)
 							: '',
 					};
 					return updatedRow;

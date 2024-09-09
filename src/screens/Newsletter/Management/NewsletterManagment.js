@@ -41,7 +41,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
-import { SEND_1, PULSE_1 } from '../../../helpers/Constants';
+import { SEND_1, PULSE_1, DateFormats } from '../../../helpers/Constants';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
@@ -686,7 +686,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                   </Typography>
                   <Typography
                     className={classes.grayTextCell}>
-                    {`${text}${separator} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+                    {`${text}${separator} ${date.format(DateFormats.DATE_TIME_24)}`}
                   </Typography>
                 </Grid>
               ) : (

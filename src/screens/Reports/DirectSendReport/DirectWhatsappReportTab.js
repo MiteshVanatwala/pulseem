@@ -15,7 +15,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { WhatsappStatus } from '../../../helpers/Constants';
+import { DateFormats, WhatsappStatus } from '../../../helpers/Constants';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { ConvertColorStatus, ConvertWhatsappStatusText, SourceType } from '../../../helpers/UI/TableText';
@@ -109,7 +109,7 @@ const DirectWhatsappReportTab = ({
         let text = data;
         if (dataType === 'date') {
             text = moment(text);
-            text = `${text.format('DD/MM/YYYY HH:mm')}`
+            text = `${text.format(DateFormats.DATE_TIME_24)}`
         }
         if (dataType === 'status') {
             text = t(ConvertWhatsappStatusText(text));
@@ -527,7 +527,7 @@ const DirectWhatsappReportTab = ({
 
     const renderNameCell = (schedule) => {
         let d = moment(schedule);
-        d = `${d.format('DD/MM/YYYY HH:mm')}`
+        d = `${d.format(DateFormats.DATE_TIME_24)}`
 
         return (
             <>

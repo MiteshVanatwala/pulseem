@@ -76,6 +76,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import { SelectChangeEvent, Stack } from '@mui/material';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
+import { DateFormats } from '../../../helpers/Constants';
 
 const SendCampaign = ({
 	classes,
@@ -828,8 +829,8 @@ const SendCampaign = ({
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				{`${translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage')}
 					${campaignSummary?.NextAvailableTime
-						? moment(campaignSummary?.NextAvailableTime).format('DD.MM.YYYY HH:MM')
-						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+						? moment(campaignSummary?.NextAvailableTime).format(DateFormats.DATE_TIME_24)
+						: moment().add(1, 'd').format(DateFormats.DATE_TIME_24)
 					}`}
 			</Typography>
 		),

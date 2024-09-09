@@ -15,7 +15,7 @@ import { getSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/re
 import { reactivateSms } from '../../../redux/reducers/clientSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { SmsStatus } from '../../../helpers/Constants';
+import { DateFormats, SmsStatus } from '../../../helpers/Constants';
 import { ConvertSmsStatusText, ConvertColorStatus, SourceType } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
@@ -108,7 +108,7 @@ const DirectSMSReportTab = ({
     let text = data;
     if (dataType === 'date') {
       text = moment(text);
-      text = `${text.format('DD/MM/YYYY HH:mm')}`
+      text = `${text.format(DateFormats.DATE_TIME_24)}`
     }
     if (dataType === 'status') {
       text = t(ConvertSmsStatusText(`${text}`));
@@ -529,7 +529,7 @@ const DirectSMSReportTab = ({
   const renderNameCell = (row) => {
     const { DATE } = row
     let d = moment(DATE);
-    d = `${d.format('DD/MM/YYYY HH:mm')}`
+    d = `${d.format(DateFormats.DATE_TIME_24)}`
 
     return (
       <>

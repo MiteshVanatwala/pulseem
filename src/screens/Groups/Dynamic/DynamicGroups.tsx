@@ -40,7 +40,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
-import { ClientStatus } from '../../../helpers/Constants';
+import { ClientStatus, DateFormats } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { Client } from '../../../Models/Clients/Client';
@@ -408,7 +408,7 @@ const DynamicGroups = ({ classes }: any) => {
                         </Typography>
                     </CustomTooltip>
                     <Typography className={clsx(classes.grayTextCell, classes.date)}>
-                        {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+                        {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
                     </Typography>
                 </Grid>
             </Grid>

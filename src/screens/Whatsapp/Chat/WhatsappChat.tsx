@@ -75,6 +75,7 @@ import moment from 'moment';
 import { Typography } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { SelectChangeEvent } from '@mui/material';
+import { DateFormats } from '../../../helpers/Constants';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -821,8 +822,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				{`${translator(
 					'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
 				)} ${nextMessageAvailable
-					? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
-					: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+					? moment(nextMessageAvailable).format(DateFormats.DATE_TIME_24)
+					: moment().add(1, 'd').format(DateFormats.DATE_TIME_24)
 					}`}
 			</Typography>
 		),

@@ -14,7 +14,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Toast from '../../../components/Toast/Toast.component';
 import { PulseemReactInstance } from '../../../helpers/Api/PulseemReactAPI';
 import { get, includes } from 'lodash';
-import { rowsOptions } from '../../../helpers/Constants';
+import { DateFormats, rowsOptions } from '../../../helpers/Constants';
 import { ERROR_TYPE } from '../../../helpers/Types/common';
 import { Title } from '../../../components/managment/Title';
 
@@ -180,7 +180,7 @@ const DownloadFiles = ({ classes }: any) => {
                     classes={cellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {moment(row.CreationDate).format("DD/MM/YYYY HH:mm")}
+                    {moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}
                 </TableCell>
                 <TableCell
                     classes={cellStyle}

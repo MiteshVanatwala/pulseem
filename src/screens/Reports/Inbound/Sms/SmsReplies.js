@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
-import { ClientStatus } from '../../../../helpers/Constants';
+import { ClientStatus, DateFormats } from '../../../../helpers/Constants';
 import { EditIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
@@ -298,7 +298,7 @@ const SmsReplies = ({ classes }) => {
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex2}>
-                    {reply.format('DD/MM/YYYY')} {reply.format('HH:mm:ss')}
+                    {reply.format(DateFormats.DATE_TIME_24)}
                 </TableCell>
                 <TableCell
                     classes={{ root: classes.tableCellRoot }}

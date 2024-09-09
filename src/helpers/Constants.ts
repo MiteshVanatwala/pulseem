@@ -204,9 +204,10 @@ export const UploadSettings = {
 };
 
 export const DateFormats = {
-    REGULAR: 'YYYY-MM-DD HH:mm:ss',
-    DATE_ONLY: 'YYYY-MM-DD',
-    FULL_DATE: 'MM/DD/YYYY HH:mm:ss A',
+    DATE_TIME_24: 'DD/MM/YYYY HH:mm',
+    DATE_ONLY: 'DD/MM/YYYY',
+    TIME_ONLY: 'HH:mm',
+    FULL_DATE_AM_PM: 'DD/MM/YYYY HH:mm:ss A',
 }
 
 export const FBBusiness = 'https://business.facebook.com/wa/manage/';

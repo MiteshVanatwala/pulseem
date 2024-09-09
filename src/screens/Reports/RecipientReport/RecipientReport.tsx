@@ -34,6 +34,7 @@ import { FaFileExcel } from 'react-icons/fa';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { DateFormats } from '../../../helpers/Constants';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -1039,7 +1040,7 @@ const RecipientReport = ({ classes }: any) => {
       </Grid>
       <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.createdDate')}</div>
-        <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(dateTimeFormat)}</div>
+        <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(DateFormats.DATE_TIME_24)}</div>
       </Grid>
       <Grid item md={'auto'} xs={6} className={clsx(classes.flexGrow1, classes.pt15)}>
         {/* @ts-ignore */}

@@ -108,7 +108,7 @@ import moment from 'moment';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
-import { FBBusiness } from '../../../helpers/Constants';
+import { DateFormats, FBBusiness } from '../../../helpers/Constants';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -1169,8 +1169,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
 				{`${translator('settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage')}
 					${campaignSummary?.NextAvailableTime
-						? moment(campaignSummary?.NextAvailableTime).format('DD.MM.YYYY HH:MM')
-						: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+						? moment(campaignSummary?.NextAvailableTime).format(DateFormats.DATE_TIME_24)
+						: moment().add(1, 'd').format(DateFormats.DATE_TIME_24)
 					}`}
 			</Typography>
 		),

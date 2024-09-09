@@ -19,6 +19,7 @@ import { Loader } from "../../../../components/Loader/Loader";
 import { IoIosArrowDown } from "react-icons/io";
 import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
+import { DateFormats } from "../../../../helpers/Constants";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -145,7 +146,7 @@ const SummaryDialog = ({ classes,
                 return `${t("sms.SendNow")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
             }
             case 2: {
-                return `${IsBestTime ? `${t('campaigns.newsLetterEditor.sendSettings.optimalSendingFrom')} - ` : ''} ${moment(newsletterSendSummary?.SendDate).format('DD/MM/YYYY HH:mm')}`;
+                return `${IsBestTime ? `${t('campaigns.newsLetterEditor.sendSettings.optimalSendingFrom')} - ` : ''} ${moment(newsletterSendSummary?.SendDate).format(DateFormats.DATE_TIME_24)}`;
             }
             case 3: {
                 const exDates = { ...extraData };
