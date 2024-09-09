@@ -76,7 +76,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		let errorsTemp = JSON.parse(JSON.stringify(errors))
 		errorsTemp = {
 			companyName: getTrimmedEmptyValue('companyName') === '' ? t('common.requiredField') : '',
-			contactName: getTrimmedEmptyValue('contactName') === '' ? t('common.requiredField') : '',
+			// contactName: getTrimmedEmptyValue('contactName') === '' ? t('common.requiredField') : '',
 			emailAddress: getTrimmedEmptyValue('emailAddress') === '' ? t('common.requiredField') : '',
 		};
 
@@ -88,7 +88,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		}
 
 		setErrors(errorsTemp);
-		return errorsTemp.companyName === '' && errorsTemp.contactName === '' && errorsTemp.emailAddress === '';
+		return errorsTemp.companyName === '' && errorsTemp.emailAddress === '';
 	}
 	
 	const handleSaveResponse = (statusCode: number) => {

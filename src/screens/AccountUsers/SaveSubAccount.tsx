@@ -736,7 +736,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							onChange={(value: any) =>
 								setSubAccountDetails({
 									...subAccountDetails,
-									automaticUserLock: moment(value).format(DateFormats.DATE_ONLY)
+									automaticUserLock: moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT)
 								})
 							}
 							timePickerOpen={true}

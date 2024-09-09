@@ -146,7 +146,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 						onChange={(value: any) =>
 							setFilter({
 								...filter,
-								fromDate: moment(value).format(DateFormats.DATE_ONLY)
+								fromDate: moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT)
 							})
 						}
 						timePickerOpen={true}
@@ -172,12 +172,12 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 						onChange={(value: any) =>
 							setFilter({
 								...filter,
-								toDate: moment(value).format(DateFormats.DATE_ONLY)
+								toDate: moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT)
 							})
 						}
 						timePickerOpen={true}
 						dateActive={true}
-						minDate={filter.fromDate}
+						minDate={moment(filter.fromDate)}
 						timeActive={false}
 						buttons={{
 							ok: t("common.confirm"),

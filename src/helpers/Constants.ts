@@ -208,6 +208,7 @@ export const DateFormats = {
     DATE_ONLY: 'DD/MM/YYYY',
     TIME_ONLY: 'HH:mm',
     FULL_DATE_AM_PM: 'DD/MM/YYYY HH:mm:ss A',
+    DATEPICKER_DATE_FORMAT: 'MM/DD/YYYY'
 }
 
 export const FBBusiness = 'https://business.facebook.com/wa/manage/';
