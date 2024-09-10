@@ -16,10 +16,9 @@ import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
 import { ListIcon } from "../../../assets/images/managment";
 import BillingDetails from "./BillingDetails";
-import { getCreditCardIframe, getPurchaseHistory } from "../../../redux/reducers/BillingSlice";
+import { getCreditCardIframe, getAccountOperations } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
-import PurchaseHistory from "./PurchaseHistory";
-import OpenInvoices from "./OpenInvoices";
+import PurchaseTableTemplate from "./PurchaseTableTemplate";
 import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -34,6 +33,8 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [showPurchaseLoader, setShowPurchaseLoader] = useState<boolean>(true);
   const [showOpenInvoicesLoader, setShowOpenInvoicesLoader] = useState<boolean>(true);
   const [purchaseHistoryData, setPurchaseHistoryData] = useState<PurchaseHistoryModel>();
+  const [purchaseUnpaidData, setPurchaseUnpaidData] = useState<PurchaseHistoryModel>();
+
 
   const renderToast = () => {
     setTimeout(() => {
@@ -43,11 +44,17 @@ const BillingSettingsPage = ({ classes }: any) => {
   };
 
   const initPurchaseHistory = async () => {
-    const response = await dispatch(getPurchaseHistory()) as any;
-    if (response && response?.payload?.StatusCode === 201) {
-      setPurchaseHistoryData(response?.payload?.Data);
+    const paidResponse = await dispatch(getAccountOperations(true)) as any;
+    const unpaidResponse = await dispatch(getAccountOperations(false)) as any;
+    if (paidResponse && paidResponse?.payload?.StatusCode === 201) {
+      setPurchaseHistoryData(paidResponse?.payload?.Data);
     }
+    if (unpaidResponse && unpaidResponse?.payload?.StatusCode === 201) {
+      setPurchaseUnpaidData(unpaidResponse?.payload?.Data);
+    }
+
     setShowPurchaseLoader(false);
+    setShowOpenInvoicesLoader(false);
   }
 
   useEffect(() => {
@@ -116,7 +123,7 @@ const BillingSettingsPage = ({ classes }: any) => {
           <Title classes={classes} Text={t("settings.billingSettings.openInvoices")} />
         </Box>
         <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          <OpenInvoices classes={classes} showLoader={showOpenInvoicesLoader} />
+          <PurchaseTableTemplate classes={classes} data={purchaseUnpaidData} showLoader={showOpenInvoicesLoader} />
         </Box>
       </Box>
       <Box className={classes.settingsContainer}>
@@ -124,7 +131,7 @@ const BillingSettingsPage = ({ classes }: any) => {
           <Title classes={classes} Text={t("settings.billingSettings.lastPurchases")} />
         </Box>
         <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          <PurchaseHistory classes={classes} data={purchaseHistoryData} showLoader={showPurchaseLoader} />
+          <PurchaseTableTemplate classes={classes} data={purchaseHistoryData} showLoader={showPurchaseLoader} />
         </Box>
       </Box>
       {addCardDialog && paymentIframe && <BaseDialog

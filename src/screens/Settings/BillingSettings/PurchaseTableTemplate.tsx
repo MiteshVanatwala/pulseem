@@ -9,9 +9,10 @@ import moment from "moment";
 import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
 import { useTranslation } from "react-i18next";
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
+import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 
-const PurchaseHistory = ({ classes, data, showLoader }: any) => {
-  const { language, windowSize, isRTL } = useSelector((state: StateType) => state.core)
+const PurchaseTableTemplate = ({ classes, data, showLoader }: any) => {
+  const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: StateType) => state.core)
 
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -20,7 +21,6 @@ const PurchaseHistory = ({ classes, data, showLoader }: any) => {
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
 
-  const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
   const [page, setPage] = useState<number>(1);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -235,10 +235,10 @@ const PurchaseHistory = ({ classes, data, showLoader }: any) => {
     )
   }
 
+  const handleRowsPerPageChange = (val: any) => {
+    dispatch(setRowsPerPage(val))
+  }
   const renderTablePagination = () => {
-    const handleRowsPerPageChange = (val: any) => {
-      dispatch(setRowsPerPage(val))
-    }
     return (<TablePagination
       classes={classes}
       rows={data?.length}
@@ -254,10 +254,18 @@ const PurchaseHistory = ({ classes, data, showLoader }: any) => {
 
   return <Box style={{ position: 'relative', width: '100%' }}>
     <Loader isOpen={showLoader} showBackdrop={false} />
-    <>{data?.length === 0 ? 'NO DATA' : renderTable()}</>
-    <>{data?.length === 0 ? 'NO DATA' : renderTablePagination()}</>
+    {data?.length > 0 ? renderTable() :
+      (
+        <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
+          <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+            {t('common.NoDataTryFilter')}
+          </Grid>
+        </Box>
+      )
+    }
+    <>{renderTablePagination()}</>
 
   </Box>
 }
 
-export default PurchaseHistory;
+export default PurchaseTableTemplate;
