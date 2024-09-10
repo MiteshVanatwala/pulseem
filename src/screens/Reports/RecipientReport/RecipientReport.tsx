@@ -8,7 +8,7 @@ import { Title } from '../../../components/managment/Title';
 import { downloadRecipientsReportData, getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
 import { GroupsIcon } from '../../../assets/images/managment';
-import { ConvertClientStatus, ConvertNewsletterStatusText, SourceType } from '../../../helpers/UI/TableText';
+import { ConvertClientStatus, ConvertNewsletterStatusText, ConvertSmsStatusText, SourceType } from '../../../helpers/UI/TableText';
 import { PreviewIcon } from '../../../assets/images/managment';
 import { FormatDate } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -47,6 +47,7 @@ const RecipientReport = ({ classes }: any) => {
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const headCellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
+  const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) };
   const [dialogType, setDialogType] = useState<{
     type: string;
     data: any
@@ -341,10 +342,8 @@ const RecipientReport = ({ classes }: any) => {
             classes.recipientsStatus,
             classes.f15,
             {
-              [classes.recipientsStatusCreated]: row?.Status === 1,
-              [classes.recipientsStatusSent]: row?.Status === 4,
-              [classes.recipientsStatusSending]: row?.Status === 2,
-              [classes.recipientsStatusCanceled]: row?.Status === 5
+              [classes.recipientsStatusSent]: row?.Status === 0,
+              [classes.recipientsStatusCanceled]: row?.Status > 0
             }
           )}>
             {t(statusText)}
@@ -357,7 +356,7 @@ const RecipientReport = ({ classes }: any) => {
           {t(`common.${row.OpeningCount > 0 ? 'Yes' : 'No'}`)}
         </TableCell>
         <TableCell
-          classes={cellStyle}
+          classes={noBorderCellStyle}
           className={clsx(classes.flex1, classes.f15)}>
           <ManagmentIcon
             onClick={async () => {
@@ -368,7 +367,6 @@ const RecipientReport = ({ classes }: any) => {
               setDialogType({
                 type: 'newsletterpreview',
                 data: row.CampaignID
-                // data: response?.payload?.Message?.HtmlToEdit
               })
             }}
             classes={classes}
@@ -701,9 +699,18 @@ const RecipientReport = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex2, classes.f15)}>
-          {renderStatusCell(row.SmsStatus)}
-          {/* {t(`${ConvertSmsStatusText(`${row.SmsStatus}`)}`)} */}
+          className={clsx(classes.flex2, classes.f15,
+            {
+              [classes.recipientsStatus]: row?.SmsStatus === -1,
+              [classes.statusPending]: row?.SmsStatus === 1,
+              [classes.recipientsStatusSending]: row?.SmsStatus === 2,
+              [classes.recipientsStatusSent]: row?.SmsStatus === 3,
+              [classes.statusFailed]: row?.SmsStatus === 4 || row?.SmsStatus === 5,
+              [classes.statusStopped]: row?.SmsStatus === 6,
+              [classes.recipientsStatusCanceled]: row?.SmsStatus > 6
+            }
+          )}>
+          {t(`${ConvertSmsStatusText(`${row.SmsStatus}`)}`)}
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -712,7 +719,7 @@ const RecipientReport = ({ classes }: any) => {
           {t(`common.${row?.ClicksCount > 0 ? 'Yes' : 'No'}`)}
         </TableCell>
         <TableCell
-          classes={cellStyle}
+          classes={noBorderCellStyle}
           className={classes.flex1}>
           <ManagmentIcon
             classes={classes}
