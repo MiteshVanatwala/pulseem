@@ -30,7 +30,7 @@ import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
 import { EmailPreview } from '../../../components/EmailPreview';
 import { actionURL } from '../../../config';
 import { IsValidEmail, IsValidPhone } from '../../../helpers/Utils/Validations';
-import { FaFileExcel } from 'react-icons/fa';
+import { FaEye, FaFileExcel } from 'react-icons/fa';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
@@ -1073,11 +1073,14 @@ const RecipientReport = ({ classes }: any) => {
 
   const getSMSPreviewDialog = (data: any = {}) => {
     return {
-      title: t('whatsappManagement.preview'),
+      title: `${t('notifications.preview')} - ${t('common.campaignID')}: ${data?.SMSCampaignID}`,
       childrenPadding: false,
       contentStyle: classes.pt2rem,
       showDivider: false,
       showDefaultButtons: false,
+      icon: (
+        <FaEye style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+      ),
       content: (
         <Box>
           <Preview
@@ -1100,6 +1103,9 @@ const RecipientReport = ({ classes }: any) => {
     title: t('whatsappManagement.preview'),
     showDivider: false,
     showDefaultButtons: false,
+    icon: (
+      <FaEye style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+    ),
     content: (
       <Box className={classes.alertModalContentMobile}>
         <WhatsappMobilePreview
@@ -1119,20 +1125,19 @@ const RecipientReport = ({ classes }: any) => {
   })
 
   const getNewsletterPreviewDialog = (templateData: string = '') => ({
-    title: t('whatsappManagement.preview'),
+    title: `${t('notifications.preview')} - ${t('common.campaignID')}: ${templateData}`,
     showDivider: false,
     customContainerStyle: classes.beeTemplate,
     showDefaultButtons: false,
+    icon: (
+      <FaEye style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+    ),
     content: (
       <Box style={{ minHeight: 'calc(70vh)', height: 'calc(70vh)' }}>
         <iframe
           src={`${actionURL}PreviewCampaign.aspx?CampaignID=${templateData}&fromreact=true`}
           style={{ border: "none !important", width: '100%', height: '100%' }}
         />
-        {/* <EmailPreview
-          classes={classes}
-          data={templateData}
-        /> */}
       </Box>
     ),
     onConfirm: async () => {
