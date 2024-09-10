@@ -56,7 +56,7 @@ import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
-import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
+import BillingSettingsPage from './screens/Settings/BillingSettings/BillingSettingsPage';
 import { sitePrefix } from './config/index'
 // import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
@@ -445,7 +445,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}BillingSettings`}
-        element={<BillingSettingsEditor classes={classes} />}
+        element={<BillingSettingsPage classes={classes} />}
       />
       <Route
         path={`/AccountBilling`}

@@ -118,7 +118,8 @@ const BillingDetails = ({ classes }: any) => {
     return isValid;
   };
 
-  return <Box>
+  return <Box style={{ position: 'relative' }}>
+    <Loader isOpen={showLoader} showBackdrop={false} />
     <Grid container spacing={3}>
       <Grid item xs={12} sm={6} md={4}>
         <Typography>
@@ -320,7 +321,6 @@ const BillingDetails = ({ classes }: any) => {
         <>{t("settings.billingSettings.btnUpdate")}</>
       </Button>
     </Box>
-    <Loader isOpen={showLoader} showBackdrop={true} zIndex={9999} />
     {renderToast()}
   </Box>
 }

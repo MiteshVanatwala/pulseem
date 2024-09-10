@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import {
@@ -16,11 +16,13 @@ import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
 import { ListIcon } from "../../../assets/images/managment";
 import BillingDetails from "./BillingDetails";
-import { getCreditCardIframe } from "../../../redux/reducers/BillingSlice";
+import { getCreditCardIframe, getPurchaseHistory } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
-import { PulseemResponse } from "../../../Models/APIResponse";
+import PurchaseHistory from "./PurchaseHistory";
+import OpenInvoices from "./OpenInvoices";
+import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
 
-const BillingSettingsEditor = ({ classes }: any) => {
+const BillingSettingsPage = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
@@ -29,6 +31,9 @@ const BillingSettingsEditor = ({ classes }: any) => {
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
   const [paymentIframe, setPaymentIframe] = useState<string>('');
   const [showLoader, setShowLoader] = useState<boolean>(false);
+  const [showPurchaseLoader, setShowPurchaseLoader] = useState<boolean>(true);
+  const [showOpenInvoicesLoader, setShowOpenInvoicesLoader] = useState<boolean>(true);
+  const [purchaseHistoryData, setPurchaseHistoryData] = useState<PurchaseHistoryModel>();
 
   const renderToast = () => {
     setTimeout(() => {
@@ -36,6 +41,18 @@ const BillingSettingsEditor = ({ classes }: any) => {
     }, 4000);
     return <Toast data={toastMessage} />;
   };
+
+  const initPurchaseHistory = async () => {
+    const response = await dispatch(getPurchaseHistory()) as any;
+    if (response && response?.payload?.StatusCode === 201) {
+      setPurchaseHistoryData(response?.payload?.Data);
+    }
+    setShowPurchaseLoader(false);
+  }
+
+  useEffect(() => {
+    initPurchaseHistory();
+  }, []);
 
   const handleOnCardSaved = () => { }
 
@@ -96,18 +113,18 @@ const BillingSettingsEditor = ({ classes }: any) => {
       </Box>
       <Box className={classes.settingsContainer}>
         <Box className="head">
-          <Title classes={classes} Text={t("settings.billingSettings.lastPurchases")} />
+          <Title classes={classes} Text={t("settings.billingSettings.openInvoices")} />
         </Box>
         <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          {/* <BillingDetails classes={classes} /> */}
+          <OpenInvoices classes={classes} showLoader={showOpenInvoicesLoader} />
         </Box>
       </Box>
       <Box className={classes.settingsContainer}>
         <Box className="head">
-          <Title classes={classes} Text={t("settings.billingSettings.openInvoices")} />
+          <Title classes={classes} Text={t("settings.billingSettings.lastPurchases")} />
         </Box>
         <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          {/* <BillingDetails classes={classes} /> */}
+          <PurchaseHistory classes={classes} data={purchaseHistoryData} showLoader={showPurchaseLoader} />
         </Box>
       </Box>
       {addCardDialog && paymentIframe && <BaseDialog
@@ -134,4 +151,4 @@ const BillingSettingsEditor = ({ classes }: any) => {
   );
 };
 
-export default BillingSettingsEditor;
+export default BillingSettingsPage;

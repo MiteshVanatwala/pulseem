@@ -1,0 +1,21 @@
+{
+  "operationId": "Operation ID",
+  "billingPeriod": "Billing Period",
+  "productType": "Product Type",
+  "productDescription": "Product Descirption",
+  "amount": "Amount",
+  "purchaseDate": "Purchase Date",
+  "forPayment": "For Payment",
+  "includingVat": "Including VAT",
+  "invoice": "Invlice",
+  "credit": "Credit",
+  "receipt": "Receipt",
+  "periodType": {
+    "0": "Instant",
+    "1": "One Time",
+    "2": "Daily",
+    "3": "Monthly",
+    "4": "Yearly",
+    "5": "Monthly By Use"
+  }
+}

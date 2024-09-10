@@ -1,0 +1,21 @@
+{
+  "operationId": "מספר פעולה",
+  "billingPeriod": "תקופת חיוב",
+  "productType": "סוג פריט",
+  "productDescription": "תיאור פריט",
+  "amount": "כמות",
+  "purchaseDate": "תאריך רכישה",
+  "forPayment": "לתשלום",
+  "includingVat": "כולל מע\"מ",
+  "invoice": "חשבונית",
+  "credit": "זיכוי",
+  "receipt": "קבלה",
+  "periodType": {
+    "0": "לא מוגבל בזמן",
+    "1": "חד פעמי",
+    "2": "יומי",
+    "3": "חודשי קבוע",
+    "4": "שנתי",
+    "5": "חודשי לפי שימוש"
+  }
+}

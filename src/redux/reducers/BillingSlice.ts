@@ -37,6 +37,18 @@ export const getCreditCardIframe = createAsyncThunk(
         }
     }
 );
+export const getPurchaseHistory = createAsyncThunk(
+    'AccountBilling/GetPurchaseHistory',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`AccountBilling/GetPurchaseHistory`);
+            return response.data as PulseemResponse
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
 
 const BillingSlice = createSlice({
     name: 'AccountSettings',
