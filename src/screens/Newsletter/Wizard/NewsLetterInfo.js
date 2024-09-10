@@ -1320,7 +1320,7 @@ const NewsLetterInfo = ({ classes }) => {
                     </Grid>
                 </Grid>
 
-                <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 15 }}>
+                {(!campaingnValues?.Status || campaingnValues?.Status === 1) && <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 15 }}>
                     <WizardActions
                         classes={classes}
                         onBack={{
@@ -1330,7 +1330,7 @@ const NewsLetterInfo = ({ classes }) => {
                         additionalButtons={renderButtons()}
                         additionalButtonsOnStart={renderTemplateButtons()}
                     />
-                </Box>
+                </Box>}
                 <BaseDialog
                     classes={classes}
                     open={confirmExit}
