@@ -710,7 +710,7 @@ const RecipientReport = ({ classes }: any) => {
               [classes.recipientsStatusCanceled]: row?.SmsStatus > 6
             }
           )}>
-          {t(`${ConvertSmsStatusText(`${row.SmsStatus}`)}`)}
+          {(row?.SmsStatus === 4 || row?.SmsStatus === 5) ? t('emailStatus.error') : t(`${ConvertSmsStatusText(`${row.SmsStatus}`)}`)}
         </TableCell>
         <TableCell
           classes={cellStyle}

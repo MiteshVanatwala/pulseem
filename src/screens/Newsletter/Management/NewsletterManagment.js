@@ -391,7 +391,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         key: 'settings',
         uIcon: SettingIcon,
         lable: t("recipient.settings"),
-        remove: windowSize === 'xs' || Status !== 1,
+        remove: windowSize === 'xs' || Status !== 1 || AutomationID !== 0,
         onClick: () => {
           navigate(`${sitePrefix}Campaigns/Create/${CampaignID}`)
         },
