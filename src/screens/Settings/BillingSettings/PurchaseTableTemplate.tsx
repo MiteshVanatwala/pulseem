@@ -31,12 +31,12 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
       <TableHead>
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('billing.operationId')}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.purchaseDate")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.billingPeriod")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.productType")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex3} align='center'>{t("billing.productDescription")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.amount")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.forPayment")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.purchaseDate")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{isPaid ? t("billing.paid") : t("billing.forPayment")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.includingVat")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.invoice")}</TableCell>
           {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.credit")}</TableCell>}
@@ -93,12 +93,6 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
           {OperationID}
         </TableCell>
         <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex2}>
-          {moment(OperationDate).format('DD/MM/yyyy')}
-        </TableCell>
-        <TableCell
           classes={cellBodyStyle}
           align='center'
           className={classes.flex2}>
@@ -121,6 +115,12 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
           align='center'
           className={classes.flex1}>
           {NumberOfProducts}
+        </TableCell>
+        <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex2}>
+          {moment(OperationDate).format('DD/MM/yyyy')}
         </TableCell>
         <TableCell
           classes={borderCellStyle}

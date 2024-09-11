@@ -141,7 +141,7 @@
 		"btnUpdate": "עדכן פרטי חיוב",
 		"btnAddCard": "הוסף כרטיס אשראי",
 		"lastPurchases": "רכישות אחרונות",
-		"openInvoices": "חשבוניות פתוחות"
+		"openInvoices": "רכישות לחיוב"
 	},
 	"changePassword": {
 		"title": "שנה סיסמא",

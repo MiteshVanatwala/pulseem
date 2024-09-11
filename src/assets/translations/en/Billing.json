@@ -6,6 +6,7 @@
   "amount": "Amount",
   "purchaseDate": "Purchase Date",
   "forPayment": "For Payment",
+  "paid": "Paid",
   "includingVat": "Including VAT",
   "invoice": "Invlice",
   "credit": "Credit",
