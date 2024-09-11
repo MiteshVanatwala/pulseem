@@ -11,7 +11,8 @@ const MobilePreivew = ({ classes, fromNumber, text, keyItem }) => {
                 <div className={classes.chatBox}>
                     <div className={classes.fromMe}>
                         {text && text !== '' ? text.split('\n').map((str, idx) => {
-                            return (<p key={`${keyItem}_${idx}`} style={{ margin: "0", padding: "0" }}>{str}</p>)
+                            const finalStr = str === '' ? <br /> : str;
+                            return (<p key={`${keyItem}_${idx}`} style={{ margin: "0", padding: "0" }}>{finalStr}</p>)
                         }) : null}
                     </div>
                 </div>
