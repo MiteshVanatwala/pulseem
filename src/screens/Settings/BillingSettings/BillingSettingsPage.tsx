@@ -123,7 +123,7 @@ const BillingSettingsPage = ({ classes }: any) => {
           <Title classes={classes} Text={t("settings.billingSettings.openInvoices")} />
         </Box>
         <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          <PurchaseTableTemplate classes={classes} data={purchaseUnpaidData} showLoader={showOpenInvoicesLoader} />
+          <PurchaseTableTemplate classes={classes} data={purchaseUnpaidData} showLoader={showOpenInvoicesLoader} isPaid={false} />
         </Box>
       </Box>
       <Box className={classes.settingsContainer}>
@@ -131,7 +131,7 @@ const BillingSettingsPage = ({ classes }: any) => {
           <Title classes={classes} Text={t("settings.billingSettings.lastPurchases")} />
         </Box>
         <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          <PurchaseTableTemplate classes={classes} data={purchaseHistoryData} showLoader={showPurchaseLoader} />
+          <PurchaseTableTemplate classes={classes} data={purchaseHistoryData} showLoader={showPurchaseLoader} isPaid={true} />
         </Box>
       </Box>
       {addCardDialog && paymentIframe && <BaseDialog

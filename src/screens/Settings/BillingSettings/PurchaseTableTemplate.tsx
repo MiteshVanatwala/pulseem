@@ -8,10 +8,10 @@ import clsx from 'clsx';
 import moment from "moment";
 import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
 import { useTranslation } from "react-i18next";
-import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
+import { TablePagination } from '../../../components/managment/index'
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 
-const PurchaseTableTemplate = ({ classes, data, showLoader }: any) => {
+const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: StateType) => state.core)
 
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
@@ -39,8 +39,8 @@ const PurchaseTableTemplate = ({ classes, data, showLoader }: any) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.forPayment")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.includingVat")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.invoice")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.credit")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.receipt")}</TableCell>
+          {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.credit")}</TableCell>}
+          {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.receipt")}</TableCell>}
         </TableRow>
       </TableHead>
     )
@@ -79,6 +79,7 @@ const PurchaseTableTemplate = ({ classes, data, showLoader }: any) => {
       AmountWithVat,
       InvoiceRecieptName,
       InvoiceURL,
+      RecieptURL,
       ReceiptID
     } = row
     return (
@@ -139,22 +140,24 @@ const PurchaseTableTemplate = ({ classes, data, showLoader }: any) => {
           classes={cellBodyStyle}
           align='center'
           className={classes.flex1}>
-          {InvoiceID}
+          <Link href={InvoiceURL} target='_blank' style={{ textDecoration: 'underline' }}>
+            {InvoiceID}
+          </Link>
         </TableCell>
-        <TableCell
+        {isPaid && <TableCell
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex1)}>
           {CreditInvoiceID}
-        </TableCell>
-        <TableCell
+        </TableCell>}
+        {isPaid && <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={clsx(classes.flex1)}>
-          <Link href={InvoiceURL} target='_blank'>
+          <Link href={RecieptURL} target='_blank' style={{ textDecoration: 'underline' }}>
             {ReceiptID}
           </Link>
-        </TableCell>
+        </TableCell>}
       </TableRow>
     )
   }

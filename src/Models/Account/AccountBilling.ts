@@ -44,4 +44,5 @@ export interface PurchaseHistoryModel {
   BillingTypeID: number | any;
   InvoiceRecipientTypeID: number | any;
   InvoiceURL: any;
+  RecieptURL: any;
 }
