@@ -25,10 +25,11 @@ import { DeleteSubAccounts, GetDirectAccountDetails, GetSubAccountList } from '.
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
+import { sitePrefix } from '../../config';
 
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
+  const { language, windowSize, isRTL, rowsPerPage, isAllowSwitchAccount } = useSelector((state: any) => state.core);
   const { isGlobal, currencySymbol, isCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
   const { subAccountList } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
@@ -63,7 +64,8 @@ const AccountUsers = ({ classes }: any) => {
   moment.locale(language);
 
   useEffect(() => {
-    getInitialData();
+    if (isAllowSwitchAccount === 'False') navigate(`${sitePrefix}`);
+    else getInitialData();
   }, []);
   
   useEffect(() => {
