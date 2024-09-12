@@ -20,7 +20,6 @@ const TotalSection = ({ classes, TotalObject, callerType }) => {
                             return false;
                         }
                     }
-                    //if (callerType === 'email') return false;
 
                     return <Grid item className={clsx(classes.txtCenter, classes.pt14)} style={{ maxWidth: windowSize === 'xs' ? 100 : null }} key={to}>
                         <Typography className={clsx(classes.bold, classes.colorBlue)}>
