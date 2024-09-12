@@ -15,10 +15,12 @@ const TotalSection = ({ classes, TotalObject, callerType }) => {
                     if ((typeof TotalObject[to] === 'object' && TotalObject[to] !== null) || to === 'DirectReport' || to === 'MmsCredits') { //|| to === 'TotalCredits') {
                         return false;
                     }
-                    if (to === 'TotalCredits' || to === 'TotalRecords' || to === 'TotalSent') {
-                        return false;
+                    if (windowSize === 'xs') {
+                        if (to === 'TotalRecords' || to === 'TotalSent') {
+                            return false;
+                        }
                     }
-                    if (callerType === 'email' && to === 'TotalCredits') return false;
+                    //if (callerType === 'email') return false;
 
                     return <Grid item className={clsx(classes.txtCenter, classes.pt14)} style={{ maxWidth: windowSize === 'xs' ? 100 : null }} key={to}>
                         <Typography className={clsx(classes.bold, classes.colorBlue)}>
