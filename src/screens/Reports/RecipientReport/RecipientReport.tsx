@@ -236,7 +236,7 @@ const RecipientReport = ({ classes }: any) => {
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex2, classes.noPonSmallScreen)} align='center'>
-            {t('common.Dates')}
+            {t('report.date')}
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex2)} align='center'>
@@ -244,7 +244,7 @@ const RecipientReport = ({ classes }: any) => {
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex1)} align='center'>
-            {t('common.Opened')}
+            {t('common.opens')}
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex1)} align='center' />
@@ -394,7 +394,7 @@ const RecipientReport = ({ classes }: any) => {
               {row.Name}
             </Box>
             <Box>
-              <Typography className={classes.bold}>{t('common.Dates')}</Typography>
+              <Typography className={classes.bold}>{t('report.date')}</Typography>
               {FormatDate(row.SendDate)}
             </Box>
           </Box>
@@ -452,7 +452,7 @@ const RecipientReport = ({ classes }: any) => {
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex2, classes.f15)} align='center'>
-            {t('common.Dates')}
+            {t('report.date')}
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex2, classes.f15)} align='center'>
@@ -460,7 +460,7 @@ const RecipientReport = ({ classes }: any) => {
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex1, classes.f15)} align='center'>
-            {t('common.Clicked')}
+            {t('common.clicks')}
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex1, classes.f15)} align='center' />
@@ -784,7 +784,7 @@ const RecipientReport = ({ classes }: any) => {
               {row.Name}
             </Box>
             <Box>
-              <Typography className={classes.bold}>{t('common.Dates')}</Typography>
+              <Typography className={classes.bold}>{t('report.date')}</Typography>
               {FormatDate(row.SendDate)}
             </Box>
           </Box>
