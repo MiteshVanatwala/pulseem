@@ -385,7 +385,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					Date: moment(record.Date).format(DateFormats.DATE_TIME_24),
 					Amount: `${isGlobal && isCurrencySymbolPrefix ? currencySymbol : ''} ${record.Amount} ${isGlobal && !isCurrencySymbolPrefix ? currencySymbol : ''}`,
 					Type: t(`${get(CreditHistoryType, record.Type, '')}`),
-					AccountType: t(`${get(CreditHistoryType, `${record.AccountType}`, '')}`),
+					AccountType: t(`${get(CreditHistoryAccountType, record.AccountType ? 1 : 0, '')}`),
 					TransferedFromSubAccountName: record.TransferedFromSubAccountName,
 					TransferredToName: record.TransferredToName
 				})

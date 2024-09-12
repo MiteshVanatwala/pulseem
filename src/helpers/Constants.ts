@@ -302,6 +302,7 @@ export const upperCaseLetters = /[A-Z]/g;
 export const numbers = /[0-9]/g;
 export const specialLetters = /[!"#$%&'()*+.\/:;<=>?@\[\\\]^_`{|}~-]/g;
 export const PhoneNumberRegEx = /^\+?[0-9]*$/;
+export const NumberWithMinusRegEx = /^-?[0-9]*(\.)?([0-9]+)?$/;
 
 export const SHOPIFY_SITE_TRACKING = `
 <script type="text/javascript">

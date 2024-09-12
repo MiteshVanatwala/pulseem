@@ -8,10 +8,11 @@ import Toast from '../../components/Toast/Toast.component';
 import { coreProps } from '../../model/Core/corePros.types';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { ValidateEmailAddress } from '../../helpers/Utils/common';
-import { get, isNull, isNumber } from 'lodash';
+import { get, isNull } from 'lodash';
 import { AddEditDirectAccounts } from '../../redux/reducers/SubAccountSlice';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
+import { NumberWithMinusRegEx } from '../../helpers/Constants';
 
 const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -25,7 +26,9 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 	const [errors, setErrors] = useState({
 		companyName: '',
 		contactName: '',
-		emailAddress: ''
+		emailAddress: '',
+		addEmailBulk: '',
+		addSMSBulk: '',
 	});
 	const [ directAccountDetails, setDirectAccountDetails ] = useState<any>({
 		companyName: '',
@@ -63,7 +66,9 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 			setErrors({
 				companyName: '',
 				contactName: '',
-				emailAddress: ''
+				emailAddress: '',
+				addEmailBulk: '',
+				addSMSBulk: ''
 			});
 		}
 	}, [ isOpen ]);
@@ -78,6 +83,8 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 			companyName: getTrimmedEmptyValue('companyName') === '' ? t('common.requiredField') : '',
 			// contactName: getTrimmedEmptyValue('contactName') === '' ? t('common.requiredField') : '',
 			emailAddress: getTrimmedEmptyValue('emailAddress') === '' ? t('common.requiredField') : '',
+			addEmailBulk: !NumberWithMinusRegEx.test(directAccountDetails.addEmailBulk) ? t('mainReport.invalidNo') : '',
+			addSMSBulk: !NumberWithMinusRegEx.test(directAccountDetails.addSMSBulk) ? t('mainReport.invalidNo') : '',
 		};
 
 		if (!ValidateEmailAddress(directAccountDetails.emailAddress)) {
@@ -88,7 +95,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		}
 
 		setErrors(errorsTemp);
-		return errorsTemp.companyName === '' && errorsTemp.emailAddress === '';
+		return errorsTemp.companyName === '' && errorsTemp.emailAddress === '' && errorsTemp.addEmailBulk === '' && errors.addSMSBulk === '';
 	}
 	
 	const handleSaveResponse = (statusCode: number) => {
@@ -154,8 +161,8 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				ContactName: directAccountDetails.contactName,
 				Telephone: directAccountDetails.telephone,
 				Email: directAccountDetails.emailAddress,
-				BulkEmail: directAccountDetails.addEmailBulk,
-				SMSCredits: directAccountDetails.addSMSBulk,
+				BulkEmail: Number(directAccountDetails.addEmailBulk),
+				SMSCredits: Number(directAccountDetails.addSMSBulk),
 				MmsCredits: directAccountDetails.addMMSBulk
 			}));
 			setIsLoader(false);
@@ -172,8 +179,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 	};
 
 	const handleKeyPress = (event: any) => {
-    var isNumber = /^[0-9].*$/;
-		if (!event.key.match(isNumber) || event.key === 'e') {
+		if (!event.key.match(NumberWithMinusRegEx) || event.key === 'e') {
       event.preventDefault();
       event.stopPropagation();
       return false;
@@ -345,10 +351,10 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 						!isGlobal && (
 							<>
 								<Grid item md={4}>
-									{t("SubAccount.emailBulk")}: {directAccountDetails.emailBulk}
+									{t("SubAccount.emailDirectBalance")}: {directAccountDetails.emailBulk}
 								</Grid>
 								<Grid item md={4}>
-									{t("SubAccount.directAccountSMSCredits")}: {directAccountDetails.SMSBulk}
+									{t("common.SMS")}: {directAccountDetails.SMSBulk}
 								</Grid>
 								<Grid item md={4}>
 									{/* {t("SubAccount.directAccountMMSCredits")}: {directAccountDetails.MMSBulk} */}
@@ -358,7 +364,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										{t("SubAccount.addBulkEmails")}
 									</Typography>
 									<TextField
-										type="number"
+										type="text"
 										id="addEmailBulk"
 										label=""
 										variant="outlined"
@@ -366,12 +372,20 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										value={directAccountDetails.addEmailBulk}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
-										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
-											...directAccountDetails,
-											addEmailBulk: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
-										})}
-										onKeyUp={handleKeyPress}
+										onChange={(e: any) => {
+											if (NumberWithMinusRegEx.test(e.target.value)) {
+												setDirectAccountDetails({
+													...directAccountDetails,
+													addEmailBulk: e.target.value
+												})
+											}
+										}}
+										inputProps={{ maxlength: 10 }}
+										// onKeyUp={handleKeyPress}
 									/>
+									<Typography className={clsx(errors.addEmailBulk ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+										{errors.addEmailBulk}
+									</Typography>
 								</Grid>
 								
 								<Grid item md={4}>
@@ -387,12 +401,20 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										value={directAccountDetails.addSMSBulk}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
-										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setDirectAccountDetails({
-											...directAccountDetails,
-											addSMSBulk: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
-										})}
-										onKeyUp={handleKeyPress}
+										onChange={(e: any) => {
+											if (NumberWithMinusRegEx.test(e.target.value)) {
+												setDirectAccountDetails({
+													...directAccountDetails,
+													addSMSBulk: e.target.value
+												})
+											}
+										}}
+										inputProps={{ maxlength: 10 }}
+										// onKeyUp={handleKeyPress}
 									/>
+									<Typography className={clsx(errors.addSMSBulk ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+										{errors.addSMSBulk}
+									</Typography>
 								</Grid>
 
 								<Grid item md={4}>

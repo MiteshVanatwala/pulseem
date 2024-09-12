@@ -11,11 +11,9 @@ import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
 import { RenderHtml, useStylesBootstrapPasswordHint } from '../../helpers/Utils/HtmlUtils';
 import PasswordHint from '../Settings/AccountSettings/Password/PasswordHint';
 import { ValidPassword } from '../Settings/AccountSettings/Password/Types';
-import { DateFormats, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from '../../helpers/Constants';
+import { lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from '../../helpers/Constants';
 import Groups from '../../components/Groups/GroupsHandler/Groups';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
-import { DateField } from '../../components/managment';
-import moment from 'moment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { ValidateEmailAddress } from '../../helpers/Utils/common';
 import { get, map } from 'lodash';
@@ -23,6 +21,7 @@ import { AddEditSubAccounts, GetGroupsAccountSubUsers } from '../../redux/reduce
 import { Group } from '../../Models/Groups/Group';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
+import { getTestGroups } from '../../redux/reducers/smsSlice';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -77,7 +76,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		password: '',
 		confirmPassword: '',
 		isPasswordVisible: false,
-		automaticUserLock: null,
+		// automaticUserLock: null,
 		balance: 0,
 		addBalance: '',
 	})
@@ -87,6 +86,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		if (subAccountAllGroups.length === 0) {
 			dispatch(getGroupsBySubAccountId());
 		}
+		if (testGroups?.length === 0) {
+      dispatch(getTestGroups());
+    }
 	}, []);
 	
 	useEffect(() => {
@@ -110,7 +112,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				password: '',
 				confirmPassword: '',
 				isPasswordVisible: false,
-				automaticUserLock: get(subAccountRecord, 'ExpiryDate', null),
+				// automaticUserLock: get(subAccountRecord, 'ExpiryDate', null),
 				balance: get(subAccountRecord, 'FinalGlobalBalance', 0),
 				addBalance: 0,
 			})
@@ -147,10 +149,13 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				password: '',
 				confirmPassword: '',
 				isPasswordVisible: false,
-				automaticUserLock: null,
+				// automaticUserLock: null,
 				balance: '',
 				addBalance: 0,
 			})
+
+			setSelectedGroups([]);
+			setAllGroupsSelected(false);
 		}
 	}, [ isOpen ]);
 
@@ -203,7 +208,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			const response = await dispatch(AddEditSubAccounts({
 				CustomGuidEnc,
 				SubAccountName: subAccountDetails.subAccountName,
-				ExpiryDate: subAccountDetails.automaticUserLock,
+				// ExpiryDate: subAccountDetails.automaticUserLock,
 				CellPhone: subAccountDetails.cellPhone,
 				AccountManager: subAccountDetails.accountManager,
 				AddEmailBulkAmount: subAccountDetails.emailBulkAmount,
@@ -211,7 +216,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				AddMmsBulkAmount: subAccountDetails.MMSBulkAmount,
 				FinalGlobalBalance: subAccountDetails.addBalance,
 				Email: subAccountDetails.emailAddress,
-				LoginUserName: subAccountDetails.loginUserName,
+				LoginUserName: CustomGuidEnc ? get(subAccountRecord, 'LoginUserName', '') : subAccountDetails.loginUserName,
 				Password: subAccountDetails.password,
 				groupIds: map(selectedGroups, 'GroupID')
 			}));
@@ -723,11 +728,10 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 						)
 					}
 					
-					<Grid item md={4} xs={12}>
+					{/* <Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.automaticUserLock")} className={clsx(classes.alignDir, classes.pt10)}>
 							{t("SubAccount.automaticUserLock")}
 						</Typography>
-						{/* @ts-ignore */}
 						<DateField
 							toolbarDisabled={false}
 							classes={classes}
@@ -751,7 +755,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							removePadding={true}
 							hideInvalidDateMessage={true}
 						/>
-					</Grid>
+					</Grid> */}
 				</Grid>
 
 				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubAccount.loginInformation')}</div>
@@ -800,7 +804,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 								...subAccountDetails,
 								loginUserName: e.target.value.trim()
 							})}
-							// disabled={CustomGuidEnc !== ''}
+							disabled={CustomGuidEnc !== ''}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.loginUserName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

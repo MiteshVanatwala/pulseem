@@ -26,6 +26,7 @@ import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { sitePrefix } from '../../config';
+import { get } from 'lodash';
 
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
@@ -38,9 +39,9 @@ const AccountUsers = ({ classes }: any) => {
   const [ showLoader, setShowLoader ] = useState<boolean>(true);
   const [ toastMessage, setToastMessage ] = useState<toastProps['SUCCESS']>(resetToastData);
   const [ selectedAccountId, setSelectedAccountId ] = useState('');
+  const [ totalRecord, setTotalRecord ] = useState<number>(0);
   const [ searchData, setSearchData ] = useState<any>({
     PageNo: 1,
-    PageSize: rowsPerPage,
     Search: "",
     CompanyAdmin: 0,
     IsPagination: true
@@ -49,9 +50,9 @@ const AccountUsers = ({ classes }: any) => {
     type: string;
     data: any
   } | null>(null);
-  const rowStyle = { head: clsx(classes.tableRowHead, classes.pt5, classes.pb5), root: classes.tableRowRoot }
+  const rowStyle = { head: clsx(classes.tableRowHead, classes.pt10, classes.pb10), root: classes.tableRowRoot }
   const cellStyle = { head: clsx(classes.tableCellHead, classes.noPadding, classes.f16), body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
-  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.noPadding) }
+  const cellBodyStyle = { body: clsx(classes.tableCellBody, classes.f16), root: clsx(classes.tableCellRoot, classes.noPadding) }
   const [ direct, setDirect ] = useState<{
     emailDirect: null | number,
     SMSDirect: null | number,
@@ -69,12 +70,8 @@ const AccountUsers = ({ classes }: any) => {
   }, []);
   
   useEffect(() => {
-    setSearchData({
-      ...searchData,
-      PageSize: rowsPerPage
-    });
     getData();
-  }, [rowsPerPage]);
+  }, [rowsPerPage, searchData.PageNo]);
 
   const getInitialData = async () => {
     setShowLoader(true);
@@ -94,7 +91,11 @@ const AccountUsers = ({ classes }: any) => {
   
   const getData = async () => {
     setShowLoader(true);
-    await dispatch(GetSubAccountList(searchData));
+    const response = await dispatch(GetSubAccountList({
+      ...searchData,
+      PageSize: rowsPerPage
+    }));
+    setTotalRecord(Number(get(response, 'payload.Data.TotalRecord', 0)));
     setShowLoader(false);
   }
 
@@ -247,7 +248,6 @@ const AccountUsers = ({ classes }: any) => {
                 onClick={async () => {
                   const searchObject = {
                     PageNo: 1,
-                    PageSize: rowsPerPage,
                     Search: "",
                     CompanyAdmin: 0,
                     IsPagination: true
@@ -287,8 +287,8 @@ const AccountUsers = ({ classes }: any) => {
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.emailBulk")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.SMSCredit")}</TableCell>
                 {/* <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.MMSCredit")}</TableCell> */}
-                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlyEmailLimit")}</TableCell>
-                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlySMSLimit")}</TableCell>
+                {/* <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlyEmailLimit")}</TableCell> */}
+                {/* <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlySMSLimit")}</TableCell> */}
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.directAccountBulkEmails")}</TableCell>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.directAccountSMSCredits")}</TableCell>
                 {/* <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.directAccountMMSCredits")}</TableCell> */}
@@ -500,7 +500,7 @@ const AccountUsers = ({ classes }: any) => {
                 className={classes.flex1}>
                   {row.BulkMMS}
               </TableCell> */}
-              <TableCell
+              {/* <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
@@ -511,7 +511,7 @@ const AccountUsers = ({ classes }: any) => {
                 align='center'
                 className={classes.flex1}>
                   {row.MaxSMSSendingForMonth}
-              </TableCell>
+              </TableCell> */}
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
@@ -585,7 +585,7 @@ const AccountUsers = ({ classes }: any) => {
     return (
       <TablePagination
         classes={classes}
-        rows={subAccountList.length}
+        rows={totalRecord}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={(val: any) => dispatch(setRowsPerPage(val))}
         rowsPerPageOptions={rowsOptions}
@@ -662,9 +662,9 @@ const AccountUsers = ({ classes }: any) => {
 
   const getDirectBox = (label: string, value: null | number) => {
     return (
-      <div className={clsx(classes.whiteBox, classes.p20, classes.mlr10, classes.txtCenter, classes.w20VW)}>
-        <div className={classes.p10}>{t(label)}</div>
-        <div className={classes.pb10}>{value || 0}</div>
+      <div className={clsx(classes.whiteBox, classes.p10, classes.mlr10, classes.txtCenter, classes.w15VW, classes.f18)}>
+        <div className={classes.p5}>{t(label)}</div>
+        <div className={clsx(classes.pb5, classes.f20)}>{value || 0}</div>
       </div>
     )
   }
