@@ -407,8 +407,8 @@ const SmsSend = ({ classes, ...props }) => {
       setFilterDialogValues({
         dontSend: filterValues.dontSend,
         exceptionalDays: filterValues.exceptionalDays,
-        selectedFilterCampaigns,
-        selectedFilterGroups
+        selectedFilterCampaigns: filterDialogValues.selectedFilterCampaigns,
+        selectedFilterGroups: filterDialogValues.selectedFilterGroups
       });
     }
   }, [dialogType])
@@ -2181,12 +2181,16 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
   const callbackUpdateCampaignFilter = (campaigns) => {
+    console.log('2184')
+    console.log(campaigns)
     setFilterDialogValues({
       ...filterDialogValues,
       selectedFilterCampaigns: campaigns
     })
   }
   const callbackFiltertedCampaigns = (campaign) => {
+    console.log('2190')
+    console.log(campaign)
     const found = filterDialogValues.selectedFilterCampaigns
       .map((c) => {
         return c.SMSCampaignID;
