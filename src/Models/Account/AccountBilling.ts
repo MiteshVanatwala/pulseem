@@ -46,3 +46,22 @@ export interface PurchaseHistoryModel {
   InvoiceURL: any;
   RecieptURL: any;
 }
+
+export interface CreditHistoryRequest {
+  AccountType: boolean | null;
+  type: number | null;
+  IsPulseemCreditOnly: boolean;
+  FromDate: string | null;
+  ToDate: string | null;
+  PageIndex: number;
+  PageSize: number;
+}
+
+export interface CreditHistory {
+  Date: string;
+  Amount: number;
+  Type: boolean;
+  AccountType: boolean;
+  TransferedFromSubAccountID: string;
+  TransferredToName: string;
+}

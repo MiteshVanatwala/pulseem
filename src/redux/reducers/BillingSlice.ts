@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemResponse } from '../../Models/APIResponse';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { BillingAccount } from '../../Models/Product/BillingAccount';
+import { CreditHistoryRequest } from '../../Models/Account/AccountBilling';
 
 export const getAccountBilling = createAsyncThunk(
     'AccountBilling/Get',
@@ -42,6 +43,18 @@ export const getAccountOperations = createAsyncThunk(
     async (isPaid: boolean, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(`AccountBilling/GetAccountOperations/${isPaid}`);
+            return response.data as PulseemResponse
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+export const getBulkHistory = createAsyncThunk(
+    'AccountBilling/GetBulkHistory',
+    async (req: CreditHistoryRequest, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AccountBilling/GetBulkHistory`, req);
             return response.data as PulseemResponse
         } catch (error) {
             return console.log(error);

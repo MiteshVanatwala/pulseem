@@ -12,7 +12,7 @@ import { TablePagination } from '../../../components/managment/index'
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 
 const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: StateType) => state.core)
+  const { windowSize, rowsPerPage } = useSelector((state: StateType) => state.core)
 
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -69,15 +69,15 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
       CreditInvoiceID,
       OperationID,
       BillingPeriod,
-      AccountPurchaseID,
+      // AccountPurchaseID,
       BillingType,
       ProdctDesciption,
       NumberOfProducts,
-      OpenDate,
+      // OpenDate,
       OperationDate,
       AmountToPay,
       AmountWithVat,
-      InvoiceRecieptName,
+      // InvoiceRecieptName,
       InvoiceURL,
       RecieptURL,
       ReceiptID
@@ -168,15 +168,15 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
       CreditInvoiceID,
       OperationID,
       BillingPeriod,
-      AccountPurchaseID,
+      // AccountPurchaseID,
       BillingType,
       ProdctDesciption,
       NumberOfProducts,
-      OpenDate,
+      // OpenDate,
       OperationDate,
       AmountToPay,
       AmountWithVat,
-      InvoiceRecieptName
+      // InvoiceRecieptName
     } = row
     return (
       <TableRow

@@ -16,10 +16,12 @@ import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
 import { ListIcon } from "../../../assets/images/managment";
 import BillingDetails from "./BillingDetails";
-import { getCreditCardIframe, getAccountOperations } from "../../../redux/reducers/BillingSlice";
+import { getCreditCardIframe, getAccountOperations, getBulkHistory } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
 import PurchaseTableTemplate from "./PurchaseTableTemplate";
-import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
+import { CreditHistory, CreditHistoryRequest, PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
+import CreditHistoryDetails from "./CreditHistoryDetails";
+
 
 const BillingSettingsPage = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -32,9 +34,18 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const [showPurchaseLoader, setShowPurchaseLoader] = useState<boolean>(true);
   const [showOpenInvoicesLoader, setShowOpenInvoicesLoader] = useState<boolean>(true);
+  const [showCreditHistoryLoader, setCreditHistoryLoader] = useState<boolean>(true);
   const [purchaseHistoryData, setPurchaseHistoryData] = useState<PurchaseHistoryModel>();
   const [purchaseUnpaidData, setPurchaseUnpaidData] = useState<PurchaseHistoryModel>();
+  const [creditHistories, setCreditHistories] = useState<CreditHistory>();
+  const [creditHistoryRequest, setCreditHistoryRequest] = useState<CreditHistoryRequest>({
+    PageIndex: 1,
+    PageSize: 6,
+    AccountType: null,
+    type: null,
+    IsPulseemCreditOnly: true
 
+  } as CreditHistoryRequest)
 
   const renderToast = () => {
     setTimeout(() => {
@@ -43,9 +54,20 @@ const BillingSettingsPage = ({ classes }: any) => {
     return <Toast data={toastMessage} />;
   };
 
+  const requestCreditHistory = async () => {
+    setCreditHistoryLoader(true);
+    const creditHistories = await dispatch(getBulkHistory(creditHistoryRequest)) as any;
+    if (creditHistories && creditHistories?.payload?.StatusCode === 201) {
+      setCreditHistories(creditHistories?.payload?.Data);
+    }
+    setCreditHistoryLoader(false);
+  }
+
   const initPurchaseHistory = async () => {
     const paidResponse = await dispatch(getAccountOperations(true)) as any;
     const unpaidResponse = await dispatch(getAccountOperations(false)) as any;
+
+
     if (paidResponse && paidResponse?.payload?.StatusCode === 201) {
       setPurchaseHistoryData(paidResponse?.payload?.Data);
     }
@@ -53,6 +75,7 @@ const BillingSettingsPage = ({ classes }: any) => {
       setPurchaseUnpaidData(unpaidResponse?.payload?.Data);
     }
 
+    requestCreditHistory();
     setShowPurchaseLoader(false);
     setShowOpenInvoicesLoader(false);
   }
@@ -75,6 +98,10 @@ const BillingSettingsPage = ({ classes }: any) => {
       setAddCardDialog(true);
       setShowLoader(false);
     });
+  }
+  const handleUpdateCreditRequest = (a: any) => {
+    console.log(a);
+    // setCreditHistoryRequest()
   }
 
   return (
@@ -132,6 +159,19 @@ const BillingSettingsPage = ({ classes }: any) => {
         </Box>
         <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
           <PurchaseTableTemplate classes={classes} data={purchaseHistoryData} showLoader={showPurchaseLoader} isPaid={true} />
+        </Box>
+      </Box>
+      <Box className={classes.settingsContainer}>
+        <Box className="head">
+          <Title classes={classes} Text={t("settings.billingSettings.lastPurchases")} />
+        </Box>
+        <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
+          <CreditHistoryDetails
+            classes={classes}
+            data={creditHistories}
+            onUpdate={handleUpdateCreditRequest}
+            onSubmit={requestCreditHistory}
+            showLoader={showCreditHistoryLoader} />
         </Box>
       </Box>
       {addCardDialog && paymentIframe && <BaseDialog
