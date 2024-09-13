@@ -135,7 +135,8 @@ export type CommonRedux = {
 	currencySymbol?: string;
 	isCurrencySymbolPrefix?: boolean;
 	isGlobal?: boolean,
-	countryCodeList?: any
+	countryCodeList?: any,
+	subAccount?: any
 };
 
 export type actionButtonProps = {

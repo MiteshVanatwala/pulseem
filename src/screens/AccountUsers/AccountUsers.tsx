@@ -30,8 +30,8 @@ import { get } from 'lodash';
 
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
-  const { language, windowSize, isRTL, rowsPerPage, isAllowSwitchAccount } = useSelector((state: any) => state.core);
-  const { isGlobal, currencySymbol, isCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
+  const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
+  const { isGlobal, currencySymbol, isCurrencySymbolPrefix, subAccount } = useSelector((state: { common: CommonRedux }) => state.common);
   const { subAccountList } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -65,7 +65,7 @@ const AccountUsers = ({ classes }: any) => {
   moment.locale(language);
 
   useEffect(() => {
-    if (isAllowSwitchAccount === 'False') navigate(`${sitePrefix}`);
+    if (get(subAccount, 'CompanyAdmin', false) === false) navigate(`${sitePrefix}`);
     else getInitialData();
   }, []);
   
