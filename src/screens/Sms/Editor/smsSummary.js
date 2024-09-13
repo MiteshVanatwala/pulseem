@@ -228,7 +228,8 @@ const SmsSummary = ({ classes,
                 classes.btnRounded,
                 classes.middle,
                 summaryPayload.FinalCount <= 0 ? classes.disabled : null
-              )}>
+              )}
+              style={{ marginInline: 15 }}>
               {t("sms.sendDialog")}
             </Button>
           </Grid>
