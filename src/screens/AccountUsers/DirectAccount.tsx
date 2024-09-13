@@ -380,7 +380,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 												})
 											}
 										}}
-										inputProps={{ maxlength: 10 }}
+										inputProps={{ max: 9999999999 }}
 										// onKeyUp={handleKeyPress}
 									/>
 									<Typography className={clsx(errors.addEmailBulk ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -409,7 +409,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 												})
 											}
 										}}
-										inputProps={{ maxlength: 10 }}
+										inputProps={{ max: 9999999999 }}
 										// onKeyUp={handleKeyPress}
 									/>
 									<Typography className={clsx(errors.addSMSBulk ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

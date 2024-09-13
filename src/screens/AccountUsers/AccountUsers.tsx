@@ -35,6 +35,7 @@ const AccountUsers = ({ classes }: any) => {
   const { subAccountList } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const [ isDirectAccount, setIsDirectAccount ] = useState<boolean>(false);
   const [ isSearching, setIsSearching ] = useState<boolean>(false);
   const [ showLoader, setShowLoader ] = useState<boolean>(true);
   const [ toastMessage, setToastMessage ] = useState<toastProps['SUCCESS']>(resetToastData);
@@ -86,6 +87,8 @@ const AccountUsers = ({ classes }: any) => {
         MMSDirect: directData?.payload?.Data?.Items[0]['DirectMmsCredits']
       })
     }
+
+    setIsDirectAccount(get(directData, 'payload.Data.Items[0]["IsDirectAccount"]', false))
     getData();
   }
   
@@ -151,7 +154,7 @@ const AccountUsers = ({ classes }: any) => {
         lable: t('SubAccount.directAccount'),
         rootClass: classes.paddingIcon,
         disable: false,
-        remove: windowSize === 'xs' || !isGlobal,
+        remove: windowSize === 'xs' || !isGlobal || !isDirectAccount,
         onClick: () => {
           setDialogType({ type: 'DirectAccount', data: row });
         }
@@ -387,7 +390,7 @@ const AccountUsers = ({ classes }: any) => {
             )
           }
           {
-            !isGlobal && selectedAccountId && (
+            !isGlobal && selectedAccountId && isDirectAccount && (
               <Button
                 className={clsx(
                   classes.btn,

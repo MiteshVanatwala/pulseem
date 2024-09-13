@@ -11,7 +11,7 @@ import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
 import { RenderHtml, useStylesBootstrapPasswordHint } from '../../helpers/Utils/HtmlUtils';
 import PasswordHint from '../Settings/AccountSettings/Password/PasswordHint';
 import { ValidPassword } from '../Settings/AccountSettings/Password/Types';
-import { lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from '../../helpers/Constants';
+import { lowerCaseLetters, numbers, NumberWithMinusRegEx, specialLetters, upperCaseLetters } from '../../helpers/Constants';
 import Groups from '../../components/Groups/GroupsHandler/Groups';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
@@ -49,6 +49,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		loginUserName: '',
 		password: '',
 		confirmPassword: '',
+		addBalance: '',
+		SMSBulkAmount: '',
+		emailBulkAmount: '',
 	});
 	const [ showPasswordTip, setShowPasswordTip ] = useState<boolean>(false);
 	const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>({
@@ -124,6 +127,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				loginUserName: '',
 				password: '',
 				confirmPassword: '',
+				addBalance: '',
+				SMSBulkAmount: '',
+				emailBulkAmount: '',
 			});
 
 			getGroupList();
@@ -175,6 +181,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			loginUserName: subAccountDetails.loginUserName.trim() === '' ? t('common.requiredField') : '',
 			password: '',
 			confirmPassword: (CustomGuidEnc === '' || subAccountDetails.confirmPassword.trim() !== '') && subAccountDetails.confirmPassword.trim() === '' ? t('common.requiredField') : '',
+			emailBulkAmount: !NumberWithMinusRegEx.test(subAccountDetails.emailBulkAmount) ? t('mainReport.invalidNo') : '',
+			SMSBulkAmount: !NumberWithMinusRegEx.test(subAccountDetails.SMSBulkAmount) ? t('mainReport.invalidNo') : '',
+			addBalance: !NumberWithMinusRegEx.test(subAccountDetails.addBalance) ? t('mainReport.invalidNo') : '',
 		};
 
 		if ((CustomGuidEnc === '' || subAccountDetails.password.trim() !== '') && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
@@ -198,7 +207,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 		}
 
 		setErrors(errorsTemp);
-		return errorsTemp.subAccountName === '' && errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '';
+		return errorsTemp.subAccountName === '' && errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '' && errorsTemp.emailBulkAmount === ''  && errorsTemp.SMSBulkAmount === ''  && errorsTemp.addBalance === '' ;
 	}
 
 	const saveSubAccountDetils = async () => {
@@ -579,7 +588,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													{t("SubAccount.emailBulkAmount")}
 												</Typography>
 												<TextField
-													type='number'
+													type='text'
 													id="emailBulkAmount"
 													label=""
 													variant="outlined"
@@ -587,12 +596,19 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													value={subAccountDetails.emailBulkAmount}
 													className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 													autoComplete="off"
-													onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
-														...subAccountDetails,
-														emailBulkAmount: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
-													})}
-													inputProps={{ maxLength: 10 }}
+													onChange={(e: any) => {
+														if (NumberWithMinusRegEx.test(e.target.value)) {
+															setSubAccountDetails({
+																...subAccountDetails,
+																emailBulkAmount: e.target.value
+															})
+														}
+													}}
+													inputProps={{ max: 9999999999 }}
 												/>
+												<Typography className={clsx(errors.emailBulkAmount ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+													{errors.emailBulkAmount}
+												</Typography>
 											</>
 										)
 									}
@@ -627,7 +643,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													{t("SubAccount.SMSBulkAmount")}
 												</Typography>
 												<TextField
-													type='number'
+													type='text'
 													id="SMSBulkAmount"
 													label=""
 													variant="outlined"
@@ -635,12 +651,19 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 													value={subAccountDetails.SMSBulkAmount}
 													className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 													autoComplete="off"
-													onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
-														...subAccountDetails,
-														SMSBulkAmount: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
-													})}
-													inputProps={{ maxLength: 10 }}
+													onChange={(e: any) => {
+														if (NumberWithMinusRegEx.test(e.target.value)) {
+															setSubAccountDetails({
+																...subAccountDetails,
+																SMSBulkAmount: e.target.value
+															})
+														}
+													}}
+													inputProps={{ max: 9999999999 }}
 												/>
+												<Typography className={clsx(errors.SMSBulkAmount ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+													{errors.SMSBulkAmount}
+												</Typography>
 											</>
 										)
 									}
@@ -709,7 +732,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 										{t("SubAccount.addBalance")}
 									</Typography>
 									<TextField
-										type='number'
+										type='text'
 										id="addBalance"
 										label=""
 										variant="outlined"
@@ -717,12 +740,19 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 										value={subAccountDetails.addBalance}
 										className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 										autoComplete="off"
-										onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setSubAccountDetails({
-											...subAccountDetails,
-											addBalance: Math.max(0, parseInt(e.target.value)).toString().slice(0,10)
-										})}
-										inputProps={{ max: 9999999999, type:'number'}}
+										onChange={(e: any) => {
+											if (NumberWithMinusRegEx.test(e.target.value)) {
+												setSubAccountDetails({
+													...subAccountDetails,
+													addBalance: e.target.value
+												})
+											}
+										}}
+										inputProps={{ max: 9999999999 }}
 									/>
+									<Typography className={clsx(errors.addBalance ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+										{errors.addBalance}
+									</Typography>
 								</Grid>
 							</>
 						)
