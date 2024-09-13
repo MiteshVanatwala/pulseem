@@ -617,6 +617,8 @@ const App = ({ screenSize }) => {
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
         isAllowSwitchAccount = '',
       } = jwt;
+      console.log(`isAllowSwitchAccount - ${isAllowSwitchAccount}`);
+      console.log(`cameFromSubAccount - ${cameFromSubAccount}`);
 
       dispatch(
         setCoreData({
