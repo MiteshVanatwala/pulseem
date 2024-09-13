@@ -260,6 +260,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   useEffect(() => {
     const initCampaignSettings = () => {
+      const filteredValues = {};
       if (campaignSettings.PulseSettings) {
         setTimeType(campaignSettings.PulseSettings.TimeType);
         setPulseType(campaignSettings.PulseSettings.PulseType);
@@ -286,18 +287,20 @@ const SmsSend = ({ classes, ...props }) => {
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Groups.length !== 0) {
         setbsDot(true);
         const relationGroups = getSelectedGroups();
-        setFilterDialogValues({...filterDialogValues, selectedFilterGroups: relationGroups});
+        filteredValues["selectedFilterGroups"] = relationGroups;
       }
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Campaigns.length !== 0) {
         setbsDot(true);
         const selectedCampaigns = getSelectedCampaigns();
-        setFilterDialogValues({...filterDialogValues, selectedFilterCampaigns: selectedCampaigns});
+        filteredValues["selectedFilterCampaigns"] = selectedCampaigns;
       }
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1 && campaignSettings.SendExeptional.ExceptionalDays !== '') {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
         setbsDot(true);
         setFilterValues({ ...filterValues, dontSend: true, exceptionalDays: `${campaignSettings.SendExeptional.ExceptionalDays}` });
+        filteredValues["dontSend"] = true;
+        filteredValues["exceptionalDays"] = `${campaignSettings.SendExeptional.ExceptionalDays}`;
       }
       if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
@@ -344,6 +347,8 @@ const SmsSend = ({ classes, ...props }) => {
           setafterClick(true);
         }
       }
+
+      setFilterDialogValues({ ...filterDialogValues, ...filteredValues });
 
       setLoader(false);
     }
