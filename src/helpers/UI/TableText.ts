@@ -117,7 +117,7 @@ export const ConvertSmsStatusText = (value: string) => {
                 return "report.directReport.statuses.sending";
             }
             case "3": {
-                return "report.directReport.statuses.sentSuccessfuly";
+                return "campaigns.successSent";
             }
             case "4": {
                 return "report.error";
@@ -159,36 +159,22 @@ export const ConvertSmsStatusText = (value: string) => {
     }
     return null;
 }
-export const ConvertNewsletterStatusText = (value: string) => {
-    if (value && value !== '') {
-        switch (value.toString()) {
-            case "1": {
-                return "common.Created";
+export const ConvertNewsletterStatusText = (value: number) => {
+    switch (value) {
+        case 0:
+            {
+                return "campaigns.successSent";
             }
-            case "2": {
-                return "common.Sending";
-            }
-            case "3": {
-                return "common.Stopped";
-            }
-            case "4": {
-                return "common.Sent";
-            }
-            case "5": {
-                return "common.cancelled";
-            }
-            case "6": {
-                return "common.Optin";
-            }
-            case "7": {
-                return "common.Approve";
-            }
-            default: {
-                return "emailStatus.noStatus";
-            }
+        case 1:
+        case 2:
+        case 3:
+        case 4: {
+            return "emailStatus.error";
+        }
+        case 5: {
+            return "common.Unsubscribed";
         }
     }
-    return null;
 }
 export const ConvertEmailStatusText = (value: string) => {
     if (value && value !== '') {
