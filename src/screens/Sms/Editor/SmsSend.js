@@ -138,8 +138,6 @@ const SmsSend = ({ classes, ...props }) => {
   })
   const [initialheadstate, setinitialheadstate] = useState([]);
   const [dialogType, setDialogType] = useState({ type: null });
-  const [selectedFilterCampaigns, setFilterCampaigns] = useState([]);
-  const [selectedFilterGroups, setFilterGroups] = useState([]);
   const [timeType, setTimeType] = useState(1);
   const [pulseType, setPulseType] = useState(2);
   const [otpPassed, setOtpPassed] = useState(false);
@@ -262,6 +260,14 @@ const SmsSend = ({ classes, ...props }) => {
 
   useEffect(() => {
     const initCampaignSettings = () => {
+      const filteredValues = {
+        dontSend: false,
+        days: '',
+        exceptionalDays: '',
+        selectedFilterCampaigns: [],
+        selectedFilterGroups: []
+      };
+
       if (campaignSettings.PulseSettings) {
         setTimeType(campaignSettings.PulseSettings.TimeType);
         setPulseType(campaignSettings.PulseSettings.PulseType);
@@ -288,18 +294,20 @@ const SmsSend = ({ classes, ...props }) => {
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Groups.length !== 0) {
         setbsDot(true);
         const relationGroups = getSelectedGroups();
-        setFilterGroups(relationGroups);
+        filteredValues.selectedFilterGroups = relationGroups;
       }
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Campaigns.length !== 0) {
         setbsDot(true);
         const selectedCampaigns = getSelectedCampaigns();
-        setFilterCampaigns(selectedCampaigns);
+        filteredValues.selectedFilterCampaigns = selectedCampaigns;
       }
       if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1 && campaignSettings.SendExeptional.ExceptionalDays !== '') {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
         setbsDot(true);
         setFilterValues({ ...filterValues, dontSend: true, exceptionalDays: `${campaignSettings.SendExeptional.ExceptionalDays}` });
+        filteredValues.dontSend = true;
+        filteredValues.exceptionalDays = `${campaignSettings.SendExeptional.ExceptionalDays}`;
       }
       if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
@@ -346,6 +354,8 @@ const SmsSend = ({ classes, ...props }) => {
           setafterClick(true);
         }
       }
+
+      setFilterDialogValues({ ...filterDialogValues, ...filteredValues });
 
       setLoader(false);
     }
@@ -407,8 +417,8 @@ const SmsSend = ({ classes, ...props }) => {
       setFilterDialogValues({
         dontSend: filterValues.dontSend,
         exceptionalDays: filterValues.exceptionalDays,
-        selectedFilterCampaigns,
-        selectedFilterGroups
+        selectedFilterCampaigns: filterDialogValues.selectedFilterCampaigns,
+        selectedFilterGroups: filterDialogValues.selectedFilterGroups
       });
     }
   }, [dialogType])
@@ -1064,7 +1074,7 @@ const SmsSend = ({ classes, ...props }) => {
     if (filterDialogValues.dontSend) {
       formIsvalid = validationCheck();
       if (formIsvalid) {
-        if (filterDialogValues.selectedFilterGroups.length !== 0 || filterDialogValues.exceptionalDays !== "" || filterDialogValues.selectedFilterCampaigns.length !== 0) {
+        if (filterDialogValues.selectedFilterGroups.length !== 0 || (filterDialogValues.exceptionalDays !== undefined && filterDialogValues.exceptionalDays !== "") || filterDialogValues.selectedFilterCampaigns.length !== 0) {
           setbsDot(true);
         }
         else {
@@ -1073,8 +1083,7 @@ const SmsSend = ({ classes, ...props }) => {
       }
     }
     else {
-      if (filterDialogValues.selectedFilterGroups.length !== 0 || filterDialogValues.exceptionalDays !== "" || filterDialogValues.selectedFilterCampaigns.length !== 0) {
-        // if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) { // TODO: Validate condition
+      if (filterDialogValues.selectedFilterGroups.length !== 0 || (filterDialogValues.exceptionalDays !== undefined && filterDialogValues.exceptionalDays !== "") || filterDialogValues.selectedFilterCampaigns.length !== 0) {
         setbsDot(true);
       }
       else {
@@ -1082,8 +1091,8 @@ const SmsSend = ({ classes, ...props }) => {
         setbsDot(false);
         setCampaignSettings({
           ...campaignSettings, SendExeptional: {
-            Groups: campaignSettings?.SendExeptional?.Groups ?? [],
-            Campaigns: campaignSettings?.SendExeptional?.Campaigns ?? [],
+            Groups: filterDialogValues.selectedFilterGroups ?? [],
+            Campaigns: filterDialogValues.selectedFilterCampaigns ?? [],
             ExceptionalDays: ''
           }
         })
@@ -1479,8 +1488,8 @@ const SmsSend = ({ classes, ...props }) => {
       },
       SendExeptional:
       {
-        Groups: selectedFilterGroups.map((c) => { return c.GroupID }),
-        Campaigns: selectedFilterCampaigns.map((c) => { return c.SMSCampaignID }),
+        Groups: filterDialogValues?.selectedFilterGroups?.map((c) => { return c.GroupID }),
+        Campaigns: filterDialogValues?.selectedFilterCampaigns?.map((c) => { return c.SMSCampaignID }),
         ExceptionalDays: exceptionalDays
       },
       SendTypeID: sendType,
@@ -1601,8 +1610,8 @@ const SmsSend = ({ classes, ...props }) => {
         toggleRandom={toggleRandom}
         random={random}
         estimationDate={estimationDate}
-        filteredGroups={selectedFilterGroups}
-        filteredCampaigns={selectedFilterCampaigns}
+        filteredGroups={filterDialogValues.selectedFilterGroups}
+        filteredCampaigns={filterDialogValues.selectedFilterCampaigns}
         // displayCampaigns={totalCampaigns}
         open={summModal}
         pulseType={timeType}
@@ -2140,7 +2149,6 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
   const callbackUpdateGroupFilterd = (groups) => {
-    setFilterGroups(groups);
     setFilterDialogValues({
       ...filterDialogValues,
       selectedFilterGroups: groups,
@@ -2149,7 +2157,6 @@ const SmsSend = ({ classes, ...props }) => {
   const callbackShowTestGroup = async (showTestGroups) => {
     if (!showTestGroups && testGroups.length > 0) {
       setShowTestGroups(true);
-      //setGroupList(testGroups.concat(subAccountAllGroups));
     }
     else {
       setShowTestGroups(false);
@@ -2172,7 +2179,6 @@ const SmsSend = ({ classes, ...props }) => {
       const newGroupArr = [...filterDialogValues.selectedFilterGroups] || [];
       newGroupArr.push(group);
 
-      setFilterGroups(newGroupArr);
 
       setFilterDialogValues({
         ...filterDialogValues,
@@ -2201,7 +2207,6 @@ const SmsSend = ({ classes, ...props }) => {
       const newCampArr = [...filterDialogValues.selectedFilterCampaigns] || [];
       newCampArr.push(campaign);
 
-      setFilterCampaigns(newCampArr);
 
       setFilterDialogValues({
         ...filterDialogValues,
