@@ -40,7 +40,7 @@ const CreditHistoryDetails = ({ classes }: any) => {
   });
 
   const requestCreditHistory = async () => {
-    setCreditHistories(null);
+    setCreditHistories([]);
     setShowLoader(true);
     const c = await dispatch(getBulkHistory(creditHistoryRequest)) as any;
     if (c && c?.payload?.StatusCode === 201) {
@@ -99,12 +99,16 @@ const CreditHistoryDetails = ({ classes }: any) => {
   const renderRow = (row: CreditHistory) => {
     const renderType = (typeNumber: number) => {
       switch (typeNumber) {
-        case 1: {
+        case 0: {
           return "email"
+        }
+        case 1:
+        default: {
+          return "SMS"
         }
         case 2:
         default: {
-          return "sms"
+          return "MMS"
         }
       }
     }
@@ -227,8 +231,6 @@ const CreditHistoryDetails = ({ classes }: any) => {
     />
     )
   }
-
-  // useEffect(() => { }, [])
 
   return <Grid container style={{ position: 'relative', width: '100%' }}>
     <Loader isOpen={showLoader} showBackdrop={false} />
