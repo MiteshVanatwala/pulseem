@@ -825,5 +825,7 @@
   "URL": "גיבוי",
   "fallbackURL": "URL גיבוי",
   "invalidURL": "אנא הכניסו קישור תקין",
-  "scheduleSend": "תזמן שליחה"
+  "scheduleSend": "תזמן שליחה",
+  "opens": "נפתח",
+  "clicks": "הקלקה"
 }
