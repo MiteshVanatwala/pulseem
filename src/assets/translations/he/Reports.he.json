@@ -129,5 +129,6 @@
   "errorReason": "סיבת השגיאה",
   "smsReplies": "דו\"ח SMS נכנסים",
   "virtualNumber": "מספר וירטואלי",
-  "WhatsappBalance": "יתרת וואטסאפ"
+  "WhatsappBalance": "יתרת וואטסאפ",
+  "removalRequest": "בקשת הסרה"
 }

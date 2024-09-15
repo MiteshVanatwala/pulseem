@@ -12,15 +12,15 @@ const TotalSection = ({ classes, TotalObject, callerType }) => {
         return <Box className={clsx(classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)} style={{ marginBottom: 50 }}>
             <Grid item container className={clsx(classes.justifyEvenly)} style={{ width: '100%' }}>
                 {Object.keys(TotalObject).map((to) => {
-                    if (typeof TotalObject[to] === 'object' || to === 'TotalCredits') {
+                    if ((typeof TotalObject[to] === 'object' && TotalObject[to] !== null) || to === 'DirectReport' || to === 'MmsCredits') { //|| to === 'TotalCredits') {
                         return false;
                     }
                     if (windowSize === 'xs') {
-                        if (to === 'TotalCredits' || to === 'TotalRecords' || to === 'TotalSent') {
+                        if (to === 'TotalRecords' || to === 'TotalSent') {
                             return false;
                         }
                     }
-                    if (callerType === 'email' && to === 'TotalCredits') return false;
+
                     return <Grid item className={clsx(classes.txtCenter, classes.pt14)} style={{ maxWidth: windowSize === 'xs' ? 100 : null }} key={to}>
                         <Typography className={clsx(classes.bold, classes.colorBlue)}>
                             {t(`report.${to}`)}
