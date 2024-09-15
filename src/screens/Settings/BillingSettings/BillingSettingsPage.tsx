@@ -26,7 +26,7 @@ import CreditHistoryDetails from "./CreditHistoryDetails";
 const BillingSettingsPage = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { isRTL, windowSize } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize, rowsPerPage } = useSelector((state: any) => state.core);
 
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
@@ -34,18 +34,8 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const [showPurchaseLoader, setShowPurchaseLoader] = useState<boolean>(true);
   const [showOpenInvoicesLoader, setShowOpenInvoicesLoader] = useState<boolean>(true);
-  const [showCreditHistoryLoader, setCreditHistoryLoader] = useState<boolean>(true);
   const [purchaseHistoryData, setPurchaseHistoryData] = useState<PurchaseHistoryModel>();
   const [purchaseUnpaidData, setPurchaseUnpaidData] = useState<PurchaseHistoryModel>();
-  const [creditHistories, setCreditHistories] = useState<CreditHistory>();
-  const [creditHistoryRequest, setCreditHistoryRequest] = useState<CreditHistoryRequest>({
-    PageIndex: 1,
-    PageSize: 6,
-    AccountType: null,
-    type: null,
-    IsPulseemCreditOnly: true
-
-  } as CreditHistoryRequest)
 
   const renderToast = () => {
     setTimeout(() => {
@@ -53,15 +43,6 @@ const BillingSettingsPage = ({ classes }: any) => {
     }, 4000);
     return <Toast data={toastMessage} />;
   };
-
-  const requestCreditHistory = async () => {
-    setCreditHistoryLoader(true);
-    const creditHistories = await dispatch(getBulkHistory(creditHistoryRequest)) as any;
-    if (creditHistories && creditHistories?.payload?.StatusCode === 201) {
-      setCreditHistories(creditHistories?.payload?.Data);
-    }
-    setCreditHistoryLoader(false);
-  }
 
   const initPurchaseHistory = async () => {
     const paidResponse = await dispatch(getAccountOperations(true)) as any;
@@ -75,7 +56,7 @@ const BillingSettingsPage = ({ classes }: any) => {
       setPurchaseUnpaidData(unpaidResponse?.payload?.Data);
     }
 
-    requestCreditHistory();
+    //requestCreditHistory(null);
     setShowPurchaseLoader(false);
     setShowOpenInvoicesLoader(false);
   }
@@ -99,11 +80,6 @@ const BillingSettingsPage = ({ classes }: any) => {
       setShowLoader(false);
     });
   }
-  const handleUpdateCreditRequest = (a: any) => {
-    console.log(a);
-    // setCreditHistoryRequest()
-  }
-
   return (
     <DefaultScreen
       currentPage="settings"
@@ -166,12 +142,7 @@ const BillingSettingsPage = ({ classes }: any) => {
           <Title classes={classes} Text={t("settings.billingSettings.lastPurchases")} />
         </Box>
         <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          <CreditHistoryDetails
-            classes={classes}
-            data={creditHistories}
-            onUpdate={handleUpdateCreditRequest}
-            onSubmit={requestCreditHistory}
-            showLoader={showCreditHistoryLoader} />
+          <CreditHistoryDetails classes={classes} />
         </Box>
       </Box>
       {addCardDialog && paymentIframe && <BaseDialog

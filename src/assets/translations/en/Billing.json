@@ -18,5 +18,9 @@
     "3": "Monthly",
     "4": "Yearly",
     "5": "Monthly By Use"
-  }
+  },
+  "accountType": "Account type",
+  "type": "Credit type",
+  "transferedFrom": "Transfer from",
+  "transferredToName": "Transfer to"
 }

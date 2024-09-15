@@ -49,19 +49,19 @@ export interface PurchaseHistoryModel {
 
 export interface CreditHistoryRequest {
   AccountType: boolean | null;
-  type: number | null;
+  Type: number | null;
   IsPulseemCreditOnly: boolean;
   FromDate: string | null;
   ToDate: string | null;
   PageIndex: number;
-  PageSize: number;
+  PageSize: number | any;
 }
 
 export interface CreditHistory {
   Date: string;
   Amount: number;
-  Type: boolean;
+  Type: number;
   AccountType: boolean;
-  TransferedFromSubAccountID: string;
+  TransferedFromSubAccountName: string;
   TransferredToName: string;
 }
