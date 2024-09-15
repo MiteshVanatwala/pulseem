@@ -8,7 +8,7 @@ import { Title } from '../../../components/managment/Title';
 import { downloadRecipientsReportData, getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
 import { GroupsIcon } from '../../../assets/images/managment';
-import { ConvertClientStatus, ConvertNewsletterStatusText, ConvertSmsStatusText, SourceType } from '../../../helpers/UI/TableText';
+import { ConvertClientStatus, ConvertNewsletterStatusText, ConvertSmsReceipientStatusText, SourceType } from '../../../helpers/UI/TableText';
 import { PreviewIcon } from '../../../assets/images/managment';
 import { FormatDate } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -710,7 +710,7 @@ const RecipientReport = ({ classes }: any) => {
               [classes.recipientsStatusCanceled]: row?.SmsStatus > 6
             }
           )}>
-          {(row?.SmsStatus === 4 || row?.SmsStatus === 5) ? t('emailStatus.error') : t(`${ConvertSmsStatusText(`${row.SmsStatus}`)}`)}
+          {t(`${ConvertSmsReceipientStatusText(`${row.SmsStatus}`)}`)}
         </TableCell>
         <TableCell
           classes={cellStyle}

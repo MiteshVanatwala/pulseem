@@ -457,3 +457,52 @@ export const WhatsappStatusColor = (status: string) => {
         }
     }
 }
+export const ConvertSmsReceipientStatusText = (value: string) => {
+    if (value && value !== '') {
+        switch (value) {
+            case "1": {
+                return "report.pending";
+            }
+            case "2": {
+                return "report.directReport.statuses.sending";
+            }
+            case "3": {
+                return "campaigns.successSent";
+            }
+            case "4": {
+                return "report.error";
+            }
+            case "5": {
+                return "report.removalRequest";
+            }
+            case "7": {
+                return "report.canceled";
+            }
+            case "8": {
+                return "report.deleted";
+            }
+            case "9": {
+                return "report.suspended";
+            }
+            case "10": {
+                return "report.requireAproval";
+            }
+            case "12": {
+                return "report.invalidFromNumber";
+            }
+            case "13": {
+                return "report.toNumberLonger";
+            }
+            case "20": {
+                return "report.blockedSync";
+            }
+            case "21": {
+                return "report.blockedRemoval";
+            }
+            default: {
+                return "report.error";
+            }
+        }
+    }
+    return null;
+}
