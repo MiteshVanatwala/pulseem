@@ -832,7 +832,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching && smsReport.length}
+        rows={smsReport?.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
