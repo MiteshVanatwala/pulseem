@@ -615,10 +615,10 @@ const DirectSMSReportTab = ({
         <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
           <Grid item className={windowSize === 'xs' ? classes.mt15 : null} style={{ textAlign: isRTL ? 'right' : 'left' }}>
             <Typography className={clsx(classes.groupsLable, classes.mb5)}>
-              {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
+              {t('common.Total')} {directSmsReport?.TotalSent?.toLocaleString() ?? 0} {t('report.Messages')}
             </Typography>
             <Typography className={clsx(classes.groupsLable, classes.mb5)}>
-              {t('common.Total')} {directSmsReport.TotalCredits ?? 0} {t('report.Credits')}
+              {t('common.Total')} {directSmsReport?.TotalCredits?.toLocaleString() ?? 0} {t('report.Credits')}
             </Typography>
           </Grid>
         </Grid>
