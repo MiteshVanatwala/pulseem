@@ -92,7 +92,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 										<option value=''>{t("common.all")}</option>
 										{
 											Object.keys(CreditHistoryType).map((item: any) => 
-												<option value={item}>{t(`${get(CreditHistoryType, item, '')}`)}</option>
+												<option value={item} key={item}>{t(`${get(CreditHistoryType, item, '')}`)}</option>
 											)
 										}
 									</Select>
@@ -126,7 +126,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 										<option value=''>{t("common.all")}</option>
 										{
 											Object.keys(CreditHistoryAccountType).map((item: any) => 
-												<option value={item}>{t(`${get(CreditHistoryAccountType, item, '')}`)}</option>
+												<option value={item} key={item}>{t(`${get(CreditHistoryAccountType, item, '')}`)}</option>
 											)
 										}
 									</Select>
@@ -382,7 +382,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 		if (history.length > 0) {
 			history.map((record: BulkHistory) => {
 				listToExport.push({
-					Date: moment(record.Date).format(DateFormats.DATE_TIME_24),
+					Date: record.Date,
 					Amount: `${isGlobal && isCurrencySymbolPrefix ? currencySymbol : ''} ${record.Amount} ${isGlobal && !isCurrencySymbolPrefix ? currencySymbol : ''}`,
 					Type: t(`${get(CreditHistoryType, record.Type, '')}`),
 					AccountType: t(`${get(CreditHistoryAccountType, record.AccountType ? 1 : 0, '')}`),
@@ -392,13 +392,19 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 			});
     }
 
+		const deleteProperties = ["Status"];
+		if (isGlobal) {
+			deleteProperties.push("Type");
+			delete exportColumnHeader["Type"];
+		}
+		
 		const fields = { ...exportColumnHeader };
 		const exportOptions = {
       OrderItems: true,
       FormatDate: true,
       ConvertStatusToString: true,
       Order: Object.keys(exportColumnHeader),
-      DeleteProperties: ["Status"]
+      DeleteProperties: deleteProperties
     };
 
     try {
