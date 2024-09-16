@@ -1,4 +1,5 @@
 import { sitePrefix } from "../../config";
+import { whatsappRoutes } from "../../screens/Whatsapp/Constant";
 export const DASHBOARD_SHORTCUT = {
   'appBar.groups.title': {
     title: 'appBar.groups.title',
@@ -89,6 +90,31 @@ export const DASHBOARD_SHORTCUT = {
       {
         title: 'master.linkSMSResponsesReport.Text',
         link: '/react/reports/Inbound'
+      }
+    ]
+  },
+  'appBar.whatsapp.title': {
+    title: 'appBar.whatsapp.title',
+    pages: [
+      {
+        title: 'whatsapp.NewWhatsappCampaign',
+        link: whatsappRoutes.CREATE_TEMPLATE
+      },
+      {
+        title: 'whatsapp.SendWhatsappCampaign',
+        link: whatsappRoutes.CREATE_CAMPAIGN_PAGE1
+      },
+      {
+        title: 'whatsapp.ManageWhatsappTemplate',
+        link: whatsappRoutes.TEMPLATE_MANAGEMENT
+      },
+      {
+        title: 'whatsapp.ManageWhatsappCampaign',
+        link: whatsappRoutes.CAMPAIGN_MANAGEMENT
+      },
+      {
+        title: 'whatsapp.ChatWhatsapp',
+        link: whatsappRoutes.CHAT
       }
     ]
   },
