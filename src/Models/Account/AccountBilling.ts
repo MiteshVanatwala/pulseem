@@ -58,6 +58,7 @@ export interface CreditHistoryRequest {
 }
 
 export interface CreditHistory {
+  Id: number;
   Date: string;
   Amount: number;
   Type: number;

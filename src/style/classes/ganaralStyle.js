@@ -4205,5 +4205,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   right15: {
     right: 15,
     left: 'auto'
+  },
+  accordion: {
+    '& .MuiAccordionSummary-root': {
+      margin: '20px 0 0 0',
+      padding: 0,
+      width: '100%'
+    },
+    '& .MuiAccordionSummary-content': {
+      width: '100%',
+      margin: '0 !important',
+      padding: 0,
+    }
   }
 });

@@ -22,5 +22,7 @@
   "accountType": "Account type",
   "type": "Credit type",
   "transferedFrom": "Transfer from",
-  "transferredToName": "Transfer to"
+  "transferredToName": "Transfer to",
+  "showLoadingCreditsFromPulseemOnly": "Show loading from Pulseem only",
+  "creditHistory": "Credit History"
 }

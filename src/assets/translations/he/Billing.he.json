@@ -22,5 +22,7 @@
   "accountType": "סוג חשבון",
   "type": "סוג קרדיטים",
   "transferedFrom": "חשבון מעביר",
-  "transferredToName": "חשבון מועבר"
+  "transferredToName": "חשבון מועבר",
+  "showLoadingCreditsFromPulseemOnly": "הצג טעינות מפולסים בלבד",
+  "creditHistory": "הסטוריית קרדיטים"
 }

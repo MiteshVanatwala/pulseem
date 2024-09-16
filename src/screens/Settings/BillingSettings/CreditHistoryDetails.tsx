@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Grid, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
+import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
 import { Loader } from "../../../components/Loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../../Models/StateTypes";
@@ -11,10 +11,11 @@ import moment from "moment";
 import { TablePagination } from "../../../components/managment";
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 import { getBulkHistory } from "../../../redux/reducers/BillingSlice";
+import { IoIosArrowDown } from "react-icons/io";
 
 const CreditHistoryDetails = ({ classes }: any) => {
 
-  const { windowSize, rowsPerPage } = useSelector((state: StateType) => state.core)
+  const { windowSize, rowsPerPage, isRTL } = useSelector((state: StateType) => state.core)
 
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -27,7 +28,7 @@ const CreditHistoryDetails = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [creditHistories, setCreditHistories] = useState<CreditHistory[]>([]);
-  const [totalRecords, setTotalRecords] = useState<number>(0);
+  const [totalRecords, setTotalRecords] = useState<any>(0);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const [creditHistoryRequest, setCreditHistoryRequest] = useState<CreditHistoryRequest>({
     PageIndex: 1,
@@ -42,9 +43,11 @@ const CreditHistoryDetails = ({ classes }: any) => {
   const requestCreditHistory = async () => {
     setCreditHistories([]);
     setShowLoader(true);
-    const c = await dispatch(getBulkHistory(creditHistoryRequest)) as any;
+    const c = await dispatch(getBulkHistory({ ...creditHistoryRequest, PageSize: rowsPerPage })) as any;
     if (c && c?.payload?.StatusCode === 201) {
-      setCreditHistories(c?.payload?.Data);
+      const data = c?.payload?.Data;
+      const dataWithId = data?.map((d: CreditHistory, idx: number) => { return { ...d, Id: idx } })
+      setCreditHistories(dataWithId);
       setTotalRecords(c?.payload?.Message);
     }
     setShowLoader(false);
@@ -54,16 +57,6 @@ const CreditHistoryDetails = ({ classes }: any) => {
     requestCreditHistory();
   }, [creditHistoryRequest])
 
-  const renderTable = () => {
-    return (
-      <TableContainer className={classes.tableStyle}>
-        <Table className={classes.tableContainer}>
-          {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
-          {renderTableBody()}
-        </Table>
-      </TableContainer>
-    )
-  }
 
   const renderTableHead = () => {
     return (
@@ -78,6 +71,15 @@ const CreditHistoryDetails = ({ classes }: any) => {
         </TableRow>
       </TableHead>
     )
+  }
+
+  const renderTable = () => {
+    return <TableContainer className={classes.tableStyle}>
+      <Table className={classes.tableContainer} style={{ minHeight: 260 }}>
+        {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
+        {renderTableBody()}
+      </Table>
+    </TableContainer>
   }
 
   const renderTableBody = () => {
@@ -102,17 +104,19 @@ const CreditHistoryDetails = ({ classes }: any) => {
         case 0: {
           return "email"
         }
-        case 1:
-        default: {
+        case 1: {
           return "SMS"
         }
-        case 2:
-        default: {
+        case 2: {
           return "MMS"
+        }
+        default: {
+          return "SMS"
         }
       }
     }
     const {
+      Id,
       Date,
       Amount,
       AccountType,
@@ -122,7 +126,8 @@ const CreditHistoryDetails = ({ classes }: any) => {
     } = row
     return (
       <TableRow
-        key={Date}
+        key={Id}
+        className={Id.toString()}
         classes={rowStyle}>
         <TableCell
           classes={borderCellStyle}
@@ -232,46 +237,95 @@ const CreditHistoryDetails = ({ classes }: any) => {
     )
   }
 
-  return <Grid container style={{ position: 'relative', width: '100%' }}>
+  return <Grid container style={{ position: 'relative', width: '100%' }} spacing={2}>
     <Loader isOpen={showLoader} showBackdrop={false} />
-    <Grid item xs={4}>
-      <Select
-        value={creditHistoryRequest?.Type}
-        onChange={(e: any) => {
-          setCreditHistoryRequest({ ...creditHistoryRequest, Type: e.target.value })
-        }}>
-        <MenuItem value="-1">הכל</MenuItem>
-        <MenuItem value="0">אימייל</MenuItem>
-        <MenuItem value="1">SMS</MenuItem>
-        <MenuItem value="2">MMS</MenuItem>
-      </Select>
-    </Grid>
-    <Grid item xs={4}>
-      <Select
-        value={creditHistoryRequest?.AccountType}
-        onChange={(e: any) => {
-          setCreditHistoryRequest({ ...creditHistoryRequest, AccountType: e.target.value })
-        }}>
-        <MenuItem value="-1">הכל</MenuItem>
-        <MenuItem value="0">רגיל</MenuItem>
-        <MenuItem value="1">שליחה ישירה</MenuItem>
-      </Select>
+    <Grid item xs={2}>
+      <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+        <Select
+          variant="standard"
+          placeholder={t('billing.type')}
+          labelId="type"
+          id="type"
+          value={creditHistoryRequest?.Type}
+          IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+          inputProps={{
+            placeholder: t('billing.type'),
+            class: creditHistoryRequest?.Type === null ? classes.selectPlaceholderInput : classes.dNone
+          }}
+          MenuProps={{
+            PaperProps: {
+              style: {
+                maxHeight: 300,
+                direction: isRTL ? 'rtl' : 'ltr'
+              },
+            },
+          }}
+          onChange={(e: any) => {
+            setPage(1);
+            setCreditHistoryRequest({ ...creditHistoryRequest, Type: e.target.value, PageIndex: 1 })
+          }}>
+          <MenuItem value="null">{t('common.all')}</MenuItem>
+          <MenuItem value="0">אימייל</MenuItem>
+          <MenuItem value="1">SMS</MenuItem>
+          <MenuItem value="2">MMS</MenuItem>
+        </Select>
+      </FormControl>
+
     </Grid>
     <Grid item xs={2}>
-      <Checkbox value={creditHistoryRequest?.IsPulseemCreditOnly}
-        onChange={(e: any) => {
-          console.log(e);
-          setCreditHistoryRequest({ ...creditHistoryRequest, IsPulseemCreditOnly: e })
-        }} />
+      <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+        <Select
+          variant="standard"
+          placeholder={t('billing.accountType')}
+          labelId="accountType"
+          id="accountType"
+          value={creditHistoryRequest?.AccountType}
+          IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+          inputProps={{
+            placeholder: t('billing.accountType'),
+            class: creditHistoryRequest?.AccountType === null ? classes.selectPlaceholderInput : classes.dNone
+          }}
+          MenuProps={{
+            PaperProps: {
+              style: {
+                maxHeight: 300,
+                direction: isRTL ? 'rtl' : 'ltr'
+              },
+            },
+          }}
+          onChange={(e: any) => {
+            setPage(1);
+            setCreditHistoryRequest({ ...creditHistoryRequest, AccountType: e.target.value, PageIndex: 1 })
+          }}>
+          <MenuItem value="null">{t('billing.accountType')}</MenuItem>
+          <MenuItem value="null">{t('common.all')}</MenuItem>
+          <MenuItem value="false">רגיל</MenuItem>
+          <MenuItem value="true">שליחה ישירה</MenuItem>
+        </Select>
+      </FormControl>
     </Grid>
-    <Grid item xs={12}>
-      {t('reports.TotalRecords')}
+    <Grid item xs={2}>
+      <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} style={{ border: 'none' }}>
+        <FormControlLabel
+          control={<Checkbox value={creditHistoryRequest?.IsPulseemCreditOnly}
+            checked={creditHistoryRequest?.IsPulseemCreditOnly}
+            onChange={(e: any) => {
+              setPage(1);
+              setCreditHistoryRequest({ ...creditHistoryRequest, IsPulseemCreditOnly: e?.target?.checked || false, PageIndex: 1 })
+            }} />}
+          label={t('billing.showLoadingCreditsFromPulseemOnly')} />
+      </FormControl>
+    </Grid>
+    <Grid item xs={12} className={clsx(classes.mt10, classes.mb5)}>
+      <Box className={clsx(classes.fullFlexColumn)} style={{ alignItems: 'end' }}>
+        {t('report.TotalRecords')} {totalRecords.toLocaleString()}
+      </Box>
     </Grid>
     <Grid item xs={12}>
       {renderTable()}
     </Grid>
     <>{renderTablePagination()}</>
-  </Grid>
+  </Grid >
 }
 
 export default CreditHistoryDetails;

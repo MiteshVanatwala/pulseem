@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Grid,
@@ -21,6 +24,7 @@ import { Loader } from "../../../components/Loader/Loader";
 import PurchaseTableTemplate from "./PurchaseTableTemplate";
 import { CreditHistory, CreditHistoryRequest, PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
 import CreditHistoryDetails from "./CreditHistoryDetails";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -36,6 +40,8 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [showOpenInvoicesLoader, setShowOpenInvoicesLoader] = useState<boolean>(true);
   const [purchaseHistoryData, setPurchaseHistoryData] = useState<PurchaseHistoryModel>();
   const [purchaseUnpaidData, setPurchaseUnpaidData] = useState<PurchaseHistoryModel>();
+  const [panel, setPanel] = useState<string>('panel1');
+  const [openPanels, setOpenPanels] = useState<string[]>(['panel1']);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -80,6 +86,16 @@ const BillingSettingsPage = ({ classes }: any) => {
       setShowLoader(false);
     });
   }
+
+  const handlePanels = (panelName: string) => {
+    const found = openPanels.filter((x: string) => { return x === panelName });
+    if (found && found?.length > 0) {
+      setOpenPanels(openPanels.filter((x: string) => { return x !== panelName }))
+    } else {
+      setOpenPanels([...openPanels, panelName]);
+    }
+  }
+
   return (
     <DefaultScreen
       currentPage="settings"
@@ -88,62 +104,104 @@ const BillingSettingsPage = ({ classes }: any) => {
       containerClass={classes.management}
     >
       {toastMessage && renderToast()}
-      <Box className={classes.settingsContainer}>
-        <Box className="head">
-          <Title
-            classes={classes}
-            Element={
-              <Box className={clsx(classes.flex, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexWrap)}>
-                {
-                  windowSize === 'xs' && <ListIcon className={classes.mr15} />
-                }
+      <Box className={classes.accordion}>
+        <Accordion expanded={openPanels.indexOf('panel1') > -1} onChange={() => handlePanels('panel1')}>
+          <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+            <Title
+              isIcon={false}
+              classes={classes}
+              Element={
+                <Box className={clsx(classes.flex, windowSize !== 'xs' ? classes.spaceBetween : '', classes.flexWrap)} style={{ width: '100%' }}>
+                  <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+                    {openPanels.indexOf('panel1') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                    <Typography
+                      style={{ width: 'auto', marginInlineStart: 15 }}
+                      className={clsx(classes.managementTitle, "mgmtTitle")}
+                    >
+                      {t("settings.billingSettings.title")}
+                    </Typography>
+                  </Box>
+                  <Button
+                    style={{ marginInlineStart: 'auto' }}
+                    className={clsx(
+                      classes.btn,
+                      classes.btnRounded
+                    )}
+                    onClick={() => handleShowCreditCardIframe()}
+                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                  >
+                    <>{t("settings.billingSettings.btnAddCard")}</>
+                  </Button>
+                </Box>
+              }
+            />
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
+              <BillingDetails classes={classes} />
+            </Box>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion expanded={openPanels.indexOf('panel2') > -1} onChange={() => handlePanels('panel2')}>
+          <AccordionSummary aria-controls="panel2-content" id="panel2-header">
+            <Title isIcon={false} classes={classes}
+              Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+                {openPanels.indexOf('panel2') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
                 <Typography
-                  style={{ width: 'auto' }}
+                  style={{ width: 'auto', marginInlineStart: 15 }}
                   className={clsx(classes.managementTitle, "mgmtTitle")}
                 >
-                  {t("settings.billingSettings.title")}
+                  {t("settings.billingSettings.openInvoices")}
                 </Typography>
-                <Button
-                  className={clsx(
-                    classes.btn,
-                    classes.btnRounded
-                  )}
-                  onClick={() => handleShowCreditCardIframe()}
-                  endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+              </Box>}
+            />
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box style={{ paddingInline: 25, paddingBlock: 20, width: '100%' }} className={classes.dFlex}>
+              <PurchaseTableTemplate classes={classes} data={purchaseUnpaidData} showLoader={showOpenInvoicesLoader} isPaid={false} />
+            </Box>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion expanded={openPanels.indexOf('panel3') > -1} onChange={() => handlePanels('panel3')}>
+          <AccordionSummary aria-controls="panel3-content" id="panel3-header">
+            <Title isIcon={false} classes={classes}
+              Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+                {openPanels.indexOf('panel3') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                <Typography
+                  style={{ width: 'auto', marginInlineStart: 15 }}
+                  className={clsx(classes.managementTitle, "mgmtTitle")}
                 >
-                  <>{t("settings.billingSettings.btnAddCard")}</>
-                </Button>
-              </Box>
-            }
-          />
-        </Box>
-        <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          <BillingDetails classes={classes} />
-        </Box>
-      </Box>
-      <Box className={classes.settingsContainer}>
-        <Box className="head">
-          <Title classes={classes} Text={t("settings.billingSettings.openInvoices")} />
-        </Box>
-        <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          <PurchaseTableTemplate classes={classes} data={purchaseUnpaidData} showLoader={showOpenInvoicesLoader} isPaid={false} />
-        </Box>
-      </Box>
-      <Box className={classes.settingsContainer}>
-        <Box className="head">
-          <Title classes={classes} Text={t("settings.billingSettings.lastPurchases")} />
-        </Box>
-        <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          <PurchaseTableTemplate classes={classes} data={purchaseHistoryData} showLoader={showPurchaseLoader} isPaid={true} />
-        </Box>
-      </Box>
-      <Box className={classes.settingsContainer}>
-        <Box className="head">
-          <Title classes={classes} Text={t("settings.billingSettings.lastPurchases")} />
-        </Box>
-        <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-          <CreditHistoryDetails classes={classes} />
-        </Box>
+                  {t("settings.billingSettings.lastPurchases")}
+                </Typography>
+              </Box>}
+            />
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box style={{ paddingInline: 25, paddingBlock: 20, width: '100%' }} className={classes.dFlex}>
+              <PurchaseTableTemplate classes={classes} data={purchaseHistoryData} showLoader={showPurchaseLoader} isPaid={true} />
+            </Box>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion expanded={openPanels.indexOf('panel4') > -1} onChange={() => handlePanels('panel4')}>
+          <AccordionSummary aria-controls="panel4-content" id="panel4-header">
+            <Title isIcon={false} classes={classes}
+              Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+                {openPanels.indexOf('panel4') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                <Typography
+                  style={{ width: 'auto', marginInlineStart: 15 }}
+                  className={clsx(classes.managementTitle, "mgmtTitle")}
+                >
+                  {t("billing.creditHistory")}
+                </Typography>
+              </Box>}
+            />
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
+              <CreditHistoryDetails classes={classes} />
+            </Box>
+          </AccordionDetails>
+        </Accordion>
       </Box>
       {addCardDialog && paymentIframe && <BaseDialog
         classes={classes}
