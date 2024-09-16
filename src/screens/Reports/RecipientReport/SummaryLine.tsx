@@ -58,7 +58,7 @@ const SummaryLine = ({ classes, Stats, CampaignType }: SummaryObj) => {
                     <Box className={classes.pt10}>{Stats?.Clicks}</Box>
                 </Grid>
                 <Grid item md={2} xs={6} className={classes.flexGrow1}>
-                    <Box className={clsx(classes.bold)}>{t('recipient.Bounced')}</Box>
+                    <Box className={clsx(classes.bold)}>{t('common.failedStatus')}</Box>
                     <Box className={classes.pt10}>{Stats?.ErrorCount}</Box>
                 </Grid>
             </Grid>

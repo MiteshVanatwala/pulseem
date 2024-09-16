@@ -80,7 +80,7 @@ const RenderRow = ({
                       <Box className={clsx(classes.txtCenter, classes.directPreview)} onClick={() => {
                         window.open(`${actionURL}DirectEmailPreview.aspx?id=${row.SendID}`, '_blank')
                       }}>
-                        <IconButton style={{paddingTop: 5}}>
+                        <IconButton style={{ paddingTop: 5 }}>
                           <VisibilityIcon className={classes.black} />
                         </IconButton>
                         <Typography display='block' align='center' className={classes.mtNeg15}>{t('common.Preview')}</Typography>
@@ -669,9 +669,9 @@ const DirectEmailReportTab = ({
     return (
       <>
         <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
-          <Grid item className={windowSize === 'xs' ? classes.mt15 : null}>
+          <Grid item className={classes.mt15}>
             <Typography className={clsx(classes.groupsLable, classes.mb5)}>
-              {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
+              {t('common.Total')} {directEmailReport?.TotalRecords?.toLocaleString()} {t('report.Messages')}
             </Typography>
           </Grid>
         </Grid>

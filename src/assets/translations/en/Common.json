@@ -847,5 +847,7 @@
   "enterTopUpAmount": "Enter Top Up Amount",
   "payment": "Payment",
   "summary": "Summary",
-  "VATTax": "VAT"
+  "VATTax": "VAT",
+  "opens": "Opens",
+  "clicks": "Clicks"
 }

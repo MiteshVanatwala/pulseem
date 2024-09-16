@@ -841,5 +841,7 @@
   "enterTopUpAmount": "הכניסו סכום",
   "payment": "תשלום",
   "summary": "סיכום",
-  "VATTax": "מע\"מ"
+  "VATTax": "מע\"מ",
+  "opens": "נפתח",
+  "clicks": "הקלקה"
 }
