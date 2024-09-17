@@ -120,7 +120,7 @@
 	},
 	"billingSettings": {
 		"title": "הגדרות פרטי חיוב",
-		"titleBillingInfo": "פרטי חיוב",
+		"pageTitle": "הגדרות תשלום ופרטי חיובים",
 		"fields": {
 			"compRegNumber": "מספר ח.פ.",
 			"invoiceEmail": "דואל לחשבוניות",

@@ -24,5 +24,7 @@
   "transferedFrom": "Transfer from",
   "transferredToName": "Transfer to",
   "showLoadingCreditsFromPulseemOnly": "Show loading from Pulseem only",
-  "creditHistory": "Credit History"
+  "creditHistory": "Credit History",
+  "invoiceType": "Invoice Type",
+  "selectForPay": "Select for Pay"
 }

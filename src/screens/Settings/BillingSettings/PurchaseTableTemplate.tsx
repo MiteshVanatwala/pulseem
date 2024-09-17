@@ -1,6 +1,6 @@
-import { Box, Grid, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import { Box, Checkbox, Grid, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import { Loader } from "../../../components/Loader/Loader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { rowsOptions, SizeOptionsOfHandHeldDevices } from "../../../helpers/Constants";
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../../Models/StateTypes";
@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { TablePagination } from '../../../components/managment/index'
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 
-const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
+const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected = false, onInvoiceSelection = null }: any) => {
   const { windowSize, rowsPerPage } = useSelector((state: StateType) => state.core)
 
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
@@ -25,11 +25,39 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const [invoicesForPayment, setInvoicesForPayment] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (allSelected) {
+      const allOperationsIds = data.map((i: any) => { return i?.OperationID?.toString() });
+      setInvoicesForPayment(allOperationsIds);
+    } else {
+      setInvoicesForPayment([]);
+    }
+  }, [allSelected]);
+
+  useEffect(() => {
+    const expiredOpertaionIds: string[] = data?.filter((ifp: PurchaseHistoryModel) => {
+      const expiredMonths = moment().diff(ifp.OperationDate, 'months');
+      if (expiredMonths >= 3) {
+        return ifp.OperationID?.toString();
+      }
+      return null;
+    });
+
+    if (expiredOpertaionIds?.length > 0) {
+      const oIds = expiredOpertaionIds.map((item: any) => { return item.OperationID.toString() });
+      setInvoicesForPayment(oIds);
+      onInvoiceSelection && onInvoiceSelection(oIds)
+    }
+
+  }, [data]);
 
   const renderTableHead = () => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
+          {!isPaid && <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('billing.selectForPay')}</TableCell>}
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('billing.operationId')}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.billingPeriod")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.productType")}</TableCell>
@@ -38,6 +66,7 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.purchaseDate")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{isPaid ? t("billing.paid") : t("billing.forPayment")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.includingVat")}</TableCell>
+          {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.invoiceType")}</TableCell>}
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.invoice")}</TableCell>
           {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.credit")}</TableCell>}
           {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.receipt")}</TableCell>}
@@ -48,7 +77,7 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
   const renderTableBody = () => {
     let rowData = data;
     if (rowData?.length > 0) {
-      rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
+      rowData = rowData.slice((page - 1) * rowsPerPage, parseInt(((page - 1) * rowsPerPage).toString()) + parseInt(rowsPerPage.toString()))
       return (
         <Box className='tableBodyContainer'>
           <TableBody>
@@ -61,6 +90,30 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
     return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
       <Typography>{t("common.NoDataTryFilter")}</Typography>
     </Box>
+  }
+
+  const convertInvoiceType = (value: string) => {
+    switch (value?.trim()) {
+      case "cumulative": {
+        return "חשבונית מס"
+      }
+      case "cash": { return "חשבונית עסקה"; }
+      case "none": { return "חיוב אישי"; }
+    }
+  }
+
+  const handleSelectedInvoices = (operationId: string) => {
+    const found = invoicesForPayment.filter((ifp: string) => { return ifp === operationId });
+    if (found?.length > 0) {
+      const filtered = invoicesForPayment.filter((ifp: string) => { return ifp !== operationId });
+      setInvoicesForPayment(filtered);
+      onInvoiceSelection(filtered)
+    }
+    else {
+      const finalSelection = [...invoicesForPayment, operationId];
+      setInvoicesForPayment(finalSelection);
+      onInvoiceSelection(finalSelection)
+    }
   }
 
   const renderRow = (row: PurchaseHistoryModel) => {
@@ -77,15 +130,28 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
       OperationDate,
       AmountToPay,
       AmountWithVat,
-      // InvoiceRecieptName,
+      InvoiceRecieptName,
       InvoiceURL,
       RecieptURL,
       ReceiptID
-    } = row
+    } = row;
+    const expiredMonths = moment().diff(OperationDate, 'months');
+
     return (
       <TableRow
         key={OperationID}
-        classes={rowStyle}>
+        classes={rowStyle}
+        style={{ backgroundColor: expiredMonths >= 3 ? '#f79282' : 'transparent' }}>
+        {!isPaid && <TableCell
+          classes={cellBodyStyle}
+          align='center'
+          className={clsx(classes.flex1)}>
+          <Checkbox
+            disabled={expiredMonths >= 3}
+            value={OperationID}
+            checked={invoicesForPayment?.indexOf(OperationID?.toString()) > -1 || expiredMonths >= 3}
+            onChange={(e: any) => handleSelectedInvoices(e.target.value)} />
+        </TableCell>}
         <TableCell
           classes={cellBodyStyle}
           align='center'
@@ -136,6 +202,12 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid }: any) => {
             {AmountWithVat?.toFixed(2)?.toLocaleString()}
           </Grid>
         </TableCell>
+        {isPaid && <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {convertInvoiceType(InvoiceRecieptName)}
+        </TableCell>}
         <TableCell
           classes={cellBodyStyle}
           align='center'

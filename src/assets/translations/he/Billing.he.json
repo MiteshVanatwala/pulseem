@@ -24,5 +24,7 @@
   "transferedFrom": "חשבון מעביר",
   "transferredToName": "חשבון מועבר",
   "showLoadingCreditsFromPulseemOnly": "הצג טעינות מפולסים בלבד",
-  "creditHistory": "הסטוריית קרדיטים"
+  "creditHistory": "הסטוריית קרדיטים",
+  "invoiceType": "סוג חשבונית",
+  "selectForPay": "בחר לתשלום"
 }

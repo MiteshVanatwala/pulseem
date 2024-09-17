@@ -120,7 +120,7 @@
 	},
 	"billingSettings": {
 		"title": "Billing settings",
-		"titleBillingInfo": "Billing Information",
+		"pageTitle": "Billing Settings And Payment Information",
 		"fields": {
 			"compRegNumber": "Company register number",
 			"invoiceEmail": "Email for invoices",
