@@ -156,11 +156,11 @@ export const getRoutes = (
           href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
           isShow: true,
         },
-        {
-          title: t("master.RadMenuItemResource10.Text"),
-          href: `${rootDomain}/CampaignTemplates.aspx?fromreact=true`,
-          isShow: true,
-        },
+        // {
+        //   title: t("master.RadMenuItemResource10.Text"),
+        //   href: `${rootDomain}/CampaignTemplates.aspx?fromreact=true`,
+        //   isShow: true,
+        // },
         {
           title: t("master.newslatterBasicEditor"),
           href: `${rootDomain}/CampaignEdit.aspx?NewsLetterType=Basic&fromreact=true`,

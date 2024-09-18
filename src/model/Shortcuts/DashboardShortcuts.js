@@ -58,10 +58,10 @@ export const DASHBOARD_SHORTCUT = {
         title: 'master.RadMenuItemResource9a.Text',
         link: '/Pulseem/AutoSendPlans.aspx'
       },
-      {
-        title: 'master.RadMenuItemResource10.Text',
-        link: '/Pulseem/CampaignTemplates.aspx'
-      },
+      // {
+      //   title: 'master.RadMenuItemResource10.Text',
+      //   link: '/Pulseem/CampaignTemplates.aspx'
+      // },
       {
         title: 'master.newslatterBasicEditor',
         link: '/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic'
