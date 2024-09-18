@@ -26,5 +26,6 @@
   "showLoadingCreditsFromPulseemOnly": "הצג טעינות מפולסים בלבד",
   "creditHistory": "הסטוריית קרדיטים",
   "invoiceType": "סוג חשבונית",
-  "selectForPay": "בחר לתשלום"
+  "selectForPay": "בחר לתשלום",
+  "ordinarySend": "רגיל"
 }

@@ -151,7 +151,7 @@ const CreditHistoryDetails = ({ classes }: any) => {
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex1)}>
-          {!AccountType ? "רגיל" : "שליחה ישירה	"}
+          {!AccountType ? t('billing.ordinarySend') : t('report.DirectSendReport')}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
@@ -265,9 +265,8 @@ const CreditHistoryDetails = ({ classes }: any) => {
             setCreditHistoryRequest({ ...creditHistoryRequest, Type: e.target.value, PageIndex: 1 })
           }}>
           <MenuItem value="null">{t('common.all')}</MenuItem>
-          <MenuItem value="0">אימייל</MenuItem>
-          <MenuItem value="1">SMS</MenuItem>
-          <MenuItem value="2">MMS</MenuItem>
+          <MenuItem value="0">{t('master.lblUserMailResource1.Text')}</MenuItem>
+          <MenuItem value="1">{t('master.RadMenuItemResource24.Text')}</MenuItem>
         </Select>
       </FormControl>
 
@@ -299,12 +298,12 @@ const CreditHistoryDetails = ({ classes }: any) => {
           }}>
           <MenuItem value="null">{t('billing.accountType')}</MenuItem>
           <MenuItem value="null">{t('common.all')}</MenuItem>
-          <MenuItem value="false">רגיל</MenuItem>
-          <MenuItem value="true">שליחה ישירה</MenuItem>
+          <MenuItem value="false">{t('billing.ordinarySend')}</MenuItem>
+          <MenuItem value="true">{t('report.DirectSendReport')}</MenuItem>
         </Select>
       </FormControl>
     </Grid>
-    <Grid item xs={2}>
+    <Grid item xs={3}>
       <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} style={{ border: 'none' }}>
         <FormControlLabel
           control={<Checkbox value={creditHistoryRequest?.IsPulseemCreditOnly}

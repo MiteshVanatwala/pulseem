@@ -26,5 +26,6 @@
   "showLoadingCreditsFromPulseemOnly": "Show loading from Pulseem only",
   "creditHistory": "Credit History",
   "invoiceType": "Invoice Type",
-  "selectForPay": "Select for Pay"
+  "selectForPay": "Select for Pay",
+  "ordinarySend": "Ordinary"
 }

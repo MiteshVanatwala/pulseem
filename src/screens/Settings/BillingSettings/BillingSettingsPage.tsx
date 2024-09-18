@@ -183,7 +183,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                       {t("settings.billingSettings.openInvoices")}
                     </Typography>
                     <Box style={{ marginInlineStart: 'auto' }}>
-                      <Button
+                      {invoicesForPayment?.length > 0 && <Button
                         className={clsx(
                           classes.btn,
                           classes.btnRounded,
@@ -198,7 +198,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                         endIcon={!allInvoicesSeleted ? <BiPlus /> : <BiMinus />}
                       >
                         <>{t('common.SelectAll')}</>
-                      </Button>
+                      </Button>}
                       <Button
                         style={{ marginInlineStart: 15 }}
                         className={clsx(
