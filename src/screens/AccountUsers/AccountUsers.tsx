@@ -189,7 +189,7 @@ const AccountUsers = ({ classes }: any) => {
               {map.map(icon => (
                 <Grid
                   style={{ flex: 1, alignItems: 'center', position: 'relative' }}
-                  className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
+                  className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfTop)}
                   key={icon.key}
                   item>
                   {/* {icon?.errorElement} */}
@@ -628,7 +628,7 @@ const AccountUsers = ({ classes }: any) => {
       const response: any = await dispatch(DeleteSubAccounts(id));
       if (response?.payload?.StatusCode === 1) {
         setToastMessage({ severity: 'success', color: 'success', message: t('SubAccount.subAccountDeleted'), showAnimtionCheck: false });  
-        getData();
+        getInitialData();
       } else {
         setToastMessage({ severity: 'error', color: 'error', message: t('SubAccount.subAccountDeletionFailed'), showAnimtionCheck: false });  
       }
@@ -702,7 +702,7 @@ const AccountUsers = ({ classes }: any) => {
         isOpen={dialogType?.type === 'SaveSubAccount'}
         onClose={(isReload: boolean = false) => {
           setDialogType(null);
-          if (isReload) getData();
+          if (isReload) getInitialData();
         }}
         subAccountRecord={dialogType?.data}
       />
@@ -711,7 +711,7 @@ const AccountUsers = ({ classes }: any) => {
         isOpen={dialogType?.type === 'DirectAccount'}
         onClose={(isReload: boolean = false) => {
           setDialogType(null);
-          if (isReload) getData();
+          if (isReload) getInitialData();
         }}
         subAccountRecord={dialogType?.data}
       />

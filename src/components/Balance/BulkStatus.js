@@ -19,7 +19,7 @@ import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
-  const { accountSettings, accountFeatures } = useSelector(state => state.common);
+  const { accountSettings, accountFeatures, isGlobal } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
   const [selectedPackageType, setPackageType] = useState({ type: 1, title: '' });
@@ -150,6 +150,8 @@ const BulkStatus = ({ classes }) => {
     }
     setIsOpenPackageDialog(true);
   }
+
+  if (isGlobal !== false) return <></>;
 
   return (
     <>

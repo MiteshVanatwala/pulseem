@@ -22,6 +22,7 @@ import { Group } from '../../Models/Groups/Group';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
 import { getTestGroups } from '../../redux/reducers/smsSlice';
+import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -245,6 +246,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			}
 			case 1: {
 				setToastMessage({ severity: 'success', color: 'success', message: t('SubAccount.subAccountSaved'), showAnimtionCheck: false } as any)
+				if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
 				setTimeout(() => {
 					onClose(true);
 				}, 2000);

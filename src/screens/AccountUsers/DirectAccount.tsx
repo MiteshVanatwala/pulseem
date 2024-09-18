@@ -42,11 +42,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		addEmailBulk: 0,
 		addSMSBulk: 0,
 		addMMSBulk: 0,
-		addBalance: 0,
-		lastEmailBulkAddedOn: '',
-		lastSMSBulkAddedOn: '',
-		lastMMSBulkAddedOn: '',
-		lastBalanceBulkAddedOn: '',
+		addBalance: 0
 	})
 	const CustomGuidEnc = get(subAccountRecord, 'CustomGuidEnc', '');
 
@@ -61,6 +57,10 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 				emailBulk: get(subAccountRecord, 'DirectBulkEmails', 0),
 				SMSBulk: get(subAccountRecord, 'DirectSMSCredits', 0),
 				MMSBulk: get(subAccountRecord, 'DirectMmsCredits', 0),
+				addEmailBulk: 0,
+				addSMSBulk: 0,
+				addMMSBulk: 0,
+				addBalance: 0,
 			});
 
 			setErrors({

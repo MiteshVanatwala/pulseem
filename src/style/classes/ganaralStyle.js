@@ -3778,6 +3778,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   alignSelfCenter: {
     alignSelf: 'center'
   },
+  alignSelfTop: {
+    alignSelf: 'flex-start'
+  },
   smallActionIcons: {
     '& button': {
       minWidth: 45,

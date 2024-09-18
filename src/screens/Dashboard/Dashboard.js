@@ -71,8 +71,8 @@ const DashboardScreen = ({ classes }) => {
         <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
-              { isGlobal === false && <BulkStatus classes={classes} /> }
-              { isGlobal === true && <GlobalBalance classes={classes} /> }
+              { <BulkStatus classes={classes} /> }
+              { <GlobalBalance classes={classes} /> }
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={8} className={windowSize === "xs" ? classes.pt20 : null}>
               <RecipientChart classes={classes} />

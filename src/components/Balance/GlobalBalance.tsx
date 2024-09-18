@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Grid, Paper, Typography, Box, Button } from '@material-ui/core';
+import { Grid, Paper, Typography, Box, Button, CircularProgress } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { CardIcon } from '../../assets/images/dashboard/index'
@@ -9,12 +9,14 @@ import GlobalBalancePaymentWizard from './GlobalBalancePaymentWizard';
 
 const GlobalBalance = ({ classes }: any) => {
   const { isRTL } = useSelector((state: any) => state.core)
-  const { currencySymbol, isCurrencySymbolPrefix, finalGlobalBalance } = useSelector((state: any) => state.common)
+  const { currencySymbol, isCurrencySymbolPrefix, finalGlobalBalance, isGlobal } = useSelector((state: any) => state.common)
   const { t } = useTranslation();
   const [dialogType, setDialogType] = useState<{
     type: string;
     data: any
   } | null>(null);
+
+  if (isGlobal === false) return <></>;
 
   return (
     <>
@@ -30,21 +32,33 @@ const GlobalBalance = ({ classes }: any) => {
                 <Typography
                   className={clsx(classes.dInlineBlock, 'title')}
                 >
-                  {t('SubAccount.credit')}
+                  {t(isGlobal === true ? 'SubAccount.credit' : '')}
                 </Typography>
               </Box>
             </Box>
           </Grid>
-          <Box className={clsx(classes.textCenter, classes.p50, classes.f30, classes.bold)}>
-            <div className={classes.pt10}>{t('SubAccount.balance')}</div>
-            <div className={classes.pt10}>{ isCurrencySymbolPrefix ? currencySymbol : '' } {finalGlobalBalance} { !isCurrencySymbolPrefix ? currencySymbol : '' }</div>
-            <Box className={classes.pt10}>
-              <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => setDialogType({ type: 'PaymentDialog', data: {} })}>
-                {t('common.topUp')}
-                {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-              </Button>
-            </Box>
-          </Box>
+          {
+            isGlobal === true && (
+              <Box className={clsx(classes.textCenter, classes.p50, classes.f30, classes.bold)}>
+                <div className={classes.pt10}>{t('SubAccount.balance')}</div>
+                <div className={classes.pt10}>{ isCurrencySymbolPrefix ? currencySymbol : '' } {finalGlobalBalance} { !isCurrencySymbolPrefix ? currencySymbol : '' }</div>
+                <Box className={classes.pt10}>
+                  <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => setDialogType({ type: 'PaymentDialog', data: {} })}>
+                    {t('common.topUp')}
+                    {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                  </Button>
+                </Box>
+              </Box>
+            )
+          }
+
+          {
+            isGlobal === null && (
+              <Box sx={{ pt: 10 }}>
+                <CircularProgress />
+              </Box>
+            )
+          }
         </Grid>
       </Paper>
       <GlobalBalancePaymentWizard classes={classes} isOpen={dialogType?.type === 'PaymentDialog'} onClose={() => setDialogType(null)} />
