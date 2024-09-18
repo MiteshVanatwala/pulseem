@@ -141,7 +141,7 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
       <TableRow
         key={OperationID}
         classes={rowStyle}
-        style={{ backgroundColor: expiredMonths >= 3 ? '#f79282' : 'transparent' }}>
+        style={{ backgroundColor: !isPaid && expiredMonths >= 3 ? '#f79282' : '' }}>
         {!isPaid && <TableCell
           classes={cellBodyStyle}
           align='center'
