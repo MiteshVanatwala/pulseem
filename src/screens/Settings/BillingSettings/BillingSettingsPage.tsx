@@ -128,7 +128,10 @@ const BillingSettingsPage = ({ classes }: any) => {
         <Box className={'topSection'}>
           <Title Text={t('settings.billingSettings.pageTitle')} classes={classes} ContainerStyle={{ width: 'auto' }} />
           <Box className={classes.accordion} style={{ padding: 15 }}>
-            <Accordion expanded={openPanels.indexOf('1') > -1} onChange={() => handlePanels('1')}>
+            <Accordion expanded={openPanels.indexOf('1') > -1} onChange={() => handlePanels('1')} elevation={0}
+              classes={{
+                root: classes.MuiAccordionroot
+              }}>
               <AccordionSummary aria-controls="1-content" id="1-header">
                 <Title
                   isIcon={false}
@@ -165,7 +168,10 @@ const BillingSettingsPage = ({ classes }: any) => {
                 </Box>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={openPanels.indexOf('2') > -1} onChange={() => handlePanels('2')}>
+            <Accordion expanded={openPanels.indexOf('2') > -1} onChange={() => handlePanels('2')} elevation={0}
+              classes={{
+                root: classes.MuiAccordionroot
+              }}>
               <AccordionSummary aria-controls="2-content" id="2-header">
                 <Title isIcon={false} classes={classes}
                   Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
@@ -181,6 +187,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                         className={clsx(
                           classes.btn,
                           classes.btnRounded,
+                          openPanels.indexOf('2') === -1 && classes.disabled,
                           (invoicesForPayment?.length === purchaseUnpaidData?.length || allInvoicesSeleted) && classes.btnActive,
                         )}
                         onClick={(e: any) => {
@@ -225,7 +232,10 @@ const BillingSettingsPage = ({ classes }: any) => {
                 </Box>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={openPanels.indexOf('3') > -1} onChange={() => handlePanels('3')}>
+            <Accordion expanded={openPanels.indexOf('3') > -1} onChange={() => handlePanels('3')} elevation={0}
+              classes={{
+                root: classes.MuiAccordionroot
+              }}>
               <AccordionSummary aria-controls="3-content" id="3-header">
                 <Title isIcon={false} classes={classes}
                   Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
@@ -245,7 +255,10 @@ const BillingSettingsPage = ({ classes }: any) => {
                 </Box>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={openPanels.indexOf('4') > -1} onChange={() => handlePanels('4')}>
+            <Accordion expanded={openPanels.indexOf('4') > -1} onChange={() => handlePanels('4')} elevation={0}
+              classes={{
+                root: classes.MuiAccordionroot
+              }}>
               <AccordionSummary aria-controls="4-content" id="4-header">
                 <Title isIcon={false} classes={classes}
                   Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
