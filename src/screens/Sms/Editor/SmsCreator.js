@@ -59,7 +59,7 @@ import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCampaign } from "react-icon
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import { CgWebsite } from "react-icons/cg";
 import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
-import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode, IsValidURL } from "../../../helpers/Utils/Validations";
+import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode, IsValidURL } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import { URL_REGEX } from "../../../helpers/Constants";
 
@@ -1064,7 +1064,8 @@ const SmsCreator = ({ classes }) => {
   };
 
   const handleNumberChange = (e) => {
-    if (e.target.value === '' && (isGlobal ? IsValidPhoneNumberWithCountryCode(phone, countryCodeList) : IsValidNonGlobalPhoneNumber(phone))) {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
       setphone(e.target.value);
     }
   };
@@ -1134,7 +1135,6 @@ const SmsCreator = ({ classes }) => {
                         maxLength: 16
                       }}
                       onChange={handleNumberChange}
-                      onKeyPress={IsValidPhoneNumberKeyPress}
                     />
                     <Button className={clsx(classes.btn, classes.btnRounded, classes.ml5)} onClick={() => { validationCheckpoint(() => handleSend()) }}>
                       {t("mainReport.send")}
