@@ -20,12 +20,15 @@
     "5": "חודשי לפי שימוש"
   },
   "accountType": "סוג חשבון",
-  "type": "סוג קרדיטים",
+  "type": "סוג מוצר",
   "transferedFrom": "חשבון מעביר",
   "transferredToName": "חשבון מועבר",
   "showLoadingCreditsFromPulseemOnly": "הצג טעינות מפולסים בלבד",
   "creditHistory": "הסטוריית קרדיטים",
   "invoiceType": "סוג חשבונית",
   "selectForPay": "בחר לתשלום",
-  "ordinarySend": "רגיל"
+  "ordinarySend": "רגיל",
+  "taxInvoice": "חשבונית מס",
+  "cash": "חשבונית עסקה",
+  "personalyCharge": "חיוב אישי"
 }

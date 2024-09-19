@@ -65,9 +65,6 @@ const CreditHistoryDetails = ({ classes }: any) => {
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('report.date')}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.amount")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.accountType")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.type")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.transferedFrom")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.transferredToName")}</TableCell>
         </TableRow>
       </TableHead>
     )
@@ -139,31 +136,13 @@ const CreditHistoryDetails = ({ classes }: any) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex2}>
-          {`${Amount?.toLocaleString()} ${t('common.NIS')}`}
+          {Amount?.toLocaleString()}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
           className={classes.flex2}>
           {renderType(Type)}
-        </TableCell>
-        <TableCell
-          classes={cellBodyStyle}
-          align='center'
-          className={clsx(classes.flex1)}>
-          {!AccountType ? t('billing.ordinarySend') : t('report.DirectSendReport')}
-        </TableCell>
-        <TableCell
-          classes={cellBodyStyle}
-          align='center'
-          className={clsx(classes.flex1)}>
-          {TransferedFromSubAccountName}
-        </TableCell>
-        <TableCell
-          classes={cellBodyStyle}
-          align='center'
-          className={clsx(classes.flex2)}>
-          {TransferredToName}
         </TableCell>
       </TableRow>
     )
@@ -196,19 +175,6 @@ const CreditHistoryDetails = ({ classes }: any) => {
           </Grid>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
             {Type}
-          </Grid>
-          <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
-            {AccountType}
-          </Grid>
-          <Grid item xs={3}>
-            <Grid container spacing={2}>
-              <Grid item>
-                {TransferedFromSubAccountName}
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={3}>
-            {TransferredToName}
           </Grid>
         </TableCell>
       </TableRow >
@@ -270,50 +236,6 @@ const CreditHistoryDetails = ({ classes }: any) => {
         </Select>
       </FormControl>
 
-    </Grid>
-    <Grid item xs={2}>
-      <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
-        <Select
-          variant="standard"
-          placeholder={t('billing.accountType')}
-          labelId="accountType"
-          id="accountType"
-          value={creditHistoryRequest?.AccountType}
-          IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-          inputProps={{
-            placeholder: t('billing.accountType'),
-            class: creditHistoryRequest?.AccountType === null ? classes.selectPlaceholderInput : classes.dNone
-          }}
-          MenuProps={{
-            PaperProps: {
-              style: {
-                maxHeight: 300,
-                direction: isRTL ? 'rtl' : 'ltr'
-              },
-            },
-          }}
-          onChange={(e: any) => {
-            setPage(1);
-            setCreditHistoryRequest({ ...creditHistoryRequest, AccountType: e.target.value, PageIndex: 1 })
-          }}>
-          <MenuItem value="null">{t('billing.accountType')}</MenuItem>
-          <MenuItem value="null">{t('common.all')}</MenuItem>
-          <MenuItem value="false">{t('billing.ordinarySend')}</MenuItem>
-          <MenuItem value="true">{t('report.DirectSendReport')}</MenuItem>
-        </Select>
-      </FormControl>
-    </Grid>
-    <Grid item xs={3}>
-      <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} style={{ border: 'none' }}>
-        <FormControlLabel
-          control={<Checkbox value={creditHistoryRequest?.IsPulseemCreditOnly}
-            checked={creditHistoryRequest?.IsPulseemCreditOnly}
-            onChange={(e: any) => {
-              setPage(1);
-              setCreditHistoryRequest({ ...creditHistoryRequest, IsPulseemCreditOnly: e?.target?.checked || false, PageIndex: 1 })
-            }} />}
-          label={t('billing.showLoadingCreditsFromPulseemOnly')} />
-      </FormControl>
     </Grid>
     <Grid item xs={12} className={clsx(classes.mt10, classes.mb5)}>
       <Box className={clsx(classes.fullFlexColumn)} style={{ alignItems: 'end' }}>

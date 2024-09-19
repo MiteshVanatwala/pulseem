@@ -5,7 +5,7 @@ export const getAccountCards = createAsyncThunk(
   'payment/GetAccountCards', async (_, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`Payment/GetAccountCards`);
-      return JSON.parse(response.data);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -70,7 +70,7 @@ export const paymentSlice = createSlice({
         state.tranzillaUrl = action.error.message
       })
       .addCase(getAccountCards.fulfilled, (state, { payload }) => {
-        state.creditCards = payload
+        state.creditCards = payload?.Data
       })
       .addCase(getAccountCards.rejected, (state, action) => {
         state.creditCards = null

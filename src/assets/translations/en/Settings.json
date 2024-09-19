@@ -141,7 +141,8 @@
 		"btnUpdate": "Update billing",
 		"btnAddCard": "Add credit card",
 		"lastPurchases": "Last Purchases",
-		"openInvoices": "Open Invoices"
+		"openInvoices": "Open Invoices",
+		"editCard": "Edit Credit Card"
 	},
 	"changePassword": {
 		"title": "Change Password",

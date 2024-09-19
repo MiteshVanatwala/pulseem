@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Grid,
+  Link,
   Typography,
 } from "@material-ui/core";
 import { Title } from "../../../components/managment/Title";
@@ -26,12 +27,16 @@ import CreditHistoryDetails from "./CreditHistoryDetails";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import queryString from 'query-string';
 import { BiMinus, BiPlus } from "react-icons/bi";
+import { getAccountCards } from "../../../redux/reducers/paymentSlice";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
+  const { creditCards } = useSelector((state: any) => state.payment);
+
+
 
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
 
@@ -57,7 +62,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const initPurchaseHistory = async () => {
     const paidResponse = await dispatch(getAccountOperations(true)) as any;
     const unpaidResponse = await dispatch(getAccountOperations(false)) as any;
-
+    dispatch(getAccountCards()) as any;
 
     if (paidResponse && paidResponse?.payload?.StatusCode === 201) {
       setPurchaseHistoryData(paidResponse?.payload?.Data);
@@ -75,7 +80,10 @@ const BillingSettingsPage = ({ classes }: any) => {
     initPurchaseHistory();
   }, []);
 
-  const handleOnCardSaved = () => { }
+  const handleOnCardSaved = () => {
+    setAddCardDialog(false);
+    dispatch(getAccountCards()) as any;
+  }
 
   const handleCreditCardIframe = async () => {
     setShowLoader(true);
@@ -147,17 +155,27 @@ const BillingSettingsPage = ({ classes }: any) => {
                           {t("settings.billingSettings.title")}
                         </Typography>
                       </Box>
-                      <Button
+                      {(!creditCards || creditCards?.length === 0) ? (<Button
                         style={{ marginInlineStart: 'auto' }}
                         className={clsx(
                           classes.btn,
                           classes.btnRounded
                         )}
-                        onClick={() => handleShowCreditCardIframe()}
+                        onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                       >
                         <>{t("settings.billingSettings.btnAddCard")}</>
-                      </Button>
+                      </Button>) : (<>
+                        <Box className={classes.dFlex} style={{ alignItems: 'center', gap: 10 }}>
+                          <Typography>{t('settings.billingSettings.fields.cardNumber')}</Typography>
+                          <Typography style={{ direction: 'ltr', fontWeight: 900 }}>**** {creditCards[0]?.LastDigits}</Typography>
+                          <Link
+                            onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
+                            className={clsx(classes.font14)}
+                            style={{ textDecoration: 'underline' }}
+                          >{t("settings.billingSettings.editCard")}</Link>
+                        </Box>
+                      </>)}
                     </Box>
                   }
                 />
@@ -273,7 +291,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                 />
               </AccordionSummary>
               <AccordionDetails>
-                <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
+                <Box style={{ paddingInline: 25, paddingBlock: 20, width: '100%' }} className={classes.dFlex}>
                   <CreditHistoryDetails classes={classes} />
                 </Box>
               </AccordionDetails>

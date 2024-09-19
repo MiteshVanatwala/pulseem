@@ -58,17 +58,12 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
       <TableHead>
         <TableRow classes={rowStyle}>
           {!isPaid && <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('billing.selectForPay')}</TableCell>}
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('billing.operationId')}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.billingPeriod")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.productType")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex3} align='center'>{t("billing.productDescription")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.amount")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.productDescription")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.purchaseDate")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{isPaid ? t("billing.paid") : t("billing.forPayment")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.includingVat")}</TableCell>
           {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.invoiceType")}</TableCell>}
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.invoice")}</TableCell>
-          {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.credit")}</TableCell>}
           {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.receipt")}</TableCell>}
         </TableRow>
       </TableHead>
@@ -95,10 +90,10 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
   const convertInvoiceType = (value: string) => {
     switch (value?.trim()) {
       case "cumulative": {
-        return "חשבונית מס"
+        return t('billing.taxInvoice')
       }
-      case "cash": { return "חשבונית עסקה"; }
-      case "none": { return "חיוב אישי"; }
+      case "cash": { return t('billing.cash') }
+      case "none": { return t('billing.personalyCharge') }
     }
   }
 
@@ -153,34 +148,10 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
             onChange={(e: any) => handleSelectedInvoices(e.target.value)} />
         </TableCell>}
         <TableCell
-          classes={cellBodyStyle}
-          align='center'
-          className={clsx(classes.flex1)}>
-          {OperationID}
-        </TableCell>
-        <TableCell
-          classes={cellBodyStyle}
+          classes={borderCellStyle}
           align='center'
           className={classes.flex2}>
-          {BillingPeriod}
-        </TableCell>
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {BillingType}
-        </TableCell>
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex3}>
           {ProdctDesciption}
-        </TableCell>
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {NumberOfProducts}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
@@ -216,12 +187,12 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
             {InvoiceID}
           </Link>
         </TableCell>
-        {isPaid && <TableCell
+        {/* {isPaid && <TableCell
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex1)}>
           {CreditInvoiceID}
-        </TableCell>}
+        </TableCell>} */}
         {isPaid && <TableCell
           classes={noBorderCellStyle}
           align='center'
@@ -256,7 +227,7 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
         component='div'
         classes={rowStyle}>
         <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
-          <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
+          {/* <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
             {OperationID}
           </Box>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
@@ -268,7 +239,7 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
           </Grid>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
             {BillingPeriod}
-          </Grid>
+          </Grid> */}
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
             {ProdctDesciption}
           </Grid>
