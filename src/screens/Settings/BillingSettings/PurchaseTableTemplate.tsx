@@ -114,14 +114,8 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
   const renderRow = (row: PurchaseHistoryModel) => {
     const {
       InvoiceID,
-      CreditInvoiceID,
       OperationID,
-      BillingPeriod,
-      // AccountPurchaseID,
-      BillingType,
       ProdctDesciption,
-      NumberOfProducts,
-      // OpenDate,
       OperationDate,
       AmountToPay,
       AmountWithVat,
@@ -136,7 +130,7 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
       <TableRow
         key={OperationID}
         classes={rowStyle}
-        style={{ backgroundColor: !isPaid && expiredMonths >= 3 ? '#f79282' : '' }}>
+      >
         {!isPaid && <TableCell
           classes={cellBodyStyle}
           align='center'
@@ -187,12 +181,6 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
             {InvoiceID}
           </Link>
         </TableCell>
-        {/* {isPaid && <TableCell
-          classes={cellBodyStyle}
-          align='center'
-          className={clsx(classes.flex1)}>
-          {CreditInvoiceID}
-        </TableCell>} */}
         {isPaid && <TableCell
           classes={noBorderCellStyle}
           align='center'
@@ -210,16 +198,11 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
       InvoiceID,
       CreditInvoiceID,
       OperationID,
-      BillingPeriod,
-      // AccountPurchaseID,
-      BillingType,
       ProdctDesciption,
       NumberOfProducts,
-      // OpenDate,
       OperationDate,
       AmountToPay,
       AmountWithVat,
-      // InvoiceRecieptName
     } = row
     return (
       <TableRow
@@ -227,19 +210,6 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
         component='div'
         classes={rowStyle}>
         <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
-          {/* <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
-            {OperationID}
-          </Box>
-          <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
-            <Grid item>
-              <Typography className={classes.mobileReportHead}>
-                {BillingType}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
-            {BillingPeriod}
-          </Grid> */}
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
             {ProdctDesciption}
           </Grid>
