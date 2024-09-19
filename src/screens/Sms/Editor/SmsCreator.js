@@ -456,9 +456,13 @@ const SmsCreator = ({ classes }) => {
 
     if (t && t.length > 0) {
       const res = t.replace('\r\n', ' ');
-      const links = res.match(URL_REGEX);
-
+      let links = res.match(URL_REGEX);
       if (links && links.length > 0) {
+        links = links.reduce((output, link) => {
+          if (link.indexOf('www') === 0 || link.indexOf('https') === 0 || link.indexOf('http') === 0) output.push(link)
+          return output;
+        }, []);
+        
         setlinkCount(links.length);
         if (isLinksStatistics) {
           setSplittedLinks(links);
