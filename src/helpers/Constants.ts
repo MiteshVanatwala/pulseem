@@ -322,5 +322,5 @@ export const SHOPIFY_SITE_TRACKING = `
 </script>`;
 export const SEND_1 = '_Send_1';
 export const PULSE_1 = '_Pulse_1';
-
+// eslint-disable-next-line
 export const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\??(?:[\-\+=&;%@\.\w_]*)##?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;
