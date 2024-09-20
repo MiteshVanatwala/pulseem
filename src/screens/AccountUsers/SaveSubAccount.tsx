@@ -187,16 +187,16 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			addBalance: !NumberWithMinusRegEx.test(subAccountDetails.addBalance) ? t('mainReport.invalidNo') : '',
 		};
 
-		if (!isGlobal && errorsTemp.emailBulkAmount === '' && subAccountDetails.emailBulkAmount !== '') {
+		if (!isGlobal && subAccountDetails.addEmailBulk === true && errorsTemp.emailBulkAmount === '' && subAccountDetails.emailBulkAmount !== '') {
 			errorsTemp.emailBulkAmount = Number(subAccountDetails.emailBulkAmount) > Number(get(mainAccountBalance, 'EmailBalance', 0)) ? t('SubAccount.notEnoughEmailCreditInParentAccount') : '';
 		}
 
-		if (!isGlobal && errorsTemp.SMSBulkAmount === '' && subAccountDetails.SMSBulkAmount) {
+		if (!isGlobal && subAccountDetails.addSMSBulk === true && errorsTemp.SMSBulkAmount === '' && subAccountDetails.SMSBulkAmount) {
 			errorsTemp.SMSBulkAmount = Number(subAccountDetails.SMSBulkAmount) > Number(get(mainAccountBalance, 'SMSBalance', 0)) ? t('SubAccount.notEnoughSMSCreditInParentAccount') : '';
 		}
 
-		if (!isGlobal && errorsTemp.addBalance === '' && subAccountDetails.SMSBulkAmount) {
-			errorsTemp.SMSBulkAmount = Number(subAccountDetails.addBalance) > Number(get(mainAccountBalance, 'GlobalBalance', 0)) ? t('SubAccount.notEnoughGlobalBalance') : '';
+		if (isGlobal && errorsTemp.addBalance === '' && subAccountDetails.addBalance) {
+			errorsTemp.addBalance = Number(subAccountDetails.addBalance) > Number(get(mainAccountBalance, 'GlobalBalance', 0)) ? t('SubAccount.notEnoughGlobalBalance') : '';
 		}
 
 		if ((CustomGuidEnc === '' || subAccountDetails.password.trim() !== '') && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
@@ -233,10 +233,10 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				// ExpiryDate: subAccountDetails.automaticUserLock,
 				CellPhone: subAccountDetails.cellPhone,
 				AccountManager: subAccountDetails.accountManager,
-				AddEmailBulkAmount: subAccountDetails.emailBulkAmount,
-				AddSmsBulkAmount: subAccountDetails.SMSBulkAmount,
-				AddMmsBulkAmount: subAccountDetails.MMSBulkAmount,
-				FinalGlobalBalance: subAccountDetails.addBalance,
+				AddEmailBulkAmount: !isGlobal && subAccountDetails.addEmailBulk ? subAccountDetails.emailBulkAmount : 0,
+				AddSmsBulkAmount: !isGlobal && subAccountDetails.addSMSBulk ? subAccountDetails.SMSBulkAmount : 0,
+				AddMmsBulkAmount: !isGlobal && subAccountDetails.MMSBulkAmount,
+				FinalGlobalBalance: isGlobal ? subAccountDetails.addBalance : 0,
 				Email: subAccountDetails.emailAddress,
 				LoginUserName: CustomGuidEnc ? get(subAccountRecord, 'LoginUserName', '') : subAccountDetails.loginUserName,
 				Password: subAccountDetails.password,
