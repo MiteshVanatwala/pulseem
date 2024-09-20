@@ -351,10 +351,10 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 						!isGlobal && (
 							<>
 								<Grid item md={4}>
-									{t("SubAccount.emailDirectBalance")}: {directAccountDetails.emailBulk}
+									{t("SubAccount.emailDirectBalance")}: {directAccountDetails.emailBulk || 0}
 								</Grid>
-								<Grid item md={4}>
-									{t("common.SMS")}: {directAccountDetails.SMSBulk}
+								<Grid item md={4} style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
+									{ isRTL ? directAccountDetails.SMSBulk || 0 : t("common.SMS")} : { isRTL ? t("common.SMS") : directAccountDetails.SMSBulk || 0}
 								</Grid>
 								<Grid item md={4}>
 									{/* {t("SubAccount.directAccountMMSCredits")}: {directAccountDetails.MMSBulk} */}
@@ -381,6 +381,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 											}
 										}}
 										inputProps={{ max: 9999999999 }}
+										style={{ direction: 'ltr' }}
 										// onKeyUp={handleKeyPress}
 									/>
 									<Typography className={clsx(errors.addEmailBulk ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -393,7 +394,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										{t("SubAccount.addSMS")}
 									</Typography>
 									<TextField
-										type="number"
+										type="text"
 										id="addSMSBulk"
 										label=""
 										variant="outlined"
@@ -410,6 +411,7 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 											}
 										}}
 										inputProps={{ max: 9999999999 }}
+										style={{ direction: 'ltr' }}
 										// onKeyUp={handleKeyPress}
 									/>
 									<Typography className={clsx(errors.addSMSBulk ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

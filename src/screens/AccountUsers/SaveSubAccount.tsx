@@ -24,7 +24,7 @@ import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNu
 import { getTestGroups } from '../../redux/reducers/smsSlice';
 import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
 
-const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
+const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
 	const dispatch: any = useDispatch();
 	const { t } = useTranslation();
 	const { windowSize, isRTL } = useSelector(
@@ -186,6 +186,18 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			SMSBulkAmount: !NumberWithMinusRegEx.test(subAccountDetails.SMSBulkAmount) ? t('mainReport.invalidNo') : '',
 			addBalance: !NumberWithMinusRegEx.test(subAccountDetails.addBalance) ? t('mainReport.invalidNo') : '',
 		};
+
+		if (!isGlobal && errorsTemp.emailBulkAmount === '' && subAccountDetails.emailBulkAmount !== '') {
+			errorsTemp.emailBulkAmount = Number(subAccountDetails.emailBulkAmount) > Number(get(mainAccountBalance, 'EmailBalance', 0)) ? t('SubAccount.notEnoughEmailCreditInParentAccount') : '';
+		}
+
+		if (!isGlobal && errorsTemp.SMSBulkAmount === '' && subAccountDetails.SMSBulkAmount) {
+			errorsTemp.SMSBulkAmount = Number(subAccountDetails.SMSBulkAmount) > Number(get(mainAccountBalance, 'SMSBalance', 0)) ? t('SubAccount.notEnoughSMSCreditInParentAccount') : '';
+		}
+
+		if (!isGlobal && errorsTemp.addBalance === '' && subAccountDetails.SMSBulkAmount) {
+			errorsTemp.SMSBulkAmount = Number(subAccountDetails.addBalance) > Number(get(mainAccountBalance, 'GlobalBalance', 0)) ? t('SubAccount.notEnoughGlobalBalance') : '';
+		}
 
 		if ((CustomGuidEnc === '' || subAccountDetails.password.trim() !== '') && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
       errorsTemp.password = t('SignUp.InvalidPassword');
@@ -607,7 +619,11 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 														}
 													}}
 													inputProps={{ max: 9999999999 }}
+													style={{ direction: 'ltr' }}
 												/>
+												<Typography className={clsx('MuiFormHelperText-root', classes.f14)}>
+												 	{t('SubAccount.balance')}: {get(mainAccountBalance, 'EmailBalance', 0)}
+												</Typography>
 												<Typography className={clsx(errors.emailBulkAmount ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
 													{errors.emailBulkAmount}
 												</Typography>
@@ -662,7 +678,11 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 														}
 													}}
 													inputProps={{ max: 9999999999 }}
+													style={{ direction: 'ltr' }}
 												/>
+												<Typography className={clsx('MuiFormHelperText-root', classes.f14)}>
+												 	{t('SubAccount.balance')}: {get(mainAccountBalance, 'SMSBalance', 0)}
+												</Typography>
 												<Typography className={clsx(errors.SMSBulkAmount ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
 													{errors.SMSBulkAmount}
 												</Typography>
@@ -751,7 +771,11 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 											}
 										}}
 										inputProps={{ max: 9999999999 }}
+										style={{ direction: 'ltr' }}
 									/>
+									<Typography className={clsx('MuiFormHelperText-root', classes.f14)}>
+										{t('SubAccount.balance')}: {get(mainAccountBalance, 'GlobalBalance', 0)}
+									</Typography>
 									<Typography className={clsx(errors.addBalance ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
 										{errors.addBalance}
 									</Typography>

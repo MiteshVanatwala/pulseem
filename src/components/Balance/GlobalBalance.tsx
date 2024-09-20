@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Grid, Paper, Typography, Box, Button, CircularProgress } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { CardIcon } from '../../assets/images/dashboard/index'
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import GlobalBalancePaymentWizard from './GlobalBalancePaymentWizard';
+import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
 
 const GlobalBalance = ({ classes }: any) => {
   const { isRTL } = useSelector((state: any) => state.core)
+  const dispatch: any = useDispatch();
   const { currencySymbol, isCurrencySymbolPrefix, finalGlobalBalance, isGlobal } = useSelector((state: any) => state.common)
   const { t } = useTranslation();
   const [dialogType, setDialogType] = useState<{
     type: string;
     data: any
   } | null>(null);
+
+  useEffect(() => {
+    if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
+  }, [])
 
   if (isGlobal === false) return <></>;
 

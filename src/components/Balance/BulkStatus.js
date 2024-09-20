@@ -57,7 +57,7 @@ const BulkStatus = ({ classes }) => {
       await dispatch(getPackagesDetails());
     }
 
-    initPackages();
+    if (!isGlobal) initPackages();
 
   }, []);
 

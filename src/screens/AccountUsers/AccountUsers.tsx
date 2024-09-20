@@ -57,11 +57,13 @@ const AccountUsers = ({ classes }: any) => {
   const [ direct, setDirect ] = useState<{
     emailDirect: null | number,
     SMSDirect: null | number,
-    MMSDirect: null | number
+    MMSDirect: null | number,
+    GlobalBalance: null | number,
   }>({
     emailDirect: null,
     SMSDirect: null,
-    MMSDirect: null
+    MMSDirect: null,
+    GlobalBalance: null
   })
   moment.locale(language);
 
@@ -80,11 +82,13 @@ const AccountUsers = ({ classes }: any) => {
       ...searchData,
       CompanyAdmin: 1
     }));
+  
     if ((directData?.payload?.Data?.Items || []).length > 0) {
       setDirect({
         emailDirect: directData?.payload?.Data?.Items[0]['DirectBulkEmails'],
         SMSDirect: directData?.payload?.Data?.Items[0]['DirectSMSCredits'],
-        MMSDirect: directData?.payload?.Data?.Items[0]['DirectMmsCredits']
+        MMSDirect: directData?.payload?.Data?.Items[0]['DirectMmsCredits'],
+        GlobalBalance: directData?.payload?.Data?.Items[0]['FinalGlobalBalance'],
       })
     }
 
@@ -288,7 +292,7 @@ const AccountUsers = ({ classes }: any) => {
             !isGlobal && (
               <>
                 <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.emailBulk")}</TableCell>
-                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.SMSCredit")}</TableCell>
+                <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.SMSBulk")}</TableCell>
                 {/* <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.MMSCredit")}</TableCell> */}
                 {/* <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlyEmailLimit")}</TableCell> */}
                 {/* <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubAccount.monthlySMSLimit")}</TableCell> */}
@@ -691,7 +695,7 @@ const AccountUsers = ({ classes }: any) => {
           <Box className={clsx(classes.justifyCenterOfCenter, classes.w100, classes.semibold)}>
             {direct.emailDirect !== null && getDirectBox('SubAccount.emailDirect', direct.emailDirect)}
             {direct.SMSDirect !== null && getDirectBox('SubAccount.SMSDirect', direct.SMSDirect)}
-            {direct.MMSDirect !== null && getDirectBox('SubAccount.MMSDirect', direct.MMSDirect)}
+            {/* {direct.MMSDirect !== null && getDirectBox('SubAccount.MMSDirect', direct.MMSDirect)} */}
           </Box>
         )
       }
@@ -705,6 +709,11 @@ const AccountUsers = ({ classes }: any) => {
           if (isReload) getInitialData();
         }}
         subAccountRecord={dialogType?.data}
+        mainAccountBalance={{
+          EmailBalance: direct.emailDirect,
+          SMSBalance: direct.SMSDirect,
+          GlobalBalance: direct.GlobalBalance
+        }}
       />
       <DirectAccount
         classes={classes}
