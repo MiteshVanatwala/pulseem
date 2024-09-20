@@ -479,10 +479,10 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 						!isGlobal ? (
 							<>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									<b>{t("SubAccount.emailBulk")}:</b> {subAccountDetails.emailBulk} {t("SubAccount.messages")}
+									<b>{t("SubAccount.emailBulk")}:</b> {subAccountDetails.emailBulk || 0} {t("SubAccount.messages")}
 								</Grid>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									<b>{t("SubAccount.SMSBulk")}:</b> {subAccountDetails.SMSBulk} {t("SubAccount.credit")}
+									<b>{t("SubAccount.SMSBulk")}:</b> {subAccountDetails.SMSBulk || 0} {t("SubAccount.credit")}
 								</Grid>
 								{/* {
 									subAccountDetails.MMSBulk !== null && (
