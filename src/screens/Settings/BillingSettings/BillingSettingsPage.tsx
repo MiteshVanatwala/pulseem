@@ -19,7 +19,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
 import BillingDetails from "./BillingDetails";
-import { getCreditCardIframe, getAccountOperations } from "../../../redux/reducers/BillingSlice";
+import { getCreditCardIframe, getAccountOperations, payDebtInvoices } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
 import PurchaseTableTemplate from "./PurchaseTableTemplate";
 import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
@@ -28,6 +28,8 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import queryString from 'query-string';
 import { BiMinus, BiPlus } from "react-icons/bi";
 import { getAccountCards } from "../../../redux/reducers/paymentSlice";
+import { PulseemResponse } from "../../../Models/APIResponse";
+import { logout } from "../../../helpers/Api/PulseemReactAPI";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -112,16 +114,46 @@ const BillingSettingsPage = ({ classes }: any) => {
     setInvoicesForPayment(items);
   }
 
-  const payInvoices = () => {
-    const totalAmountList: any = purchaseUnpaidData?.filter(function (item: PurchaseHistoryModel) {
+  const payInvoices = async () => {
+    const invoiceIds = purchaseUnpaidData?.filter((item: PurchaseHistoryModel) => {
       return invoicesForPayment.indexOf(item.OperationID.toString()) !== -1;
-    }).map((item: PurchaseHistoryModel) => {
-      return item.AmountWithVat;
-    });
+    }).map((g: PurchaseHistoryModel) => { return g.AccountPurchaseID });
 
-    const totalPrice = totalAmountList.reduce((AmountWithVat: any, a: any) => AmountWithVat + a, 0);
+    console.log(invoiceIds);
 
-    alert(`pay ${totalPrice} NIS`);
+    // @ts-ignore
+    const debtResponse = await dispatch(payDebtInvoices(invoiceIds)) as any;
+
+    handlePayResponse(debtResponse?.payload);
+  }
+
+  const handlePayResponse = (response: PulseemResponse) => {
+    switch (response.StatusCode) {
+      case 201: {
+        alert('success');
+        break;
+      }
+      case 401: {
+        logout();
+        break;
+      }
+      case 404: {
+        alert('not found');
+        break;
+      }
+      case 405: {
+        alert('NO_CREDIT_CARD_FOUND');
+        break;
+      }
+      case 406: {
+        alert('No invoices exists');
+        break;
+      }
+      case 407: {
+        alert('Payment failed');
+        break;
+      }
+    }
   }
 
   return (

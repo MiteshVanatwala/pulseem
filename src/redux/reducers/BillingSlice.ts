@@ -62,6 +62,20 @@ export const getBulkHistory = createAsyncThunk(
     }
 );
 
+export const payDebtInvoices = createAsyncThunk(
+    'AccountBilling/PayInvoices',
+    async (req: number[], thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`AccountBilling/PayInvoices`, req);
+            return response.data as PulseemResponse
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
+
+
 
 const BillingSlice = createSlice({
     name: 'AccountSettings',
