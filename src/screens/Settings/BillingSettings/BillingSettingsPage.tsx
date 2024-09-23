@@ -115,6 +115,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   }
 
   const payInvoices = async () => {
+    setShowLoader(true);
     const invoiceIds = purchaseUnpaidData?.filter((item: PurchaseHistoryModel) => {
       return invoicesForPayment.indexOf(item.OperationID.toString()) !== -1;
     }).map((g: PurchaseHistoryModel) => { return g.AccountPurchaseID });
@@ -125,6 +126,7 @@ const BillingSettingsPage = ({ classes }: any) => {
     const debtResponse = await dispatch(payDebtInvoices(invoiceIds)) as any;
 
     handlePayResponse(debtResponse?.payload);
+    setShowLoader(false);
   }
 
   const handlePayResponse = (response: PulseemResponse) => {
