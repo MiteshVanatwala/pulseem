@@ -142,7 +142,8 @@ const BillingSettingsPage = ({ classes }: any) => {
         break;
       }
       case 405: {
-        alert('NO_CREDIT_CARD_FOUND');
+        handleShowCreditCardIframe();
+        // alert('NO_CREDIT_CARD_FOUND');
         break;
       }
       case 406: {
@@ -151,6 +152,11 @@ const BillingSettingsPage = ({ classes }: any) => {
       }
       case 407: {
         alert('Payment failed');
+        break;
+      }
+      case 408:
+      case 409: {
+        alert('סוגים שונים של חיובים');
         break;
       }
     }
