@@ -13,6 +13,7 @@ import { AddEditDirectAccounts } from '../../redux/reducers/SubAccountSlice';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { NumberWithMinusRegEx } from '../../helpers/Constants';
+import { Stack } from '@mui/material';
 
 const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -353,8 +354,11 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 								<Grid item md={4}>
 									{t("SubAccount.emailDirectBalance")}: {directAccountDetails.emailBulk || 0}
 								</Grid>
-								<Grid item md={4} style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
-									{ isRTL ? directAccountDetails.SMSBulk || 0 : t("common.SMS")} : { isRTL ? t("common.SMS") : directAccountDetails.SMSBulk || 0}
+								<Grid item md={4}>
+									<Stack direction="row">
+										<span>{t("common.SMS")}:</span>
+										&nbsp;{directAccountDetails.SMSBulk || 0}
+									</Stack>
 								</Grid>
 								<Grid item md={4}>
 									{/* {t("SubAccount.directAccountMMSCredits")}: {directAccountDetails.MMSBulk} */}

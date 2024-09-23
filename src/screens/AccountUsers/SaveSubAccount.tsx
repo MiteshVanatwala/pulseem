@@ -23,6 +23,7 @@ import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from '../../helpers/Utils/Validations';
 import { getTestGroups } from '../../redux/reducers/smsSlice';
 import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlice';
+import { Stack } from '@mui/material';
 
 const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
 	const dispatch: any = useDispatch();
@@ -133,7 +134,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				emailBulkAmount: '',
 			});
 
-			getGroupList();
+			// getGroupList();
 		}
 
 		if (!isOpen) {
@@ -482,15 +483,11 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 									<b>{t("SubAccount.emailBulk")}:</b> {subAccountDetails.emailBulk || 0} {t("SubAccount.messages")}
 								</Grid>
 								<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-									<b>{t("SubAccount.SMSBulk")}:</b> {subAccountDetails.SMSBulk || 0} {t("SubAccount.credit")}
+									<Stack direction="row">
+										<b>{t("SubAccount.SMSBulk")}:</b>
+										&nbsp;{subAccountDetails.SMSBulk || 0} {t("SubAccount.credit")}
+									</Stack>
 								</Grid>
-								{/* {
-									subAccountDetails.MMSBulk !== null && (
-										<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-											<b>{t("SubAccount.MMSBulk")}:</b> {subAccountDetails.MMSBulk} {t("SubAccount.messages")}
-										</Grid>
-									)
-								} */}
 							</>
 						) : (
 							<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
