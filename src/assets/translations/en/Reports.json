@@ -129,5 +129,6 @@
   "Failed": "Failed",
   "Completed": "completed" ,
   "smsReplies": "SMS Incoming report",
-  "WhatsappBalance": "Whatsapp Balance"
+  "WhatsappBalance": "Whatsapp Balance",
+  "removalRequest": "Removal request"
 }
