@@ -832,5 +832,6 @@
   "fallbackURL": "Fallback URL",
   "invalidURL": "Please enter valid fallback URL",
   "opens": "Opens",
-  "clicks": "Clicks"
+  "clicks": "Clicks",
+  "reconnect": "Reconnect"
 }

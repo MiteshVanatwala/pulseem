@@ -37,20 +37,11 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
   }, [allSelected]);
 
   useEffect(() => {
-    const expiredOpertaionIds: string[] = data?.filter((ifp: PurchaseHistoryModel) => {
-      const expiredMonths = moment().diff(ifp.OperationDate, 'months');
-      if (expiredMonths >= 3) {
-        return ifp.OperationID?.toString();
-      }
-      return null;
-    });
-
-    if (expiredOpertaionIds?.length > 0) {
-      const oIds = expiredOpertaionIds.map((item: any) => { return item.OperationID.toString() });
-      setInvoicesForPayment(oIds);
-      onInvoiceSelection && onInvoiceSelection(oIds)
+    if (data && data?.length > 0) {
+      const allIds = data?.map((item: any) => { return item.OperationID.toString() });
+      setInvoicesForPayment(allIds);
+      onInvoiceSelection && onInvoiceSelection(allIds)
     }
-
   }, [data]);
 
   const renderTableHead = () => {

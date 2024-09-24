@@ -826,5 +826,6 @@
   "fallbackURL": "URL גיבוי",
   "invalidURL": "אנא הכניסו קישור תקין",
   "opens": "נפתח",
-  "clicks": "הקלקה"
+  "clicks": "הקלקה",
+  "reconnect": "התחבר מחדש"
 }

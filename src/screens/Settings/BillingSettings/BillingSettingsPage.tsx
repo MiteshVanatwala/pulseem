@@ -5,10 +5,13 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  AppBar,
   Box,
   Button,
+  FormControl,
   Grid,
   Link,
+  MenuItem,
   Typography,
 } from "@material-ui/core";
 import { Title } from "../../../components/managment/Title";
@@ -30,6 +33,16 @@ import { BiMinus, BiPlus } from "react-icons/bi";
 import { getAccountCards } from "../../../redux/reducers/paymentSlice";
 import { PulseemResponse } from "../../../Models/APIResponse";
 import { logout } from "../../../helpers/Api/PulseemReactAPI";
+import { DialogOptions } from "../../../helpers/Types/Dialog";
+import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
+import moment from "moment";
+import PulseemNewLogo from "../../../assets/images/PulseemNewLogo";
+import USImage from "../../../assets/images/united-states-flag-icon.svg";
+import IsraelImage from "../../../assets/images/israel-flag-icon.svg";
+import { setLanguage } from "../../../redux/reducers/coreSlice";
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import i18n from "../../../i18n";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -37,11 +50,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const dispatch = useDispatch();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
   const { creditCards } = useSelector((state: any) => state.payment);
-
-
-
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
-
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
   const [paymentIframe, setPaymentIframe] = useState<string>('');
@@ -53,6 +62,9 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [openPanels, setOpenPanels] = useState<string[]>([qs?.p || '1']);
   const [invoicesForPayment, setInvoicesForPayment] = useState<number[]>([]);
   const [allInvoicesSeleted, setAllInvoiceSelected] = useState<boolean>(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [currentDialog, setCurrentDialog] = useState<any>('success');
+  const [hasDebt, setHasDebt] = useState<boolean>(false);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -71,9 +83,24 @@ const BillingSettingsPage = ({ classes }: any) => {
     }
     if (unpaidResponse && unpaidResponse?.payload?.StatusCode === 201) {
       setPurchaseUnpaidData(unpaidResponse?.payload?.Data);
-    }
 
-    //requestCreditHistory(null);
+      if (unpaidResponse?.payload?.Data?.length > 0) {
+        setCurrentDialog('success');
+        setShowPopup(true);
+
+        const expiredOpertaionIds: string[] = unpaidResponse?.payload?.Data?.filter((ifp: PurchaseHistoryModel) => {
+          const expiredMonths = moment().diff(ifp.OperationDate, 'months');
+          if (expiredMonths >= 3) {
+            return ifp.OperationID?.toString();
+          }
+          return null;
+        });
+
+        if (expiredOpertaionIds?.length > 0) {
+          setHasDebt(true);
+        }
+      }
+    }
     setShowPurchaseLoader(false);
     setShowOpenInvoicesLoader(false);
   }
@@ -81,6 +108,10 @@ const BillingSettingsPage = ({ classes }: any) => {
   useEffect(() => {
     initPurchaseHistory();
   }, []);
+
+  useEffect(() => {
+    i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
+  }, [isRTL]);
 
   const handleOnCardSaved = () => {
     setAddCardDialog(false);
@@ -112,6 +143,7 @@ const BillingSettingsPage = ({ classes }: any) => {
 
   const handleInvoices = (items: any[]) => {
     setInvoicesForPayment(items);
+    setAllInvoiceSelected(items?.length === purchaseUnpaidData?.length);
   }
 
   const payInvoices = async () => {
@@ -132,34 +164,108 @@ const BillingSettingsPage = ({ classes }: any) => {
   const handlePayResponse = (response: PulseemResponse) => {
     switch (response.StatusCode) {
       case 201: {
-        alert('success');
+        setCurrentDialog('success');
+        initPurchaseHistory();
+        setShowPopup(true);
         break;
       }
       case 401: {
         logout();
         break;
       }
-      case 404: {
-        alert('not found');
-        break;
-      }
       case 405: {
         handleShowCreditCardIframe();
-        // alert('NO_CREDIT_CARD_FOUND');
         break;
       }
-      case 406: {
-        alert('No invoices exists');
-        break;
-      }
-      case 407: {
-        alert('Payment failed');
-        break;
-      }
+      case 404:
+      case 406:
+      case 407:
       case 408:
-      case 409: {
-        alert('סוגים שונים של חיובים');
+      case 409:
+      case 500: {
+        setToastMessage({
+          color: 'error',
+          severity: 'error',
+          message: response?.Message,
+          showAnimtionCheck: false
+        } as ERROR_TYPE);
+        // alert(t('common.ErrorOccured'));
         break;
+      }
+    }
+  }
+
+  const renderDebtDialog = () => {
+    return {
+      title: t('billing.debtBalance'),
+      open: showPopup,
+      exitButton: false,
+      onClose: () => setShowPopup(false),
+      onCancel: () => setShowPopup(false),
+      disableBackdropClick: true,
+      showDefaultButtons: false,
+      renderButtons: () => {
+        return <>
+          {(!creditCards || creditCards?.length === 0) ? (<Button
+            style={{ marginInlineStart: 'auto' }}
+            className={clsx(
+              classes.btn,
+              classes.btnRounded
+            )}
+            onClick={(e: any) => { setShowPopup(false); handleShowCreditCardIframe() }}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
+            <>{t("settings.billingSettings.btnAddCard")}</>
+          </Button>) : (<Button
+            style={{ marginInlineStart: 'auto' }}
+            className={clsx(
+              classes.btn,
+              classes.btnRounded
+            )}
+            onClick={(e: any) => { setShowPopup(false) }}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
+            <>{t("common.continue")}</>
+          </Button>)}
+        </>
+      },
+      children: <>{RenderHtml(t('billing.debtWelcomeMessage'))}</>
+    } as DialogOptions;
+  }
+
+  const renderSuccessDialog = () => {
+    return {
+      title: t('billing.paymentSuccessfulTitle'),
+      open: showPopup,
+      icon: <IoIosCheckmarkCircleOutline />,
+      onCancel: () => { setShowPopup(false) },
+      disableBackdropClick: true,
+      showDefaultButtons: false,
+      renderButtons: () => {
+        return <Button
+          style={{ marginInlineStart: 'auto' }}
+          className={clsx(
+            classes.btn,
+            classes.btnRounded
+          )}
+          onClick={(e: any) => { window.location.href = '/react' }} // logout() }}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+        >
+          <>{t("common.reconnect")}</>
+        </Button>
+      },
+      children: <Box style={{ marginBottom: 25 }}>{RenderHtml(t('billing.paymentSuccessful'))}</Box>
+    } as DialogOptions;
+  }
+
+  const renderOptions = () => {
+    switch (currentDialog) {
+      default:
+      case 'debt': {
+        return renderDebtDialog();
+      }
+      case 'success': {
+        return renderSuccessDialog();
       }
     }
   }
@@ -173,7 +279,55 @@ const BillingSettingsPage = ({ classes }: any) => {
     >
       <Box className={classes.mb50}>
         {toastMessage && renderToast()}
-        <Box className={'topSection'}>
+        {hasDebt && <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground, windowSize === 'xl' ? classes.p10 : '')}>
+          <Grid container>
+            <Grid md={2}></Grid>
+
+            <Grid md={8}>
+              <PulseemNewLogo />
+              <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
+                -&nbsp;&nbsp;{t('SignUp.Header')}
+              </span>
+            </Grid>
+
+            <Grid md={2} className={clsx(classes.w100, {
+              [classes.textRight]: !isRTL,
+              [classes.textLeft]: isRTL,
+              [classes.mt10]: windowSize === 'sm' || windowSize === 'xs'
+            })}>
+              <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.SignUpLanguageDropdown, classes.bgWhite)}>
+                <Select
+                  variant="standard"
+                  value={isRTL ? 'he' : 'en'}
+                  name='TwoFactorAuthOptionID'
+                  onChange={(e: SelectChangeEvent) => dispatch(setLanguage(e.target.value))}
+                  IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        width: 100,
+                        maxHeight: 200,
+                        direction: isRTL ? 'rtl' : 'ltr'
+                      },
+                    },
+                  }}
+                  className={classes.SignUpLanguageDropdown}
+                >
+                  <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+                    <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
+                    <label className="cname">{t('languages.langCodes.hebrew')}</label>
+                  </MenuItem>
+
+                  <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+                    <img width={35} src={USImage} alt={t('languages.langCodes.english')} />
+                    <label className="cname">{t('languages.langCodes.english')}</label>
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </AppBar>}
+        <Box className={'topSection'} style={{ marginTop: hasDebt ? 100 : 37.870 }}>
           <Title Text={t('settings.billingSettings.pageTitle')} classes={classes} ContainerStyle={{ width: 'auto' }} />
           <Box className={classes.accordion} style={{ padding: 15 }}>
             <Accordion expanded={openPanels.indexOf('1') > -1} onChange={() => handlePanels('1')} elevation={0}
@@ -246,7 +400,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                           classes.btn,
                           classes.btnRounded,
                           openPanels.indexOf('2') === -1 && classes.disabled,
-                          (invoicesForPayment?.length === purchaseUnpaidData?.length || allInvoicesSeleted) && classes.btnActive,
+                          allInvoicesSeleted && classes.btnActive,
                         )}
                         onClick={(e: any) => {
                           e?.preventDefault();
@@ -262,7 +416,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                         className={clsx(
                           classes.btn,
                           classes.btnRounded,
-                          (invoicesForPayment?.length === 0 && !allInvoicesSeleted) && classes.disabled
+                          invoicesForPayment?.length === 0 && classes.disabled
                         )}
                         onClick={(e: any) => {
                           e?.preventDefault();
@@ -340,6 +494,11 @@ const BillingSettingsPage = ({ classes }: any) => {
         </Box>
         <Loader isOpen={showLoader} showBackdrop={true} />
       </Box>
+      {/* @ts-ignore */}
+      {showPopup && <BaseDialog
+        classes={classes}
+        {...renderOptions()}
+      ></BaseDialog>}
       {addCardDialog && paymentIframe && <BaseDialog
         classes={classes}
         title={t("settings.billingSettings.btnAddCard")}
