@@ -285,9 +285,7 @@ const BillingSettingsPage = ({ classes }: any) => {
 
             <Grid md={8}>
               <PulseemNewLogo />
-              <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
-                -&nbsp;&nbsp;{t('SignUp.Header')}
-              </span>
+              <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}></span>
             </Grid>
 
             <Grid md={2} className={clsx(classes.w100, {
