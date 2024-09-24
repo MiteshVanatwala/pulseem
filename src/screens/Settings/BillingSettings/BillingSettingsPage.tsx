@@ -63,7 +63,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [invoicesForPayment, setInvoicesForPayment] = useState<number[]>([]);
   const [allInvoicesSeleted, setAllInvoiceSelected] = useState<boolean>(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [currentDialog, setCurrentDialog] = useState<any>('success');
+  const [currentDialog, setCurrentDialog] = useState<any>('debt');
   const [hasDebt, setHasDebt] = useState<boolean>(false);
 
   const renderToast = () => {
@@ -85,7 +85,7 @@ const BillingSettingsPage = ({ classes }: any) => {
       setPurchaseUnpaidData(unpaidResponse?.payload?.Data);
 
       if (unpaidResponse?.payload?.Data?.length > 0) {
-        setCurrentDialog('success');
+        setCurrentDialog('debt');
         setShowPopup(true);
 
         const expiredOpertaionIds: string[] = unpaidResponse?.payload?.Data?.filter((ifp: PurchaseHistoryModel) => {
