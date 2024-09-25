@@ -20,8 +20,6 @@ const CreditHistoryDetails = ({ classes }: any) => {
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
-  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
-  const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
 
   const [page, setPage] = useState<number>(1);
@@ -64,7 +62,7 @@ const CreditHistoryDetails = ({ classes }: any) => {
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('report.date')}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.amount")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.accountType")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.type")}</TableCell>
         </TableRow>
       </TableHead>
     )

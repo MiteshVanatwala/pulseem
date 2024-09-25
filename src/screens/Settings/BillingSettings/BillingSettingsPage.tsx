@@ -43,7 +43,7 @@ import SharedAppBar from "../../../components/core/SharedAppBar";
 const BillingSettingsPage = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { isRTL, windowSize } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize, isAdmin } = useSelector((state: any) => state.core);
   const { creditCards } = useSelector((state: any) => state.payment);
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
@@ -275,8 +275,8 @@ const BillingSettingsPage = ({ classes }: any) => {
     >
       <Box className={classes.mb50}>
         {toastMessage && renderToast()}
-        {hasDebt && <SharedAppBar classes={classes} />}
-        <Box className={'topSection'} style={{ marginTop: hasDebt ? 100 : 37.870 }}>
+        {hasDebt && !isAdmin && <SharedAppBar classes={classes} />}
+        <Box className={'topSection'} style={{ marginTop: hasDebt && !isAdmin ? 100 : 37.870 }}>
           <Title Text={t('settings.billingSettings.pageTitle')} classes={classes} ContainerStyle={{ width: 'auto' }} />
           <Box className={classes.accordion} style={{ padding: 15 }}>
             <Accordion expanded={openPanels.indexOf('1') > -1} onChange={() => handlePanels('1')} elevation={0}
