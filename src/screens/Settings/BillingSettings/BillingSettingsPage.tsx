@@ -184,7 +184,7 @@ const BillingSettingsPage = ({ classes }: any) => {
         setToastMessage({
           color: 'error',
           severity: 'error',
-          message: response?.Message,
+          message: response?.Data || response?.Message,
           showAnimtionCheck: false
         } as ERROR_TYPE);
         // alert(t('common.ErrorOccured'));
