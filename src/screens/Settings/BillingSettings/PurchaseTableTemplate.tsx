@@ -1,4 +1,4 @@
-import { Box, Checkbox, Grid, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import { Box, Button, Checkbox, FormControlLabel, Grid, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import { Loader } from "../../../components/Loader/Loader";
 import { useEffect, useState } from "react";
 import { rowsOptions, SizeOptionsOfHandHeldDevices } from "../../../helpers/Constants";
@@ -11,8 +11,10 @@ import { useTranslation } from "react-i18next";
 import { TablePagination } from '../../../components/managment/index'
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 
-const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected = false, onInvoiceSelection = null }: any) => {
+const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, onInvoiceSelection = null }: any) => {
   const { windowSize, rowsPerPage } = useSelector((state: StateType) => state.core)
+
+  const [allSelected, setAllSelected] = useState<boolean>(true);
 
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -28,15 +30,6 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
   const [invoicesForPayment, setInvoicesForPayment] = useState<string[]>([]);
 
   useEffect(() => {
-    if (allSelected) {
-      const allOperationsIds = data.map((i: any) => { return i?.OperationID?.toString() });
-      setInvoicesForPayment(allOperationsIds);
-    } else {
-      setInvoicesForPayment([]);
-    }
-  }, [allSelected]);
-
-  useEffect(() => {
     if (data && data?.length > 0) {
       const allIds = data?.map((item: any) => { return item.OperationID.toString() });
       setInvoicesForPayment(allIds);
@@ -44,11 +37,40 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
     }
   }, [data]);
 
+  const handleSelectAll = () => {
+    const isAllSelected = !allSelected;
+    if (isAllSelected) {
+      const allOperationsIds = data?.map((i: any) => { return i?.OperationID?.toString() });
+      setInvoicesForPayment(allOperationsIds);
+    } else {
+      const mandateInvoices = data?.map((i: any) => { return moment().diff(i?.OperationDate, 'months') > 3 ? i?.OperationID?.toString() : null });
+      setInvoicesForPayment(mandateInvoices);
+    }
+
+    setAllSelected(isAllSelected);
+  }
+
   const renderTableHead = () => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          {!isPaid && <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('billing.selectForPay')}</TableCell>}
+          {!isPaid && <TableCell classes={cellStyle} className={classes.flex1} align='center'>
+            {invoicesForPayment?.length > 0 && <FormControlLabel
+              style={{ marginInlineEnd: 0, justifyContent: 'center', alignItems: 'flex-start' }}
+              control={
+                <Checkbox
+                  style={{ alignSelf: 'flex-start', padding: 0, paddingInlineEnd: 10 }}
+                  title={t("common.SelectAll")}
+                  color="secondary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleSelectAll()}
+                  checked={allSelected}
+                />
+              }
+              label={<Typography style={{ fontSize: 18, fontWeight: 700 }}>{t('billing.selectForPay')}</Typography>}
+            />
+            }
+          </TableCell>}
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.productDescription")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.purchaseDate")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{isPaid ? t("billing.paid") : t("billing.forPayment")}</TableCell>
@@ -90,15 +112,23 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, allSelected 
 
   const handleSelectedInvoices = (operationId: string) => {
     const found = invoicesForPayment.filter((ifp: string) => { return ifp === operationId });
+    const mandateInvoices = data?.filter((i: any) => { return moment().diff(i?.OperationDate, 'months') > 3 && i?.OperationID?.toString() })
+      ?.map((e: PurchaseHistoryModel) => e.OperationID.toString());
     if (found?.length > 0) {
       const filtered = invoicesForPayment.filter((ifp: string) => { return ifp !== operationId });
-      setInvoicesForPayment(filtered);
-      onInvoiceSelection(filtered)
+
+      setInvoicesForPayment([...mandateInvoices, ...filtered]);
+      onInvoiceSelection([...mandateInvoices, ...filtered]);
+      setAllSelected(false);
     }
     else {
-      const finalSelection = [...invoicesForPayment, operationId];
+      const finalSelection = [...invoicesForPayment, operationId]?.reduce((a: any, b: any) => {
+        if (b && a && a.indexOf(b) < 0) a.push(b);
+        return a;
+      }, []);
       setInvoicesForPayment(finalSelection);
       onInvoiceSelection(finalSelection)
+      setAllSelected(finalSelection?.length === data?.length);
     }
   }
 

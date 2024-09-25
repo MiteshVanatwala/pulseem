@@ -36,13 +36,9 @@ import { logout } from "../../../helpers/Api/PulseemReactAPI";
 import { DialogOptions } from "../../../helpers/Types/Dialog";
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import moment from "moment";
-import PulseemNewLogo from "../../../assets/images/PulseemNewLogo";
-import USImage from "../../../assets/images/united-states-flag-icon.svg";
-import IsraelImage from "../../../assets/images/israel-flag-icon.svg";
-import { setLanguage } from "../../../redux/reducers/coreSlice";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import i18n from "../../../i18n";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import SharedAppBar from "../../../components/core/SharedAppBar";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -61,7 +57,6 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [purchaseUnpaidData, setPurchaseUnpaidData] = useState<PurchaseHistoryModel[]>();
   const [openPanels, setOpenPanels] = useState<string[]>([qs?.p || '1']);
   const [invoicesForPayment, setInvoicesForPayment] = useState<number[]>([]);
-  const [allInvoicesSeleted, setAllInvoiceSelected] = useState<boolean>(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [currentDialog, setCurrentDialog] = useState<any>('debt');
   const [hasDebt, setHasDebt] = useState<boolean>(false);
@@ -142,8 +137,11 @@ const BillingSettingsPage = ({ classes }: any) => {
   }
 
   const handleInvoices = (items: any[]) => {
-    setInvoicesForPayment(items);
-    setAllInvoiceSelected(items?.length === purchaseUnpaidData?.length);
+    const uniqueItems = items?.reduce((a: any, b: any) => {
+      if (b && a && a.indexOf(b) < 0) a.push(b);
+      return a;
+    }, []);
+    setInvoicesForPayment(uniqueItems);
   }
 
   const payInvoices = async () => {
@@ -279,52 +277,7 @@ const BillingSettingsPage = ({ classes }: any) => {
     >
       <Box className={classes.mb50}>
         {toastMessage && renderToast()}
-        {hasDebt && <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground, windowSize === 'xl' ? classes.p10 : '')}>
-          <Grid container>
-            <Grid md={2}></Grid>
-
-            <Grid md={8}>
-              <PulseemNewLogo />
-              <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}></span>
-            </Grid>
-
-            <Grid md={2} className={clsx(classes.w100, {
-              [classes.textRight]: !isRTL,
-              [classes.textLeft]: isRTL,
-              [classes.mt10]: windowSize === 'sm' || windowSize === 'xs'
-            })}>
-              <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.SignUpLanguageDropdown, classes.bgWhite)}>
-                <Select
-                  variant="standard"
-                  value={isRTL ? 'he' : 'en'}
-                  name='TwoFactorAuthOptionID'
-                  onChange={(e: SelectChangeEvent) => dispatch(setLanguage(e.target.value))}
-                  IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        width: 100,
-                        maxHeight: 200,
-                        direction: isRTL ? 'rtl' : 'ltr'
-                      },
-                    },
-                  }}
-                  className={classes.SignUpLanguageDropdown}
-                >
-                  <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-                    <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
-                    <label className="cname">{t('languages.langCodes.hebrew')}</label>
-                  </MenuItem>
-
-                  <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-                    <img width={35} src={USImage} alt={t('languages.langCodes.english')} />
-                    <label className="cname">{t('languages.langCodes.english')}</label>
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </AppBar>}
+        {hasDebt && <SharedAppBar classes={classes} />}
         <Box className={'topSection'} style={{ marginTop: hasDebt ? 100 : 37.870 }}>
           <Title Text={t('settings.billingSettings.pageTitle')} classes={classes} ContainerStyle={{ width: 'auto' }} />
           <Box className={classes.accordion} style={{ padding: 15 }}>
@@ -393,22 +346,6 @@ const BillingSettingsPage = ({ classes }: any) => {
                       {t("settings.billingSettings.openInvoices")}
                     </Typography>
                     <Box style={{ marginInlineStart: 'auto' }}>
-                      {invoicesForPayment?.length > 0 && <Button
-                        className={clsx(
-                          classes.btn,
-                          classes.btnRounded,
-                          openPanels.indexOf('2') === -1 && classes.disabled,
-                          allInvoicesSeleted && classes.btnActive,
-                        )}
-                        onClick={(e: any) => {
-                          e?.preventDefault();
-                          e?.stopPropagation();
-                          setAllInvoiceSelected(!allInvoicesSeleted)
-                        }}
-                        endIcon={!allInvoicesSeleted ? <BiPlus /> : <BiMinus />}
-                      >
-                        <>{t('common.SelectAll')}</>
-                      </Button>}
                       <Button
                         style={{ marginInlineStart: 15 }}
                         className={clsx(
@@ -437,7 +374,6 @@ const BillingSettingsPage = ({ classes }: any) => {
                     showLoader={showOpenInvoicesLoader}
                     isPaid={false}
                     onInvoiceSelection={handleInvoices}
-                    allSelected={allInvoicesSeleted}
                   />
                 </Box>
               </AccordionDetails>
