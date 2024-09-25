@@ -244,7 +244,7 @@ const BillingSettingsPage = ({ classes }: any) => {
             classes.btn,
             classes.btnRounded
           )}
-          onClick={(e: any) => { window.location.href = '/react' }} // logout() }}
+          onClick={(e: any) => { logout() }}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
         >
           <>{t("common.reconnect")}</>
