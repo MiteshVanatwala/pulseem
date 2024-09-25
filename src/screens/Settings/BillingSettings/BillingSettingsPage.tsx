@@ -29,7 +29,6 @@ import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
 import CreditHistoryDetails from "./CreditHistoryDetails";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import queryString from 'query-string';
-import { BiMinus, BiPlus } from "react-icons/bi";
 import { getAccountCards } from "../../../redux/reducers/paymentSlice";
 import { PulseemResponse } from "../../../Models/APIResponse";
 import { logout } from "../../../helpers/Api/PulseemReactAPI";
@@ -163,7 +162,6 @@ const BillingSettingsPage = ({ classes }: any) => {
     switch (response.StatusCode) {
       case 201: {
         setCurrentDialog('success');
-        initPurchaseHistory();
         setShowPopup(true);
         break;
       }
