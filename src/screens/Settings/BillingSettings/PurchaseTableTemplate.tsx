@@ -42,9 +42,11 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, onInvoiceSel
     if (isAllSelected) {
       const allOperationsIds = data?.map((i: any) => { return i?.OperationID?.toString() });
       setInvoicesForPayment(allOperationsIds);
+      onInvoiceSelection(allOperationsIds);
     } else {
       const mandateInvoices = data?.map((i: any) => { return moment().diff(i?.OperationDate, 'months') > 3 ? i?.OperationID?.toString() : null });
       setInvoicesForPayment(mandateInvoices);
+      onInvoiceSelection(mandateInvoices);
     }
 
     setAllSelected(isAllSelected);
