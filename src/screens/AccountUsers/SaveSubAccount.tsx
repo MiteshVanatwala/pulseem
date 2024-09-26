@@ -236,7 +236,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 				AccountManager: subAccountDetails.accountManager,
 				AddEmailBulkAmount: !isGlobal && subAccountDetails.addEmailBulk ? subAccountDetails.emailBulkAmount : 0,
 				AddSmsBulkAmount: !isGlobal && subAccountDetails.addSMSBulk ? subAccountDetails.SMSBulkAmount : 0,
-				AddMmsBulkAmount: !isGlobal && subAccountDetails.MMSBulkAmount,
+				AddMmsBulkAmount: 0,
 				FinalGlobalBalance: isGlobal ? subAccountDetails.addBalance : 0,
 				Email: subAccountDetails.emailAddress,
 				LoginUserName: CustomGuidEnc ? get(subAccountRecord, 'LoginUserName', '') : subAccountDetails.loginUserName,
