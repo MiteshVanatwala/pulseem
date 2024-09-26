@@ -147,7 +147,7 @@ const BillingSettingsPage = ({ classes }: any) => {
     setShowLoader(true);
     const invoiceIds = purchaseUnpaidData?.filter((item: PurchaseHistoryModel) => {
       return invoicesForPayment.indexOf(item.OperationID.toString()) !== -1;
-    }).map((g: PurchaseHistoryModel) => { return g.AccountPurchaseID });
+    }).map((g: PurchaseHistoryModel) => { return g.OperationID });
 
     console.log(invoiceIds);
 
