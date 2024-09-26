@@ -43,7 +43,7 @@ import SharedAppBar from "../../../components/core/SharedAppBar";
 const BillingSettingsPage = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { isRTL, windowSize, isAdmin } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize, isAdmin, isDebtAccount } = useSelector((state: any) => state.core);
   const { creditCards } = useSelector((state: any) => state.payment);
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
@@ -149,8 +149,6 @@ const BillingSettingsPage = ({ classes }: any) => {
       return invoicesForPayment.indexOf(item.OperationID.toString()) !== -1;
     }).map((g: PurchaseHistoryModel) => { return g.OperationID });
 
-    console.log(invoiceIds);
-
     // @ts-ignore
     const debtResponse = await dispatch(payDebtInvoices(invoiceIds)) as any;
 
@@ -229,6 +227,11 @@ const BillingSettingsPage = ({ classes }: any) => {
     } as DialogOptions;
   }
 
+  const handlePostPayment = () => {
+    setShowPopup(false);
+    initPurchaseHistory();
+  }
+
   const renderSuccessDialog = () => {
     return {
       title: t('billing.paymentSuccessfulTitle'),
@@ -244,13 +247,16 @@ const BillingSettingsPage = ({ classes }: any) => {
             classes.btn,
             classes.btnRounded
           )}
-          onClick={(e: any) => { logout() }}
+          onClick={(e: any) => { isDebtAccount && isDebtAccount === true ? logout() : handlePostPayment() }}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
         >
-          <>{t("common.reconnect")}</>
+          <>{isDebtAccount && isDebtAccount === true ? t("common.reconnect") : t("common.close")}</>
         </Button>
       },
-      children: <Box style={{ marginBottom: 25 }}>{RenderHtml(t('billing.paymentSuccessful'))}</Box>
+      children: <Box style={{ marginBottom: 25 }}>{
+        RenderHtml(isDebtAccount && isDebtAccount === true ?
+          t('billing.paymentSuccessful') :
+          t('billing.paymentSuccessfulWithoutLogout'))}</Box>
     } as DialogOptions;
   }
 
