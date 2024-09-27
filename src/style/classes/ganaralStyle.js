@@ -3549,7 +3549,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         // paddingLeft: 0,
         // paddingRight: 0,
         minHeight: 25,
-        display: 'flex',
+        display: 'block',
         alignItems: 'center',
         '&:focus': {
           backgroundColor: '#fff !important'
