@@ -15,7 +15,7 @@ const steps = ['common.enterTopUpAmount', 'common.selectPaymentMethod', 'common.
 
 const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core)
-  const { currencySymbol, isCurrencySymbolPrefix, VAT, currencyId } = useSelector((state: any) => state.common)
+  const { currencySymbol, isCurrencySymbolPrefix, VAT, currencyId, isGlobal } = useSelector((state: any) => state.common)
   const { globalPaymentUrl } = useSelector((state: any) => state.payment);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -193,7 +193,7 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
                 <span>
                   { isCurrencySymbolPrefix ? currencySymbol : '' } {topUpAmount} { !isCurrencySymbolPrefix ? currencySymbol : '' }
                 </span>
-                { currencyId === IsraelCurrencyId && (
+                { !isGlobal && (
                   <>
                     <span className={classes.ml5}>
                       + {VAT}%
@@ -223,7 +223,7 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
                 }]}
                 classes={classes}
                 isRTL={isRTL}
-                packageId={4}
+                packageId={isGlobal ? 4 : 1}
                 onComplete={onPaymentResult}
                 paymentUrl={globalPaymentUrl}
                 onStepBack={() => setActiveStep(activeStep - 1)}

@@ -18,7 +18,7 @@ const PurchaseSummary = ({
     const pack = data.find((p) => { return p.ID === packageId });
     const { windowSize } = useSelector(state => state.core);
     const { VAT: VAT_Tax, currencySymbol, isCurrencySymbolPrefix, isGlobal, currencyId } = useSelector(state => state.common);
-    const israelTax = packageId === GlobalPackageId ? (VAT_Tax / 100) : 0.17;
+    const israelTax = isGlobal ? 0 : (VAT_Tax / 100);
     const vat = (pack.Price * israelTax).toFixed(2);
     const totalPrice = pack.Price + parseFloat(vat);
     const productName = {
