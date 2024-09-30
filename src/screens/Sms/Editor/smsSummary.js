@@ -230,7 +230,8 @@ const SmsSummary = ({ classes,
                 summaryPayload.FinalCount <= 0 ? classes.disabled : null
               )}
               style={{ marginInline: 15 }}>
-              {t("sms.sendDialog")}
+
+              {props.sendType === "1" ? t("sms.sendDialog") : t("common.scheduleSend")}
             </Button>
           </Grid>
           <Grid item>

@@ -506,7 +506,7 @@ const SummaryDialog = ({ classes,
                             classes.btn, classes.btnRounded,
                             FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
                         )}>
-                        {t("sms.sendDialog")}
+                        {newsletterSendSummary?.SendingMethod === 1 ? t("sms.sendDialog") : t("common.scheduleSend")}
                     </Button>
                 </Grid>
                 <Grid item className={classes.paddingSides10}>
@@ -522,7 +522,7 @@ const SummaryDialog = ({ classes,
             </Grid>
         ),
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,
-        confirmText: t("common.send"),
+        confirmText: newsletterSendSummary?.SendingMethod === 1 ? t("common.send") : t("common.schedule"),
         cancelText: '',
         onClose: () => { setDialogType(null) },
     }
