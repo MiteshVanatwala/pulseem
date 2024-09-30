@@ -47,21 +47,8 @@ const BillingDetails = ({ classes }: any) => {
 
   const [errors, setErrors] = useState<BillingErrorTypes>({
     CompanyName: "",
-    ContactName: "",
-    Cellphone: "",
-    Phone: "",
     EmailForInvoices: "",
-    Address: "",
-    City: "",
-    Zip: "",
-    Country: "",
-    CompRegNumber: "",
-    InvoiceLang: "",
-    CardNumber: "",
-    ExpMonth: "",
-    ExpYear: "",
-    SecurityCode: "",
-    Id: "",
+    CompRegNumber: ""
   });
 
   const getData = async () => {
@@ -80,6 +67,15 @@ const BillingDetails = ({ classes }: any) => {
   }, [billing])
 
   const onBeforeUpdate = (e: any) => {
+    if (e.target.name === 'CompanyName') {
+      setErrors({ ...errors, CompanyName: '' });
+    }
+    if (e.target.name === 'CorporationNumber') {
+      setErrors({ ...errors, CompRegNumber: '' });
+    }
+    if (e.target.name === 'Email') {
+      setErrors({ ...errors, EmailForInvoices: '' });
+    }
     setBillingInfoValues({
       ...billingInfoValues,
       [e.target.name]: e.target.value,
@@ -100,6 +96,10 @@ const BillingDetails = ({ classes }: any) => {
           setToastMessage({ severity: 'error', color: 'error', message: t('campaigns.newsLetterEditor.errors.generalError'), showAnimtionCheck: false } as any);
           break;
         }
+        case 406: {
+          setToastMessage({ severity: 'error', color: 'error', message: t('common.requiredField'), showAnimtionCheck: false } as any);
+          break;
+        }
         case 401: {
           logout();
           break;
@@ -110,10 +110,23 @@ const BillingDetails = ({ classes }: any) => {
   };
 
   const isValidBillingPayload = () => {
-    let tempErrors = { ...errors };
     let isValid = true;
+    const tempErrors = { ...errors };
 
-    setErrors({ ...tempErrors });
+    if (!billingInfoValues?.CompanyName || billingInfoValues?.CompanyName === '') {
+      tempErrors.CompanyName = t('common.requiredField');
+      isValid = false;
+    }
+    if (!billingInfoValues?.CorporationNumber || billingInfoValues?.CorporationNumber === '') {
+      tempErrors.CompRegNumber = t('common.requiredField');
+      isValid = false;
+    }
+    if (!billingInfoValues?.Email || billingInfoValues?.Email === '') {
+      tempErrors.EmailForInvoices = t('common.requiredField');
+      isValid = false;
+    }
+
+    setErrors(tempErrors)
 
     return isValid;
   };
@@ -131,7 +144,7 @@ const BillingDetails = ({ classes }: any) => {
           name="CompanyName"
           value={billingInfoValues?.CompanyName}
           onChange={onBeforeUpdate}
-          className={clsx(classes.textField, classes.minWidth252)}
+          className={clsx(classes.textField, classes.minWidth252, errors.CompanyName !== '' && classes.error)}
           error={!!errors.CompanyName}
         />
         {!!errors.CompanyName && (
@@ -245,7 +258,7 @@ const BillingDetails = ({ classes }: any) => {
           value={billingInfoValues?.CorporationNumber}
           onKeyPress={IsNumberField}
           onChange={onBeforeUpdate}
-          className={clsx(classes.textField, classes.minWidth252)}
+          className={clsx(classes.textField, classes.minWidth252, errors.CompRegNumber !== '' && classes.error)}
           error={!!errors.CompRegNumber}
         />
         {!!errors.CompRegNumber && (
@@ -262,7 +275,7 @@ const BillingDetails = ({ classes }: any) => {
           name="Email"
           value={billingInfoValues?.Email}
           onChange={onBeforeUpdate}
-          className={clsx(classes.textField, classes.minWidth252)}
+          className={clsx(classes.textField, classes.minWidth252, errors.EmailForInvoices !== '' && classes.error)}
           error={!!errors.EmailForInvoices}
         />
         {!!errors.EmailForInvoices && (
