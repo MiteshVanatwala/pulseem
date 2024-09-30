@@ -47,7 +47,7 @@ const GlobalBalance = ({ classes }: any) => {
             isGlobal === true && (
               <Box className={clsx(classes.textCenter, classes.p50, classes.f30, classes.bold)}>
                 <div className={classes.pt10}>{t('SubAccount.balance')}</div>
-                <div className={classes.pt10}>{ isCurrencySymbolPrefix ? currencySymbol : '' } {finalGlobalBalance.toFixed(2)} { !isCurrencySymbolPrefix ? currencySymbol : '' }</div>
+                <div className={classes.pt10}>{ isCurrencySymbolPrefix ? currencySymbol : '' } {finalGlobalBalance} { !isCurrencySymbolPrefix ? currencySymbol : '' }</div>
                 <Box className={classes.pt10}>
                   <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => setDialogType({ type: 'PaymentDialog', data: {} })}>
                     {t('common.topUp')}
