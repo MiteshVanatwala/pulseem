@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Grid, Typography, Divider } from '@material-ui/core';
 import Package from '../../PackageBox/Package';
 
-const PackagesList = ({ data, classes, packageType, smsBulkData = null, newsletterBulkData = null, onSelect = () => null }) => {
+const PackagesList = ({ data, classes, packageType, smsBulkData = null, newsletterBulkData = null, whatsappBulkData = null, onSelect = () => null }) => {
     const { t } = useTranslation();
     if (data !== null) {
         const packageLength = data.length;
@@ -12,8 +12,13 @@ const PackagesList = ({ data, classes, packageType, smsBulkData = null, newslett
 
         const packageList = {
             2: { data: newsletterBulkData, title: t('common.newsletterBulkTitle'), description: t('common.newsletterBulkDescription') },
-            3: { data: smsBulkData, title: t('common.smsBulkTitle'), description: t('common.smsBulkDescription') }
+            3: { data: smsBulkData, title: t('common.smsBulkTitle'), description: t('common.smsBulkDescription') },
+            4: { data: whatsappBulkData, title: t('common.whatsappBulk'), description: t('common.whatsappBulkDescription') },
         };
+
+        const renderWhatsapp = () => {
+            return <>Type balance</>
+        }
 
         return (
             packageList[packageType].data &&
@@ -22,7 +27,7 @@ const PackagesList = ({ data, classes, packageType, smsBulkData = null, newslett
                     <Typography>{packageList[packageType].description}</Typography>
                     <Divider />
                 </Grid>
-                {
+                {packageType === 4 ? renderWhatsapp() : (<>{
                     packageList[packageType].data.sort((a, b) => a.Quantity - b.Quantity).map((d, index) => {
                         return (
                             <Package
@@ -34,7 +39,8 @@ const PackagesList = ({ data, classes, packageType, smsBulkData = null, newslett
                                 classes={classes} />
                         )
                     })
-                }
+                }</>)}
+
             </>
         );
     }

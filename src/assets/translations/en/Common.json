@@ -470,6 +470,7 @@
   "whatsappBulk": "Whatsapp Bulk",
   "smsBulkDescription": "Purchase an SMS package online. Please select the desired quantity",
   "newsletterBulkDescription": "Purchase an Newsletter package online. Please select the desired quantity",
+  "whatsappBulkDescription": "Purchase an Whatsapp balance online. Please type the desired balance",
   "select": "Select",
   "endPurchase": "Complete Purchase",
   "productName": "Product Name",
