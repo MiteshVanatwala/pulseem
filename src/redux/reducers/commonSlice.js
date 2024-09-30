@@ -272,7 +272,9 @@ export const commonSlice = createSlice({
       })
     builder
       .addCase(GetGlobalAccountPackagesDetails.fulfilled, (state, { payload }) => {
-        const currency = find(state.currencyList, { ID: get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', 1)});
+        const isGlobal = get(payload, 'Data.balanceInfo.IsGlobalAccount', false);
+        const reportCurrencyId = !isGlobal ? 1 : get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', 1);
+        const currency = find(state.currencyList, { ID: reportCurrencyId});
         state.currency = get(currency, 'Name', '');
         state.currencyDescription = get(currency, 'Description', '');
         state.currencyId = get(payload, 'Data.balanceInfo.CurrencyId', 1);
@@ -282,7 +284,7 @@ export const commonSlice = createSlice({
         state.tranzilaCurrencyID = get(payload, 'Data.balanceInfo.TranzilaCurrencyID', null)
         state.finalGlobalBalance = get(payload, 'Data.balanceInfo.FinalGlobalBalance', 0)
         state.VAT = get(payload, 'Data.balanceInfo.VAT', 0)
-        state.showCurrencyReportCurrencyID = get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', null)
+        state.showCurrencyReportCurrencyID = reportCurrencyId
       });
     builder
       .addCase(GetCurrencyList.fulfilled, (state, { payload }) => {

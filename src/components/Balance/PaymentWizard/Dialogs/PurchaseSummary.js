@@ -18,7 +18,7 @@ const PurchaseSummary = ({
     const pack = data.find((p) => { return p.ID === packageId });
     const { windowSize } = useSelector(state => state.core);
     const { VAT: VAT_Tax, currencySymbol, isCurrencySymbolPrefix, isGlobal, currencyId } = useSelector(state => state.common);
-    const israelTax = isGlobal ? 0 : (VAT_Tax / 100);
+    const israelTax = currencyId !== IsraelCurrencyId ? 0 : (VAT_Tax / 100);
     const vat = (pack.Price * israelTax).toFixed(2);
     const totalPrice = pack.Price + parseFloat(vat);
     const productName = {
@@ -46,7 +46,7 @@ const PurchaseSummary = ({
                 <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.price')}</Typography>
             </Grid>
             <Grid item xs={6}>
-                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={packageId === GlobalPackageId ? (isCurrencySymbolPrefix === true ? ` ${currencySymbol} ` : '') : '₪'} suffix={packageId === GlobalPackageId && (isCurrencySymbolPrefix === false ? ` ${currencySymbol} ` : '')} /></Typography>
+                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={currencyId !== IsraelCurrencyId ? (isCurrencySymbolPrefix === true ? ` ${currencySymbol} ` : '') : '₪'} suffix={currencyId !== IsraelCurrencyId && (isCurrencySymbolPrefix === false ? ` ${currencySymbol} ` : '')} /></Typography>
             </Grid>
             <Grid item xs={12}>
                 <Divider />
@@ -57,12 +57,12 @@ const PurchaseSummary = ({
                     <>
                         <Grid item xs={6}>
                             <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>
-                                {packageId === GlobalPackageId && (`${israelTax * 100}% `)}
-                                {t( packageId === GlobalPackageId ? 'common.VATTax' : 'common.vat')}
+                                {currencyId === IsraelCurrencyId && (`${israelTax * 100}% `)}
+                                {t( currencyId === IsraelCurrencyId ? 'common.VATTax' : 'common.vat')}
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
-                            <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={vat} displayType={'text'} thousandSeparator={true} prefix={packageId === GlobalPackageId ? (isCurrencySymbolPrefix === true ? ` ${currencySymbol} ` : '') : '₪'} suffix={packageId === GlobalPackageId && (isCurrencySymbolPrefix === false ? ` ${currencySymbol} ` : '')} /></Typography>
+                            <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={vat} displayType={'text'} thousandSeparator={true} prefix={currencyId !== IsraelCurrencyId ? (isCurrencySymbolPrefix === true ? ` ${currencySymbol} ` : '') : '₪'} suffix={currencyId !== IsraelCurrencyId && (isCurrencySymbolPrefix === false ? ` ${currencySymbol} ` : '')} /></Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Divider className={classes.blackDivider} />
@@ -76,7 +76,7 @@ const PurchaseSummary = ({
                 <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.totalPrice')}</Typography>
             </Grid>
             <Grid item md={6}>
-                <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={totalPrice.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={packageId === GlobalPackageId ? (isCurrencySymbolPrefix === true ? ` ${currencySymbol} ` : '') : '₪'} suffix={packageId === GlobalPackageId && (isCurrencySymbolPrefix === false ? ` ${currencySymbol} ` : '')} /></Typography>
+                <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={totalPrice.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={currencyId !== IsraelCurrencyId ? (isCurrencySymbolPrefix === true ? ` ${currencySymbol} ` : '') : '₪'} suffix={currencyId !== IsraelCurrencyId && (isCurrencySymbolPrefix === false ? ` ${currencySymbol} ` : '')} /></Typography>
             </Grid>
 
             {showButtons && <Grid

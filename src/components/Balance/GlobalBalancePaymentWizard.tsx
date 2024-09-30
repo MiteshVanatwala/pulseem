@@ -193,7 +193,7 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
                 <span>
                   { isCurrencySymbolPrefix ? currencySymbol : '' } {topUpAmount} { !isCurrencySymbolPrefix ? currencySymbol : '' }
                 </span>
-                { !isGlobal && (
+                { currencyId === IsraelCurrencyId && (
                   <>
                     <span className={classes.ml5}>
                       + {VAT}%
