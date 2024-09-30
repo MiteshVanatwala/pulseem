@@ -14,6 +14,7 @@ import moment from 'moment';
 import { DateFormats } from '../../../../helpers/Constants';
 import SelectComparingType from '../Components/SelectComparingType';
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
+import SelectProductCategories from '../Components/SelectProductCategories';
 
 const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
@@ -210,6 +211,20 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         </Grid>
                     </Grid>
                 }
+                <Grid item xs={6} sm={6} md={2}>
+                    <SelectProductCategories
+                        classes={classes}
+                        disabled={!data.dynamicData?.MyActivities.IsPurchased}
+                        data={data.dynamicData?.MyActivities?.PurchasedProductCategory?.split(',')}
+                        onUpdate={(value: any) => {
+                            if (value !== null) {
+                                onUpdate('PurchasedProductCategory', value.join(','))
+                            }
+                            else {
+                                onUpdate('PurchasedProductCategory', value)
+                            }
+                        }} />
+                </Grid>
             </Grid>
 
         );
@@ -387,6 +402,20 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     </Grid>
                 </Grid>
                 }
+                <Grid item xs={6} sm={6} md={2}>
+                    <SelectProductCategories
+                        classes={classes}
+                        disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
+                        data={data.dynamicData?.MyActivities?.NotPurchasedProductCategory?.split(',')}
+                        onUpdate={(value: any) => {
+                            if (value !== null) {
+                                onUpdate('NotPurchasedProductCategory', value.join(','))
+                            }
+                            else {
+                                onUpdate('NotPurchasedProductCategory', value)
+                            }
+                        }} />
+                </Grid>
             </Grid>
 
         );
@@ -564,6 +593,20 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     </Grid>
                 </Grid>
                 }
+                <Grid item xs={6} sm={6} md={2}>
+                    <SelectProductCategories
+                        classes={classes}
+                        disabled={!data.dynamicData?.MyActivities.IsAbandoned}
+                        data={data.dynamicData?.MyActivities?.AbandonedProductCategory?.split(',')}
+                        onUpdate={(value: any) => {
+                            if (value !== null) {
+                                onUpdate('AbandonedProductCategory', value.join(','))
+                            }
+                            else {
+                                onUpdate('AbandonedProductCategory', value)
+                            }
+                        }} />
+                </Grid>
             </Grid>
 
         );

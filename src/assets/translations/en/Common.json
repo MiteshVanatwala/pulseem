@@ -831,6 +831,7 @@
   "URL": "URL",
   "fallbackURL": "Fallback URL",
   "invalidURL": "Please enter valid fallback URL",
+  "searchInput": "Search...",
   "opens": "Opens",
   "clicks": "Clicks"
 }

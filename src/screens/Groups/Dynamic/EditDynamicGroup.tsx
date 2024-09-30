@@ -108,7 +108,9 @@ const EditDynamicGroup = ({ classes }: any) => {
                 IsPageViewedMaxPrice: null,
                 IsPageViewedFromDate: null,
                 IsPageViewedToDate: null,
-                PageViewedPrice: null
+                PageViewedPrice: null,
+
+                ProductCategory: null
             } as MyActivities,
             MyConditions: [{
                 FirstName: '',
@@ -536,7 +538,8 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsPurchasedMinPrice: null,
                                         IsPurchasedMaxPrice: null,
                                         IsPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
-                                        PurchasedPrice: null
+                                        PurchasedPrice: null,
+                                        PurchasedProductCategory: null
                                     }
                                 }
                             });
@@ -555,7 +558,8 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsNotPurchasedMinPrice: null,
                                         IsNotPurchasedMaxPrice: null,
                                         IsNotPurchasedInterval: ActivtyTimeInterval.Last2Weeks,
-                                        NotPurchasedPrice: null
+                                        NotPurchasedPrice: null,
+                                        NotPurchasedProductCategory: null
                                     }
                                 }
                             });
@@ -574,7 +578,8 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsAbandonedMinPrice: null,
                                         IsAbandonedMaxPrice: null,
                                         IsAbandonedInterval: ActivtyTimeInterval.Last2Weeks,
-                                        AbandonedPrice: null
+                                        AbandonedPrice: null,
+                                        AbandonedProductCategory: null
                                     }
                                 }
                             });
