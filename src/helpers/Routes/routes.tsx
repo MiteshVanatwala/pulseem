@@ -24,8 +24,8 @@ import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
-export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
-//export const rootDomain = '/Pulseem';
+// export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
+export const rootDomain = '/Pulseem';
 
 export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
