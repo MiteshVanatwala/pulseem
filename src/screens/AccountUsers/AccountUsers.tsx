@@ -742,6 +742,10 @@ const AccountUsers = ({ classes }: any) => {
           if (isReload) getInitialData();
         }}
         subAccountRecord={dialogType?.data}
+        mainAccountBalance={{
+          EmailBalance: direct.emailDirect,
+          SMSBalance: direct.SMSDirect,
+        }}
       />
       <Loader isOpen={showLoader} zIndex={9999} />
     </DefaultScreen>

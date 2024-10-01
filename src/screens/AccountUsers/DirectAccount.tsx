@@ -15,7 +15,7 @@ import { CommonRedux } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { NumberWithMinusRegEx } from '../../helpers/Constants';
 import { Stack } from '@mui/material';
 
-const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {} }: any) => {
+const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}, mainAccountBalance = {} }: any) => {
 	const dispatch: any = useDispatch();
 	const { t } = useTranslation();
 	const { isRTL  } = useSelector(
@@ -388,6 +388,9 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										style={{ direction: 'ltr' }}
 										// onKeyUp={handleKeyPress}
 									/>
+									<Typography className={clsx('MuiFormHelperText-root', classes.f14)}>
+										{t('SubAccount.balance')}: {get(mainAccountBalance, 'EmailBalance', 0) || 0}
+									</Typography>
 									<Typography className={clsx(errors.addEmailBulk ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
 										{errors.addEmailBulk}
 									</Typography>
@@ -418,6 +421,9 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 										style={{ direction: 'ltr' }}
 										// onKeyUp={handleKeyPress}
 									/>
+									<Typography className={clsx('MuiFormHelperText-root', classes.f14)}>
+										{t('SubAccount.balance')}: {get(mainAccountBalance, 'SMSBalance', 0) || 0}
+									</Typography>
 									<Typography className={clsx(errors.addSMSBulk ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
 										{errors.addSMSBulk}
 									</Typography>
