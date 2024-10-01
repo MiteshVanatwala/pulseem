@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { sitePrefix } from '../../config';
 import { get } from 'lodash';
+import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
@@ -65,6 +66,15 @@ const AccountUsers = ({ classes }: any) => {
     MMSDirect: null,
     GlobalBalance: null
   })
+  const [ packageDetails, setPackageDetails ] = useState<{
+    email: null | number,
+    SMS: null | number,
+    whatsApp: null | number,
+  }>({
+    email: null,
+    SMS: null,
+    whatsApp: null
+  })
   moment.locale(language);
 
   useEffect(() => {
@@ -94,6 +104,15 @@ const AccountUsers = ({ classes }: any) => {
 
     setIsDirectAccount(get(directData, 'payload.Data.Items[0]["IsDirectAccount"]', false))
     getData();
+
+    if (!isGlobal) {
+      const nonGlobalPackageDetails = await dispatch(getPackagesDetails());
+      setPackageDetails({
+        email: get(nonGlobalPackageDetails, 'payload.PackageDetails.Newsletters.Credits', 0),
+        SMS: get(nonGlobalPackageDetails, 'payload.PackageDetails.Sms.Credits', 0),
+        whatsApp: get(nonGlobalPackageDetails, 'payload.PackageDetails.Whatsapp.Credits', 0),
+      })
+    }
   }
   
   const getData = async () => {
@@ -710,9 +729,9 @@ const AccountUsers = ({ classes }: any) => {
         }}
         subAccountRecord={dialogType?.data}
         mainAccountBalance={{
-          EmailBalance: direct.emailDirect,
-          SMSBalance: direct.SMSDirect,
-          GlobalBalance: direct.GlobalBalance
+          EmailBalance: !isGlobal ? packageDetails.email : direct.emailDirect,
+          SMSBalance: !isGlobal ? packageDetails.SMS : direct.SMSDirect,
+          GlobalBalance: !isGlobal ? 0 : direct.GlobalBalance
         }}
       />
       <DirectAccount
