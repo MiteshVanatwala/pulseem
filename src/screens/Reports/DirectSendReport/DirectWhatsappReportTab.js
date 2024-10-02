@@ -24,6 +24,7 @@ import { Title } from '../../../components/managment/Title';
 import { WhatsappTemplatePreview } from '../../../components/WhatsappTemplatePreview/WhatsappTemplatePreview';
 import TotalSection from '../../../components/managment/TotalSection';
 import { useSelector } from 'react-redux';
+import { get } from 'lodash';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -613,7 +614,7 @@ const DirectWhatsappReportTab = ({
                 <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
                     <Grid item className={classes.mt15} style={{ textAlign: isRTL ? 'left' : 'right' }}>
                         <Typography className={clsx(classes.groupsLable, classes.mb5)}>
-                            {t('common.Total')} {directWhatsappReport?.Message?.TotalMessages?.toLocalString() ?? 0} {t('report.Messages')}
+                            {t('common.Total')} {get(directWhatsappReport, 'Message.TotalMessages', 0)} {t('report.Messages')}
                         </Typography>
                     </Grid>
                 </Grid>
