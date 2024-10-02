@@ -39,7 +39,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
   const { directWhatsappReport } = useSelector(state => state.whatsapp);
-  const { currencySymbol, isCurrencySymbolPrefix, finalGlobalBalance, isGlobal } = useSelector((state) => state.common)
+  const { isGlobal } = useSelector((state) => state.common)
   const [searchData, setSearchData] = useState({});
   const [isSearching, setSearching] = useState({});
   const [tabValue, setTabValue] = useState(0);
