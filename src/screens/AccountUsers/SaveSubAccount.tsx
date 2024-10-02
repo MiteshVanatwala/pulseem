@@ -11,7 +11,7 @@ import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
 import { RenderHtml, useStylesBootstrapPasswordHint } from '../../helpers/Utils/HtmlUtils';
 import PasswordHint from '../Settings/AccountSettings/Password/PasswordHint';
 import { ValidPassword } from '../Settings/AccountSettings/Password/Types';
-import { lowerCaseLetters, numbers, NumberWithMinusRegEx, specialLetters, upperCaseLetters } from '../../helpers/Constants';
+import { lowerCaseLetters, numbers, DecimalWithMinusRegEx, specialLetters, upperCaseLetters, NumberWithMinusRegEx } from '../../helpers/Constants';
 import Groups from '../../components/Groups/GroupsHandler/Groups';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
@@ -183,9 +183,9 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 			loginUserName: subAccountDetails.loginUserName.trim() === '' ? t('common.requiredField') : '',
 			password: '',
 			confirmPassword: (CustomGuidEnc === '' || subAccountDetails.confirmPassword.trim() !== '') && subAccountDetails.confirmPassword.trim() === '' ? t('common.requiredField') : '',
-			emailBulkAmount: !NumberWithMinusRegEx.test(subAccountDetails.emailBulkAmount) ? t('mainReport.invalidNo') : '',
-			SMSBulkAmount: !NumberWithMinusRegEx.test(subAccountDetails.SMSBulkAmount) ? t('mainReport.invalidNo') : '',
-			addBalance: !NumberWithMinusRegEx.test(subAccountDetails.addBalance) ? t('mainReport.invalidNo') : '',
+			emailBulkAmount: !DecimalWithMinusRegEx.test(subAccountDetails.emailBulkAmount) ? t('mainReport.invalidNo') : '',
+			SMSBulkAmount: !DecimalWithMinusRegEx.test(subAccountDetails.SMSBulkAmount) ? t('mainReport.invalidNo') : '',
+			addBalance: !DecimalWithMinusRegEx.test(subAccountDetails.addBalance) ? t('mainReport.invalidNo') : '',
 		};
 
 		if (!isGlobal && subAccountDetails.addEmailBulk === true && errorsTemp.emailBulkAmount === '' && subAccountDetails.emailBulkAmount !== '') {

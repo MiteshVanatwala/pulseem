@@ -179,14 +179,6 @@ const DirectAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {}
 		return <Toast customData={null} data={toastMessage} />;
 	};
 
-	const handleKeyPress = (event: any) => {
-		if (!event.key.match(NumberWithMinusRegEx) || event.key === 'e') {
-      event.preventDefault();
-      event.stopPropagation();
-      return false;
-    }
-  }
-
 	return (
 		<BaseDialog
 			classes={classes}
