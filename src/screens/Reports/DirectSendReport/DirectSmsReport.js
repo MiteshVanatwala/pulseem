@@ -24,6 +24,7 @@ import { Title } from '../../../components/managment/Title';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
+import { GetGlobalAccountPackagesDetails } from '../../../redux/reducers/commonSlice';
 
 const DirectSMSReportTab = ({
   classes,
@@ -51,6 +52,7 @@ const DirectSMSReportTab = ({
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
   const { showContent } = useSelector(state => state.report);
+  const { isGlobal } = useSelector((state) => state.common)
 
   const handleSearch = async () => {
     setLoader(true);
@@ -77,6 +79,7 @@ const DirectSMSReportTab = ({
     })
 
     await dispatch(isArchive ? getArchiveSMSDirectReport(searchObjects) : getSMSDirectReport(searchObjects))
+    if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
     handleSearching('sms', true);
     setLoader(false);
   }

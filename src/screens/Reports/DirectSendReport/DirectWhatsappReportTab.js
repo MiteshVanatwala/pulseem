@@ -25,6 +25,7 @@ import { WhatsappTemplatePreview } from '../../../components/WhatsappTemplatePre
 import TotalSection from '../../../components/managment/TotalSection';
 import { useSelector } from 'react-redux';
 import { get } from 'lodash';
+import { GetGlobalAccountPackagesDetails } from '../../../redux/reducers/commonSlice';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -47,7 +48,7 @@ const DirectWhatsappReportTab = ({
     const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
     const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
-    const { currencySymbol, isCurrencySymbolPrefix } = useSelector((state) => state.common);
+    const { currencySymbol, isCurrencySymbolPrefix, isGlobal } = useSelector((state) => state.common);
     const { t } = useTranslation();
     const [showLoader, setLoader] = useState(false)
     const [page, setPage] = useState(1);
@@ -77,7 +78,8 @@ const DirectWhatsappReportTab = ({
             }
         })
 
-        await dispatch(getDirectReport(searchObjects))
+        await dispatch(getDirectReport(searchObjects));
+        if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
         handleSearching('whatsapp', true);
         setLoader(false);
     }

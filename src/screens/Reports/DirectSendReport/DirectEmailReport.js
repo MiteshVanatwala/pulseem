@@ -23,6 +23,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
+import { GetGlobalAccountPackagesDetails } from '../../../redux/reducers/commonSlice';
 
 const RenderRow = ({
   classes,
@@ -227,6 +228,7 @@ const DirectEmailReportTab = ({
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
+  const { isGlobal } = useSelector((state) => state.common)
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
 
@@ -255,6 +257,7 @@ const DirectEmailReportTab = ({
 
     setLoader(true)
     await dispatch(isArchive ? getArchiveDirectReport(searchObjects) : getNewsletterDirectReport(searchObjects))
+    if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
     handleSearching('email', true);
     handlePageChange(1);
     setLoader(false)
