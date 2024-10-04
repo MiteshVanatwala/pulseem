@@ -15,7 +15,7 @@ const steps = ['common.enterTopUpAmount', 'common.selectPaymentMethod', 'common.
 
 const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core)
-  const { currencySymbol, isCurrencySymbolPrefix, VAT, currencyId, isGlobal } = useSelector((state: any) => state.common)
+  const { accountIsCurrencySymbolPrefix, accountCurrencySymbol, VAT, currencyId, isGlobal } = useSelector((state: any) => state.common)
   const { globalPaymentUrl } = useSelector((state: any) => state.payment);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -151,8 +151,8 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
               autoComplete="off"
               onChange={(e: any) => e.target.value < 0 ? (e.target.value = 0) : setTopUpAmount(Number(Math.max(0, parseInt(e.target.value)).toString().slice(0,10)))}
               InputProps={{
-                startAdornment: isCurrencySymbolPrefix === true ? <InputAdornment position="start">{currencySymbol}</InputAdornment> : null,
-                endAdornment: isCurrencySymbolPrefix === false ? <InputAdornment position="end">{currencySymbol}</InputAdornment> : null
+                startAdornment: accountIsCurrencySymbolPrefix === true ? <InputAdornment position="start">{accountCurrencySymbol}</InputAdornment> : null,
+                endAdornment: accountIsCurrencySymbolPrefix === false ? <InputAdornment position="end">{accountCurrencySymbol}</InputAdornment> : null
               }}
             />
           </Box>
@@ -191,17 +191,17 @@ const GlobalBalancePaymentWizard = ({ classes, isOpen, onClose = () => {} }: any
               <Box className={clsx(classes.bold, classes.pt25, classes.f18)}>
                 {t('common.Total')}&nbsp;:&nbsp;
                 <span>
-                  { isCurrencySymbolPrefix ? currencySymbol : '' } {topUpAmount} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+                  { accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {topUpAmount} { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
                 </span>
                 { currencyId === IsraelCurrencyId && (
                   <>
                     <span className={classes.ml5}>
                       + {VAT}%
-                      ({ isCurrencySymbolPrefix ? currencySymbol : '' } {(Number(topUpAmount) * VAT / 100)} { !isCurrencySymbolPrefix ? currencySymbol : '' })
+                      ({ accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {(Number(topUpAmount) * VAT / 100)} { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' })
                     </span>
                     <span className={classes.ml5}>=</span>
                     <span>
-                      { isCurrencySymbolPrefix ? currencySymbol : '' } {Number(topUpAmount) + (Number(topUpAmount) * VAT / 100)} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+                      { accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {Number(topUpAmount) + (Number(topUpAmount) * VAT / 100)} { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
                     </span>
                   </>
                 )}

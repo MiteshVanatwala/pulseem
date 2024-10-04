@@ -17,7 +17,7 @@ const PurchaseSummary = ({
     const { t } = useTranslation();
     const pack = data.find((p) => { return p.ID === packageId });
     const { windowSize } = useSelector(state => state.core);
-    const { VAT: VAT_Tax, currencySymbol, isCurrencySymbolPrefix, currencyId } = useSelector(state => state.common);
+    const { VAT: VAT_Tax, accountIsCurrencySymbolPrefix, accountCurrencySymbol, currencyId } = useSelector(state => state.common);
     const israelTax = currencyId !== IsraelCurrencyId ? 0 : (VAT_Tax / 100);
     const vat = (pack.Price * israelTax).toFixed(2);
     const totalPrice = pack.Price + parseFloat(vat);
@@ -46,7 +46,7 @@ const PurchaseSummary = ({
                 <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.price')}</Typography>
             </Grid>
             <Grid item xs={6}>
-                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={isCurrencySymbolPrefix === true ? ` ${currencySymbol} ` : ''} suffix={isCurrencySymbolPrefix === false ? ` ${currencySymbol} ` : ''} /></Typography>
+                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={accountIsCurrencySymbolPrefix === true ? ` ${accountCurrencySymbol} ` : ''} suffix={accountIsCurrencySymbolPrefix === false ? ` ${accountCurrencySymbol} ` : ''} /></Typography>
             </Grid>
             <Grid item xs={12}>
                 <Divider />
@@ -62,7 +62,7 @@ const PurchaseSummary = ({
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
-                            <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={vat} displayType={'text'} thousandSeparator={true} prefix={isCurrencySymbolPrefix === true ? ` ${currencySymbol} ` : ''} suffix={isCurrencySymbolPrefix === false ? ` ${currencySymbol} ` : ''} /></Typography>
+                            <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={vat} displayType={'text'} thousandSeparator={true} prefix={accountIsCurrencySymbolPrefix === true ? ` ${accountCurrencySymbol} ` : ''} suffix={accountIsCurrencySymbolPrefix === false ? ` ${accountCurrencySymbol} ` : ''} /></Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Divider className={classes.blackDivider} />
@@ -76,7 +76,7 @@ const PurchaseSummary = ({
                 <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.totalPrice')}</Typography>
             </Grid>
             <Grid item md={6}>
-                <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={totalPrice.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={isCurrencySymbolPrefix === true ? ` ${currencySymbol} ` : ''} suffix={isCurrencySymbolPrefix === false ? ` ${currencySymbol} ` : ''} /></Typography>
+                <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={totalPrice.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={accountIsCurrencySymbolPrefix === true ? ` ${accountCurrencySymbol} ` : ''} suffix={accountIsCurrencySymbolPrefix === false ? ` ${accountCurrencySymbol} ` : ''} /></Typography>
             </Grid>
 
             {showButtons && <Grid

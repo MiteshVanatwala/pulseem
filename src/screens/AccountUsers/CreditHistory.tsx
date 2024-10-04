@@ -29,7 +29,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 	const { isRTL, language, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, isCurrencySymbolPrefix, currencySymbol  } = useSelector(
+	const { isGlobal, accountIsCurrencySymbolPrefix, accountCurrencySymbol  } = useSelector(
 		(state: { common: any }) => state.common
 	);
 	const defaultFilter = {
@@ -266,7 +266,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					align='center'
 					className={classes.flex1}
 				>
-					{ isGlobal && isCurrencySymbolPrefix ? currencySymbol : '' } {row.Amount} { isGlobal && !isCurrencySymbolPrefix ? currencySymbol : '' }
+					{ isGlobal && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {row.Amount} { isGlobal && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
 				</TableCell>
 				{
 					!isGlobal && (
@@ -383,7 +383,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 			history.map((record: BulkHistory) => {
 				listToExport.push({
 					Date: record.Date,
-					Amount: `${isGlobal && isCurrencySymbolPrefix ? currencySymbol : ''} ${record.Amount} ${isGlobal && !isCurrencySymbolPrefix ? currencySymbol : ''}`,
+					Amount: `${isGlobal && accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} ${record.Amount} ${isGlobal && !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}`,
 					Type: t(`${get(CreditHistoryType, record.Type, '')}`),
 					AccountType: t(`${get(CreditHistoryAccountType, record.AccountType ? 1 : 0, '')}`),
 					TransferedFromSubAccountName: record.TransferedFromSubAccountName,

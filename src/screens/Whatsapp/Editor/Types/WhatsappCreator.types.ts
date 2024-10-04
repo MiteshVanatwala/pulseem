@@ -134,6 +134,8 @@ export type CommonRedux = {
 	};
 	currencySymbol?: string;
 	isCurrencySymbolPrefix?: boolean;
+	accountCurrencySymbol?: string;
+	accountIsCurrencySymbolPrefix?: boolean;
 	isGlobal?: boolean,
 	countryCodeList?: any,
 	subAccount?: any

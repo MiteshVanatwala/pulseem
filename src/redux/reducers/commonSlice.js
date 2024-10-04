@@ -220,6 +220,8 @@ export const commonSlice = createSlice({
     currencyDescription: null,
     currencySymbol: '',
     isCurrencySymbolPrefix: true,
+    accountCurrencySymbol: '',
+    accountIsCurrencySymbolPrefix: true,
     tranzilaCurrencyID: null,
     finalGlobalBalance: 0,
     VAT: null,
@@ -274,11 +276,17 @@ export const commonSlice = createSlice({
       .addCase(GetGlobalAccountPackagesDetails.fulfilled, (state, { payload }) => {
         const isGlobal = get(payload, 'Data.balanceInfo.IsGlobalAccount', false);
         const reportCurrencyId = !isGlobal ? 1 : get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', 1);
+        const accountCurrencyId = get(payload, 'Data.balanceInfo.CurrencyId', 1);
+        
         const currency = find(state.currencyList, { ID: reportCurrencyId});
+        const accountCurrency = find(state.currencyList, { ID: accountCurrencyId});
+
         state.currency = get(currency, 'Name', '');
         state.currencyDescription = get(currency, 'Description', '');
         state.currencyId = get(payload, 'Data.balanceInfo.CurrencyId', 1);
         state.currencySymbol = get(currency, 'CurrencySymbol', '');
+        state.accountCurrencySymbol = get(accountCurrency, 'CurrencySymbol', '');
+        state.accountIsCurrencySymbolPrefix = get(accountCurrency, 'IsCurrencySymbolPrefix', false);
         state.isCurrencySymbolPrefix = get(currency, 'IsCurrencySymbolPrefix', false);
         state.isGlobal = get(payload, 'Data.balanceInfo.IsGlobalAccount', null)
         state.tranzilaCurrencyID = get(payload, 'Data.balanceInfo.TranzilaCurrencyID', null)

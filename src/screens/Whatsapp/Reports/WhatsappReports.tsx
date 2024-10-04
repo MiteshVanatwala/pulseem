@@ -68,7 +68,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { isRTL, windowSize, rowsPerPage } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, isGlobal } = useSelector(
+	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
@@ -306,8 +306,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						`${cellValue >= 1 && isClickable && 'value-cell'}`
 					)}>
 					{amountCell.includes(cellName)
-						? `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${cellValue ? cellValue.toFixed(2) : '0'}  ${ !isCurrencySymbolPrefix ? currencySymbol : '' }`
-						: cellValue || '0'}
+						? (
+							cellName === reportCellNames.REVENUE ? 
+							`${ isCurrencySymbolPrefix ? currencySymbol : '' } ${cellValue ? cellValue.toFixed(2) : '0'}  ${ !isCurrencySymbolPrefix ? currencySymbol : '' }`
+							: `${cellValue ? cellValue.toFixed(2) : '0'} ${translator('common.NIS')}`
+						)
+						: cellValue || '0'
+					}
 				</Typography>
 				{!amountCell.includes(cellName) && (
 					<Typography
@@ -690,9 +695,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							</Typography>
 							<Grid container spacing={2}>
 								<Grid item>
-									<Typography className={clsx(classes.middleText)}>
-										{ isCurrencySymbolPrefix ? currencySymbol : '' } {report?.Cost} { !isCurrencySymbolPrefix ? currencySymbol : '' }
-									</Typography>
+									{getTableTypographyCells('', report?.Cost, reportCellNames.COST, report)}
 								</Grid>
 							</Grid>
 						</Grid>
@@ -855,15 +858,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						classes.revenueTableCell
 					)}>
 						<Typography className={clsx(classes.middleText)}>
-							{
-								isGlobal ? (
-									<>
-										{ isCurrencySymbolPrefix ? currencySymbol : '' } {report?.Cost} { !isCurrencySymbolPrefix ? currencySymbol : '' }
-									</>
-								) : (
-									<>{ isCurrencySymbolPrefix ? currencySymbol : '' } { report?.Cost } { !isCurrencySymbolPrefix ? currencySymbol : '' }</>
-								)
-							}
+							{getTableTypographyCells(
+								translator('whatsappReport.cost'),
+								report?.Cost,
+								reportCellNames.COST,
+								report
+							)}
 						</Typography>
 					{/* {getTableTypographyCells(
 						translator('whatsappReport.cost'),

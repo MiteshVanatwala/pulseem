@@ -32,7 +32,7 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
-  const { isGlobal, currencySymbol, isCurrencySymbolPrefix, subAccount } = useSelector((state: { common: CommonRedux }) => state.common);
+  const { isGlobal, accountCurrencySymbol, accountIsCurrencySymbolPrefix, subAccount } = useSelector((state: { common: CommonRedux }) => state.common);
   const { subAccountList } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -500,7 +500,7 @@ const AccountUsers = ({ classes }: any) => {
               align='center'
               className={isGlobal ? classes.flex1 : classes.flex2}>
                 <Typography className={clsx(classes.middleText, classes.bold)}>
-                  { isCurrencySymbolPrefix ? currencySymbol : '' } {row.FinalGlobalBalance} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+                  { accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {row.FinalGlobalBalance} { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
                 </Typography>
             </TableCell>
           )

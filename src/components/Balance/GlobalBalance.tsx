@@ -11,7 +11,7 @@ import { GetGlobalAccountPackagesDetails } from '../../redux/reducers/commonSlic
 const GlobalBalance = ({ classes }: any) => {
   const { isRTL } = useSelector((state: any) => state.core)
   const dispatch: any = useDispatch();
-  const { currencySymbol, isCurrencySymbolPrefix, finalGlobalBalance, isGlobal } = useSelector((state: any) => state.common)
+  const { accountIsCurrencySymbolPrefix, accountCurrencySymbol, finalGlobalBalance, isGlobal } = useSelector((state: any) => state.common)
   const { t } = useTranslation();
   const [dialogType, setDialogType] = useState<{
     type: string;
@@ -47,7 +47,7 @@ const GlobalBalance = ({ classes }: any) => {
             isGlobal === true && (
               <Box className={clsx(classes.textCenter, classes.p50, classes.f30, classes.bold)}>
                 <div className={classes.pt10}>{t('SubAccount.balance')}</div>
-                <div className={classes.pt10}>{ isCurrencySymbolPrefix ? currencySymbol : '' } {finalGlobalBalance} { !isCurrencySymbolPrefix ? currencySymbol : '' }</div>
+                <div className={classes.pt10}>{ accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {finalGlobalBalance} { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }</div>
                 <Box className={classes.pt10}>
                   <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => setDialogType({ type: 'PaymentDialog', data: {} })}>
                     {t('common.topUp')}

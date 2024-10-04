@@ -31,7 +31,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { isGlobal, countryCodeList, currencySymbol, isCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { subAccountAllGroups } = useSelector((state: any) => state.group);
 	const { testGroups } = useSelector((state: any) => state.sms);
 	const [ selectedGroups, setSelectedGroups ] = useState<any>([]);
@@ -491,7 +491,7 @@ const SaveSubAccount = ({ classes, isOpen = false, onClose, subAccountRecord = {
 							</>
 						) : (
 							<Grid item md={4} xs={12} className={clsx(classes.pb10)}>
-								<b>{t("SubAccount.balance")}:</b> { isCurrencySymbolPrefix ? currencySymbol : '' } {subAccountDetails.balance} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+								<b>{t("SubAccount.balance")}:</b> { accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {subAccountDetails.balance || 0} { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
 							</Grid>
 						)
 					}

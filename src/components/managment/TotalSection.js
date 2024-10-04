@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 const TotalSection = ({ classes, TotalObject, callerType }) => {
     const { t } = useTranslation();
     const { windowSize } = useSelector(state => state.core);
-    const { currencySymbol, isCurrencySymbolPrefix, finalGlobalBalance, isGlobal } = useSelector((state) => state.common)
+    const { accountCurrencySymbol, accountIsCurrencySymbolPrefix, finalGlobalBalance, isGlobal } = useSelector((state) => state.common)
 
     if (typeof TotalObject === 'object' && Object.keys(TotalObject).length > 0) {
         return <Box className={clsx(classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)} style={{ marginBottom: 50 }}>
@@ -41,7 +41,7 @@ const TotalSection = ({ classes, TotalObject, callerType }) => {
                                 {t(`SubAccount.balance`)}
                             </Typography>
                             <Typography align='center' className={clsx(classes.colorBlue)}>
-                                { isCurrencySymbolPrefix ? currencySymbol : '' } {finalGlobalBalance} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+                                { accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {finalGlobalBalance} { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
                             </Typography>
                         </Grid>
                     )
