@@ -235,7 +235,7 @@ export const ConvertWhatsappStatusText = (value: string, isRecipientReport: bool
                 return "common.Sent";
             }
             case "3": { //Success
-                return "common.Sent";
+                return "campaigns.successSent";
             }
             case "4": { // Failed
                 return !isRecipientReport ? "common.failedStatus" : "notifications.status.failed";
