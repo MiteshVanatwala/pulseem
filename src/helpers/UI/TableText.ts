@@ -235,13 +235,13 @@ export const ConvertWhatsappStatusText = (value: string, isRecipientReport: bool
                 return "common.Sent";
             }
             case "3": { //Success
-                return "common.delivered";
+                return "common.Sent";
             }
             case "4": { // Failed
                 return !isRecipientReport ? "common.failedStatus" : "notifications.status.failed";
             }
             case "5": { //Unsubscribe
-                return "common.Unsubscribed";
+                return "report.removalRequest";
             }
             case "6": { // read
                 return "common.read";
