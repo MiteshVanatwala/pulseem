@@ -222,7 +222,7 @@ export const ConvertEmailStatusText = (value: string) => {
     }
     return null;
 }
-export const ConvertWhatsappStatusText = (value: string) => {
+export const ConvertWhatsappStatusText = (value: string, isRecipientReport: boolean = false) => {
     if (value) {
         switch (value.toString()) {
             case "-1": {
@@ -238,7 +238,7 @@ export const ConvertWhatsappStatusText = (value: string) => {
                 return "common.delivered";
             }
             case "4": { // Failed
-                return "common.failedStatus";
+                return !isRecipientReport ? "common.failedStatus" : "notifications.status.failed";
             }
             case "5": { //Unsubscribe
                 return "common.Unsubscribed";

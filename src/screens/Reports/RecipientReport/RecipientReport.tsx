@@ -8,7 +8,7 @@ import { Title } from '../../../components/managment/Title';
 import { downloadRecipientsReportData, getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
 import { GroupsIcon } from '../../../assets/images/managment';
-import { ConvertClientStatus, ConvertNewsletterStatusText, ConvertSmsReceipientStatusText, SourceType } from '../../../helpers/UI/TableText';
+import { ConvertClientStatus, ConvertNewsletterStatusText, ConvertSmsReceipientStatusText, ConvertWhatsappStatusText, SourceType } from '../../../helpers/UI/TableText';
 import { PreviewIcon } from '../../../assets/images/managment';
 import { FormatDate } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -27,7 +27,6 @@ import { getSavedTemplatesPreviewById } from '../../../redux/reducers/whatsappSl
 import { apiStatus, resetToastData } from '../../Whatsapp/Constant';
 import Toast from '../../../components/Toast/Toast.component';
 import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
-import { EmailPreview } from '../../../components/EmailPreview';
 import { actionURL } from '../../../config';
 import { IsValidEmail, IsValidPhone } from '../../../helpers/Utils/Validations';
 import { FaEye, FaFileExcel } from 'react-icons/fa';
@@ -679,6 +678,27 @@ const RecipientReport = ({ classes }: any) => {
     }
   };
 
+  const renderStatusClasses = (row: any, campaignType: string) => {
+    if (campaignType === 'sms') {
+      return {
+        [classes.recipientsStatus]: row?.SmsStatus === -1,
+        [classes.statusPending]: row?.SmsStatus === 1,
+        [classes.recipientsStatusSending]: row?.SmsStatus === 2,
+        [classes.recipientsStatusSent]: row?.SmsStatus === 3,
+        [classes.statusFailed]: row?.SmsStatus === 4 || row?.SmsStatus === 5,
+        [classes.statusStopped]: row?.SmsStatus === 6,
+        [classes.recipientsStatusCanceled]: row?.SmsStatus > 6
+      }
+    }
+    return {
+      [classes.statusPending]: (row?.SmsStatus === 1 || row?.SmsStatus === -1),
+      [classes.recipientsStatusSending]: row?.SmsStatus === 2,
+      [classes.recipientsStatusSent]: (row?.SmsStatus === 3 || row?.SmsStatus === 6),
+      [classes.statusFailed]: row?.SmsStatus === 4 || row?.SmsStatus === 5,
+      [classes.recipientsStatusCanceled]: row?.SmsStatus > 6
+    }
+  }
+
   const renderRow = (row: any, campaignType: string) => {
     return (
       <TableRow
@@ -699,18 +719,8 @@ const RecipientReport = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex2, classes.f15,
-            {
-              [classes.recipientsStatus]: row?.SmsStatus === -1,
-              [classes.statusPending]: row?.SmsStatus === 1,
-              [classes.recipientsStatusSending]: row?.SmsStatus === 2,
-              [classes.recipientsStatusSent]: row?.SmsStatus === 3,
-              [classes.statusFailed]: row?.SmsStatus === 4 || row?.SmsStatus === 5,
-              [classes.statusStopped]: row?.SmsStatus === 6,
-              [classes.recipientsStatusCanceled]: row?.SmsStatus > 6
-            }
-          )}>
-          {t(`${ConvertSmsReceipientStatusText(`${row.SmsStatus}`)}`)}
+          className={clsx(classes.flex2, classes.f15, renderStatusClasses(row, campaignType))}>
+          {t(`${campaignType === 'sms' ? ConvertSmsReceipientStatusText(`${row.SmsStatus}`) : ConvertWhatsappStatusText(row.SmsStatus, true)}`)}
         </TableCell>
         <TableCell
           classes={cellStyle}
