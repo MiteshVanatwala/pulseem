@@ -831,6 +831,8 @@
   "URL": "URL",
   "fallbackURL": "Fallback URL",
   "invalidURL": "Please enter valid fallback URL",
+  "searchInput": "Search...",
+  "scheduleSend": "Schedule Campaign",
   "opens": "Opens",
   "clicks": "Clicks"
 }

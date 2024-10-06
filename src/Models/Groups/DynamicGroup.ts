@@ -88,6 +88,8 @@ export interface MyActivities {
     IsPageViewedToDate: Date | string | null;
     PageViewedPrice: number | string | null;
 
+    ProductCategory: string[] | null;
+
 }
 export interface CondGroup {
     FirstName: string;
