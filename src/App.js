@@ -573,8 +573,8 @@ const App = ({ screenSize }) => {
   }, [screenSize]);
 
   useEffect(() => {
-    if (currencyList.length > 0) {
-      !isSignup && dispatch(GetGlobalAccountPackagesDetails());
+    if (!isSignup && currencyList?.length > 0) {
+      dispatch(GetGlobalAccountPackagesDetails());
     }
   }, [currencyList]);
 

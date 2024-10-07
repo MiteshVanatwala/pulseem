@@ -110,20 +110,12 @@ export const SubAccountSlice = createSlice({
     subAccountList: [] as SubAccountUsers[],
     bulkHistory: [] as BulkHistory[],
   },
-  reducers: {
-    update: (state, action) => {
-      // state.extraData = action.payload;
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(GetSubAccountList.fulfilled, (state, { payload }) => {
       state.subAccountList = payload?.Data?.Items || [];
     });
-    // builder.addCase(GetBulkHistory.fulfilled, (state, { payload }) => {
-    //   state.bulkHistory = payload?.Data || [];
-    // });
   },
 });
 
-export const { update } = SubAccountSlice.actions
 export default SubAccountSlice.reducer;
