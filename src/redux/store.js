@@ -27,6 +27,7 @@ import DomainVerificationSlice from './reducers/DomainVerificationSlice';
 import productSlice from './reducers/productSlice';
 import ExtraFieldsSlice from './reducers/ExtraFieldsSlice';
 import AffiliateSlice from './reducers/AffiliateSlice';
+import SubAccountSlice from './reducers/SubAccountSlice';
 
 export default configureStore({
   reducer: {
@@ -57,6 +58,7 @@ export default configureStore({
     domainVerification: DomainVerificationSlice,
     product: productSlice,
     extraFields: ExtraFieldsSlice,
-    affiliates: AffiliateSlice
+    affiliates: AffiliateSlice,
+    subAccount: SubAccountSlice
   },
 });

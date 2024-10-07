@@ -132,6 +132,13 @@ export type CommonRedux = {
 			WhatsappTierID: null | string;
 		};
 	};
+	currencySymbol?: string;
+	isCurrencySymbolPrefix?: boolean;
+	accountCurrencySymbol?: string;
+	accountIsCurrencySymbolPrefix?: boolean;
+	isGlobal?: boolean,
+	countryCodeList?: any,
+	subAccount?: any
 };
 
 export type actionButtonProps = {

@@ -49,7 +49,7 @@ import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
 import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition, FlatObject } from '../../helpers/Export/ExportHelper';
-import { ClientStatus } from "../../helpers/Constants";
+import { ClientStatus, DateFormats } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -100,7 +100,7 @@ const ClientSearchResult = ({ classes }) => {
     rowsPerPage,
     isRTL
   } = useSelector((state) => state.core);
-  const { accountFeatures } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
@@ -569,12 +569,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.OpenTime")}
           </Typography>
           <Typography>
-            {snt_OpeningDate ? moment(snt_OpeningDate).format('DD/MM/YYYY HH:mm') : ''}
+            {snt_OpeningDate ? moment(snt_OpeningDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         </>),
         web: ({ snt_OpeningDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {snt_OpeningDate ? moment(snt_OpeningDate).format('DD/MM/YYYY HH:mm') : ''}
+            {snt_OpeningDate ? moment(snt_OpeningDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         )
       },
@@ -589,12 +589,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.OpenTime")}
           </Typography>
           <Typography>
-            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+            {SentDate ? moment(SentDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         </>),
         web: ({ SentDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+            {SentDate ? moment(SentDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         )
       },
@@ -609,12 +609,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("sms.sendingTime")}
           </Typography>
           <Typography>
-            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {CreationDate ? moment(CreationDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         </>),
         web: ({ CreationDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {CreationDate ? moment(CreationDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         )
       },
@@ -629,12 +629,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.SendDate")}
           </Typography>
           <Typography>
-            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+            {SentDate ? moment(SentDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         </>),
         web: ({ SentDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+            {SentDate ? moment(SentDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         )
       },
@@ -669,12 +669,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.campaignRevenue")}
           </Typography>
           <Typography>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         </>),
         web: ({ Revenue = 0, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         )
       },
@@ -689,12 +689,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.campaignRevenue")}
           </Typography>
           <Typography>
-            {Revenue} {t("common.NIS")}
+          { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         </>),
         web: ({ Revenue = 0, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         )
       },
@@ -710,12 +710,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.SendDate")}
           </Typography>
           <Typography>
-            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+            {SentDate ? moment(SentDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         </>),
         web: ({ SentDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+            {SentDate ? moment(SentDate).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         )
       },
@@ -731,12 +731,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.ReadTime")}
           </Typography>
           <Typography>
-            {OpenTime ? moment(OpenTime).format('DD/MM/YYYY HH:mm') : ''}
+            {OpenTime ? moment(OpenTime).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         </>),
         web: ({ OpenTime = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {OpenTime ? moment(OpenTime).format('DD/MM/YYYY HH:mm') : ''}
+            {OpenTime ? moment(OpenTime).format(DateFormats.DATE_TIME_24) : ''}
           </Typography>
         )
       },
@@ -775,12 +775,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.campaignRevenue")}
           </Typography>
           <Typography>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         </>),
         web: ({ Revenue = 0, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
           </Typography>
         )
       },
@@ -830,8 +830,8 @@ const ClientSearchResult = ({ classes }) => {
       handleFilter();
       setRevenueSummary([
         { title: t('client.Purchased'), value: TotalCount },
-        { title: t('client.totalRevenue'), value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
-        { title: t('client.avgOrderRevenue'), value: `${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${t('common.NIS')}` },
+        { title: t('client.totalRevenue'), value: `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${TotalRevenue?.toLocaleString()} ${ !isCurrencySymbolPrefix ? currencySymbol : '' }` },
+        { title: t('client.avgOrderRevenue'), value: `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${ !isCurrencySymbolPrefix ? currencySymbol : '' }` },
         { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
       ]);
     }
@@ -1382,7 +1382,7 @@ const ClientSearchResult = ({ classes }) => {
           )
         }
         <Typography className={classes.grayTextCell}>
-          {date ? `${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}` : text}
+          {date ? `${text} ${date.format(DateFormats.DATE_TIME_24)}` : text}
         </Typography>
       </>
     );
@@ -1412,7 +1412,7 @@ const ClientSearchResult = ({ classes }) => {
           </CustomTooltip>
           <Typography
             className={classes.grayTextCell}>
-            {date ? `${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}` : text}
+            {date ? `${text} ${date.format(DateFormats.DATE_TIME_24)}` : text}
           </Typography>
         </Grid>
       </Grid>

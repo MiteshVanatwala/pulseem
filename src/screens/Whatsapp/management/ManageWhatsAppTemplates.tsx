@@ -84,6 +84,7 @@ import ConfirmationButtons from '../../../components/ConfirmationButtons/Confirm
 import { sitePrefix } from '../../../config';
 import { TablePagination } from '../../../components/managment';
 import { TemplateErrorDialog } from '../../../components/TemplateErrorDialog/TemplateErrorDialog';
+import { DateFormats } from '../../../helpers/Constants';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -244,7 +245,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					titleStyle={undefined}
 				/>
 				<Typography className={classes.grayTextCell}>
-					{`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+					{`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
 				</Typography>
 			</>
 		);

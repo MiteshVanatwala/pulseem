@@ -14,7 +14,7 @@ import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { SizeOptionsOfHandHeldDevices, smsReportStatus } from '../../../helpers/Constants';
+import { DateFormats, SizeOptionsOfHandHeldDevices, smsReportStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
@@ -39,7 +39,7 @@ const SmsReport = ({ classes }) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const from = state?.from || "/";
-  const { accountFeatures } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { language, windowSize, isRTL } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
@@ -499,13 +499,13 @@ const SmsReport = ({ classes }) => {
 
     const date = SendDate ? moment(SendDate) : ''
     const udate = UpdateDate ? moment(UpdateDate) : '';
-    const showDate = SendDate ? date.format('L') : ''
-    const showTime = SendDate ? date.format('LT') : ''
+    const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
+    const showTime = SendDate ? date.format(DateFormats.TIME_ONLY) : ''
     //const now =  moment().add('months',-1).utc();
     //const isSchedule = moment(SendDate).isAfter(now.format());
     const isSchedule = moment(SendDate) > moment();
-    const showUpdateDate = UpdateDate ? udate.format('L') : '';
-    const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
+    const showUpdateDate = UpdateDate ? udate.format(DateFormats.DATE_ONLY) : '';
+    const showTimeUpdate = UpdateDate ? udate.format(DateFormats.TIME_ONLY) : '';
 
     return (
       <>
@@ -516,12 +516,12 @@ const SmsReport = ({ classes }) => {
         {SendDate !== null ?
           (
             <Typography className={classes.grayTextCell}>
-              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
+              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format(DateFormats.DATE_ONLY)} ${showTime}`}
             </Typography>
           ) :
           (
             <Typography className={classes.grayTextCell}>
-              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
             </Typography>
           )
         }
@@ -569,7 +569,7 @@ const SmsReport = ({ classes }) => {
           }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           style={{ ...textStyle, textDecoration: value > 0 && 'underline', cursor: value > 0 && 'pointer' }}>
-          {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
+            { isCurrencySymbolPrefix ? currencySymbol : '' } {(value && value.toLocaleString()) || '0'} { !isCurrencySymbolPrefix ? currencySymbol : '' }
         </Typography>
       </Box>
     )
