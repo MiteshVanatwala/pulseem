@@ -842,6 +842,8 @@
   "payment": "תשלום",
   "summary": "סיכום",
   "VATTax": "מע\"מ",
+  "searchInput": "חפש...",
+  "scheduleSend": "תזמן שליחה",
   "opens": "נפתח",
   "clicks": "הקלקה"
 }

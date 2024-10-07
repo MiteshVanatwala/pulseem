@@ -119,9 +119,9 @@ const SummaryModal = ({
 				} else {
 					campaignData?.Message
 						? setToastMessage({
-								...ToastMessages.ERROR,
-								message: campaignData?.Message,
-						  })
+							...ToastMessages.ERROR,
+							message: campaignData?.Message,
+						})
 						: setToastMessage(ToastMessages.ERROR);
 				}
 				setIsLoader(false);
@@ -320,9 +320,9 @@ const SummaryModal = ({
 	};
 
 	const getValidationDialog = () => ({
-    title: translator('whatsappCampaign.sendValidation'),
-    showDivider: false,
-    content: (
+		title: translator('whatsappCampaign.sendValidation'),
+		showDivider: false,
+		content: (
 			<ul className={clsx(classes.noMargin, classes.mb20)}>
 				{validationErrors?.map((requiredField: string, index: number) => (
 					<li key={index} className={classes.validationAlertModalLi}>
@@ -330,41 +330,41 @@ const SummaryModal = ({
 					</li>
 				))}
 			</ul>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const getExceedDailyLimit = () => ({
-    title: translator('settings.accountSettings.actDetails.fields.doYouWantToProceed'),
-    showDivider: false,
-    content: (
-      <Box className={classes.tierAlertModalWrapper}>
+		title: translator('settings.accountSettings.actDetails.fields.doYouWantToProceed'),
+		showDivider: false,
+		content: (
+			<Box className={classes.tierAlertModalWrapper}>
 				<Box>{translator('settings.accountSettings.actDetails.fields.stopSending')}</Box>
 				<br />
 				<Box>{translator('settings.accountSettings.actDetails.fields.yourResponsibility')}</Box>
 			</Box>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
 			onTierAlertConfirm();
-    }
-  })
+		}
+	})
 
 	const renderDialog = () => {
-    const { type } = dialogType || {}
+		const { type } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'validation') {
-    	currentDialog = getValidationDialog();
+			currentDialog = getValidationDialog();
 		} else if (type === 'exceedDailyLimit') {
-    	currentDialog = getExceedDailyLimit();
+			currentDialog = getExceedDailyLimit();
 		}
 
 		if (type) {
@@ -380,7 +380,7 @@ const SummaryModal = ({
 				</BaseDialog>
 			)
 		}
-  }
+	}
 
 	return (
 		<>
@@ -415,10 +415,9 @@ const SummaryModal = ({
 										{sendType === '2' &&
 											moment(sendDate)?.format('dddd , MMMM Do YYYY, h:mm a')}
 										{sendType === '3' &&
-											`${daysBeforeAfter} ${translator('mainReport.days')} ${
-												isSpecialDateBefore
-													? translator('mainReport.before')
-													: translator('mainReport.after')
+											`${daysBeforeAfter} ${translator('mainReport.days')} ${isSpecialDateBefore
+												? translator('mainReport.before')
+												: translator('mainReport.after')
 											} ${getSpecialDay()} ${translator('whatsappCampaign.atTime')} ${moment(sendTime)?.format(
 												'HH:mm a'
 											)}`}
@@ -454,103 +453,103 @@ const SummaryModal = ({
 									sendType,
 									isIn24HrWindow
 								) && (
-									<Box className={classes.campaignSummaryExceedLimitWrapper}>
-										<div className={classes.campaignSummaryExceedLimitTierInfo}>
-											<>
-												{`${translator(
-													'settings.accountSettings.actDetails.fields.sendingTier'
-												)} ${translator(
-													tierSetting[
-														getIndexFromTierId(campaignSummary?.WhatsappTierID)
-													]?.name
-												)}`}
-												<CustomTooltip
-													isSimpleTooltip={false}
-													arrow={true}
-													style={{
-														fontSize: 14,
-														width: 'auto',
-														paddingLeft: isRTL ? '0px' : '10px',
-														paddingRight: isRTL ? '10px' : '0px',
-													}}
-													classes={classes}
-													interactive={true}
-													placement={'top'}
-													title={getTierInfoTooltip()}
-													// @ts-ignore
-													titleStyle={{
-														width: '100%',
-														display: 'inline-block',
-													}}
-													text={<span className={classes.bodyInfo}>i</span>}
-													icon={undefined}>
-												</CustomTooltip>
-											</>
-										</div>
-										<div className={classes.campaignSummaryExceedLimitText}>
-											<>
-												{translator(
-													'settings.accountSettings.actDetails.fields.exceedLimitMessage'
-												)}
-											</>
-										</div>
-										<div className={classes.campaignSummaryExceedLimitText}>
-											<>
-												{translator(
-													'settings.accountSettings.actDetails.fields.exceedLimitNumberMessage'
-												)}
-												{campaignSummary?.WhatsappSmsLeft}
-											</>
-										</div>
-										<Box
-											className={
-												classes.campaignSummaryExceedLimitSendRandomlyWrapper
-											}>
-											<div
-												className={
-													classes.campaignSummaryExceedLimitSendRandomlyText
-												}>
+										<Box className={classes.campaignSummaryExceedLimitWrapper}>
+											<div className={classes.campaignSummaryExceedLimitTierInfo}>
+												<>
+													{`${translator(
+														'settings.accountSettings.actDetails.fields.sendingTier'
+													)} ${translator(
+														tierSetting[
+															getIndexFromTierId(campaignSummary?.WhatsappTierID)
+														]?.name
+													)}`}
+													<CustomTooltip
+														isSimpleTooltip={false}
+														arrow={true}
+														style={{
+															fontSize: 14,
+															width: 'auto',
+															paddingLeft: isRTL ? '0px' : '10px',
+															paddingRight: isRTL ? '10px' : '0px',
+														}}
+														classes={classes}
+														interactive={true}
+														placement={'top'}
+														title={getTierInfoTooltip()}
+														// @ts-ignore
+														titleStyle={{
+															width: '100%',
+															display: 'inline-block',
+														}}
+														text={<span className={classes.bodyInfo}>i</span>}
+														icon={undefined}>
+													</CustomTooltip>
+												</>
+											</div>
+											<div className={classes.campaignSummaryExceedLimitText}>
 												<>
 													{translator(
-														'settings.accountSettings.actDetails.fields.sendRandomlyTo'
+														'settings.accountSettings.actDetails.fields.exceedLimitMessage'
 													)}
+												</>
+											</div>
+											<div className={classes.campaignSummaryExceedLimitText}>
+												<>
+													{translator(
+														'settings.accountSettings.actDetails.fields.exceedLimitNumberMessage'
+													)}
+													{campaignSummary?.WhatsappSmsLeft}
 												</>
 											</div>
 											<Box
 												className={
-													classes.campaignSummaryExceedLimitSendRandomlyInsert
+													classes.campaignSummaryExceedLimitSendRandomlyWrapper
 												}>
-												<TextField
-													id='randomcount'
-													type='text'
-													placeholder={translator(
-														'settings.accountSettings.actDetails.fields.insert'
-													)}
-													className={clsx(
-														classes.buttonField,
-														classes.campaignSummaryExceedLimitSendRandomlyInsertInput
-													)}
-													onChange={(e: BaseSyntheticEvent) =>
-														onRandomlyCountChange(
-															e.target?.value?.replace(/\D/g, '')
-														)
-													}
-													value={randomlyCount}
-												/>
-												<span
+												<div
 													className={
-														classes.campaignSummaryExceedLimitSendRandomlyRecipients
+														classes.campaignSummaryExceedLimitSendRandomlyText
 													}>
 													<>
 														{translator(
-															'settings.accountSettings.actDetails.fields.recipientsOutOfTotal'
+															'settings.accountSettings.actDetails.fields.sendRandomlyTo'
 														)}
 													</>
-												</span>
+												</div>
+												<Box
+													className={
+														classes.campaignSummaryExceedLimitSendRandomlyInsert
+													}>
+													<TextField
+														id='randomcount'
+														type='text'
+														placeholder={translator(
+															'settings.accountSettings.actDetails.fields.insert'
+														)}
+														className={clsx(
+															classes.buttonField,
+															classes.campaignSummaryExceedLimitSendRandomlyInsertInput
+														)}
+														onChange={(e: BaseSyntheticEvent) =>
+															onRandomlyCountChange(
+																e.target?.value?.replace(/\D/g, '')
+															)
+														}
+														value={randomlyCount}
+													/>
+													<span
+														className={
+															classes.campaignSummaryExceedLimitSendRandomlyRecipients
+														}>
+														<>
+															{translator(
+																'settings.accountSettings.actDetails.fields.recipientsOutOfTotal'
+															)}
+														</>
+													</span>
+												</Box>
 											</Box>
 										</Box>
-									</Box>
-								)}
+									)}
 								<div>&emsp;</div>
 							</Grid>
 
@@ -760,19 +759,19 @@ const SummaryModal = ({
 					style={{ marginTop: '16px' }}>
 					<Button
 						className={clsx(classes.btn, classes.btnRounded)}
+						color='primary'
+						variant='contained'
+						onClick={onSummaryModalClose}>
+						<>{translator('whatsapp.alertModal.calcelButtonText')}</>
+					</Button>
+					<Button
+						className={clsx(classes.btn, classes.btnRounded)}
 						variant='contained'
 						color='primary'
 						autoFocus
 						disabled={campaignSummary && campaignSummary?.FinalCount <= 0}
 						onClick={onConfirmOrYesClick}>
-						<>{translator('whatsapp.alertModal.okButtonText')}</>
-					</Button>
-					<Button
-						className={clsx(classes.btn, classes.btnRounded)}
-						color='primary'
-						variant='contained'
-						onClick={onSummaryModalClose}>
-						<>{translator('whatsapp.alertModal.calcelButtonText')}</>
+						<>{sendType === "1" ? translator('sms.sendDialog') : translator("common.scheduleSend")}</>
 					</Button>
 				</Grid>
 			</div>

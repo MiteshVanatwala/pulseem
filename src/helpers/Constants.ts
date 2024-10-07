@@ -329,7 +329,6 @@ export const SHOPIFY_SITE_TRACKING = `
 export const SEND_1 = '_Send_1';
 export const PULSE_1 = '_Pulse_1';
 
-export const URL_REGEX = /(((?:www\.)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;
 export const CreditHistoryType = {
     0: "common.Mail",
     1: "common.SMS",
@@ -344,3 +343,5 @@ export const CreditHistoryAccountType = {
 export const IsraelCurrencyId = 1;
 export const USDCurrencyId = 2;
 export const GlobalPackageId = 4;
+// eslint-disable-next-line
+export const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\??(?:[\-\+=&;%@\.\w_]*)##?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;

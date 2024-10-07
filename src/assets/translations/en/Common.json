@@ -848,6 +848,8 @@
   "payment": "Payment",
   "summary": "Summary",
   "VATTax": "VAT",
+  "searchInput": "Search...",
+  "scheduleSend": "Schedule Campaign",
   "opens": "Opens",
   "clicks": "Clicks"
 }

@@ -148,21 +148,21 @@ export const getRoutes = (
           href: `${rootDomain}/CampaignsByResults.aspx?fromreact=true`,
           isShow: false,
         },
-        // {
-        //   title: t("master.linkAbTestingsResource1.Text"),
-        //   href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
-        //   isShow: false,
-        // },
+        {
+          title: t("master.linkAbTestingsResource1.Text"),
+          href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
+          isShow: true,
+        },
         {
           title: t("master.RadMenuItemResource9a.Text"),
           href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
           isShow: true,
         },
-        {
-          title: t("master.RadMenuItemResource10.Text"),
-          href: `${rootDomain}/CampaignTemplates.aspx?fromreact=true`,
-          isShow: true,
-        },
+        // {
+        //   title: t("master.RadMenuItemResource10.Text"),
+        //   href: `${rootDomain}/CampaignTemplates.aspx?fromreact=true`,
+        //   isShow: true,
+        // },
         {
           title: t("master.newslatterBasicEditor"),
           href: `${rootDomain}/CampaignEdit.aspx?NewsLetterType=Basic&fromreact=true`,

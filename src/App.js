@@ -208,10 +208,10 @@ const renderRoutes = (classes, redirect) => {
         path={`/AutoSendPlans`}
         element={transferUrl('/Pulseem/AutoSendPlans.aspx')}
       />
-      <Route
+      {/* <Route
         path={`/CampaignTemplates`}
         element={transferUrl('/Pulseem/CampaignTemplates.aspx')}
-      />
+      /> */}
       <Route
         path={`/CampaignEdit`}
         element={transferUrl('/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic')}
