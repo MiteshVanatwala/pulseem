@@ -204,9 +204,11 @@ export const UploadSettings = {
 };
 
 export const DateFormats = {
-    REGULAR: 'YYYY-MM-DD HH:mm:ss',
-    DATE_ONLY: 'YYYY-MM-DD',
-    IL_DATE_ONLY: 'DD/MM/YYYY'
+    DATE_TIME_24: 'DD/MM/YYYY HH:mm',
+    DATE_ONLY: 'DD/MM/YYYY',
+    TIME_ONLY: 'HH:mm',
+    FULL_DATE_AM_PM: 'DD/MM/YYYY HH:mm:ss A',
+    DATEPICKER_DATE_FORMAT: 'MM/DD/YYYY'
 }
 
 export const FBBusiness = 'https://business.facebook.com/wa/manage/';
@@ -299,6 +301,9 @@ export const lowerCaseLetters = /[a-z]/g;
 export const upperCaseLetters = /[A-Z]/g;
 export const numbers = /[0-9]/g;
 export const specialLetters = /[!"#$%&'()*+.\/:;<=>?@\[\\\]^_`{|}~-]/g;
+export const PhoneNumberRegEx = /^\+?[0-9]*$/;
+export const DecimalWithMinusRegEx = /^-?[0-9]*(\.)?([0-9]+)?$/;
+export const NumberWithMinusRegEx = /^-?[0-9]*$/;
 
 export const DEFAULT_NEW_GROUP = {
     ActiveCell: 0,
@@ -346,4 +351,19 @@ export const SHOPIFY_SITE_TRACKING = `
 export const SEND_1 = '_Send_1';
 export const PULSE_1 = '_Pulse_1';
 
-export const URL_REGEX = /(((?:www\.)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;
+export const CreditHistoryType = {
+    0: "common.Mail",
+    1: "common.SMS",
+    2: "common.MMS",
+};
+
+export const CreditHistoryAccountType = {
+    0: "SubAccount.standard",
+    1: "SubAccount.direct",
+}
+
+export const IsraelCurrencyId = 1;
+export const USDCurrencyId = 2;
+export const GlobalPackageId = 4;
+// eslint-disable-next-line
+export const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\??(?:[\-\+=&;%@\.\w_]*)##?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;

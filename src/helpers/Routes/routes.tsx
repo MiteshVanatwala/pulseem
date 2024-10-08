@@ -35,6 +35,7 @@ export const getSettingsItem = (
   isRTL: Boolean = false,
   accountSettings: any,
   features: any = null,
+  companyAdmin: boolean = false
 ) => ({
   key: "settings",
   title: title,
@@ -43,8 +44,8 @@ export const getSettingsItem = (
     { key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: `${sitePrefix}AccountSettings`, iconSrc: SettingsMenuIcon, isShow: true },
     { title: t('master.linkAccountBilling.Text'), href: `${rootDomain}/AccountBilling.aspx?fromreact=true`, iconSrc: DolarMenuIcon, isShow: true },
     { key: 'affiliateManagement', title: t('master.affiliateManagement'), href: `${sitePrefix}AffiliateManagement`, iconSrc: DolarMenuIcon, isShow: features && features?.indexOf(PulseemFeatures.AFFILIATE) > -1, },
-    { title: t('master.RadMenuItemResource3.Text'), href: `${rootDomain}/AccountUsers.aspx?fromreact=true`, iconSrc: GroupMenuIcon, isShow: isAllowSwitchAccount },
-    { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount },
+    { title: t('master.RadMenuItemResource3.Text'), href: `${sitePrefix}AccountUsers`, iconSrc: GroupMenuIcon, isShow: companyAdmin },
+    { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: companyAdmin },
     { title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
     //@ts-ignore
     { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0) ? true : false },
@@ -146,21 +147,21 @@ export const getRoutes = (
           href: `${rootDomain}/CampaignsByResults.aspx?fromreact=true`,
           isShow: false,
         },
-        // {
-        //   title: t("master.linkAbTestingsResource1.Text"),
-        //   href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
-        //   isShow: false,
-        // },
+        {
+          title: t("master.linkAbTestingsResource1.Text"),
+          href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
+          isShow: true,
+        },
         {
           title: t("master.RadMenuItemResource9a.Text"),
           href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
           isShow: true,
         },
-        {
-          title: t("master.RadMenuItemResource10.Text"),
-          href: `${rootDomain}/CampaignTemplates.aspx?fromreact=true`,
-          isShow: true,
-        },
+        // {
+        //   title: t("master.RadMenuItemResource10.Text"),
+        //   href: `${rootDomain}/CampaignTemplates.aspx?fromreact=true`,
+        //   isShow: true,
+        // },
         {
           title: t("master.newslatterBasicEditor"),
           href: `${rootDomain}/CampaignEdit.aspx?NewsLetterType=Basic&fromreact=true`,

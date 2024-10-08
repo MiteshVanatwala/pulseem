@@ -7,7 +7,8 @@ import {
 } from '@material-ui/core'
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon,
-  GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon, SendIcon
+  GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon, SendIcon,
+  SettingIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, PopMassage, RestorDialogContent
@@ -41,7 +42,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
-import { SEND_1, PULSE_1 } from '../../../helpers/Constants';
+import { SEND_1, PULSE_1, DateFormats } from '../../../helpers/Constants';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
@@ -82,8 +83,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
     preText: '',
     showSkip: false
   });
-  const [ expandedIds, setExpandedIds ] = useState([]);
-  const [ parentCampaignsWithChild, setParentCampaignsWithChild ] = useState([]);
+  const [expandedIds, setExpandedIds] = useState([]);
+  const [parentCampaignsWithChild, setParentCampaignsWithChild] = useState([]);
 
   moment.locale(language);
 
@@ -129,7 +130,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       }, []);
     }
     setParentCampaignsWithChild(ids);
-  }, [ newslettersParentCampaigns, newslettersChildCampaigns ]);
+  }, [newslettersParentCampaigns, newslettersChildCampaigns]);
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -386,6 +387,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
 
     const iconsMap = [[
+      {
+        key: 'settings',
+        uIcon: SettingIcon,
+        lable: t("recipient.settings"),
+        remove: windowSize === 'xs' || Status !== 1 || AutomationID !== 0,
+        onClick: () => {
+          navigate(`${sitePrefix}Campaigns/Create/${CampaignID}`)
+        },
+        rootClass: classes.paddingIcon,
+      },
       {
         key: 'preview',
         uIcon: PreviewIcon,
@@ -667,42 +678,42 @@ const NewsletterManagnentScreen = ({ classes }) => {
           title={<Typography noWrap={false}>{row.Name}</Typography>}
           text={!(expandedIds.indexOf(row.CampaignID) > -1 && isParent) && <div>{isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '').replace(PULSE_1, '') : row.Name}</div>}
         />
-          <Grid container wrap="nowrap">
-            <Grid item md={1}>
-              {
-                isParentCampaignWithChild && isParent && <>
-                  {
-                    expandedIds.indexOf(row.CampaignID) === -1
+        <Grid container wrap="nowrap">
+          <Grid item md={1}>
+            {
+              isParentCampaignWithChild && isParent && <>
+                {
+                  expandedIds.indexOf(row.CampaignID) === -1
                     ? <MdOutlineAddCircleOutline className={clsx(classes.f20, classes.p5, classes.cursorPointer)} onClick={() => setExpandedIds([...expandedIds, row.CampaignID])} />
                     : <MdOutlineRemoveCircleOutline className={clsx(classes.f20, classes.p5, classes.cursorPointer)} onClick={() => setExpandedIds(expandedIds.filter((id) => id !== row.CampaignID))} />
-                  }
-                </>
-              }
-            </Grid>
-            {
-              !(expandedIds.indexOf(row.CampaignID) > -1 && isParent) ? (
-                <Grid item md={11}>
-                  <Typography className={classes.f14}>
-                    {`${t("mainReport.CampaignID")}${separator} ${row.CampaignID}`}
-                  </Typography>
-                  <Typography
-                    className={classes.grayTextCell}>
-                    {`${text}${separator} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
-                  </Typography>
-                </Grid>
-              ) : (
-                <div className={clsx(isParentCampaignWithChild ? classes.paddingInline30 : '', classes.bold, classes.pt5, classes.f16, classes.w100)}>
-                  {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '').replace(PULSE_1, '') : row.Name}
-                </div>
-              )
+                }
+              </>
             }
           </Grid>
+          {
+            !(expandedIds.indexOf(row.CampaignID) > -1 && isParent) ? (
+              <Grid item md={11}>
+                <Typography className={classes.f14}>
+                  {`${t("mainReport.CampaignID")}${separator} ${row.CampaignID}`}
+                </Typography>
+                <Typography
+                  className={classes.grayTextCell}>
+                  {`${text}${separator} ${date.format(DateFormats.DATE_TIME_24)}`}
+                </Typography>
+              </Grid>
+            ) : (
+              <div className={clsx(isParentCampaignWithChild ? classes.paddingInline30 : '', classes.bold, classes.pt5, classes.f16, classes.w100)}>
+                {isParentCampaignWithChild && isParent ? row.Name.replace(SEND_1, '').replace(PULSE_1, '') : row.Name}
+              </div>
+            )
+          }
+        </Grid>
       </>
     )
   }
 
   const renderRow = (row, isParent = true, isEven = false) => {
-    const childItems  = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
+    const childItems = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
     const isExpanded = expandedIds.indexOf(row.CampaignID) > -1;
     return (
       <>
@@ -754,7 +765,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   }
 
   const renderPhoneRow = (row, isParent = true, isEven = false) => {
-    const childItems  = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
+    const childItems = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
     const isExpanded = expandedIds.indexOf(row.CampaignID) > -1;
     return (
       <>

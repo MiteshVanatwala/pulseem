@@ -23,7 +23,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             toolbarDisabled={false}
                             classes={classes}
                             value={moment(data.dynamicData?.MyConditions[0]?.BirthDateFrom).diff('0001-01-01') > 0 ? data.dynamicData?.MyConditions[0]?.BirthDateFrom : null}
-                            onChange={(value: any) => onUpdate('BirthDateFrom', moment(value).format(DateFormats.DATE_ONLY))}
+                            onChange={(value: any) => onUpdate('BirthDateFrom', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -48,7 +48,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             toolbarDisabled={false}
                             classes={classes}
                             value={moment(data.dynamicData?.MyConditions[0]?.BirthDateTo).diff('0001-01-01') > 0 ? data.dynamicData?.MyConditions[0]?.BirthDateTo : null}
-                            onChange={(value: any) => onUpdate('BirthDateTo', moment(value).format(DateFormats.DATE_ONLY))}
+                            onChange={(value: any) => onUpdate('BirthDateTo', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
@@ -75,7 +75,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             toolbarDisabled={false}
                             classes={classes}
                             value={moment(data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear).diff('0001-01-01') > 0 ? data.dynamicData?.MyConditions[0]?.BirthDateFromWithoutYear : null}
-                            onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', moment(value).format(DateFormats.DATE_ONLY))}
+                            onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -99,7 +99,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             toolbarDisabled={false}
                             classes={classes}
                             value={moment(data.dynamicData?.MyConditions[0]?.BirthDateToWithoutYear).diff('0001-01-01') > 0 ? data.dynamicData?.MyConditions[0]?.BirthDateToWithoutYear : null}
-                            onChange={(value: any) => onUpdate('BirthDateToWithoutYear', moment(value).format(DateFormats.DATE_ONLY))}
+                            onChange={(value: any) => onUpdate('BirthDateToWithoutYear', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}
@@ -128,7 +128,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             toolbarDisabled={false}
                             classes={classes}
                             value={moment(data.dynamicData?.MyConditions[0]?.ReminderFrom).diff('0001-01-01') > 0 ? data.dynamicData?.MyConditions[0]?.ReminderFrom : null}
-                            onChange={(value: any) => onUpdate('ReminderFrom', moment(value).format(DateFormats.DATE_ONLY))}
+                            onChange={(value: any) => onUpdate('ReminderFrom', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                             placeholder={t('common.FromDate')}
                             timePickerOpen={true}
                             dateActive={true}
@@ -150,7 +150,7 @@ const DateDetails = ({ classes, data, onUpdate }: any) => {
                             toolbarDisabled={false}
                             classes={classes}
                             value={moment(data.dynamicData?.MyConditions[0]?.ReminderTo).diff('0001-01-01') > 0 ? data.dynamicData?.MyConditions[0]?.ReminderTo : null}
-                            onChange={(value: any) => onUpdate('ReminderTo', moment(value).format(DateFormats.DATE_ONLY))}
+                            onChange={(value: any) => onUpdate('ReminderTo', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                             placeholder={t('common.ToDate')}
                             timePickerOpen={false}
                             dateActive={true}

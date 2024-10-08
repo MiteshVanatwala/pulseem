@@ -13,8 +13,8 @@ const TranzilaIframe = ({
     isRTL,
     packageId,
     paymentUrl = null,
-    onStepBack = () => null,
-    onComplete = () => null
+    onStepBack = () => {},
+    onComplete = () => {}
 }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();

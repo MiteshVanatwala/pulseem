@@ -14,6 +14,7 @@ import moment from 'moment';
 import { DateFormats } from '../../../../helpers/Constants';
 import SelectComparingType from '../Components/SelectComparingType';
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
+import SelectProductCategories from '../Components/SelectProductCategories';
 
 const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
@@ -78,7 +79,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsPurchased && data.dynamicData?.MyActivities.IsPurchasedFromDate}
-                                        onChange={(value: any) => onUpdate('IsPurchasedFromDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsPurchasedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
@@ -101,7 +102,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsPurchased && data.dynamicData?.MyActivities.IsPurchasedToDate}
-                                        onChange={(value: any) => onUpdate('IsPurchasedToDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsPurchasedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
@@ -210,6 +211,20 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         </Grid>
                     </Grid>
                 }
+                <Grid item xs={6} sm={6} md={2}>
+                    <SelectProductCategories
+                        classes={classes}
+                        disabled={!data.dynamicData?.MyActivities.IsPurchased}
+                        data={data.dynamicData?.MyActivities?.PurchasedProductCategory?.split(',')}
+                        onUpdate={(value: any) => {
+                            if (value !== null) {
+                                onUpdate('PurchasedProductCategory', value.join(','))
+                            }
+                            else {
+                                onUpdate('PurchasedProductCategory', value)
+                            }
+                        }} />
+                </Grid>
             </Grid>
 
         );
@@ -255,7 +270,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotPurchased && data.dynamicData?.MyActivities.IsNotPurchasedFromDate}
-                                        onChange={(value: any) => onUpdate('IsNotPurchasedFromDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsNotPurchasedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
@@ -278,7 +293,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotPurchased && data.dynamicData?.MyActivities.IsNotPurchasedToDate}
-                                        onChange={(value: any) => onUpdate('IsNotPurchasedToDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsNotPurchasedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
@@ -387,6 +402,20 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     </Grid>
                 </Grid>
                 }
+                <Grid item xs={6} sm={6} md={2}>
+                    <SelectProductCategories
+                        classes={classes}
+                        disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
+                        data={data.dynamicData?.MyActivities?.NotPurchasedProductCategory?.split(',')}
+                        onUpdate={(value: any) => {
+                            if (value !== null) {
+                                onUpdate('NotPurchasedProductCategory', value.join(','))
+                            }
+                            else {
+                                onUpdate('NotPurchasedProductCategory', value)
+                            }
+                        }} />
+                </Grid>
             </Grid>
 
         );
@@ -432,7 +461,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsAbandoned && data.dynamicData?.MyActivities.IsAbandonedFromDate}
-                                        onChange={(value: any) => onUpdate('IsAbandonedFromDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsAbandonedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
@@ -455,7 +484,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsAbandoned && data.dynamicData?.MyActivities.IsAbandonedToDate}
-                                        onChange={(value: any) => onUpdate('IsAbandonedToDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsAbandonedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
@@ -564,6 +593,20 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     </Grid>
                 </Grid>
                 }
+                <Grid item xs={6} sm={6} md={2}>
+                    <SelectProductCategories
+                        classes={classes}
+                        disabled={!data.dynamicData?.MyActivities.IsAbandoned}
+                        data={data.dynamicData?.MyActivities?.AbandonedProductCategory?.split(',')}
+                        onUpdate={(value: any) => {
+                            if (value !== null) {
+                                onUpdate('AbandonedProductCategory', value.join(','))
+                            }
+                            else {
+                                onUpdate('AbandonedProductCategory', value)
+                            }
+                        }} />
+                </Grid>
             </Grid>
 
         );

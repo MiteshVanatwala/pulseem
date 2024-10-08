@@ -15,7 +15,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { WhatsappStatus } from '../../../helpers/Constants';
+import { DateFormats, WhatsappStatus } from '../../../helpers/Constants';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { ConvertColorStatus, ConvertWhatsappStatusText, SourceType } from '../../../helpers/UI/TableText';
@@ -23,6 +23,9 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { Title } from '../../../components/managment/Title';
 import { WhatsappTemplatePreview } from '../../../components/WhatsappTemplatePreview/WhatsappTemplatePreview';
 import TotalSection from '../../../components/managment/TotalSection';
+import { useSelector } from 'react-redux';
+import { get } from 'lodash';
+import { GetGlobalAccountPackagesDetails } from '../../../redux/reducers/commonSlice';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -45,6 +48,7 @@ const DirectWhatsappReportTab = ({
     const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
     const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
+    const { currencySymbol, isCurrencySymbolPrefix, isGlobal } = useSelector((state) => state.common);
     const { t } = useTranslation();
     const [showLoader, setLoader] = useState(false)
     const [page, setPage] = useState(1);
@@ -74,7 +78,8 @@ const DirectWhatsappReportTab = ({
             }
         })
 
-        await dispatch(getDirectReport(searchObjects))
+        await dispatch(getDirectReport(searchObjects));
+        if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
         handleSearching('whatsapp', true);
         setLoader(false);
     }
@@ -107,7 +112,7 @@ const DirectWhatsappReportTab = ({
         let text = data;
         if (dataType === 'date') {
             text = moment(text);
-            text = `${text.format('DD/MM/YYYY HH:mm')}`
+            text = `${text.format(DateFormats.DATE_TIME_24)}`
         }
         if (dataType === 'status') {
             text = t(ConvertWhatsappStatusText(text));
@@ -117,7 +122,9 @@ const DirectWhatsappReportTab = ({
         }
 
         return (
-            <Typography style={{ fontWeight: isBalanceCol ? 900 : null, wordBreak: dataType === 'content' ? 'break-word' : null }}>{isBalanceCol ? text?.toFixed(2) : text} {isBalanceCol && t("common.NIS")}</Typography>
+            <Typography style={{ fontWeight: isBalanceCol ? 900 : null, wordBreak: dataType === 'content' ? 'break-word' : null }}>
+                { isBalanceCol && isCurrencySymbolPrefix ? currencySymbol : '' } {isBalanceCol ? text?.toFixed(2) : text} { isBalanceCol && !isCurrencySymbolPrefix ? currencySymbol : '' }
+            </Typography>
         );
     }
 
@@ -523,7 +530,7 @@ const DirectWhatsappReportTab = ({
 
     const renderNameCell = (schedule) => {
         let d = moment(schedule);
-        d = `${d.format('DD/MM/YYYY HH:mm')}`
+        d = `${d.format(DateFormats.DATE_TIME_24)}`
 
         return (
             <>
@@ -607,9 +614,9 @@ const DirectWhatsappReportTab = ({
         return (
             <>
                 <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
-                    <Grid item className={windowSize === 'xs' ? classes.mt15 : null} style={{ textAlign: isRTL ? 'left' : 'right' }}>
+                    <Grid item className={classes.mt15} style={{ textAlign: isRTL ? 'left' : 'right' }}>
                         <Typography className={clsx(classes.groupsLable, classes.mb5)}>
-                            {t('common.Total')} {directWhatsappReport?.Message?.TotalMessages ?? 0} {t('report.Messages')}
+                            {t('common.Total')} {get(directWhatsappReport, 'Message.TotalMessages', 0)} {t('report.Messages')}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -648,7 +655,7 @@ const DirectWhatsappReportTab = ({
         {renderTablePagination()}
         {directWhatsappReport && <TotalSection classes={classes} TotalObject={{
             "TotalSent": directWhatsappReport?.Message?.TotalMessages,
-            "WhatsappBalance": `${directWhatsappReport?.Message?.WhatsappBalance || 0} ${t("common.NIS")}`
+            "WhatsappBalance": `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${directWhatsappReport?.Message?.WhatsappBalance || 0} ${ !isCurrencySymbolPrefix ? currencySymbol : '' }`
         }} callerType="whatsapp" />}
         <WhatsappTemplatePreview classes={classes} templateID={templateID} openPreview={openTemplatePreview} closeModel={() => setTemplatePreview(false)} />
         <Loader isOpen={showLoader} />

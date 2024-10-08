@@ -8,7 +8,7 @@ import { Title } from '../../../components/managment/Title';
 import { downloadRecipientsReportData, getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
 import { GroupsIcon } from '../../../assets/images/managment';
-import { ConvertClientStatus, ConvertNewsletterStatusText, SourceType } from '../../../helpers/UI/TableText';
+import { ConvertClientStatus, ConvertNewsletterStatusText, ConvertSmsReceipientStatusText, SourceType } from '../../../helpers/UI/TableText';
 import { PreviewIcon } from '../../../assets/images/managment';
 import { FormatDate } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -30,10 +30,11 @@ import { getCampaignInfo } from '../../../redux/reducers/newsletterSlice';
 import { EmailPreview } from '../../../components/EmailPreview';
 import { actionURL } from '../../../config';
 import { IsValidEmail, IsValidPhone } from '../../../helpers/Utils/Validations';
-import { FaFileExcel } from 'react-icons/fa';
+import { FaEye, FaFileExcel } from 'react-icons/fa';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { DateFormats } from '../../../helpers/Constants';
 
 const RecipientReport = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -47,6 +48,7 @@ const RecipientReport = ({ classes }: any) => {
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const headCellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
+  const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) };
   const [dialogType, setDialogType] = useState<{
     type: string;
     data: any
@@ -235,7 +237,7 @@ const RecipientReport = ({ classes }: any) => {
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex2, classes.noPonSmallScreen)} align='center'>
-            {t('common.Dates')}
+            {t('report.date')}
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex2)} align='center'>
@@ -243,7 +245,7 @@ const RecipientReport = ({ classes }: any) => {
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex1)} align='center'>
-            {t('common.Opened')}
+            {t('common.opens')}
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex1)} align='center' />
@@ -341,10 +343,8 @@ const RecipientReport = ({ classes }: any) => {
             classes.recipientsStatus,
             classes.f15,
             {
-              [classes.recipientsStatusCreated]: row?.Status === 1,
-              [classes.recipientsStatusSent]: row?.Status === 4,
-              [classes.recipientsStatusSending]: row?.Status === 2,
-              [classes.recipientsStatusCanceled]: row?.Status === 5
+              [classes.recipientsStatusSent]: row?.Status === 0,
+              [classes.recipientsStatusCanceled]: row?.Status > 0
             }
           )}>
             {t(statusText)}
@@ -357,7 +357,7 @@ const RecipientReport = ({ classes }: any) => {
           {t(`common.${row.OpeningCount > 0 ? 'Yes' : 'No'}`)}
         </TableCell>
         <TableCell
-          classes={cellStyle}
+          classes={noBorderCellStyle}
           className={clsx(classes.flex1, classes.f15)}>
           <ManagmentIcon
             onClick={async () => {
@@ -368,7 +368,6 @@ const RecipientReport = ({ classes }: any) => {
               setDialogType({
                 type: 'newsletterpreview',
                 data: row.CampaignID
-                // data: response?.payload?.Message?.HtmlToEdit
               })
             }}
             classes={classes}
@@ -396,7 +395,7 @@ const RecipientReport = ({ classes }: any) => {
               {row.Name}
             </Box>
             <Box>
-              <Typography className={classes.bold}>{t('common.Dates')}</Typography>
+              <Typography className={classes.bold}>{t('report.date')}</Typography>
               {FormatDate(row.SendDate)}
             </Box>
           </Box>
@@ -454,7 +453,7 @@ const RecipientReport = ({ classes }: any) => {
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex2, classes.f15)} align='center'>
-            {t('common.Dates')}
+            {t('report.date')}
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex2, classes.f15)} align='center'>
@@ -462,7 +461,7 @@ const RecipientReport = ({ classes }: any) => {
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex1, classes.f15)} align='center'>
-            {t('common.Clicked')}
+            {t('common.clicks')}
           </TableCell>
 
           <TableCell classes={headCellStyle} className={clsx(classes.flex1, classes.f15)} align='center' />
@@ -701,9 +700,18 @@ const RecipientReport = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex2, classes.f15)}>
-          {renderStatusCell(row.SmsStatus)}
-          {/* {t(`${ConvertSmsStatusText(`${row.SmsStatus}`)}`)} */}
+          className={clsx(classes.flex2, classes.f15,
+            {
+              [classes.recipientsStatus]: row?.SmsStatus === -1,
+              [classes.statusPending]: row?.SmsStatus === 1,
+              [classes.recipientsStatusSending]: row?.SmsStatus === 2,
+              [classes.recipientsStatusSent]: row?.SmsStatus === 3,
+              [classes.statusFailed]: row?.SmsStatus === 4 || row?.SmsStatus === 5,
+              [classes.statusStopped]: row?.SmsStatus === 6,
+              [classes.recipientsStatusCanceled]: row?.SmsStatus > 6
+            }
+          )}>
+          {t(`${ConvertSmsReceipientStatusText(`${row.SmsStatus}`)}`)}
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -712,7 +720,7 @@ const RecipientReport = ({ classes }: any) => {
           {t(`common.${row?.ClicksCount > 0 ? 'Yes' : 'No'}`)}
         </TableCell>
         <TableCell
-          classes={cellStyle}
+          classes={noBorderCellStyle}
           className={classes.flex1}>
           <ManagmentIcon
             classes={classes}
@@ -777,7 +785,7 @@ const RecipientReport = ({ classes }: any) => {
               {row.Name}
             </Box>
             <Box>
-              <Typography className={classes.bold}>{t('common.Dates')}</Typography>
+              <Typography className={classes.bold}>{t('report.date')}</Typography>
               {FormatDate(row.SendDate)}
             </Box>
           </Box>
@@ -1039,7 +1047,7 @@ const RecipientReport = ({ classes }: any) => {
       </Grid>
       <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.createdDate')}</div>
-        <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(dateTimeFormat)}</div>
+        <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(DateFormats.DATE_TIME_24)}</div>
       </Grid>
       <Grid item md={'auto'} xs={6} className={clsx(classes.flexGrow1, classes.pt15)}>
         {/* @ts-ignore */}
@@ -1066,11 +1074,14 @@ const RecipientReport = ({ classes }: any) => {
 
   const getSMSPreviewDialog = (data: any = {}) => {
     return {
-      title: t('whatsappManagement.preview'),
+      title: `${t('notifications.preview')} - ${t('common.campaignID')}: ${data?.SMSCampaignID}`,
       childrenPadding: false,
       contentStyle: classes.pt2rem,
       showDivider: false,
       showDefaultButtons: false,
+      icon: (
+        <FaEye style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+      ),
       content: (
         <Box>
           <Preview
@@ -1093,6 +1104,9 @@ const RecipientReport = ({ classes }: any) => {
     title: t('whatsappManagement.preview'),
     showDivider: false,
     showDefaultButtons: false,
+    icon: (
+      <FaEye style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+    ),
     content: (
       <Box className={classes.alertModalContentMobile}>
         <WhatsappMobilePreview
@@ -1112,20 +1126,19 @@ const RecipientReport = ({ classes }: any) => {
   })
 
   const getNewsletterPreviewDialog = (templateData: string = '') => ({
-    title: t('whatsappManagement.preview'),
+    title: `${t('notifications.preview')} - ${t('common.campaignID')}: ${templateData}`,
     showDivider: false,
     customContainerStyle: classes.beeTemplate,
     showDefaultButtons: false,
+    icon: (
+      <FaEye style={{ fontSize: 35, padding: 5, fill: '#fff' }} />
+    ),
     content: (
       <Box style={{ minHeight: 'calc(70vh)', height: 'calc(70vh)' }}>
         <iframe
           src={`${actionURL}PreviewCampaign.aspx?CampaignID=${templateData}&fromreact=true`}
           style={{ border: "none !important", width: '100%', height: '100%' }}
         />
-        {/* <EmailPreview
-          classes={classes}
-          data={templateData}
-        /> */}
       </Box>
     ),
     onConfirm: async () => {

@@ -120,7 +120,7 @@ const WebformSummary = ({ classes }: any) => {
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>{t('landingPages.formOfflineDate')}</Typography>
-                        <Typography title={webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.IL_DATE_ONLY) : t('common.notSet')}>{webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.IL_DATE_ONLY) : t('common.notSet')}</Typography>
+                        <Typography title={webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}>{webForm.OfflineDate ? moment(webForm.OfflineDate).format(DateFormats.DATE_ONLY) : t('common.notSet')}</Typography>
                     </Grid>
                     <Grid item xs={4}>
                         <Typography className={classes.bold}>{t('landingPages.redirectURLWhenOffline')}</Typography>

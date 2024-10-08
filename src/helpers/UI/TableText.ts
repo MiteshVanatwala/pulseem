@@ -117,7 +117,7 @@ export const ConvertSmsStatusText = (value: string) => {
                 return "report.directReport.statuses.sending";
             }
             case "3": {
-                return "report.directReport.statuses.sentSuccessfuly";
+                return "campaigns.successSent";
             }
             case "4": {
                 return "report.error";
@@ -159,36 +159,22 @@ export const ConvertSmsStatusText = (value: string) => {
     }
     return null;
 }
-export const ConvertNewsletterStatusText = (value: string) => {
-    if (value && value !== '') {
-        switch (value.toString()) {
-            case "1": {
-                return "common.Created";
+export const ConvertNewsletterStatusText = (value: number) => {
+    switch (value) {
+        case 0:
+            {
+                return "campaigns.successSent";
             }
-            case "2": {
-                return "common.Sending";
-            }
-            case "3": {
-                return "common.Stopped";
-            }
-            case "4": {
-                return "common.Sent";
-            }
-            case "5": {
-                return "common.cancelled";
-            }
-            case "6": {
-                return "common.Optin";
-            }
-            case "7": {
-                return "common.Approve";
-            }
-            default: {
-                return "emailStatus.noStatus";
-            }
+        case 1:
+        case 2:
+        case 3:
+        case 4: {
+            return "emailStatus.error";
+        }
+        case 5: {
+            return "common.Unsubscribed";
         }
     }
-    return null;
 }
 export const ConvertEmailStatusText = (value: string) => {
     if (value && value !== '') {
@@ -470,4 +456,53 @@ export const WhatsappStatusColor = (status: string) => {
             return '#959595';
         }
     }
+}
+export const ConvertSmsReceipientStatusText = (value: string) => {
+    if (value && value !== '') {
+        switch (value) {
+            case "1": {
+                return "report.pending";
+            }
+            case "2": {
+                return "report.directReport.statuses.sending";
+            }
+            case "3": {
+                return "campaigns.successSent";
+            }
+            case "4": {
+                return "report.error";
+            }
+            case "5": {
+                return "report.removalRequest";
+            }
+            case "7": {
+                return "report.canceled";
+            }
+            case "8": {
+                return "report.deleted";
+            }
+            case "9": {
+                return "report.suspended";
+            }
+            case "10": {
+                return "report.requireAproval";
+            }
+            case "12": {
+                return "report.invalidFromNumber";
+            }
+            case "13": {
+                return "report.toNumberLonger";
+            }
+            case "20": {
+                return "report.blockedSync";
+            }
+            case "21": {
+                return "report.blockedRemoval";
+            }
+            default: {
+                return "report.error";
+            }
+        }
+    }
+    return null;
 }

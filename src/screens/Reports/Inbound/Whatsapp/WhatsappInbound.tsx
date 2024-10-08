@@ -37,6 +37,7 @@ import {
   wpInbdRowType,
 } from "../../../../Models/Whatsapp/whatsappInbound";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
+import { DateFormats } from "../../../../helpers/Constants";
 
 const WhatsappInbound = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -258,7 +259,7 @@ const WhatsappInbound = ({ classes }: any) => {
           align="center"
           className={classes.flex2}
         >
-          {reply.format("DD/MM/YYYY")} {reply.format("HH:mm:ss")}
+          {reply.format(DateFormats.DATE_TIME_24)}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
@@ -305,7 +306,7 @@ const WhatsappInbound = ({ classes }: any) => {
                   {`${t("common.ReplyDate")}`}
                 </Typography>
                 <Typography component={"p"} className={clsx(classes.middleTxt)}>
-                  {reply.format("DD/MM/YYYY")} {reply.format("HH:mm:ss")}
+                  {reply.format(DateFormats.DATE_TIME_24)}
                 </Typography>
               </Grid>
               <Grid item xs={6}>

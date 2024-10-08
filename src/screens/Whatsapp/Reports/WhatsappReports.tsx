@@ -58,7 +58,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import NoSetup from '../NoSetup/NoSetup';
 import { TablePagination } from '../../../components/managment';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { SizeOptions_XS_SM } from '../../../helpers/Constants';
+import { DateFormats, SizeOptions_XS_SM } from '../../../helpers/Constants';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
@@ -68,7 +68,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { isRTL, windowSize, rowsPerPage } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { accountFeatures } = useSelector(
+	const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
@@ -222,7 +222,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					icon={undefined}
 				/>
 				<Typography className={classes.grayTextCell}>
-					{`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+					{`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
 				</Typography>
 			</>
 		);
@@ -306,10 +306,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						`${cellValue >= 1 && isClickable && 'value-cell'}`
 					)}>
 					{amountCell.includes(cellName)
-						? `${cellValue ? cellValue.toFixed(2) : '0'} ${translator(
-							'common.NIS'
-						)}`
-						: cellValue || '0'}
+						? (
+							cellName === reportCellNames.REVENUE ? 
+							`${ isCurrencySymbolPrefix ? currencySymbol : '' } ${cellValue ? cellValue.toFixed(2) : '0'}  ${ !isCurrencySymbolPrefix ? currencySymbol : '' }`
+							: `${cellValue ? cellValue.toFixed(2) : '0'} ${translator('common.NIS')}`
+						)
+						: cellValue || '0'
+					}
 				</Typography>
 				{!amountCell.includes(cellName) && (
 					<Typography
@@ -374,10 +377,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						Cost: row?.Cost,
 						Revenue: row?.Revenue,
 						CreateDate: row?.CreateDate
-							? moment(row?.CreateDate).format('DD/MM/YYYY')
+							? moment(row?.CreateDate).format(DateFormats.DATE_ONLY)
 							: '',
 						UpdateDate: row?.UpdateDate
-							? moment(row?.UpdateDate).format('DD/MM/YYYY')
+							? moment(row?.UpdateDate).format(DateFormats.DATE_ONLY)
 							: '',
 					};
 					return updatedRow;
@@ -854,12 +857,20 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						classes.flex1,
 						classes.revenueTableCell
 					)}>
-					{getTableTypographyCells(
+						<Typography className={clsx(classes.middleText)}>
+							{getTableTypographyCells(
+								translator('whatsappReport.cost'),
+								report?.Cost,
+								reportCellNames.COST,
+								report
+							)}
+						</Typography>
+					{/* {getTableTypographyCells(
 						translator('whatsappReport.cost'),
 						report?.Cost,
 						reportCellNames.COST,
 						report
-					)}
+					)} */}
 				</TableCell>
 				{hasRevenue && (
 					<TableCell

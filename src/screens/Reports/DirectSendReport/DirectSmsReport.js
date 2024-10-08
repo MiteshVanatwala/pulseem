@@ -15,7 +15,7 @@ import { getSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/re
 import { reactivateSms } from '../../../redux/reducers/clientSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { SmsStatus } from '../../../helpers/Constants';
+import { DateFormats, SmsStatus } from '../../../helpers/Constants';
 import { ConvertSmsStatusText, ConvertColorStatus, SourceType } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
@@ -24,6 +24,7 @@ import { Title } from '../../../components/managment/Title';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
+import { GetGlobalAccountPackagesDetails } from '../../../redux/reducers/commonSlice';
 
 const DirectSMSReportTab = ({
   classes,
@@ -51,6 +52,7 @@ const DirectSMSReportTab = ({
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
   const { showContent } = useSelector(state => state.report);
+  const { isGlobal } = useSelector((state) => state.common)
 
   const handleSearch = async () => {
     setLoader(true);
@@ -77,6 +79,7 @@ const DirectSMSReportTab = ({
     })
 
     await dispatch(isArchive ? getArchiveSMSDirectReport(searchObjects) : getSMSDirectReport(searchObjects))
+    if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
     handleSearching('sms', true);
     setLoader(false);
   }
@@ -108,7 +111,7 @@ const DirectSMSReportTab = ({
     let text = data;
     if (dataType === 'date') {
       text = moment(text);
-      text = `${text.format('DD/MM/YYYY HH:mm')}`
+      text = `${text.format(DateFormats.DATE_TIME_24)}`
     }
     if (dataType === 'status') {
       text = t(ConvertSmsStatusText(`${text}`));
@@ -529,7 +532,7 @@ const DirectSMSReportTab = ({
   const renderNameCell = (row) => {
     const { DATE } = row
     let d = moment(DATE);
-    d = `${d.format('DD/MM/YYYY HH:mm')}`
+    d = `${d.format(DateFormats.DATE_TIME_24)}`
 
     return (
       <>
@@ -615,10 +618,10 @@ const DirectSMSReportTab = ({
         <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
           <Grid item className={windowSize === 'xs' ? classes.mt15 : null} style={{ textAlign: isRTL ? 'right' : 'left' }}>
             <Typography className={clsx(classes.groupsLable, classes.mb5)}>
-              {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
+              {t('common.Total')} {directSmsReport?.TotalSent?.toLocaleString() ?? 0} {t('report.Messages')}
             </Typography>
             <Typography className={clsx(classes.groupsLable, classes.mb5)}>
-              {t('common.Total')} {directSmsReport.TotalCredits ?? 0} {t('report.Credits')}
+              {t('common.Total')} {directSmsReport?.TotalCredits?.toLocaleString() ?? 0} {t('report.Credits')}
             </Typography>
           </Grid>
         </Grid>

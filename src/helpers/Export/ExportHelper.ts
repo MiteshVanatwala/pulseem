@@ -3,6 +3,7 @@ import i18n from 'i18next';
 import moment from 'moment';
 import Papa from 'papaparse';
 import { AccountExtraFields } from '../../Models/Account/AccountExtraFields';
+import { DateFormats } from '../Constants';
 export interface ExportConditions {
     IsBoolean: boolean;
     OrderItems: boolean;
@@ -227,7 +228,7 @@ export const FormatDate = (date: string, preventText: boolean = false) => {
         }
         return '';
     }
-    return moment(date).format("DD/MM/YYYY HH:mm");
+    return moment(date).format(DateFormats.DATE_TIME_24);
 }
 export async function ReplaceClientStatus(obj: ExportData | any) {
     obj.forEach((o: any) => {

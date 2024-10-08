@@ -40,7 +40,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
-import { ClientStatus } from '../../../helpers/Constants';
+import { ClientStatus, DateFormats } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { Client } from '../../../Models/Clients/Client';
@@ -52,6 +52,8 @@ import {
 import { GroupData } from '../../../Models/Groups/Group';
 import { sitePrefix } from '../../../config';
 import AddRecipientResponse from '../Management/Popup/AddRecipientResponse';
+import { SortColumns, SortDirection } from '../../../Models/PushNotifications/Enums';
+import Sort from '../../../components/Sort/Sort';
 
 const DynamicGroups = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -87,6 +89,8 @@ const DynamicGroups = ({ classes }: any) => {
     const pageProperty = useRef<any>();
     const qs = (window.location.search && queryString.parse(window.location.search)) || state;
     const exportColumnHeader = useRef(null);
+    const [sortDirection, setSortDirection] = useState(SortDirection.DESC);
+    const [sortBySelected, setSortBy] = useState(SortColumns.UPDATE_DATE);
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -188,7 +192,13 @@ const DynamicGroups = ({ classes }: any) => {
     }
 
     const getData = async (customSearch: any | never = null) => {
-        const search: any = { ...serachData, PageSize: rowsPerPage || "6", ...customSearch };
+        const search: any = {
+            ...serachData,
+            PageSize: rowsPerPage || "6",
+            ...customSearch,
+            SortByField: sortBySelected,
+            SortDirection: sortDirection
+        };
         setLoader(true);
         // @ts-ignore
         await dispatch(getGroups(search));
@@ -210,7 +220,7 @@ const DynamicGroups = ({ classes }: any) => {
 
     useEffect(() => {
         reSearch();
-    }, [serachData.PageIndex, rowsPerPage]);
+    }, [serachData.PageIndex, rowsPerPage, sortBySelected, sortDirection]);
 
     const reSearch = () => {
         const queryState = from?.toLowerCase().indexOf('editdynamicgroup') > -1;
@@ -243,6 +253,21 @@ const DynamicGroups = ({ classes }: any) => {
             setDialog(DialogType.ADD_GROUP)
         }
     }, [])
+
+    const groupSortOptions = [
+        {
+            value: SortColumns.UPDATE_DATE,
+            text: t("notifications.sort_by_updated"),
+        },
+        {
+            value: SortColumns.GROUP_NAME,
+            text: t("notifications.sort_by_group"),
+        },
+        {
+            value: SortColumns.CREATION_DATE,
+            text: t("notifications.sort_by_creation"),
+        }
+    ];
 
     const renderSearchSection = () => {
         const handleKeyDown = (event: any) => {
@@ -306,6 +331,16 @@ const DynamicGroups = ({ classes }: any) => {
                         </Button>
                     </Grid>
                 )}
+                <Grid item className={isRTL ? classes.marginRightAuto : classes.marginLeftAuto} style={{ paddingInline: 25 }}>
+                    <Sort
+                        sortItems={groupSortOptions}
+                        sortBySelected={sortBySelected}
+                        sortDirection={sortDirection}
+                        handleSortDirection={handleSortDirection}
+                        handleSortBySelected={handleSortBySelected}
+                        classes={classes}
+                    />
+                </Grid>
             </Grid>
         );
     };
@@ -408,7 +443,7 @@ const DynamicGroups = ({ classes }: any) => {
                         </Typography>
                     </CustomTooltip>
                     <Typography className={clsx(classes.grayTextCell, classes.date)}>
-                        {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+                        {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
                     </Typography>
                 </Grid>
             </Grid>
@@ -1893,6 +1928,22 @@ const DynamicGroups = ({ classes }: any) => {
         return <></>;
     }
 
+    const handleSortDirection = () => {
+        setSearchData({
+            ...serachData,
+            PageIndex: 1
+        });
+        const selected = sortDirection === SortDirection.ASC ? SortDirection.DESC : SortDirection.ASC;
+        setSortDirection(selected);
+    }
+
+    const handleSortBySelected = (event: any) => {
+        setSearchData({
+            ...serachData,
+            PageIndex: 1
+        });
+        setSortBy(event.target.value);
+    };
 
     return (
         <DefaultScreen

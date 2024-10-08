@@ -17,7 +17,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus } from '../../../helpers/Constants';
+import { DateFormats, EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
@@ -437,7 +437,7 @@ const ArchiveManagementScreen = ({ classes }) => {
         </Typography>
         <Typography
           className={classes.grayTextCell}>
-          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+          {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
         </Typography>
       </>
     )
