@@ -57,3 +57,41 @@ export interface SubAccount {
     SubAccountSettings: SubAccountSetting;
     DefaultLinkChars: number;
 }
+
+export interface SubAccountUsers {
+    BulkEmail: null | number;
+    BulkMMS: null | number;
+    BulkSMS: null | number;
+    CellPhone: null | string;
+    CompanyAdmin: boolean;
+    CreationDate: string;
+    CurrencyID: number;
+    CurrencyName: string;
+    CustomGuidEnc: string;
+    DirectAccountCompanyName: null | string;
+    DirectAccountContactName: null | string;
+    DirectAccountEmail: null | string;
+    DirectAccountTelephone: null | string;
+    DirectBulkEmails: null | number;
+    DirectMmsCredits: null | number;
+    DirectSMSCredits: null | number;
+    Email: null | number;
+    ExpiryDate: null | string;
+    FinalGlobalBalance: null | number;
+    IsDirectAccount: boolean;
+    IsGlobalAccount: boolean;
+    LoginUserName: string;
+    MaxMailSendingForMonth: null | number;
+    MaxSMSSendingForMonth: null | number;
+    SubAccountManager: string;
+    SubAccountName: string;
+}
+
+export interface BulkHistory {
+    AccountType: null | boolean | number;
+    Amount: null | number;
+    Date: string;
+    TransferedFromSubAccountName: string;
+    TransferredToName: string;
+    Type: number
+}

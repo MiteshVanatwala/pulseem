@@ -26,7 +26,7 @@ import {
   setRowsPerPage,
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
-import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
+import { getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
@@ -82,6 +82,7 @@ import SignUp from './screens/SignUp/SignUp.tsx';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
+import AccountUsers from './screens/AccountUsers/AccountUsers';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -452,8 +453,10 @@ const renderRoutes = (classes, redirect) => {
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
       <Route
-        path={`/AccountUsers`}
-        component={transferUrl('/Pulseem/AccountUsers.aspx')}
+        exact
+        path={`${sitePrefix}AccountUsers`}
+        element={<AccountUsers classes={classes} />}
+        // component={transferUrl('/Pulseem/AccountUsers.aspx')}
       />
       <Route
         path={`/AccountUsersReport`}
@@ -556,7 +559,7 @@ const App = ({ screenSize }) => {
   const dispatch = useDispatch();
 
   const { language, isRTL, windowSize, isClal } = useSelector(state => state.core)
-  const { accountSettings } = useSelector(state => state.common)
+  const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
@@ -568,6 +571,12 @@ const App = ({ screenSize }) => {
   useEffect(() => {
     screenSize && dispatch(setWindowSize(screenSize));
   }, [screenSize]);
+
+  useEffect(() => {
+    if (!isSignup && currencyList?.length > 0) {
+      dispatch(GetGlobalAccountPackagesDetails());
+    }
+  }, [currencyList]);
 
   useEffect(() => {
     const initFeatures = async () => {
@@ -608,7 +617,7 @@ const App = ({ screenSize }) => {
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
         isAllowSwitchAccount = '',
       } = jwt;
-
+      
       dispatch(
         setCoreData({
           email,
@@ -645,7 +654,8 @@ const App = ({ screenSize }) => {
     })
     !isSignup && updateToken()
     !isSignup && initFeatures()
-
+    !isSignup && dispatch(GetCurrencyList());
+    !isSignup && dispatch(GetSmsCountries());
   }, [dispatch])
 
 
