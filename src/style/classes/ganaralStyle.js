@@ -383,6 +383,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w60: {
     width: "60%",
   },
+  w15VW: {
+    width: "15vw",
+  },
+  w70VW: {
+    width: "70vw",
+  },
   minWidth100: {
     minWidth: 100,
   },
@@ -767,7 +773,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   whiteBox: {
     backgroundColor: "#fff",
-    boxShadow: "5px 3px 3px 1px rgba(0,0,0,.2)",
+    boxShadow: "0px 0px 10px 3px rgba(0, 0, 0, .2)",
     padding: 5,
   },
   packageBox: {
@@ -3537,7 +3543,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         // paddingLeft: 0,
         // paddingRight: 0,
         minHeight: 25,
-        display: 'flex',
+        display: 'block',
         alignItems: 'center',
         '&:focus': {
           backgroundColor: '#fff !important'
@@ -3765,6 +3771,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   alignSelfCenter: {
     alignSelf: 'center'
+  },
+  alignSelfTop: {
+    alignSelf: 'flex-start'
   },
   smallActionIcons: {
     '& button': {

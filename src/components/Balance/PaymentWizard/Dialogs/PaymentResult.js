@@ -5,7 +5,7 @@ import {
     CheckAnimation
 } from '../../../../assets/images/settings/index'
 
-const PaymentResult = ({ t, classes, paymentObject, onStepBack = () => null }) => {
+const PaymentResult = ({ t, classes, paymentObject, onStepBack = () => {} }) => {
     return <Grid container>
         <Grid item xs={12}>
             {paymentObject.result === true ? (<Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>

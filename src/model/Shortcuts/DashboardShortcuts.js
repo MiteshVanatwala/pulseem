@@ -50,10 +50,10 @@ export const DASHBOARD_SHORTCUT = {
         title: 'dashboard.createABTest',
         link: '/Pulseem/CampaignsByResults.aspx'
       },
-      // {
-      //   title: 'master.linkAbTestingsResource1.Text',
-      //   link: '/Pulseem/CampaignsAbTestings.aspx'
-      // },
+      {
+        title: 'master.linkAbTestingsResource1.Text',
+        link: '/Pulseem/CampaignsAbTestings.aspx'
+      },
       {
         title: 'master.RadMenuItemResource9a.Text',
         link: '/Pulseem/AutoSendPlans.aspx'

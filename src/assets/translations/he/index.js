@@ -32,6 +32,7 @@ import SignUp from './SignUp.json';
 import SimplyClub from './WhiteLabel/SimplyClub.he.json';
 import FileUploads from './FileUploads.he.json';
 import affiliate from './Affiliate.he.json';
+import SubAccount from './SubAccount.he.json';
 import billing from './Billing.he.json';
 
 export const he = {
@@ -69,5 +70,6 @@ export const he = {
 	FileUploads,
 	SimplyClub,
 	affiliate,
+	SubAccount,
 	billing
 };
