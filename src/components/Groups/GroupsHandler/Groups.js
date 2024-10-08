@@ -38,7 +38,8 @@ const Groups = ({ classes,
     callbackSelectAll,
     callbackReciFilter,
     callbackShowTestGroup,
-    uniqueKey
+    uniqueKey,
+    groupCompareKey = ''
 }) => {
     const { windowSize, isRTL } = useSelector(state => state.core)
     const { t } = useTranslation();
@@ -84,7 +85,7 @@ const Groups = ({ classes,
     };
 
     const renderGroups = () => {
-        const groupIdKey = isNotifications ? "Id" : "GroupID";
+        const groupIdKey = groupCompareKey === '' ? (isNotifications ? "Id" : "GroupID") : groupCompareKey;
         const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
         return groupList && groupList.length > 0 ? groupList?.filter((g) => {
             return g.GroupName.trim().toLowerCase().indexOf(groupNameSearch?.trim().toLowerCase()) > -1;

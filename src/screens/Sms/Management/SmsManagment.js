@@ -57,6 +57,7 @@ import { sitePrefix } from '../../../config';
 import DuplicateCampaign from '../../../components/Campaigns/DuplicateCampaign';
 import { FaEye } from 'react-icons/fa';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
+import { DateFormats } from '../../../helpers/Constants';
 
 const SmsManagnentScreen = ({ classes }) => {
 	const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -516,7 +517,7 @@ const SmsManagnentScreen = ({ classes }) => {
 					text={row.Name}
 				/>
 				<Typography className={classes.grayTextCell}>
-					{`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+					{`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
 				</Typography>
 			</>
 		);

@@ -29,4 +29,5 @@ export interface AccountSettings {
     TwoFactorAuthOverrideDateTime: Date | string | null;
     ExpiryDate: Date | string | null;
     DisablePluginOTP: boolean;
+    RevenueCurrencyId?: number | null;
 }
