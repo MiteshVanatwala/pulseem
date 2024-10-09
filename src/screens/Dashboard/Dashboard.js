@@ -17,10 +17,11 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import DahsboardDomainVerificationPopup from './Popup/DahsboardDomainVerificationPopup';
 import WelcomePulseemNewDesign from './Popup/WelcomePulseemNewDesign';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
+import GlobalBalance from '../../components/Balance/GlobalBalance';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
-  const { accountSettings } = useSelector(state => state.common);
+  const { accountSettings, isGlobal } = useSelector(state => state.common);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -70,7 +71,8 @@ const DashboardScreen = ({ classes }) => {
         <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
-              <BulkStatus classes={classes} />
+              { <BulkStatus classes={classes} /> }
+              { <GlobalBalance classes={classes} /> }
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={8} className={windowSize === "xs" ? classes.pt20 : null}>
               <RecipientChart classes={classes} />

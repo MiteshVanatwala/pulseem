@@ -24,6 +24,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { DateFormats } from '../../../helpers/Constants';
 
 const MmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
@@ -415,7 +416,7 @@ const MmsManagnentScreen = ({ classes }) => {
         />
         <Typography
           className={classes.grayTextCell}>
-          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+          {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
         </Typography>
       </>
     )

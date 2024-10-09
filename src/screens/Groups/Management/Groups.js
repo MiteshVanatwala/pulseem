@@ -47,7 +47,7 @@ import { Title } from '../../../components/managment/Title';
 import queryString from 'query-string';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
-import { ClientStatus } from '../../../helpers/Constants';
+import { ClientStatus, DateFormats } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import Sort from '../../../components/Sort/Sort';
@@ -534,7 +534,7 @@ const Groups = ({ classes }) => {
                         )}
                     </CustomTooltip>
                     <Typography className={clsx(classes.grayTextCell, classes.date)}>
-                        {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+                        {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
                     </Typography>
                 </Grid>
             </Grid>

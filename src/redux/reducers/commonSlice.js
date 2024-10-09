@@ -1,3 +1,4 @@
+import { find, get } from 'lodash';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
@@ -163,6 +164,43 @@ const wl_referrerObject = (account) => {
   return retVal;
 }
 
+export const GetCurrencyList = createAsyncThunk(
+  'AccountSubUsers/GetCurrency',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`AccountSubUsers/GetCurrency`);
+      return response.data;
+      return [];
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const GetGlobalAccountPackagesDetails = createAsyncThunk(
+  'dashboard/GetGlobalAccountPackagesDetails',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`dashboard/GetGlobalAccountPackagesDetails`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const GetSmsCountries = createAsyncThunk(
+  'AccountSubUsers/GetSmsCountries',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`AccountSubUsers/GetSmsCountries`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
@@ -175,7 +213,21 @@ export const commonSlice = createSlice({
     accountSettings: null,
     accountFeatures: null,
     isSweepingApproval: false,
-    subAccount: null
+    subAccount: null,
+    isGlobal: null,
+    currencyId: null,
+    currency: null,
+    currencyDescription: null,
+    currencySymbol: '',
+    isCurrencySymbolPrefix: true,
+    accountCurrencySymbol: '',
+    accountIsCurrencySymbolPrefix: true,
+    tranzilaCurrencyID: null,
+    finalGlobalBalance: 0,
+    VAT: null,
+    showCurrencyReportCurrencyID: null,
+    currencyList: [],
+    countryCodeList: []
   },
   extraReducers: builder => {
     builder
@@ -220,6 +272,41 @@ export const commonSlice = createSlice({
       .addCase(isSweepingApprovalAccount.fulfilled, (state, { payload }) => {
         state.isSweepingApproval = payload
       })
+    builder
+      .addCase(GetGlobalAccountPackagesDetails.fulfilled, (state, { payload }) => {
+        const isGlobal = get(payload, 'Data.balanceInfo.IsGlobalAccount', false);
+        const reportCurrencyId = !isGlobal ? 1 : get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', 1);
+        const accountCurrencyId = get(payload, 'Data.balanceInfo.CurrencyId', 1);
+        
+        const currency = find(state.currencyList, { ID: reportCurrencyId});
+        const accountCurrency = find(state.currencyList, { ID: accountCurrencyId});
+
+        state.currency = get(currency, 'Name', '');
+        state.currencyDescription = get(currency, 'Description', '');
+        state.currencyId = get(payload, 'Data.balanceInfo.CurrencyId', 1);
+        state.currencySymbol = get(currency, 'CurrencySymbol', '');
+        state.accountCurrencySymbol = get(accountCurrency, 'CurrencySymbol', '');
+        state.accountIsCurrencySymbolPrefix = get(accountCurrency, 'IsCurrencySymbolPrefix', false);
+        state.isCurrencySymbolPrefix = get(currency, 'IsCurrencySymbolPrefix', false);
+        state.isGlobal = get(payload, 'Data.balanceInfo.IsGlobalAccount', null)
+        state.tranzilaCurrencyID = get(payload, 'Data.balanceInfo.TranzilaCurrencyID', null)
+        state.finalGlobalBalance = get(payload, 'Data.balanceInfo.FinalGlobalBalance', 0)
+        state.VAT = get(payload, 'Data.balanceInfo.VAT', 0)
+        state.showCurrencyReportCurrencyID = reportCurrencyId
+      });
+    builder
+      .addCase(GetCurrencyList.fulfilled, (state, { payload }) => {
+        state.currencyList = get(payload, 'Data.Data', []);
+      });
+    builder
+      .addCase(GetSmsCountries.fulfilled, (state, { payload }) => {
+        state.countryCodeList = get(payload, 'Data.Data', []);
+        state.countryCodeList.push({
+          ID: 0,
+          Name: 'Default',
+          SmsCountryPhoneCode: '0'
+        })
+      });
   },
   reducers: {
     updateDefaultFromEmail: (state, action) => {

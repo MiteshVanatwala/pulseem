@@ -59,7 +59,7 @@ import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCampaign } from "react-icon
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import { CgWebsite } from "react-icons/cg";
 import { DynamicProductLink } from "../../../Models/PushNotifications/Enums";
-import { IsValidURL } from "../../../helpers/Utils/Validations";
+import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberWithCountryCode, IsValidURL } from "../../../helpers/Utils/Validations";
 import { WhiteLabelObject } from "../../../components/WhiteLabel/WhiteLabelMigrate";
 import { URL_REGEX } from "../../../helpers/Constants";
 
@@ -135,7 +135,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { accountSettings, accountFeatures } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures, countryCodeList, isGlobal } = useSelector((state) => state.common)
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [checked, setChecked] = React.useState(false);
@@ -558,7 +558,7 @@ const SmsCreator = ({ classes }) => {
     return isValid;
   };
   const handleSend = async () => {
-    if (phone !== "") {
+    if (phone !== "" && (isGlobal ? IsValidPhoneNumberWithCountryCode(phone, countryCodeList) : IsValidNonGlobalPhoneNumber(phone))) {
       if (id) {
         const smsQuickSendData = {
           ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
@@ -1136,7 +1136,7 @@ const SmsCreator = ({ classes }) => {
                       className={clsx(classes.textField)}
                       value={phone}
                       inputProps={{
-                        maxLength: 12
+                        maxLength: 16
                       }}
                       onChange={handleNumberChange}
                     />

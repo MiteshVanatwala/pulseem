@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Button, Grid, Typography, Divider } from '@material-ui/core';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux'
+import { IsraelCurrencyId } from '../../../../helpers/Constants';
 
 const PurchaseSummary = ({
     data,
@@ -14,14 +15,16 @@ const PurchaseSummary = ({
     onConfirm = () => null,
     onComplete = () => null }) => {
     const { t } = useTranslation();
-    const israelTax = 0.17;
     const pack = data.find((p) => { return p.ID === packageId });
+    const { windowSize } = useSelector(state => state.core);
+    const { VAT: VAT_Tax, accountIsCurrencySymbolPrefix, accountCurrencySymbol, currencyId } = useSelector(state => state.common);
+    const israelTax = currencyId !== IsraelCurrencyId ? 0 : (VAT_Tax / 100);
     const vat = (pack.Price * israelTax).toFixed(2);
     const totalPrice = pack.Price + parseFloat(vat);
-    const { windowSize } = useSelector(state => state.core);
     const productName = {
         2: t('common.newsletterMessages'),
-        3: t('common.smsMessages')
+        3: t('common.smsMessages'),
+        4: t('common.whatsappBalance'),
     };
     return (
         <Grid container spacing={1} className={classes.paymentDialog}>
@@ -43,28 +46,37 @@ const PurchaseSummary = ({
                 <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.price')}</Typography>
             </Grid>
             <Grid item xs={6}>
-                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={'₪'} /></Typography>
+                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={accountIsCurrencySymbolPrefix === true ? ` ${accountCurrencySymbol} ` : ''} suffix={accountIsCurrencySymbolPrefix === false ? ` ${accountCurrencySymbol} ` : ''} /></Typography>
             </Grid>
             <Grid item xs={12}>
                 <Divider />
             </Grid>
 
-            <Grid item xs={6}>
-                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.vat')}</Typography>
-            </Grid>
-            <Grid item xs={6}>
-                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={vat} displayType={'text'} thousandSeparator={true} prefix={'₪'} /></Typography>
-            </Grid>
-            <Grid item xs={12}>
-                <Divider className={classes.blackDivider} />
-            </Grid>
+            {
+                currencyId === IsraelCurrencyId && (
+                    <>
+                        <Grid item xs={6}>
+                            <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>
+                                {currencyId === IsraelCurrencyId && (`${israelTax * 100}% `)}
+                                {t( currencyId === IsraelCurrencyId ? 'common.VATTax' : 'common.vat')}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={vat} displayType={'text'} thousandSeparator={true} prefix={accountIsCurrencySymbolPrefix === true ? ` ${accountCurrencySymbol} ` : ''} suffix={accountIsCurrencySymbolPrefix === false ? ` ${accountCurrencySymbol} ` : ''} /></Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider className={classes.blackDivider} />
+                        </Grid>
+                    </>
+                )
+            }
 
 
             <Grid item xs={6} className={clsx(classes.mb4)}>
                 <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.totalPrice')}</Typography>
             </Grid>
             <Grid item md={6}>
-                <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={totalPrice.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'₪'} /></Typography>
+                <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={totalPrice.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={accountIsCurrencySymbolPrefix === true ? ` ${accountCurrencySymbol} ` : ''} suffix={accountIsCurrencySymbolPrefix === false ? ` ${accountCurrencySymbol} ` : ''} /></Typography>
             </Grid>
 
             {showButtons && <Grid
