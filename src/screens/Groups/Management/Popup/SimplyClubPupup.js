@@ -125,6 +125,15 @@ const SimplyClubPupup = ({
 
     }, [ClientData])
 
+    useEffect(() => {
+        if (summary !== null) {
+            setShowClients(false);
+            setClientData({})
+            setSelectedGroups([]);
+            setSelectedGroupIds([])
+        }
+    }, summary);
+
 
     useEffect(() => {
         selectedGroups.length > 0 && handleGetClients()
@@ -281,76 +290,45 @@ const SimplyClubPupup = ({
         return isValid
     }
 
-    const handleAddClients = (ids) => {
+    const handleAddClients = async (ids) => {
         setShowLoader(true)
         let tempClients = Object.values(updatedClients ?? ClientData)[0]
-
 
         const Payload = {
             ClientsData: tempClients || [],
             GroupIds: ids
         }
 
-        const pr = new Promise(async (resolve, reject) => {
-            try {
-                const response = await dispatch(addRecipient(Payload));
-                resolve(response);
-            } catch (e) {
-                console.error(e);
-                dispatch(sendToTeamChannel({
-                    MethodName: 'handleAddClients',
-                    ComponentName: 'SimplyClubPupup.js',
-                    Text: e
-                }));
-                reject(null);
-            }
-        });
+        const response = await dispatch(addRecipient(Payload));
 
-        pr.then((response) => {
-            setShowLoader(false);
-            handleResponses(response, {
-                'S_200': {
-                    code: 200,
-                    message: '',
-                    Func: () => null
-                },
-                'S_201': {
-                    code: 201,
-                    message: '',
-                    Func: () => {
-                        setShowClients(false);
-                        setClientData({})
-                        setSelectedGroups([]);
-                        setSelectedGroupIds([])
-                        setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
-                    }
-                },
-                'S_202': {
-                    code: 202,
-                    message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE,
-                    Func: () => null
-                },
-                'S_400': {
-                    code: 400,
-                    message: ToastMessages.IMPORT_EMPTYLIST_INVALID_CLIENT,
-                    Func: () => null
-                },
-                'S_404': {
-                    code: 404,
-                    message: ToastMessages.IMPORT_NO_FOLDER_FOUND,
-                    Func: () => null
-                },
-                'S_500': {
-                    code: 500,
-                    message: ToastMessages.ERROR_OCCURED,
-                    Func: () => null
-                },
-                'default': {
-                    message: ToastMessages.IMPORT_GENERIC_ERROR,
-                    Func: () => null
-                },
-            });
-        });
+        switch (response?.payload?.StatusCode) {
+            default: {
+                setToastMessage({ message: ToastMessages.IMPORT_GENERIC_ERROR });
+                break;
+            }
+            case 200: { break; }
+            case 201: {
+                setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
+                setShowLoader(false);
+                break;
+            }
+            case 202: {
+                setToastMessage({ message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE });
+                break;
+            }
+            case 400: {
+                setToastMessage({ message: ToastMessages.IMPORT_NO_FOLDER_FOUND });
+                break;
+            }
+            case 404: {
+                setToastMessage({ message: ToastMessages.IMPORT_EMPTYLIST_INVALID_CLIENT });
+                break;
+            }
+            case 500: {
+                setToastMessage({ message: ToastMessages.ERROR_OCCURED });
+                break;
+            }
+        }
     }
 
     const searchGroupAndModify = async (groupName) => {
