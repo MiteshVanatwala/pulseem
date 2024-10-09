@@ -530,38 +530,38 @@ const NewsLetterInfo = ({ classes }) => {
 
     const handleFromEmailChange = (event) => {
         const isSharedDomain = event.target.value.split("@").pop() === SharedEmailDomain;
-        const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === event.target.value })[0];
+        // const fromEmailProperty = verifiedEmails.filter((ve) => { return ve.Number === event.target.value })[0];
         setCampaingnValues({
             ...campaingnValues,
             FromEmail: event.target.value,
             ReplyTo: isSharedDomain ? ((campaingnValues.ReplyTo !== '' && campaingnValues.ReplyTo) || verifiedEmails[0].Number) : event.target.value
         });
         setErrors({ ...errors, FromEmail: '' });
-        if (!isSharedDomain && (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true)) {
-            const emailObj = {
-                NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
-                Restricted: 'common.domainVerification.campaignCreation.restricted.preText',
-            }
-            const domainErrorObj = {
-                display: true,
-                address: fromEmailProperty.Number,
-                verifySharedCallback: async (obj) => {
-                    setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
-                    setShowDomainVerification(false);
-                    // const response = await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo }));
-                    // if (response && response.payload && (!id || id <= 0)) {
-                    //     const saveInfo = JSON.parse(response.payload?.Message);
-                    //     navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
-                    // }
-                },
-                isFullDescription: true,
-                preText: t(emailObj[fromEmailProperty?.IsRestricted ? 'Restricted' : 'NonVerified']),
-                showSkip: false,
-                replyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : event.target.value
-            }
-            setDomainAddressError(domainErrorObj);
-            setShowDomainVerification(true);
-        }
+        // if (!isSharedDomain && (!fromEmailProperty.IsVerified || fromEmailProperty.IsRestricted === true)) {
+        //     const emailObj = {
+        //         NonVerified: 'common.domainVerification.campaignCreation.nonVerified.preText',
+        //         Restricted: 'common.domainVerification.campaignCreation.restricted.preText',
+        //     }
+        //     const domainErrorObj = {
+        //         display: true,
+        //         address: fromEmailProperty.Number,
+        //         verifySharedCallback: async (obj) => {
+        //             setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
+        //             setShowDomainVerification(false);
+        //             // const response = await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo }));
+        //             // if (response && response.payload && (!id || id <= 0)) {
+        //             //     const saveInfo = JSON.parse(response.payload?.Message);
+        //             //     navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
+        //             // }
+        //         },
+        //         isFullDescription: true,
+        //         preText: t(emailObj[fromEmailProperty?.IsRestricted ? 'Restricted' : 'NonVerified']),
+        //         showSkip: false,
+        //         replyTo: isSharedDomain ? (campaingnValues.ReplyTo || verifiedEmails[0].Number) : event.target.value
+        //     }
+        //     setDomainAddressError(domainErrorObj);
+        //     setShowDomainVerification(true);
+        // }
     }
 
     const handleHideNewCautionMessage = (e) => {
