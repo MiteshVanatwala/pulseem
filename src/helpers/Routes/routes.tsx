@@ -145,10 +145,10 @@ export const getRoutes = (
         {
           title: t("master.linkSendCampaignByResultResource1.Text"),
           href: `${rootDomain}/CampaignsByResults.aspx?fromreact=true`,
-          isShow: true,
+          isShow: false,
         },
         {
-          title: t("master.linkAbTestingsResource1.Text"),
+          title: t("master.RadMenuItemResource16.Text"),
           href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
           isShow: true,
         },
