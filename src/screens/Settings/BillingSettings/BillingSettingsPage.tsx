@@ -5,13 +5,10 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  AppBar,
   Box,
   Button,
-  FormControl,
   Grid,
   Link,
-  MenuItem,
   Typography,
 } from "@material-ui/core";
 import { Title } from "../../../components/managment/Title";
@@ -38,12 +35,14 @@ import moment from "moment";
 import i18n from "../../../i18n";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import SharedAppBar from "../../../components/core/SharedAppBar";
+import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL, windowSize, isAdmin, isDebtAccount } = useSelector((state: any) => state.core);
+  const { accountFeatures } = useSelector((state: any) => state.common);
   const { creditCards } = useSelector((state: any) => state.payment);
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
@@ -100,7 +99,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   }
 
   useEffect(() => {
-    initPurchaseHistory();
+    accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && initPurchaseHistory();
   }, []);
 
   useEffect(() => {
@@ -304,27 +303,29 @@ const BillingSettingsPage = ({ classes }: any) => {
                           {t("settings.billingSettings.title")}
                         </Typography>
                       </Box>
-                      {(!creditCards || creditCards?.length === 0) ? (<Button
-                        style={{ marginInlineStart: 'auto' }}
-                        className={clsx(
-                          classes.btn,
-                          classes.btnRounded
-                        )}
-                        onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
-                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                      >
-                        <>{t("settings.billingSettings.btnAddCard")}</>
-                      </Button>) : (<>
-                        <Box className={classes.dFlex} style={{ alignItems: 'center', gap: 10 }}>
-                          <Typography>{t('settings.billingSettings.fields.cardNumber')}</Typography>
-                          <Typography style={{ direction: 'ltr', fontWeight: 900 }}>**** {creditCards[0]?.LastDigits}</Typography>
-                          <Link
-                            onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
-                            className={clsx(classes.font14)}
-                            style={{ textDecoration: 'underline' }}
-                          >{t("settings.billingSettings.editCard")}</Link>
-                        </Box>
-                      </>)}
+                      {accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && <>
+                        {(!creditCards || creditCards?.length === 0) ? (<Button
+                          style={{ marginInlineStart: 'auto' }}
+                          className={clsx(
+                            classes.btn,
+                            classes.btnRounded
+                          )}
+                          onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
+                          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                        >
+                          <>{t("settings.billingSettings.btnAddCard")}</>
+                        </Button>) : (<>
+                          <Box className={classes.dFlex} style={{ alignItems: 'center', gap: 10 }}>
+                            <Typography>{t('settings.billingSettings.fields.cardNumber')}</Typography>
+                            <Typography style={{ direction: 'ltr', fontWeight: 900 }}>**** {creditCards[0]?.LastDigits}</Typography>
+                            <Link
+                              onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
+                              className={clsx(classes.font14)}
+                              style={{ textDecoration: 'underline' }}
+                            >{t("settings.billingSettings.editCard")}</Link>
+                          </Box>
+                        </>)}
+                      </>}
                     </Box>
                   }
                 />
@@ -335,7 +336,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                 </Box>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={openPanels.indexOf('2') > -1} onChange={() => handlePanels('2')} elevation={0}
+            {accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && <Accordion expanded={openPanels.indexOf('2') > -1} onChange={() => handlePanels('2')} elevation={0}
               classes={{
                 root: classes.MuiAccordionroot
               }}>
@@ -381,8 +382,8 @@ const BillingSettingsPage = ({ classes }: any) => {
                   />
                 </Box>
               </AccordionDetails>
-            </Accordion>
-            <Accordion expanded={openPanels.indexOf('3') > -1} onChange={() => handlePanels('3')} elevation={0}
+            </Accordion>}
+            {accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && <Accordion expanded={openPanels.indexOf('3') > -1} onChange={() => handlePanels('3')} elevation={0}
               classes={{
                 root: classes.MuiAccordionroot
               }}>
@@ -404,8 +405,8 @@ const BillingSettingsPage = ({ classes }: any) => {
                   <PurchaseTableTemplate classes={classes} data={purchaseHistoryData} showLoader={showPurchaseLoader} isPaid={true} />
                 </Box>
               </AccordionDetails>
-            </Accordion>
-            <Accordion expanded={openPanels.indexOf('4') > -1} onChange={() => handlePanels('4')} elevation={0}
+            </Accordion>}
+            {accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && <Accordion expanded={openPanels.indexOf('4') > -1} onChange={() => handlePanels('4')} elevation={0}
               classes={{
                 root: classes.MuiAccordionroot
               }}>
@@ -427,7 +428,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                   <CreditHistoryDetails classes={classes} />
                 </Box>
               </AccordionDetails>
-            </Accordion>
+            </Accordion>}
           </Box>
         </Box>
         <Loader isOpen={showLoader} showBackdrop={true} />
