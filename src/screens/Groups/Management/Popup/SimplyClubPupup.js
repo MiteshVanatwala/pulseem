@@ -293,7 +293,9 @@ const SimplyClubPupup = ({
     }
 
     const handleAddClients = async (ids) => {
-        setShowLoader(true)
+        setShowLoader(true);
+        setShowClients(false);
+        setShowGroups(false);
         let tempClients = Object.values(updatedClients ?? ClientData)[0]
 
         const Payload = {
@@ -311,7 +313,6 @@ const SimplyClubPupup = ({
             case 200: { break; }
             case 201: {
                 setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
-                setShowLoader(false);
                 break;
             }
             case 202: {
@@ -332,6 +333,7 @@ const SimplyClubPupup = ({
                 break;
             }
         }
+        setShowLoader(false);
     }
 
     const searchGroupAndModify = async (groupName) => {
@@ -523,9 +525,9 @@ const SimplyClubPupup = ({
         <>
             <BaseDialog
                 classes={classes}
-                open={isOpen || backgrounUpload}
-                onClose={() => { setBackgrounUpload(false); onClose() }}
-                onCancel={() => { setBackgrounUpload(false); onClose() }}
+                open={isOpen}
+                onClose={onClose}
+                onCancel={onClose}
                 onConfirm={handleLogin}
                 icon={<div className={classes.dialogIconContent} >
                     {'\uE0D5'}
@@ -606,8 +608,33 @@ const SimplyClubPupup = ({
                     message={summary.message}
                     summary={summary.data}
                 />}
-                {backgrounUpload && RenderHtml(t("recipient.backgroundImport"))}
-
+            </BaseDialog>
+            <BaseDialog
+                classes={classes}
+                open={backgrounUpload}
+                onClose={() => { setBackgrounUpload(false); }}
+                onCancel={() => { setBackgrounUpload(false); }}
+                onConfirm={() => { setBackgrounUpload(false); }}
+                icon={<div className={classes.dialogIconContent} >
+                    {'\uE0D5'}
+                </div >}
+                title={t("group.simplyClubLoginTitle")}
+                showDivider={false}
+            >
+                <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)} style={{ paddingBottom: 15 }}>
+                    <Box
+                        className={clsx(
+                            classes.customDialogContentBox,
+                            classes.flex,
+                            classes.mt4,
+                        )}
+                        style={{ marginInline: 10 }}
+                    >
+                        <Box className={classes.flex1} >
+                            {RenderHtml(t("recipient.backgroundImport"))}
+                        </Box>
+                    </Box>
+                </Box>
             </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
         </>
