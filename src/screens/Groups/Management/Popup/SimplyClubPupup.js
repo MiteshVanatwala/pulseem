@@ -101,6 +101,7 @@ const SimplyClubPupup = ({
     const [error, setError] = useState(null)
     const [updatedClients, setUpdatedClients] = useState(null);
     const [selectArray, setselectArray] = useState([]);
+    const [backgrounUpload, setBackgrounUpload] = useState(false);
 
 
     useEffect(() => {
@@ -314,6 +315,7 @@ const SimplyClubPupup = ({
             }
             case 202: {
                 setToastMessage({ message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE });
+                setBackgrounUpload(true);
                 break;
             }
             case 400: {
@@ -603,6 +605,7 @@ const SimplyClubPupup = ({
                     message={summary.message}
                     summary={summary.data}
                 />}
+                {backgrounUpload && t("recipient.backgroundImport")}
 
             </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
