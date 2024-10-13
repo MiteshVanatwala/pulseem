@@ -148,13 +148,13 @@ export const getRoutes = (
           isShow: false,
         },
         {
-          title: t("master.linkAbTestingsResource1.Text"),
-          href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
+          title: t("master.RadMenuItemResource9a.Text"),
+          href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
           isShow: true,
         },
         {
-          title: t("master.RadMenuItemResource9a.Text"),
-          href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
+          title: 'A/B Test',
+          href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
           isShow: true,
         },
         // {
