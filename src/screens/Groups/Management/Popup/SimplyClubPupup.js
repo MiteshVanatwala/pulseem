@@ -13,6 +13,7 @@ import AddRecipientResponse from './AddRecipientResponse';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -605,7 +606,7 @@ const SimplyClubPupup = ({
                     message={summary.message}
                     summary={summary.data}
                 />}
-                {backgrounUpload && t("recipient.backgroundImport")}
+                {backgrounUpload && RenderHtml(t("recipient.backgroundImport"))}
 
             </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
