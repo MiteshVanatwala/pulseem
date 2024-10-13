@@ -315,7 +315,7 @@ const SimplyClubPupup = ({
                 break;
             }
             case 202: {
-                setToastMessage({ message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE });
+                // setToastMessage({ message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE });
                 setBackgrounUpload(true);
                 break;
             }
@@ -523,9 +523,9 @@ const SimplyClubPupup = ({
         <>
             <BaseDialog
                 classes={classes}
-                open={isOpen}
-                onClose={onClose}
-                onCancel={onClose}
+                open={isOpen || backgrounUpload}
+                onClose={() => { setBackgrounUpload(false); onClose() }}
+                onCancel={() => { setBackgrounUpload(false); onClose() }}
                 onConfirm={handleLogin}
                 icon={<div className={classes.dialogIconContent} >
                     {'\uE0D5'}
