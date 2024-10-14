@@ -37,14 +37,19 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import SharedAppBar from "../../../components/core/SharedAppBar";
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import ConfirmDeletePopUp from "../../Groups/Management/Popup/ConfirmDeletePopUp";
+import useRedirect from "../../../helpers/Routes/Redirect";
+import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
+import { sitePrefix } from "../../../config";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const Redirect = useRedirect();
   const { isRTL, windowSize, isAdmin, isDebtAccount } = useSelector((state: any) => state.core);
   const { accountFeatures } = useSelector((state: any) => state.common);
   const { creditCards } = useSelector((state: any) => state.payment);
+  const { subAccount } = useSelector((state: any) => state.common)
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
@@ -103,6 +108,15 @@ const BillingSettingsPage = ({ classes }: any) => {
   useEffect(() => {
     accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && initPurchaseHistory();
   }, []);
+
+  useEffect(() => {
+    if (subAccount) {
+      !subAccount?.CompanyAdmin && Redirect({
+        url: `${sitePrefix}`,
+        openNewTab: false
+      } as RedirectPropTypes)
+    }
+  }, [subAccount])
 
   useEffect(() => {
     i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
