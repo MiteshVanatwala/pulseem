@@ -4152,6 +4152,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: 5,
     '& .MuiSelect-select': {
       padding: '5px 7px !important',
+      display: 'flex !important',
+      justifyContent: 'flex-end'
     },
     '& img': {
       height: 20,

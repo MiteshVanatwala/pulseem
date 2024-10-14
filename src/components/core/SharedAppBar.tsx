@@ -37,7 +37,7 @@ const SharedAppBar = ({ classes, title }: any) => {
             value={isRTL ? 'he' : 'en'}
             name='TwoFactorAuthOptionID'
             onChange={(e: SelectChangeEvent) => dispatch(setLanguage(e.target.value))}
-            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 15 : 'auto', left: isRTL ? 'auto' : 15 }} />}
             MenuProps={{
               PaperProps: {
                 style: {
@@ -47,16 +47,16 @@ const SharedAppBar = ({ classes, title }: any) => {
                 },
               },
             }}
-            className={classes.SignUpLanguageDropdown}
+            className={clsx(classes.SignUpLanguageDropdown)}
           >
             <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
               <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
-              <label className="cname">{t('languages.langCodes.hebrew')}</label>
+              <label>{t('languages.langCodes.hebrew')}</label>
             </MenuItem>
 
             <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
               <img width={35} src={USImage} alt={t('languages.langCodes.english')} />
-              <label className="cname">{t('languages.langCodes.english')}</label>
+              <label>{t('languages.langCodes.english')}</label>
             </MenuItem>
           </Select>
         </FormControl>
