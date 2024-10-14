@@ -74,6 +74,18 @@ export const payDebtInvoices = createAsyncThunk(
     }
 );
 
+export const inactiveCreditCard = createAsyncThunk(
+    'AccountBilling/InactiveCreditCard',
+    async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.delete(`AccountBilling/InactiveCreditCard`);
+            return response.data as PulseemResponse
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
 
 
 

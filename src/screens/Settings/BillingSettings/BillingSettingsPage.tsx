@@ -19,7 +19,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { ERROR_TYPE } from "../../../helpers/Types/common";
 import BillingDetails from "./BillingDetails";
-import { getCreditCardIframe, getAccountOperations, payDebtInvoices } from "../../../redux/reducers/BillingSlice";
+import { getCreditCardIframe, getAccountOperations, payDebtInvoices, inactiveCreditCard } from "../../../redux/reducers/BillingSlice";
 import { Loader } from "../../../components/Loader/Loader";
 import PurchaseTableTemplate from "./PurchaseTableTemplate";
 import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
@@ -36,6 +36,7 @@ import i18n from "../../../i18n";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import SharedAppBar from "../../../components/core/SharedAppBar";
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
+import ConfirmDeletePopUp from "../../Groups/Management/Popup/ConfirmDeletePopUp";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -58,6 +59,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [currentDialog, setCurrentDialog] = useState<any>('debt');
   const [hasDebt, setHasDebt] = useState<boolean>(false);
+  const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -67,9 +69,9 @@ const BillingSettingsPage = ({ classes }: any) => {
   };
 
   const initPurchaseHistory = async () => {
+    dispatch(getAccountCards()) as any;
     const paidResponse = await dispatch(getAccountOperations(true)) as any;
     const unpaidResponse = await dispatch(getAccountOperations(false)) as any;
-    dispatch(getAccountCards()) as any;
 
     if (paidResponse && paidResponse?.payload?.StatusCode === 201) {
       setPurchaseHistoryData(paidResponse?.payload?.Data);
@@ -124,6 +126,43 @@ const BillingSettingsPage = ({ classes }: any) => {
       setShowLoader(false);
     });
   }
+
+  const handleRemoveCreditCard = async () => {
+    setConfirmDialog(false);
+    setShowLoader(true);
+    const response = await dispatch(inactiveCreditCard()) as any;
+    setShowLoader(false);
+    switch (response?.payload?.StatusCode) {
+      case 201: {
+        setToastMessage({ severity: 'success', color: 'success', message: t('billing.cardInactiveSuccess'), showAnimtionCheck: false });
+        initPurchaseHistory();
+        break;
+      }
+      case 404: {
+        setToastMessage({
+          color: 'error',
+          severity: 'error',
+          message: t('billing.creditNotFound'),
+          showAnimtionCheck: false
+        } as ERROR_TYPE);
+        break;
+      }
+      case 406: {
+        setToastMessage({
+          color: 'error',
+          severity: 'error',
+          message: t('common.ErrorOccured'),
+          showAnimtionCheck: false
+        } as ERROR_TYPE);
+        break;
+      }
+      case 401: {
+        logout();
+        break;
+      }
+    }
+  }
+
 
   const handlePanels = (panelName: string) => {
     const found = openPanels.filter((x: string) => { return x === panelName });
@@ -322,7 +361,12 @@ const BillingSettingsPage = ({ classes }: any) => {
                               onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
                               className={clsx(classes.font14)}
                               style={{ textDecoration: 'underline' }}
-                            >{t("settings.billingSettings.editCard")}</Link>
+                            >{t("settings.billingSettings.editCard")}</Link> |
+                            <Link
+                              onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); setConfirmDialog(true) }}
+                              className={clsx(classes.font14)}
+                              style={{ textDecoration: 'underline' }}
+                            >{t("common.remove")}</Link>
                           </Box>
                         </>)}
                       </>}
@@ -457,6 +501,17 @@ const BillingSettingsPage = ({ classes }: any) => {
           </Grid>
         </Grid>
       </BaseDialog>}
+      <ConfirmDeletePopUp
+        handleDeleteGroup={() => handleRemoveCreditCard()}
+        onCancel={() => setConfirmDialog(false)}
+        onClose={() => setConfirmDialog(false)}
+        classes={classes}
+        isOpen={confirmDialog}
+        key={1}
+        windowSize={windowSize}
+        title={t('billing.confirmDeleteCardTitle')}
+        text={t('billing.confirmDeleteCardText')}
+      />
     </DefaultScreen>
   );
 };
