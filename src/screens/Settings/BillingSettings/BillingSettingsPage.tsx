@@ -110,13 +110,6 @@ const BillingSettingsPage = ({ classes }: any) => {
     accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && initPurchaseHistory();
   }, []);
 
-  // useEffect(() => {
-  //   if (hasDebt && hasDebt === true) {
-  //     setOpenPanels([...openPanels, '2']);
-  //     debtPanel?.current?.scrollIntoView();
-  //   }
-  // }, [hasDebt])
-
   useEffect(() => {
     if (subAccount) {
       !subAccount?.CompanyAdmin && Redirect({
