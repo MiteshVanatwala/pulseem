@@ -1072,8 +1072,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderColor: '#FF3343',
     background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
     color: '#fff',
+    border: '2px solid #F65026',
     '&:hover': {
-      background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+      // background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+      background: '#fff',
+      // maxWidth: 300,
+      minHeight: 34,
+      color: '#000',
+      '& path': {
+        stroke: 'inherit'
+      },
     },
   },
   redButtonLink: {

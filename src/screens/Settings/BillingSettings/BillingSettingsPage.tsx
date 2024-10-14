@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import {
@@ -46,6 +46,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const Redirect = useRedirect();
+  const debtPanel: any = useRef(null);
   const { isRTL, windowSize, isAdmin, isDebtAccount } = useSelector((state: any) => state.core);
   const { accountFeatures } = useSelector((state: any) => state.common);
   const { creditCards } = useSelector((state: any) => state.payment);
@@ -108,6 +109,13 @@ const BillingSettingsPage = ({ classes }: any) => {
   useEffect(() => {
     accountFeatures.indexOf(PulseemFeatures.NOT_TO_SHOW_CREDITS_HISTORY_FEATURE) === -1 && initPurchaseHistory();
   }, []);
+
+  // useEffect(() => {
+  //   if (hasDebt && hasDebt === true) {
+  //     setOpenPanels([...openPanels, '2']);
+  //     debtPanel?.current?.scrollIntoView();
+  //   }
+  // }, [hasDebt])
 
   useEffect(() => {
     if (subAccount) {
@@ -241,6 +249,11 @@ const BillingSettingsPage = ({ classes }: any) => {
     }
   }
 
+  const focusOnDebt = () => {
+    setOpenPanels(['2']);
+    debtPanel?.current?.scrollIntoView();
+  }
+
   const renderDebtDialog = () => {
     return {
       title: t('billing.debtBalance'),
@@ -268,7 +281,7 @@ const BillingSettingsPage = ({ classes }: any) => {
               classes.btn,
               classes.btnRounded
             )}
-            onClick={(e: any) => { setShowPopup(false) }}
+            onClick={(e: any) => { setShowPopup(false); focusOnDebt() }}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             <>{t("common.continue")}</>
@@ -410,10 +423,11 @@ const BillingSettingsPage = ({ classes }: any) => {
                     </Typography>
                     <Box style={{ marginInlineStart: 'auto' }}>
                       <Button
-                        style={{ marginInlineStart: 15 }}
+                        style={{ marginInlineStart: 15, minWidth: 150 }}
                         className={clsx(
-                          classes.btn,
+                          classes.redButton,
                           classes.btnRounded,
+                          classes.bold,
                           invoicesForPayment?.length === 0 && classes.disabled
                         )}
                         onClick={(e: any) => {
@@ -432,6 +446,7 @@ const BillingSettingsPage = ({ classes }: any) => {
               <AccordionDetails>
                 <Box style={{ paddingInline: 25, paddingBlock: 20, width: '100%' }} className={classes.dFlex}>
                   <PurchaseTableTemplate
+                    ref={debtPanel}
                     classes={classes}
                     data={purchaseUnpaidData}
                     showLoader={showOpenInvoicesLoader}
