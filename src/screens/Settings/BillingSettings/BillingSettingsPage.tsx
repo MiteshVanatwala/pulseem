@@ -114,17 +114,10 @@ const BillingSettingsPage = ({ classes }: any) => {
 
   useEffect(() => {
     if (subAccount) {
-      if (!subAccount?.CompanyAdmin) {
-        if (hasDebt) {
-          // show error message popup
-        }
-        else {
-          Redirect({
-            url: `${sitePrefix}`,
-            openNewTab: false
-          } as RedirectPropTypes)
-        }
-      }
+      !subAccount?.CompanyAdmin && Redirect({
+        url: `${sitePrefix}`,
+        openNewTab: false
+      } as RedirectPropTypes)
     }
   }, [subAccount])
 
