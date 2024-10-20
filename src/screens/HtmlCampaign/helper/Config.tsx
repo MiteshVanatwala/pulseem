@@ -54,6 +54,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
+        customCss: 'https://pulseem.co.il/pulseem/css/beefreeRtlFixes.css',
         trackChanges: true,
         //autosave: AUTO_SAVE_SECONDS,
         loadingSpinnerDisableOnSave: true,
