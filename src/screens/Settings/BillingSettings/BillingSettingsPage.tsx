@@ -40,6 +40,8 @@ import ConfirmDeletePopUp from "../../Groups/Management/Popup/ConfirmDeletePopUp
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
 import { sitePrefix } from "../../../config";
+import PurchaseSummary from "../../../components/Balance/PaymentWizard/Dialogs/PurchaseSummary";
+import SummaryPopup from "./SummaryPopup";
 
 
 const BillingSettingsPage = ({ classes }: any) => {
@@ -197,6 +199,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   }
 
   const payInvoices = async () => {
+    setShowPopup(false);
     setShowLoader(true);
     const invoiceIds = purchaseUnpaidData?.filter((item: PurchaseHistoryModel) => {
       return invoicesForPayment.indexOf(item.OperationID.toString()) !== -1;
@@ -327,7 +330,50 @@ const BillingSettingsPage = ({ classes }: any) => {
       case 'success': {
         return renderSuccessDialog();
       }
+      case 'paymentSummary': {
+        return renderSummaryDialog();
+      }
     }
+  }
+
+  const renderSummaryDialog = () => {
+    return {
+      title: t('billing.debtBalance'),
+      open: showPopup,
+      exitButton: false,
+      onClose: () => setShowPopup(false),
+      onCancel: () => setShowPopup(false),
+      disableBackdropClick: true,
+      showDefaultButtons: false,
+      renderButtons: () => {
+        return <Box className={clsx(classes.dFlex, classes.justifyContentEnd)}>
+          <Button
+            style={{marginInlineEnd: 15}}
+            className={clsx(
+              classes.btn,
+              classes.btnRounded
+            )}
+            onClick={(e: any) => { setShowPopup(false) }}
+          >
+            <>{t("common.cancel")}</>
+          </Button>
+          <Button
+            className={clsx(
+              classes.btn,
+              classes.btnRounded
+            )}
+            onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); payInvoices() }}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
+            <>{t("common.pay")}</>
+          </Button>
+        </Box>
+      },
+      children: <SummaryPopup
+        classes={classes}
+        data={purchaseUnpaidData?.filter((ud: PurchaseHistoryModel) => { return invoicesForPayment.indexOf(ud.OperationID.toString()) > -1 })}
+      />
+    } as DialogOptions;
   }
 
   return (
@@ -426,7 +472,8 @@ const BillingSettingsPage = ({ classes }: any) => {
                         onClick={(e: any) => {
                           e?.preventDefault();
                           e?.stopPropagation();
-                          payInvoices()
+                          setCurrentDialog('paymentSummary');
+                          setShowPopup(true)
                         }}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                       >

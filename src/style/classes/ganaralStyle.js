@@ -744,7 +744,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   subTitle: {
     margin: "0 10px !important",
-    color: "#157eaf",
+    // color: "#157eaf",
+    color: '#FF0054',
     fontSize: 30,
   },
   packageBoxTitle: {
