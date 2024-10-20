@@ -25,23 +25,35 @@ const SummaryPopup = ({
                 <Typography className={clsx(classes.subTitle)}>{t('payment.purchaseSummary')}</Typography>
                 <Divider />
             </Grid>
+            <Grid item xs={4}>
+                <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{t('common.productName')}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+                <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{t("billing.amount")}</Typography>
+            </Grid>
+            <Grid item xs={2}>
+                <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{t("billing.forPayment")}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+                <Divider />
+            </Grid>
             {data?.map((item: PurchaseHistoryModel, index: number) => {
                 return <>
                     <Grid item xs={4}>
-                        <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{index + 1}. {t('common.productName')}</Typography>
+                        <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{item.ProdctDesciption}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{`${item.NumberOfProducts} ${item.ProdctDesciption}`}</Typography>
+                        <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{item.NumberOfProducts}</Typography>
                     </Grid>
                     <Grid item xs={2}>
                         <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>
-                        <NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={item.AmountToPay.toString()} displayType={'text'} thousandSeparator={true} prefix={accountIsCurrencySymbolPrefix === true ? ` ${accountCurrencySymbol} ` : ''} suffix={accountIsCurrencySymbolPrefix === false ? ` ${accountCurrencySymbol} ` : ''} /></Typography>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Divider />
+                            <NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={item.AmountToPay.toString()} displayType={'text'} thousandSeparator={true} prefix={accountIsCurrencySymbolPrefix === true ? ` ${accountCurrencySymbol} ` : ''} suffix={accountIsCurrencySymbolPrefix === false ? ` ${accountCurrencySymbol} ` : ''} /></Typography>
                     </Grid>
                 </>
             })}
+            <Grid item xs={12}>
+                <Divider />
+            </Grid>
             <Grid item xs={4}>
                 <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{t('common.price')}</Typography>
             </Grid>
