@@ -114,10 +114,17 @@ const BillingSettingsPage = ({ classes }: any) => {
 
   useEffect(() => {
     if (subAccount) {
-      !subAccount?.CompanyAdmin && Redirect({
-        url: `${sitePrefix}`,
-        openNewTab: false
-      } as RedirectPropTypes)
+      if (!subAccount?.CompanyAdmin) {
+        if (hasDebt) {
+          // show error message popup
+        }
+        else {
+          Redirect({
+            url: `${sitePrefix}`,
+            openNewTab: false
+          } as RedirectPropTypes)
+        }
+      }
     }
   }, [subAccount])
 
@@ -348,7 +355,7 @@ const BillingSettingsPage = ({ classes }: any) => {
       renderButtons: () => {
         return <Box className={clsx(classes.dFlex, classes.justifyContentEnd)}>
           <Button
-            style={{marginInlineEnd: 15}}
+            style={{ marginInlineEnd: 15 }}
             className={clsx(
               classes.btn,
               classes.btnRounded
