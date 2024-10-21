@@ -13,6 +13,7 @@ import AddRecipientResponse from './AddRecipientResponse';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -101,6 +102,7 @@ const SimplyClubPupup = ({
     const [error, setError] = useState(null)
     const [updatedClients, setUpdatedClients] = useState(null);
     const [selectArray, setselectArray] = useState([]);
+    const [showBackgroundUpload, setShowBackgroundUpload] = useState(false);
 
 
     useEffect(() => {
@@ -303,7 +305,7 @@ const SimplyClubPupup = ({
 
         switch (response?.payload?.StatusCode) {
             default: {
-                setToastMessage({ message: ToastMessages.IMPORT_GENERIC_ERROR });
+                setToastMessage(ToastMessages.IMPORT_GENERIC_ERROR);
                 break;
             }
             case 200: { break; }
@@ -313,19 +315,20 @@ const SimplyClubPupup = ({
                 break;
             }
             case 202: {
-                setToastMessage({ message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE });
+                setShowBackgroundUpload(true);
+                setShowLoader(false);
                 break;
             }
             case 400: {
-                setToastMessage({ message: ToastMessages.IMPORT_NO_FOLDER_FOUND });
+                setToastMessage(ToastMessages.IMPORT_NO_FOLDER_FOUND);
                 break;
             }
             case 404: {
-                setToastMessage({ message: ToastMessages.IMPORT_EMPTYLIST_INVALID_CLIENT });
+                setToastMessage(ToastMessages.IMPORT_EMPTYLIST_INVALID_CLIENT);
                 break;
             }
             case 500: {
-                setToastMessage({ message: ToastMessages.ERROR_OCCURED });
+                setToastMessage(ToastMessages.ERROR_OCCURED);
                 break;
             }
         }
@@ -515,6 +518,47 @@ const SimplyClubPupup = ({
             />
         )
     }
+    const backgrounUploadInProgress = () => {
+        return <BaseDialog
+            icon={<div className={classes.dialogIconContent}>
+                {'\uE0D5'}
+            </div>}
+            title={t('recipient.bulkImportTitle')}
+            showDefaultButtons={false}
+            classes={classes}
+            contentStyle={classes.maxWidth900}
+            open={showBackgroundUpload}
+            renderButtons={() => (<>
+                <Grid
+                    container
+                    spacing={2}
+                    className={classes.dialogButtonsContainer}
+                >
+                    <Grid item xs={12}>
+                        <>{RenderHtml(t(ToastMessages.UPLOADING_RECIPIENT_AS_FILE.message))}</>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={() => {
+                                setShowBackgroundUpload(false);
+                                getData();
+                                onClose();
+                            }}
+                            className={clsx(
+                                classes.btn,
+                                classes.btnRounded
+                            )}>
+                            {t('common.confirm')}
+                        </Button>
+                    </Grid>
+                </Grid>
+            </>)}
+        >
+
+        </BaseDialog>
+    }
 
     return (
         <>
@@ -594,6 +638,7 @@ const SimplyClubPupup = ({
                 {error && <span className={localClasses.errortext}>{error}</span>}
                 {showGroups && groups.length > 0 && GroupDialog()}
                 {showClients && ColumnAdjustmentPopup()}
+                {showBackgroundUpload && backgrounUploadInProgress()}
                 {summary && <AddRecipientResponse
                     classes={classes}
                     isOpen={!!summary}
