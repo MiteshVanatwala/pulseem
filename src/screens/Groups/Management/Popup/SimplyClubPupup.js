@@ -13,6 +13,7 @@ import AddRecipientResponse from './AddRecipientResponse';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -101,6 +102,7 @@ const SimplyClubPupup = ({
     const [error, setError] = useState(null)
     const [updatedClients, setUpdatedClients] = useState(null);
     const [selectArray, setselectArray] = useState([]);
+    const [backgrounUpload, setBackgrounUpload] = useState(false);
 
 
     useEffect(() => {
@@ -124,6 +126,15 @@ const SimplyClubPupup = ({
         }
 
     }, [ClientData])
+
+    useEffect(() => {
+        if (summary !== null) {
+            setShowClients(false);
+            setClientData({})
+            setSelectedGroups([]);
+            setSelectedGroupIds([])
+        }
+    }, summary);
 
 
     useEffect(() => {
@@ -281,76 +292,48 @@ const SimplyClubPupup = ({
         return isValid
     }
 
-    const handleAddClients = (ids) => {
-        setShowLoader(true)
+    const handleAddClients = async (ids) => {
+        setShowLoader(true);
+        setShowClients(false);
+        setShowGroups(false);
         let tempClients = Object.values(updatedClients ?? ClientData)[0]
-
 
         const Payload = {
             ClientsData: tempClients || [],
             GroupIds: ids
         }
 
-        const pr = new Promise(async (resolve, reject) => {
-            try {
-                const response = await dispatch(addRecipient(Payload));
-                resolve(response);
-            } catch (e) {
-                console.error(e);
-                dispatch(sendToTeamChannel({
-                    MethodName: 'handleAddClients',
-                    ComponentName: 'SimplyClubPupup.js',
-                    Text: e
-                }));
-                reject(null);
-            }
-        });
+        const response = await dispatch(addRecipient(Payload));
 
-        pr.then((response) => {
-            setShowLoader(false);
-            handleResponses(response, {
-                'S_200': {
-                    code: 200,
-                    message: '',
-                    Func: () => null
-                },
-                'S_201': {
-                    code: 201,
-                    message: '',
-                    Func: () => {
-                        setShowClients(false);
-                        setClientData({})
-                        setSelectedGroups([]);
-                        setSelectedGroupIds([])
-                        setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
-                    }
-                },
-                'S_202': {
-                    code: 202,
-                    message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE,
-                    Func: () => null
-                },
-                'S_400': {
-                    code: 400,
-                    message: ToastMessages.IMPORT_EMPTYLIST_INVALID_CLIENT,
-                    Func: () => null
-                },
-                'S_404': {
-                    code: 404,
-                    message: ToastMessages.IMPORT_NO_FOLDER_FOUND,
-                    Func: () => null
-                },
-                'S_500': {
-                    code: 500,
-                    message: ToastMessages.ERROR_OCCURED,
-                    Func: () => null
-                },
-                'default': {
-                    message: ToastMessages.IMPORT_GENERIC_ERROR,
-                    Func: () => null
-                },
-            });
-        });
+        switch (response?.payload?.StatusCode) {
+            default: {
+                setToastMessage({ message: ToastMessages.IMPORT_GENERIC_ERROR });
+                break;
+            }
+            case 200: { break; }
+            case 201: {
+                setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
+                break;
+            }
+            case 202: {
+                // setToastMessage({ message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE });
+                setBackgrounUpload(true);
+                break;
+            }
+            case 400: {
+                setToastMessage({ message: ToastMessages.IMPORT_NO_FOLDER_FOUND });
+                break;
+            }
+            case 404: {
+                setToastMessage({ message: ToastMessages.IMPORT_EMPTYLIST_INVALID_CLIENT });
+                break;
+            }
+            case 500: {
+                setToastMessage({ message: ToastMessages.ERROR_OCCURED });
+                break;
+            }
+        }
+        setShowLoader(false);
     }
 
     const searchGroupAndModify = async (groupName) => {
@@ -625,7 +608,33 @@ const SimplyClubPupup = ({
                     message={summary.message}
                     summary={summary.data}
                 />}
-
+            </BaseDialog>
+            <BaseDialog
+                classes={classes}
+                open={backgrounUpload}
+                onClose={() => { setBackgrounUpload(false); }}
+                onCancel={() => { setBackgrounUpload(false); }}
+                onConfirm={() => { setBackgrounUpload(false); }}
+                icon={<div className={classes.dialogIconContent} >
+                    {'\uE0D5'}
+                </div >}
+                title={t("group.simplyClubLoginTitle")}
+                showDivider={false}
+            >
+                <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)} style={{ paddingBottom: 15 }}>
+                    <Box
+                        className={clsx(
+                            classes.customDialogContentBox,
+                            classes.flex,
+                            classes.mt4,
+                        )}
+                        style={{ marginInline: 10 }}
+                    >
+                        <Box className={classes.flex1} >
+                            {RenderHtml(t("recipient.backgroundImport"))}
+                        </Box>
+                    </Box>
+                </Box>
             </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
         </>
