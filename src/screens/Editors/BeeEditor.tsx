@@ -41,7 +41,6 @@ import { DemoModal } from '../HtmlCampaign/components/DemoModal';
 import { ClientForm } from '../../Models/BeeModels/BeeModel';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from '../../redux/reducers/smsSlice';
 import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
-import { PulseemResponse } from '../../Models/APIResponse';
 import LPTemplates from './modals/Templates';
 
 const BeeEditor = ({ classes }: BeeEditorModel) => {
@@ -196,6 +195,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     if (landingPage && landingPage?.Data?.WebForm?.SelectedGroupList.length > 0) {
       const groups: [] = landingPage?.Data?.WebForm?.SelectedGroupList?.map((gid: any) => parseInt(gid));
       setSelectedGroups(groups);
+      saveRef.current = {
+        //@ts-ignore
+        ...saveRef.current,
+        showGroupPopup: landingPage?.Data?.WebForm?.HtmlData?.indexOf('submithandler.axd') > -1 && groups?.length <= 0,
+        groups: groups
+      }
     }
   }, [landingPage]);
   useEffect(() => {
@@ -406,23 +411,21 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         ID: args.campaignId,
         JsonData: finalJson,
         HtmlData: finalHtml,
-        GroupIds: selectedGroups?.join(',')
+        //@ts-ignore
+        GroupIDs: saveRef.current.groups ? saveRef.current.groups.join(',') : ''
       }));
 
       switch (response.payload.StatusCode) {
         case 201: {
-          if (finalHtml.indexOf('submithandler.axd') > -1 && (!selectedGroups || selectedGroups?.length <= 0)) {
-            // show Popup
-            //@ts-ignore
-            if (saveRef.current?.showGroupPopup) {
-              setShowGroupSelection(true);
-              saveRef.current = {
-                //@ts-ignore
-                ...saveRef.current,
-                showGroupPopup: false
-              }
-              return false;
+          //@ts-ignore
+          if (saveRef.current?.showGroupPopup) {
+            setShowGroupSelection(true);
+            saveRef.current = {
+              //@ts-ignore
+              ...saveRef.current,
+              showGroupPopup: false
             }
+            return false;
           }
 
           //@ts-ignore
@@ -463,7 +466,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         }
         case 406: {
           setToastMessage({ severity: 'error', color: 'error', message: t('landingPages.selectAtleastOneGroup'), showAnimtionCheck: false } as any);
-        setShowGroupSelection(true);
+          setShowGroupSelection(true);
           break;
         }
       }
@@ -498,7 +501,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   }
   const saveDesign = async (redirectAfterSave = false, redirectUrl: string | null | undefined = null, showAnimation = true, isPublish: boolean = false) => {
     //@ts-ignore
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish, showGroupPopup: saveRef.current?.showGroupPopup || false };
+    saveRef.current = { ...saveRef.current, redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation, isPublish: isPublish };
     //@ts-ignore
     await editorRef.current.save();
     setTimeout(() => {
@@ -587,8 +590,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     })
   }
   const saveTemplate = async () => {
-    //@ts-ignore
     saveRef.current = {
+      //@ts-ignore
+      ...saveRef.current,
       templateName: saveTemplateDetails.templateName,
       templateCategory: saveTemplateDetails.categoryName,
       saveTemplate: true,
@@ -666,7 +670,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               saveRef.current = {
                 //@ts-ignore
                 ...saveRef.current,
-                showGroupPopup: true
+                showGroupPopup: selectedGroups && selectedGroups?.length <= 0
               };
               saveDesign(false, null, true)
             }}
@@ -690,7 +694,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                   saveRef.current = {
                     //@ts-ignore
                     ...saveRef.current,
-                    showGroupPopup: true
+                    showGroupPopup: selectedGroups && selectedGroups?.length <= 0
                   };
                   saveDesign(true, null, false, true);
                 }}
@@ -712,7 +716,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                   saveRef.current = {
                     //@ts-ignore
                     ...saveRef.current,
-                    showGroupPopup: true
+                    showGroupPopup: selectedGroups && selectedGroups?.length <= 0
                   };
                   saveDesign(true, `${sitePrefix}EditRegistrationPage`, false, landingPage.Status === 2);
                 }}
@@ -1106,13 +1110,21 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       else {
         const tempArr = [...selectedGroups, ...list];
         setSelectedGroups(tempArr);
+        saveRef.current = {
+          //@ts-ignore
+          ...saveRef.current,
+          showGroupPopup: false,
+          groups: tempArr
+        };
+        //@ts-ignore
+        await editorRef.current.save();
       }
     }
     else {
       // @ts-ignore
       setToastMessage({ severity: 'error', color: 'error', message: t('common.ErrorOccured'), showAnimtionCheck: false });
     }
-    getData();
+    // getData();
     setLoader(false);
   }
   //#endregion Forms 
