@@ -40,7 +40,6 @@ import ConfirmDeletePopUp from "../../Groups/Management/Popup/ConfirmDeletePopUp
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { RedirectPropTypes } from "../../../helpers/Types/Redirect";
 import { sitePrefix } from "../../../config";
-import PurchaseSummary from "../../../components/Balance/PaymentWizard/Dialogs/PurchaseSummary";
 import SummaryPopup from "./SummaryPopup";
 
 
@@ -338,7 +337,7 @@ const BillingSettingsPage = ({ classes }: any) => {
 
   const renderSummaryDialog = () => {
     return {
-      title: t('billing.debtBalance'),
+      title: t('payment.purchaseSummary'),
       open: showPopup,
       exitButton: false,
       onClose: () => setShowPopup(false),

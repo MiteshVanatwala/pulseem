@@ -39,5 +39,6 @@
   "cardInactiveSuccess": "Credit Card has been successfully removed!",
   "creditNotFound": "Credit Card not found",
   "confirmDeleteCardTitle": "Delete Credit Card",
-  "confirmDeleteCardText": "Are you sure you want to delete Credit Card?"
+  "confirmDeleteCardText": "Are you sure you want to delete Credit Card?",
+  "priceWithoutVAT": "Price Without VAT"
 }

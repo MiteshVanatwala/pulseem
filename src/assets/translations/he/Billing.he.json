@@ -39,5 +39,6 @@
   "cardInactiveSuccess": "כרטיס האשראי הוסר בהצלחה!",
   "creditNotFound": "לא נמצא כרטיס אשראי",
   "confirmDeleteCardTitle": "הסרת כרטיס אשראי",
-  "confirmDeleteCardText": "האם אתה בטוח שברצונך להסיר את כרטיס האשראי?"
+  "confirmDeleteCardText": "האם אתה בטוח שברצונך להסיר את כרטיס האשראי?",
+  "priceWithoutVAT": "סה\"כ ללא מע\"מ"
 }
