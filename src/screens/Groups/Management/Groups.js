@@ -1885,7 +1885,7 @@ const Groups = ({ classes }) => {
             case 202: {
                 actions?.S_202?.Func?.();
                 actions?.S_202?.message && setToastMessage(actions?.S_202?.message);
-                setDialog(null);
+                // setDialog(null);
                 getData(null)
                 break;
             }
