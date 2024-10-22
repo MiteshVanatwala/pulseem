@@ -14,6 +14,7 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
+import { logout } from '../../../../helpers/Api/PulseemReactAPI';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -317,8 +318,16 @@ const SimplyClubPupup = ({
                 break;
             }
             case 202: {
-                setShowBackgroundUpload(true);
-                setShowLoader(false);
+                handleResponses(response, {
+                    'S_202': {
+                        code: 202,
+                        message: '',
+                        Func: () => {
+                            setShowBackgroundUpload(true);
+                            setShowLoader(false);
+                        }
+                    },
+                })
                 break;
             }
             case 400: {
@@ -339,65 +348,54 @@ const SimplyClubPupup = ({
     const searchGroupAndModify = async (groupName) => {
         const response = await dispatch(getGroups({ SearchTerm: groupName, PageSize: 6, PageIndex: 1 }))
         if (response?.payload?.Groups && response?.payload?.RecordCount === 1) {
-            handleAddClients([response.payload.Groups[0].GroupID])
+            await handleAddClients([response.payload.Groups[0].GroupID])
         }
         else if (response?.payload?.RecordCount > 1) {
             const exactGroup = response?.payload.Groups.find((g) => { return g.GroupName.trim() === groupName.trim() });
-            handleAddClients([exactGroup.GroupID]);
+            await handleAddClients([exactGroup.GroupID]);
         }
     }
 
-    const handleImportRecipients = () => {
+    const handleImportRecipients = async () => {
         if (manualUploadValidationscheck()) {
-            let GroupObj = groups.find((obj) => obj.GroupID === selectedGroups[0])
-            new Promise((resolve, reject) => resolve(dispatch(createGroup({ GroupName: GroupObj.GroupName })))).then((res) => {
-                handleResponses(res, {
-                    'S_200': {
-                        code: 200,
-                        message: '',
-                        Func: () => null
-                    },
-                    'S_201': {
-                        code: 201,
-                        message: '',
-                        Func: () => {
-                            handleAddClients([res.payload.Message])
-                        }
-                    },
-                    'S_401': {
-                        code: 401,
-                        message: ToastMessages.GROUP_INVALID_API,
-                        Func: () => null
-                    },
-                    'S_404': {
-                        code: 404,
-                        message: ToastMessages.RECIPIENTS_NOT_FOUND,
-                        Func: () => null
-                    },
-                    'S_405': {
-                        code: 405,
-                        message: ToastMessages.GROUP_ERROR,
-                        Func: () => null
-                    },
-                    'S_422': {
-                        code: 422,
-                        // message: ToastMessages.GROUP_ALREADY_EXIST,
-                        message: '',
-                        Func: () => searchGroupAndModify(GroupObj.GroupName)
-                    },
-                    'S_500': {
-                        code: 500,
-                        message: ToastMessages.ERROR_OCCURED,
-                        Func: () => null
-                    },
-                    'default': {
-                        message: ToastMessages.GROUP_ERROR,
-                        Func: () => null
-                    },
-                })
-            });
-        }
+            let GroupObj = groups.find((obj) => obj.GroupID === selectedGroups[0]);
 
+            const creationResponse = await dispatch(createGroup({ GroupName: GroupObj.GroupName }));
+            switch (creationResponse?.payload?.StatusCode) {
+                case 200: {
+                    break;
+                }
+                case 201: {
+                    handleAddClients([creationResponse.payload.Message])
+                    break;
+                }
+                case 202: {
+                    searchGroupAndModify(GroupObj.GroupName)
+                    break;
+                }
+                case 401: {
+                    logout();
+                    break;
+                }
+                case 404: {
+                    setToastMessage(ToastMessages.RECIPIENTS_NOT_FOUND)
+                    break;
+                }
+                case 422: {
+                    searchGroupAndModify(GroupObj.GroupName)
+                    break;
+                }
+                case 500: {
+                    setToastMessage(ToastMessages.ERROR_OCCURED)
+
+                    break;
+                }
+                case 405:
+                default: {
+                    break;
+                }
+            }
+        }
     }
 
     const GroupDialog = () => {
