@@ -276,9 +276,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
     let tempRows = [{
-      name: 'product-catalog',
-      value: 'product-catalog',
-      handle: 'product-catalog',
+      name: 'Dynamic-Products',
+      value: 'Dynamic-Products',
+      handle: 'Dynamic-Products',
       isLocal: true,
       behaviors: {
         canEdit: true,
@@ -288,7 +288,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];
       tags?.forEach((tag, idx) => {
-        if (tag && tag !== undefined && tag !== null && tag.trim() !== 'product-catalog') {
+        if (tag && tag !== undefined && tag !== null && tag.trim() !== 'Dynamic-Products') {
           const tagObj = {
             name: tag.trim(),
             value: tag.replace(' ', ''),

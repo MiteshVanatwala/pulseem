@@ -1,8 +1,6 @@
-import noImagePreview from '../../assets/images/no-image-preview.jpg';
 import clsx from 'clsx';
 import { PreviewTypes } from './Types';
-import { Direction, EventTypes, Structure } from '../../config/enum';
-import { NO_IMAGE_URL } from '../../helpers/Constants';
+import { Direction, Structure } from '../../config/enum';
 
 const Preview = ({
   classes,
@@ -55,7 +53,7 @@ const Preview = ({
             )}
           >
             <img
-              src={NO_IMAGE_URL}
+              src={imageURL}
               alt=''
               style={{
                 width: structure === Structure.Horizontal ? '100%' : '150px',
