@@ -252,7 +252,9 @@ const SimplyClubPupup = ({
             'S_201': {
                 code: 201,
                 message: '',
-                Func: () => null
+                Func: () => {
+                    setUser({ Username: '', Password: '' });
+                }
             },
             'S_401': {
                 code: 401,
@@ -595,7 +597,7 @@ const SimplyClubPupup = ({
                                 variant="outlined"
                                 value={user.Username}
                                 className={clsx(classes.textField, classes.minWidth252, { [classes.textFieldError]: !!error })}
-                                inputProps={{ autocomplete: "new-password" }}
+                                inputProps={{ autocomplete: "password" }}
                                 onChange={handleChange}
                             />
                         </Box>
@@ -620,7 +622,7 @@ const SimplyClubPupup = ({
                                 variant="outlined"
                                 value={user.Password}
                                 className={clsx(classes.textField, classes.minWidth252, { [classes.textFieldError]: !!error })}
-                                inputProps={{ autocomplete: "new-password" }}
+                                inputProps={{ autocomplete: "password" }}
                                 onChange={handleChange}
                                 InputProps={{
                                     endAdornment: <Button onClick={() => setShowPassword(!showPassword)} className={localClasses.pwdEveButton} > {showPassword ? <VisibilityOff style={{ fontSize: 15 }} /> : <Visibility style={{ fontSize: 15 }} />}</Button>,
