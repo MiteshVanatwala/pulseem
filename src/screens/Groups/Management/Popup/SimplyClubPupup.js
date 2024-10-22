@@ -104,6 +104,7 @@ const SimplyClubPupup = ({
     const [updatedClients, setUpdatedClients] = useState(null);
     const [selectArray, setselectArray] = useState([]);
     const [showBackgroundUpload, setShowBackgroundUpload] = useState(false);
+    const [showUserNamePass, setShowUserNamePass] = useState(true);
 
 
     useEffect(() => {
@@ -296,7 +297,10 @@ const SimplyClubPupup = ({
     }
 
     const handleAddClients = async (ids) => {
-        setShowLoader(true)
+        setShowLoader(true);
+        setShowClients(false);
+        setShowGroups(false);
+        setShowUserNamePass(false);
         let tempClients = Object.values(updatedClients ?? ClientData)[0]
 
         const Payload = {
@@ -528,15 +532,17 @@ const SimplyClubPupup = ({
             classes={classes}
             contentStyle={classes.maxWidth900}
             open={showBackgroundUpload}
+            onCancel={() => {
+                setShowBackgroundUpload(false);
+                getData();
+                onClose();
+            }}
             renderButtons={() => (<>
                 <Grid
                     container
                     spacing={2}
                     className={classes.dialogButtonsContainer}
                 >
-                    <Grid item xs={12}>
-                        <>{RenderHtml(t(ToastMessages.UPLOADING_RECIPIENT_AS_FILE.message))}</>
-                    </Grid>
                     <Grid item>
                         <Button
                             variant='contained'
@@ -556,7 +562,9 @@ const SimplyClubPupup = ({
                 </Grid>
             </>)}
         >
-
+            <Grid item xs={12}>
+                <>{RenderHtml(t('recipient.backgroundImport'))}</>
+            </Grid>
         </BaseDialog>
     }
 
@@ -568,13 +576,14 @@ const SimplyClubPupup = ({
                 onClose={onClose}
                 onCancel={onClose}
                 onConfirm={handleLogin}
-                icon={<div className={classes.dialogIconContent} >
+                icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div >}
-                title={t("group.simplyClubLoginTitle")}
+                title={showUserNamePass && t("group.simplyClubLoginTitle")}
                 showDivider={false}
+                showDefaultButtons={showUserNamePass}
             >
-                <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)} style={{ paddingBottom: error ? 0 : 15 }}>
+                {showUserNamePass ? (<Box className={clsx(classes.flex, classes.mt4, localClasses.h100)} style={{ paddingBottom: error ? 0 : 15 }}>
                     <Box
                         className={clsx(
                             classes.customDialogContentBox,
@@ -634,7 +643,7 @@ const SimplyClubPupup = ({
                             />
                         </Box>
                     </Box>
-                </Box>
+                </Box>) : (<>{t('common.pleaseWait')}</>)}
                 {error && <span className={localClasses.errortext}>{error}</span>}
                 {showGroups && groups.length > 0 && GroupDialog()}
                 {showClients && ColumnAdjustmentPopup()}
@@ -648,7 +657,6 @@ const SimplyClubPupup = ({
                     message={summary.message}
                     summary={summary.data}
                 />}
-
             </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
         </>
