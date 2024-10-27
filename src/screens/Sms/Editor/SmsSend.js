@@ -1559,14 +1559,14 @@ const SmsSend = ({ classes, ...props }) => {
     if (
       pulseType === 2
     ) {
-      addTime = (Math.ceil(((summary.FinalCount - pulseAmount) / pulseAmount))) * timeInterval
+      addTime = (Math.ceil((((summary.FinalCount + summary.FinalVoiceCount) - pulseAmount) / pulseAmount))) * timeInterval
     } else {
       let recipientPercents =
-        (summary.FinalCount *
+        ((summary.FinalCount + summary.FinalVoiceCount) *
           pulseAmount) /
         100;
       addTime =
-        ((summary.FinalCount - recipientPercents.toFixed(1)) *
+        (((summary.FinalCount + summary.FinalVoiceCount) - recipientPercents.toFixed(1)) *
           timeInterval) /
         recipientPercents.toFixed(1);
     }
@@ -1627,7 +1627,8 @@ const SmsSend = ({ classes, ...props }) => {
       "SubAccountID": -1,
       "AccountID": -1,
       "Credits": dataSaved.CreditPerSms,
-      "TotalRecipients": getCampaignSum.FinalCount
+      "TotalRecipients": getCampaignSum.FinalCount,
+      "FinalVoiceCount": getCampaignSum.FinalVoiceCount
     }
 
     let r = await dispatch(sendSms(payload))

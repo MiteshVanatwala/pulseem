@@ -326,7 +326,7 @@ const SmsCreator = ({ classes }) => {
     setLoader(true);
     setsummary(false);
     const groupIds = selectedGroup.map((g) => { return g.GroupID });
-    const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount };
+    const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount, FinalVoiceCount: getCampaignSum.FinalVoiceCount };
     const FinalPayloadData = {
       ...smsModel,
       fromNumber: campaignNumber,

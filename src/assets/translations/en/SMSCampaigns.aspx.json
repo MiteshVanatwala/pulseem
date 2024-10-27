@@ -486,6 +486,7 @@
   "smsDialogWhen": "When",
   "smsDialogFor": "For",
   "smsSummaryDialogTotalRecipients": "Total Number of Recipients",
+  "smsSummaryDialogTotalVoiceRecipients": "Total Number of Voice Recipients",
   "smsSummaryDetails": "Details",
   "smsSummaryClose": "Close",
   "smsSummaryGroups": "Groups",
