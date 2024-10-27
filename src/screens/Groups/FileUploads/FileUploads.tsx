@@ -149,7 +149,7 @@ const FileUploads = ({ classes }: ClassesType) => {
   }
 
   const renderStatus = (status: number) => {
-    const colors: any = ['#0371AD', '#E74C3C', '#27AE60', '#E74C3C', '#F59A23'];
+    const colors: any = ['grey', '#0371AD', '#27AE60', '#E74C3C', '#F59A23'];
     return <Typography style={{ color: colors[status] }} className={clsx(classes.bold, classes.font16)}>{t(`group.uploadFiles.statuses.${status}`)}</Typography>
 
   }

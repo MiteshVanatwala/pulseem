@@ -136,5 +136,6 @@
   "newsletterCampaign": "Newsletter Campaign",
   "smsCampaign": "SMS Campaign",
   "maxUploadLimitation": "You are able to upload up to 5,000 recipients at once",
-  "whatsappCampaign": "Whatsapp Campaign"
+  "whatsappCampaign": "Whatsapp Campaign",
+  "backgroundImport": "<b>Please note</b><br/>You requested to upload a large amount of recipients<br/>The system performs the upload in the background.<br/>The results of the upload can be seen on the File upload page"
 }
