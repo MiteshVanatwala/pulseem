@@ -55,7 +55,7 @@ const SummaryPopup = ({
                 <Divider />
             </Grid>
             <Grid item xs={4}>
-                <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{t('billinh.priceWithoutVAT')}</Typography>
+                <Typography className={clsx(classes.blue, classes.subTitle, classes.font20)}>{t('billing.priceWithoutVAT')}</Typography>
             </Grid>
             <Grid item xs={6}></Grid>
             <Grid item xs={2}>

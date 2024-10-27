@@ -33,7 +33,7 @@ import { DialogOptions } from "../../../helpers/Types/Dialog";
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import moment from "moment";
 import i18n from "../../../i18n";
-import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import { IoIosCheckmarkCircleOutline, IoIosCloseCircleOutline  } from "react-icons/io";
 import SharedAppBar from "../../../components/core/SharedAppBar";
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import ConfirmDeletePopUp from "../../Groups/Management/Popup/ConfirmDeletePopUp";
@@ -63,8 +63,8 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [purchaseUnpaidData, setPurchaseUnpaidData] = useState<PurchaseHistoryModel[]>();
   const [openPanels, setOpenPanels] = useState<string[]>([qs?.p || '1']);
   const [invoicesForPayment, setInvoicesForPayment] = useState<number[]>([]);
-  const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [currentDialog, setCurrentDialog] = useState<any>('debt');
+  const [showPopup, setShowPopup] = useState<boolean>(true);
+  const [currentDialog, setCurrentDialog] = useState<any>('failed');
   const [hasDebt, setHasDebt] = useState<boolean>(false);
   const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
 
@@ -179,7 +179,6 @@ const BillingSettingsPage = ({ classes }: any) => {
     }
   }
 
-
   const handlePanels = (panelName: string) => {
     const found = openPanels.filter((x: string) => { return x === panelName });
     if (found && found?.length > 0) {
@@ -222,15 +221,19 @@ const BillingSettingsPage = ({ classes }: any) => {
         logout();
         break;
       }
+      case 404:
       case 405: {
         handleShowCreditCardIframe();
         break;
       }
-      case 404:
       case 406:
       case 407:
       case 408:
-      case 409:
+      case 409: {
+        setCurrentDialog('failed');
+        setShowPopup(true);
+        break;
+      }
       case 500: {
         setToastMessage({
           color: 'error',
@@ -319,6 +322,31 @@ const BillingSettingsPage = ({ classes }: any) => {
           t('billing.paymentSuccessfulWithoutLogout'))}</Box>
     } as DialogOptions;
   }
+  const renderFailedDialog = () => {
+    return {
+      title: t('billing.paymentFailedTitle'),
+      open: showPopup,
+      icon: <IoIosCloseCircleOutline />,
+      onCancel: () => {  setShowPopup(false); setCurrentDialog(null) },
+      disableBackdropClick: true,
+      showDefaultButtons: false,
+      renderButtons: () => {
+        return <Button
+          style={{ marginInlineStart: 'auto' }}
+          className={clsx(
+            classes.btn,
+            classes.btnRounded
+          )}
+          onClick={(e: any) => { setShowPopup(false); setCurrentDialog(null) }}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+        >
+          <>{t("common.close")}</>
+        </Button>
+      },
+      children: <Box style={{ marginBottom: 25 }}>{
+        RenderHtml(t('billing.paymentFailed'))}</Box>
+    } as DialogOptions;
+  }
 
   const renderOptions = () => {
     switch (currentDialog) {
@@ -331,6 +359,9 @@ const BillingSettingsPage = ({ classes }: any) => {
       }
       case 'paymentSummary': {
         return renderSummaryDialog();
+      }
+      case 'failed': {
+        return renderFailedDialog();
       }
     }
   }

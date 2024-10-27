@@ -33,6 +33,8 @@
   "personalyCharge": "Personal charge",
   "debtBalance": "Debt balance",
   "debtWelcomeMessage": "Hi,<br/>According to our record, you have a debt in the system.<br/>On this screen you can see the invoices open for payment, update credit and make a payment. <br/>If there is any problem making the payment or questions about the debt you can Contact support at <a href=\"tel:035240290\">03-5240290</a> or at <a href=\"mailto:support@pulseem.com\">support@pulseem.com</a>< br/>Greetings, Pulseem team",
+  "paymentFailedTitle": "Payment failed",
+  "paymentFailed": "We tried to charge the credit shown in the system without success<br/>You can try again or update the credit saved in the system",
   "paymentSuccessfulTitle": "Payment successful",
   "paymentSuccessful": "We are pleased to inform you that your payment has been processed successfully.<br/>Thank you for your cooperation!<br/>To access your account, please log in again.<br/><br/>Best regards,<br/>Pulseem Team",
   "paymentSuccessfulWithoutLogout": "We are pleased to inform you that your payment has been processed successfully.<br/>Thank you for your cooperation!<br/><br/>Pulseem Team",
