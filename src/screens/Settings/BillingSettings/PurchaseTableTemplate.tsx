@@ -10,6 +10,7 @@ import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
 import { useTranslation } from "react-i18next";
 import { TablePagination } from '../../../components/managment/index'
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
+import { MdOutlineReceiptLong } from "react-icons/md";
 
 const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, onInvoiceSelection = null }: any) => {
   const { windowSize, rowsPerPage } = useSelector((state: StateType) => state.core)
@@ -209,7 +210,7 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, onInvoiceSel
           align='center'
           className={clsx(classes.flex1)}>
           <Link href={RecieptURL} target='_blank' style={{ textDecoration: 'underline' }}>
-            {ReceiptID}
+            <MdOutlineReceiptLong className={clsx(classes.font20, (!ReceiptID || ReceiptID <= 0) && classes.disabled)} />
           </Link>
         </TableCell>}
       </TableRow>
