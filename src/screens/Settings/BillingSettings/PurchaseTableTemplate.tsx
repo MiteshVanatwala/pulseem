@@ -210,7 +210,7 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, onInvoiceSel
           align='center'
           className={clsx(classes.flex1)}>
           <Link href={RecieptURL} target='_blank' style={{ textDecoration: 'underline' }}>
-            <MdOutlineReceiptLong className={clsx(classes.font20, (!ReceiptID || ReceiptID <= 0) && classes.disabled)} />
+            <MdOutlineReceiptLong className={clsx(classes.font20, classes.sendIconText, (!ReceiptID || ReceiptID <= 0) && classes.disabled)} />
           </Link>
         </TableCell>}
       </TableRow>

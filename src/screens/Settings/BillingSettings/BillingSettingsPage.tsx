@@ -33,7 +33,7 @@ import { DialogOptions } from "../../../helpers/Types/Dialog";
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import moment from "moment";
 import i18n from "../../../i18n";
-import { IoIosCheckmarkCircleOutline, IoIosCloseCircleOutline  } from "react-icons/io";
+import { IoIosCheckmarkCircleOutline, IoIosCloseCircleOutline } from "react-icons/io";
 import SharedAppBar from "../../../components/core/SharedAppBar";
 import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import ConfirmDeletePopUp from "../../Groups/Management/Popup/ConfirmDeletePopUp";
@@ -63,8 +63,8 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [purchaseUnpaidData, setPurchaseUnpaidData] = useState<PurchaseHistoryModel[]>();
   const [openPanels, setOpenPanels] = useState<string[]>([qs?.p || '1']);
   const [invoicesForPayment, setInvoicesForPayment] = useState<number[]>([]);
-  const [showPopup, setShowPopup] = useState<boolean>(true);
-  const [currentDialog, setCurrentDialog] = useState<any>('failed');
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [currentDialog, setCurrentDialog] = useState<any>('debt');
   const [hasDebt, setHasDebt] = useState<boolean>(false);
   const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
 
@@ -234,6 +234,11 @@ const BillingSettingsPage = ({ classes }: any) => {
         setShowPopup(true);
         break;
       }
+      case 410: {
+        setCurrentDialog('multipleInvoiceTypeSelected');
+        setShowPopup(true);
+        break;
+      }
       case 500: {
         setToastMessage({
           color: 'error',
@@ -327,7 +332,7 @@ const BillingSettingsPage = ({ classes }: any) => {
       title: t('billing.paymentFailedTitle'),
       open: showPopup,
       icon: <IoIosCloseCircleOutline />,
-      onCancel: () => {  setShowPopup(false); setCurrentDialog(null) },
+      onCancel: () => { setShowPopup(false); setCurrentDialog(null) },
       disableBackdropClick: true,
       showDefaultButtons: false,
       renderButtons: () => {
@@ -347,7 +352,31 @@ const BillingSettingsPage = ({ classes }: any) => {
         RenderHtml(t('billing.paymentFailed'))}</Box>
     } as DialogOptions;
   }
-
+  const renderMultipleInvoiceTypeDialog = () => {
+    return {
+      title: t('billing.paymentFailedTitle'),
+      open: showPopup,
+      icon: <IoIosCloseCircleOutline />,
+      onCancel: () => { setShowPopup(false); setCurrentDialog(null) },
+      disableBackdropClick: true,
+      showDefaultButtons: false,
+      renderButtons: () => {
+        return <Button
+          style={{ marginInlineStart: 'auto' }}
+          className={clsx(
+            classes.btn,
+            classes.btnRounded
+          )}
+          onClick={(e: any) => { setShowPopup(false); setCurrentDialog(null) }}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+        >
+          <>{t("common.close")}</>
+        </Button>
+      },
+      children: <Box style={{ marginBottom: 25 }}>{
+        RenderHtml(t('billing.multipleInvoiceTypeMessage'))}</Box>
+    } as DialogOptions;
+  }
   const renderOptions = () => {
     switch (currentDialog) {
       default:
@@ -362,6 +391,9 @@ const BillingSettingsPage = ({ classes }: any) => {
       }
       case 'failed': {
         return renderFailedDialog();
+      }
+      case 'multipleInvoiceTypeSelected': {
+        return renderMultipleInvoiceTypeDialog();
       }
     }
   }
