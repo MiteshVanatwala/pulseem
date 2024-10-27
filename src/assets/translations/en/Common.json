@@ -854,5 +854,6 @@
   "searchInput": "Search...",
   "scheduleSend": "Schedule Campaign",
   "opens": "Opens",
-  "clicks": "Clicks"
+  "clicks": "Clicks",
+  "pleaseWait": "Please wait..."
 }
