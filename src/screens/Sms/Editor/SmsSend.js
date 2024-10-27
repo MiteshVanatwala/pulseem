@@ -1628,7 +1628,7 @@ const SmsSend = ({ classes, ...props }) => {
       "AccountID": -1,
       "Credits": dataSaved.CreditPerSms,
       "TotalRecipients": getCampaignSum.FinalCount,
-      "FinalVoiceCount": getCampaignSum.FinalVoiceCount
+      "VoiceCredits": getCampaignSum.FinalVoiceCount
     }
 
     let r = await dispatch(sendSms(payload))
