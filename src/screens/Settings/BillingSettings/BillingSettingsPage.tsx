@@ -67,6 +67,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [currentDialog, setCurrentDialog] = useState<any>('debt');
   const [hasDebt, setHasDebt] = useState<boolean>(false);
   const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
+  const [tranzilaError, setTranzilaError] = useState<any>(null);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -232,6 +233,7 @@ const BillingSettingsPage = ({ classes }: any) => {
       case 409: {
         setCurrentDialog('failed');
         setShowPopup(true);
+        setTranzilaError(response.Data);
         break;
       }
       case 410: {
@@ -348,8 +350,10 @@ const BillingSettingsPage = ({ classes }: any) => {
           <>{t("common.close")}</>
         </Button>
       },
-      children: <Box style={{ marginBottom: 25 }}>{
-        RenderHtml(t('billing.paymentFailed'))}</Box>
+      children: <>
+        <Box style={{ marginBottom: 25 }}>{RenderHtml(t('billing.paymentFailed'))}</Box>
+        {tranzilaError !== null && <Box>{tranzilaError}</Box>}
+      </>
     } as DialogOptions;
   }
   const renderMultipleInvoiceTypeDialog = () => {
