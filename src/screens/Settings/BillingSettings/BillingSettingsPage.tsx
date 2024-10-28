@@ -352,7 +352,10 @@ const BillingSettingsPage = ({ classes }: any) => {
       },
       children: <>
         <Box style={{ marginBottom: 25 }}>{RenderHtml(t('billing.paymentFailed'))}</Box>
-        {tranzilaError !== null && <Box>{tranzilaError}</Box>}
+        {tranzilaError !== null && <>
+          <Box><b>{t('common.errorCode')}:</b> {tranzilaError}</Box>
+          <Box>{RenderHtml(t('common.errorCodeSupport'))}</Box>
+        </>}
       </>
     } as DialogOptions;
   }
