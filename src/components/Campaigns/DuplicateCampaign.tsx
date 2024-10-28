@@ -108,6 +108,19 @@ const DuplicateCampaign = ({
               }
               label={t("smsReport.pulseSending")}
             />
+            {
+              isSms === false && <FormControlLabel
+                control={
+                  <Checkbox
+                    color="primary"
+                    inputProps={{ "aria-label": "secondary checkbox" }}
+                    onClick={() => handleDuplicateOptions(CloneOptions.SupportedForBee)}
+                    checked={duplicateOptions.indexOf(CloneOptions.SupportedForBee) > -1}
+                  />
+                }
+                label={"duplicate supported by bee"}
+              />
+            }
           </FormGroup>
         </FormControl>
       </>
