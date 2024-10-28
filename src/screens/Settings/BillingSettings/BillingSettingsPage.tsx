@@ -354,6 +354,7 @@ const BillingSettingsPage = ({ classes }: any) => {
         <Box style={{ marginBottom: 25 }}>{RenderHtml(t('billing.paymentFailed'))}</Box>
         {tranzilaError !== null && <>
           <Box><b>{t('common.errorCode')}:</b> {tranzilaError}</Box>
+          <br />
           <Box>{RenderHtml(t('common.errorCodeSupport'))}</Box>
         </>}
       </>
