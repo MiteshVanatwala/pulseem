@@ -854,5 +854,6 @@
   "clicks": "Clicks",
   "reconnect": "Reconnect",
   "errorCode": "Error Code",
-  "errorCodeSupport": "For more information or Support<br/><a href=\"tel:035240290\">03-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com</a>"
+  "errorCodeSupport": "For more information or Support<br/><a href=\"tel:035240290\">03-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com</a>",
+  "pleaseWait": "Please wait..."
 }
