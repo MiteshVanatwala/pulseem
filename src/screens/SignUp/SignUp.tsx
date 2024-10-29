@@ -1,9 +1,7 @@
 import clsx from "clsx";
-import { AppBar, Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormGroup, FormHelperText, Grid, MenuItem, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormHelperText, Grid, MenuItem, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import PulseemNewLogo from "../../assets/images/PulseemNewLogo";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
@@ -11,8 +9,6 @@ import { FieldOfActivities, FieldOfInterest, lowerCaseLetters, numbers, specialL
 import { MdDvr, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
-import USImage from "../../assets/images/united-states-flag-icon.svg";
-import IsraelImage from "../../assets/images/israel-flag-icon.svg";
 import Illustration_BG_BL from "../../assets/images/Illustration_BG_BL";
 import Illustration_BG_BR from "../../assets/images/Illustration_BG_BR";
 import PasswordHint from "../Settings/AccountSettings/Password/PasswordHint";
@@ -26,8 +22,9 @@ import i18n from "../../i18n";
 import { IsValidEmail, IsValidPhoneNumber } from "../../helpers/Utils/Validations";
 import { Autocomplete } from "@mui/material";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
-import { CompanyWebsiteRequest, CompanyWebsiteApiResponse } from "../../Models/CompanyWebsite/CompanyWebSite";
+import { CompanyWebsiteRequest } from "../../Models/CompanyWebsite/CompanyWebSite";
 import { actionURL } from "../../config";
+import SharedAppBar from "../../components/core/SharedAppBar";
 
 const SignUp = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -458,55 +455,7 @@ const SignUp = ({ classes }: any) => {
         <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
         <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
       </div>
-      <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground, windowSize === 'xl' ? classes.p10 : '')}>
-        <Grid container>
-          <Grid md={2}></Grid>
-
-          <Grid md={8}>
-            <PulseemNewLogo />
-            <span className={clsx(classes.f25, classes.dInlineBlock, classes.pr10, classes.verticalAlignTop)}>
-              -&nbsp;&nbsp;{t('SignUp.Header')}
-            </span>
-          </Grid>
-
-          <Grid md={2} className={clsx(classes.w100, {
-            [classes.textRight]: !isRTL,
-            [classes.textLeft]: isRTL,
-            [classes.mt10]: windowSize === 'sm' || windowSize === 'xs'
-          })}>
-            <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.SignUpLanguageDropdown, classes.bgWhite)}>
-              <Select
-                variant="standard"
-                value={isRTL ? 'he' : 'en'}
-                name='TwoFactorAuthOptionID'
-                onChange={(e: SelectChangeEvent) => dispatch(setLanguage(e.target.value))}
-                IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      width: 100,
-                      maxHeight: 200,
-                      direction: isRTL ? 'rtl' : 'ltr'
-                    },
-                  },
-                }}
-                className={classes.SignUpLanguageDropdown}
-              >
-                <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-                  <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
-                  <label className="cname">{t('languages.langCodes.hebrew')}</label>
-                </MenuItem>
-
-                <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-                  <img width={35} src={USImage} alt={t('languages.langCodes.english')} />
-                  <label className="cname">{t('languages.langCodes.english')}</label>
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
-      </AppBar>
-
+      <SharedAppBar title={t('SignUp.Header')} classes={classes} />
       <Box className={clsx(classes.pt50, windowSize !== 'sm' && windowSize !== 'xs' ? classes.pageContainer : '', windowSize === 'xs' || windowSize === 'sm' ? classes.pt90 : '')}>
         <Box className={clsx(windowSize === 'xs' ? classes.pt50 : classes.pt20)}>
           <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>

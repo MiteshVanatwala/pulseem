@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { TopAppBar,/*Drawer*/ } from '../components/core'
 import { Container } from '@material-ui/core'
-// import { Helmet } from 'react-helmet';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { getRoutes, getSettingsItem } from '../helpers/Routes/routes';
 import { useTranslation } from "react-i18next";
@@ -11,10 +10,11 @@ import Illustration_BG_BL from '../assets/images/Illustration_BG_BL';
 import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 import DomainVerification from '../Shared/Dialogs/DomainVerification';
 import TawkToContainer from '../components/TawkTo/TawkToContainer';
+import { sitePrefix } from '../config';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
-  const { isAdmin, isAllowSwitchAccount, isRTL } = useSelector(state => state.core)
+  const { isAdmin, isAllowSwitchAccount, isRTL, isDebtAccount } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
   const [reKey, setReKey] = useState(0);
@@ -42,8 +42,12 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   title = title ? `${title} | ${t('master.pulseemSystem')}` : t('master.pulseemSystem');
 
 
+
   useEffect(() => {
     setReKey(reKey + 1);
+    if (isDebtAccount === true && window.location.href.toLowerCase().indexOf('billingsettings') <= -1) {
+      window.location.href = `${sitePrefix}BillingSettings?p=2`;
+    }
   }, [])
 
   return (
@@ -51,11 +55,11 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <TopAppBar
+      {(!isDebtAccount || isDebtAccount === false) && <TopAppBar
         showAppBar={showAppBar}
         classes={classes}
         currentPage={currentPage}
-      />
+      />}
       <Container
         maxWidth='xl'
         className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null, customStyle)}

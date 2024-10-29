@@ -82,7 +82,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 1050,
   },
   mgmtTitleContainer: {
-    width: 'auto !important',
+    // width: 'auto !important',
     background: '#F0F5FF',
     padding: 15,
     borderTopRightRadius: 10,
@@ -1378,6 +1378,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     margin: '0 5px',
     cursor: 'pointer',
     textUnderlineOffset: '4px',
+    backgroundColor: 'transparent',
     "&:hover": {
       textDecoration: 'none',
     }

@@ -56,7 +56,7 @@ import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
-import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
+import BillingSettingsPage from './screens/Settings/BillingSettings/BillingSettingsPage';
 import { sitePrefix } from './config/index'
 // import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
@@ -457,7 +457,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}BillingSettings`}
-        element={<BillingSettingsEditor classes={classes} />}
+        element={<BillingSettingsPage classes={classes} />}
       />
       <Route
         path={`/AccountBilling`}
@@ -574,7 +574,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
@@ -618,7 +618,7 @@ const App = ({ screenSize }) => {
         certthumbprint: billingTypeId,
         role: isAdmin,
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone':
-        phone = '',
+        isDebtAccount = '',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality':
         locality = 'he-IL',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince':
@@ -638,7 +638,7 @@ const App = ({ screenSize }) => {
         setCoreData({
           email,
           basename,
-          phone,
+          isDebtAccount,
           imageURL,
           isWhiteLabel,
           companyName,
@@ -686,7 +686,15 @@ const App = ({ screenSize }) => {
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
-          {renderRoutes(classes, redirect)}
+          {isDebtAccount === true ? (
+            <Routes>
+              <Route
+                exact
+                path="*"
+                element={<BillingSettingsPage classes={classes} />}
+              />
+            </Routes>
+          ) : renderRoutes(classes, redirect)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider >
