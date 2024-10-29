@@ -1,0 +1,311 @@
+import { Box, Button, Checkbox, FormControlLabel, Grid, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import { Loader } from "../../../components/Loader/Loader";
+import { useEffect, useState } from "react";
+import { rowsOptions, SizeOptionsOfHandHeldDevices } from "../../../helpers/Constants";
+import { useDispatch, useSelector } from "react-redux";
+import { StateType } from "../../../Models/StateTypes";
+import clsx from 'clsx';
+import moment from "moment";
+import { PurchaseHistoryModel } from "../../../Models/Account/AccountBilling";
+import { useTranslation } from "react-i18next";
+import { TablePagination } from '../../../components/managment/index'
+import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
+import { MdOutlineReceiptLong } from "react-icons/md";
+
+const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, onInvoiceSelection = null }: any) => {
+  const { windowSize, rowsPerPage } = useSelector((state: StateType) => state.core)
+
+  const [allSelected, setAllSelected] = useState<boolean>(true);
+
+  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
+  const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
+  const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
+  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
+  const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
+  const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
+
+  const [page, setPage] = useState<number>(1);
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  const [invoicesForPayment, setInvoicesForPayment] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (data && data?.length > 0) {
+      const allIds = data?.map((item: any) => { return item.OperationID.toString() });
+      setInvoicesForPayment(allIds);
+      onInvoiceSelection && onInvoiceSelection(allIds)
+    }
+  }, [data]);
+
+  const handleSelectAll = () => {
+    const isAllSelected = !allSelected;
+    if (isAllSelected) {
+      const allOperationsIds = data?.map((i: any) => { return i?.OperationID?.toString() });
+      setInvoicesForPayment(allOperationsIds);
+      onInvoiceSelection(allOperationsIds);
+    } else {
+      const mandateInvoices = data?.map((i: any) => { return moment().diff(i?.OperationDate, 'months') > 3 ? i?.OperationID?.toString() : null });
+      setInvoicesForPayment(mandateInvoices);
+      onInvoiceSelection(mandateInvoices);
+    }
+
+    setAllSelected(isAllSelected);
+  }
+
+  const renderTableHead = () => {
+    return (
+      <TableHead>
+        <TableRow classes={rowStyle}>
+          {!isPaid && <TableCell classes={cellStyle} className={classes.flex1} align='center'>
+            {invoicesForPayment?.length > 0 && <FormControlLabel
+              style={{ marginInlineEnd: 0, justifyContent: 'center', alignItems: 'flex-start' }}
+              control={
+                <Checkbox
+                  style={{ alignSelf: 'flex-start', padding: 0, paddingInlineEnd: 10 }}
+                  title={t("common.SelectAll")}
+                  color="secondary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleSelectAll()}
+                  checked={allSelected}
+                />
+              }
+              label={<Typography style={{ fontSize: 18, fontWeight: 700 }}>{t('billing.selectForPay')}</Typography>}
+            />
+            }
+          </TableCell>}
+          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.productDescription")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("billing.purchaseDate")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{isPaid ? t("billing.paid") : t("billing.forPayment")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("billing.includingVat")}</TableCell>
+          {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.invoiceType")}</TableCell>}
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.invoice")}</TableCell>
+          {isPaid && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("billing.receipt")}</TableCell>}
+        </TableRow>
+      </TableHead>
+    )
+  }
+  const renderTableBody = () => {
+    let rowData = data;
+    if (rowData?.length > 0) {
+      rowData = rowData.slice((page - 1) * rowsPerPage, parseInt(((page - 1) * rowsPerPage).toString()) + parseInt(rowsPerPage.toString()))
+      return (
+        <Box className='tableBodyContainer'>
+          <TableBody>
+            {rowData
+              .map(SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? renderPhoneRow : renderRow)}
+          </TableBody>
+        </Box>
+      )
+    }
+    return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+      <Typography>{t("common.NoDataTryFilter")}</Typography>
+    </Box>
+  }
+
+  const convertInvoiceType = (value: string) => {
+    switch (value?.trim()) {
+      case "cumulative": {
+        return t('billing.taxInvoice')
+      }
+      case "cash": { return t('billing.cash') }
+      case "none": { return t('billing.personalyCharge') }
+    }
+  }
+
+  const handleSelectedInvoices = (operationId: string) => {
+    const found = invoicesForPayment.filter((ifp: string) => { return ifp === operationId });
+    const mandateInvoices = data?.filter((i: any) => { return moment().diff(i?.OperationDate, 'months') > 3 && i?.OperationID?.toString() })
+      ?.map((e: PurchaseHistoryModel) => e.OperationID.toString());
+    if (found?.length > 0) {
+      const filtered = invoicesForPayment.filter((ifp: string) => { return ifp !== operationId });
+
+      setInvoicesForPayment([...mandateInvoices, ...filtered]);
+      onInvoiceSelection([...mandateInvoices, ...filtered]);
+      setAllSelected(false);
+    }
+    else {
+      const finalSelection = [...invoicesForPayment, operationId]?.reduce((a: any, b: any) => {
+        if (b && a && a.indexOf(b) < 0) a.push(b);
+        return a;
+      }, []);
+      setInvoicesForPayment(finalSelection);
+      onInvoiceSelection(finalSelection)
+      setAllSelected(finalSelection?.length === data?.length);
+    }
+  }
+
+  const renderRow = (row: PurchaseHistoryModel) => {
+    const {
+      InvoiceID,
+      OperationID,
+      ProdctDesciption,
+      OperationDate,
+      AmountToPay,
+      AmountWithVat,
+      InvoiceRecieptName,
+      InvoiceURL,
+      RecieptURL,
+      ReceiptID
+    } = row;
+    const expiredMonths = moment().diff(OperationDate, 'months');
+
+    return (
+      <TableRow
+        key={OperationID}
+        classes={rowStyle}
+      >
+        {!isPaid && <TableCell
+          classes={cellBodyStyle}
+          align='center'
+          className={clsx(classes.flex1)}>
+          <Checkbox
+            disabled={expiredMonths >= 3}
+            value={OperationID}
+            checked={invoicesForPayment?.indexOf(OperationID?.toString()) > -1 || expiredMonths >= 3}
+            onChange={(e: any) => handleSelectedInvoices(e.target.value)} />
+        </TableCell>}
+        <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex2}>
+          {ProdctDesciption}
+        </TableCell>
+        <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex2}>
+          {moment(OperationDate).format('DD/MM/yyyy')}
+        </TableCell>
+        <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {AmountToPay?.toFixed(2).toLocaleString()}
+        </TableCell>
+        <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          <Grid container direction={'row'} className={classes.justifyEvenly} style={{ flexWrap: 'initial' }}>
+            {AmountWithVat?.toFixed(2)?.toLocaleString()}
+          </Grid>
+        </TableCell>
+        {isPaid && <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {convertInvoiceType(InvoiceRecieptName)}
+        </TableCell>}
+        <TableCell
+          classes={cellBodyStyle}
+          align='center'
+          className={classes.flex1}>
+          <Link href={InvoiceURL} target='_blank' style={{ textDecoration: 'underline' }}>
+            {InvoiceID}
+          </Link>
+        </TableCell>
+        {isPaid && <TableCell
+          classes={noBorderCellStyle}
+          align='center'
+          className={clsx(classes.flex1)}>
+          <Link href={RecieptURL} target='_blank' style={{ textDecoration: 'underline' }}>
+            <MdOutlineReceiptLong className={clsx(classes.font20, classes.sendIconText, (!ReceiptID || ReceiptID <= 0) && classes.disabled)} />
+          </Link>
+        </TableCell>}
+      </TableRow>
+    )
+  }
+
+  const renderPhoneRow = (row: PurchaseHistoryModel) => {
+    const {
+      InvoiceID,
+      CreditInvoiceID,
+      OperationID,
+      ProdctDesciption,
+      NumberOfProducts,
+      OperationDate,
+      AmountToPay,
+      AmountWithVat,
+    } = row
+    return (
+      <TableRow
+        key={OperationID}
+        component='div'
+        classes={rowStyle}>
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
+          <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
+            {ProdctDesciption}
+          </Grid>
+          <Grid item xs={3}>
+            <Grid container spacing={2}>
+              <Grid item>
+                {NumberOfProducts}
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={3}>
+            {moment(OperationDate).format('0:dd/MM/yyyy')}
+          </Grid>
+          <Grid item xs={3}>
+            {AmountToPay}
+          </Grid>
+          <Grid item xs={3}>
+            {AmountWithVat}
+          </Grid>
+          <Grid item xs={3}>
+            {InvoiceID}
+          </Grid>
+          <Grid item xs={3}>
+            {CreditInvoiceID}
+          </Grid>
+        </TableCell>
+      </TableRow >
+    )
+  }
+
+  const renderTable = () => {
+    return (
+      <TableContainer className={classes.tableStyle}>
+        <Table className={classes.tableContainer}>
+          {SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && renderTableHead()}
+          {renderTableBody()}
+        </Table>
+      </TableContainer>
+    )
+  }
+
+  const handleRowsPerPageChange = (val: any) => {
+    dispatch(setRowsPerPage(val))
+  }
+  const renderTablePagination = () => {
+    return (<TablePagination
+      classes={classes}
+      rows={data?.length}
+      rowsPerPage={rowsPerPage}
+      onRowsPerPageChange={handleRowsPerPageChange}
+      rowsPerPageOptions={rowsOptions}
+      page={page}
+      onPageChange={setPage}
+    />
+    )
+  }
+
+
+  return <Box style={{ position: 'relative', width: '100%' }}>
+    <Loader isOpen={showLoader} showBackdrop={false} />
+    {data?.length > 0 ? renderTable() :
+      (
+        <Box className={clsx(classes.p10, classes.mt15, classes.mb15, classes.colorBlue)}>
+          <Grid container spacing={2} className={clsx(classes.flexJustifyCenter, classes.alignCenter, classes.textCenter, classes.pr25, classes.pe25)} style={{ minHeight: 70 }}>
+            {t('common.NoDataTryFilter')}
+          </Grid>
+        </Box>
+      )
+    }
+    <>{renderTablePagination()}</>
+
+  </Box>
+}
+
+export default PurchaseTableTemplate;

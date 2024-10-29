@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { MdDeleteForever } from 'react-icons/md';
 
-const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, onCancel, windowSize, handleDeleteGroup }) => {
+const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, onCancel, windowSize, handleDeleteGroup, title = null, text = null }) => {
 
     const { t } = useTranslation();
 
@@ -15,7 +15,7 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, onCancel, window
         <BaseDialog
             classes={classes}
             open={isOpen}
-            title={t("group.delete")}
+            title={title || t("group.delete")}
 
             icon={<MdDeleteForever />}
             showDivider={false}
@@ -27,7 +27,7 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, onCancel, window
         >
             <Box>
                 <Typography variant="subtitle1" className={classes.textCenter}>
-                    {t("group.deleteConfirm")}
+                    {text || t("group.deleteConfirm")}
                 </Typography>
             </Box>
         </BaseDialog>
