@@ -108,7 +108,18 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       initExtraDataField(extraData, t).then((exData) => {
         setPulseemMergeData(exData);
         initClientForm(ed, t, isRTL).then((res) => {
-          setClientForm(res);
+          setClientForm({
+            ...res,
+            labelsOptions: {
+              align: isRTL ? "right" : "left",
+            },
+            buttonsOptions: {
+              align: isRTL ? "right" : "left",
+            },
+            blockOptions: {
+              align: isRTL ? "right" : "left",
+            }
+          },);
         })
       })
     });
