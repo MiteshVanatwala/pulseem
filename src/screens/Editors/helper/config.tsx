@@ -156,6 +156,15 @@ export const BeeConfig = (Options: ConfigOptions) => {
           "min-width": "100px",
           "text-align": "right"
         }
+      },
+      labelsOptions: {
+        align: IsRTL ? "right" : "left",
+      },
+      buttonsOptions: {
+        align: IsRTL ? "right" : "left",
+      },
+      blockOptions: {
+        align: IsRTL ? "right" : "left",
       }
     },
     defaultModulesOrder: [
