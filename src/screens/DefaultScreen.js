@@ -10,10 +10,11 @@ import clsx from 'clsx';
 import Illustration_BG_BL from '../assets/images/Illustration_BG_BL';
 import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 import DomainVerification from '../Shared/Dialogs/DomainVerification';
+import { sitePrefix } from '../config';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
   const { t } = useTranslation();
-  const { isAdmin, isAllowSwitchAccount, isRTL } = useSelector(state => state.core)
+  const { isAdmin, isAllowSwitchAccount, isRTL, isDebtAccount } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
   const { accountSettings } = useSelector(state => state.common);
@@ -61,6 +62,9 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         document.body.removeChild(liveChat);
       }
     }
+    if (isDebtAccount === true && window.location.href.toLowerCase().indexOf('billingsettings') <= -1) {
+      window.location.href = `${sitePrefix}BillingSettings?p=2`;
+    }
   }, [])
 
   return (
@@ -68,11 +72,11 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <TopAppBar
+      {(!isDebtAccount || isDebtAccount === false) && <TopAppBar
         showAppBar={showAppBar}
         classes={classes}
         currentPage={currentPage}
-      />
+      />}
       <Container
         maxWidth='xl'
         className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null, customStyle)}

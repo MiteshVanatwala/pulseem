@@ -16,6 +16,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ArrowDropDownCircleOutlined } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "../../../components/Loader/Loader";
+import { rowsOptions } from "../../../helpers/Constants";
 
 const AffiliateProgram = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -39,7 +40,6 @@ const AffiliateProgram = ({ classes }: any) => {
   const [page, setPage] = useState(1);
   const [copyStatus, setCopyStatus] = useState<boolean>(false);
   const [showTimeFrame, setShowTimeFrame] = useState<boolean>(false);
-  const rowsOptions = [6, 10, 20, 50];
   const timeFrameOptions = [eTimeFrame.ALL_TIME, eTimeFrame.LAST_MONTH, eTimeFrame.LAST_QUARTER];
   const anchorRef = React.useRef<HTMLDivElement>(null);
 
@@ -167,7 +167,7 @@ const AffiliateProgram = ({ classes }: any) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? searchResults.length : affiliateDetails?.Data?.lengh}
+        rows={isSearching ? searchResults.length : affiliateDetails?.Data?.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}

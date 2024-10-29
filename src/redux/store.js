@@ -28,6 +28,7 @@ import productSlice from './reducers/productSlice';
 import ExtraFieldsSlice from './reducers/ExtraFieldsSlice';
 import AffiliateSlice from './reducers/AffiliateSlice';
 import SubAccountSlice from './reducers/SubAccountSlice';
+import BillingSlice from './reducers/BillingSlice';
 
 export default configureStore({
   reducer: {
@@ -59,6 +60,7 @@ export default configureStore({
     product: productSlice,
     extraFields: ExtraFieldsSlice,
     affiliates: AffiliateSlice,
-    subAccount: SubAccountSlice
+    subAccount: SubAccountSlice,
+    billing: BillingSlice
   },
 });

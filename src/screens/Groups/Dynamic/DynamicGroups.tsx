@@ -40,7 +40,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
-import { ClientStatus, DateFormats } from '../../../helpers/Constants';
+import { ClientStatus, DateFormats, rowsOptions } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { Client } from '../../../Models/Clients/Client';
@@ -63,7 +63,6 @@ const DynamicGroups = ({ classes }: any) => {
     const { accountFeatures } = useSelector((state: any) => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state: any) => state.group);
     const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector((state: any) => state.core)
-    const rowsOptions = [6, 10, 20, 50];
     const [selectedGroups, setSelectedGroups] = useState<any>([]);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot) };

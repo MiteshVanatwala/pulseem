@@ -120,7 +120,7 @@
 	},
 	"billingSettings": {
 		"title": "Billing settings",
-		"titleBillingInfo": "Billing Information",
+		"pageTitle": "Billing Settings And Payment Information",
 		"fields": {
 			"compRegNumber": "Company register number",
 			"invoiceEmail": "Email for invoices",
@@ -139,7 +139,10 @@
 			"invalidId": "Invalid ID number"
 		},
 		"btnUpdate": "Update billing",
-		"btnAddCard": "Add credit card"
+		"btnAddCard": "Add credit card",
+		"lastPurchases": "Last Purchases",
+		"openInvoices": "Open Invoices",
+		"editCard": "Edit Credit Card"
 	},
 	"changePassword": {
 		"title": "Change Password",

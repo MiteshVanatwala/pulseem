@@ -744,7 +744,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   subTitle: {
     margin: "0 10px !important",
-    color: "#157eaf",
+    // color: "#157eaf",
+    color: '#FF0054',
     fontSize: 30,
   },
   packageBoxTitle: {
@@ -1072,8 +1073,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderColor: '#FF3343',
     background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
     color: '#fff',
+    border: '2px solid #F65026',
     '&:hover': {
-      background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+      // background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+      background: '#fff',
+      // maxWidth: 300,
+      minHeight: 34,
+      color: '#000',
+      '& path': {
+        stroke: 'inherit'
+      },
     },
   },
   redButtonLink: {
@@ -2902,8 +2911,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           paddingLeft: 15,
           paddingRight: 15,
           paddingBottom: 10,
-          // paddingLeft: isRTL ? 0 : 15,
-          // paddingRight: isRTL ? 15 : 0,
           [theme.breakpoints.down("xs")]: {
             paddingLeft: 0,
             paddingRight: 0,
@@ -2918,8 +2925,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             position: 'absolute',
             right: isRTL ? 'auto' : 85,
             left: isRTL ? 85 : 'auto',
-            // right: isRTL ? 'auto' : 86.44,
-            // left: isRTL ? 86.44 : 'auto',
             top: 49.17,
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
           },
@@ -2928,8 +2933,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             top: 121.3,
             right: isRTL ? 'auto' : 90,
             left: isRTL ? 90 : 'auto',
-            // right: isRTL ? 'auto' : 93.14,
-            // left: isRTL ? 93.14 : 'auto',
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
           },
           '& .subHeading': {
@@ -4158,6 +4161,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: 5,
     '& .MuiSelect-select': {
       padding: '5px 7px !important',
+      display: 'flex !important',
+      justifyContent: 'flex-end'
     },
     '& img': {
       height: 20,
@@ -4220,5 +4225,26 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   right15: {
     right: 15,
     left: 'auto'
+  },
+  accordion: {
+    '& .MuiAccordionSummary-root': {
+      margin: '20px 0 0 0',
+      padding: 0,
+      width: '100%'
+    },
+    '& .MuiAccordionSummary-content': {
+      width: '100%',
+      margin: '0 !important',
+      padding: 0,
+    }
+  },
+  btnActive: {
+    color: "#fff",
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)'
+  },
+  MuiAccordionroot: {
+    "&:before": {
+      backgroundColor: 'transparent'
+    }
   }
 });
