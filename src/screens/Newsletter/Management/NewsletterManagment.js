@@ -1048,6 +1048,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         isOpen={!!duplicateDialog?.id}
         duplicateOptions={[]}
         handleClose={async (selectedOptions) => {
+          setLoader(true);
           setDuplicateDialog({});
           if (selectedOptions !== undefined) {
             clearSearch()
@@ -1055,6 +1056,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             setPage(1)
             await dispatch(duplicteCampaign({ CampaignID: duplicateDialog?.id, CloneOptions: selectedOptions }))
             getData()
+            setLoader(false);
           }
         }}
         campaignName={duplicateDialog?.name}
