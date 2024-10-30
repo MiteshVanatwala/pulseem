@@ -308,8 +308,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       config.specialLinks = specialLinksFiles;
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
-      // config.defaultForm
-      // console.log(config.defaultForm);
+
       if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
         config.workspace.type = 'mixed';
       }
@@ -372,8 +371,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           onAutoSavePage(false);
         }, 3000);
       }
-
-      console.log('2', config);
     })
   }
   useEffect(() => {
@@ -1157,8 +1154,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     }) as any;
   }
   const config = getConfig();
-
-  console.log(config);
 
   return (
     <DefaultScreen
