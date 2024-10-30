@@ -108,63 +108,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
           target: "_self",
           dir: IsRTL ? 'rtl' : 'ltr'
         },
-      },
-      style: {
-        "buttons": {
-          "backgroundColor": "#fc7318",
-          "border-bottom": "0px solid transparent",
-          "border-left": "0px solid transparent",
-          "border-radius": "4px",
-          "border-right": "0px solid transparent",
-          "border-top": "0px solid transparent",
-          "color": "#ffffff",
-          "outer": {
-            "flexGrow": 1,
-            "display": "flex",
-            "padding-buttom": "0px",
-            "padding-left": "0px",
-            "padding-right": "0px",
-            "padding-top": "0px"
-          },
-          "padding-bottom": "11px",
-          "padding-left": "20px",
-          "padding-right": "20px",
-          "padding-top": "11px",
-          "text-align": "center",
-          "width": "50%"
-        },
-        "fields": {
-          "backgroundColor": "#ffffff",
-          "border-bottom": "1px solid #FC7318",
-          "border-left": "1px solid #FC7318",
-          "border-radius": "6px",
-          "border-right": "1px solid #FC7318",
-          "border-top": "1px solid #FC7318",
-          "color": "#000000",
-          "outlineColor": "#953ae0",
-          "padding-bottom": "5px",
-          "padding-left": "5px",
-          "padding-right": "5px",
-          "padding-top": "5px"
-        },
-        "labels": {
-          "color": "#000000",
-          "font-style": "",
-          "font-weight": "",
-          "label-position": "side",
-          "line-height": "200%",
-          "min-width": "100px",
-          "text-align": "right"
-        }
-      },
-      labelsOptions: {
-        align: IsRTL ? "right" : "left",
-      },
-      buttonsOptions: {
-        align: IsRTL ? "right" : "left",
-      },
-      blockOptions: {
-        align: IsRTL ? "right" : "left",
       }
     },
     defaultModulesOrder: [
@@ -379,6 +322,20 @@ export const DefaultContent = (IsRTL: Boolean) => {
           direction: IsRTL ? "rtl" : "ltr",
         },
       },
+      form: {
+        labelsOptions: {
+          align: "right"
+        },
+        fieldsOptions: {
+          align: "right"
+        },
+        buttonsOptions: {
+          align: "right"
+        },
+        blockOptions: {
+          align: "right"
+        }
+      }
     },
     defaultTemplate: {
       page: {

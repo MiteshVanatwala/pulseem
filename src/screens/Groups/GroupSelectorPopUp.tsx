@@ -110,6 +110,9 @@ const GroupSelectorPopUp = ({
                 id="groups-selection"
                 options={subAccountAllGroups}
                 disableCloseOnSelect
+                isOptionEqualToValue={(option, value) => {
+                    return option?.GroupID === value.GroupID;
+                }}
                 value={subAccountAllGroups?.reduce((prevVal: any, newVal: any) => {
                     if (newSelection.indexOf(newVal.GroupID) !== -1) {
                         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]

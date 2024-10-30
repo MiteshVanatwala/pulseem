@@ -372,6 +372,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           onAutoSavePage(false);
         }, 3000);
       }
+
+      console.log('2', config);
     })
   }
   useEffect(() => {
@@ -1155,6 +1157,9 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     }) as any;
   }
   const config = getConfig();
+
+  console.log(config);
+
   return (
     <DefaultScreen
       showAppBar={false}
