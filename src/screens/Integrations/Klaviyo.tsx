@@ -418,108 +418,108 @@ const Klaviyo = ({ classes }: any) => {
         )
       }
       {
-        // isAuthenticated && (
-        <Box className={"formContainer"}>
-          <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt20)}>
-            <Button
-              onClick={() => setShowResetDialog(true)}
-              variant='contained'
-              size='medium'
-              className={clsx(
-                classes.btn,
-                classes.btnRounded
-              )}
-              color="primary"
-            >
-              {t("integrations.disconnectStore")}
-            </Button>
-          </Grid>
-          <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
-            <Grid item xs={12}>
-              <Typography style={{ fontSize: "18px", color: "#000" }}>{RenderHtml(t("integrations.Klaviyo.notice"))}</Typography>
+        isAuthenticated && (
+          <Box className={"formContainer"}>
+            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt20)}>
+              <Button
+                onClick={() => setShowResetDialog(true)}
+                variant='contained'
+                size='medium'
+                className={clsx(
+                  classes.btn,
+                  classes.btnRounded
+                )}
+                color="primary"
+              >
+                {t("integrations.disconnectStore")}
+              </Button>
             </Grid>
-          </Grid>
-          <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
-            <Box className={clsx(windowSize !== 'xs' ? classes.justifyBetween : '')}>
-              <Box className={clsx(classes.pr10, classes.pe10)}>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    style={{ display: 'flex', alignItems: 'start' }}
-                    control={
-                      <PulseemSwitch
-                        id={'isDeleted'}
-                        switchType='ios'
-                        classes={classes}
-                        checked={settings?.IsDeleted}
-                        height={20}
-                        width={48}
-                        className={{ [classes.rtlSwitch]: isRTL }}
-                        onChange={(e: any) => {
-                          setSettings({ ...settings, IsDeleted: !!settings?.IsDeleted });
-                        }}
-                      />
-                    }
-                    label={<Box className={classes.radio}>
-                      <Typography style={{ fontSize: "18px" }}>
-                        <b>{t("integrations.Klaviyo.importListsAndRecipients")}</b>
-                      </Typography>
-                      <Typography style={{ maxWidth: 400, wordBreak: 'break-word' }}>
-                        {RenderHtml(t("integrations.Klaviyo.importListsAndRecipientsDesc"))}
-                      </Typography>
-                    </Box>}
-                  />
-                </Grid>
-              </Box>
-              <Box className={clsx(classes.pr10, classes.pe10)}>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    style={{ display: 'flex', alignItems: 'start' }}
-                    control={
-                      <PulseemSwitch
-                        id={'UnsubscribePreferenceTypeID'}
-                        switchType='ios'
-                        classes={classes}
-                        checked={settings?.UnsubscribePreferenceTypeID > 0}
-                        height={20}
-                        width={48}
-                        className={{ [classes.rtlSwitch]: isRTL }}
-                        onChange={(e: any) => {
-                          setSettings({ ...settings, UnsubscribePreferenceTypeID: e.target.value });
-                        }}
-                      />
-                    }
-                    label={<Box className={classes.radio}>
-                      <Typography style={{ fontSize: "18px" }}>
-                        <b>{t("integrations.Klaviyo.unusbscribe")}</b>
-                      </Typography>
-                      <Typography style={{ maxWidth: 400, wordBreak: 'break-word' }}>
-                        {RenderHtml(t("integrations.Klaviyo.unsubscribeDesc"))}
-                      </Typography>
-                    </Box>}
-                  />
-                </Grid>
-                <Grid item xs={12} className={classes.pt20}>
-                  asdasd
-                </Grid>
-              </Box>
-            </Box >
-          </Grid >
-          <Box className={clsx(classes.flex, classes.pbt15)}>
-            <Button
-              onClick={() => submitForm(false)}
-              variant='contained'
-              size='medium'
-              className={clsx(
-                classes.btn,
-                classes.btnRounded
-              )}
-              color="primary"
-            >
-              {t("common.save")}
-            </Button>
+            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
+              <Grid item xs={12}>
+                <Typography style={{ fontSize: "18px", color: "#000" }}>{RenderHtml(t("integrations.Klaviyo.notice"))}</Typography>
+              </Grid>
+            </Grid>
+            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
+              <Box className={clsx(windowSize !== 'xs' ? classes.justifyBetween : '')}>
+                <Box className={clsx(classes.pr10, classes.pe10)}>
+                  <Grid item xs={12}>
+                    <FormControlLabel
+                      style={{ display: 'flex', alignItems: 'start' }}
+                      control={
+                        <PulseemSwitch
+                          id={'isDeleted'}
+                          switchType='ios'
+                          classes={classes}
+                          checked={settings?.IsDeleted}
+                          height={20}
+                          width={48}
+                          className={{ [classes.rtlSwitch]: isRTL }}
+                          onChange={(e: any) => {
+                            setSettings({ ...settings, IsDeleted: !!settings?.IsDeleted });
+                          }}
+                        />
+                      }
+                      label={<Box className={classes.radio}>
+                        <Typography style={{ fontSize: "18px" }}>
+                          <b>{t("integrations.Klaviyo.importListsAndRecipients")}</b>
+                        </Typography>
+                        <Typography style={{ maxWidth: 400, wordBreak: 'break-word' }}>
+                          {RenderHtml(t("integrations.Klaviyo.importListsAndRecipientsDesc"))}
+                        </Typography>
+                      </Box>}
+                    />
+                  </Grid>
+                </Box>
+                <Box className={clsx(classes.pr10, classes.pe10)}>
+                  <Grid item xs={12}>
+                    <FormControlLabel
+                      style={{ display: 'flex', alignItems: 'start' }}
+                      control={
+                        <PulseemSwitch
+                          id={'UnsubscribePreferenceTypeID'}
+                          switchType='ios'
+                          classes={classes}
+                          checked={settings?.UnsubscribePreferenceTypeID > 0}
+                          height={20}
+                          width={48}
+                          className={{ [classes.rtlSwitch]: isRTL }}
+                          onChange={(e: any) => {
+                            setSettings({ ...settings, UnsubscribePreferenceTypeID: e.target.value });
+                          }}
+                        />
+                      }
+                      label={<Box className={classes.radio}>
+                        <Typography style={{ fontSize: "18px" }}>
+                          <b>{t("integrations.Klaviyo.unusbscribe")}</b>
+                        </Typography>
+                        <Typography style={{ maxWidth: 400, wordBreak: 'break-word' }}>
+                          {RenderHtml(t("integrations.Klaviyo.unsubscribeDesc"))}
+                        </Typography>
+                      </Box>}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.pt20}>
+                    asdasd
+                  </Grid>
+                </Box>
+              </Box >
+            </Grid >
+            <Box className={clsx(classes.flex, classes.pbt15)}>
+              <Button
+                onClick={() => submitForm(false)}
+                variant='contained'
+                size='medium'
+                className={clsx(
+                  classes.btn,
+                  classes.btnRounded
+                )}
+                color="primary"
+              >
+                {t("common.save")}
+              </Button>
+            </Box>
           </Box>
-        </Box >
-        // )
+        )
       }
       <Loader isOpen={showLoader} showBackdrop={true} />
       {renderResetDialog()}
