@@ -16,6 +16,8 @@ import { URL_HELPER } from "../../helpers/Links/ExternalLink";
 import { GoLinkExternal } from "react-icons/go";
 import PulseemSwitch from "../../components/Controlls/PulseemSwitch";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
+import { Select } from "@mui/material";
+import { IoIosArrowDown } from "react-icons/io";
 
 const Klaviyo = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -30,7 +32,6 @@ const Klaviyo = ({ classes }: any) => {
   const [errors, setErrors] = useState({
     ApiKey: '',
     authentication_message: '',
-    group_not_selected: '',
     unsubscribePreferenceTypeID: '',
     DaysBackwards: '',
   });
@@ -70,34 +71,21 @@ const Klaviyo = ({ classes }: any) => {
   }
 
   const submitForm = async (isManualProcessing: boolean = false) => {
-    let errorsObj = JSON.parse(JSON.stringify(errors));
-    let isValid = errorsObj?.length <= 0;
+    setErrors({
+      ...errors,
+      unsubscribePreferenceTypeID: ''
+    })
+    setShowLoader(true);
 
-    if (!isValid) {
-      errorsObj = { ...errorsObj, group_not_selected: t(`integrations.selectGroup`) };
-    }
-
-    if (isValid) {
-      setErrors({
-        ...errors,
-        group_not_selected: '',
-        DaysBackwards: '',
-        unsubscribePreferenceTypeID: ''
-      })
-      setShowLoader(true);
-
-      const request = {
-        IntegrationSource: LU_Plugin.Klaviyo,
-        JsonData: JSON.stringify({ ...settings })
-      } as IntegrationRequest;
-      const response = await dispatch(
-        isManualProcessing ? RunIntegrationService(request) : setIntegration(request)
-      );
-      handleSubmitFormResponse(response, isManualProcessing);
-      setShowLoader(false);
-    } else {
-      setErrors(errorsObj);
-    }
+    const request = {
+      IntegrationSource: LU_Plugin.Klaviyo,
+      JsonData: JSON.stringify({ ...settings })
+    } as IntegrationRequest;
+    const response = await dispatch(
+      isManualProcessing ? RunIntegrationService(request) : setIntegration(request)
+    );
+    handleSubmitFormResponse(response, isManualProcessing);
+    setShowLoader(false);
   }
 
   const handleSubmitFormResponse = (response: any, isManualProcessing: boolean = false) => {
@@ -270,7 +258,6 @@ const Klaviyo = ({ classes }: any) => {
       setErrors({
         ApiKey: '',
         authentication_message: '',
-        group_not_selected: '',
         DaysBackwards: '',
         unsubscribePreferenceTypeID: '',
       })
@@ -340,7 +327,7 @@ const Klaviyo = ({ classes }: any) => {
       {
         !isPageLoading && (
           <Box className={clsx(classes.containerBody)}>
-            <Button
+            {!isAuthenticated && <Button
               onClick={() => window.open(URL_HELPER.Integrations.Klaviyo.guide, '_blank')}
               variant='contained'
               size='medium'
@@ -354,7 +341,7 @@ const Klaviyo = ({ classes }: any) => {
               endIcon={<GoLinkExternal />}
             >
               {t(`integrations.Klaviyo.howToConnect`)}
-            </Button>
+            </Button>}
             <Box className={clsx(classes.dblock)}>
               <Typography className={clsx(classes.bold)}>
                 {t("integrations.apiKey")}
@@ -455,7 +442,7 @@ const Klaviyo = ({ classes }: any) => {
                           width={48}
                           className={{ [classes.rtlSwitch]: isRTL }}
                           onChange={(e: any) => {
-                            setSettings({ ...settings, IsDeleted: !!settings?.IsDeleted });
+                            setSettings({ ...settings, IsDeleted: !settings?.IsDeleted });
                           }}
                         />
                       }
@@ -484,7 +471,7 @@ const Klaviyo = ({ classes }: any) => {
                           width={48}
                           className={{ [classes.rtlSwitch]: isRTL }}
                           onChange={(e: any) => {
-                            setSettings({ ...settings, UnsubscribePreferenceTypeID: e.target.value });
+                            setSettings({ ...settings, UnsubscribePreferenceTypeID: settings?.UnsubscribePreferenceTypeID === 0 ? UnsubscribePreferenceType.Both : UnsubscribePreferenceType.None });
                           }}
                         />
                       }
@@ -499,7 +486,37 @@ const Klaviyo = ({ classes }: any) => {
                     />
                   </Grid>
                   <Grid item xs={12} className={classes.pt20}>
-                    asdasd
+                    <Typography>{t("SubAccount.type")}</Typography>
+                    <FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
+                      <Select
+                        native
+                        variant="standard"
+                        value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
+                        onChange={(event: any) => {
+                          setSettings({
+                            ...settings,
+                            UnsubscribePreferenceTypeID: event.target.value
+                          })
+                        }}
+                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                        MenuProps={{
+                          PaperProps: {
+                            style: {
+                              maxHeight: 300,
+                              direction: isRTL ? 'rtl' : 'ltr'
+                            },
+                          },
+                        }}
+                        style={{
+                          padding: 2
+                        }}
+                      >
+                        <option value={UnsubscribePreferenceType.None}>None</option>
+                        <option value={UnsubscribePreferenceType.Email}>Email</option>
+                        <option value={UnsubscribePreferenceType.Sms}>Sms</option>
+                        <option value={UnsubscribePreferenceType.Both}>Both</option>
+                      </Select>
+                    </FormControl>
                   </Grid>
                 </Box>
               </Box >
