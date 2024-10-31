@@ -268,8 +268,8 @@ const BillingSettingsPage = ({ classes }: any) => {
       title: t('billing.debtBalance'),
       open: showPopup,
       exitButton: false,
-      onClose: () => setShowPopup(false),
-      onCancel: () => setShowPopup(false),
+      onClose: (e: any) => { setShowPopup(false); focusOnDebt() },
+      onCancel: (e: any) => { setShowPopup(false); focusOnDebt() },
       disableBackdropClick: true,
       showDefaultButtons: false,
       renderButtons: () => {
