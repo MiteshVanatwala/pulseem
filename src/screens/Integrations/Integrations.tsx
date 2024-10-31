@@ -11,6 +11,7 @@ import ShopifyIcon from '../../assets/images/shopify.png';
 import WooCommerceIcon from '../../assets/images/woocommerce.png';
 import CashCowIcon from '../../assets/images/cashCow.png';
 import EShopIcon from '../../assets/images/e-shop.jpg';
+import KlaviyoIcon from '../../assets/images/KlaviyoIcon.png'
 import { Title } from "../../components/managment/Title";
 import IsraCardIcon from '../../assets/images/isracard.png';
 import WixIcon from '../../assets/images/wix.png';
@@ -19,6 +20,7 @@ import EcwidIcon from '../../assets/images/ecwid.png';
 import Ecwid from "./Ecwid";
 import EShop from "./EShop";
 import Wix from "./Wix";
+import Klaviyo from "./Klaviyo";
 
 
 const Integrations = ({ classes }: any) => {
@@ -107,6 +109,13 @@ const Integrations = ({ classes }: any) => {
             className={classes.iconTab}
             value='5'
           />
+          <Tab
+            label={t('integrations.Klaviyo.title')}
+            icon={<img src={KlaviyoIcon} alt={t('integrations.Klaviyo.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='10'
+          />
         </Tabs>
         <TabContext value={`${tabValue}`}>
           <TabPanel value='0' className={clsx(classes.pt0)}>
@@ -135,6 +144,9 @@ const Integrations = ({ classes }: any) => {
 
           <TabPanel value='6'>
             <Wix classes={classes} />
+          </TabPanel>
+          <TabPanel value='10'>
+            <Klaviyo classes={classes} />
           </TabPanel>
         </TabContext>
       </Box>

@@ -99,5 +99,18 @@
     "title": "Wix",
     "description": "In order to integrate your Wix store to your Pulseem account please read the following guide:",
     "connectStore": "CONNECT YOUR WIX STORE"
+  },
+  "Klaviyo": {
+    "title": "Klaviyo",
+    "apiKey": "API Key",
+    "connectStore": "Connect store",
+    "fetchStore": "Fetch store every",
+    "subTitle": "Insert your Klaviyo API key",
+    "howToConnect": "Learn how to connect you Klaviyo account",
+    "notice": "<b>Important!</b> Please change the Opt-In Process in Klaviyo “Consent” settings to “Single Opt-In”",
+    "importListsAndRecipients": "Import lists and recipients",
+    "importListsAndRecipientsDesc": "All your Klaviyo list and recipients will be imported as groups to your Pulseem account in the selected timeframe<br/>Recipients who are removed or unsubscribe from your Klaviyo account will also be removed from your Pulseem account",
+    "unusbscribe": "Sync Unsubscribes from Pulseem to Klaviyo",
+    "unsubscribeDesc": "Recipients who are removed or unsubscribe from your Pulseem account will also be removed from your Klaviyo account"
   }
 }
