@@ -465,6 +465,7 @@ const BillingSettingsPage = ({ classes }: any) => {
               }}>
               <AccordionSummary aria-controls="1-content" id="1-header">
                 <Title
+                  autoWidth={false}
                   isIcon={false}
                   classes={classes}
                   Element={
@@ -521,7 +522,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                 root: classes.MuiAccordionroot
               }}>
               <AccordionSummary aria-controls="2-content" id="2-header">
-                <Title isIcon={false} classes={classes}
+                <Title autoWidth={false} isIcon={false} classes={classes}
                   Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                     {openPanels.indexOf('2') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     <Typography
@@ -571,7 +572,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                 root: classes.MuiAccordionroot
               }}>
               <AccordionSummary aria-controls="3-content" id="3-header">
-                <Title isIcon={false} classes={classes}
+                <Title autoWidth={false} isIcon={false} classes={classes}
                   Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                     {openPanels.indexOf('3') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     <Typography
@@ -594,7 +595,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                 root: classes.MuiAccordionroot
               }}>
               <AccordionSummary aria-controls="4-content" id="4-header">
-                <Title isIcon={false} classes={classes}
+                <Title autoWidth={false} isIcon={false} classes={classes}
                   Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                     {openPanels.indexOf('4') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     <Typography

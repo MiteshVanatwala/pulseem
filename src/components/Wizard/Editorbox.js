@@ -131,14 +131,12 @@ const Editorbox = ({
     const [isPageLoaded, setIsPageLoaded] = useState(false);
     const [showRemovalLink, setShowRemovalLink] = useState(false);
     const [smsModel, setSmsModel] = useState({
-        SubAccountID: -1,
         CreditsPerSms: "1",
         FromNumber: campaignNumber,
         IsLinksStatistics: true,
         IsResponse: false,
         IsTest: true,
         IsTestCampaign: false,
-        AccountID: -1,
         Credits: "1",
         SmsCampaignID: -1,
         TotalRecipients: 1,
@@ -607,7 +605,7 @@ const Editorbox = ({
                                 </Button>
                                 {editmenuClick ? (
                                     <Box
-                                        className={classes.dropDiv} 
+                                        className={classes.dropDiv}
                                         style={{
                                             top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-120px" : "-170px") : null,
                                             right: isRTL ? 'auto' : 0,

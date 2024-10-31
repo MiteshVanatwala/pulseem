@@ -56,9 +56,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 	const [emailToVerify, setEmailToVerify] = useState<string>('');
 	const [cellphoneToVerify, setCellphoneToVerify] = useState<string>('');
 	const [settingRequest, setSettingRequest] = useState<AccountSettings>({
-		SubAccountId: -1,
 		LoginUserName: '',
-		AccountID: -1,
 		CompanyAdmin: false,
 		CompanyName: '',
 		ContactName: '',
@@ -120,13 +118,13 @@ const AccountSettingsEditor = ({ classes }: any) => {
 			setSelectedTier(WhatsappTierID);
 		}
 	}, [WhatsappTierID]);
-	
+
 	useEffect(() => {
 		setSettingRequest({
 			...settingRequest,
 			RevenueCurrencyId: showCurrencyReportCurrencyID
 		});
-	}, [ showCurrencyReportCurrencyID ]);
+	}, [showCurrencyReportCurrencyID]);
 
 	const handleUpdate = async (
 		updatedObject: AccountSettings,
@@ -155,7 +153,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 			finally {
 				handleResponses(response, updatedObject);
 				response = await dispatch(UpdateShowCurrencyReportCurrencyID({ CurrencyID: updatedObject.RevenueCurrencyId }));
-    		await dispatch(GetGlobalAccountPackagesDetails());
+				await dispatch(GetGlobalAccountPackagesDetails());
 				setShowLoader(false);
 			}
 		}

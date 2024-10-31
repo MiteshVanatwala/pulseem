@@ -585,7 +585,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
 
         let payload = {
-            SubAccountID: -1,
+            // SubAccountID: -1,
             GroupName: groupName,
             GroupIds: temp,
         };
