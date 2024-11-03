@@ -465,8 +465,6 @@ const Klaviyo = ({ classes }: any) => {
                             UnsubscribePreferenceTypeID: event.target.value
                           });
 
-                          // submitForm(false)
-
                           handleSave({
                             ...settings,
                             UnsubscribePreferenceTypeID: event.target.value
