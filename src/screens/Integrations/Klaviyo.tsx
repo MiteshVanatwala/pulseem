@@ -71,6 +71,24 @@ const Klaviyo = ({ classes }: any) => {
     setIsPageLoading(false);
   }
 
+  const handleSave = async (req: KlaviyoModel) => {
+    setShowLoader(true);
+
+    setSettings(req);
+
+    setErrors({
+      ...errors,
+      unsubscribePreferenceTypeID: ''
+    })
+
+    const request = {
+      IntegrationSource: LU_Plugin.Klaviyo,
+      JsonData: JSON.stringify({ ...req })
+    } as IntegrationRequest;
+    const response = await dispatch(setIntegration(request));
+    handleSubmitFormResponse(response);
+    setShowLoader(false);
+  }
   const submitForm = async (isManualProcessing: boolean = false) => {
     setErrors({
       ...errors,
@@ -85,28 +103,24 @@ const Klaviyo = ({ classes }: any) => {
     const response = await dispatch(
       isManualProcessing ? RunIntegrationService(request) : setIntegration(request)
     );
-    handleSubmitFormResponse(response, isManualProcessing);
+    handleSubmitFormResponse(response);
     setShowLoader(false);
   }
 
-  const handleSubmitFormResponse = (response: any, isManualProcessing: boolean = false) => {
+  const handleSubmitFormResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        if (isManualProcessing) {
-          setManualFetchDialog(true);
-        } else {
+        setMessages({
+          ...messages,
+          group_saved: t(`integrations.formSubmitResponses.201`),
+        });
+        setToastMessage({ severity: 'success', color: 'success', message: t(`integrations.formSubmitResponses.201`), showAnimtionCheck: false } as any);
+        setTimeout(() => {
           setMessages({
-            ...messages,
-            group_saved: t(`integrations.formSubmitResponses.201`),
+            ...errors,
+            group_saved: '',
           });
-          setToastMessage({ severity: 'success', color: 'success', message: t(`integrations.formSubmitResponses.201`), showAnimtionCheck: false } as any);
-          setTimeout(() => {
-            setMessages({
-              ...errors,
-              group_saved: '',
-            });
-          }, 4000);
-        }
+        }, 4000);
         break;
       }
       case 401: {
@@ -349,9 +363,9 @@ const Klaviyo = ({ classes }: any) => {
                 {t("integrations.apiKey")}
                 <label className={clsx(classes.ml10, classes.textRed)}>*</label>
               </Typography>
-              <Typography className={clsx(classes.mb5)}>
+              {!isAuthenticated && <Typography className={clsx(classes.mb5)}>
                 {t("integrations.Klaviyo.subTitle")}
-              </Typography>
+              </Typography>}
               <TextField
                 size="small"
                 name="DefaultFromName"
@@ -409,20 +423,6 @@ const Klaviyo = ({ classes }: any) => {
       {
         isAuthenticated && (
           <Box className={"formContainer"}>
-            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt20)}>
-              <Button
-                onClick={() => setShowResetDialog(true)}
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.btn,
-                  classes.btnRounded
-                )}
-                color="primary"
-              >
-                {t("integrations.disconnectStore")}
-              </Button>
-            </Grid>
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
               <Grid item xs={12}>
                 <Typography style={{ fontSize: "18px", color: "#000" }}>{RenderHtml(t("integrations.Klaviyo.notice"))}</Typography>
@@ -444,7 +444,7 @@ const Klaviyo = ({ classes }: any) => {
                           width={48}
                           className={{ [classes.rtlSwitch]: isRTL }}
                           onChange={(e: any) => {
-                            setSettings({ ...settings, isSyncRecipients: !settings?.isSyncRecipients });
+                            handleSave({ ...settings, isSyncRecipients: !settings?.isSyncRecipients })
                           }}
                         />
                       }
@@ -473,7 +473,7 @@ const Klaviyo = ({ classes }: any) => {
                           width={48}
                           className={{ [classes.rtlSwitch]: isRTL }}
                           onChange={(e: any) => {
-                            setSettings({ ...settings, UnsubscribePreferenceTypeID: settings?.UnsubscribePreferenceTypeID === 0 ? UnsubscribePreferenceType.Both : UnsubscribePreferenceType.None });
+                            handleSave({ ...settings, UnsubscribePreferenceTypeID: settings?.UnsubscribePreferenceTypeID === 0 ? UnsubscribePreferenceType.Both : UnsubscribePreferenceType.None });
                           }}
                         />
                       }
@@ -488,7 +488,7 @@ const Klaviyo = ({ classes }: any) => {
                     />
                   </Grid>
                   <Grid item xs={12} className={classes.pt20}>
-                    <Typography>{t("SubAccount.type")}</Typography>
+                    <Typography className={clsx(classes.bold, classes.font18)}>{t("common.remove")}</Typography>
                     <FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
                       <Select
                         native
@@ -498,7 +498,14 @@ const Klaviyo = ({ classes }: any) => {
                           setSettings({
                             ...settings,
                             UnsubscribePreferenceTypeID: event.target.value
-                          })
+                          });
+
+                          // submitForm(false)
+
+                          handleSave({
+                            ...settings,
+                            UnsubscribePreferenceTypeID: event.target.value
+                          });
                         }}
                         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
                         MenuProps={{
@@ -523,7 +530,7 @@ const Klaviyo = ({ classes }: any) => {
                 </Box>
               </Box >
             </Grid >
-            <Box className={clsx(classes.flex, classes.pbt15)}>
+            {/* <Box className={clsx(classes.flex, classes.pbt15)}>
               <Button
                 onClick={() => submitForm(false)}
                 variant='contained'
@@ -536,10 +543,26 @@ const Klaviyo = ({ classes }: any) => {
               >
                 {t("common.save")}
               </Button>
-            </Box>
+            </Box> */}
           </Box>
         )
       }
+      {isAuthenticated && <Box className={"formContainer"}>
+        <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt20)}>
+          <Button
+            onClick={() => setShowResetDialog(true)}
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.btn,
+              classes.btnRounded
+            )}
+            color="primary"
+          >
+            {t("integrations.disconnectStore")}
+          </Button>
+        </Grid>
+      </Box>}
       <Loader isOpen={showLoader} showBackdrop={true} />
       {renderResetDialog()}
       {renderManualFetchDialog()}
