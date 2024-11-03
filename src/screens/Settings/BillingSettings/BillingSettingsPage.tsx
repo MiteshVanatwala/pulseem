@@ -68,6 +68,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [hasDebt, setHasDebt] = useState<boolean>(false);
   const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
   const [tranzilaError, setTranzilaError] = useState<any>(null);
+  const [showEditCard, setShowEditCard] = useState<boolean>(false);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -101,6 +102,9 @@ const BillingSettingsPage = ({ classes }: any) => {
 
         if (expiredOpertaionIds?.length > 0) {
           setHasDebt(true);
+        }
+        else {
+          setShowEditCard(true);
         }
       }
     }
@@ -264,8 +268,8 @@ const BillingSettingsPage = ({ classes }: any) => {
       title: t('billing.debtBalance'),
       open: showPopup,
       exitButton: false,
-      onClose: () => setShowPopup(false),
-      onCancel: () => setShowPopup(false),
+      onClose: (e: any) => { setShowPopup(false); focusOnDebt() },
+      onCancel: (e: any) => { setShowPopup(false); focusOnDebt() },
       disableBackdropClick: true,
       showDefaultButtons: false,
       renderButtons: () => {
@@ -497,12 +501,12 @@ const BillingSettingsPage = ({ classes }: any) => {
                               onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
                               className={clsx(classes.font14)}
                               style={{ textDecoration: 'underline' }}
-                            >{t("settings.billingSettings.editCard")}</Link> |
-                            <Link
-                              onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); setConfirmDialog(true) }}
-                              className={clsx(classes.font14)}
-                              style={{ textDecoration: 'underline' }}
-                            >{t("common.remove")}</Link>
+                            >{t("settings.billingSettings.editCard")}</Link>{showEditCard && <> |
+                              <Link
+                                onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); setConfirmDialog(true) }}
+                                className={clsx(classes.font14)}
+                                style={{ textDecoration: 'underline' }}
+                              >{t("common.remove")}</Link></>}
                           </Box>
                         </>)}
                       </>}
