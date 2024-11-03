@@ -89,23 +89,6 @@ const Klaviyo = ({ classes }: any) => {
     handleSubmitFormResponse(response);
     setShowLoader(false);
   }
-  const submitForm = async (isManualProcessing: boolean = false) => {
-    setErrors({
-      ...errors,
-      unsubscribePreferenceTypeID: ''
-    })
-    setShowLoader(true);
-
-    const request = {
-      IntegrationSource: LU_Plugin.Klaviyo,
-      JsonData: JSON.stringify({ ...settings })
-    } as IntegrationRequest;
-    const response = await dispatch(
-      isManualProcessing ? RunIntegrationService(request) : setIntegration(request)
-    );
-    handleSubmitFormResponse(response);
-    setShowLoader(false);
-  }
 
   const handleSubmitFormResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
@@ -242,24 +225,6 @@ const Klaviyo = ({ classes }: any) => {
         <Box className={clsx(classes.bodyTextDialog, classes.pb25)}>
           <Typography>
             {t("integrations.resetConfirmation")}
-          </Typography>
-        </Box>
-      </BaseDialog>
-    )
-  }
-
-  const renderManualFetchDialog = () => {
-    return (
-      <BaseDialog
-        classes={classes}
-        open={showManualFetchDialog}
-        onClose={() => setManualFetchDialog(false)}
-        onConfirm={() => setManualFetchDialog(false)}
-        title={t('common.SentTo')}
-      >
-        <Box className={clsx(classes.bodyTextDialog, classes.pb25)}>
-          <Typography>
-            {t("integrations.Klaviyo.fetchDataManualSuccess")}
           </Typography>
         </Box>
       </BaseDialog>
@@ -530,20 +495,6 @@ const Klaviyo = ({ classes }: any) => {
                 </Box>
               </Box >
             </Grid >
-            {/* <Box className={clsx(classes.flex, classes.pbt15)}>
-              <Button
-                onClick={() => submitForm(false)}
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.btn,
-                  classes.btnRounded
-                )}
-                color="primary"
-              >
-                {t("common.save")}
-              </Button>
-            </Box> */}
           </Box>
         )
       }
@@ -565,7 +516,6 @@ const Klaviyo = ({ classes }: any) => {
       </Box>}
       <Loader isOpen={showLoader} showBackdrop={true} />
       {renderResetDialog()}
-      {renderManualFetchDialog()}
     </>
   );
 };
