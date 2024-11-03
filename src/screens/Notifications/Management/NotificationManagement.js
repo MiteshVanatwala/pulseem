@@ -81,20 +81,25 @@ const NotificationManagement = ({ classes }) => {
     }
   }
   useEffect(() => {
+    setLoader(true);
+    
     const handleApiKey = async () => {
-      if (!subAccountApiKey || subAccountApiKey === "") {
-        await dispatch(getSubAccountApiKey());
-      }
+      await dispatch(getSubAccountApiKey());
+      setLoader(false);
     }
     const getData = async () => {
       await dispatch(getNotificationData());
       setLoader(false);
     }
 
-    setLoader(true);
     handleScriptPath();
-    handleApiKey();
-    getData();
+
+    if (!subAccountApiKey || subAccountApiKey === "") {
+      handleApiKey();
+    }
+    else {
+      getData();
+    }
   }, [dispatch, subAccountApiKey]);
 
 
