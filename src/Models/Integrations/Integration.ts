@@ -54,6 +54,7 @@ export interface KlaviyoModel {
     IsDeleted: boolean;
     IntervalToRunService: string;
     UnsubscribePreferenceTypeID: UnsubscribePreferenceType;
+    isSyncRecipients?: boolean;
 }
 
 export enum UnsubscribePreferenceType {

@@ -43,7 +43,8 @@ const Klaviyo = ({ classes }: any) => {
     ApiKey: '',
     DaysBackwards: null,
     IsDeleted: false,
-    UnsubscribePreferenceTypeID: UnsubscribePreferenceType.None
+    UnsubscribePreferenceTypeID: UnsubscribePreferenceType.None,
+    isSyncRecipients: false
   } as KlaviyoModel);
   const [isAuthenticated, setAuthenticated] = useState(false);
 
@@ -189,7 +190,8 @@ const Klaviyo = ({ classes }: any) => {
           IntervalToRunService: '',
           UnsubscribePreferenceTypeID: 0,
           DaysBackwards: 1,
-          IsDeleted: false
+          IsDeleted: false,
+          isSyncRecipients: false
         });
         break;
       }
@@ -434,15 +436,15 @@ const Klaviyo = ({ classes }: any) => {
                       style={{ display: 'flex', alignItems: 'start' }}
                       control={
                         <PulseemSwitch
-                          id={'isDeleted'}
+                          id={'isSyncRecipients'}
                           switchType='ios'
                           classes={classes}
-                          checked={settings?.IsDeleted}
+                          checked={settings?.isSyncRecipients === true}
                           height={20}
                           width={48}
                           className={{ [classes.rtlSwitch]: isRTL }}
                           onChange={(e: any) => {
-                            setSettings({ ...settings, IsDeleted: !settings?.IsDeleted });
+                            setSettings({ ...settings, isSyncRecipients: !settings?.isSyncRecipients });
                           }}
                         />
                       }
@@ -511,10 +513,10 @@ const Klaviyo = ({ classes }: any) => {
                           padding: 2
                         }}
                       >
-                        <option value={UnsubscribePreferenceType.None}>None</option>
-                        <option value={UnsubscribePreferenceType.Email}>Email</option>
-                        <option value={UnsubscribePreferenceType.Sms}>Sms</option>
-                        <option value={UnsubscribePreferenceType.Both}>Both</option>
+                        <option value={UnsubscribePreferenceType.None}>{t('report.None')}</option>
+                        <option value={UnsubscribePreferenceType.Email}>{t('common.email')}</option>
+                        <option value={UnsubscribePreferenceType.Sms}>{t('common.SMS')}</option>
+                        <option value={UnsubscribePreferenceType.Both}>{t('common.both')}</option>
                       </Select>
                     </FormControl>
                   </Grid>
