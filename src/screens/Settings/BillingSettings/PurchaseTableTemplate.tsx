@@ -201,9 +201,9 @@ const PurchaseTableTemplate = ({ classes, data, showLoader, isPaid, onInvoiceSel
           classes={cellBodyStyle}
           align='center'
           className={classes.flex1}>
-          <Link href={InvoiceURL} target='_blank' style={{ textDecoration: 'underline' }}>
+          {InvoiceID > 0 ? (<Link href={InvoiceURL} target='_blank' style={{ textDecoration: 'underline' }}>
             {InvoiceID}
-          </Link>
+          </Link>) : <>{t('billing.creditCardPurchase')}</>}
         </TableCell>
         {isPaid && <TableCell
           classes={noBorderCellStyle}
