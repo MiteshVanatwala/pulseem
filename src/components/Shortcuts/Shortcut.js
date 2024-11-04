@@ -50,7 +50,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   }
 
   useEffect(() => {
-    if (!shortcuts || shortcuts.length === 0)
+    if (!shortcuts || shortcuts?.length === 0)
       initData();
 
   }, [])
@@ -92,7 +92,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     let categoryTitle = (selectedCategory[num] && categories[selectedCategory[num]].title) ?? '';
     const open = Boolean(anchorEl[num]);
 
-    if (shortcuts.length > 0) {
+    if (shortcuts?.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
         if (pageTitle === '' && categoryTitle === selectedShortcut.CategoryName) {
@@ -217,7 +217,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     }
     let data = {};
     data[num] = num === Object.keys(anchorEl) && anchorEl[num] ? null : refElement;
-    if (shortcuts.length > 0) {
+    if (shortcuts?.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
         if (pageTitle === '') {
@@ -312,7 +312,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
   const renderNewShortcutButtons = () => {
     let newShortcutButtons = [];
-    for (let index = shortcuts.length; index < 5; index++) {
+    for (let index = shortcuts?.length; index < 5; index++) {
       const innerRef = createRef();
       newShortcutButtons.push(
         <Box className={classes.shortcutBtnBox} key={`emptyShortcutBtn${index}`} ref={innerRef}>
@@ -331,7 +331,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
     return newShortcutButtons;
   }
-  if ((shortcuts.length > 0 && windowSize === 'xs') || windowSize !== 'xs') {
+  if ((shortcuts?.length > 0 && windowSize === 'xs') || windowSize !== 'xs') {
     return (
       <Box className={classes.shortcutBox}>
         <Box className={clsx(classes.dashBoxtitleSection, classes.shortcutTitle, classes.flex)}>
