@@ -290,7 +290,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 await dispatch(getEmailSendSettings(params?.id));
                 await dispatch(getGroupsBySubAccountId());
                 await dispatch(getTestGroups());
-                await dispatch(getCommonFeatures());
+                if (!accountSettings || !accountSettings?.SubAccountSettings) {
+                    await dispatch(getCommonFeatures());
+                }
                 resolve();
             } catch (error) {
                 reject(error)

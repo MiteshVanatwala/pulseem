@@ -193,7 +193,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
 export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const Redirect = useRedirect();
 
-  const { companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
+  const { windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
   const { accountSettings, accountFeatures, subAccount } = useSelector(state => state.common);
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
