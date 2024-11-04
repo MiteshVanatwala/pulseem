@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { PreviewTypes } from './Types';
 import { Direction, Structure } from '../../config/enum';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const Preview = ({
   classes,
@@ -79,7 +80,7 @@ const Preview = ({
         }
       >
         {isNameVisible && <div className={clsx(classes.nameStyle)}>{name}</div>}
-        {isDescriptionVisible && <div className={clsx(classes.bodyStyle)}>{description}</div>}
+        {isDescriptionVisible && <div className={clsx(classes.bodyStyle)}>{RenderHtml(description)}</div>}
         {isPriceVisible && <div className={clsx(classes.bodyStyle)}>{price}</div>}
         {eventType && <div className={clsx(classes.bodyStyle)}>{eventType}</div>}
         {renderCategory()}
