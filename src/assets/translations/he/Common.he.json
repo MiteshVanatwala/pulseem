@@ -846,5 +846,9 @@
   "scheduleSend": "תזמן שליחה",
   "opens": "נפתח",
   "clicks": "הקלקה",
-  "smsVc": "המרות קוליות"
+  "smsVc": "המרות קוליות",
+  "reconnect": "התחבר מחדש",
+  "errorCode": "קוד שגיאה",
+  "errorCodeSupport": "למידע נוסף או תמיכה<br/><a href=\"tel:035240290\">03-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com</a>",
+  "pleaseWait": "אנא המתן..."
 }

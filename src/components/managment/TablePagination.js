@@ -110,17 +110,17 @@ export const TablePagination = ({
         item
         className={clsx(classes.tablePadingtonGridItem)}
       >
-        {page > 1 &&
-          <IconButton
-            onClick={() => {
-              setTyping(false);
-              onPageChange(page - 1)
-            }}
-            size='small'
-            className={classes.tablePadingtonArrowOppisite}>
-            <MdArrowBackIos />
-          </IconButton>}
-        <Typography>
+        <IconButton
+          disabled={page <= 1}
+          onClick={() => {
+            setTyping(false);
+            onPageChange(page - 1)
+          }}
+          size='small'
+          className={classes.tablePadingtonArrowOppisite}>
+          <MdArrowBackIos />
+        </IconButton>
+        <Typography style={{ userSelect: 'none' }}>
           {t('common.page')}
         </Typography>
         <TextField
@@ -136,19 +136,19 @@ export const TablePagination = ({
           size='small'
           className={classes.tablePadingtonTextFeild}
         />
-        <Typography>
+        <Typography style={{ userSelect: 'none' }}>
           {t('common.outOf')} {pages === 0 ? 1 : pages}
         </Typography>
-        {page < pages &&
-          <IconButton
-            onClick={() => {
-              setTyping(false);
-              onPageChange(page + 1)
-            }}
-            size='small'
-            className={classes.tablePadingtonArrow}>
-            <MdArrowBackIos />
-          </IconButton>}
+        <IconButton
+          disabled={page >= pages}
+          onClick={() => {
+            setTyping(false);
+            onPageChange(page + 1)
+          }}
+          size='small'
+          className={classes.tablePadingtonArrow}>
+          <MdArrowBackIos />
+        </IconButton>
       </Grid>
     )
   }
