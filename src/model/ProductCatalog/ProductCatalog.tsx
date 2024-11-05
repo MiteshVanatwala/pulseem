@@ -458,7 +458,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       open={isOpen}
       classes={classes}
       disableBackdropClick={true}
-      title={t(isStaticOrDynamic === AddProductCatalogType.Dynamic ? "campaigns.setupDynamicProduct" : "campaigns.setupStaticProduct")}
+      title={t(isStaticOrDynamic === AddProductCatalogType.Dynamic ? "campaigns.setupStaticProduct" : "campaigns.setupStaticProduct")}
       showDefaultButtons={false}
       contentStyle={classes.noPadding}
       customContainerStyle={classes.callToAction}
