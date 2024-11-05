@@ -13,6 +13,7 @@ import { FlagIcon } from '../../assets/images/dashboard/index'
 import { CgCloseO } from 'react-icons/cg';
 import { sitePrefix } from '../../config';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
+import { Loader } from '../Loader/Loader';
 
 const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
@@ -28,6 +29,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const dispatch = useDispatch();
   const categories = { ...DASHBOARD_SHORTCUT };
   const Redirect = useRedirect();
+  const [showLoader, setShowLoader] = useState(true);
 
   if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf(PulseemFeatures.NOTIFICATION) > -1) {
     categories['appBar.notifications.title'] = {
@@ -45,17 +47,19 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     }
   }
 
-  const initData = () => {
-    dispatch(getShortcuts());
+  const initData = async () => {
+    setShowLoader(true)
+    await dispatch(getShortcuts());
+    setShowLoader(false)
   }
 
   useEffect(() => {
     if (!shortcuts || shortcuts?.length === 0)
       initData();
-
   }, [])
 
   const handlePageChange = useCallback((title, href, update, num, index) => {
+    setShowLoader(true)
     const data = {
       ID: update && num,
       CategoryName: categories[selectedCategory[num]].title,
@@ -72,6 +76,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
       dispatch(getShortcuts());
       setLoading({});
+      setShowLoader(false)
     })
   });
 
@@ -199,12 +204,16 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   }
 
   const deleteShortcut = async (event) => {
+    setShowLoader(true);
     event?.preventDefault();
     event?.stopPropagation();
     if (activeShortcut !== null) {
       const sid = activeShortcut.replace('short_', '');
       await dispatch(deleteShortcuts(sid));
       initData();
+    }
+    else {
+      setShowLoader(false)
     }
   }
 
@@ -339,6 +348,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           <Typography className={'title'}>{t('dashboard.myShortcuts')}</Typography>
         </Box>
         <Paper className={classes.shortcutPaper} ref={shortcutRef}>
+          <Loader isOpen={showLoader} showBackdrop={false} />
           <Typography align='center' className={clsx(classes.shortcutSubtitle)}>{t('dashboard.addQuickButtons')}</Typography>
           {shortcuts && shortcuts.map((item, index) => {
             return renderShortcutButton(item, index)
