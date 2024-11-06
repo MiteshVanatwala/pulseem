@@ -107,8 +107,8 @@ export const Dialog = (options: Options) => {
               size="small"
               onClick={options.OnConfirm}
               className={clsx(
-                options.Classes.dialogButton,
-                options.Classes.dialogConfirmButton
+                options.Classes.btn,
+                options.Classes.btnRounded
               )}
             >
               <>{t(options.ConfirmText)}</>
