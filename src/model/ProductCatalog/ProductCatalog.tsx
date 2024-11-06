@@ -6,25 +6,48 @@ import {
   Grid,
   RadioGroup,
   Radio,
-  FormControlLabel, MenuItem, Checkbox, Button, Input, FormControl
+  FormControlLabel, MenuItem, Checkbox, Button, Input, FormControl,
+  ButtonGroup,
+  TextField,
+  Typography
 } from '@material-ui/core'
 import clsx from 'clsx';
-import { range } from 'lodash';
+import { get, range } from 'lodash';
 import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulRow } from '../../screens/HtmlCampaign/helper/Template';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { ProductCatalogTypes } from './Types';
-import { Direction, EventTypes, Items, Structure } from '../../config/enum';
-import { useSelector } from 'react-redux';
+import { AddProductCatalogType, Direction, EventTypes, Items, ProductDetails, Structure } from '../../config/enum';
+import { useDispatch, useSelector } from 'react-redux';
 import { StateType } from '../../Models/StateTypes';
 import Select from '@mui/material/Select';
 import { IoIosArrowDown } from 'react-icons/io';
 import { DynamicProductGrid, NO_IMAGE_URL } from '../../helpers/Constants';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { GetProductsList } from '../../redux/reducers/productSlice';
+import { ProductDetailsInterface, StaticProductListInterface } from '../../Models/Newsletter/ProductCatalog';
+import { Autocomplete } from '@mui/material';
+import Toast from '../../components/Toast/Toast.component';
+
+const StaticProductInit: ProductDetailsInterface = {
+  CategoriesId: '',
+  CategoriesName: '',
+  Description: '',
+  ID: 0,
+  ImageURLs: NO_IMAGE_URL,
+  MaxPrice: ProductDetails.Price,
+  Name: ProductDetails.Name,
+  URL: '',
+  Error: '',
+};
 
 const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const { productList } = useSelector((state: StateType) => state.product)
   const [isSingleOrMultiple, setSingleOrMultiple] = useState(Items.Single);
+  const [selectedStaticProduct, setSelectedStaticProduct] = useState<number>(1);
+  const [staticProduct, setStaticProduct] = useState<StaticProductListInterface>({1: StaticProductInit});
   const [uptoProducts, setUptoProducts] = useState(1);
   const [isFilterByEventType, setFilterIsByEventType] = useState(true);
   const [isFilterIsByProductCategory, setFilterIsByProductCategory] = useState(true);
@@ -42,6 +65,8 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { productCategories } = useSelector((state: StateType) => state.product);
   const [direction, setDirection] = useState(isRTL ? Direction.RightToLeft : Direction.LeftToRight);
+  const [isStaticOrDynamic, setIsStaticOrDynamic] = useState(AddProductCatalogType.Dynamic);
+  const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {
     if (structure === Structure.Horizontal) {
@@ -61,13 +86,10 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       setMaxProducts(4);
       if (uptoProducts === 3) {
         setNameVisibility(true);
-        // setDescriptionVisibility(false);
       } else if (uptoProducts === 4) {
         setNameVisibility(false);
-        // setDescriptionVisibility(false);
       } else {
         setNameVisibility(true);
-        // setDescriptionVisibility(true);
       }
     }
   }, [productOrder, structure]);
@@ -77,7 +99,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       setStructure(Structure.Vertical);
       setProductOrder(Structure.Vertical);
       setUptoProducts(2);
-    } else setUptoProducts(1);
+    } else {
+      setUptoProducts(1);
+    }
 
     if (productOrder === Structure.Vertical && structure === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
       setDirection(Direction.Center);
@@ -86,7 +110,6 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     }
     if (structure === Structure.Vertical && productOrder === Structure.Vertical && isSingleOrMultiple === Items.Multiple) {
       setMaxProducts(4);
-      // setDescriptionVisibility(false);
     } else {
       setMaxProducts(2);
     }
@@ -96,26 +119,59 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     if (structure === Structure.Vertical && productOrder === Structure.Horizontal && isSingleOrMultiple === Items.Multiple && uptoProducts > 2) {
       if (uptoProducts === 3) {
         setNameVisibility(true);
-        // setDescriptionVisibility(false);
       } else if (uptoProducts === 4) {
         setNameVisibility(false);
-        // setDescriptionVisibility(false);
       }
     } else {
       setNameVisibility(true);
-      // setDescriptionVisibility(true);
+    }
+
+    if (isStaticOrDynamic === AddProductCatalogType.Static) {
+      let staticProductList: StaticProductListInterface = {};
+      for (let ind=1; ind<=uptoProducts; ind++) {
+        staticProductList[ind] = StaticProductInit;
+      }
+      setStaticProduct(staticProductList);
+      setSelectedStaticProduct(1);
     }
   }, [uptoProducts]);
 
   useEffect(() => {
+    if (isStaticOrDynamic === AddProductCatalogType.Static) {
+      setSingleOrMultiple(Items.Single);
+    }
+  }, [ isStaticOrDynamic  ])
+
+  useEffect(() => {
     setButtonText(t('campaigns.buyNow'));
+    if (!productList?.length) {
+      dispatch(GetProductsList());
+    }
   }, []);
 
   const onHandleSave = async () => {
+    if (isStaticOrDynamic === AddProductCatalogType.Static) {
+      let isFormComplete = true;
+      for (var  key in staticProduct) {
+        if (staticProduct[key]['ID'] === 0) {
+          isFormComplete = false;
+          staticProduct[key]['Error'] = t('campaigns.selectProduct');
+        } else {
+          staticProduct[key]['Error'] = '';
+        }
+      }
+      if (!isFormComplete) {
+        // @ts-ignore
+        setToastMessage({ severity: 'error', color: 'error', message: "campaigns.selectAllStaticProducts", showAnimtionCheck: false });
+        return false;
+      }
+    }
+
     let dynamicRow = JSON.parse(JSON.stringify(PulRow));
     // dynamicRow['container']['style']['direction'] = direction;
-    dynamicRow['container']['style']['product-block-container'] = '1';
+    if (isStaticOrDynamic === AddProductCatalogType.Dynamic) dynamicRow['container']['style']['product-block-container'] = '1';
     if (structure === Structure.Horizontal) dynamicRow['content']['style']['direction'] = direction;
+    dynamicRow['metadata']["StaticOrDynamic"] = isStaticOrDynamic;
     dynamicRow['metadata']["EventType"] = eventType.toString(); //getEventName(eventType);
     dynamicRow['metadata']["ProductCategory"] = category;
     dynamicRow['metadata']["EventTypeEnabled"] = isFilterByEventType;
@@ -130,24 +186,26 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       var productJSON: any = await getProductJSON(alignment);
       productJSON[0]['grid-columns'] = 4;
       productJSON[1]['grid-columns'] = 8;
-      const mod0 = productJSON[0]['modules'];
-      const mod1 = productJSON[1]['modules'];
       for (let ind = 1; ind < uptoProducts; ind++) {
+        var productJSONStatic: any = await getProductJSON(alignment, ind + 1);
+        const mod0 = productJSONStatic[0]['modules'];
+        const mod1 = productJSONStatic[1]['modules'];
         productJSON[0]['modules'] = productJSON[0]['modules'].concat(mod0);
         productJSON[1]['modules'] = productJSON[1]['modules'].concat(mod1);
       }
       dynamicRow['columns'].push(productJSON[0]);
       dynamicRow['columns'].push(productJSON[1]);
     } else {
-      var productJSON: any = await getProductJSON(alignment);
       if (uptoProducts > 0) {
         if (productOrder === Structure.Horizontal) {
           for (let ind = 0; ind < uptoProducts; ind++) {
+            var productJSON: any = await getProductJSON(alignment, ind + 1);
             dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
           }
         } else if (productOrder === Structure.Vertical) {
           var modules: any = [];
           for (let ind = 0; ind < uptoProducts; ind++) {
+            var productJSON: any = await getProductJSON(alignment, ind + 1);
             for (let indJ = 0; indJ < productJSON.length; indJ++) {
               modules = modules.concat(productJSON[indJ]['modules']);
             }
@@ -155,16 +213,21 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
           }
 
           if (structure === Structure.Vertical) {
+            var productJSON: any = await getProductJSON(alignment);
             productJSON[0]['modules'] = modules;
             dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
           } else {
             for (let ind = 0; ind < uptoProducts; ind++) {
+              var productJSON: any = await getProductJSON(alignment, ind + 1);
               dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
               dynamicRow['columns'] = dynamicRow['columns'].concat(PulDivider as any);
             }
           }
         }
-      } else dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
+      } else {
+        var productJSON: any = await getProductJSON(alignment);
+        dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
+      }
     }
 
     setTimeout(() => {
@@ -175,7 +238,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     }, 1);
   };
 
-  const getProductJSON = async (alignment: string) => {
+  const getProductJSON = async (alignment: string, staticProductIndex: number = 1) => {
     const productJSON = [];
     if (structure === Structure.Horizontal) {
       const imageCol = DynamicProductGrid[`Item_${uptoProducts}`].image;
@@ -185,7 +248,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isImageVisible) {
         let image = JSON.parse(JSON.stringify(PulImage));
         image['uuid'] = uuidv4();
-        image['descriptor']['image']['src'] = NO_IMAGE_URL;
+        image['descriptor']['image']['src'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? NO_IMAGE_URL : staticProduct[staticProductIndex].ImageURLs;
         image['descriptor']['image']['style']['text-align'] = alignment;
         image['descriptor']['style']['text-align'] = alignment;
         if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple == Items.Multiple) {
@@ -204,7 +267,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isNameVisible) {
         let head = JSON.parse(JSON.stringify(PulHead));
         head['uuid'] = uuidv4();
-        head['descriptor']['heading']['text'] = '#name#';
+        head['descriptor']['heading']['text'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? '#name#' : staticProduct[staticProductIndex].Name;
         head['descriptor']['heading']['style']['text-align'] = alignment;
         moduleItems.push(head);
       }
@@ -212,7 +275,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isDescriptionVisible) {
         let desc = JSON.parse(JSON.stringify(PulPara));
         desc['uuid'] = uuidv4();
-        desc['descriptor']['paragraph']['html'] = '#description#';
+        desc['descriptor']['paragraph']['html'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? '#description#' : staticProduct[1].Description;
         desc['descriptor']['paragraph']['style']['text-align'] = alignment;
         moduleItems.push(desc);
       }
@@ -220,12 +283,12 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isPriceVisible) {
         let price = JSON.parse(JSON.stringify(PulPara));
         price['uuid'] = uuidv4();
-        price['descriptor']['paragraph']['html'] = '#price#';
+        price['descriptor']['paragraph']['html'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? '#price#' : staticProduct[staticProductIndex].MaxPrice;
         price['descriptor']['paragraph']['style']['text-align'] = alignment;
         moduleItems.push(price);
       }
 
-      if (isFilterByEventType) {
+      if (isStaticOrDynamic === AddProductCatalogType.Dynamic && isFilterByEventType) {
         let event = JSON.parse(JSON.stringify(PulPara));
         event['uuid'] = uuidv4();
         event['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
@@ -235,11 +298,11 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         moduleItems.push(event);
       }
 
-      if (isFilterIsByProductCategory) {
+      if (isStaticOrDynamic === AddProductCatalogType.Dynamic && isFilterIsByProductCategory) {
         let cat = JSON.parse(JSON.stringify(PulPara));
         cat['uuid'] = uuidv4();
         cat['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
-        cat['descriptor']['paragraph']['html'] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
+        cat['descriptor']['paragraph']['html'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? (category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories')) : staticProduct[staticProductIndex].CategoriesName;
         cat['descriptor']['paragraph']['style']['text-align'] = alignment;
         cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
         moduleItems.push(cat);
@@ -250,6 +313,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         button['uuid'] = uuidv4();
         button['descriptor']['button']['label'] = buttonText;
         button['descriptor']['style']['text-align'] = alignment;
+        if (isStaticOrDynamic === AddProductCatalogType.Static) button['descriptor']['button']['href'] = staticProduct[staticProductIndex].URL;
         moduleItems.push(button);
       }
 
@@ -264,7 +328,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isImageVisible) {
         let image = JSON.parse(JSON.stringify(PulImage));
         image['uuid'] = uuidv4();
-        image['descriptor']['image']['src'] = NO_IMAGE_URL;
+        image['descriptor']['image']['src'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? NO_IMAGE_URL : staticProduct[staticProductIndex].ImageURLs;
         image['descriptor']['image']['style']['text-align'] = alignment;
         image['descriptor']['image']['percWidth'] = productOrder === Structure.Vertical || isSingleOrMultiple === Items.Single ? '30' : '100';
         image['descriptor']['style']['text-align'] = alignment;
@@ -280,7 +344,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isNameVisible) {
         let head = JSON.parse(JSON.stringify(PulHead));
         head['uuid'] = uuidv4();
-        head['descriptor']['heading']['text'] = '#name#';
+        head['descriptor']['heading']['text'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? '#name#' : staticProduct[staticProductIndex].Name;
         head['descriptor']['heading']['style']['text-align'] = alignment;
         moduleItems.push(head);
       }
@@ -288,7 +352,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isDescriptionVisible) {
         let desc = JSON.parse(JSON.stringify(PulPara));
         desc['uuid'] = uuidv4();
-        desc['descriptor']['paragraph']['html'] = '#description#';
+        desc['descriptor']['paragraph']['html'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? '#description#' : staticProduct[staticProductIndex].Description;
         desc['descriptor']['paragraph']['style']['text-align'] = alignment;
         moduleItems.push(desc);
       }
@@ -296,12 +360,12 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       if (isPriceVisible) {
         let price = JSON.parse(JSON.stringify(PulPara));
         price['uuid'] = uuidv4();
-        price['descriptor']['paragraph']['html'] = '#price#';
+        price['descriptor']['paragraph']['html'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? '#price#' : staticProduct[staticProductIndex].MaxPrice;
         price['descriptor']['paragraph']['style']['text-align'] = alignment;
         moduleItems.push(price);
       }
 
-      if (isFilterByEventType) {
+      if (isStaticOrDynamic === AddProductCatalogType.Dynamic && isFilterByEventType) {
         let event = JSON.parse(JSON.stringify(PulPara));
         event['uuid'] = uuidv4();
         event['descriptor']['paragraph']['html'] = getEventName(eventType);
@@ -311,10 +375,10 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         moduleItems.push(event);
       }
 
-      if (isFilterIsByProductCategory) {
+      if (isStaticOrDynamic === AddProductCatalogType.Dynamic && isFilterIsByProductCategory) {
         let cat = JSON.parse(JSON.stringify(PulPara));
         cat['uuid'] = uuidv4();
-        cat['descriptor']['paragraph']['html'] = category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories');
+        cat['descriptor']['paragraph']['html'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? (category ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName : t('campaigns.allCategories')) : staticProduct[staticProductIndex].CategoriesName;
         cat['descriptor']['paragraph']['style']['text-align'] = alignment;
         cat['descriptor']['paragraph']['style']['pulseem-hide'] = '1';
         cat['descriptor']['computedStyle']['hideContentOnHtml'] = true;
@@ -326,6 +390,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         button['uuid'] = uuidv4();
         button['descriptor']['button']['label'] = buttonText || t('campaigns.buttonText');
         button['descriptor']['style']['text-align'] = alignment;
+        if (isStaticOrDynamic === AddProductCatalogType.Static) button['descriptor']['button']['href'] = staticProduct[staticProductIndex].URL;
         moduleItems.push(button);
       }
       productCol['modules'] = moduleItems;
@@ -345,6 +410,10 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     return range(2, maxProducts + 1).map((item: number) => <MenuItem key={`${item}`} value={`${item}`}>{item}</MenuItem>)
   }
 
+  const getProductButtons = () => {
+    return range(1, uptoProducts + 1).map((item: number) => <Button className={clsx(classes.btn, classes.w50, selectedStaticProduct === item ? classes.redButton : null)} onClick={() => setSelectedStaticProduct(item)}>{item}</Button>)
+  }
+
   const previewContainerHeight = window.innerHeight - 350;
 
   const getEventName = (eventType: number) => {
@@ -361,12 +430,35 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     return event;
   }
 
+  const fillProduct = (prodDetails: ProductDetailsInterface = StaticProductInit) => {
+    setStaticProduct({
+      ...staticProduct,
+      [selectedStaticProduct]: {
+        ...prodDetails,
+        ImageURLs: prodDetails.ImageURLs || NO_IMAGE_URL,
+        MaxPrice: `${prodDetails.MaxPrice} ${t('common.NIS')}`
+      }
+    });
+  }
+
+  const renderToast = () => {
+    if (toastMessage) {
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 3000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
+
   return (
     <BaseDialog
       open={isOpen}
       classes={classes}
       disableBackdropClick={true}
-      title={t("campaigns.setupDynamicProduct")}
+      title={t(isStaticOrDynamic === AddProductCatalogType.Dynamic ? "campaigns.setupStaticProduct" : "campaigns.setupStaticProduct")}
       showDefaultButtons={false}
       contentStyle={classes.noPadding}
       customContainerStyle={classes.callToAction}
@@ -401,10 +493,14 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         <Box>
           <Grid container spacing={5}>
             <Grid item md={5}>
-              <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1">
+              <ButtonGroup variant="outlined" className={clsx(classes.mb20, classes.w100)}>
+                <Button className={clsx(classes.btn, classes.w50, isStaticOrDynamic === AddProductCatalogType.Dynamic ? classes.redButton : null)} onClick={() => setIsStaticOrDynamic(AddProductCatalogType.Dynamic)}>{t('campaigns.createProductBlock')}</Button>
+                <Button className={clsx(classes.btn, classes.w50, isStaticOrDynamic === AddProductCatalogType.Static ? classes.redButton : null)} onClick={() => setIsStaticOrDynamic(AddProductCatalogType.Static)}>{t('campaigns.selectProduct')}</Button>
+              </ButtonGroup>
+              
+              <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1" className={clsx(classes.mb10)}>
                 <FormControlLabel
                   value={Items.Single}
-                  className={clsx(classes.fullSize)}
                   control={<Radio
                     color="primary"
                     checked={isSingleOrMultiple === Items.Single}
@@ -419,7 +515,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                 />
                 <FormControlLabel
                   value={Items.Multiple}
-                  className={clsx(classes.fullSize)}
+                  // className={clsx(classes.fullSize)}
                   control={
                     <Radio
                       color="primary"
@@ -463,90 +559,155 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                 )
               }
 
-              <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.filter')}:</h4>
-              <div className={clsx(classes.mb25)}>
-                <div className={clsx(classes.pb10)}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        defaultChecked={isFilterByEventType}
-                        checked={isFilterByEventType}
-                        onChange={(event) => setFilterIsByEventType(event.target.checked)}
-                        name="by_event_type"
-                        color="primary"
-                      />
-                    }
-                    label={t('campaigns.byEventType')}
-                  />
-                  <FormControl
-                    variant="standard"
-                    className={clsx(classes.dBlock, classes.selectInputFormControl, classes.ml25)}
-                  >
-                    <Select
-                      variant="standard"
-                      displayEmpty
-                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                      value={eventType}
-                      onChange={(event: any) => setEventType(event.target.value)}
-                      style={{ width: '100%' }}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 300,
-                            direction: isRTL ? 'rtl' : 'ltr'
-                          },
-                        },
-                      }}
-                    >
-                      <MenuItem value={EventTypes.All}>{t('campaigns.allEvents')}</MenuItem>
-                      {/* <MenuItem value={EventTypes.Page}>{t('campaigns.pageView')}</MenuItem> */}
-                      <MenuItem value={EventTypes.Purchase}>{t('campaigns.purchase')}</MenuItem>
-                      <MenuItem value={EventTypes.CartAbandon}>{t('campaigns.cartAbandonment')}</MenuItem>
-                    </Select>
-                  </FormControl>
-                </div>
-
-                <div className='product-type'>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        defaultChecked={isFilterIsByProductCategory}
-                        checked={isFilterIsByProductCategory}
-                        onChange={(event) => setFilterIsByProductCategory(event.target.checked)}
-                        name="by_product_category"
-                        color="primary"
-                      />
-                    }
-                    label={t('campaigns.byProductCategory')}
-                  />
-                  <FormControl
-                    variant="standard"
-                    className={clsx(classes.dBlock, classes.selectInputFormControl, classes.ml25)}
-                  >
-                    <Select
-                      variant="standard"
-                      id='category'
-                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                      value={category}
-                      onChange={(event: any) => setCategory(event.target.value)}
-                      style={{ width: '100%' }}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 300,
-                            direction: isRTL ? 'rtl' : 'ltr'
-                          },
-                        },
-                      }}
-                    >
-                      <MenuItem key='0' value={0}>{t('campaigns.allCategories')}</MenuItem>
+              {
+                isStaticOrDynamic === AddProductCatalogType.Static && isSingleOrMultiple === Items.Multiple && (
+                  <>
+                    <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.products')}</h4>
+                    <ButtonGroup variant="outlined" className={clsx(classes.mb20, classes.w100)}>
                       {
-                        productCategories?.map((item: any) => <MenuItem key={item.CategoryId} value={item.CategoryId}>{item.CategoryName}</MenuItem>)
+                        getProductButtons()
                       }
-                    </Select>
-                  </FormControl>
-                </div>
-              </div>
+                    </ButtonGroup>
+                  </>
+                )
+              }
+
+              {
+                isStaticOrDynamic === AddProductCatalogType.Static && (
+                  <div className={clsx(classes.pt5)}>
+                    <h4 className={clsx(classes.bold, classes.noMargin, classes.pb10)}>{t('campaigns.selectProduct')}:</h4>
+                    <FormControl
+                      variant="standard"
+                      className={clsx(classes.selectInputFormControl, classes.w100)}
+                      style={{ verticalAlign: 'baseline' }}
+                    >
+                      <Autocomplete
+                        // @ts-ignore
+                        value={get(staticProduct, [selectedStaticProduct, 'ID'], StaticProductInit.ID) != 0 ? staticProduct[selectedStaticProduct] : null}
+                        disablePortal
+                        id='pinkScrollbar'
+                        className={classes.autoComplete}
+                        options={productList}
+                        noOptionsText={t("group.noGroupFound")}
+                        getOptionLabel={(option: ProductDetailsInterface) => option.Name}
+                        getOptionKey={(option: ProductDetailsInterface) => option.ID}
+                        renderOption={
+                          (props, options: ProductDetailsInterface) => <MenuItem component='li' {...props} key={options.ID} value={options.ID}>{options.Name} ({options.ID})</MenuItem>
+                        }
+                        style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                        renderInput={(params) => {
+                          //@ts-ignore
+                          return (<TextField
+                            {...params}
+                            color="primary" className={clsx(classes.textField, classes.w100)}
+                          />)
+                        }}
+                        disableClearable
+                        // isOptionEqualToValue
+                        onChange={(event: any, value: any) => fillProduct(value)}
+                        popupIcon={<IoIosArrowDown size={20} className={classes.colrPrimary} />}
+                      />
+
+                    </FormControl>
+                    <Box className='textBoxWrapper'>
+                      <Typography className={clsx(get(staticProduct, [selectedStaticProduct, 'Error'], '') ? classes.errorText : 'MuiFormHelperText-root', classes.f14, classes.pt5)}>
+                        {get(staticProduct, [selectedStaticProduct, 'Error'], '')}
+                      </Typography>
+                    </Box>
+                  </div>
+                )
+              }
+
+              {
+                isStaticOrDynamic === AddProductCatalogType.Dynamic && (
+                  <>    
+                    <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.filter')}:</h4>
+                    <div className={clsx(classes.mb25)}>
+                      <div className={clsx(classes.pb10)}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              defaultChecked={isFilterByEventType}
+                              checked={isFilterByEventType}
+                              onChange={(event) => setFilterIsByEventType(event.target.checked)}
+                              name="by_event_type"
+                              color="primary"
+                            />
+                          }
+                          label={t('campaigns.byEventType')}
+                        />
+                        <FormControl
+                          variant="standard"
+                          className={clsx(classes.dBlock, classes.selectInputFormControl, classes.ml25)}
+                        >
+                          <Select
+                            variant="standard"
+                            displayEmpty
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                            value={eventType}
+                            onChange={(event: any) => setEventType(event.target.value)}
+                            style={{ width: '100%' }}
+                            MenuProps={{
+                              PaperProps: {
+                                style: {
+                                  maxHeight: 300,
+                                  direction: isRTL ? 'rtl' : 'ltr'
+                                },
+                              },
+                            }}
+                          >
+                            <MenuItem value={EventTypes.All}>{t('campaigns.allEvents')}</MenuItem>
+                            {/* <MenuItem value={EventTypes.Page}>{t('campaigns.pageView')}</MenuItem> */}
+                            <MenuItem value={EventTypes.Purchase}>{t('campaigns.purchase')}</MenuItem>
+                            <MenuItem value={EventTypes.CartAbandon}>{t('campaigns.cartAbandonment')}</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </div>
+
+                      <div className='product-type'>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              defaultChecked={isFilterIsByProductCategory}
+                              checked={isFilterIsByProductCategory}
+                              onChange={(event) => setFilterIsByProductCategory(event.target.checked)}
+                              name="by_product_category"
+                              color="primary"
+                            />
+                          }
+                          label={t('campaigns.byProductCategory')}
+                        />
+                        <FormControl
+                          variant="standard"
+                          className={clsx(classes.dBlock, classes.selectInputFormControl, classes.ml25)}
+                        >
+                          <Select
+                            variant="standard"
+                            id='category'
+                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                            value={category}
+                            onChange={(event: any) => setCategory(event.target.value)}
+                            style={{ width: '100%' }}
+                            MenuProps={{
+                              PaperProps: {
+                                style: {
+                                  maxHeight: 300,
+                                  direction: isRTL ? 'rtl' : 'ltr'
+                                },
+                              },
+                            }}
+                          >
+                            <MenuItem key='0' value={0}>{t('campaigns.allCategories')}</MenuItem>
+                            {
+                              productCategories?.map((item: any) => <MenuItem key={item.CategoryId} value={item.CategoryId}>{item.CategoryName}</MenuItem>)
+                            }
+                          </Select>
+                        </FormControl>
+                      </div>
+                    </div>
+                  </>
+                )
+              }
 
               <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.display')}:</h4>
               <div className={clsx(classes.mb10)}>
@@ -756,15 +917,16 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                           isDescriptionVisible={isDescriptionVisible}
                           isPriceVisible={isPriceVisible}
                           isButtonVisible={isButtonVisible}
-                          imageURL='#productsrc#'
-                          name='#name#'
-                          description='#description#'
-                          price='#price#'
+                          imageURL={ isStaticOrDynamic === AddProductCatalogType.Dynamic ? NO_IMAGE_URL : get(staticProduct, [i+1, 'ImageURLs'], NO_IMAGE_URL) }
+                          name={ isStaticOrDynamic === AddProductCatalogType.Dynamic ? ProductDetails.Name : get(staticProduct, [i+1, 'Name'], '')}
+                          description={ isStaticOrDynamic === AddProductCatalogType.Dynamic ? ProductDetails.Description : get(staticProduct, [i+1, 'Description'], '')}
+                          price={ isStaticOrDynamic === AddProductCatalogType.Dynamic ? ProductDetails.Price : `${get(staticProduct, [i+1, 'MaxPrice'], '')}`}
                           buttonText={buttonText}
                           structure={structure}
                           direction={direction}
-                          eventType={isFilterByEventType ? getEventName(eventType) : ''}
-                          category={isFilterIsByProductCategory ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || t('campaigns.allCategories') : ''}
+                          eventType={ isStaticOrDynamic === AddProductCatalogType.Dynamic && isFilterByEventType ? getEventName(eventType) : ''}
+                          category={
+                            isStaticOrDynamic === AddProductCatalogType.Dynamic ? (isFilterIsByProductCategory ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || t('campaigns.allCategories') : '') : ''}
                         />
                       )
                     }
@@ -774,6 +936,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
             </Grid>
           </Grid>
         </Box>
+        {renderToast()}
       </div>
     </BaseDialog>
   )

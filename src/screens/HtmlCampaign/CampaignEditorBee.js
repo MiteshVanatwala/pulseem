@@ -55,7 +55,7 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
-import { getCategories } from '../../redux/reducers/productSlice';
+import { getCategories, GetProductsList } from '../../redux/reducers/productSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { NO_IMAGE_URL } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
@@ -72,6 +72,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
+  const { productList } = useSelector(state => state.product)
   const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
@@ -177,6 +178,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       } else getData();
     }
     if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    if (!productList?.length) dispatch(GetProductsList());
     dispatch(getAllTemplatesBySubaccountId());
   }, []);
 
@@ -276,9 +278,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
     let tempRows = [{
-      name: 'product-catalog',
-      value: 'product-catalog',
-      handle: 'product-catalog',
+      name: 'Dynamic-Products',
+      value: 'Dynamic-Products',
+      handle: 'Dynamic-Products',
       isLocal: true,
       behaviors: {
         canEdit: true,
@@ -288,7 +290,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];
       tags?.forEach((tag, idx) => {
-        if (tag && tag !== undefined && tag !== null && tag.trim() !== 'product-catalog') {
+        if (tag && tag !== undefined && tag !== null && tag.trim() !== 'Dynamic-Products') {
           const tagObj = {
             name: tag.trim(),
             value: tag.replace(' ', ''),
