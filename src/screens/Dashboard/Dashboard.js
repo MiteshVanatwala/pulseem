@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useSelector, useDispatch } from 'react-redux'
-import { Button, Checkbox, FormControlLabel, Grid } from '@material-ui/core';
+import { useDispatch, useSelector } from 'react-redux'
+import { Box, Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
 import BulkStatus from '../../components/Balance/BulkStatus';
@@ -14,10 +14,13 @@ import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
-import DahsboardDomainVerificationPopup from './Popup/DahsboardDomainVerificationPopup';
-import WelcomePulseemNewDesign from './Popup/WelcomePulseemNewDesign';
+// import WelcomePulseemNewDesign from './Popup/WelcomePulseemNewDesign';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
 import GlobalBalance from '../../components/Balance/GlobalBalance';
+import TermsOfUse from '../TermsOfUse/TermsOfUse';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { updateTermsOfUse } from '../../redux/reducers/TermsOfUseSlice';
+import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
@@ -25,8 +28,13 @@ const DashboardScreen = ({ classes }) => {
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [showWelcomePulseemNewDesign, setShowWelcomePulseemNewDesign] = useState(true);
   const [member, setMember] = useState(null);
+  const [showTermsOfUse, setShowTermsOfUse] = useState(false);
+  const [termOfUse, setTermOfUse] = useState({
+    IsTermsApproved: false
+  });
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const initialize = async () => {
@@ -42,6 +50,7 @@ const DashboardScreen = ({ classes }) => {
             setShowChangePassword(true);
           }
         }
+        setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
       }
     }
     if (accountSettings) {
@@ -62,6 +71,13 @@ const DashboardScreen = ({ classes }) => {
 
   const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
 
+  const onCloseTerms = async () => {
+    setShowTermsOfUse(false);
+    const response = await dispatch(updateTermsOfUse(termOfUse));
+    if (response?.payload?.StatusCode === 201 && termOfUse.IsTermsApproved) {
+      await dispatch(getCommonFeatures());
+    }
+  }
   return (
     <DefaultScreen
       currentPage='dashboard'
@@ -71,8 +87,8 @@ const DashboardScreen = ({ classes }) => {
         <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
-              { <BulkStatus classes={classes} /> }
-              { <GlobalBalance classes={classes} /> }
+              {<BulkStatus classes={classes} />}
+              {<GlobalBalance classes={classes} />}
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={8} className={windowSize === "xs" ? classes.pt20 : null}>
               <RecipientChart classes={classes} />
@@ -114,10 +130,20 @@ const DashboardScreen = ({ classes }) => {
         OnClose={() => setShowChangePassword(false)}
         Text={renderPasswordText()}
       />}
-      <WelcomePulseemNewDesign
+      <BaseDialog
+        disableBackdropClick
         classes={classes}
-        isOpen={showWelcomePulseemNewDesign}
-        onClose={() => setShowWelcomePulseemNewDesign(false)} />
+        open={showTermsOfUse}
+        showDefaultButtons={false}
+        title={t('TermsOfUse.title')}
+        onCancel={() => {
+          onCloseTerms();
+        }}
+      >
+        <Box style={{ height: 230 }}>
+          <TermsOfUse classes={classes} />
+        </Box>
+      </BaseDialog>
     </DefaultScreen>
   )
 }

@@ -83,6 +83,7 @@ import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
+import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -456,7 +457,7 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}AccountUsers`}
         element={<AccountUsers classes={classes} />}
-        // component={transferUrl('/Pulseem/AccountUsers.aspx')}
+      // component={transferUrl('/Pulseem/AccountUsers.aspx')}
       />
       <Route
         path={`/AccountUsersReport`}
@@ -550,6 +551,11 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}AffiliateManagement`}
         element={<AffiliateProgram classes={classes} />}
       />
+      <Route
+        exact
+        path={`${sitePrefix}TermsOfUse`}
+        element={<TermsOfUsePage classes={classes} />}
+      />
     </Routes>
   )
 }
@@ -617,7 +623,7 @@ const App = ({ screenSize }) => {
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
         isAllowSwitchAccount = '',
       } = jwt;
-      
+
       dispatch(
         setCoreData({
           email,
@@ -666,19 +672,36 @@ const App = ({ screenSize }) => {
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
+  const renderRoutesByCondition = (classes, redirect) => {
+    if (accountSettings && !accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount > 2) {
+      return <Routes>
+        <Route
+          exact
+          path="*"
+          element={<TermsOfUsePage classes={classes} />}
+        />
+      </Routes>
+    }
+    if (isDebtAccount === true) {
+      return <Routes>
+        <Route
+          exact
+          path="*"
+          element={<BillingSettingsPage classes={classes} />}
+        />
+      </Routes>
+    }
+    else {
+      return renderRoutes(classes, redirect);
+    }
+
+  }
+
   return (accountSettings || isSignup) && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
-          {isDebtAccount === true ? (
-            <Routes>
-              <Route
-                exact
-                path="*"
-                element={<BillingSettingsPage classes={classes} />}
-              />
-            </Routes>
-          ) : renderRoutes(classes, redirect)}
+          {renderRoutesByCondition(classes, redirect)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider >

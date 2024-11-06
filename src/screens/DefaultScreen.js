@@ -11,6 +11,7 @@ import Illustration_BG_BL from '../assets/images/Illustration_BG_BL';
 import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 import DomainVerification from '../Shared/Dialogs/DomainVerification';
 import { sitePrefix } from '../config';
+import useRedirect from '../helpers/Routes/Redirect';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
   const { t } = useTranslation();
@@ -18,6 +19,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
   const { accountSettings } = useSelector(state => state.common);
+  const Redirect = useRedirect();
 
   let route, title;
 
@@ -63,7 +65,12 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       }
     }
     if (isDebtAccount === true && window.location.href.toLowerCase().indexOf('billingsettings') <= -1) {
-      window.location.href = `${sitePrefix}BillingSettings?p=2`;
+      Redirect({ url: `${sitePrefix}BillingSettings?p=2` })
+    }
+    else if (!accountSettings?.SubAccountSettings?.IsTermsApproved &&
+      accountSettings?.SubAccountSettings?.IgnoranceCount > 2 &&
+      window.location.href.toLowerCase().indexOf('termsofuse') <= -1) {
+      Redirect({ url: `${sitePrefix}TermsOfUse` })
     }
   }, [])
 
