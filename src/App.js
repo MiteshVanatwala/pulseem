@@ -673,7 +673,8 @@ const App = ({ screenSize }) => {
   else document.body.classList.remove('rtl');
 
   const renderRoutesByCondition = (classes, redirect) => {
-    if (accountSettings && !accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount > 2) {
+    const ignoreCookie = getCookie('ignoreTerm')
+    if (accountSettings && !accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount === 3 && ignoreCookie !== 'true') {
       return <Routes>
         <Route
           exact

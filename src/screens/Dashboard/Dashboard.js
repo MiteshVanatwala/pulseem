@@ -21,6 +21,7 @@ import TermsOfUse from '../TermsOfUse/TermsOfUse';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { updateTermsOfUse } from '../../redux/reducers/TermsOfUseSlice';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
+import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
@@ -38,6 +39,8 @@ const DashboardScreen = ({ classes }) => {
 
   useEffect(() => {
     const initialize = async () => {
+      const hasCookie = getCookie('ignoreTerm');
+
       if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
         const member = accountSettings?.SubAccountSettings?.MembershipDetails;
         setMember(member);
@@ -50,6 +53,9 @@ const DashboardScreen = ({ classes }) => {
             setShowChangePassword(true);
           }
         }
+      }
+
+      if (!hasCookie) {
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
       }
     }
@@ -71,8 +77,9 @@ const DashboardScreen = ({ classes }) => {
 
   const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
 
-  const onCloseTerms = async () => {
+  const onIgnoreTerms = async () => {
     setShowTermsOfUse(false);
+    setCookie("ignoreTerm", true);
     const response = await dispatch(updateTermsOfUse(termOfUse));
     if (response?.payload?.StatusCode === 201 && termOfUse.IsTermsApproved) {
       await dispatch(getCommonFeatures());
@@ -137,7 +144,10 @@ const DashboardScreen = ({ classes }) => {
         showDefaultButtons={false}
         title={t('TermsOfUse.title')}
         onCancel={() => {
-          onCloseTerms();
+          onIgnoreTerms();
+        }}
+        onClose={() => {
+          onIgnoreTerms();
         }}
       >
         <Box style={{ height: 230 }}>

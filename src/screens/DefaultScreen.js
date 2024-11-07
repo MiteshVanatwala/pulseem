@@ -12,6 +12,7 @@ import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 import DomainVerification from '../Shared/Dialogs/DomainVerification';
 import { sitePrefix } from '../config';
 import useRedirect from '../helpers/Routes/Redirect';
+import { getCookie } from '../helpers/Functions/cookies';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
   const { t } = useTranslation();
@@ -68,7 +69,8 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       Redirect({ url: `${sitePrefix}BillingSettings?p=2` })
     }
     else if (!accountSettings?.SubAccountSettings?.IsTermsApproved &&
-      accountSettings?.SubAccountSettings?.IgnoranceCount > 2 &&
+      getCookie('ignoreTerm') !== 'true' &&
+      accountSettings?.SubAccountSettings?.IgnoranceCount === 3 &&
       window.location.href.toLowerCase().indexOf('termsofuse') <= -1) {
       Redirect({ url: `${sitePrefix}TermsOfUse` })
     }
