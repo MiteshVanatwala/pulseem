@@ -19,6 +19,7 @@ const TermsOfUse = ({ classes }: any) => {
   const [termOfUse, setTermOfUse] = useState<TermsOfUseModel>({
     IsTermsApproved: false
   });
+  const [requiredField, setRequiredField] = useState<boolean>(false);
 
   const { isRTL } = useSelector((state: any) => state.common);
 
@@ -30,6 +31,9 @@ const TermsOfUse = ({ classes }: any) => {
         url: `${sitePrefix}`,
         openNewTab: false
       } as RedirectPropTypes)
+    }
+    else {
+      setRequiredField(true);
     }
   }
 
@@ -48,13 +52,18 @@ const TermsOfUse = ({ classes }: any) => {
             inputProps={{ "aria-label": "secondary checkbox" }}
             onClick={() => {
               setTermOfUse({ ...termOfUse, IsTermsApproved: !termOfUse.IsTermsApproved });
+              setRequiredField(false)
             }}
             checked={termOfUse.IsTermsApproved}
           />
         }
         label={t("TermsOfUse.checkbox")}
       />
-      <Grid item xs={12} style={{ marginTop: 30 }}>
+      <Grid item xs={12}>
+        {requiredField && <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>{t('common.requiredField')}</Typography>
+        }
+      </Grid>
+      <Grid item xs={12} className={classes.mt6}>
         <Grid
           container
           spacing={4}
