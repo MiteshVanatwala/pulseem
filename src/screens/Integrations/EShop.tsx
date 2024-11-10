@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, MenuItem, FormControl } from "@material-ui/core";
+import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, MenuItem, FormControl, RadioGroup, Radio } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
 import { Loader } from "../../components/Loader/Loader";
 import { RunIntegrationService, authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
-import { EShopModel, IntegrationGroups } from '../../Models/Integrations/Integration';
+import { eAutomaticDailyEmailsUnsubscribesAndActiveTypeID, EShopModel, IntegrationGroups } from '../../Models/Integrations/Integration';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
@@ -49,12 +49,15 @@ const EShop = ({ classes }: any) => {
     PurchaseEventActive: false,
     AbandonedEventActive: false,
     Groups: {} as IntegrationGroups,
+    AutomaticDailyEmailsUnsubscribesAndActiveTypeID: eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.None,
+    AutomaticDailyEmailsGroups: []
   } as EShopModel);
-  const [isAuthenticated, setAuthenticated] = useState(false);
+  const [isAuthenticated, setAuthenticated] = useState(true);
   const [storeRunInterval, setStoreRunInterval] = useState<number>(1);
   const [storeRunIntervalType, setStoreRunIntervalType] = useState<number>(TimeType.Days);
   const [insertCartAsAbandonedTime, setInsertCartAsAbandonedTime] = useState<number>(10);
   const [insertCartAsAbandonedTimeType, setInsertCartAsAbandonedTimeType] = useState<number>(TimeType.Minutes);
+  const [addRecipientEnabled, setAddRecipientEnabled] = useState<boolean>(false);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -218,6 +221,7 @@ const EShop = ({ classes }: any) => {
           calculateDaysHoursMinutes(resp.IntervalToProccessingAbandoned)
           calculateDaysHoursMinutes(resp.IntervalToRunService)
           setAuthenticated(true);
+          setAddRecipientEnabled(resp.AutomaticDailyEmailsUnsubscribesAndActiveTypeID !== eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.None)
         }
         break;
       }
@@ -425,6 +429,10 @@ const EShop = ({ classes }: any) => {
       }
     }
   }
+
+  useEffect(() => {
+    console.log(settings)
+  }, [settings])
 
   return (
     <>
@@ -836,6 +844,84 @@ const EShop = ({ classes }: any) => {
                 </Typography>
               </Box>
             )}
+            <Grid item xs={12} sm={12} md={12} className={clsx(classes.dblock, classes.pt20)}>
+              <FormControl
+                className={clsx(classes.dInlineBlock)}
+              >
+                <FormControlLabel
+                  value={addRecipientEnabled}
+                  control={<Checkbox color='primary' checked={addRecipientEnabled} />}
+                  label={<Typography>{t('integrations.eShop.addRecipientsAsCustomer')}</Typography>}
+                  onChange={() => {
+                    setAddRecipientEnabled(!addRecipientEnabled);
+                    setSettings({
+                      ...settings,
+                      AutomaticDailyEmailsUnsubscribesAndActiveTypeID: !!addRecipientEnabled ? eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.None : eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.Subaccount,
+                      AutomaticDailyEmailsGroups: []
+                    })
+                  }}
+                />
+
+                <RadioGroup
+                  className={settings.AutomaticDailyEmailsUnsubscribesAndActiveTypeID === eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.None && classes.disabled}
+                  aria-label='AutomaticDailyEmailsUnsubscribesAndActiveTypeID'
+                  name='AutomaticDailyEmailsUnsubscribesAndActiveTypeID'
+                  value={settings.AutomaticDailyEmailsUnsubscribesAndActiveTypeID}>
+                  <FormControlLabel
+                    className={clsx(classes.fullSize)}
+                    value={eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.Subaccount}
+                    control={<Radio
+                      color='primary'
+                      checked={settings.AutomaticDailyEmailsUnsubscribesAndActiveTypeID === eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.Subaccount}
+                    />}
+                    label={<Typography style={{ fontWeight: settings.AutomaticDailyEmailsUnsubscribesAndActiveTypeID === eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.Subaccount ? 'bold' : 500 }}>{t('integrations.eShop.addAll')}</Typography>}
+                    onClick={() => {
+                      setSettings({
+                        ...settings,
+                        AutomaticDailyEmailsUnsubscribesAndActiveTypeID: eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.Subaccount,
+                        AutomaticDailyEmailsGroups: []
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    className={clsx(classes.fullSize)}
+                    value={eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.GroupID}
+                    control={<Radio
+                      color='primary'
+                      checked={settings.AutomaticDailyEmailsUnsubscribesAndActiveTypeID === eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.GroupID} />}
+                    label={<Typography style={{ fontWeight: settings.AutomaticDailyEmailsUnsubscribesAndActiveTypeID === eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.GroupID ? 'bold' : 500 }}>{t('integrations.eShop.addFromGroups')}</Typography>}
+                    onClick={() => {
+                      setSettings({
+                        ...settings,
+                        AutomaticDailyEmailsUnsubscribesAndActiveTypeID: eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.GroupID
+                      })
+                    }}
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+            {settings.AutomaticDailyEmailsUnsubscribesAndActiveTypeID === eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.GroupID && <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect, classes.pb15)}>
+              <Box className={clsx('group-dropdown')}>
+                <GroupTags
+                  className='group-select'
+                  groupSelected={settings?.AutomaticDailyEmailsGroups || []}
+                  classes={classes}
+                  title={'siteTracking.typeGroupName'}
+                  dropdown
+                  dropDownProps={{
+                    onChange: (e: any, val: any) => {
+                      setSettings({
+                        ...settings,
+                        AutomaticDailyEmailsGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                      })
+                    },
+                    selectedGroups: settings?.AutomaticDailyEmailsGroups || [],
+                    groups: []
+                  }}
+                />
+              </Box>
+            </Grid>}
+
             <Box className={clsx(classes.flex, classes.pbt15)}>
               <Button
                 onClick={() => submitForm(false)}
