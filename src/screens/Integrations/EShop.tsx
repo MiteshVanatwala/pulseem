@@ -218,6 +218,9 @@ const EShop = ({ classes }: any) => {
         const resp = response?.payload?.Data as EShopModel;
         if (resp.ApiKey) {
           setSettings(resp);
+          if (resp.AutomaticDailyEmailsUnsubscribesAndActiveTypeID && resp.AutomaticDailyEmailsUnsubscribesAndActiveTypeID > 0) {
+            setAddRecipientEnabled(true)
+          }
           calculateDaysHoursMinutes(resp.IntervalToProccessingAbandoned)
           calculateDaysHoursMinutes(resp.IntervalToRunService)
           setAuthenticated(true);
