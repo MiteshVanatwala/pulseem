@@ -252,7 +252,8 @@ export const commonSlice = createSlice({
           DefaultFromName: data?.DefaultFromName,
           DefaultLinkChars: data?.DefaultLinkChars,
           DefaultCellNumber: data?.DefaultCellNumber,
-          SubAccountSettings: data?.SubAccountSettings
+          SubAccountSettings: data?.SubAccountSettings,
+          HasSmsVoice: data?.HasSmsVoice
         };
         state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
         state.subAccount = data;
@@ -277,9 +278,9 @@ export const commonSlice = createSlice({
         const isGlobal = get(payload, 'Data.balanceInfo.IsGlobalAccount', false);
         const reportCurrencyId = !isGlobal ? 1 : get(payload, 'Data.balanceInfo.ShowCurrencyReport_CurrencyID', 1);
         const accountCurrencyId = get(payload, 'Data.balanceInfo.CurrencyId', 1);
-        
-        const currency = find(state.currencyList, { ID: reportCurrencyId});
-        const accountCurrency = find(state.currencyList, { ID: accountCurrencyId});
+
+        const currency = find(state.currencyList, { ID: reportCurrencyId });
+        const accountCurrency = find(state.currencyList, { ID: accountCurrencyId });
 
         state.currency = get(currency, 'Name', '');
         state.currencyDescription = get(currency, 'Description', '');

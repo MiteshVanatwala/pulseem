@@ -2598,7 +2598,7 @@ const SmsSend = ({ classes, ...props }) => {
               </Box>
             </Box>
           </Box>
-          <Box
+          {accountSettings && !accountSettings?.HasSmsVoice && <><Box
             className={classes.randomSendDiv}
           >
             <Checkbox
@@ -2613,26 +2613,27 @@ const SmsSend = ({ classes, ...props }) => {
             />
             <Typography className={clsx(classes.ps15, classes.pe15, classes.bold, classes.dInlineBlock)}>{t("smsReport.randomSend")}</Typography>
           </Box>
-          <Box className={classes.randomRows}>
-            <span
-              className={classes.randomReciSpan}
-            >
-              {t("smsReport.noOfReci")}
-            </span>
-            <input
-              type="text"
-              placeholder={t("smsReport.insert")}
-              disabled={toggleRandom ? false : true}
-              className={
-                toggleRandom
-                  ? boolRandom ? clsx(classes.ml5, classes.mr5, classes.pulseActive, classes.error) : clsx(classes.pulseActive, classes.ml5, classes.mr5)
-                  : clsx(classes.pulseInsert, classes.ml5, classes.mr5)
-              }
-              value={random}
-              onChange={handleRandom}
-            />
-          </Box>
-        </Box>
+            <Box className={classes.randomRows}>
+              <span
+                className={classes.randomReciSpan}
+              >
+                {t("smsReport.noOfReci")}
+              </span>
+              <input
+                type="text"
+                placeholder={t("smsReport.insert")}
+                disabled={toggleRandom ? false : true}
+                className={
+                  toggleRandom
+                    ? boolRandom ? clsx(classes.ml5, classes.mr5, classes.pulseActive, classes.error) : clsx(classes.pulseActive, classes.ml5, classes.mr5)
+                    : clsx(classes.pulseInsert, classes.ml5, classes.mr5)
+                }
+                value={random}
+                onChange={handleRandom}
+              />
+            </Box>
+          </>}
+        </Box >
       ),
       showDefaultButtons: true,
       onClose: () => { handlePulseClose() },
