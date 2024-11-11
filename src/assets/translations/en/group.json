@@ -57,7 +57,7 @@
   "uploadFiles": {
     "statuses": {
       "0": "Waiting For Upload",
-      "1": "Error Occured",
+      "1": "In Progress",
       "2": "Successfully Completed",
       "3": "Error Occured",
       "4": "cancelled"

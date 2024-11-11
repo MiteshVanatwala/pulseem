@@ -20,6 +20,7 @@ import { BsInfoCircle, BsInfoCircleFill } from "react-icons/bs";
 import { editGroup, } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { DateFormats } from "../../../../helpers/Constants";
 
 
 const EditGroupPopup = ({ classes,
@@ -267,8 +268,8 @@ const EditGroupPopup = ({ classes,
                     )}
                     style={{ justifyContent: 'space-between' }}
                 >
-                    <Typography>{t("common.CreatedOn")}: {moment(editableFroupData.CreationDate).format("DD/MM/YYYY HH:mm")}</Typography>
-                    <Typography>{t("common.UpdatedOn")}: {moment(editableFroupData.UpdateDate).format("DD/MM/YYYY HH:mm")}</Typography>
+                    <Typography>{t("common.CreatedOn")}: {moment(editableFroupData.CreationDate).format(DateFormats.DATE_TIME_24)}</Typography>
+                    <Typography>{t("common.UpdatedOn")}: {moment(editableFroupData.UpdateDate).format(DateFormats.DATE_TIME_24)}</Typography>
                 </Box>
             </BaseDialog>
             }

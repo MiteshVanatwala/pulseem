@@ -47,7 +47,7 @@ import { Title } from '../../../components/managment/Title';
 import queryString from 'query-string';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
-import { ClientStatus } from '../../../helpers/Constants';
+import { ClientStatus, DateFormats } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import Sort from '../../../components/Sort/Sort';
@@ -534,7 +534,7 @@ const Groups = ({ classes }) => {
                         )}
                     </CustomTooltip>
                     <Typography className={clsx(classes.grayTextCell, classes.date)}>
-                        {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+                        {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
                     </Typography>
                 </Grid>
             </Grid>
@@ -1878,14 +1878,14 @@ const Groups = ({ classes }) => {
             case 201: {
                 actions?.S_201?.Func?.();
                 actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
-                setDialog(null);
+                // setDialog(null);
                 getData(null)
                 break;
             }
             case 202: {
                 actions?.S_202?.Func?.();
                 actions?.S_202?.message && setToastMessage(actions?.S_202?.message);
-                setDialog(null);
+                // setDialog(null);
                 getData(null)
                 break;
             }

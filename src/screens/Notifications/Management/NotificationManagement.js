@@ -34,6 +34,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { DialogTypes } from '../../../Models/PushNotifications/DialogTypes';
 import { sitePrefix } from '../../../config/index';
+import { DateFormats } from '../../../helpers/Constants';
 
 const NotificationManagement = ({ classes }) => {
   const Redirect = useRedirect();
@@ -591,7 +592,7 @@ const NotificationManagement = ({ classes }) => {
           </Typography>
         </Tooltip>
         <Typography style={{ 'WebkitLineClamp': 1 }}>
-          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+          {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
         </Typography>
       </>
     )

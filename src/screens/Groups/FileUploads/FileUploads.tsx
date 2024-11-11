@@ -26,6 +26,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import moment from 'moment';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { eFileStatus } from '../../../Models/Files/FileUpload';
+import { DateFormats } from '../../../helpers/Constants';
 
 const FileUploads = ({ classes }: ClassesType) => {
   const { windowSize, rowsPerPage } = useSelector((state: any) => state.core)
@@ -141,14 +142,14 @@ const FileUploads = ({ classes }: ClassesType) => {
         />
         <Typography
           className={clsx(classes.grayTextCell)} style={{ fontSize: 12 }}>
-          {RenderHtml(`${text}${separator}  ${t('common.OnDate')} <b>${date.format('DD/MM/YYYY')} ${date.format('LT')}</b>`)}
+          {RenderHtml(`${text}${separator}  ${t('common.OnDate')} <b>${date.format(DateFormats.DATE_TIME_24)}</b>`)}
         </Typography>
       </>
     )
   }
 
   const renderStatus = (status: number) => {
-    const colors: any = ['#0371AD', '#E74C3C', '#27AE60', '#E74C3C', '#F59A23'];
+    const colors: any = ['grey', '#0371AD', '#27AE60', '#E74C3C', '#F59A23'];
     return <Typography style={{ color: colors[status] }} className={clsx(classes.bold, classes.font16)}>{t(`group.uploadFiles.statuses.${status}`)}</Typography>
 
   }

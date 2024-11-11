@@ -19,6 +19,7 @@ import { Loader } from "../../../../components/Loader/Loader";
 import { IoIosArrowDown } from "react-icons/io";
 import { IsSharedDomain } from "../../../../helpers/Functions/DomainVerificationHelper";
 import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
+import { DateFormats } from "../../../../helpers/Constants";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -145,7 +146,7 @@ const SummaryDialog = ({ classes,
                 return `${t("sms.SendNow")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
             }
             case 2: {
-                return `${IsBestTime ? `${t('campaigns.newsLetterEditor.sendSettings.optimalSendingFrom')} - ` : ''} ${moment(newsletterSendSummary?.SendDate).format('DD/MM/YYYY HH:mm')}`;
+                return `${IsBestTime ? `${t('campaigns.newsLetterEditor.sendSettings.optimalSendingFrom')} - ` : ''} ${moment(newsletterSendSummary?.SendDate).format(DateFormats.DATE_TIME_24)}`;
             }
             case 3: {
                 const exDates = { ...extraData };
@@ -506,7 +507,7 @@ const SummaryDialog = ({ classes,
                             classes.btn, classes.btnRounded,
                             FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
                         )}>
-                        {t("sms.sendDialog")}
+                        {newsletterSendSummary?.SendingMethod === 1 ? t("sms.sendDialog") : t("common.scheduleSend")}
                     </Button>
                 </Grid>
                 <Grid item className={classes.paddingSides10}>
@@ -522,7 +523,7 @@ const SummaryDialog = ({ classes,
             </Grid>
         ),
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,
-        confirmText: t("common.send"),
+        confirmText: newsletterSendSummary?.SendingMethod === 1 ? t("common.send") : t("common.schedule"),
         cancelText: '',
         onClose: () => { setDialogType(null) },
     }

@@ -53,7 +53,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsOpened && data.dynamicData?.MyActivities?.IsOpenedFromDate}
-                                        onChange={(value: any) => onUpdate('IsOpenedFromDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsOpenedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
@@ -76,7 +76,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsOpened && data.dynamicData?.MyActivities?.IsOpenedToDate}
-                                        onChange={(value: any) => onUpdate('IsOpenedToDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsOpenedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
@@ -152,7 +152,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotOpenedFromDate}
-                                        onChange={(value: any) => onUpdate('IsNotOpenedFromDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsNotOpenedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
@@ -175,7 +175,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotOpenedToDate}
-                                        onChange={(value: any) => onUpdate('IsNotOpenedToDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsNotOpenedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
@@ -251,7 +251,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsClickedFromDate}
-                                        onChange={(value: any) => onUpdate('IsClickedFromDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsClickedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
@@ -274,7 +274,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsClickedToDate}
-                                        onChange={(value: any) => onUpdate('IsClickedToDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsClickedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}
@@ -350,7 +350,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotClickedFromDate}
-                                        onChange={(value: any) => onUpdate('IsNotClickedFromDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsNotClickedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
                                         dateActive={true}
@@ -373,7 +373,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
                                         value={data.dynamicData?.MyActivities?.IsNotClickedToDate}
-                                        onChange={(value: any) => onUpdate('IsNotClickedToDate', moment(value).format(DateFormats.DATE_ONLY))}
+                                        onChange={(value: any) => onUpdate('IsNotClickedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
                                         dateActive={true}

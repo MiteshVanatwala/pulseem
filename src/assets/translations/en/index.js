@@ -32,6 +32,8 @@ import SignUp from './SignUp.json';
 import FileUploads from './FileUploads.json';
 import SimplyClub from './WhiteLabel/SimplyClub.json';
 import affiliate from './Affiliate.json';
+import SubAccount from './SubAccount.json'
+import billing from './Billing.json';
 
 export const en = {
 	automations,
@@ -67,5 +69,7 @@ export const en = {
 	SignUp,
 	FileUploads,
 	SimplyClub,
-	affiliate
+	affiliate,
+	SubAccount,
+	billing
 };

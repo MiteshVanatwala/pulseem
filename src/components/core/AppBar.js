@@ -21,6 +21,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { BsGlobe2 } from 'react-icons/bs';
 import { sitePrefix } from '../../config';
 import PulseemNewLogo from '../../assets/images/PulseemNewLogo';
+import { get } from 'lodash';
 
 const AppBarItem = ({
   item,
@@ -193,7 +194,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const Redirect = useRedirect();
 
   const { companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
-  const { accountSettings, accountFeatures } = useSelector(state => state.common);
+  const { accountSettings, accountFeatures, subAccount } = useSelector(state => state.common);
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
   const [settingsLoaded, setSettingsLoaded] = useState(false);
@@ -212,7 +213,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const { username } = useSelector(state => state.user)
   const routes = getRoutes(t, isClal, accountFeatures, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
-    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL, accountSettings, accountFeatures)
+    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false))
 
   const returnToAdmin = () => {
     window.location = '/Pulseem/ReactRedirect.aspx';

@@ -26,7 +26,7 @@ import {
   setRowsPerPage,
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
-import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
+import { getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
@@ -56,7 +56,7 @@ import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
-import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
+import BillingSettingsPage from './screens/Settings/BillingSettings/BillingSettingsPage';
 import { sitePrefix } from './config/index'
 // import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
@@ -82,6 +82,7 @@ import SignUp from './screens/SignUp/SignUp.tsx';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
+import AccountUsers from './screens/AccountUsers/AccountUsers';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -445,15 +446,17 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}BillingSettings`}
-        element={<BillingSettingsEditor classes={classes} />}
+        element={<BillingSettingsPage classes={classes} />}
       />
       <Route
         path={`/AccountBilling`}
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
       <Route
-        path={`/AccountUsers`}
-        component={transferUrl('/Pulseem/AccountUsers.aspx')}
+        exact
+        path={`${sitePrefix}AccountUsers`}
+        element={<AccountUsers classes={classes} />}
+        // component={transferUrl('/Pulseem/AccountUsers.aspx')}
       />
       <Route
         path={`/AccountUsersReport`}
@@ -555,8 +558,8 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal } = useSelector(state => state.core)
-  const { accountSettings } = useSelector(state => state.common)
+  const { language, isRTL, windowSize, isClal, isDebtAccount } = useSelector(state => state.core)
+  const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
@@ -568,6 +571,12 @@ const App = ({ screenSize }) => {
   useEffect(() => {
     screenSize && dispatch(setWindowSize(screenSize));
   }, [screenSize]);
+
+  useEffect(() => {
+    if (!isSignup && currencyList?.length > 0) {
+      dispatch(GetGlobalAccountPackagesDetails());
+    }
+  }, [currencyList]);
 
   useEffect(() => {
     const initFeatures = async () => {
@@ -593,7 +602,7 @@ const App = ({ screenSize }) => {
         certthumbprint: billingTypeId,
         role: isAdmin,
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone':
-        phone = '',
+        isDebtAccount = '',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality':
         locality = 'he-IL',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince':
@@ -608,12 +617,12 @@ const App = ({ screenSize }) => {
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
         isAllowSwitchAccount = '',
       } = jwt;
-
+      
       dispatch(
         setCoreData({
           email,
           basename,
-          phone,
+          isDebtAccount,
           imageURL,
           isWhiteLabel,
           companyName,
@@ -645,7 +654,8 @@ const App = ({ screenSize }) => {
     })
     !isSignup && updateToken()
     !isSignup && initFeatures()
-
+    !isSignup && dispatch(GetCurrencyList());
+    !isSignup && dispatch(GetSmsCountries());
   }, [dispatch])
 
 
@@ -660,7 +670,15 @@ const App = ({ screenSize }) => {
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
-          {renderRoutes(classes, redirect)}
+          {isDebtAccount === true ? (
+            <Routes>
+              <Route
+                exact
+                path="*"
+                element={<BillingSettingsPage classes={classes} />}
+              />
+            </Routes>
+          ) : renderRoutes(classes, redirect)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider >

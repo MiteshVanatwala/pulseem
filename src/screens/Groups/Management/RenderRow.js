@@ -23,6 +23,7 @@ import NameValueGridStructure from "../../../components/Grids/NameValueGridStruc
 import IconWrapper from "../../../components/icons/IconWrapper";
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import { useSelector } from 'react-redux';
+import { DateFormats } from '../../../helpers/Constants';
 
 const useStyles = makeStyles({
   groupName: {
@@ -141,7 +142,7 @@ const RenderWebRow = ({
           )}
         </CustomTooltip>
         <Typography className={clsx(classes.grayTextCell, localClasses.date)}>
-          {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+          {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
         </Typography>
       </>
     );
