@@ -67,7 +67,6 @@ const Shopify = ({ classes }: any) => {
 
   useEffect(() => {
     initSettings();
-    document.title = `${t('integrations.shopify.title')} | ${document.title}`;
   }, []);
 
   const initSettings = async () => {
@@ -450,26 +449,26 @@ const Shopify = ({ classes }: any) => {
   }
 
   const renderDialog = () => {
-		const { type } = dialogType || {}
-		let currentDialog: any = {};
-		if (type === 'scriptImplementation') {
-			currentDialog = scriptImplementationDialog();
-		}
+    const { type } = dialogType || {}
+    let currentDialog: any = {};
+    if (type === 'scriptImplementation') {
+      currentDialog = scriptImplementationDialog();
+    }
 
-		if (type) {
-			return (
-				dialogType && <BaseDialog
-					classes={classes}
-					open={dialogType}
-					onCancel={() => setDialogType(null)}
-					onClose={() => setDialogType(null)}
-					renderButtons={currentDialog?.renderButtons || null}
-					{...currentDialog}>
-					{currentDialog?.content}
-				</BaseDialog>
-			)
-		}
-	}
+    if (type) {
+      return (
+        dialogType && <BaseDialog
+          classes={classes}
+          open={dialogType}
+          onCancel={() => setDialogType(null)}
+          onClose={() => setDialogType(null)}
+          renderButtons={currentDialog?.renderButtons || null}
+          {...currentDialog}>
+          {currentDialog?.content}
+        </BaseDialog>
+      )
+    }
+  }
 
   return (
     <>

@@ -68,7 +68,6 @@ const EShop = ({ classes }: any) => {
 
   useEffect(() => {
     initSettings();
-    document.title = `${t('integrations.eShop.title')} | ${document.title}`;
   }, []);
 
   useEffect(() => {
