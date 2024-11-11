@@ -445,7 +445,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
 
       const response = await dispatch(saveCampaign({
-        Name: campaign.Name,
+        Name: campaign?.Name || '',
         campaignId: args.campaignId,
         JsonData: finalJson,
         HTML: finalHtml,

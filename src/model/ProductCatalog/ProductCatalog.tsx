@@ -250,11 +250,13 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['uuid'] = uuidv4();
         image['descriptor']['image']['src'] = isStaticOrDynamic === AddProductCatalogType.Dynamic ? NO_IMAGE_URL : staticProduct[staticProductIndex].ImageURLs;
         image['descriptor']['image']['style']['text-align'] = alignment;
+        image['descriptor']['style']['width'] = '100%';
         image['descriptor']['style']['text-align'] = alignment;
         if (structure === Structure.Horizontal && productOrder === Structure.Vertical && isSingleOrMultiple == Items.Multiple) {
           image['descriptor']['style']['padding-bottom'] = '25px';
         }
         image['descriptor']['computedStyle']['class'] = 'fullwidthOnMobile';
+        image['descriptor']['computedStyle']['width'] = 300;
         image['align'] = alignment;
         productCol['modules'].push(image);
         productCol['grid-columns'] = imageCol;
@@ -337,6 +339,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         // if (alignment !== Direction.Center) image['descriptor']['style']['display'] = 'flex';
         image['descriptor']['computedStyle']['class'] = `${alignment} fixedwidth fullwidthOnMobile`;
         image['descriptor']['computedStyle']['style'] = `text-align: ${alignment}`;
+
+        image['descriptor']['style']['width'] = '100%';
+        image['descriptor']['computedStyle']['width'] = 300;
         image['align'] = alignment;
         moduleItems.push(image);
       }
