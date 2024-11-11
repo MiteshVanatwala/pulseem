@@ -325,7 +325,7 @@ const BulkStatus = ({ classes }) => {
               <Divider />
             </>
           )}
-          {SMSVC?.Credits > 0 && (<>
+          {SMSVC && SMSVC?.FeatureExist && (<>
             <Grid
               container
               item sm={12} md={12} lg={12} xl={12}
