@@ -7,7 +7,7 @@ import { StateType } from '../../Models/StateTypes';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { setLanguage } from "../../redux/reducers/coreSlice";
 import { IoIosArrowDown } from 'react-icons/io';
-import USImage from "../../assets/images/united-states-flag-icon.svg";
+import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
 import { setCookie } from '../../helpers/Functions/cookies';
 import i18n from '../../i18n';
@@ -63,7 +63,7 @@ const SharedAppBar = ({ classes, title }: any) => {
             </MenuItem>
 
             <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-              <img width={35} src={USImage} alt={t('languages.langCodes.english')} />
+              <img width={35} src={EnImage} alt={t('languages.langCodes.english')} />
               <label>{t('languages.langCodes.english')}</label>
             </MenuItem>
           </Select>
