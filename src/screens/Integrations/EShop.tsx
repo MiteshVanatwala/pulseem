@@ -52,7 +52,7 @@ const EShop = ({ classes }: any) => {
     AutomaticDailyEmailsUnsubscribesAndActiveTypeID: eAutomaticDailyEmailsUnsubscribesAndActiveTypeID.None,
     AutomaticDailyEmailsGroups: []
   } as EShopModel);
-  const [isAuthenticated, setAuthenticated] = useState(true);
+  const [isAuthenticated, setAuthenticated] = useState(false);
   const [storeRunInterval, setStoreRunInterval] = useState<number>(1);
   const [storeRunIntervalType, setStoreRunIntervalType] = useState<number>(TimeType.Days);
   const [insertCartAsAbandonedTime, setInsertCartAsAbandonedTime] = useState<number>(10);
