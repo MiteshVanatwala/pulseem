@@ -256,7 +256,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
           image['descriptor']['style']['padding-bottom'] = '25px';
         }
         image['descriptor']['computedStyle']['class'] = 'fullwidthOnMobile';
-        image['descriptor']['computedStyle']['width'] = 200;
+        image['descriptor']['computedStyle']['width'] = 300;
         image['align'] = alignment;
         productCol['modules'].push(image);
         productCol['grid-columns'] = imageCol;
@@ -341,7 +341,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
         image['descriptor']['computedStyle']['style'] = `text-align: ${alignment}`;
 
         image['descriptor']['style']['width'] = '100%';
-        image['descriptor']['computedStyle']['width'] = 200;
+        image['descriptor']['computedStyle']['width'] = 300;
         image['align'] = alignment;
         moduleItems.push(image);
       }
