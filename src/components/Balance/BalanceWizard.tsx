@@ -26,7 +26,7 @@ const BalanceWizard = ({ classes, steps }: any) => {
       setShowLoader(true)
       setActiveStep(activeStep + 1);
       // @ts-ignore
-      await dispatch(getManualPaymentURL({ actualPrice: balance, Culture: isRTL ? 'he-IL' : 'en-US', OperationSource: 'Whatsapp-Dashboard' }));
+      await dispatch(getManualPaymentURL({ actualPrice: balance, Culture: isRTL ? 'he-IL' : 'en-US', OperationSource: 'Whatsapp' }));
       setShowLoader(false)
     }
   }
