@@ -294,7 +294,7 @@ const BulkStatus = ({ classes }) => {
               <Divider />
             </>
           )}
-          <>
+          {Whatsapp.FeatureExist && (<>
             <Grid
               container
               item sm={12} md={12} lg={12} xl={12}
@@ -320,7 +320,7 @@ const BulkStatus = ({ classes }) => {
               </Grid>
             </Grid>
             <Divider />
-          </>
+          </>)}
         </Grid>
       </Paper>
     </>

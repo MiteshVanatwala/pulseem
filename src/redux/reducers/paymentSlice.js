@@ -51,6 +51,16 @@ export const getGlobalPaymentURL = createAsyncThunk(
     }
   });
 
+export const getManualPaymentURL = createAsyncThunk(
+  'Payment/GetManualPaymentURL', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`Payment/GetManualPaymentURL`, data);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const paymentSlice = createSlice({
   name: 'payment',
   initialState: {
@@ -59,7 +69,8 @@ export const paymentSlice = createSlice({
     globalPaymentUrl: null,
     creditCards: null,
     paymentConfirmation: null,
-    dialogMaxWidth: null
+    dialogMaxWidth: null,
+    manualPaymentUrl: null
   },
   reducers: {
     setDialogWidth: (state, action) => {
@@ -79,6 +90,12 @@ export const paymentSlice = createSlice({
       })
       .addCase(getGlobalPaymentURL.rejected, (state, action) => {
         state.globalPaymentUrl = action.error.message
+      })
+      .addCase(getManualPaymentURL.fulfilled, (state, { payload }) => {
+        state.manualPaymentUrl = payload
+      })
+      .addCase(getManualPaymentURL.rejected, (state, action) => {
+        state.manualPaymentUrl = action.error.message
       })
       .addCase(getTranzillaURL.fulfilled, (state, { payload }) => {
         state.tranzillaUrl = payload
