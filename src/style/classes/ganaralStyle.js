@@ -4220,5 +4220,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   right15: {
     right: 15,
     left: 'auto'
+  },
+  connectedDot: {
+    '& .MuiBadge-dot': {
+      left: isRTL ? 'auto' : -10,
+      right: isRTL ? -10 : 'auto',
+      top: 10,
+      background: '#23ff23'
+    }
   }
 });

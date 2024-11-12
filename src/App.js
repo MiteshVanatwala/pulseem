@@ -83,6 +83,7 @@ import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
+import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -491,6 +492,10 @@ const renderRoutes = (classes, redirect) => {
       <Route exact
         path={`${sitePrefix}Integrations`}
         element={<Integrations classes={classes} />}
+      />
+      <Route exact
+        path={`${sitePrefix}whatsapp-onboarding`}
+        element={<WhatsappOnBoarding classes={classes} />}
       />
       <Route
         exact

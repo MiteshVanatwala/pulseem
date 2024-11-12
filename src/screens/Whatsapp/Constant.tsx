@@ -348,6 +348,20 @@ export const resetToastData: toastProps['SUCCESS'] = {
 	showAnimtionCheck: false,
 };
 
+export const errorToastData: toastProps['ERROR'] = {
+	severity: 'error',
+	color: 'error',
+	message: '',
+	showAnimtionCheck: false,
+};
+
+export const successToastData: toastProps['SUCCESS'] = {
+	severity: 'success',
+	color: 'success',
+	message: '',
+	showAnimtionCheck: false,
+};
+
 export const statuses: statusProps = {
 	1: 'common.Created',
 	2: 'common.Sending',
@@ -556,3 +570,8 @@ export const templateErrors: WhatsappTemplateError[] = [
 		reason: 'noImageAuthentication'
 	}
 ]
+
+export const WHATSAPP_ONBOARDING_STATUS = {
+	CONNECTED: 'CONNECTED',
+	BUSINESS_VERIFIED: 'verified'
+};

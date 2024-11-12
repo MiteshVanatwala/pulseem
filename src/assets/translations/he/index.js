@@ -33,6 +33,7 @@ import SimplyClub from './WhiteLabel/SimplyClub.he.json';
 import FileUploads from './FileUploads.he.json';
 import affiliate from './Affiliate.he.json';
 import SubAccount from './SubAccount.he.json';
+import WhatsappOnBoarding from './WhatsappOnBoarding.json';
 
 export const he = {
 	automations,
@@ -69,5 +70,6 @@ export const he = {
 	FileUploads,
 	SimplyClub,
 	affiliate,
-	SubAccount
+	SubAccount,
+	WhatsappOnBoarding
 };
