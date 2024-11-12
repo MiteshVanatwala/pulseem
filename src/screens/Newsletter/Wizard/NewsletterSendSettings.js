@@ -1007,7 +1007,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         onClick={() => { setDialogType(null) }}
                         className={clsx(
                             classes.gruopsDialogButton,
-                            classes.dialogConfirmButton,
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.Ok')}
                     </Button>

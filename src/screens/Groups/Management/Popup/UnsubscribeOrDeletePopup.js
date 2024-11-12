@@ -697,8 +697,8 @@ const UnsubscribeOrDeletePopup = ({
                         style={{ margin: '0 auto' }}
                         onClick={() => { setLimitationWarning(false) }}
                         className={clsx(
-                            classes.dialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.Ok')}
                     </Button>
