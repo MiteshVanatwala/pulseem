@@ -48,7 +48,7 @@ const SendResponseDialog = ({
                 container
                 spacing={4}
                 className={clsx(
-                    classes.dialogButtonsContainer
+                    classes.dialogButtonsContainer,
                 )}
             >
                 <Grid item>
@@ -62,7 +62,7 @@ const SendResponseDialog = ({
                             }
                             setDialogType(null)
                         }}
-                        className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+                        className={clsx(classes.btn, classes.btnRounded)}
                     >
                         <>{t('common.Ok')}</>
                     </Button>

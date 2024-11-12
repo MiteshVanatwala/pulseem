@@ -730,5 +730,9 @@
   "ampSelectEmail": "בחר כתובת מייל לשליחה לאישור AMP",
   "ampPageText": "<b>מה זה AMP?</b><br/>שליחת מייל הכולל AMP מאפשרת לנו לכלול אלמנטים דינאמיים בגוף המייל<br/>לדוגמא: קרוסלת תמונות מתחלפות<br/>על מנת לשלוח אלמנטים אלו, יש לאשר את כתובת המייל לשליחה מול Google ו-Yahoo <br/><br/><b>איך מתחילים?</b><br/>בחרו את כתובת המייל דרכן תרצו לשלוח AMP ולחצו על כפתור \"שליחת בקשה\"<br/>לאחר מכן עליכם למלא את <a href='https://forms.gle/fDqLE1gh4wMB6BeQ6' target='_blank'>טופס ההרשמה</a><br/><br/>שימו לב! ניתן לאשר כתובות מייל הרשומות תחת דומיין מאומת בלבד",
   "webpNotSupport": "סיומת קובץ webp לא נתמכת בשילוב קרוסלת AMP",
-  "htmlDocTypeNotAllowed": "נמצאו תגים לא חוקיים בבלוק ה-HTML"
+  "htmlDocTypeNotAllowed": "נמצאו תגים לא חוקיים בבלוק ה-HTML",
+  "setupStaticProduct": "הגדרות מוצר",
+  "createProductBlock": "בלוק מוצר מותאם אישית",
+  "selectProduct": "בחירת מוצר מקטלוג",
+  "selectAllStaticProducts": "בחירת מוצר מקטלוג"
 }

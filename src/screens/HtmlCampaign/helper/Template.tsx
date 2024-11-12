@@ -199,8 +199,8 @@ export const PulColItem = {
 
 export const PulRow = {
   "columns": [],
-  "type": "product-catalog",
-  "name": "Product Catalog",
+  "type": "Dynamic-Products",
+  "name": "Dynamic-Products",
   "synced": false,
   "metadata": {
     "name": "Product Catalog",
