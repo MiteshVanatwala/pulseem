@@ -96,8 +96,8 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
                         variant='contained'
                         size='small'
                         className={clsx(
-                            classes.dialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )} style={{ whiteSpace: 'nowrap', width: 'auto' }} onClick={() => { handleVerifyOTP() }}>{t("sms.sendVerificationCode")}</Button>
                     <Typography className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
                     <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
