@@ -165,6 +165,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 			case 201: {
 				setToastMessage(ToastMessages.SETTINGS_SAVED);
 				dispatch(updateDefaultFromEmail(updatedObject.DefaultFromMail));
+				dispatch(getCommonFeatures());
 				break;
 			}
 			case 401: {
