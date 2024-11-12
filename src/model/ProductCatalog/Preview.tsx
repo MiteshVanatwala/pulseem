@@ -33,6 +33,7 @@ const Preview = ({
           classes.card, classes.w100, classes.mb10,
           {
             [classes.directionRTL]: direction === Direction.RightToLeft,
+            [classes.directionLTR]: direction === Direction.LeftToRight,
             [classes.textRight]: direction === Direction.RightToLeft,
             [classes.textCenter]: direction === Direction.Center,
           }
