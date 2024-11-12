@@ -915,8 +915,8 @@ const Editorbox = ({
                     style={{ maxWidth: 100 }}
                     onClick={() => { setDialogType(null) }}
                     className={clsx(
-                        classes.gruopsDialogButton,
-                        classes.dialogConfirmButton,
+                        classes.btn,
+                        classes.btnRounded,
                     )}>
                     {t('common.Ok')}
                 </Button>
