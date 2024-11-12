@@ -138,6 +138,7 @@ const DashboardScreen = ({ classes }) => {
         Text={renderPasswordText()}
       />}
       <BaseDialog
+        paperStyle={classes.maxWidthMinContent}
         disableBackdropClick
         classes={classes}
         open={showTermsOfUse}

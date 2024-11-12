@@ -4246,5 +4246,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "&:before": {
       backgroundColor: 'transparent'
     }
+  },
+  maxWidthMinContent: {
+    maxWidth: 'min-content !important'
   }
 });
