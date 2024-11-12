@@ -64,8 +64,8 @@ const TFA = ({ classes,
                         size='small'
                         onClick={() => { onConfirm() }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.Yes')}
                     </Button>

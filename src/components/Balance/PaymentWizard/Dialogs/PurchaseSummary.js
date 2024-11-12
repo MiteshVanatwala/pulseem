@@ -89,8 +89,8 @@ const PurchaseSummary = ({
                         size='small'
                         onClick={() => onConfirm()}
                         className={clsx(
-                            classes.dialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.continue')}
                     </Button>

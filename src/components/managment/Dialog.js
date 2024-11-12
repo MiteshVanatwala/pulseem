@@ -100,8 +100,8 @@ export const Dialog = ({
             size='small'
             onClick={onConfirm}
             className={clsx(
-              classes.dialogButton,
-              classes.dialogConfirmButton
+              classes.btn,
+              classes.btnRounded
             )}>
             {t(confirmText)}
           </Button>
@@ -112,8 +112,8 @@ export const Dialog = ({
             size='small'
             onClick={onClose}
             className={clsx(
-              classes.dialogButton,
-              classes.dialogConfirmButton
+              classes.btn,
+              classes.btnRounded
             )}>
             {t(cancelText)}
           </Button>

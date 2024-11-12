@@ -21,10 +21,9 @@ const PaymentResult = ({ t, classes, paymentObject, onStepBack = () => {} }) => 
                         variant='contained'
                         size='medium'
                         className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen,
-                            classes.backButton,
-                            classes.mt50
+                            classes.btn,
+                            classes.btnRounded,
+                            classes.mt6
                         )}
                         onClick={() => onStepBack()}>{t("payment.tryAgain")}</Button>
                 </Box>)

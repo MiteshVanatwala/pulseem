@@ -53,8 +53,8 @@ const Pay = ({
                         size='small'
                         onClick={() => onConfirmPayment()}
                         className={clsx(
-                            classes.dialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.pay')}
                     </Button>
