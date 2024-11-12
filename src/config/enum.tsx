@@ -20,3 +20,15 @@ export enum EventTypes {
   Purchase = 1,
   CartAbandon = 2
 }
+
+export enum AddProductCatalogType {
+  Static = 'static',
+  Dynamic = 'dynamic'
+}
+
+export enum ProductDetails {
+  Image = '#productsrc#',
+  Name = '#name#',
+  Description = '#description#',
+  Price = '#price#'
+}
