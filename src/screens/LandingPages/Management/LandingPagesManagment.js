@@ -108,7 +108,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   const handleSearch = () => {
     ClearPageState();
     const searchTxt = landingPageNameSearch !== '' ? landingPageNameSearch : (pageProperty.current && pageProperty.current?.SearchTerm);
-    let sortData = landingPagesData?.filter((lp) => { return lp.Name.toLowerCase().indexOf(searchTxt) > -1 });
+    let sortData = landingPagesData?.filter((lp) => { return lp.Name.toLowerCase().indexOf(searchTxt.toLowerCase()) > -1 });
     setSearchResults(sortData);
     setSearching(true);
     setPage(1);
