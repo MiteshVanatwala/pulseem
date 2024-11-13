@@ -27,6 +27,7 @@ export const whatsappRoutes = {
 	EDIT_CAMPAIGN_PAGE2: `${sitePrefix}whatsapp/campaign/edit/page2/:campaignID`,
 	CHAT: `${sitePrefix}whatsapp/chat`,
 	CHAT_CONVERSATION: `${sitePrefix}whatsapp/chat/:contactID`,
+	ONBOARDING: `${sitePrefix}whatsapp-onboarding`,
 };
 
 export const apiStatus = {

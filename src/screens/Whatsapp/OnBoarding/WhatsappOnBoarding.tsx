@@ -77,11 +77,15 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 
 	const fetchMetaPhoneNumbers = async () => {
 		const resp = await dispatch(getMetaPhoneNumbers({})) as any;
+		console.log('getMetaPhoneNumbers');
+		console.log(resp);
 		handleMetaPhoneNumberResponse(resp?.payload as PulseemResponse)
 	}
 
 	const fetchWhatsAppSMSVirtualNumbers = async () => {
 		const resp = await dispatch(getWhatsAppSMSVirtualNumbers()) as any;
+		console.log('getWhatsAppSMSVirtualNumbers');
+		console.log(resp);
 		const { StatusCode, Data } = resp?.payload as PulseemResponse
 		if (StatusCode === 1) {
 			setVirtualNumbers(flatten(Data));
@@ -90,6 +94,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	
 	const fetchWhatsAppCodeVirtualNumbers = async () => {
 		const resp = await dispatch(getWhatsAppCodeVirtualNumbers()) as any;
+		console.log('getWhatsAppCodeVirtualNumbers');
+		console.log(resp);
 		const { StatusCode, Data } = resp?.payload as PulseemResponse
 		if (StatusCode === 1) {
 			setVirtualNumbersCodeList(flatten(Data));
@@ -176,15 +182,19 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
  
     try {
       const data = JSON.parse(event.data);
+			console.log('handleMessage');
+			console.log(data);
       if (data.type === 'WA_EMBEDDED_SIGNUP') {
         if (data.event === 'FINISH') {
           const { phone_number_id, waba_id } = data.data;
           console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
-          await dispatch(facebookLogin({
+          const resp = await dispatch(facebookLogin({
             phone_number_id,
             waba_id,
             code: window.localStorage.getItem('fblogin_authcode')
           }));
+					console.log('facebookLogin')
+					console.log(resp)
         } else if (data.event === 'CANCEL') {
           const { current_step } = data.data;
           console.warn("Cancel at ", current_step);
@@ -199,6 +209,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   };
  
   const fbLoginCallback = (response: any) => {
+		console.log('fbLoginCallback');
+		console.log(response);
     if (response.authResponse) {
       const code = response.authResponse.code;
       console.log(`Code : ${code}`)
@@ -476,6 +488,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 				PhoneNumberId: get(data, 'id', ''),
 				Pin: pin
 			})) as any;
+			console.log('MetaPhoneRegister');
+			console.log(resp);
 			handleMetaPhoneRegisterResponse(resp?.payload as PulseemResponse);
 		}
 	}
