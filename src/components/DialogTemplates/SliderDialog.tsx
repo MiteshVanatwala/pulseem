@@ -99,7 +99,7 @@ const SliderDialog = ({
             //   console.log("Error:", error);
             // }
           }}
-          className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+          className={clsx(classes.btn, classes.btnRounded)}
         >
           <>{t(confirmText)}</>
         </Button>
@@ -140,8 +140,8 @@ const SliderDialog = ({
           PrevSlide();
         }}
         className={clsx(
-          classes.dialogButton,
-          classes.dialogConfirmButton,
+          classes.btn,
+          classes.btnRounded,
           classes.ml5
         )}
       >
@@ -158,8 +158,8 @@ const SliderDialog = ({
           NextSlide();
         }}
         className={clsx(
-          classes.dialogButton,
-          classes.dialogConfirmButton,
+          classes.btn,
+          classes.btnRounded,
           classes.ml5
         )}
       >
