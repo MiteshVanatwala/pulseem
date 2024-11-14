@@ -179,7 +179,7 @@ const SmsCreator = ({ classes }) => {
   const [dynamicProductFallbackURL, setDynamicProductFallbackURL] = useState('');
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
-  const [buttonsDisabled, setButtonsDisabled] = useState(false);
+  const [buttonsDisabled, setButtonsDisabled] = useState(true);
 
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
