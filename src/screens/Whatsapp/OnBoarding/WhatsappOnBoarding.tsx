@@ -251,69 +251,87 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
           key={row.id}
           component='div'
           classes={rowStyle}
-          className={clsx()}
         >
-          <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }}>
-            <Box className={classes.justifyBetween}>
-              <Box className={classes.inlineGrid}>
-                
+          <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }} className={classes.p20}>
+            <Box className={clsx(classes.justifyBetween, classes.pb5)}>
+              <Box className={clsx(classes.dFlex, classes.f18)}>
+								<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
+									{t("WhatsappOnBoarding.ID")}:
+								</Typography>
+								<Typography className={classes.f18}>
+									{row?.id}
+								</Typography>
               </Box>
-              <Box>
-                
+              <Box className={clsx(classes.dInlineBlock, classes.textCapitalize)}>
+								{renderPhoneNumberStatus(row)}
               </Box>
             </Box>
+						<Box className={classes.dFlex}>
+							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
+								{t("WhatsappOnBoarding.phoneNumber")}:
+							</Typography>
+							<Typography className={classes.f18}>
+								{row?.display_phone_number}
+							</Typography>
+						</Box>
           </TableCell>
         </TableRow>
       </>
     )
   }
 
+	const renderPhoneNumberStatus = (row: phoneNumbersInterface) => {
+		return (
+			<>
+				{
+					row?.status !== WHATSAPP_ONBOARDING_STATUS.CONNECTED
+					? row?.status?.toLowerCase()
+					: (
+						<Badge color="primary" variant="dot" anchorOrigin={{vertical: 'top', horizontal: 'left'}} className={clsx(classes.connectedDot)}>
+							{row?.status?.toLowerCase()}
+						</Badge>
+					)
+				}
+				{
+					row?.status !== WHATSAPP_ONBOARDING_STATUS.CONNECTED && (
+						<Button
+							onClick={() => setDialogType({ type: 'OTP', data: row })}
+							className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10)}
+						>
+							{t('Connect')}
+						</Button>
+					)
+				}
+			</>
+		)
+	}
+
 	const renderPhoneNumbersRow = (row: phoneNumbersInterface) => {
     return (
-      <>
-        <TableRow
-          key={row.id}
-          classes={rowStyle}
-          className={clsx()}
-        >
-          <TableCell
-            classes={cellStyle}
-            align='center'
-            className={classes.flex2}>
-							{row?.id}
-          </TableCell>
-          <TableCell
-            classes={cellStyle}
-            align='center'
-            className={classes.flex2}>
-							{row?.display_phone_number}
-          </TableCell>
-          <TableCell
-            classes={cellStyle}
-            align='center'
-            className={clsx(classes.flex2, classes.dInlineBlock, classes.textCapitalize)}>
-							{
-								row?.status !== WHATSAPP_ONBOARDING_STATUS.CONNECTED
-								? row?.status?.toLowerCase()
-								: (
-									<Badge color="primary" variant="dot" anchorOrigin={{vertical: 'top', horizontal: 'left'}} className={clsx(classes.connectedDot)}>
-										{row?.status?.toLowerCase()}
-									</Badge>
-								)
-							}
-							{
-								row?.status !== WHATSAPP_ONBOARDING_STATUS.CONNECTED && (
-									<Button
-										onClick={() => setDialogType({ type: 'OTP', data: row })}
-										className={clsx(classes.searchButton, classes.btn, classes.btnRounded, classes.ml10)}
-									>
-										{t('Connect')}
-									</Button>
-								)
-							}
-          </TableCell>
-        </TableRow>
-      </>
+			<TableRow
+				key={row.id}
+				classes={rowStyle}
+				className={clsx()}
+			>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={classes.flex2}>
+						{row?.id}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={classes.flex2}>
+						{row?.display_phone_number}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={clsx(classes.flex2, classes.dInlineBlock, classes.textCapitalize)}>
+						{renderPhoneNumberStatus(row)}
+				</TableCell>
+			</TableRow>
     )
   }
 
@@ -349,13 +367,17 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		return (
 			<>
 				<Typography className={clsx(classes.semibold, classes.f22, classes.pb10)}>{t('WhatsappOnBoarding.virtualNumbers')}</Typography>
-				<TableContainer className={clsx(classes.tableStyle, classes.w50)}>
+				<TableContainer className={clsx(classes.tableStyle, windowSize !== 'xs' ? classes.w50 : classes.w100)}>
 					<Table className={classes.tableContainer}>
-						<TableHead>
-							<TableRow classes={rowStyle}>
-								<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.virtualNumber')}</TableCell>
-							</TableRow>
-						</TableHead>
+						{
+							windowSize !== 'xs' && (
+								<TableHead>
+									<TableRow classes={rowStyle}>
+										<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.virtualNumber')}</TableCell>
+									</TableRow>
+								</TableHead>
+							)
+						}
 						<Box className='tableBodyContainer'>
 							<TableBody>
 								{
@@ -389,41 +411,80 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 				<Typography className={clsx(classes.semibold, classes.f22, classes.pb10)}>{t('WhatsappOnBoarding.incomingMessages')}</Typography>
 				<TableContainer className={clsx(classes.tableStyle)}>
 					<Table className={classes.tableContainer}>
-						<TableHead>
-							<TableRow classes={rowStyle}>
-								<TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('WhatsappOnBoarding.virtualNumber')}</TableCell>
-								<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.message')}</TableCell>
-							</TableRow>
-						</TableHead>
+						{
+							windowSize !== 'xs' && (
+								<TableHead>
+									<TableRow classes={rowStyle}>
+										<TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('WhatsappOnBoarding.virtualNumber')}</TableCell>
+										<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.message')}</TableCell>
+									</TableRow>
+								</TableHead>
+							)
+						}
 						<Box className='tableBodyContainer'>
 							<TableBody>
 								{
-									virtualNumbersCodeList.map((vnumber: virtualNumbersCodeListInterface) => (
-										<TableRow
-											classes={rowStyle}
-											className={clsx()}
-											key={vnumber.VirtualNumber}
-										>
-											<TableCell
-												classes={cellStyle}
-												align='center'
-												className={classes.flex1}>
-													{vnumber?.VirtualNumber}
-											</TableCell>
-											<TableCell
-												classes={cellStyle}
-												align='center'
-												className={classes.flex2}>
-													{vnumber?.ReplyText}
-											</TableCell>
-										</TableRow>
-									))
+									virtualNumbersCodeList.map(windowSize === 'xs' ? renderIncomingMessagePhoneRow : renderIncomingMessageRow)
 								}
 							</TableBody>
 						</Box>
 					</Table>
 				</TableContainer>
 			</>
+		)
+	}
+
+	const renderIncomingMessagePhoneRow = (vnumber: virtualNumbersCodeListInterface) => {
+		return (
+			<TableRow
+				key={vnumber.VirtualNumber}
+				component='div'
+				classes={rowStyle}
+			>
+				<TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }} className={classes.p20}>
+					<Box className={clsx(classes.pb5)}>
+						<Box className={clsx(classes.dFlex, classes.f18)}>
+							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
+								{t("WhatsappOnBoarding.virtualNumber")}:
+							</Typography>
+							<Typography className={classes.f18}>
+								{vnumber.VirtualNumber}
+							</Typography>
+						</Box>
+					</Box>
+					<Box className={classes.dFlex}>
+						<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
+							{t("WhatsappOnBoarding.message")}:
+						</Typography>
+						<Typography className={classes.f18}>
+							{vnumber.ReplyText}
+						</Typography>
+					</Box>
+				</TableCell>
+			</TableRow>
+    )
+	}
+
+	const renderIncomingMessageRow = (vnumber: virtualNumbersCodeListInterface) => {
+		return (
+			<TableRow
+				classes={rowStyle}
+				className={clsx()}
+				key={vnumber.VirtualNumber}
+			>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={classes.flex1}>
+						{vnumber.VirtualNumber}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={classes.flex2}>
+						{vnumber.ReplyText}
+				</TableCell>
+			</TableRow>
 		)
 	}
 
@@ -600,7 +661,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 
 					<Box className={clsx(classes.p20)}>
 						<Grid container spacing={3}>
-							<Grid item md={6}>
+							<Grid item md={6} sm={12} xs={12}>
 								{renderBusinessDetails()}
 								{
 									phoneNumbers.length > 0 && (
@@ -610,7 +671,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 									)
 								}
 							</Grid>
-							<Grid item md={6}>
+							<Grid item md={6} sm={12} xs={12}>
 								{renderVirtualNumbers()}
 								<Box className={clsx(classes.pt20)}>
 									{renderIncomingMessages()}
