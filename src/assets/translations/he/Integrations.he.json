@@ -94,8 +94,8 @@
     "fetchDataManually": "משוך נתונים ידנית",
     "fetchDataManualSuccess": "נשלחה בקשה לחנות, הסנכרון יתבצע ב-10 הדקות הקרובות",
     "howToConnect": "מדריך לחיבור החנות שלכם",
-    "addRecipientsAsCustomer": "הוספת נמענים כלקוחות באי-שופ",
-    "addAll":"הוסף את כל הנמענים",
+    "addRecipientsAsCustomer": "הוספת נמענים כלקוחות ב-E-Shop",
+    "addAll": "הוסף את כל הנמענים",
     "addFromGroups": "הוסף נמענים מתוך קבוצות"
   },
   "wix": {
