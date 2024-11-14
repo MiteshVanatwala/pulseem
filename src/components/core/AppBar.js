@@ -211,7 +211,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   }
   const { t } = useTranslation();
   const { username } = useSelector(state => state.user)
-  const routes = getRoutes(t, isClal, accountFeatures, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
+  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
     (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false))
 

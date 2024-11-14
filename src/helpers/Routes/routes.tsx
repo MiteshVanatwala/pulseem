@@ -60,7 +60,7 @@ export const getRoutes = (
   t: (text: string) => null | VoidFunction = (par: string) => null,
   isClalAccount: Boolean | string = false,
   features: any = null,
-  subAccountSettings: any = null,
+  accountSettings: any = null,
   windowSize: string | number | null = null,
   isRTL: Boolean = false
 ) => [
@@ -390,8 +390,8 @@ export const getRoutes = (
         { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: true },
         { title: t('master.locRemovedReason.Text'), href: `${rootDomain}/RemovedStats.aspx?fromreact=true`, isShow: true },
         { key: 'productsReport', title: t('report.ProductsReport.products'), href: `${sitePrefix}Reports/ProductsReport`, isShow: true },
-        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: true },
-        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: true },
+        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true },
+        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: accountSettings && accountSettings?.IsDirectAccount === true },
         { title: t('master.OpenedClickedReport'), href: `${rootDomain}/EmailCampaignStatistics.aspx?fromreact=true`, isShow: true },
         { key: 'inboundMessages', title: t('master.responses'), href: `${sitePrefix}Reports/Inbound`, isShow: true },
       ],
