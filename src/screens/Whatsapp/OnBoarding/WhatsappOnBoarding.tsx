@@ -31,7 +31,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	const { windowSize  } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(false);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [dialogType, setDialogType] = useState<DialogTypeInterface | null>(null);
 	const [toastMessage, setToastMessage] = useState<toastProps['SUCCESS']>(resetToastData);
@@ -63,13 +62,11 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 				phoneNumberData?.Data?.length > 0
 			) {
 				setIsLoader(false);
-				setIsAccountSetup(true);
 				fetchMetaPhoneNumbers();
 				fetchWhatsAppSMSVirtualNumbers();
 				fetchWhatsAppCodeVirtualNumbers();
 			} else {
 				setIsLoader(false);
-				setIsAccountSetup(false);
 			}
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -626,65 +623,60 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			classes={classes}
 			customPadding={false}
 			containerClass={clsx(classes.management, classes.mb50, classes.whatsapp)}>
-			{isAccountSetup && (
-				<Box className={'topSection'}>
-					<Title Text={t('WhatsappOnBoarding.title')} classes={classes} />
-					<Box className={clsx(classes.p20)}>
-						<button
-							onClick={launchWhatsAppSignup}
-							style={{
-								backgroundColor: '#1877f2',
-								border: '0',
-								borderRadius: '4px',
-								color: '#fff',
-								cursor: 'pointer',
-								fontFamily: 'Helvetica, Arial, sans-serif',
-								fontSize: '16px',
-								fontWeight: 'bold',
-								height: '40px',
-								padding: '0 24px',
-							}}
-						>
-							{t('WhatsappOnBoarding.loginWithFacebook')}
-						</button>
+			<Box className={'topSection'}>
+				<Title Text={t('WhatsappOnBoarding.title')} classes={classes} />
+				<Box className={clsx(classes.p20)}>
+					<button
+						onClick={launchWhatsAppSignup}
+						style={{
+							backgroundColor: '#1877f2',
+							border: '0',
+							borderRadius: '4px',
+							color: '#fff',
+							cursor: 'pointer',
+							fontFamily: 'Helvetica, Arial, sans-serif',
+							fontSize: '16px',
+							fontWeight: 'bold',
+							height: '40px',
+							padding: '0 24px',
+						}}
+					>
+						{t('WhatsappOnBoarding.loginWithFacebook')}
+					</button>
 
-						<Typography className={clsx(classes.f22, classes.pt10, classes.semibold)}>{t('WhatsappOnBoarding.instruction')}</Typography>
-						<ul className={clsx(classes.mt1, classes.noPadding)}>
-							<li className={clsx(classes.pb10)}>1. {RenderHtml(t('WhatsappOnBoarding.instruction_step_1'))}</li>
-							<li className={clsx(classes.pb10)}>2. {t('WhatsappOnBoarding.instruction_step_2')}</li>
-							<li className={clsx(classes.pb10)}>3. {t('WhatsappOnBoarding.instruction_step_3')}</li>
-							<li className={clsx(classes.pb10)}>4. {t('WhatsappOnBoarding.instruction_step_4')}</li>
-							<li className={clsx(classes.pb10)}>5. {t('WhatsappOnBoarding.instruction_step_5')}</li>
-							<li className={clsx(classes.pb10)}>6. {t('WhatsappOnBoarding.instruction_step_6')}</li>
-						</ul>
-					</Box>
-
-					<Box className={clsx(classes.p20)}>
-						<Grid container spacing={3}>
-							<Grid item md={6} sm={12} xs={12}>
-								{renderBusinessDetails()}
-								{
-									phoneNumbers.length > 0 && (
-										<Box className={clsx(classes.pt20)}>
-											{renderPhoneNumbersTable()}
-										</Box>
-									)
-								}
-							</Grid>
-							<Grid item md={6} sm={12} xs={12}>
-								{renderVirtualNumbers()}
-								<Box className={clsx(classes.pt20)}>
-									{renderIncomingMessages()}
-								</Box>
-							</Grid>
-						</Grid>
-					</Box>
+					<Typography className={clsx(classes.f22, classes.pt10, classes.semibold)}>{t('WhatsappOnBoarding.instruction')}</Typography>
+					<ul className={clsx(classes.mt1, classes.noPadding)}>
+						<li className={clsx(classes.pb10)}>1. {RenderHtml(t('WhatsappOnBoarding.instruction_step_1'))}</li>
+						<li className={clsx(classes.pb10)}>2. {t('WhatsappOnBoarding.instruction_step_2')}</li>
+						<li className={clsx(classes.pb10)}>3. {t('WhatsappOnBoarding.instruction_step_3')}</li>
+						<li className={clsx(classes.pb10)}>4. {t('WhatsappOnBoarding.instruction_step_4')}</li>
+						<li className={clsx(classes.pb10)}>5. {t('WhatsappOnBoarding.instruction_step_5')}</li>
+						<li className={clsx(classes.pb10)}>6. {t('WhatsappOnBoarding.instruction_step_6')}</li>
+					</ul>
 				</Box>
-			)}
-			{!isAccountSetup && (
-				!isLoader && <NoSetup classes={classes} />
-			)}
 
+				<Box className={clsx(classes.p20)}>
+					<Grid container spacing={3}>
+						<Grid item md={6} sm={12} xs={12}>
+							{renderBusinessDetails()}
+							{
+								phoneNumbers.length > 0 && (
+									<Box className={clsx(classes.pt20)}>
+										{renderPhoneNumbersTable()}
+									</Box>
+								)
+							}
+						</Grid>
+						<Grid item md={6} sm={12} xs={12}>
+							{renderVirtualNumbers()}
+							<Box className={clsx(classes.pt20)}>
+								{renderIncomingMessages()}
+							</Box>
+						</Grid>
+					</Grid>
+				</Box>
+			</Box>
+			
 			{renderToast()}
 			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
