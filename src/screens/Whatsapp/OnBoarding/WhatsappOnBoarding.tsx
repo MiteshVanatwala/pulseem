@@ -47,6 +47,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}>({
 		pin: ''
 	});
+	const [sessionInfo, setSessionInfo] = useState('');
+  const [sdkResponse, setSdkResponse] = useState('');
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
@@ -187,6 +189,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
           console.error("error ", error_message);
         }
       }
+			setSessionInfo(JSON.stringify(data, null, 2));
     } catch (error) {
       console.log('Non JSON Responses', event.data);
     }
@@ -202,6 +205,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
       // The returned code must be transmitted to your backend first and then
       // perform a server-to-server call from there to our servers for an access token.
     }
+		setSdkResponse(JSON.stringify(response, null, 2));
   };
 
 	const launchWhatsAppSignup = () => {
@@ -641,6 +645,13 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 						<li className={clsx(classes.pb10)}>6. {t('WhatsappOnBoarding.instruction_step_6')}</li>
 					</ul>
 				</Box>
+
+				<p>Session info response:</p>
+				<pre>{sessionInfo}</pre>
+				<br />
+				<p>SDK response:</p>
+				<pre>{sdkResponse}</pre>
+
 
 				<Box className={clsx(classes.p20)}>
 					<Grid container spacing={3}>
