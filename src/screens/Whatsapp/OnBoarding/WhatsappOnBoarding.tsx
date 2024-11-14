@@ -52,23 +52,10 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
   
 	useEffect(() => {
-		(async () => {
-			setIsLoader(true);
-			const { payload: phoneNumberData }: phoneNumberAPIProps =
-				await dispatch<any>(userPhoneNumbers());
-			if (
-				phoneNumberData?.Status === apiStatus.SUCCESS &&
-				phoneNumberData?.Data &&
-				phoneNumberData?.Data?.length > 0
-			) {
-				setIsLoader(false);
-				fetchMetaPhoneNumbers();
-				fetchWhatsAppSMSVirtualNumbers();
-				fetchWhatsAppCodeVirtualNumbers();
-			} else {
-				setIsLoader(false);
-			}
-		})();
+		setIsLoader(false);
+		fetchMetaPhoneNumbers();
+		fetchWhatsAppSMSVirtualNumbers();
+		fetchWhatsAppCodeVirtualNumbers();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
