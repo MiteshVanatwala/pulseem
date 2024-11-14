@@ -432,10 +432,6 @@ const EShop = ({ classes }: any) => {
     }
   }
 
-  useEffect(() => {
-    console.log(settings)
-  }, [settings])
-
   return (
     <>
       {toastMessage && renderToast()}
