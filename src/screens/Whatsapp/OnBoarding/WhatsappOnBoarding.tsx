@@ -202,7 +202,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
     }
   };
  
-  const fbLoginCallback = async (response: any) => {
+  const fbLoginCallback = (response: any) => {
 		console.log('fbLoginCallback');
 		console.log(response);
     if (response.authResponse) {
@@ -210,13 +210,13 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
       console.log(`Code : ${code}`)
       if (code !== undefined && code !== null && phoneNumberId !== '' && wabaId !== '') {
 				window.localStorage.setItem('fblogin_authcode', code);
-				const resp = await dispatch(facebookLogin({
+				dispatch(facebookLogin({
 					phoneNumberId,
 					wabaId,
 					code: code
 				}));
-				console.log('facebookLogin')
-				console.log(resp)
+				// console.log('facebookLogin')
+				// console.log(resp)
 			}
       // The returned code must be transmitted to your backend first and then
       // perform a server-to-server call from there to our servers for an access token.
