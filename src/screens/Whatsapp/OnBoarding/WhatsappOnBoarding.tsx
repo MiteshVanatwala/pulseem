@@ -10,11 +10,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
-import NoSetup from '../NoSetup/NoSetup';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { apiStatus, errorToastData, resetToastData, successToastData, WHATSAPP_ONBOARDING_STATUS } from '../Constant';
-import { userPhoneNumbers } from '../../../redux/reducers/whatsappSlice';
-import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
+import { errorToastData, resetToastData, successToastData, WHATSAPP_ONBOARDING_STATUS } from '../Constant';
 import { Badge, Box, Button, Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@material-ui/core';
 import { Title } from '../../../components/managment/Title';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
@@ -174,13 +171,19 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
         if (data.event === 'FINISH') {
           const { phone_number_id, waba_id } = data.data;
           console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
-          const resp = await dispatch(facebookLogin({
-            phone_number_id,
-            waba_id,
-            code: window.localStorage.getItem('fblogin_authcode')
-          }));
-					console.log('facebookLogin')
-					console.log(resp)
+					const fblogin_authcode = window.localStorage.getItem('fblogin_authcode');
+					if (phone_number_id && waba_id && fblogin_authcode) {
+						const resp = await dispatch(facebookLogin({
+							phone_number_id,
+							waba_id,
+							code: fblogin_authcode
+						}));
+						console.log('facebookLogin')
+						console.log(resp)
+					}
+					console.log('Calling fetchWhatsAppSMSVirtualNumbers & fetchWhatsAppCodeVirtualNumbers');
+					fetchWhatsAppSMSVirtualNumbers();
+					fetchWhatsAppCodeVirtualNumbers();
         } else if (data.event === 'CANCEL') {
           const { current_step } = data.data;
           console.warn("Cancel at ", current_step);
@@ -201,7 +204,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
     if (response.authResponse) {
       const code = response.authResponse.code;
       console.log(`Code : ${code}`)
-      window.localStorage.setItem('fblogin_authcode', code);
+      if (code !== undefined && code !== null) window.localStorage.setItem('fblogin_authcode', code);
       // The returned code must be transmitted to your backend first and then
       // perform a server-to-server call from there to our servers for an access token.
     }
@@ -656,7 +659,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 				<Box className={clsx(classes.p20)}>
 					<Grid container spacing={3}>
 						<Grid item md={6} sm={12} xs={12}>
-							{renderBusinessDetails()}
+							{renderVirtualNumbers()}
 							{
 								phoneNumbers.length > 0 && (
 									<Box className={clsx(classes.pt20)}>
@@ -666,7 +669,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 							}
 						</Grid>
 						<Grid item md={6} sm={12} xs={12}>
-							{renderVirtualNumbers()}
+							{renderBusinessDetails()}
 							<Box className={clsx(classes.pt20)}>
 								{renderIncomingMessages()}
 							</Box>
