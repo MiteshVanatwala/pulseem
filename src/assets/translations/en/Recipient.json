@@ -97,7 +97,8 @@
   "responses": {
     "serverFoundWithNoResponse": "The request accepted by server, but no response has been sent. Please contact support",
     "notFound": "No recipients has been found for unsubscribe",
-    "noRecipientsInGroup": "No recipienets found in the selected group"
+    "noRecipientsInGroup": "No recipienets found in the selected group",
+    "noRecipientsTyped": "No recipienets found in your query"
   },
   "unsubscribed": {
     "succeeded": "The recipients successfully unsubscribed from the selected groups",

@@ -159,7 +159,7 @@ const FORM_COMPANY_DETAILS = ({
     dispatch(resetTwoFA());
 
   }
-// Not in use
+  // Not in use
   const handleQueryString2FA = () => {
     //@ts-ignore
     if (searchParams.has('2fa') && !Settings.TwoFactorAuthEnabled) {

@@ -19,7 +19,6 @@ import {
     getTestGroups,
     getSMSVirtualNumber
 } from "../../redux/reducers/smsSlice";
-import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
@@ -216,11 +215,6 @@ const Editorbox = ({
         debouncedCallback(characterCount)
         //getcredits(characterCount);
     }, [characterCount])
-
-    useEffect(() => {
-        if (!accountSettings || Object.keys(accountSettings).length === 0)
-            dispatch(getCommonFeatures());
-    }, [])
 
     const handleSmsModelChange = (name, value) => {
         setSmsModel(prevState => ({
