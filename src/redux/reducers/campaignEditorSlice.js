@@ -7,7 +7,7 @@ export const getCampaignById = createAsyncThunk(
     '/CampaignEditor/GetCampaignById/', async (id, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(`/CampaignEditor/GetCampaignById/${id}`);
-            return JSON.parse(response.data)
+            return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }

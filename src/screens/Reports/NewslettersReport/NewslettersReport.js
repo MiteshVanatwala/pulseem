@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import 'moment/locale/he';
-import { getGetEmailReportsManagement, getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
+import { getGetEmailReportsManagement } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
@@ -224,7 +224,6 @@ const NewslettersReport = ({ classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    await dispatch(getNewsletterReports(isDemoSend));
     await dispatch(getGetEmailReportsManagement(isDemoSend));
     setLoader(false);
     const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
@@ -779,12 +778,14 @@ const NewslettersReport = ({ classes }) => {
       <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0 && !isRootElement) ? onClick : VoidFunction}>
         <Typography
           component={'p'}
-          style={{ ...textStyle, 
+          style={{
+            ...textStyle,
             pointerEvents: isRootElement && 'none',
-            textDecoration: ((value > 0 || (isRevenueCol && value > 0)) && !isRootElement) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) && !isRootElement ? 'pointer' : null }}
+            textDecoration: ((value > 0 || (isRevenueCol && value > 0)) && !isRootElement) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) && !isRootElement ? 'pointer' : null
+          }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">
-            { isCurrencySymbolPrefix ? currencySymbol : '' } {(value && value.toLocaleString()) || '0'} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+          {isCurrencySymbolPrefix ? currencySymbol : ''} {(value && value.toLocaleString()) || '0'} {!isCurrencySymbolPrefix ? currencySymbol : ''}
         </Typography>
       </Box>
     )
@@ -835,7 +836,7 @@ const NewslettersReport = ({ classes }) => {
     } = getParentChildSum(row);
 
     const hasChildren = isParent && newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID)?.length > 0;
-    
+
     const hrefs = getHrefs(CampaignID, Revenue, hasChildren)
     return (
       <>

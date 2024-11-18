@@ -241,7 +241,6 @@ const Shopify = ({ classes }: any) => {
       case 201: {
         setSettings({
           ID: 0,
-          SubAccountID: 0,
           store_name: '',
           api_key: '',
           api_access_token: '',

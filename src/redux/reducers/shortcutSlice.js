@@ -5,7 +5,7 @@ export const getShortcuts = createAsyncThunk(
     'dashboard/GetShortcuts', async (_, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(`dashboard/GetShortcuts`);
-            return JSON.parse(response.data)
+            return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
@@ -34,13 +34,18 @@ export const deleteShortcuts = createAsyncThunk(
 export const shortcutSlice = createSlice({
     name: 'shortcuts',
     initialState: {
-        shortcuts: [],
+        shortcuts: null,
         shortcutsError: ''
     },
     extraReducers: builder => {
         builder
             .addCase(getShortcuts.fulfilled, (state, { payload }) => {
-                state.shortcuts = payload;
+                if (payload?.StatusCode === 201) {
+                    state.shortcuts = payload?.Data;
+                }
+                else {
+                    state.shortcuts = [];
+                }
             })
             .addCase(getShortcuts.rejected, (state, action) => {
                 state.shortcutsError = action.error.message
