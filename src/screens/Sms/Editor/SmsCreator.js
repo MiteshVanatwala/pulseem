@@ -180,14 +180,12 @@ const SmsCreator = ({ classes }) => {
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [smsModel, setSmsModel] = useState({
-    SubAccountID: -1,
     CreditsPerSms: "1",
     FromNumber: campaignNumber,
     IsLinksStatistics: true,
     IsResponse: false,
     IsTest: true,
     IsTestCampaign: false,
-    AccountID: -1,
     Credits: "1",
     SmsCampaignID: -1,
     TotalRecipients: 1,
@@ -204,7 +202,6 @@ const SmsCreator = ({ classes }) => {
 
   const quickSendPayload = {
     SMSCampaignID: -1,
-    SubAccountID: -1,
     Status: -1,
     Type: 0,
     CreditsPerSms: "1",
@@ -223,8 +220,6 @@ const SmsCreator = ({ classes }) => {
     MessageLength: "1",
     LogData: {
       SmsCampaignID: -1,
-      SubAccountID: "",
-      AccountID: "",
       Credits: "1",
       TotalRecipients: 1
     }
@@ -462,7 +457,7 @@ const SmsCreator = ({ classes }) => {
           if (link.indexOf('www.') === 0 || link.indexOf('https://') === 0 || link.indexOf('http://') === 0) output.push(link)
           return output;
         }, []);
-        
+
         setlinkCount(links.length);
         if (isLinksStatistics) {
           setSplittedLinks(links);
@@ -1252,7 +1247,7 @@ const SmsCreator = ({ classes }) => {
 
   const onSave = async (isSave, returnToAutomation = false) => {
     linkCalculation();
-    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: accountSettings.AccountID, SubAccountID: accountSettings.SubAccountId, SmsCampaignID: smsCampaignId, FallbackURL: dynamicProductFallbackURL }
+    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, SmsCampaignID: smsCampaignId, FallbackURL: dynamicProductFallbackURL }
     setLoader(true);
     let r = await dispatch(smsSave(payloadToPush));
     const campaignId = r.payload.Message;
