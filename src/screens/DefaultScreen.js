@@ -14,14 +14,15 @@ import { sitePrefix } from '../config';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
-  const { isAdmin, isAllowSwitchAccount, isRTL, isDebtAccount } = useSelector(state => state.core)
+  const { isAdmin, isAllowSwitchAccount, windowSize, isRTL, isDebtAccount, isClal } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
   const [reKey, setReKey] = useState(0);
+  const { accountSettings, accountFeatures } = useSelector(state => state.common);
 
   let route, title;
 
-  const routes = getRoutes(t);
+  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL);
 
   if (subPage) {
     if (currentPage === 'settings') {

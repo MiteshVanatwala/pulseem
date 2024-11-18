@@ -130,7 +130,6 @@ const Istores = ({ classes }: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
         setSettings({
-          SubAccountID: 0,
           api_key: '',
           StoreID: '',
           PurchaseEventActive: false,
@@ -226,6 +225,7 @@ const Istores = ({ classes }: any) => {
           ...errors,
           authentication_message: t(`integrations.authResponses.400`),
         });
+        setToastMessage({ severity: 'error', color: 'error', message: "integrations.authResponses.400", showAnimtionCheck: false } as any);
         break;
       }
       case 401: {
@@ -238,6 +238,7 @@ const Istores = ({ classes }: any) => {
           ...errors,
           authentication_message: t(`integrations.authResponses.403`),
         })
+        setToastMessage({ severity: 'error', color: 'error', message: "integrations.authResponses.403", showAnimtionCheck: false } as any);
         break;
       }
       case 404: {

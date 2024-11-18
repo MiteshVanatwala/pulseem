@@ -11,7 +11,7 @@ import FilterRecipientsDialog from '../Popups/FilterRecipientsDialog';
 import GroupSelector from './GroupSelector';
 import { tabs } from '../../Constant';
 import UploadXL from '../../../../components/Files/UploadXL';
-import { UploadSettings } from '../../../Groups/tempConstants';
+import { UploadSettings } from '../../../../helpers/Constants';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import Toast from '../../../../components/Toast/Toast.component';
 import { BsInfoCircle } from 'react-icons/bs';
@@ -90,36 +90,36 @@ const LeftPane = ({
 		),
 		showDefaultButtons: false,
 		renderButtons: () =>
-      (
-        <Grid
-          container
-          spacing={2}
-          className={clsx(classes.dialogButtonsContainer)}
-        >
-          <Grid item>
-            <Button
-              onClick={() => refFilterRecipientsDialog?.current?.onOkClick() }
-              className={clsx(
-                classes.btn,
-                classes.btnRounded
-              )}
-            >
-              {translator('common.Yes')}
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              onClick={() => refFilterRecipientsDialog?.current?.onNoClick()}
-              className={clsx(
-                classes.btn,
-                classes.btnRounded
-              )}
-            >
-              {translator('common.No')}
-            </Button>
-          </Grid>
-        </Grid>
-      ),
+		(
+			<Grid
+				container
+				spacing={2}
+				className={clsx(classes.dialogButtonsContainer)}
+			>
+				<Grid item>
+					<Button
+						onClick={() => refFilterRecipientsDialog?.current?.onOkClick()}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded
+						)}
+					>
+						{translator('common.Yes')}
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+						onClick={() => refFilterRecipientsDialog?.current?.onNoClick()}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded
+						)}
+					>
+						{translator('common.No')}
+					</Button>
+				</Grid>
+			</Grid>
+		),
 	})
 
 	const renderDialog = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
 import BeeEditor from './screens/Editors/BeeEditor';
@@ -467,7 +467,6 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}AccountUsers`}
         element={<AccountUsers classes={classes} />}
-        // component={transferUrl('/Pulseem/AccountUsers.aspx')}
       />
       <Route
         path={`/AccountUsersReport`}
@@ -633,7 +632,6 @@ const App = ({ screenSize }) => {
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
         isAllowSwitchAccount = '',
       } = jwt;
-      
       dispatch(
         setCoreData({
           email,
