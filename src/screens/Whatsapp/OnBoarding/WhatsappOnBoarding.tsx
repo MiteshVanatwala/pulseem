@@ -48,6 +48,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   const [sdkResponse, setSdkResponse] = useState('');
   const [phoneNumberId, setPhoneNumberId] = useState('');
   const [wabaId, setWabaId] = useState('');
+  const [code, setCode] = useState('');
 	
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
@@ -58,7 +59,30 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		fetchWhatsAppSMSVirtualNumbers();
 		fetchWhatsAppCodeVirtualNumbers();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
+
+		const interval = setInterval(() => {
+			fetchWhatsAppCodeVirtualNumbers();
+		}, 10000);
+	
+		return () => clearInterval(interval);
 	}, [])
+
+	useEffect(() => {
+		console.log(`Phone number ID - ${phoneNumberId} |  WABA ID - ${wabaId} | Code - ${code}`);
+		if (phoneNumberId !== '' && wabaId !== '' && code !== '') {
+			FBlogin();
+		}
+	}, [phoneNumberId, wabaId, code]);
+
+	const FBlogin = async () => {
+		console.log(`FacebookLogin...`)
+		const resp = await dispatch(facebookLogin({
+			phoneNumberId,
+			wabaId,
+			code
+		}));
+		console.log(resp)
+	}
 
 	const fetchMetaPhoneNumbers = async () => {
 		const resp = await dispatch(getMetaPhoneNumbers({})) as any;
@@ -88,12 +112,15 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}
 	
 	const handleMetaPhoneNumberResponse = (response: PulseemResponse) => {
-		const { StatusCode, Data: {
-			businessInfo, phoneNumbers
-		} } = response;
+		const { StatusCode, Data } = response;
 		if (StatusCode === 0) {
+			const {
+				businessInfo, phoneNumbers
+			} = Data;
 			setBusinessInfo(businessInfo);
 			setPhoneNumbers(phoneNumbers);
+		} else if (StatusCode === 4) {
+			// Meta configuration missing
 		}
 	}
 
@@ -172,22 +199,20 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
       if (data.type === 'WA_EMBEDDED_SIGNUP') {
         if (data.event === 'FINISH') {
           const { phone_number_id, waba_id } = data.data;
+          console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
 					setPhoneNumberId(phone_number_id);
 					setWabaId(waba_id);
-          console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
-					const fblogin_authcode = window.localStorage.getItem('fblogin_authcode');
-					if (phone_number_id && waba_id && fblogin_authcode) {
-						const resp = await dispatch(facebookLogin({
-							phone_number_id,
-							waba_id,
-							code: fblogin_authcode
-						}));
-						console.log('facebookLogin')
-						console.log(resp)
-					}
+					// const fblogin_authcode = window.localStorage.getItem('fblogin_authcode');
+					// if (phone_number_id && waba_id && fblogin_authcode) {
+					// 	const resp = await dispatch(facebookLogin({
+					// 		phone_number_id,
+					// 		waba_id,
+					// 		code: fblogin_authcode
+					// 	}));
+					// 	console.log('facebookLogin')
+					// 	console.log(resp)
+					// }
 					console.log('Calling fetchWhatsAppSMSVirtualNumbers & fetchWhatsAppCodeVirtualNumbers');
-					fetchWhatsAppSMSVirtualNumbers();
-					fetchWhatsAppCodeVirtualNumbers();
         } else if (data.event === 'CANCEL') {
           const { current_step } = data.data;
           console.warn("Cancel at ", current_step);
@@ -207,17 +232,18 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		console.log(response);
     if (response.authResponse) {
       const code = response.authResponse.code;
+			setCode(code);
       console.log(`Code : ${code}`)
-      if (code !== undefined && code !== null && phoneNumberId !== '' && wabaId !== '') {
-				window.localStorage.setItem('fblogin_authcode', code);
-				dispatch(facebookLogin({
-					phoneNumberId,
-					wabaId,
-					code: code
-				}));
-				// console.log('facebookLogin')
-				// console.log(resp)
-			}
+      // if (code !== undefined && code !== null && phoneNumberId !== '' && wabaId !== '') {
+			// 	window.localStorage.setItem('fblogin_authcode', code);
+			// 	dispatch(facebookLogin({
+			// 		phoneNumberId,
+			// 		wabaId,
+			// 		code: code
+			// 	}));
+			// 	// console.log('facebookLogin')
+			// 	// console.log(resp)
+			// }
       // The returned code must be transmitted to your backend first and then
       // perform a server-to-server call from there to our servers for an access token.
     }
