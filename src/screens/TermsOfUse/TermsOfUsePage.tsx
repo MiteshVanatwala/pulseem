@@ -21,6 +21,7 @@ const TermsOfUsePage = ({ classes }: any) => {
         <Title
           classes={classes}
           Text={t('TermsOfUse.title')}
+          autoWidth={false}
         />
       </Box>
       <Box className={classes.accordion} style={{ padding: 15 }}>
