@@ -80,7 +80,7 @@ const NotificationManagement = ({ classes }) => {
   }
   useEffect(() => {
     setLoader(true);
-
+    
     const handleApiKey = async () => {
       await dispatch(getSubAccountApiKey());
       setLoader(false);

@@ -253,8 +253,10 @@ export const commonSlice = createSlice({
           DefaultLinkChars: data?.DefaultLinkChars,
           DefaultCellNumber: data?.DefaultCellNumber,
           IsDirectAccount: data?.IsDirectAccount,
-          SubAccountSettings: data?.SubAccountSettings
+          SubAccountSettings: data?.SubAccountSettings,
+          DomainAddress: data?.DomainAddress
         };
+
         state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
         state.subAccount = data;
       })
