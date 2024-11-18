@@ -11,12 +11,15 @@ import Illustration_BG_BL from '../assets/images/Illustration_BG_BL';
 import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 import DomainVerification from '../Shared/Dialogs/DomainVerification';
 import { sitePrefix } from '../config';
+import useRedirect from '../helpers/Routes/Redirect';
+import { getCookie } from '../helpers/Functions/cookies';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
   const { t } = useTranslation();
   const { isAdmin, isAllowSwitchAccount, windowSize, isRTL, isDebtAccount, isClal } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
+  const Redirect = useRedirect();
   const { accountSettings, accountFeatures } = useSelector(state => state.common);
 
   let route, title;
@@ -63,7 +66,13 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       }
     }
     if (isDebtAccount === true && window.location.href.toLowerCase().indexOf('billingsettings') <= -1) {
-      window.location.href = `${sitePrefix}BillingSettings?p=2`;
+      Redirect({ url: `${sitePrefix}BillingSettings?p=2` })
+    }
+    else if (!accountSettings?.SubAccountSettings?.IsTermsApproved &&
+      getCookie('ignoreTerm') !== 'true' &&
+      accountSettings?.SubAccountSettings?.IgnoranceCount === 3 &&
+      window.location.href.toLowerCase().indexOf('termsofuse') <= -1) {
+      Redirect({ url: `${sitePrefix}TermsOfUse` })
     }
   }, [])
 
