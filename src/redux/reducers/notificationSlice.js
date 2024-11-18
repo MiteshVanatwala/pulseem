@@ -5,7 +5,7 @@ export const getNotificationData = createAsyncThunk(
   'notification/getNotifications', async (_, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`notification/getNotifications`);
-      return JSON.parse(response.data)
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

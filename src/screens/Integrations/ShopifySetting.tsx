@@ -242,7 +242,6 @@ const Shopify = ({ classes }: any) => {
       case 201: {
         setSettings({
           ID: 0,
-          SubAccountID: 0,
           store_name: '',
           api_key: '',
           api_access_token: '',
@@ -450,26 +449,26 @@ const Shopify = ({ classes }: any) => {
   }
 
   const renderDialog = () => {
-		const { type } = dialogType || {}
-		let currentDialog: any = {};
-		if (type === 'scriptImplementation') {
-			currentDialog = scriptImplementationDialog();
-		}
+    const { type } = dialogType || {}
+    let currentDialog: any = {};
+    if (type === 'scriptImplementation') {
+      currentDialog = scriptImplementationDialog();
+    }
 
-		if (type) {
-			return (
-				dialogType && <BaseDialog
-					classes={classes}
-					open={dialogType}
-					onCancel={() => setDialogType(null)}
-					onClose={() => setDialogType(null)}
-					renderButtons={currentDialog?.renderButtons || null}
-					{...currentDialog}>
-					{currentDialog?.content}
-				</BaseDialog>
-			)
-		}
-	}
+    if (type) {
+      return (
+        dialogType && <BaseDialog
+          classes={classes}
+          open={dialogType}
+          onCancel={() => setDialogType(null)}
+          onClose={() => setDialogType(null)}
+          renderButtons={currentDialog?.renderButtons || null}
+          {...currentDialog}>
+          {currentDialog?.content}
+        </BaseDialog>
+      )
+    }
+  }
 
   return (
     <>

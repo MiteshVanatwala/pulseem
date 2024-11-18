@@ -9,6 +9,7 @@ interface TitleObject {
   Element?: any;
   isIcon?: boolean;
   subTitle?: any;
+  autoWidth?: any;
 }
 
 export const Title = ({
@@ -17,7 +18,8 @@ export const Title = ({
   ContainerStyle,
   Element = null,
   isIcon = true,
-  subTitle
+  subTitle,
+  autoWidth = true
 }: TitleObject) => {
   return (
     <Box
@@ -26,7 +28,7 @@ export const Title = ({
         classes.alignItemsCenter,
         classes.mgmtTitleContainer
       )}
-      style={ContainerStyle}
+      style={{ ...ContainerStyle, width: autoWidth ? 'auto' : '100%' }}
     >
       <Box className={Element ? '' : clsx(classes.flex, classes.alignItemsCenter)}>
         {isIcon && <ListIcon className={classes.mr15} />}

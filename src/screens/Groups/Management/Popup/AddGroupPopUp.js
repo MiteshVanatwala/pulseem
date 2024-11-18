@@ -60,7 +60,6 @@ const AddGroupPopUp = ({
         RemovedCell: 0,
         RemovedEmails: 0,
         RestrictedEmails: 0,
-        SubAccountID: 0,
         TotalRecipients: 0,
         GroupName: "",
         UpdatedDate: new Date(),
@@ -87,7 +86,6 @@ const AddGroupPopUp = ({
 
             if (isCombinedRequest) {
                 payload = {
-                    SubAccountID: -1,
                     GroupName: newGroupData.GroupName,
                     GroupIds: selectedGroupId,
                     IsTestGroup: newGroupData.IsTestGroup,

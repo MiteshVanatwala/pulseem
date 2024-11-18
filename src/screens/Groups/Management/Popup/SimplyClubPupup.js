@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
-import { UploadSettings } from '../../tempConstants';
+import { UploadSettings } from '../../../../helpers/Constants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
