@@ -20,3 +20,8 @@ export enum EventTypes {
   Purchase = 1,
   CartAbandon = 2
 }
+
+export enum WhatsappCampaignStatus {
+  META_BUSINESS_NOTVERIFIED = 11,
+  META_PHONENUMBER_NOTVERIFIED = 12
+}

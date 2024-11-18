@@ -52,6 +52,8 @@ import { BsInfoCircle } from "react-icons/bs";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelper";
 import { sitePrefix } from "../../../config";
+import { WhatsappCampaignStatus } from "../../../config/enum";
+import { errorToastData } from "../../Whatsapp/Constant";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -436,6 +438,16 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         else if (response.StatusCode === 405 || response?.StatusCode === 402) {
             setNoCreditLeft(true);
+        } else if (response.StatusCode === WhatsappCampaignStatus.META_BUSINESS_NOTVERIFIED) {
+            setToastMessage({
+                ...errorToastData,
+                message: t('whatsappCampaign.metaBusinessNotVerified')
+            });
+        } else if (response.StatusCode === WhatsappCampaignStatus.META_PHONENUMBER_NOTVERIFIED) {
+            setToastMessage({
+                ...errorToastData,
+                message: t('whatsappCampaign.metaPhoneNumberNotVerified')
+            });
         }
         else {
             setDialogType(SEND_PROC[response?.StatusCode]);
