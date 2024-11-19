@@ -347,13 +347,13 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					classes={cellStyle}
 					align='center'
 					className={classes.flex2}>
-						{row?.id}
+						{row?.display_phone_number}
 				</TableCell>
 				<TableCell
 					classes={cellStyle}
 					align='center'
 					className={classes.flex2}>
-						{row?.display_phone_number}
+						{row?.id}
 				</TableCell>
 				<TableCell
 					classes={cellStyle}
@@ -383,8 +383,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.ID')}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.phoneNumber')}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.ID')}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.status')}</TableCell>
         </TableRow>
       </TableHead>

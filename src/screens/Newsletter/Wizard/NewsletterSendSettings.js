@@ -52,7 +52,7 @@ import { BsInfoCircle } from "react-icons/bs";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelper";
 import { sitePrefix } from "../../../config";
-import { WhatsappCampaignStatus } from "../../../config/enum";
+import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from "../../../config/enum";
 import { errorToastData } from "../../Whatsapp/Constant";
 
 function Alert(props) {
@@ -125,7 +125,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
     const { isRTL } = useSelector((state) => state.core);
-    const { verifiedEmails, accountSettings } = useSelector(state => state.common);
+    const { verifiedEmails, WhatsAppPlatformID, accountSettings } = useSelector(state => state.common);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, extraData, testGroups, previousLandingData } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
@@ -438,12 +438,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         else if (response.StatusCode === 405 || response?.StatusCode === 402) {
             setNoCreditLeft(true);
-        } else if (response.StatusCode === WhatsappCampaignStatus.META_BUSINESS_NOTVERIFIED) {
+        } else if (response.StatusCode === WhatsappCampaignStatus.META_BUSINESS_NOTVERIFIED && WhatsAppPlatformID === WhatsAppPlatformIDEnum.META) {
             setToastMessage({
                 ...errorToastData,
                 message: t('whatsappCampaign.metaBusinessNotVerified')
             });
-        } else if (response.StatusCode === WhatsappCampaignStatus.META_PHONENUMBER_NOTVERIFIED) {
+        } else if (response.StatusCode === WhatsappCampaignStatus.META_PHONENUMBER_NOTVERIFIED && WhatsAppPlatformID === WhatsAppPlatformIDEnum.META) {
             setToastMessage({
                 ...errorToastData,
                 message: t('whatsappCampaign.metaPhoneNumberNotVerified')
