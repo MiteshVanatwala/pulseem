@@ -77,11 +77,27 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	const FBlogin = async () => {
 		console.log(`FacebookLogin...`)
 		const resp = await dispatch(facebookLogin({
-			phoneNumberId,
-			wabaId,
-			code
-		}));
+			phone_number_id: phoneNumberId,
+			waba_id: wabaId,
+			code: code
+		})) as any;
 		console.log(resp)
+		handleFBloginResponse(resp?.payload as PulseemResponse)
+	}
+
+	const handleFBloginResponse = (response: PulseemResponse) => {
+		const { Status, Message } = response as any;
+		if (Status === 'Error') {
+			setToastMessage({
+				...successToastData,
+				message: Message
+			});
+		} else {
+			setToastMessage({
+				...errorToastData,
+				message: Message
+			});
+		}
 	}
 
 	const fetchMetaPhoneNumbers = async () => {
