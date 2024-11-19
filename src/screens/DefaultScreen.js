@@ -68,7 +68,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
     if (isDebtAccount === true && window.location.href.toLowerCase().indexOf('billingsettings') <= -1) {
       Redirect({ url: `${sitePrefix}BillingSettings?p=2` })
     }
-    else if (!accountSettings?.SubAccountSettings?.IsTermsApproved &&
+    else if (!isAdmin && !accountSettings?.SubAccountSettings?.IsTermsApproved &&
       getCookie('ignoreTerm') !== 'true' &&
       accountSettings?.SubAccountSettings?.IgnoranceCount === 3 &&
       window.location.href.toLowerCase().indexOf('termsofuse') <= -1) {

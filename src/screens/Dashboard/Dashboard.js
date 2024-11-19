@@ -24,7 +24,7 @@ import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL } = useSelector(state => state.core);
+  const { windowSize, isRTL, isAdmin } = useSelector(state => state.core);
   const { accountSettings, isGlobal } = useSelector(state => state.common);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
@@ -55,7 +55,7 @@ const DashboardScreen = ({ classes }) => {
         }
       }
 
-      if (!hasCookie) {
+      if (!hasCookie && !isAdmin) {
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
       }
     }
