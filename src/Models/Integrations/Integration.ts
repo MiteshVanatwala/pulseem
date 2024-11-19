@@ -45,4 +45,12 @@ export interface EShopModel {
     Groups?: IntegrationGroups;
     IsDeleted?: boolean;
     SubAccountID?: string;
+    AutomaticDailyEmailsUnsubscribesAndActiveTypeID?: eAutomaticDailyEmailsUnsubscribesAndActiveTypeID;
+    AutomaticDailyEmailsGroups?: never | number[];
+}
+
+export enum eAutomaticDailyEmailsUnsubscribesAndActiveTypeID {
+    None = 0,
+    Subaccount = 1,
+    GroupID = 2
 }

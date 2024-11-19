@@ -179,6 +179,8 @@ const SmsCreator = ({ classes }) => {
   const [dynamicProductFallbackURL, setDynamicProductFallbackURL] = useState('');
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
+  const [buttonsDisabled, setButtonsDisabled] = useState(false);
+
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
     FromNumber: campaignNumber,
@@ -487,6 +489,7 @@ const SmsCreator = ({ classes }) => {
   }
 
   const getcredits = (count) => {
+    setButtonsDisabled(true);
     dispatch(getCreditsforSMS(count)).then((res) => {
       let credits = res.payload?.split("#");
       if (credits && credits !== '') {
@@ -497,6 +500,7 @@ const SmsCreator = ({ classes }) => {
         setmessageCount(0);
         handleSmsModelChange("CreditsPerSms", 0);
       }
+      setButtonsDisabled(false);
     });
   }
   const onCamppaignChange = (e) => {
@@ -801,9 +805,10 @@ const SmsCreator = ({ classes }) => {
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {linkCount} {linkCount === 1 ? t("mainReport.link") : t("mainReport.links")}
               </Typography>
-              <Typography style={{ marginInlineEnd: "18px" }}>
-                {messageCount} {messageCount === 1 ? t("sms.message") : t("sms.messages")}
-              </Typography>
+              <Box className={classes.dFlex} style={{ justifyContent: 'space-between', gap: 5 }}>
+                {buttonsDisabled ? <Loader isOpen={buttonsDisabled} showBackdrop={false} size={10} contained />
+                  : <Typography style={{ position: 'relative' }}>{messageCount}</Typography>} <Typography style={{ marginInlineEnd: "18px", position: 'relative' }}>{messageCount === 1 ? t("sms.message") : t("sms.messages")}</Typography>
+              </Box>
               <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
             </Box>
             <Box className={clsx(classes.funcDiv, classes.dFlex, classes.flexWrap)}>
@@ -1489,7 +1494,8 @@ const SmsCreator = ({ classes }) => {
           className={clsx(
             classes.btn,
             classes.btnRounded,
-            classes.backButton
+            classes.backButton,
+            buttonsDisabled && classes.disabled
           )}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           color="primary"
@@ -1503,7 +1509,8 @@ const SmsCreator = ({ classes }) => {
           className={clsx(
             classes.btn,
             classes.btnRounded,
-            classes.backButton
+            classes.backButton,
+            buttonsDisabled && classes.disabled
           )}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           color="primary"

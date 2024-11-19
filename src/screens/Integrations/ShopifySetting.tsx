@@ -67,7 +67,6 @@ const Shopify = ({ classes }: any) => {
 
   useEffect(() => {
     initSettings();
-    document.title = `${t('integrations.shopify.title')} | ${document.title}`;
   }, []);
 
   const initSettings = async () => {
