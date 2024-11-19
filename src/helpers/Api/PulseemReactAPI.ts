@@ -16,6 +16,7 @@ export const logout = async () => {
         setCookie('jtoken', '')
         setCookie('accountFeatures', '');
         setCookie('accountSettings', '');
+        setCookie('ignoreTerm', '');
         redirectToLogin()
     } catch (err) {
         console.log("logout error", err)

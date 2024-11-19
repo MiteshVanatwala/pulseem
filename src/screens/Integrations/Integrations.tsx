@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, Tab, Box } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../DefaultScreen";
@@ -25,11 +25,25 @@ const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState('0');
 
+  useEffect(() => {
+    const integrationTitles = {
+      '0': { title: `${t('integrations.shopify.title')}` },
+      '1': { title: `${t('integrations.wooCommerce.title')}` },
+      '2': { title: `${t('integrations.cashCow.title')}` },
+      '3': { title: `${t('integrations.Istores.title')}` },
+      '4': { title: `${t('integrations.ecwid.title')}` },
+      '5': { title: `${t('integrations.eShop.title')}` },
+      '6': { title: `${t('integrations.wix.title')}` },
+    } as any;
+
+    document.title = `${integrationTitles[tabValue].title} | ${t('master.pulseemSystem')}`;
+  }, [, tabValue]);
+
   return (
     <DefaultScreen
       currentPage="settings"
-      subPage="soptifySettings"
-      key="spotifySettings"
+      subPage="Integrations"
+      key="Integrations"
       classes={classes}
       containerClass={clsx(classes.editorCont)}
 

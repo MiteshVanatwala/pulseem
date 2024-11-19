@@ -11,6 +11,8 @@ import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 import DomainVerification from '../Shared/Dialogs/DomainVerification';
 import TawkToContainer from '../components/TawkTo/TawkToContainer';
 import { sitePrefix } from '../config';
+import useRedirect from '../helpers/Routes/Redirect';
+import { getCookie } from '../helpers/Functions/cookies';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
@@ -18,6 +20,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
   const [reKey, setReKey] = useState(0);
+  const Redirect = useRedirect();
   const { accountSettings, accountFeatures } = useSelector(state => state.common);
 
   let route, title;
@@ -47,7 +50,13 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   useEffect(() => {
     setReKey(reKey + 1);
     if (isDebtAccount === true && window.location.href.toLowerCase().indexOf('billingsettings') <= -1) {
-      window.location.href = `${sitePrefix}BillingSettings?p=2`;
+      Redirect({ url: `${sitePrefix}BillingSettings?p=2` })
+    }
+    else if (!isAdmin && !accountSettings?.SubAccountSettings?.IsTermsApproved &&
+      getCookie('ignoreTerm') !== 'true' &&
+      accountSettings?.SubAccountSettings?.IgnoranceCount === 3 &&
+      window.location.href.toLowerCase().indexOf('termsofuse') <= -1) {
+      Redirect({ url: `${sitePrefix}TermsOfUse` })
     }
   }, [])
 

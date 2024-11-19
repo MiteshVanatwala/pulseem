@@ -50,7 +50,6 @@ const Istores = ({ classes }: any) => {
 
   useEffect(() => {
     initSettings();
-    document.title = `${t('integrations.Istores.title')} | ${document.title}`;
   }, []);
 
   const initSettings = async () => {
