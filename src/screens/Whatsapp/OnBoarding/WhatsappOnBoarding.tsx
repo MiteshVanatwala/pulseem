@@ -86,16 +86,17 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}
 
 	const handleFBloginResponse = (response: PulseemResponse) => {
-		const { Status, Message } = response as any;
-		if (Status === 'Error') {
+		const { StatusCode, Message } = response as any;
+		if (StatusCode === 1) {
 			setToastMessage({
 				...successToastData,
-				message: Message
+				message: t('WhatsappOnBoarding.phoneNumberRegistered')
 			});
+			fetchMetaPhoneNumbers();
 		} else {
 			setToastMessage({
 				...errorToastData,
-				message: Message
+				message: t(`WhatsappOnBoarding.registerResponseCodes.${StatusCode}`) || Message
 			});
 		}
 	}
@@ -619,7 +620,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		} else {
 			setToastMessage({
 				...errorToastData,
-				message: get(error, 'message', t('common.Error'))
+				message: get(error, 'error_user_msg', t('common.Error'))
 			});
 		}
 	}

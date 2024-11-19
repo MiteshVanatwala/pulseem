@@ -45,7 +45,8 @@ export const facebookLogin = createAsyncThunk(
 			const response = await PulseemReactInstance.post(`WhatsAppAccountOnBoard/SaveWhatsappMetaClients`, request);
 			return response.data as PulseemResponse;
 		} catch (error) {
-			return console.log(error);
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
 );

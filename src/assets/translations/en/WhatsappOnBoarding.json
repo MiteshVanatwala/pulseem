@@ -25,6 +25,15 @@
 	"phoneNumberRegistered": "Phone number has been registered succesfully.",
 	"enterValidPIN": "Enter valid PIN",
 	"loginWithFacebook": "Login With Facebook",
+	"registerResponseCodes": {
+		"3": "Sub account not found",
+		"4": "Meta configuration missing",
+		"5": "Invalid input",
+		"6": "You cannot use another WhatsApp business account",
+		"7": "Access token not found from meta",
+		"8": "Phone data not found from meta",
+		"100": "Internal Error"
+	},
 	"metaErrorCodes": {
 		"_comment_1": " ************** Authorization Errors ************** ",
 		"0": "We were unable to authenticate the app user.",
