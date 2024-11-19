@@ -562,7 +562,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
@@ -671,7 +671,7 @@ const App = ({ screenSize }) => {
 
   const renderRoutesByCondition = (classes, redirect) => {
     const ignoreCookie = getCookie('ignoreTerm')
-    if (accountSettings && !accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount === 3 && ignoreCookie !== 'true') {
+    if (!isAdmin && accountSettings && !accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount === 3 && ignoreCookie !== 'true') {
       return <Routes>
         <Route
           exact
@@ -680,7 +680,7 @@ const App = ({ screenSize }) => {
         />
       </Routes>
     }
-    if (isDebtAccount === true) {
+    if (!isAdmin && isDebtAccount === true) {
       return <Routes>
         <Route
           exact
