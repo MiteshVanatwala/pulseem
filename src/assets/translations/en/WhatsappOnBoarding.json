@@ -25,7 +25,7 @@
 	"phoneNumberRegistered": "Phone number has been registered succesfully.",
 	"enterValidPIN": "Enter valid PIN",
 	"loginWithFacebook": "Login With Facebook",
-	"registerResponseCodes": {
+	"SaveWhatsappMetaClientsResponseCode": {
 		"3": "Sub account not found",
 		"4": "Meta configuration missing",
 		"5": "Invalid input",
@@ -33,6 +33,13 @@
 		"7": "Access token not found from meta",
 		"8": "Phone data not found from meta",
 		"100": "Internal Error"
+	},
+	"MetaPhoneRegister": {
+		"3": "Sub account not found",
+		"4": "Meta account not found",
+		"5": "PhoneNumberId is required",
+		"6": "Pin is required",
+		"7": "Phone number not found"
 	},
 	"metaErrorCodes": {
 		"_comment_1": " ************** Authorization Errors ************** ",

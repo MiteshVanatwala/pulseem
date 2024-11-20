@@ -68,20 +68,20 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}, [])
 
 	useEffect(() => {
-		console.log(`Phone number ID - ${phoneNumberId} |  WABA ID - ${wabaId} | Code - ${code}`);
+		// console.log(`Phone number ID - ${phoneNumberId} |  WABA ID - ${wabaId} | Code - ${code}`);
 		if (phoneNumberId !== '' && wabaId !== '' && code !== '') {
 			FBlogin();
 		}
 	}, [phoneNumberId, wabaId, code]);
 
 	const FBlogin = async () => {
-		console.log(`FacebookLogin...`)
+		// console.log(`FacebookLogin...`)
 		const resp = await dispatch(facebookLogin({
 			phone_number_id: phoneNumberId,
 			waba_id: wabaId,
 			code: code
 		})) as any;
-		console.log(resp)
+		// console.log(resp)
 		handleFBloginResponse(resp?.payload as PulseemResponse)
 	}
 
@@ -96,22 +96,22 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		} else {
 			setToastMessage({
 				...errorToastData,
-				message: t(`WhatsappOnBoarding.registerResponseCodes.${StatusCode}`) || Message
+				message: (StatusCode >=3 && StatusCode <= 8 || StatusCode === 100) ? t(`WhatsappOnBoarding.SaveWhatsappMetaClientsResponseCode.${StatusCode}`) : Message
 			});
 		}
 	}
 
 	const fetchMetaPhoneNumbers = async () => {
 		const resp = await dispatch(getMetaPhoneNumbers({})) as any;
-		console.log('getMetaPhoneNumbers');
-		console.log(resp);
+		// console.log('getMetaPhoneNumbers');
+		// console.log(resp);
 		handleMetaPhoneNumberResponse(resp?.payload as PulseemResponse)
 	}
 
 	const fetchWhatsAppSMSVirtualNumbers = async () => {
 		const resp = await dispatch(getWhatsAppSMSVirtualNumbers()) as any;
-		console.log('getWhatsAppSMSVirtualNumbers');
-		console.log(resp);
+		// console.log('getWhatsAppSMSVirtualNumbers');
+		// console.log(resp);
 		const { StatusCode, Data } = resp?.payload as PulseemResponse
 		if (StatusCode === 1) {
 			setVirtualNumbers(flatten(Data));
@@ -120,8 +120,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	
 	const fetchWhatsAppCodeVirtualNumbers = async () => {
 		const resp = await dispatch(getWhatsAppCodeVirtualNumbers()) as any;
-		console.log('getWhatsAppCodeVirtualNumbers');
-		console.log(resp);
+		// console.log('getWhatsAppCodeVirtualNumbers');
+		// console.log(resp);
 		const { StatusCode, Data } = resp?.payload as PulseemResponse
 		if (StatusCode === 1) {
 			setVirtualNumbersCodeList(flatten(Data));
@@ -211,12 +211,12 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
  
     try {
       const data = JSON.parse(event.data);
-			console.log('handleMessage');
-			console.log(data);
+			// console.log('handleMessage');
+			// console.log(data);
       if (data.type === 'WA_EMBEDDED_SIGNUP') {
         if (data.event === 'FINISH') {
           const { phone_number_id, waba_id } = data.data;
-          console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
+          // console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
 					setPhoneNumberId(phone_number_id);
 					setWabaId(waba_id);
 					// const fblogin_authcode = window.localStorage.getItem('fblogin_authcode');
@@ -229,13 +229,13 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					// 	console.log('facebookLogin')
 					// 	console.log(resp)
 					// }
-					console.log('Calling fetchWhatsAppSMSVirtualNumbers & fetchWhatsAppCodeVirtualNumbers');
+					// console.log('Calling fetchWhatsAppSMSVirtualNumbers & fetchWhatsAppCodeVirtualNumbers');
         } else if (data.event === 'CANCEL') {
           const { current_step } = data.data;
-          console.warn("Cancel at ", current_step);
+          // console.warn("Cancel at ", current_step);
         } else if (data.event === 'ERROR') {
           const { error_message } = data.data;
-          console.error("error ", error_message);
+          // console.error("error ", error_message);
         }
       }
 			setSessionInfo(JSON.stringify(data, null, 2));
@@ -245,12 +245,12 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   };
  
   const fbLoginCallback = (response: any) => {
-		console.log('fbLoginCallback');
-		console.log(response);
+		// console.log('fbLoginCallback');
+		// console.log(response);
     if (response.authResponse) {
       const code = response.authResponse.code;
 			setCode(code);
-      console.log(`Code : ${code}`)
+      // console.log(`Code : ${code}`)
       // if (code !== undefined && code !== null && phoneNumberId !== '' && wabaId !== '') {
 			// 	window.localStorage.setItem('fblogin_authcode', code);
 			// 	dispatch(facebookLogin({
@@ -596,17 +596,17 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 				PhoneNumberId: get(data, 'id', ''),
 				Pin: pin
 			})) as any;
-			console.log('MetaPhoneRegister');
-			console.log(resp);
+			// console.log('MetaPhoneRegister');
+			// console.log(resp);
 			handleMetaPhoneRegisterResponse(resp?.payload as PulseemResponse);
 		}
 	}
 
 	const handleMetaPhoneRegisterResponse = (response: any) => {
-		const { Data: {
+		const { StatusCode, Data: {
 			success, error
-		} } = response;
-		if (success === true) {
+		}} = response;
+		if (StatusCode === 1) {
 			setDialogType(null)
 			setErrors({
 				...errors,
@@ -620,7 +620,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		} else {
 			setToastMessage({
 				...errorToastData,
-				message: get(error, 'error_user_msg', t('common.Error'))
+				message: (StatusCode >=3 && StatusCode <= 8 || StatusCode === 100) ? t(`WhatsappOnBoarding.SaveWhatsappMetaClientsResponseCode.${StatusCode}`) : get(error, 'error_user_msg', t('common.Error'))
 			});
 		}
 	}
@@ -705,11 +705,11 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					</ul>
 				</Box>
 
-				<p>Session info response:</p>
+				{/* <p>Session info response:</p>
 				<pre>{sessionInfo}</pre>
 				<br />
 				<p>SDK response:</p>
-				<pre>{sdkResponse}</pre>
+				<pre>{sdkResponse}</pre> */}
 
 
 				<Box className={clsx(classes.p20)}>
