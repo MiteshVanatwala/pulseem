@@ -97,5 +97,6 @@
 		"133010": "Phone number not registered on the WhatsApp Business Platform.",
 		"133015": "The phone number you are attempting to register was recently deleted, and deletion has not yet completed.",
 		"135000": "Message failed to send because of an unknown error with your request parameters."
-	}
+	},
+	"NoMeta": "Meta is not enabled in your account. Please contact our support for more details."
 }

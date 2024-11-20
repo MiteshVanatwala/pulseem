@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
 import {
+	CommonRedux,
 	coreProps,
 	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
@@ -21,12 +22,17 @@ import { flatten, get } from 'lodash';
 import { IsValidPhoneNumberKeyPress } from '../../../helpers/Utils/Validations';
 import { DialogTypeInterface } from '../../../Models/Common';
 import { businessInfoInterface, phoneNumbersInterface, virtualNumbersCodeListInterface, virtualNumbersInterface } from '../../../Models/Whatsapp/WhatsappOnboarding';
+import { WhatsAppPlatformIDEnum } from '../../../config/enum';
+import NoSetup from '../NoSetup/NoSetup';
 
 const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const { windowSize  } = useSelector(
 		(state: { core: coreProps }) => state.core
+	);
+	const { WhatsAppPlatformID } = useSelector(
+		(state: { common: CommonRedux }) => state.common
 	);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [dialogType, setDialogType] = useState<DialogTypeInterface | null>(null);
@@ -44,8 +50,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	}>({
 		pin: ''
 	});
-	const [sessionInfo, setSessionInfo] = useState('');
-  const [sdkResponse, setSdkResponse] = useState('');
   const [phoneNumberId, setPhoneNumberId] = useState('');
   const [wabaId, setWabaId] = useState('');
   const [code, setCode] = useState('');
@@ -55,33 +59,32 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   
 	useEffect(() => {
 		setIsLoader(false);
-		fetchMetaPhoneNumbers();
-		fetchWhatsAppSMSVirtualNumbers();
-		fetchWhatsAppCodeVirtualNumbers();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-
-		const interval = setInterval(() => {
+		if (WhatsAppPlatformID === WhatsAppPlatformIDEnum.META) {
+			fetchMetaPhoneNumbers();
+			fetchWhatsAppSMSVirtualNumbers();
 			fetchWhatsAppCodeVirtualNumbers();
-		}, 10000);
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 	
-		return () => clearInterval(interval);
+			const interval = setInterval(() => {
+				fetchWhatsAppCodeVirtualNumbers();
+			}, 10000);
+		
+			return () => clearInterval(interval);
+		}
 	}, [])
 
 	useEffect(() => {
-		// console.log(`Phone number ID - ${phoneNumberId} |  WABA ID - ${wabaId} | Code - ${code}`);
-		if (phoneNumberId !== '' && wabaId !== '' && code !== '') {
+		if (phoneNumberId !== null && phoneNumberId !== '' && wabaId !== null && wabaId !== '' && code !==  null && code !== '') {
 			FBlogin();
 		}
 	}, [phoneNumberId, wabaId, code]);
 
 	const FBlogin = async () => {
-		// console.log(`FacebookLogin...`)
 		const resp = await dispatch(facebookLogin({
 			phone_number_id: phoneNumberId,
 			waba_id: wabaId,
 			code: code
 		})) as any;
-		// console.log(resp)
 		handleFBloginResponse(resp?.payload as PulseemResponse)
 	}
 
@@ -103,15 +106,11 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 
 	const fetchMetaPhoneNumbers = async () => {
 		const resp = await dispatch(getMetaPhoneNumbers({})) as any;
-		// console.log('getMetaPhoneNumbers');
-		// console.log(resp);
 		handleMetaPhoneNumberResponse(resp?.payload as PulseemResponse)
 	}
 
 	const fetchWhatsAppSMSVirtualNumbers = async () => {
 		const resp = await dispatch(getWhatsAppSMSVirtualNumbers()) as any;
-		// console.log('getWhatsAppSMSVirtualNumbers');
-		// console.log(resp);
 		const { StatusCode, Data } = resp?.payload as PulseemResponse
 		if (StatusCode === 1) {
 			setVirtualNumbers(flatten(Data));
@@ -120,8 +119,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	
 	const fetchWhatsAppCodeVirtualNumbers = async () => {
 		const resp = await dispatch(getWhatsAppCodeVirtualNumbers()) as any;
-		// console.log('getWhatsAppCodeVirtualNumbers');
-		// console.log(resp);
 		const { StatusCode, Data } = resp?.payload as PulseemResponse
 		if (StatusCode === 1) {
 			setVirtualNumbersCodeList(flatten(Data));
@@ -130,14 +127,13 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	
 	const handleMetaPhoneNumberResponse = (response: PulseemResponse) => {
 		const { StatusCode, Data } = response;
-		if (StatusCode === 0) {
+		if (StatusCode === 1) {
 			const {
 				businessInfo, phoneNumbers
 			} = Data;
 			setBusinessInfo(businessInfo);
 			setPhoneNumbers(phoneNumbers);
 		} else if (StatusCode === 4) {
-			// Meta configuration missing
 		}
 	}
 
@@ -211,60 +207,26 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
  
     try {
       const data = JSON.parse(event.data);
-			// console.log('handleMessage');
-			// console.log(data);
-      if (data.type === 'WA_EMBEDDED_SIGNUP') {
+			if (data.type === 'WA_EMBEDDED_SIGNUP') {
         if (data.event === 'FINISH') {
           const { phone_number_id, waba_id } = data.data;
-          // console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
 					setPhoneNumberId(phone_number_id);
 					setWabaId(waba_id);
-					// const fblogin_authcode = window.localStorage.getItem('fblogin_authcode');
-					// if (phone_number_id && waba_id && fblogin_authcode) {
-					// 	const resp = await dispatch(facebookLogin({
-					// 		phone_number_id,
-					// 		waba_id,
-					// 		code: fblogin_authcode
-					// 	}));
-					// 	console.log('facebookLogin')
-					// 	console.log(resp)
-					// }
-					// console.log('Calling fetchWhatsAppSMSVirtualNumbers & fetchWhatsAppCodeVirtualNumbers');
-        } else if (data.event === 'CANCEL') {
-          const { current_step } = data.data;
-          // console.warn("Cancel at ", current_step);
-        } else if (data.event === 'ERROR') {
-          const { error_message } = data.data;
-          // console.error("error ", error_message);
+        } else if (data.event === 'CANCEL' || data.event === 'ERROR') {
+					setPhoneNumberId('');
+					setWabaId('');
         }
       }
-			setSessionInfo(JSON.stringify(data, null, 2));
     } catch (error) {
       console.log('Non JSON Responses', event.data);
     }
   };
  
   const fbLoginCallback = (response: any) => {
-		// console.log('fbLoginCallback');
-		// console.log(response);
-    if (response.authResponse) {
+		if (response.authResponse) {
       const code = response.authResponse.code;
 			setCode(code);
-      // console.log(`Code : ${code}`)
-      // if (code !== undefined && code !== null && phoneNumberId !== '' && wabaId !== '') {
-			// 	window.localStorage.setItem('fblogin_authcode', code);
-			// 	dispatch(facebookLogin({
-			// 		phoneNumberId,
-			// 		wabaId,
-			// 		code: code
-			// 	}));
-			// 	// console.log('facebookLogin')
-			// 	// console.log(resp)
-			// }
-      // The returned code must be transmitted to your backend first and then
-      // perform a server-to-server call from there to our servers for an access token.
     }
-		setSdkResponse(JSON.stringify(response, null, 2));
   };
 
 	const launchWhatsAppSignup = () => {
@@ -596,8 +558,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 				PhoneNumberId: get(data, 'id', ''),
 				Pin: pin
 			})) as any;
-			// console.log('MetaPhoneRegister');
-			// console.log(resp);
 			handleMetaPhoneRegisterResponse(resp?.payload as PulseemResponse);
 		}
 	}
@@ -675,63 +635,64 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			containerClass={clsx(classes.management, classes.mb50, classes.whatsapp)}>
 			<Box className={'topSection'}>
 				<Title Text={t('WhatsappOnBoarding.title')} classes={classes} />
-				<Box className={clsx(classes.p20)}>
-					<button
-						onClick={launchWhatsAppSignup}
-						style={{
-							backgroundColor: '#1877f2',
-							border: '0',
-							borderRadius: '4px',
-							color: '#fff',
-							cursor: 'pointer',
-							fontFamily: 'Helvetica, Arial, sans-serif',
-							fontSize: '16px',
-							fontWeight: 'bold',
-							height: '40px',
-							padding: '0 24px',
-						}}
-					>
-						{t('WhatsappOnBoarding.loginWithFacebook')}
-					</button>
+				{
+					WhatsAppPlatformID === WhatsAppPlatformIDEnum.META ? (
+						<>		
+							<Box className={clsx(classes.p20)}>
+								<button
+									onClick={launchWhatsAppSignup}
+									style={{
+										backgroundColor: '#1877f2',
+										border: '0',
+										borderRadius: '4px',
+										color: '#fff',
+										cursor: 'pointer',
+										fontFamily: 'Helvetica, Arial, sans-serif',
+										fontSize: '16px',
+										fontWeight: 'bold',
+										height: '40px',
+										padding: '0 24px',
+									}}
+								>
+									{t('WhatsappOnBoarding.loginWithFacebook')}
+								</button>
 
-					<Typography className={clsx(classes.f22, classes.pt10, classes.semibold)}>{t('WhatsappOnBoarding.instruction')}</Typography>
-					<ul className={clsx(classes.mt1, classes.noPadding)}>
-						<li className={clsx(classes.pb10)}>1. {RenderHtml(t('WhatsappOnBoarding.instruction_step_1'))}</li>
-						<li className={clsx(classes.pb10)}>2. {t('WhatsappOnBoarding.instruction_step_2')}</li>
-						<li className={clsx(classes.pb10)}>3. {t('WhatsappOnBoarding.instruction_step_3')}</li>
-						<li className={clsx(classes.pb10)}>4. {t('WhatsappOnBoarding.instruction_step_4')}</li>
-						<li className={clsx(classes.pb10)}>5. {t('WhatsappOnBoarding.instruction_step_5')}</li>
-						<li className={clsx(classes.pb10)}>6. {t('WhatsappOnBoarding.instruction_step_6')}</li>
-					</ul>
-				</Box>
-
-				{/* <p>Session info response:</p>
-				<pre>{sessionInfo}</pre>
-				<br />
-				<p>SDK response:</p>
-				<pre>{sdkResponse}</pre> */}
-
-
-				<Box className={clsx(classes.p20)}>
-					<Grid container spacing={3}>
-						<Grid item md={6} sm={12} xs={12}>
-							{renderVirtualNumbers()}
-							{
-								phoneNumbers.length > 0 && (
-									<Box className={clsx(classes.pt20)}>
-										{renderPhoneNumbersTable()}
-									</Box>
-								)
-							}
-						</Grid>
-						<Grid item md={6} sm={12} xs={12}>
-							{renderBusinessDetails()}
-							<Box className={clsx(classes.pt20)}>
-								{renderIncomingMessages()}
+								<Typography className={clsx(classes.f22, classes.pt10, classes.semibold)}>{t('WhatsappOnBoarding.instruction')}</Typography>
+								<ul className={clsx(classes.mt1, classes.noPadding)}>
+									<li className={clsx(classes.pb10)}>1. {RenderHtml(t('WhatsappOnBoarding.instruction_step_1'))}</li>
+									<li className={clsx(classes.pb10)}>2. {t('WhatsappOnBoarding.instruction_step_2')}</li>
+									<li className={clsx(classes.pb10)}>3. {t('WhatsappOnBoarding.instruction_step_3')}</li>
+									<li className={clsx(classes.pb10)}>4. {t('WhatsappOnBoarding.instruction_step_4')}</li>
+									<li className={clsx(classes.pb10)}>5. {t('WhatsappOnBoarding.instruction_step_5')}</li>
+									<li className={clsx(classes.pb10)}>6. {t('WhatsappOnBoarding.instruction_step_6')}</li>
+								</ul>
 							</Box>
-						</Grid>
-					</Grid>
-				</Box>
+
+							<Box className={clsx(classes.p20)}>
+								<Grid container spacing={3}>
+									<Grid item md={6} sm={12} xs={12}>
+										{renderVirtualNumbers()}
+										{
+											phoneNumbers.length > 0 && (
+												<Box className={clsx(classes.pt20)}>
+													{renderPhoneNumbersTable()}
+												</Box>
+											)
+										}
+									</Grid>
+									<Grid item md={6} sm={12} xs={12}>
+										{renderBusinessDetails()}
+										<Box className={clsx(classes.pt20)}>
+											{renderIncomingMessages()}
+										</Box>
+									</Grid>
+								</Grid>
+							</Box>
+						</>		
+					) : (
+						<NoSetup classes={classes} customMessage={t('WhatsappOnBoarding.NoMeta')} />
+					)
+				}
 			</Box>
 			
 			{renderToast()}
