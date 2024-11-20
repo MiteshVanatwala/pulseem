@@ -62,8 +62,9 @@ import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
-import { getWhatsappError } from "../Whatsapp/Common";
+import { getMetaError, getWhatsappError } from "../Whatsapp/Common";
 import { getCookie, setCookie } from "../../helpers/Functions/cookies";
+import { WhatsAppPlatformIDEnum } from "../../config/enum";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -100,7 +101,7 @@ const ClientSearchResult = ({ classes }) => {
     rowsPerPage,
     isRTL
   } = useSelector((state) => state.core);
-  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, WhatsAppPlatformID } = useSelector(state => state.common);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
@@ -753,13 +754,13 @@ const ClientSearchResult = ({ classes }) => {
           </Typography>
           <Typography className={classes.whatsappReportErrorCell}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(getWhatsappError(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(WhatsAppPlatformID !== WhatsAppPlatformIDEnum.META ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         </>),
         web: ({ LogSms_ErrorType = '', ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(getWhatsappError(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(WhatsAppPlatformID !== WhatsAppPlatformIDEnum.META ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         )
       },

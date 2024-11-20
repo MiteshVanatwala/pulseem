@@ -24,6 +24,8 @@ import { DialogTypeInterface } from '../../../Models/Common';
 import { businessInfoInterface, phoneNumbersInterface, virtualNumbersCodeListInterface, virtualNumbersInterface } from '../../../Models/Whatsapp/WhatsappOnboarding';
 import { WhatsAppPlatformIDEnum } from '../../../config/enum';
 import NoSetup from '../NoSetup/NoSetup';
+import { DateFormats } from '../../../helpers/Constants';
+import moment from 'moment';
 
 const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -59,7 +61,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   
 	useEffect(() => {
 		setIsLoader(false);
-		if (WhatsAppPlatformID === WhatsAppPlatformIDEnum.META) {
+		if (WhatsAppPlatformID !== WhatsAppPlatformIDEnum.TWILLIO) {
 			fetchMetaPhoneNumbers();
 			fetchWhatsAppSMSVirtualNumbers();
 			fetchWhatsAppCodeVirtualNumbers();
@@ -426,6 +428,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 									<TableRow classes={rowStyle}>
 										<TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('WhatsappOnBoarding.virtualNumber')}</TableCell>
 										<TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.message')}</TableCell>
+										<TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('WhatsappOnBoarding.message')}</TableCell>
 									</TableRow>
 								</TableHead>
 							)
@@ -492,6 +495,12 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 					align='center'
 					className={classes.flex2}>
 						{vnumber.ReplyText}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={classes.flex1}>
+						{moment(vnumber.ReplyDate).format(DateFormats.DATE_TIME_24)}
 				</TableCell>
 			</TableRow>
 		)
@@ -636,7 +645,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			<Box className={'topSection'}>
 				<Title Text={t('WhatsappOnBoarding.title')} classes={classes} />
 				{
-					WhatsAppPlatformID === WhatsAppPlatformIDEnum.META ? (
+					WhatsAppPlatformID !== WhatsAppPlatformIDEnum.TWILLIO ? (
 						<>		
 							<Box className={clsx(classes.p20)}>
 								<button
