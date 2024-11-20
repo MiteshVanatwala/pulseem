@@ -14,7 +14,7 @@ const ColorPaletteView = ({ selected, onSelected }: any) => {
     }}
     value={selected}>
     {Object.keys(ColorPalettes).map((paletteName: any, idx: number) => {
-      return <MenuItem value={paletteName} style={{ display: 'flex', flexDirection: 'row' }} key={idx}>
+      return <MenuItem value={paletteName} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} key={idx}>
         <Typography>{paletteName}</Typography>
         <Box style={{ width: 200, height: 20 }}>
           {/* @ts-ignore */}
