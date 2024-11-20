@@ -97,7 +97,8 @@
   "responses": {
     "serverFoundWithNoResponse": "הבקשה התקבלה בשרת, אך לא התקבלה תגובה. יש לפנות לתמיכה.",
     "notFound": "לא נמצאו נמענים להסרה",
-    "noRecipientsInGroup": "לא נמצאו נמענים בקבוצה שנבחרה"
+    "noRecipientsInGroup": "לא נמצאו נמענים בקבוצה שנבחרה",
+    "noRecipientsTyped": "לא נמצאו נמענים ברשימה שהזנת"
   },
   "unsubscribed": {
     "succeeded": "הנמענים שהזנת הוסרו מהקבוצות שנבחרו בהצלחה.",

@@ -196,6 +196,7 @@ export const groupSlice = createSlice({
             UNSUBSCRIBE_LIMIT: { severity: 'error', color: 'error', message: 'recipient.maximumRecordLimitation', showAnimtionCheck: false },
             MAX_GROUPS_EXCEEDED: { severity: 'error', color: 'error', message: 'group.maxGroupsExceeded', showAnimtionCheck: false },
             UPLOADING_RECIPIENT_AS_FILE: { severity: 'success', color: 'success', message: 'recipient.importResponses.fileUploaded', showAnimtionCheck: false },
+            NO_RECIPIENTS_TYPED: { severity: 'error', color: 'error', message: "recipient.responses.noRecipientsTyped", showAnimtionCheck: false },
         }
     },
     reducers: {

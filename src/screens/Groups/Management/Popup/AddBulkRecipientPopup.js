@@ -1,6 +1,6 @@
 import { Box, Grid, IconButton, makeStyles, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { UploadSettings } from "../../tempConstants";
+import { UploadSettings } from "../../../../helpers/Constants";
 import UploadXL from '../../../../components/Files/UploadXL'
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
@@ -68,7 +68,7 @@ const AddBulkRecipientPopup = ({ classes,
                                 sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
                             >
                                 <IconButton style={{ color: '#fff' }} className={clsx(classes.icon_Info, classes.f20)} aria-label={t("mainReport.toolTip1")}>
-                                    <BsInfoCircle style={{  color: '#fff', fontSize: 24 }}  />
+                                    <BsInfoCircle style={{ color: '#fff', fontSize: 24 }} />
                                 </IconButton>
                             </Tooltip>
                         </Box>

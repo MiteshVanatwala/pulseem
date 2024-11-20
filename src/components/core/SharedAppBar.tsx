@@ -7,13 +7,21 @@ import { StateType } from '../../Models/StateTypes';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { setLanguage } from "../../redux/reducers/coreSlice";
 import { IoIosArrowDown } from 'react-icons/io';
-import USImage from "../../assets/images/united-states-flag-icon.svg";
+import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
+import { setCookie } from '../../helpers/Functions/cookies';
+import i18n from '../../i18n';
 
 const SharedAppBar = ({ classes, title }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
+
+  const changeLanguage = (value: any) => {
+    setCookie('Culture', `${value}-${value === 'he' ? 'IL' : 'US'}`);
+    i18n.changeLanguage(value);
+    dispatch(setLanguage(value));
+  }
 
   return <AppBar component="nav" className={clsx(classes.p10, classes.f18, classes.bold, classes.flexColCenter, classes.gradientBackground, windowSize === 'xl' ? classes.p10 : '')}>
     <Grid container>
@@ -36,7 +44,7 @@ const SharedAppBar = ({ classes, title }: any) => {
             variant="standard"
             value={isRTL ? 'he' : 'en'}
             name='TwoFactorAuthOptionID'
-            onChange={(e: SelectChangeEvent) => dispatch(setLanguage(e.target.value))}
+            onChange={(e: SelectChangeEvent) => changeLanguage(e.target.value)}
             IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 15 : 'auto', left: isRTL ? 'auto' : 15 }} />}
             MenuProps={{
               PaperProps: {
@@ -55,7 +63,7 @@ const SharedAppBar = ({ classes, title }: any) => {
             </MenuItem>
 
             <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
-              <img width={35} src={USImage} alt={t('languages.langCodes.english')} />
+              <img width={35} src={EnImage} alt={t('languages.langCodes.english')} />
               <label>{t('languages.langCodes.english')}</label>
             </MenuItem>
           </Select>

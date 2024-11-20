@@ -34,6 +34,7 @@ import SimplyClub from './WhiteLabel/SimplyClub.json';
 import affiliate from './Affiliate.json';
 import SubAccount from './SubAccount.json'
 import billing from './Billing.json';
+import TermsOfUse from './TermsOfUse.json'
 
 export const en = {
 	automations,
@@ -71,5 +72,6 @@ export const en = {
 	SimplyClub,
 	affiliate,
 	SubAccount,
-	billing
+	billing,
+	TermsOfUse
 };

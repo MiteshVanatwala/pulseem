@@ -130,10 +130,10 @@ const AffiliateProgram = ({ classes }: any) => {
       </Box>
     )
   }
-  const renderRow = (row: AffiliateDetails) => {
+  const renderRow = (row: AffiliateDetails, rowNumber: any) => {
     return (
       <TableRow
-        key={row.AccountID}
+        key={rowNumber}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}

@@ -159,10 +159,10 @@ const FORM_COMPANY_DETAILS = ({
     dispatch(resetTwoFA());
 
   }
-
+  // Not in use
   const handleQueryString2FA = () => {
     //@ts-ignore
-    if (searchParams.has('2fa') && Settings?.SubAccountId > 0 && !Settings.TwoFactorAuthEnabled) {
+    if (searchParams.has('2fa') && !Settings.TwoFactorAuthEnabled) {
       searchParams.delete('2fa');
       setSearchParams(searchParams);
       const req = { ...companyDetails, TwoFactorAuthEnabled: true };
