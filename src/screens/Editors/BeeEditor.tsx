@@ -468,6 +468,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           setShowGroupSelection(true);
           break;
         }
+        case 412: {
+          // @ts-ignore
+          setToastMessage(ToastMessages.HTML_DOCTYPE_ERROR);
+          break;
+        }
       }
       //@ts-ignore
       if (saveRef.current?.saveTemplate) {

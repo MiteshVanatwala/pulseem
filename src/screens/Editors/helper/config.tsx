@@ -228,6 +228,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
       // https://docs.beefree.io/beefree-sdk/tracking-message-changes#content-codes - Codes
       // Every code should get "00" in the end
       switch (response.code) {
+        case '0780':{
+          return;
+        }
         case "0900": {
           const formsCount = getFormsCount(jsonFile);
           onFormAdded(formsCount);

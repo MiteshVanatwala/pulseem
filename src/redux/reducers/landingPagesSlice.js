@@ -288,6 +288,7 @@ export const landingPagesSlice = createSlice({
       TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
       USER_BLOCK_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
       MULTIPLE_FORMS_NOT_ALLOWED: { severity: 'error', color: 'error', message: 'landingPages.multipleFormsBlocked', showAnimtionCheck: false },
+      HTML_DOCTYPE_ERROR: { severity: 'error', color: 'error', message: 'campaigns.htmlDocTypeNotAllowed', showAnimtionCheck: false }
     },
   },
   reducers: {
