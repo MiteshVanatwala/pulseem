@@ -101,7 +101,7 @@ const SurveyDetails = ({ classes }: any) => {
           key={item.ID || uuidv4()}
           data={arr}
           labels={[...Object.values(item.AnswerAndCount)]}
-          yAxis={[{ scaleType: 'band', dataKey: 'question' }]}
+          yAxis={[{ scaleType: 'band', dataKey: 'question', tickFontSize: 14, tickLabelPlacement: 'middle', tickPlacement: 'middle', labelStyle: { width: 200 } }]}
           onChartClick={(p: any) => { onAnswerSelected(p) }}
           colors={ColorPalettes[selectedPalette]} />) :
           (<PulseemPie
@@ -209,8 +209,8 @@ const SurveyDetails = ({ classes }: any) => {
                   }} value={gridSize}>
                     <option value={12}>1</option>
                     <option value={6}>2</option>
-                    <option value={4}>3</option>
-                    <option value={3}>4</option>
+                    {/* <option value={4}>3</option>
+                    <option value={3}>4</option> */}
                   </Select>
                     &nbsp;<Typography>{t('landingPages.survey.surveysPerLine')}</Typography>
                   </>

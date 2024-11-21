@@ -4,13 +4,12 @@ import { StateType } from '../../Models/StateTypes';
 import { Box } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { AxisValueFormatterContext } from '@mui/x-charts/internals';
 
 const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gridSize }: any) => {
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
 
-  const widthSizes: any = { 12: 850, 6: 600, 3: 300, 4: 400 };
+  const widthSizes: any = { 12: windowSize === 'xl' ? 1080 : 850, 6: 600, 3: 300, 4: 400 };
   const heightSizes: any = { 12: 280, 6: 280, 3: 280, 4: 280 };
 
   const chartSetting = {
@@ -21,12 +20,15 @@ const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gri
           type: 'ordinal',
           colors
         },
-        tickSize: 1,
-        tickNumber: 2,
-        tickMinStep: 1,
-        tickMaxStep: 10,
+        tickSize: 5,
+        tickNumber: 5,
+        tickMinStep: 0,
+        tickMaxStep: 5,
         barGapRatio: 0.1,
         tickPlacement: 'middle',
+        tickLabelPlacement: 'middle',
+        tickFontSize: 12,
+        labelTickFontSize: 6
       },
     ],
     width: windowSize !== 'sm' && windowSize !== 'xs' ? widthSizes[gridSize] : 250,
@@ -50,9 +52,11 @@ const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gri
       //@ts-ignore
       series={[{ dataKey: 'answer', valueFormatter }]}
       layout="horizontal"
+      margin={{ left: gridSize === 1 ? 400 : 250 }}
       barLabel={(item, context) => {
         return `${item.value} (${data.filter((e: any) => e.answer === item.value)[0]?.percentage})`;
       }}
+      sx={{ "& .MuiBarLabel-root": { fontSize: 12 }, }}
       {...chartSetting}
     />
   </Box>
