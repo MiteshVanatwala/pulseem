@@ -16,9 +16,9 @@ export enum Items {
 
 export enum EventTypes {
   All = 0,
-  // Page = 1,
   Purchase = 1,
-  CartAbandon = 2
+  CartAbandon = 2,
+  LastViewedProduct = 3
 }
 
 export enum AddProductCatalogType {
