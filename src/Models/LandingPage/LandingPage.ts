@@ -185,6 +185,8 @@ export interface SurveyResponse {
     AnswerAndCount: { [key: string]: number; };
     AnswerWithText: { [key: string]: string; };
     ShowAsPie?: boolean;
+    pieChart: SurveyDataPieChart[]
+    barChart: SurveyDataBarChart[]
 }
 
 export interface SurveyAnswers {
@@ -204,4 +206,17 @@ export enum eQuestionType {
     Text = 1,
     SingleSelect = 2,
     MultipleSelect = 3
+}
+
+export interface SurveyDataPieChart {
+    id: string;
+    value: number;
+    label: string;
+    percentage: string;
+}
+
+export interface SurveyDataBarChart {
+    answer: number;
+    question: string;
+    percentage: string;
 }

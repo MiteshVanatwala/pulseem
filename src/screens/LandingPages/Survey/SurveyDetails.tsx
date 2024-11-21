@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { PulseemResponse } from "../../../Models/APIResponse";
 import { logout } from "../../../helpers/Api/PulseemReactAPI";
 import { useNavigate, useParams } from "react-router-dom";
-import { LandingPageModel, SurveyResponse, eQuestionType } from "../../../Models/LandingPage/LandingPage";
+import { LandingPageModel, SurveyDataBarChart, SurveyResponse, eQuestionType } from "../../../Models/LandingPage/LandingPage";
 import PulseemPie from "../../../components/Chart/PieChart";
 import { StateType } from "../../../Models/StateTypes";
 import { exportSurvey } from "../../../redux/reducers/landingPagesSlice";
@@ -26,8 +26,6 @@ import IconSwitch from "../../../components/Controlls/IconSwitch";
 import { FaChartPie } from "react-icons/fa";
 import { PiChartBarHorizontalFill } from "react-icons/pi";
 import { sitePrefix } from "../../../config";
-
-
 
 const SurveyDetails = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -76,63 +74,15 @@ const SurveyDetails = ({ classes }: any) => {
     console.log(params);
   }
 
-  const calculatePercentages = (item: SurveyResponse, selected: any, answers: any, isMultipleSelection: boolean) => {
-    const summArray: any = [];
 
-    if (isMultipleSelection) {
-      const objToScan = Object.values(answers.flat()) as any;
-      for (var i = 0; i < objToScan?.length; i++) {
-        summArray[objToScan[i]] = !summArray[objToScan[i]] ? 1 : summArray[objToScan[i]] + 1;
-      }
-    }
-
-    const allAnswers = isMultipleSelection ? Object.values(item?.AnswerAndCount).flat() : (Object.values(item?.AnswerAndCount) || 0);
-    const sumValues = Object.values(isMultipleSelection ? summArray : item?.AnswerAndCount).reduce((a: any, b: any) => a + b, 0) as any;
-    // @ts-ignore
-    const percentage = allAnswers.reduce(() => {
-      return `${(selected / sumValues * 100).toFixed(1)}%`;
-    }) as any
-
-    return percentage;
-  }
-
-  const createPieObject = (item: any, isMultipleSelection: boolean) => {
-    const pieArr: any = [];
-
-    Object.keys(item?.AnswerWithText)?.forEach((ans: any, idx: number) => {
-      const optionAnswer = item?.AnswerWithText[ans];
-      const answers = isMultipleSelection ? item?.Answers.map((a: string) => {
-        return a.split('|');
-      }) : (item?.AnswerAndCount[optionAnswer] || 0);
-
-      const selected = isMultipleSelection ? (answers.flat().filter((x: any) => x === optionAnswer).length) : (answers || 0);
-      const percentage = calculatePercentages(item, selected, answers, isMultipleSelection);
-
-      pieArr.push({ id: idx, value: selected, label: ans.slice(0, 7), percentage: percentage })
-    });
-
-    return pieArr;
-  }
-
-  const createBarChartObject = (item: any, isMultipleSelection: boolean) => {
+  const createBarChartObject = (barData: SurveyDataBarChart[]) => {
     const dataset: any = [];
 
-    Object.keys(item?.AnswerWithText)?.forEach((ans: any, idx: number) => {
-      const optionAnswer = item?.AnswerWithText[ans];
-      const answers = isMultipleSelection ? item?.Answers.map((a: string) => {
-        return a.split('|');
-      }) : (item?.AnswerAndCount[optionAnswer] || 0);
-
-      // const answerOptions: any = Object.values(item.AnswerWithText);
-
-      const selected = isMultipleSelection ? (answers.flat().filter((x: any) => x === optionAnswer).length) : (answers || 0);
-
-      const percentage = calculatePercentages(item, selected, answers, isMultipleSelection);
-
+    barData?.forEach((ans: any) => {
       const tempObj: any = [];
-      tempObj["answer"] = isMultipleSelection ? (answers.flat().filter((x: any) => x === optionAnswer).length) : (answers || 0)
-      tempObj['question'] = item.AnswerWithText[ans];
-      tempObj['percentage'] = percentage;
+      tempObj["answer"] = ans.answer
+      tempObj['question'] = ans.question;
+      tempObj['percentage'] = ans.percentage;
 
       dataset.push(tempObj);
 
@@ -144,7 +94,7 @@ const SurveyDetails = ({ classes }: any) => {
     switch (item.QuestionType) {
       case eQuestionType.MultipleSelect: {
         let arr: any;
-        arr = item.ShowAsPie ? createPieObject(item, true) : createBarChartObject(item, true);
+        arr = item.ShowAsPie ? item?.pieChart : createBarChartObject(item?.barChart);
 
         return !item.ShowAsPie ? (<PulseemBarChart
           gridSize={gridSize}
@@ -182,7 +132,7 @@ const SurveyDetails = ({ classes }: any) => {
       }
       case eQuestionType.SingleSelect: {
         let arr: any;
-        arr = item.ShowAsPie || item.ShowAsPie === undefined ? createPieObject(item, false) : createBarChartObject(item, false);
+        arr = item.ShowAsPie || item.ShowAsPie === undefined ? item?.pieChart : createBarChartObject(item?.barChart);
 
         return (item.ShowAsPie === true || item.ShowAsPie === undefined) ? (<PulseemPie
           key={item.ID || uuidv4()}
