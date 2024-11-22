@@ -777,7 +777,7 @@ const SmsCreator = ({ classes }) => {
     else {
       setremovalLinkDisabled(false);
     }
-    setDynamicProductButtonDisabled(smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT));
+    setDynamicProductButtonDisabled(smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT) || smsModel.Text.includes(DynamicProductLink.LATEST_VIEWED_PRODUCT));
   }
 
   const renderMsg = () => {

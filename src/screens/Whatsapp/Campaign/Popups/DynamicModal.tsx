@@ -62,7 +62,7 @@ const DynamicModal = ({
 		}
 		const isDynamicProduct = getFieldValueByID(fieldIDs[fieldNames.LINK]);
 		if (isDynamicProduct.indexOf('dynamic') > -1) {
-			setDynamicProductType(isDynamicProduct.indexOf('?Purchase') > -1 ? DynamicProductLink.LATEST_PURCHASE : DynamicProductLink.LATEST_ABANDONMENT)
+			setDynamicProductType(isDynamicProduct.indexOf('?Purchase') > -1 ? DynamicProductLink.LATEST_PURCHASE : (isDynamicProduct.indexOf('?LastViewedProduct') > -1 ? DynamicProductLink.LATEST_VIEWED_PRODUCT : DynamicProductLink.LATEST_ABANDONMENT))
 			setDynamicProductFallbackURL(updatedDynamicVariable?.find(
 				(updatedVariable: updatedVariable) =>
 					updatedVariable?.VariableIndex === dynamicModalVariable &&
