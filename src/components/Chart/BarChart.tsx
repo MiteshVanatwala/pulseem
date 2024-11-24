@@ -5,12 +5,12 @@ import { Box } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
-const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gridSize }: any) => {
+const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gridSize = 12 }: any) => {
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
 
   const widthSizes: any = { 12: windowSize === 'xl' ? 1080 : 850, 6: 600, 3: 300, 4: 400 };
-  const heightSizes: any = { 12: 280, 6: 280, 3: 280, 4: 280 };
+  const heightSizes: any = { 12: 320, 6: 320, 3: 320, 4: 320 };
 
   const chartSetting = {
     xAxis: [

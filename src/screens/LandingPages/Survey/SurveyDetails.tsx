@@ -34,9 +34,9 @@ const SurveyDetails = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const cookie_colorPalette = getCookie('chartsColorPalette');
-  const cookie_surveyGridSize = getCookie('surveyGridSize');
+  // const cookie_surveyGridSize = getCookie('surveyGridSize');
   const [selectedPalette, setSelectedPallete] = useState<any>(cookie_colorPalette || 'Pulseem');
-  const [gridSize, setGridSize] = useState<any>(cookie_surveyGridSize || 4);
+  // const [gridSize, setGridSize] = useState<any>(cookie_surveyGridSize || 4);
   // @ts-ignore
   const [webForm, setWebForm] = useState<LandingPageModel>({ PageName: '' });
   const [surveyResult, setSurveyResult] = useState<SurveyResponse[]>();
@@ -90,14 +90,15 @@ const SurveyDetails = ({ classes }: any) => {
     return dataset;
   }
 
-  const renderResults = (item: any) => {
+  const renderAnswersBlock = (item: any) => {
     switch (item.QuestionType) {
+      case eQuestionType.SingleSelect:
       case eQuestionType.MultipleSelect: {
         let arr: any;
         arr = item.ShowAsPie ? item?.pieChart : createBarChartObject(item?.barChart);
 
         return !item.ShowAsPie ? (<PulseemBarChart
-          gridSize={gridSize}
+          // gridSize={gridSize}
           key={item.ID || uuidv4()}
           data={arr}
           labels={[...Object.values(item.AnswerAndCount)]}
@@ -107,7 +108,7 @@ const SurveyDetails = ({ classes }: any) => {
           (<PulseemPie
             key={item.ID || uuidv4()}
             data={arr}
-            gridSize={gridSize}
+            // gridSize={gridSize}
             onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />)
       }
       case eQuestionType.Text: {
@@ -129,22 +130,6 @@ const SurveyDetails = ({ classes }: any) => {
             })
           }
         </List>
-      }
-      case eQuestionType.SingleSelect: {
-        let arr: any;
-        arr = item.ShowAsPie || item.ShowAsPie === undefined ? item?.pieChart : createBarChartObject(item?.barChart);
-
-        return (item.ShowAsPie === true || item.ShowAsPie === undefined) ? (<PulseemPie
-          key={item.ID || uuidv4()}
-          data={arr}
-          onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />) :
-          (<PulseemBarChart
-            key={item.ID || uuidv4()}
-            data={arr}
-            labels={[...Object.values(item.AnswerAndCount)]}
-            yAxis={[{ scaleType: 'band', dataKey: 'question' }]}
-            onChartClick={(p: any) => { onAnswerSelected(p) }}
-            colors={ColorPalettes[selectedPalette]} />)
       }
     }
   }
@@ -177,10 +162,10 @@ const SurveyDetails = ({ classes }: any) => {
     }
   }
 
-  useEffect(() => {
-    if (windowSize === 'sm' || windowSize === 'xs')
-      setGridSize(12);
-  }, [windowSize]);
+  // useEffect(() => {
+  //   if (windowSize === 'sm' || windowSize === 'xs')
+  //     setGridSize(12);
+  // }, [windowSize]);
 
   return (
     <DefaultScreen
@@ -203,18 +188,18 @@ const SurveyDetails = ({ classes }: any) => {
                     setCookie('chartsColorPalette', selectedPlt, { maxAge: 36000000000 });
                     setSelectedPallete(selectedPlt);
                   }} />
-                  {windowSize !== 'sm' && windowSize !== 'xs' && <><Select native onChange={(event: any) => {
+                  {/* {windowSize !== 'sm' && windowSize !== 'xs' && <><Select native onChange={(event: any) => {
                     setCookie('surveyGridSize', event.target.value, { maxAge: 36000000000 });
                     setGridSize(event.target.value)
                   }} value={gridSize}>
                     <option value={12}>1</option>
                     <option value={6}>2</option>
-                    {/* <option value={4}>3</option>
-                    <option value={3}>4</option> */}
+                    <option value={4}>3</option>
+                    <option value={3}>4</option>}
                   </Select>
                     &nbsp;<Typography>{t('landingPages.survey.surveysPerLine')}</Typography>
                   </>
-                  }
+                  } */}
                 </Box>
                 <Button
                   onClick={onExportSurvey}
@@ -254,7 +239,7 @@ const SurveyDetails = ({ classes }: any) => {
           <Grid container>
             {surveyResult && surveyResult?.map((item: SurveyResponse, idx: number) => {
               item.ID = !item.ID ? uuidv4() : item.ID;
-              return <Grid item xs={gridSize || 0} key={`grid_${idx}`}>
+              return <Grid item xs={12} key={`grid_${idx}`}>
                 <Paper elevation={2} key={idx} className={classes.surveyPapaerContainer}>
                   {item.QuestionType === eQuestionType.Text ? (
                     <ListSubheader className={clsx(classes.textAnswerDirection, classes.subHeaderInherit, classes.font16)}>
@@ -310,7 +295,7 @@ const SurveyDetails = ({ classes }: any) => {
                   )}
                   <Divider className={classes.mt15} />
                   <Box className={classes.surveyResults}>
-                    {renderResults(item)}
+                    {renderAnswersBlock(item)}
                   </Box>
                 </Paper>
               </Grid>

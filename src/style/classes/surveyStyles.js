@@ -6,10 +6,10 @@ export const surveyStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center', justifySelf: 'flex-end', paddingInlineEnd: 15
   },
   surveyPapaerContainer: {
-    height: 400, overflow: 'hidden auto', margin: 15
+    height: 450, overflow: 'hidden auto', margin: 15
   },
   surveyResults: {
-    direction: 'ltr', display: 'flex', alignItems: 'center', flexDirection: 'column'
+    direction: 'ltr', display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'space-between'
   },
   textAnswerContainer: {
     width: '100%', height: '50%', overflow: 'hidden', overflowY: 'auto'
