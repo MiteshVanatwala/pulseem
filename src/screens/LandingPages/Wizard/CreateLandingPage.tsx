@@ -34,6 +34,7 @@ import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPa
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
+import SubscriberGroup from './Tabs/SubscriberGroup';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -799,6 +800,12 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						className={clsx(classes.iconTab, classes.f18)}
 						value='4'
 					/>
+					<Tab
+						label={t('common.Groups')}
+						classes={{ root: classes.tabText, selected: classes.activeTab }}
+						className={clsx(classes.iconTab, classes.f18)}
+						value='5'
+					/>
 				</Tabs>
 				<TabContext value={`${tabValue}`}>
 					<TabPanel value='1' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
@@ -854,18 +861,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								/>
 							</Grid>}
 						</Grid>
-						{/* <Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
-						{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
-					</Typography>
-					<SubscriberGroup
-						classes={classes}
-						data={landingPageModel}
-						onUpdate={setLandingPageModel}
-						onSetDialog={setDialogType}
-						removeEmailId={removeEmailId}
-						errors={errors}
-					/> */}
-					</TabPanel >
+						<Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
+							{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
+						</Typography>
+					</TabPanel>
 					<TabPanel value='2' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
 						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
 					</TabPanel>
@@ -880,6 +879,16 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							filesProperties={filesProperties}
 							onSetDialog={setDialogType}
 							removeAttachmentFile={removeAttachmentFile}
+							errors={errors}
+						/>
+					</TabPanel>
+					<TabPanel value='5' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
+						<SubscriberGroup
+							classes={classes}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
+							onSetDialog={setDialogType}
+							removeEmailId={removeEmailId}
 							errors={errors}
 						/>
 					</TabPanel>
