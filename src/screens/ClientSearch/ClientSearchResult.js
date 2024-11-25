@@ -49,7 +49,7 @@ import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
 import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition, FlatObject } from '../../helpers/Export/ExportHelper';
-import { ClientStatus, DateFormats } from "../../helpers/Constants";
+import { ClientStatus, DateFormats, Separator } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -754,13 +754,13 @@ const ClientSearchResult = ({ classes }) => {
           </Typography>
           <Typography className={classes.whatsappReportErrorCell}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(WhatsAppPlatformID !== WhatsAppPlatformIDEnum.META ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         </>),
         web: ({ LogSms_ErrorType = '', ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(WhatsAppPlatformID !== WhatsAppPlatformIDEnum.META ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         )
       },
