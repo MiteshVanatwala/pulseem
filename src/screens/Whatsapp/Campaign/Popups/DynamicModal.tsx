@@ -62,7 +62,7 @@ const DynamicModal = ({
 		}
 		const isDynamicProduct = getFieldValueByID(fieldIDs[fieldNames.LINK]);
 		if (isDynamicProduct.indexOf('dynamic') > -1) {
-			setDynamicProductType(isDynamicProduct.indexOf('?Purchase') > -1 ? DynamicProductLink.LATEST_PURCHASE : (isDynamicProduct.indexOf('?LastViewedProduct') > -1 ? DynamicProductLink.LATEST_VIEWED_PRODUCT : DynamicProductLink.LATEST_ABANDONMENT))
+			setDynamicProductType(getDynamicProductLink(isDynamicProduct));
 			setDynamicProductFallbackURL(updatedDynamicVariable?.find(
 				(updatedVariable: updatedVariable) =>
 					updatedVariable?.VariableIndex === dynamicModalVariable &&
@@ -119,6 +119,13 @@ const DynamicModal = ({
 		// setUpdatedDynamicVariable([]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [savedTemplate]);
+
+	const getDynamicProductLink = (isDynamicProduct: string) => {
+		if (isDynamicProduct.indexOf('?Purchase') > -1) return DynamicProductLink.LATEST_PURCHASE;
+		else if (isDynamicProduct.indexOf('?Abandonment') > -1) return DynamicProductLink.LATEST_ABANDONMENT;
+		else if (isDynamicProduct.indexOf('?LastViewedProduct') > -1) return DynamicProductLink.LATEST_VIEWED_PRODUCT;
+		else return '';
+	}
 
 	const onClose = () => {
 		setUpdatedDynamicVariable(dynamicVariable);
