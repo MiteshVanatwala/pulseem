@@ -104,10 +104,13 @@ const SurveyDetails = ({ classes }: any) => {
           labels={[...Object.values(item.AnswerAndCount)]}
           yAxis={[{ scaleType: 'band', dataKey: 'question', tickFontSize: 14, tickLabelPlacement: 'middle', tickPlacement: 'middle', labelStyle: { width: 200 } }]}
           onChartClick={(p: any) => { onAnswerSelected(p) }}
-          colors={ColorPalettes[selectedPalette]} />) :
+          colors={ColorPalettes[selectedPalette]}
+          selectedPalette={selectedPalette}
+        />) :
           (<PulseemPie
             key={item.ID || uuidv4()}
             data={arr}
+            selectedPalette={selectedPalette}
             // gridSize={gridSize}
             onChartClick={(p: any) => { onAnswerSelected(p) }} colorPalette={ColorPalettes[selectedPalette]} />)
       }

@@ -2,8 +2,9 @@ import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 import { useSelector } from 'react-redux';
 import { StateType } from '../../Models/StateTypes';
 import { Box } from '@material-ui/core';
+import { ColorPalettesStyles } from '../../helpers/UI/ColorPalettes';
 
-const PulseemPie = ({ data, onChartClick, colorPalette, gridSize = 12 }: any) => {
+const PulseemPie = ({ data, onChartClick, colorPalette, gridSize = 12, selectedPalette }: any) => {
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
 
   const widthSizes: any = { 12: windowSize === 'xl' ? 950 : 650, 6: 600, 3: 300, 4: 300 };
@@ -42,10 +43,10 @@ const PulseemPie = ({ data, onChartClick, colorPalette, gridSize = 12 }: any) =>
       ]}
       sx={{
         [`& .${pieArcLabelClasses.root}`]: {
-          fill: 'white',
-          fontWeight: '400',
+          ...ColorPalettesStyles[selectedPalette],
+          fontWeight: '700',
           fontSize: 12
-        },
+        }
       }}
       width={windowSize !== 'sm' && windowSize !== 'xs' ? widthSizes[gridSize] : 250}
       height={heightSizes[gridSize]}

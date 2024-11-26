@@ -1,11 +1,12 @@
-import { BarChart } from '@mui/x-charts/BarChart';
+import { BarChart, barLabelClasses } from '@mui/x-charts/BarChart';
 import { useSelector } from 'react-redux';
 import { StateType } from '../../Models/StateTypes';
 import { Box } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { ColorPalettesStyles } from '../../helpers/UI/ColorPalettes';
 
-const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gridSize = 12 }: any) => {
+const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gridSize = 12, selectedPalette }: any) => {
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
 
@@ -56,7 +57,14 @@ const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gri
       barLabel={(item, context) => {
         return `${item.value} (${data.filter((e: any) => e.answer === item.value)[0]?.percentage})`;
       }}
-      sx={{ "& .MuiBarLabel-root": { fontSize: 12 }, }}
+      sx={{
+        [`& .${barLabelClasses.root}`]: {
+          ...ColorPalettesStyles[selectedPalette],
+          fontWeight: '700 !important',
+          fontSize: 12,
+          border: '2px solid red  !important'
+        }
+      }}
       {...chartSetting}
     />
   </Box>
