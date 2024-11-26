@@ -682,6 +682,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   semibold: {
     fontWeight: 500,
   },
+  semibold600: {
+    fontWeight: 600,
+  },
   disabled: {
     opacity: ".65",
     pointerEvents: "none !important",
@@ -4252,5 +4255,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxWidthMinContent: {
     maxWidth: 'min-content !important'
+  },
+  automationTemplate: {
+    border: 'solid 1.5px #fefefe',
+    borderRadius: '5px',
+    boxShadow: '0px 0px 10px #898888',
+    padding: '15px',
+    height: '80px',
+    transition: 'all 0.25s ease',
+    "&:hover, &.active": {
+      background: "linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)",
+      boxShadow: '0px 0px 10px #ff3343',
+      color: '#fff',
+      borderColor: '#ff3343',
+      '& div': {
+        color: '#fff',
+      }
+    },
   }
 });

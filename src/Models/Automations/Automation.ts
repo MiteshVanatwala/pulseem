@@ -18,3 +18,13 @@ export interface Automation {
     AutomationNodes: AutomationNode ;
     HasNodes: boolean;
 }
+
+
+export interface AutomationTemplate {
+    AutomationId: number;
+    Name: string;
+    IsDeleted: boolean | null;
+    IsActive: boolean | null;
+    Description: string;
+    CreatedDate: Date | string | null;
+}

@@ -83,6 +83,7 @@ import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
+import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -402,6 +403,10 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`/CreateAutomations`}
         component={transferUrl('/Pulseem/CreateAutomations.aspx')}
+      />
+      <Route
+        path={`${sitePrefix}Automations/Create`}
+        element={<CreateAutomationTemplate classes={classes} />}
       />
 
       <Route

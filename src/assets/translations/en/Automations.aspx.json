@@ -56,5 +56,7 @@
   "duplicateContent": "Do you want to duplicate the automation?",
   "restoreCampaignTitle": "Select the automations you want to restore",
   "NoNodesFound": "The automation does not have any workflow saved, please create a workflow first.",
-  "pressHereToEditAutomation": "Click <b>OK</b> to edit the automation"
+  "pressHereToEditAutomation": "Click <b>OK</b> to edit the automation",
+  "selectTemplate": "Select Template",
+  "automationNameIsRequired": "Automation name is required"
 }

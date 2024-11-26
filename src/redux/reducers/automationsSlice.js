@@ -57,12 +57,23 @@ export const activateAutomation = createAsyncThunk(
   }
 )
 
+export const getAutomationTemplates = createAsyncThunk(
+  'automation/getAutomationTemplates', async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`automation/getAutomationTemplates`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+})
+
 export const automationsSlice = createSlice({
   name: 'newsletter',
   initialState: {
     automationsData: [],
     automationsDeletedData: [],
-    automationsDataError: ''
+    automationsDataError: '',
+    automationTemplates: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -72,6 +83,9 @@ export const automationsSlice = createSlice({
     })
     builder.addCase(getAutomationsData.rejected, (state, action) => {
       state.automationsDataError = action.error.message
+    })
+    builder.addCase(getAutomationTemplates.fulfilled, (state, { payload }) => {
+      state.automationTemplates = payload.filter(row => !row?.IsDeleted)
     })
     builder.addCase(deleteAutomations.fulfilled, () => console.log('api deleteAutomations success'))
     builder.addCase(duplicateAutomations.fulfilled, () => console.log('api duplicateAutomations success'))
