@@ -58,5 +58,6 @@
   "NoNodesFound": "The automation does not have any workflow saved, please create a workflow first.",
   "pressHereToEditAutomation": "Click <b>OK</b> to edit the automation",
   "selectTemplate": "Select Template",
-  "automationNameIsRequired": "Automation name is required"
+  "automationNameIsRequired": "Automation name is required",
+  "automationcreated": "Automation has been created"
 }

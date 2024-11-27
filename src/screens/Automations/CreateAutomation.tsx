@@ -3,34 +3,30 @@ import { useTranslation } from 'react-i18next'
 import { Box, Button, Grid, TextField, Typography } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
 import { toastProps } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
 import { resetToastData } from '../Whatsapp/Constant';
 import Toast from '../../components/Toast/Toast.component';
 import { Loader } from '../../components/Loader/Loader';
 import DefaultScreen from '../DefaultScreen';
 import { Title } from '../../components/managment/Title';
-import { getAutomationTemplates } from '../../redux/reducers/automationsSlice';
+import { createAutomation, getAutomationTemplates } from '../../redux/reducers/automationsSlice';
 import { AutomationTemplate } from '../../Models/Automations/Automation';
 import { BiSave } from 'react-icons/bi';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const CreateAutomationTemplate = ({ classes }: any) => {
-  const navigate = useNavigate();
-  const { language, windowSize, isRTL } = useSelector((state: any) => state.core);
-  const { automationTemplates } = useSelector((state: any) => state.automations)
+  const { windowSize, isRTL } = useSelector((state: any) => state.core);
+  const { automationTemplates } = useSelector((state: any) => state.automations);
+  const { ToastMessages } = useSelector((state: any) => state.client);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [ showLoader, setShowLoader ] = useState<boolean>(true);
   const [ toastMessage, setToastMessage ] = useState<toastProps['SUCCESS']>(resetToastData);
   const [ errors, setErrors ] = useState({
-    automationName: "",
-    selectedTemplate: ""
+    automationName: ""
   });
   const [ selectedTemplate, setSelectedTemplate ] = useState<number>(0);
   const [ automationName, setAutomationName ] = useState<string>('');
-  moment.locale(language);
 
   useEffect(() => {
     setShowLoader(false);
@@ -56,14 +52,29 @@ const CreateAutomationTemplate = ({ classes }: any) => {
     </Grid>
   }
 
-  const saveAutomation = () => {
+  const saveAutomation = async () => {
     let errorsTemp = JSON.parse(JSON.stringify(errors));
     errorsTemp.automationName = automationName === '' ? t('automations.automationNameIsRequired') : '';
-    errorsTemp.selectedTemplate = selectedTemplate === 0 ? t('automations.automationNameIsRequired') : '';
     setErrors(errorsTemp);
     
-    if (errorsTemp.automationName === '' && errorsTemp.selectedTemplate === '') {
+    if (errorsTemp.automationName === '') {
+      setShowLoader(true);
+      // @ts-ignore`
+      const response = await dispatch(createAutomation({AutomationName: automationName})) as any;
+      switch (response?.payload?.StatusCode) {
+        case 1:
+            setToastMessage({ severity: 'success', color: 'success', message: t('automations.automationcreated'), showAnimtionCheck: false })
+            setTimeout(() => {
+              window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${response?.payload?.Data?.AutomationID}&TemplateId=${selectedTemplate}fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+            }, 2000);
+          break;
 
+        case 100:
+        default:
+          setToastMessage(ToastMessages.SOMETHING_WENT_WRONG);
+          break;
+      }
+      setShowLoader(false);
     }
   }
 
@@ -108,10 +119,6 @@ const CreateAutomationTemplate = ({ classes }: any) => {
               <>
                 <Typography title={t("automations.selectTemplate")} className={clsx(classes.alignDir, classes.pb15, classes.bold, classes.f18)}>
                   {t("automations.selectTemplate")}
-                  <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-                  <Typography className={clsx(errors.selectedTemplate ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                    {errors.selectedTemplate ?? errors.selectedTemplate}
-                  </Typography>
                 </Typography>
                 <Grid container className={clsx(classes.pb15)} spacing={3}>
                   {
@@ -132,19 +139,20 @@ const CreateAutomationTemplate = ({ classes }: any) => {
               [classes.textLeft]: isRTL
           })}>
           {/* @ts-ignore */}
-          <Button
+            <Button
               onClick={saveAutomation}
               className={clsx(
-                  classes.btn,
-                  classes.btnRounded,
-                  classes.backButton,
-                  {
-                    [classes.w100]: windowSize === 'xs'
-                  }
+                classes.btn,
+                classes.btnRounded,
+                classes.backButton,
+                {
+                  [classes.w100]: windowSize === 'xs'
+                }
               )}
               style={{ margin: '8px' }}
               startIcon={<BiSave />}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+              disabled={showLoader}
             >{t("common.continue")}
           </Button>
         </Box>

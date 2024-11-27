@@ -11,7 +11,19 @@ export const getAutomationsData = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  })
+})
+
+export const createAutomation = createAsyncThunk(
+  'automation/CreateAutomation', async (payload, thunkAPI) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await PulseemReactInstance.post(`automation/CreateAutomation`, payload);
+        resolve(response.data)
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
+});
 
 export const deleteAutomations = createAsyncThunk(
   'automation/deleteAutomation/', async (id, thunkAPI) => {

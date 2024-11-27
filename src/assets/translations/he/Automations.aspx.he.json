@@ -57,6 +57,7 @@
   "restoreCampaignTitle": "בחר את האוטומציות שברצונך לשחזר",
   "NoNodesFound": "לאוטומציה לא נשמרת זרימת עבודה, אנא צור תחילה זרימת עבודה.",
   "pressHereToEditAutomation": "לחץ <b>אישור</b> כדי לערוך את האוטומציה",
-  "selectTemplate": "Select Template",
-  "automationNameIsRequired": "Automation name is required"
+  "selectTemplate": "בחירת תבנית",
+  "automationNameIsRequired": "יש למלא שם לאוטמציה",
+  "automationcreated": "אוטומציה נוצרה בהצלחה"
 }
