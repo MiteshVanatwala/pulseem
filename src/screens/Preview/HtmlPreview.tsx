@@ -131,21 +131,34 @@ const HtmlPreview = ({ classes }: any) => {
             variant="outlined"
             color="primary"
             size="small"
+            style={{ backgroundColor: '#fff' }}
             startIcon={<div className={classes.copyIcon}>{copyStatus ? '\uE134' : '\ue0b0'}</div>}
           >
-            <Typography style={{ fontSize: 14 }}>
+            <Typography style={{ fontSize: 15, fontWeight: '600' }}>
               {copyStatus ? t('notifications.copied') : t('notifications.copy')}
             </Typography>
           </Button>
         </CopyToClipboard></>
       </Box>
       <Divider style={{ marginBlock: 10 }} />
-      <Typography style={{ fontSize: 14 }}><b>{t('master.lblContactNameResource1.Text')}:</b> {details?.PageName}</Typography>
-      <Typography style={{ fontSize: 14 }}><b>{type?.toLowerCase() === 'newsletter' ? t('common.campaignID') : t('landingPages.StaticPage')}:</b> {details?.ID}</Typography>
-      {type?.toLowerCase() === 'newsletter' && <>
-        <Typography style={{ fontSize: 14 }}><b>{t('report.FromEmail')}:</b> {details?.FromEmail}</Typography>
-        <Typography style={{ fontSize: 14 }}><b>{t('report.FromName')}:</b> {details?.FromName}</Typography>
-      </>}
+      <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
+        <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
+          <Typography style={{ fontWeight: 600 }}>{t('master.lblContactNameResource1.Text')}:</Typography> <Typography style={{ fontSize: 15 }}>&nbsp;{details?.PageName}</Typography>
+        </Box>
+        <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
+          <Typography style={{ fontWeight: 600 }}>{type?.toLowerCase() === 'newsletter' ? t('common.campaignID') : t('common.landingPageId')}: </Typography> <Typography style={{ fontSize: 15 }}>&nbsp;{details?.ID}</Typography>
+        </Box>
+      </Box>
+
+      {type?.toLowerCase() === 'newsletter' && <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
+        <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
+          <Typography style={{ fontSize: 15 }}><Typography style={{ fontWeight: 400 }}>{t('report.FromEmail')}: </Typography>&nbsp;{details?.FromEmail}</Typography>
+        </Box>
+        <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
+          <Typography style={{ fontSize: 15 }}><Typography style={{ fontWeight: 400 }}>{t('report.FromName')}: </Typography>&nbsp;{details?.FromName}</Typography>
+        </Box>
+      </Box>
+      }
     </Box>
   }
 
