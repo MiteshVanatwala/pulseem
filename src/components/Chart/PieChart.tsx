@@ -7,14 +7,54 @@ import { ColorPalettesStyles } from '../../helpers/UI/ColorPalettes';
 const PulseemPie = ({ data, onChartClick, colorPalette, gridSize = 12, selectedPalette }: any) => {
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
 
-  const widthSizes: any = { 12: windowSize === 'xl' ? 950 : 650, 6: 600, 3: 300, 4: 300 };
+  const widthSizes: any = { 12: (windowSize === 'xs' || windowSize === 'sm') ? 650 : 950, 6: 600, 3: 300, 4: 300 };
   const heightSizes: any = { 12: 320, 6: 320, 3: 320, 4: 320 };
   const gapSize: any = {
-    12: isRTL ? 10 : 10,
+    12: isRTL ? -30 : 10,
     6: isRTL ? 10 : 10,
     3: isRTL ? 10 : 10,
     4: isRTL ? 10 : 10
   };
+
+  const styles: any = {
+    rtl: {
+      margin: {
+        top: 20,
+        left: 400,
+        right: 0,
+        bottom: 20
+      },
+      labelStyle: {
+        fontSize: 14,
+        color: 'black',
+        direction: 'rtl'
+      },
+      position: {
+        horizontal: 'right',// | 'middle' | 'right',
+        vertical: 'middle' // | 'middle' | 'top'
+      },
+      padding: { bottom: 0, left: 0, right: 150, top: 0 }
+    },
+    ltr: {
+      margin: {
+        top: 20,
+        left: 400,
+        right: 0,
+        bottom: 20
+      },
+      labelStyle: {
+        fontSize: 14,
+        color: 'black',
+        direction: 'ltr'
+      },
+      position: {
+        horizontal: 'left',// | 'middle' | 'right',
+        vertical: 'middle' // | 'middle' | 'top'
+      },
+      padding: { bottom: 0, left: 150, right: 0, top: 0 }
+    },
+
+  }
 
   const onItemClick = (
     event: any, // The mouse event.
@@ -51,26 +91,23 @@ const PulseemPie = ({ data, onChartClick, colorPalette, gridSize = 12, selectedP
       width={windowSize !== 'sm' && windowSize !== 'xs' ? widthSizes[gridSize] : 250}
       height={heightSizes[gridSize]}
       margin={{
-        top: 20,
-        left: 50,
-        right: 50,
-        bottom: 20
+        top: styles[isRTL ? 'rtl' : 'ltr'].margin.top,
+        left: styles[isRTL ? 'rtl' : 'ltr'].margin.left,
+        right: styles[isRTL ? 'rtl' : 'ltr'].margin.right,
+        bottom: styles[isRTL ? 'rtl' : 'ltr'].margin.bottom
       }}
       onItemClick={onItemClick}
       slotProps={{
         legend: {
+          // onItemClick: (e: any) => { console.log(e) },
+          padding: styles[isRTL ? 'rtl' : 'ltr'].padding,
+          position: styles[isRTL ? 'rtl' : 'ltr'].position,
           direction: 'column',
-          position: { vertical: 'middle', horizontal: 'left' },
           markGap: gapSize[gridSize],
           itemMarkWidth: 15,
           itemMarkHeight: 15,
           itemGap: 5,
-          padding: 0,
-          labelStyle: {
-            fontSize: 14,
-            color: 'black',
-            direction: 'ltr'
-          }
+          labelStyle: styles[isRTL ? 'rtl' : 'ltr'].labelStyle
         },
       }}
     />
