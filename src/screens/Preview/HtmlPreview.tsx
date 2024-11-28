@@ -141,7 +141,7 @@ const HtmlPreview = ({ classes }: any) => {
       </Box>
       <Divider style={{ marginBlock: 10 }} />
       <Typography style={{ fontSize: 14 }}><b>{t('master.lblContactNameResource1.Text')}:</b> {details?.PageName}</Typography>
-      <Typography style={{ fontSize: 14 }}><b>{t('common.campaignID')}:</b> {details?.ID}</Typography>
+      <Typography style={{ fontSize: 14 }}><b>{type?.toLowerCase() === 'newsletter' ? t('common.campaignID') : t('landingPages.StaticPage')}:</b> {details?.ID}</Typography>
       {type?.toLowerCase() === 'newsletter' && <>
         <Typography style={{ fontSize: 14 }}><b>{t('report.FromEmail')}:</b> {details?.FromEmail}</Typography>
         <Typography style={{ fontSize: 14 }}><b>{t('report.FromName')}:</b> {details?.FromName}</Typography>
