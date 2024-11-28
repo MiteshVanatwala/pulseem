@@ -152,10 +152,10 @@ const HtmlPreview = ({ classes }: any) => {
 
       {type?.toLowerCase() === 'newsletter' && <Box className={classes.dFlex} style={{ flexDirection: 'column' }}>
         <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
-          <Typography style={{ fontSize: 15 }}><Typography style={{ fontWeight: 400 }}>{t('report.FromEmail')}: </Typography>&nbsp;{details?.FromEmail}</Typography>
+          <Typography style={{ fontWeight: 600 }}>{t('report.FromEmail')}: </Typography><Typography style={{ fontSize: 15 }}>&nbsp;{details?.FromEmail}</Typography>
         </Box>
         <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
-          <Typography style={{ fontSize: 15 }}><Typography style={{ fontWeight: 400 }}>{t('report.FromName')}: </Typography>&nbsp;{details?.FromName}</Typography>
+          <Typography style={{ fontWeight: 600 }}>{t('report.FromName')}: </Typography><Typography style={{ fontSize: 15 }}>&nbsp;{details?.FromName}</Typography>
         </Box>
       </Box>
       }
