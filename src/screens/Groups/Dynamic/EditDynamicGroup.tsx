@@ -68,11 +68,13 @@ const EditDynamicGroup = ({ classes }: any) => {
                 IsClickedFromDate: null,
                 IsClickedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsClickedToDate: null,
+                IsClickInCampaignTypes: null,
 
                 IsNotClicked: null,
                 IsNotClickedFromDate: null,
                 IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsNotClickedToDate: null,
+                IsNotClickInCampaignTypes: null,
 
                 IsPurchased: null,
                 IsPurchasedComparingType: ActivityEvent.Any,

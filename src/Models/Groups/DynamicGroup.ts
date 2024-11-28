@@ -46,11 +46,13 @@ export interface MyActivities {
     IsClickedInterval: ActivtyTimeInterval;
     IsClickedFromDate: Date | string | null;
     IsClickedToDate: Date | string | null;
+    IsClickInCampaignTypes: number[] | null;
 
     IsNotClicked: boolean | null;
     IsNotClickedInterval: ActivtyTimeInterval;
     IsNotClickedFromDate: Date | string | null;
     IsNotClickedToDate: Date | string | null;
+    IsNotClickInCampaignTypes: number[] | null;
 
     IsPurchased: boolean | null;
     IsPurchasedComparingType: ActivityEvent;
