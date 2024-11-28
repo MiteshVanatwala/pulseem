@@ -65,7 +65,7 @@ const CreateAutomationTemplate = ({ classes }: any) => {
         case 1:
             setToastMessage({ severity: 'success', color: 'success', message: t('automations.automationcreated'), showAnimtionCheck: false })
             setTimeout(() => {
-              window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${response?.payload?.Data?.AutomationID}&TemplateId=${selectedTemplate}fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+              window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${response?.payload?.Data?.AutomationID}&TemplateId=${selectedTemplate}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
             }, 2000);
           break;
 
