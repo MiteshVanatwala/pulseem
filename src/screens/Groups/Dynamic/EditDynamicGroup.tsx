@@ -476,6 +476,8 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsClicked: null,
                                         IsClickedFromDate: null,
                                         IsClickedToDate: null,
+                                        IsClickInCampaignTypes: null,
+                                        IsNotClickInCampaignTypes: null,
                                         IsClickedInterval: ActivtyTimeInterval.Last2Weeks
                                     }
                                 }
@@ -491,6 +493,8 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsNotClicked: null,
                                         IsNotClickedFromDate: null,
                                         IsNotClickedToDate: null,
+                                        IsClickInCampaignTypes: null,
+                                        IsNotClickInCampaignTypes: null,
                                         IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks
                                     }
                                 }

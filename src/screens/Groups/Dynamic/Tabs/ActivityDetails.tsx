@@ -242,8 +242,15 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={6} sm={6} md={2}>
                 <SelectCampaignType
                     Disabled={!data.dynamicData?.MyActivities?.IsClicked}
-                    OnUpdate={(event: any) => onUpdate('IsClickInCampaignTypes', event.target.value)}
-                    Value={!data.dynamicData?.MyActivities?.IsClicked ? null : data.dynamicData?.MyActivities.IsClickInCampaignTypes}
+                    OnUpdate={(event: any) => {
+                        if (event.target.value !== null) {
+                            onUpdate('IsClickInCampaignTypes', event.target.value.join(','))
+                        }
+                        else {
+                            onUpdate('IsClickInCampaignTypes', event.target.value)
+                        }
+                    }}
+                    Value={!data.dynamicData?.MyActivities?.IsClicked ? null : data.dynamicData?.MyActivities?.IsClickInCampaignTypes}
                     classes={classes}
                     key={'IsClickInCampaignTypes'}
                 />
@@ -341,7 +348,14 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={6} sm={6} md={2}>
                 <SelectActivityInteval
                     Disabled={!data.dynamicData?.MyActivities.IsNotClicked}
-                    OnUpdate={(event: any) => onUpdate('IsNotClickedInterval', event.target.value)}
+                    OnUpdate={(event: any) => {
+                        if (event.target.value !== null) {
+                            onUpdate('IsNotClickedInterval', event.target.value.join(','))
+                        }
+                        else {
+                            onUpdate('IsNotClickedInterval', event.target.value)
+                        }
+                    }}
                     Value={!data.dynamicData?.MyActivities.IsNotClicked ? null : data.dynamicData?.MyActivities.IsNotClickedInterval}
                     classes={classes}
                     key={'IsNotClickedInterval'}
@@ -350,8 +364,15 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={6} sm={6} md={2}>
                 <SelectCampaignType
                     Disabled={!data.dynamicData?.MyActivities?.IsClicked}
-                    OnUpdate={(event: any) => onUpdate('IsNotClickInCampaignTypes', event.target.value)}
-                    Value={!data.dynamicData?.MyActivities?.IsClicked ? null : data.dynamicData?.MyActivities.IsNotClickInCampaignTypes}
+                    OnUpdate={(event: any) => {
+                        if (event.target.value !== null) {
+                            onUpdate('IsNotClickInCampaignTypes', event.target.value.join(','))
+                        }
+                        else {
+                            onUpdate('IsNotClickInCampaignTypes', event.target.value)
+                        }
+                    }}
+                    Value={!data.dynamicData?.MyActivities?.IsClicked ? null : data.dynamicData?.MyActivities?.IsNotClickInCampaignTypes}
                     classes={classes}
                     key={'IsNotClickInCampaignTypes'}
                 />

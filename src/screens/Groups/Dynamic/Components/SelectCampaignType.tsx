@@ -27,13 +27,13 @@ const SelectCampaignType = (args: CampaignArgs) => {
         disabled={Disabled}
         variant='standard'
         multiple
-        value={Value || []}
+        value={Value?.split(',') || []}
         onChange={OnUpdate}
         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
         className={clsx(classes.w100, classes.mt10, Disabled ? classes.disabled : null)}
         renderValue={() => {
           const arr: string[] = [];
-          Value?.forEach((campaignType: number) => {
+          Value?.split(',').forEach((campaignType: string) => {
             switch (campaignType) {
               case CampaignType.All: {
                 arr.push(t('common.All'));
