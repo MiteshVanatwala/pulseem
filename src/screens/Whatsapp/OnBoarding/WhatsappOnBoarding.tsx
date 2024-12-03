@@ -48,9 +48,11 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   const [virtualNumbersCodeList, setVirtualNumbersCodeList] = useState<virtualNumbersCodeListInterface[]>([]);
   const [pin, setPin] = useState<string>('');
   const [errors, setErrors] = useState<{
-		pin?: string
+		pin?: string,
+		pinError?: string
 	}>({
-		pin: ''
+		pin: '',
+		pinError: ''
 	});
   const [phoneNumberId, setPhoneNumberId] = useState('');
   const [wabaId, setWabaId] = useState('');
@@ -61,6 +63,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   
 	useEffect(() => {
 		setIsLoader(false);
+
 		if (WhatsAppPlatformID !== WhatsAppPlatformIDEnum.TWILLIO) {
 			fetchMetaPhoneNumbers();
 			fetchWhatsAppSMSVirtualNumbers();
@@ -579,7 +582,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			setDialogType(null)
 			setErrors({
 				...errors,
-				pin: ''
+				pin: '',
+				pinError: '',
 			})
 			setToastMessage({
 				...successToastData,
@@ -587,10 +591,10 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			});
 			fetchMetaPhoneNumbers();
 		} else {
-			setToastMessage({
-				...errorToastData,
-				message: (StatusCode >=3 && StatusCode <= 8 || StatusCode === 100) ? t(`WhatsappOnBoarding.SaveWhatsappMetaClientsResponseCode.${StatusCode}`) : get(error, 'error_user_msg', t('common.Error'))
-			});
+			setErrors({
+				...errors,
+				pinError: (StatusCode >=3 && StatusCode <= 8 || StatusCode === 100) ? t(`WhatsappOnBoarding.SaveWhatsappMetaClientsResponseCode.${StatusCode}`) : get(error, 'error_user_msg', t('common.Error'))
+			})
 		}
 	}
 
@@ -624,6 +628,16 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 							{errors.pin}
 						</Typography>
 					</Box>
+
+					{
+						errors.pinError && (
+							<Box className='textBoxWrapper'>
+								<Typography className={clsx(classes.errorText, classes.f16, classes.txtCenter, classes.pt20)}>
+									{errors.pinError}
+								</Typography>
+							</Box>
+						)
+					}
         </Box>
       ),
       showDefaultButtons: true,
