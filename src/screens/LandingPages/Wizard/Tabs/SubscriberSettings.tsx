@@ -210,6 +210,24 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 >
                     <FormControlLabel
                         className={classes.fullWidth}
+                        label={translator('landingPages.addClientAsActiveWhenClientSelect')}
+                        value={null}
+                        control={<Radio
+                            color="primary"
+                            name={'optinGroup'}
+                            inputProps={{ "aria-label": "secondary checkbox" }}
+                            checked={data?.DoubleOptin === null || (data?.DoubleOptin === null && isNewPage)}
+                            onChange={(e: any) => {
+                                onUpdate({
+                                    ...data,
+                                    DoubleOptin: null
+                                })
+                            }}
+                        />
+                        }
+                    />
+                    <FormControlLabel
+                        className={classes.fullWidth}
                         label={translator('landingPages.addClientAsActive')}
                         value={false}
                         control={<Radio
@@ -236,24 +254,6 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                                 onUpdate({
                                     ...data,
                                     DoubleOptin: true
-                                })
-                            }}
-                        />
-                        }
-                    />
-                    <FormControlLabel
-                        className={classes.fullWidth}
-                        label={translator('landingPages.addClientAsActiveWhenClientSelect')}
-                        value={null}
-                        control={<Radio
-                            color="primary"
-                            name={'optinGroup'}
-                            inputProps={{ "aria-label": "secondary checkbox" }}
-                            checked={data?.DoubleOptin === null || (data?.DoubleOptin === null && isNewPage)}
-                            onChange={(e: any) => {
-                                onUpdate({
-                                    ...data,
-                                    DoubleOptin: null
                                 })
                             }}
                         />
