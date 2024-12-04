@@ -243,12 +243,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 <SelectCampaignType
                     Disabled={!data.dynamicData?.MyActivities?.IsClicked}
                     OnUpdate={(event: any) => {
-                        if (event.target.value !== null) {
-                            onUpdate('IsClickInCampaignTypes', event.target.value.join(','))
-                        }
-                        else {
-                            onUpdate('IsClickInCampaignTypes', event.target.value)
-                        }
+                        onUpdate('IsClickInCampaignTypes', event.target.value.join(','))
                     }}
                     Value={!data.dynamicData?.MyActivities?.IsClicked ? null : data.dynamicData?.MyActivities?.IsClickInCampaignTypes}
                     classes={classes}
@@ -360,7 +355,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 <SelectCampaignType
                     Disabled={!data.dynamicData?.MyActivities?.IsNotClicked}
                     OnUpdate={(event: any) => {
-                        onUpdate('IsNotClickInCampaignTypes', event.target.value)
+                        onUpdate('IsNotClickInCampaignTypes', event.target.value.join(','))
                     }}
                     Value={!data.dynamicData?.MyActivities?.IsNotClicked ? null : data.dynamicData?.MyActivities?.IsNotClickInCampaignTypes}
                     classes={classes}
