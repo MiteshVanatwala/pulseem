@@ -25,7 +25,7 @@ const LPTemplates = ({
 }: any) => {
   const dispatch = useDispatch()
   const { t } = useTranslation();
-  const [tabValue, setTabValue] = useState(0);
+  const [tabValue, setTabValue] = useState(1);
   const [templateList, setTemplateList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [maxTemplatesToShow, setMaxTemplatesToShow] = useState(8);
@@ -68,7 +68,7 @@ const LPTemplates = ({
     const categories = tabValue === 0 ? publicTemplateCategories : templatesBySubAccountCategories;
     setCategoryList(categories);
     setSelectedCategory(categories?.length > 0 ? categories[0] : '');
-    
+
     resizeWindow();
     setLoader(false);
   }, [publicTemplates, templatesBySubAccount, tabValue]);
@@ -131,7 +131,7 @@ const LPTemplates = ({
         <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')} style={{
           overflowY: 'auto', direction: 'ltr'
         }}>
-          {
+          {/* {
             tabValue === EmailTemplateType.PULSEEM_TEMPLATES && <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
               style={{
                 width: '100%',
@@ -140,7 +140,7 @@ const LPTemplates = ({
               }}
               alt={templateDetails.Name}
               title={templateDetails.Name} />
-          }
+          } */}
           {
             tabValue === EmailTemplateType.MY_TEMPLATES && <Box
               style={{
@@ -293,7 +293,7 @@ const LPTemplates = ({
             className={clsx(classes.mr15, classes.ml15)}
             classes={{ indicator: classes.hideIndicator }}
           >
-            <Tab value={EmailTemplateType.PULSEEM_TEMPLATES} label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
+            {/* <Tab value={EmailTemplateType.PULSEEM_TEMPLATES} label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} /> */}
             <Tab value={EmailTemplateType.MY_TEMPLATES} label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
           </Tabs>
           <Box className={classes.pt15}>
