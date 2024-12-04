@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Input, ListItemText, MenuItem, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Input, ListItemText, MenuItem, Radio, RadioGroup, TextField, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { Select } from '@mui/material';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -9,7 +9,10 @@ import { BiPlus } from 'react-icons/bi';
 import { coreProps } from '../../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { WebformsToReportLeadByApi } from '../../../../Models/LandingPage/WebformsToReportLeadByApi';
 import RegistrationToApiForm from '../Popups/RegistrationToApiForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
+import { AiOutlineExclamationCircle } from 'react-icons/ai';
 
 const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialog, errors, onDone }: any) => {
     const { t: translator } = useTranslation();
@@ -26,18 +29,13 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
         RequestUrl: ''
     });
     const [systemSelectOpen, setSystemSelectOpen] = useState<boolean>(false);
+    const [isNewPage, setIsNewPage] = useState<boolean>(true);
+    const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
 
-    const handleChangeMultiple = (event: any) => {
-        //const { value } = event.target;
-        // const value = [];
-        // for (let i = 0, l = options.length; i < l; i += 1) {
-        //     if (options[i].selected) {
-        //         value.push(options[i].value);
-        //     }
-        // }
-
-
-    };
+    useEffect(() => {
+        const isNewPage = !data?.ID || data?.ID > 0;
+        setIsNewPage(isNewPage);
+    }, []);
 
     const onEditSystem = (id: number) => {
         const found = data?.WebformsToReportLeadByApi.find((x: WebformsToReportLeadByApi) => { return x.ID === id });
@@ -207,21 +205,61 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                 </Box>
             </Grid>
 
-            <Grid item md={6} className={clsx(classes.dFlex)}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
+            <Grid item md={12} className={clsx(classes.dFlex)}>
+                <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1" className={clsx(classes.mb10)}
+                >
+                    <FormControlLabel
+                        className={classes.fullWidth}
+                        label={translator('landingPages.addClientAsActive')}
+                        value={false}
+                        control={<Radio
                             color="primary"
+                            name={'optinGroup'}
                             inputProps={{ "aria-label": "secondary checkbox" }}
-                            onClick={() => onUpdate({
-                                ...data,
-                                DoubleOptin: !data.DoubleOptin
-                            })}
-                            checked={data.DoubleOptin}
+                            checked={data?.DoubleOptin === false}
+                            onChange={() => {
+                                setShowConfirmDialog(true)
+                            }}
                         />
-                    }
-                    label={translator("landingPages.duplicateEmailConfirmation")}
-                />
+                        }
+                    />
+                    <FormControlLabel
+                        className={classes.fullWidth}
+                        label={translator('landingPages.duplicateEmailConfirmation')}
+                        value={true}
+                        control={<Radio
+                            color="primary"
+                            name={'optinGroup'}
+                            inputProps={{ "aria-label": "secondary checkbox" }}
+                            checked={data?.DoubleOptin === true}
+                            onChange={() => {
+                                onUpdate({
+                                    ...data,
+                                    DoubleOptin: true
+                                })
+                            }}
+                        />
+                        }
+                    />
+                    <FormControlLabel
+                        className={classes.fullWidth}
+                        label={translator('landingPages.addClientAsActiveWhenClientSelect')}
+                        value={null}
+                        control={<Radio
+                            color="primary"
+                            name={'optinGroup'}
+                            inputProps={{ "aria-label": "secondary checkbox" }}
+                            checked={data?.DoubleOptin === null || (data?.DoubleOptin === null && isNewPage)}
+                            onChange={(e: any) => {
+                                onUpdate({
+                                    ...data,
+                                    DoubleOptin: null
+                                })
+                            }}
+                        />
+                        }
+                    />
+                </RadioGroup>
             </Grid>
             <RegistrationToApiForm
                 classes={classes}
@@ -237,6 +275,24 @@ const SubscriberSettings = ({ classes, data, onUpdate, removeEmailId, onSetDialo
                     resetSelectedApiIntegration();
                     onDone();
                 }}
+            />
+            <ConfirmRadioDialog
+                classes={classes}
+                isOpen={showConfirmDialog}
+                title={translator('common.payAttention')}
+                // @ts-ignore
+                icon={<AiOutlineExclamationCircle />}
+                // @ts-ignore
+                radioTitle={RenderHtml(translator('landingPages.changeOptInDesclaimer'))}
+                onConfirm={(e: any) => {
+                    onUpdate({
+                        ...data,
+                        DoubleOptin: false
+                    });
+                    setShowConfirmDialog(false)
+                }}
+                onCancel={() => setShowConfirmDialog(false)}
+                options={null}
             />
         </Grid>
     )

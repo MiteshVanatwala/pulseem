@@ -861,9 +861,6 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 								/>
 							</Grid>}
 						</Grid>
-						<Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
-							{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
-						</Typography>
 					</TabPanel>
 					<TabPanel value='2' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
 						<SeoSettings classes={classes} data={landingPageModel} onUpdate={setLandingPageModel} errors={errors} />
@@ -883,6 +880,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						/>
 					</TabPanel>
 					<TabPanel value='5' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
+						<Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
+							{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
+						</Typography>
 						<SubscriberGroup
 							classes={classes}
 							data={landingPageModel}

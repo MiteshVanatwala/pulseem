@@ -474,5 +474,8 @@
   "multipleFormsBlocked": "Multiple Forms are currenly not allowed.",
   "isOptIn": "Mailing Approval",
   "approved": "Approved",
-  "notApproved": "Not Approved"
+  "notApproved": "Not Approved",
+  "addClientAsActive": "Add all new registered recipients coming from this landing page as “Active”",
+  "addClientAsActiveWhenClientSelect": "Add new recipients as “Active” only if they approved mailing by checking the opt-in checkbox ",
+  "changeOptInDesclaimer": "For your attention, <br/>by activating <b>Add all new registered recipients coming from this landing page as “Active”</b> setting, you are requesting to add recipient which have not opt in to receive mailing, which means these recipients will receive Emails, SMS and WhatsApp campaigns that you send.<br/>Changing the aforementioned settings is carried out at your sole responsibility, and in doing so you confirm that Pulseem will not bear any responsibility for any damage caused to you and/or to Pulseem as a result, and therefore these damages will apply only to you."
 }
