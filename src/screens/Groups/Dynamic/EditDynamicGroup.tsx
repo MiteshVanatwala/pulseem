@@ -68,13 +68,13 @@ const EditDynamicGroup = ({ classes }: any) => {
                 IsClickedFromDate: null,
                 IsClickedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsClickedToDate: null,
-                IsClickInCampaignTypes: null,
+                IsClickInCampaignTypes: '0',
 
                 IsNotClicked: null,
                 IsNotClickedFromDate: null,
                 IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsNotClickedToDate: null,
-                IsNotClickInCampaignTypes: null,
+                IsNotClickInCampaignTypes: '0',
 
                 IsPurchased: null,
                 IsPurchasedComparingType: ActivityEvent.Any,
@@ -476,8 +476,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsClicked: null,
                                         IsClickedFromDate: null,
                                         IsClickedToDate: null,
-                                        IsClickInCampaignTypes: null,
-                                        IsNotClickInCampaignTypes: null,
+                                        IsClickInCampaignTypes: '0',
                                         IsClickedInterval: ActivtyTimeInterval.Last2Weeks
                                     }
                                 }
@@ -493,8 +492,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsNotClicked: null,
                                         IsNotClickedFromDate: null,
                                         IsNotClickedToDate: null,
-                                        IsClickInCampaignTypes: null,
-                                        IsNotClickInCampaignTypes: null,
+                                        IsNotClickInCampaignTypes: '0',
                                         IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks
                                     }
                                 }

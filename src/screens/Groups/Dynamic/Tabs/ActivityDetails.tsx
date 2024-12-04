@@ -349,12 +349,7 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                 <SelectActivityInteval
                     Disabled={!data.dynamicData?.MyActivities.IsNotClicked}
                     OnUpdate={(event: any) => {
-                        if (event.target.value !== null) {
-                            onUpdate('IsNotClickedInterval', event.target.value.join(','))
-                        }
-                        else {
-                            onUpdate('IsNotClickedInterval', event.target.value)
-                        }
+                        onUpdate('IsNotClickedInterval', event.target.value)
                     }}
                     Value={!data.dynamicData?.MyActivities.IsNotClicked ? null : data.dynamicData?.MyActivities.IsNotClickedInterval}
                     classes={classes}
@@ -363,16 +358,11 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
             </Grid>
             <Grid item xs={6} sm={6} md={2}>
                 <SelectCampaignType
-                    Disabled={!data.dynamicData?.MyActivities?.IsClicked}
+                    Disabled={!data.dynamicData?.MyActivities?.IsNotClicked}
                     OnUpdate={(event: any) => {
-                        if (event.target.value !== null) {
-                            onUpdate('IsNotClickInCampaignTypes', event.target.value.join(','))
-                        }
-                        else {
-                            onUpdate('IsNotClickInCampaignTypes', event.target.value)
-                        }
+                        onUpdate('IsNotClickInCampaignTypes', event.target.value)
                     }}
-                    Value={!data.dynamicData?.MyActivities?.IsClicked ? null : data.dynamicData?.MyActivities?.IsNotClickInCampaignTypes}
+                    Value={!data.dynamicData?.MyActivities?.IsNotClicked ? null : data.dynamicData?.MyActivities?.IsNotClickInCampaignTypes}
                     classes={classes}
                     key={'IsNotClickInCampaignTypes'}
                 />
