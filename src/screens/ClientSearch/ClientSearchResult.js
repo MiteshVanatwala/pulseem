@@ -16,8 +16,7 @@ import {
 import { ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
 import {
-  TablePagination,
-  SearchField,
+  TablePagination
 } from "../../components/managment/index";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -47,12 +46,12 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition, FlatObject } from '../../helpers/Export/ExportHelper';
+import { ExportFile } from '../../helpers/Export/ExportFile';
+import { HandleExportData, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
 import { ClientStatus, DateFormats } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
-import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
+import { getAllGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
@@ -208,7 +207,7 @@ const ClientSearchResult = ({ classes }) => {
     const initExtraFields = async () => {
       dispatch(getAccountExtraData());
       if (subAccountAllGroups.length === 0) {
-        dispatch(getGroupsBySubAccountId());
+        dispatch(getAllGroupsBySubAccountId());
       }
     }
     const initSearchData = () => {
@@ -669,12 +668,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.campaignRevenue")}
           </Typography>
           <Typography>
-            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+            {isCurrencySymbolPrefix ? currencySymbol : ''} {Revenue} {!isCurrencySymbolPrefix ? currencySymbol : ''}
           </Typography>
         </>),
         web: ({ Revenue = 0, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+            {isCurrencySymbolPrefix ? currencySymbol : ''} {Revenue} {!isCurrencySymbolPrefix ? currencySymbol : ''}
           </Typography>
         )
       },
@@ -689,12 +688,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.campaignRevenue")}
           </Typography>
           <Typography>
-          { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+            {isCurrencySymbolPrefix ? currencySymbol : ''} {Revenue} {!isCurrencySymbolPrefix ? currencySymbol : ''}
           </Typography>
         </>),
         web: ({ Revenue = 0, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+            {isCurrencySymbolPrefix ? currencySymbol : ''} {Revenue} {!isCurrencySymbolPrefix ? currencySymbol : ''}
           </Typography>
         )
       },
@@ -775,12 +774,12 @@ const ClientSearchResult = ({ classes }) => {
             {t("common.campaignRevenue")}
           </Typography>
           <Typography>
-            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+            {isCurrencySymbolPrefix ? currencySymbol : ''} {Revenue} {!isCurrencySymbolPrefix ? currencySymbol : ''}
           </Typography>
         </>),
         web: ({ Revenue = 0, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            { isCurrencySymbolPrefix ? currencySymbol : '' } {Revenue} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+            {isCurrencySymbolPrefix ? currencySymbol : ''} {Revenue} {!isCurrencySymbolPrefix ? currencySymbol : ''}
           </Typography>
         )
       },
@@ -830,8 +829,8 @@ const ClientSearchResult = ({ classes }) => {
       handleFilter();
       setRevenueSummary([
         { title: t('client.Purchased'), value: TotalCount },
-        { title: t('client.totalRevenue'), value: `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${TotalRevenue?.toLocaleString()} ${ !isCurrencySymbolPrefix ? currencySymbol : '' }` },
-        { title: t('client.avgOrderRevenue'), value: `${ isCurrencySymbolPrefix ? currencySymbol : '' } ${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${ !isCurrencySymbolPrefix ? currencySymbol : '' }` },
+        { title: t('client.totalRevenue'), value: `${isCurrencySymbolPrefix ? currencySymbol : ''} ${TotalRevenue?.toLocaleString()} ${!isCurrencySymbolPrefix ? currencySymbol : ''}` },
+        { title: t('client.avgOrderRevenue'), value: `${isCurrencySymbolPrefix ? currencySymbol : ''} ${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${!isCurrencySymbolPrefix ? currencySymbol : ''}` },
         { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
       ]);
     }
@@ -1112,7 +1111,7 @@ const ClientSearchResult = ({ classes }) => {
     }));
     handleResponses(response, assignClientsActions);
     setLoader(false);
-    dispatch(getGroupsBySubAccountId());
+    dispatch(getAllGroupsBySubAccountId());
     getData();
   }
   const handleUnSubscribe = async (opt, notifyEmail) => {
