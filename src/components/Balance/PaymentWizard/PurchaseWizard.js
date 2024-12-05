@@ -19,6 +19,7 @@ const PurchaseWizard = ({ classes,
     const [data, setData] = useState(null);
     const [newsletterBulkData, setNewsletterBulkData] = useState(null);
     const [smsBulkData, setSmsBulkData] = useState(null);
+    const [whatsappBulkData, setWhatsappBulkData] = useState(null);
     // const [notificationsBulkData, setNotificationsBulkData] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [packageId, setPackageId] = useState(null);
@@ -38,6 +39,7 @@ const PurchaseWizard = ({ classes,
         const initPackages = async () => {
             setSmsBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 3 }));
             setNewsletterBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 2 }));
+            setWhatsappBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 4 }))
             setData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === packageType }));
             setLoader(false);
         }
@@ -94,6 +96,7 @@ const PurchaseWizard = ({ classes,
                     packageType={packageType}
                     smsBulkData={smsBulkData}
                     newsletterBulkData={newsletterBulkData}
+                    whatsappBulkData={whatsappBulkData}
                 />
             case 2: {
                 dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
