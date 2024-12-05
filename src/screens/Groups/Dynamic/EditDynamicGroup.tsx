@@ -192,12 +192,13 @@ const EditDynamicGroup = ({ classes }: any) => {
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
-        }, 4000);
+        }, 5000);
         return <Toast customData={toastMessage} data={null} />;
     };
 
     const onSave = async (isExit: boolean | never = false) => {
         let isValid = true;
+        let message = '';
         // Add validations
         // IsPageViewed && Range && required min & max - SpecificDates && required min & max  
 
@@ -258,6 +259,18 @@ const EditDynamicGroup = ({ classes }: any) => {
                 }
             }
         }
+        if (dynamicGroupModel.dynamicData.MyActivities.IsClicked === true) {
+            if (!dynamicGroupModel.dynamicData.MyActivities.IsClickInCampaignTypes) {
+                message = t('group.saveDynamicGroupResponse.clickChannelRequired');
+                isValid = false;
+            }
+        }
+        if (dynamicGroupModel.dynamicData.MyActivities.IsNotClicked === true) {
+            if (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickInCampaignTypes) {
+                message = t('group.saveDynamicGroupResponse.notClickChannelRequired');
+                isValid = false;
+            }
+        }
 
         if (isValid) {
             setLoader(true);
@@ -266,7 +279,7 @@ const EditDynamicGroup = ({ classes }: any) => {
             handleResponse(response.payload, isExit);
         }
         else {
-            showErrorToast(t('group.saveDynamicGroupResponse.incorrectValue'));
+            showErrorToast(t(message !== '' ? message : 'group.saveDynamicGroupResponse.incorrectValue'));
         }
     }
 

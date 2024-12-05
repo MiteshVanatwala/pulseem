@@ -4,6 +4,7 @@ import 'moment/locale/he';
 import { IoIosArrowDown } from 'react-icons/io';
 import { useTranslation } from 'react-i18next';
 import { CampaignType } from '../../../../Models/Common/CampaignTypes';
+import { useEffect, useState } from 'react';
 
 
 interface CampaignArgs {
@@ -15,8 +16,13 @@ interface CampaignArgs {
 
 const SelectCampaignType = (args: CampaignArgs) => {
   const { t } = useTranslation();
+  const [allSelected, setAllSelected] = useState<boolean>(false);
 
   const { classes, Value, Disabled, OnUpdate }: CampaignArgs = args;
+
+  useEffect(() => {
+    setAllSelected(Value?.split(',')?.length > 3)
+  }, [Value]);
 
   return <>
     <FormControl
@@ -30,15 +36,15 @@ const SelectCampaignType = (args: CampaignArgs) => {
         value={Value?.split(',') || []}
         onChange={OnUpdate}
         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-        className={clsx(classes.w100, classes.mt10, Disabled ? classes.disabled : null)}
+        className={clsx(classes.w100, classes.mt10, Disabled ? classes.disabled : null, (Value === null || Value === '') && classes.error)}
         renderValue={() => {
           const arr: string[] = [];
+          if (Value?.indexOf('0') > -1 || allSelected) {
+            return <Box className={classes.elipsis} style={{ maxWidth: 'calc(100% - 30px)' }}>{t('common.allChannels')}</Box>;
+          }
+
           Value?.split(',').forEach((campaignType: string) => {
             switch (campaignType) {
-              case CampaignType.All: {
-                arr.push(t('common.All'));
-                break;
-              }
               case CampaignType.Newsletter: {
                 arr.push(t('master.RadMenuItemResource12.Text'));
                 break;
@@ -64,8 +70,8 @@ const SelectCampaignType = (args: CampaignArgs) => {
         }}
       >
         <MenuItem key={CampaignType.All} value={CampaignType.All}>
-          <Checkbox checked={Value?.indexOf(CampaignType.All) > -1} />
-          <ListItemText primary={t('common.All')} />
+          <Checkbox checked={(Value?.indexOf(CampaignType.All) > -1 || allSelected)} />
+          <ListItemText primary={t('common.allChannels')} />
         </MenuItem>
         <MenuItem key={CampaignType.Newsletter} value={CampaignType.Newsletter}>
           <Checkbox disabled={Value?.indexOf(CampaignType.All) > -1} checked={Value?.indexOf(CampaignType.All) > -1 || Value?.indexOf(CampaignType.Newsletter) > -1} />
