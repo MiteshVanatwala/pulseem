@@ -11,7 +11,15 @@ export const getGroupsBySubAccountId = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
-
+export const getAllGroupsBySubAccountId = createAsyncThunk(
+    'Group/getAllGroupsBySubAccountId', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`Group/getAllGroupsBySubAccountId`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
 export const getGroups = createAsyncThunk(
     'Group/Get', async (data, thunkAPI) => {
         try {
@@ -210,6 +218,9 @@ export const groupSlice = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(getGroupsBySubAccountId.fulfilled, (state, { payload }) => {
+            state.subAccountAllGroups = payload;
+        })
+        builder.addCase(getAllGroupsBySubAccountId.fulfilled, (state, { payload }) => {
             state.subAccountAllGroups = payload;
         })
         builder.addCase(getGroups.fulfilled, (state, { payload }) => {
