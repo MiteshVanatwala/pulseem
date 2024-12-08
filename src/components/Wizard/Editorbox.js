@@ -19,7 +19,6 @@ import {
     getTestGroups,
     getSMSVirtualNumber
 } from "../../redux/reducers/smsSlice";
-import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
@@ -131,14 +130,12 @@ const Editorbox = ({
     const [isPageLoaded, setIsPageLoaded] = useState(false);
     const [showRemovalLink, setShowRemovalLink] = useState(false);
     const [smsModel, setSmsModel] = useState({
-        SubAccountID: -1,
         CreditsPerSms: "1",
         FromNumber: campaignNumber,
         IsLinksStatistics: true,
         IsResponse: false,
         IsTest: true,
         IsTestCampaign: false,
-        AccountID: -1,
         Credits: "1",
         SmsCampaignID: -1,
         TotalRecipients: 1,
@@ -218,11 +215,6 @@ const Editorbox = ({
         debouncedCallback(characterCount)
         //getcredits(characterCount);
     }, [characterCount])
-
-    useEffect(() => {
-        if (!accountSettings || Object.keys(accountSettings).length === 0)
-            dispatch(getCommonFeatures());
-    }, [])
 
     const handleSmsModelChange = (name, value) => {
         setSmsModel(prevState => ({
@@ -607,7 +599,7 @@ const Editorbox = ({
                                 </Button>
                                 {editmenuClick ? (
                                     <Box
-                                        className={classes.dropDiv} 
+                                        className={classes.dropDiv}
                                         style={{
                                             top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-120px" : "-170px") : null,
                                             right: isRTL ? 'auto' : 0,
@@ -915,8 +907,8 @@ const Editorbox = ({
                     style={{ maxWidth: 100 }}
                     onClick={() => { setDialogType(null) }}
                     className={clsx(
-                        classes.gruopsDialogButton,
-                        classes.dialogConfirmButton,
+                        classes.btn,
+                        classes.btnRounded,
                     )}>
                     {t('common.Ok')}
                 </Button>

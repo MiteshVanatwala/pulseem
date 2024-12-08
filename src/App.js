@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
-// import BeeEditorPage from './screens/BeeEditorPage/BeeEditorPage.tsx';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
@@ -83,6 +82,7 @@ import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
+import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -456,7 +456,6 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}AccountUsers`}
         element={<AccountUsers classes={classes} />}
-        // component={transferUrl('/Pulseem/AccountUsers.aspx')}
       />
       <Route
         path={`/AccountUsersReport`}
@@ -550,6 +549,11 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}AffiliateManagement`}
         element={<AffiliateProgram classes={classes} />}
       />
+      <Route
+        exact
+        path={`${sitePrefix}TermsOfUse`}
+        element={<TermsOfUsePage classes={classes} />}
+      />
     </Routes>
   )
 }
@@ -558,7 +562,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
@@ -617,7 +621,6 @@ const App = ({ screenSize }) => {
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
         isAllowSwitchAccount = '',
       } = jwt;
-      
       dispatch(
         setCoreData({
           email,
@@ -666,19 +669,37 @@ const App = ({ screenSize }) => {
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
+  const renderRoutesByCondition = (classes, redirect) => {
+    const ignoreCookie = getCookie('ignoreTerm')
+    if (!isAdmin && accountSettings && !accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount === 3 && ignoreCookie !== 'true') {
+      return <Routes>
+        <Route
+          exact
+          path="*"
+          element={<TermsOfUsePage classes={classes} />}
+        />
+      </Routes>
+    }
+    if (!isAdmin && isDebtAccount === true) {
+      return <Routes>
+        <Route
+          exact
+          path="*"
+          element={<BillingSettingsPage classes={classes} />}
+        />
+      </Routes>
+    }
+    else {
+      return renderRoutes(classes, redirect);
+    }
+
+  }
+
   return (accountSettings || isSignup) && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
-          {isDebtAccount === true ? (
-            <Routes>
-              <Route
-                exact
-                path="*"
-                element={<BillingSettingsPage classes={classes} />}
-              />
-            </Routes>
-          ) : renderRoutes(classes, redirect)}
+          {renderRoutesByCondition(classes, redirect)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider >

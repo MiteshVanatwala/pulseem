@@ -1982,8 +1982,8 @@ const ClientSearchResult = ({ classes }) => {
                       window.history.back();
                     }}
                     className={clsx(
-                      classes.solidDialogButton,
-                      classes.dialogConfirmButton
+                      classes.btn,
+                      classes.btnRounded
                     )}>
                     {t('common.confirm')}
                   </Button>

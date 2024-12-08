@@ -1,8 +1,7 @@
-import noImagePreview from '../../assets/images/no-image-preview.jpg';
 import clsx from 'clsx';
 import { PreviewTypes } from './Types';
-import { Direction, EventTypes, Structure } from '../../config/enum';
-import { NO_IMAGE_URL } from '../../helpers/Constants';
+import { Direction, Structure } from '../../config/enum';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const Preview = ({
   classes,
@@ -34,6 +33,7 @@ const Preview = ({
           classes.card, classes.w100, classes.mb10,
           {
             [classes.directionRTL]: direction === Direction.RightToLeft,
+            [classes.directionLTR]: direction === Direction.LeftToRight,
             [classes.textRight]: direction === Direction.RightToLeft,
             [classes.textCenter]: direction === Direction.Center,
           }
@@ -55,7 +55,7 @@ const Preview = ({
             )}
           >
             <img
-              src={NO_IMAGE_URL}
+              src={imageURL}
               alt=''
               style={{
                 width: structure === Structure.Horizontal ? '100%' : '150px',
@@ -81,7 +81,7 @@ const Preview = ({
         }
       >
         {isNameVisible && <div className={clsx(classes.nameStyle)}>{name}</div>}
-        {isDescriptionVisible && <div className={clsx(classes.bodyStyle)}>{description}</div>}
+        {isDescriptionVisible && <div className={clsx(classes.bodyStyle)}>{RenderHtml(description)}</div>}
         {isPriceVisible && <div className={clsx(classes.bodyStyle)}>{price}</div>}
         {eventType && <div className={clsx(classes.bodyStyle)}>{eventType}</div>}
         {renderCategory()}

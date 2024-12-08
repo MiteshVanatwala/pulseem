@@ -871,6 +871,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   directionRTL: {
     direction: 'rtl',
   },
+  directionLTR: {
+    direction: 'ltr',
+  },
   wAuto: {
     width: 'auto'
   },
@@ -4246,5 +4249,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "&:before": {
       backgroundColor: 'transparent'
     }
+  },
+  maxWidthMinContent: {
+    maxWidth: 'min-content !important'
   }
 });

@@ -525,7 +525,6 @@ const SmsSend = ({ classes, ...props }) => {
     }
 
     let payload = {
-      SubAccountID: 1,
       GroupName: groupValue,
       GroupIds: temp,
     };
@@ -1624,8 +1623,6 @@ const SmsSend = ({ classes, ...props }) => {
     setLoader(true);
     let payload = {
       "SmsCampaignID": id,
-      "SubAccountID": -1,
-      "AccountID": -1,
       "Credits": dataSaved.CreditPerSms,
       "TotalRecipients": getCampaignSum.FinalCount
     }

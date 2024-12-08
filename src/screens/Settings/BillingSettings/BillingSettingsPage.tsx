@@ -68,6 +68,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const [hasDebt, setHasDebt] = useState<boolean>(false);
   const [confirmDialog, setConfirmDialog] = useState<boolean>(false);
   const [tranzilaError, setTranzilaError] = useState<any>(null);
+  const [showEditCard, setShowEditCard] = useState<boolean>(false);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -101,6 +102,9 @@ const BillingSettingsPage = ({ classes }: any) => {
 
         if (expiredOpertaionIds?.length > 0) {
           setHasDebt(true);
+        }
+        else {
+          setShowEditCard(true);
         }
       }
     }
@@ -264,8 +268,8 @@ const BillingSettingsPage = ({ classes }: any) => {
       title: t('billing.debtBalance'),
       open: showPopup,
       exitButton: false,
-      onClose: () => setShowPopup(false),
-      onCancel: () => setShowPopup(false),
+      onClose: (e: any) => { setShowPopup(false); focusOnDebt() },
+      onCancel: (e: any) => { setShowPopup(false); focusOnDebt() },
       disableBackdropClick: true,
       showDefaultButtons: false,
       renderButtons: () => {
@@ -465,6 +469,7 @@ const BillingSettingsPage = ({ classes }: any) => {
               }}>
               <AccordionSummary aria-controls="1-content" id="1-header">
                 <Title
+                  autoWidth={false}
                   isIcon={false}
                   classes={classes}
                   Element={
@@ -497,12 +502,12 @@ const BillingSettingsPage = ({ classes }: any) => {
                               onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
                               className={clsx(classes.font14)}
                               style={{ textDecoration: 'underline' }}
-                            >{t("settings.billingSettings.editCard")}</Link> |
-                            <Link
-                              onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); setConfirmDialog(true) }}
-                              className={clsx(classes.font14)}
-                              style={{ textDecoration: 'underline' }}
-                            >{t("common.remove")}</Link>
+                            >{t("settings.billingSettings.editCard")}</Link>{showEditCard && <> |
+                              <Link
+                                onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); setConfirmDialog(true) }}
+                                className={clsx(classes.font14)}
+                                style={{ textDecoration: 'underline' }}
+                              >{t("common.remove")}</Link></>}
                           </Box>
                         </>)}
                       </>}
@@ -521,7 +526,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                 root: classes.MuiAccordionroot
               }}>
               <AccordionSummary aria-controls="2-content" id="2-header">
-                <Title isIcon={false} classes={classes}
+                <Title autoWidth={false} isIcon={false} classes={classes}
                   Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                     {openPanels.indexOf('2') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     <Typography
@@ -571,7 +576,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                 root: classes.MuiAccordionroot
               }}>
               <AccordionSummary aria-controls="3-content" id="3-header">
-                <Title isIcon={false} classes={classes}
+                <Title autoWidth={false} isIcon={false} classes={classes}
                   Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                     {openPanels.indexOf('3') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     <Typography
@@ -594,7 +599,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                 root: classes.MuiAccordionroot
               }}>
               <AccordionSummary aria-controls="4-content" id="4-header">
-                <Title isIcon={false} classes={classes}
+                <Title autoWidth={false} isIcon={false} classes={classes}
                   Element={<Box className={classes.dFlex} style={{ alignItems: 'center' }}>
                     {openPanels.indexOf('4') > -1 ? <IoIosArrowUp /> : <IoIosArrowDown />}
                     <Typography

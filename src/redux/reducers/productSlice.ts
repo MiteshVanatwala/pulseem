@@ -13,10 +13,23 @@ export const getCategories = createAsyncThunk(
   }
 );
 
+export const GetProductsList = createAsyncThunk(
+  "Product/GetProductsList",
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`Product/GetProductsList`);
+      return response.data;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 export const productSlice = createSlice({
   name: "product",
   initialState: {
-    productCategories: []
+    productCategories: [],
+    productList: []
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -24,6 +37,12 @@ export const productSlice = createSlice({
       getCategories.fulfilled,
       (state: any, { meta, payload }: any) => {
         state.productCategories = payload?.Data;
+      }
+    );
+    builder.addCase(
+      GetProductsList.fulfilled,
+      (state: any, { meta, payload }: any) => {
+        state.productList = payload?.Data;
       }
     );
   },

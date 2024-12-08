@@ -9,9 +9,7 @@ import {
   DeleteIcon, DuplicateIcon, EditIcon,
   GroupsIcon, PreviewIcon, SendIcon
 } from '../../../assets/images/managment/index'
-import {
-  TablePagination, ManagmentIcon, DateField, RestorDialogContent, SearchField
-} from '../../../components/managment/index'
+import { TablePagination, ManagmentIcon, DateField, RestorDialogContent } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -81,20 +79,26 @@ const NotificationManagement = ({ classes }) => {
     }
   }
   useEffect(() => {
+    setLoader(true);
+    
     const handleApiKey = async () => {
-      if (!subAccountApiKey || subAccountApiKey === "") {
-        await dispatch(getSubAccountApiKey());
-      }
+      await dispatch(getSubAccountApiKey());
+      setLoader(false);
     }
+
     const getData = async () => {
       await dispatch(getNotificationData());
       setLoader(false);
     }
 
-    setLoader(true);
+    if (!subAccountApiKey || subAccountApiKey === "") {
+      handleApiKey();
+    }
+    else {
+      getData();
+    }
+
     handleScriptPath();
-    handleApiKey();
-    getData();
   }, [dispatch, subAccountApiKey]);
 
 
@@ -264,7 +268,7 @@ const NotificationManagement = ({ classes }) => {
 
       let sortData = notificationData;
       searchArray.forEach(values => {
-        sortData = sortData.filter(row => filtersObject[values.type](row, values))
+        sortData = sortData?.filter(row => filtersObject[values.type](row, values))
       });
       setSearchResults(sortData);
       setSearching(true);
@@ -340,7 +344,7 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderManagmentLine = () => {
-    const dataLength = isSearching ? searchResults.length : notificationData.length;
+    const dataLength = isSearching ? searchResults?.length : notificationData?.length;
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
         {<Grid item>
@@ -675,12 +679,12 @@ const NotificationManagement = ({ classes }) => {
   const renderTableBody = () => {
     let rowData = searchResults || notificationData;
     let rpp = parseInt(rowsPerPage)
-    rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+    rowData = rowData?.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <Box className='tableBodyContainer'>
         <TableBody>
           {rowData
-            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+            ?.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
         </TableBody>
       </Box>
     )
@@ -704,7 +708,7 @@ const NotificationManagement = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? searchResults.length : notificationData.length}
+        rows={isSearching ? searchResults?.length : notificationData?.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
