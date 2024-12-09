@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent } from 'react';
+import { BaseSyntheticEvent, ReactElement } from 'react';
 import { ClassesType } from '../../../Classes.types';
 import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
@@ -124,6 +124,10 @@ export type RightPaneProps = {
 	isSpecialDateBefore: boolean;
 	setIsSpecialDateBefore: (value: boolean) => void;
 	specialDatedropDown: specialDateDropDownPayload | undefined;
+	selectedGroups: testGroupDataProps[];
+	pulseSendingOpen: () => void;
+	packetSending: ReactElement;
+	randomSending: ReactElement;
 };
 
 export type LeftPaneProps = {
