@@ -313,10 +313,10 @@ const BulkStatus = ({ classes }) => {
               </Grid>
 
               <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-                <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })}>
+                {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })}>
                   {t('dashboard.purchase')}
                   {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                </Button>
+                </Button>}
               </Grid>
             </Grid>
             <Divider />
