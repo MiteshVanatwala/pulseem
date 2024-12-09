@@ -44,7 +44,8 @@
     "404": "Not found",
     "incorrectValue": "One",
     "clickChannelRequired": "At least one campaign channel must be selected in order to search for customers who clicked",
-    "notClickChannelRequired": "At least one campaign channel must be selected in order to search for customers who did not click"
+    "notClickChannelRequired": "At least one campaign channel must be selected in order to search for customers who did not click",
+    "specificDateIsRequired": "Please select specific dates"
   },
   "updateFrequency": "Update Frequency",
   "results": "Results",

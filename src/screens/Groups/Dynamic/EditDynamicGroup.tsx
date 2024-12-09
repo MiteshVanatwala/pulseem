@@ -260,14 +260,25 @@ const EditDynamicGroup = ({ classes }: any) => {
             }
         }
         if (dynamicGroupModel.dynamicData.MyActivities.IsClicked === true) {
+
             if (!dynamicGroupModel.dynamicData.MyActivities.IsClickInCampaignTypes) {
                 message = t('group.saveDynamicGroupResponse.clickChannelRequired');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval.toString() === ActivtyTimeInterval.SpecificDates
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsClickedFromDate || !dynamicGroupModel.dynamicData.MyActivities.IsClickedToDate)) {
+                message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
                 isValid = false;
             }
         }
         if (dynamicGroupModel.dynamicData.MyActivities.IsNotClicked === true) {
             if (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickInCampaignTypes) {
                 message = t('group.saveDynamicGroupResponse.notClickChannelRequired');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval.toString() === ActivtyTimeInterval.SpecificDates
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickedFromDate && !dynamicGroupModel.dynamicData.MyActivities.IsNotClickedToDate)) {
+                message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
                 isValid = false;
             }
         }
