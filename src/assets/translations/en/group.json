@@ -42,7 +42,10 @@
     "400": "Group does not updated due to incorrect data",
     "402": "Group does not updated due to broken request",
     "404": "Not found",
-    "incorrectValue": "One"
+    "incorrectValue": "One",
+    "clickChannelRequired": "At least one campaign channel must be selected in order to search for customers who clicked",
+    "notClickChannelRequired": "At least one campaign channel must be selected in order to search for customers who did not click",
+    "specificDateIsRequired": "Please select specific dates"
   },
   "updateFrequency": "Update Frequency",
   "results": "Results",

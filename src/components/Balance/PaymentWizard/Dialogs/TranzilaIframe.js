@@ -12,9 +12,9 @@ const TranzilaIframe = ({
     data,
     isRTL,
     packageId,
+    onStepBack,
     paymentUrl = null,
-    onStepBack = () => {},
-    onComplete = () => {}
+    onComplete = () => { }
 }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -43,13 +43,13 @@ const TranzilaIframe = ({
     }, []);
 
     return <Grid container>
-        <Grid item xs={12}>
+        {onStepBack && <Grid item xs={12}>
             <Box className={classes.justifyBetween} style={{ alignItems: 'center' }}>
                 <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t("payment.updateCreditCard")}</Typography>
                 <Link onClick={onStepBack} style={{ cursor: 'pointer' }}>{t("smsReport.back")}</Link>
             </Box>
             <Divider />
-        </Grid>
+        </Grid>}
         <Grid item className={clsx(classes.mt25, classes.fullFlexItem)}>
             <PurchaseSummary data={data}
                 classes={classes}

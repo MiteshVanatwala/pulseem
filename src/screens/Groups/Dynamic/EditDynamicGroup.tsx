@@ -68,11 +68,13 @@ const EditDynamicGroup = ({ classes }: any) => {
                 IsClickedFromDate: null,
                 IsClickedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsClickedToDate: null,
+                IsClickInCampaignTypes: '0',
 
                 IsNotClicked: null,
                 IsNotClickedFromDate: null,
                 IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsNotClickedToDate: null,
+                IsNotClickInCampaignTypes: '0',
 
                 IsPurchased: null,
                 IsPurchasedComparingType: ActivityEvent.Any,
@@ -190,12 +192,13 @@ const EditDynamicGroup = ({ classes }: any) => {
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
-        }, 4000);
+        }, 5000);
         return <Toast customData={toastMessage} data={null} />;
     };
 
     const onSave = async (isExit: boolean | never = false) => {
         let isValid = true;
+        let message = '';
         // Add validations
         // IsPageViewed && Range && required min & max - SpecificDates && required min & max  
 
@@ -256,6 +259,29 @@ const EditDynamicGroup = ({ classes }: any) => {
                 }
             }
         }
+        if (dynamicGroupModel.dynamicData.MyActivities.IsClicked === true) {
+
+            if (!dynamicGroupModel.dynamicData.MyActivities.IsClickInCampaignTypes) {
+                message = t('group.saveDynamicGroupResponse.clickChannelRequired');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval.toString() === ActivtyTimeInterval.SpecificDates
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsClickedFromDate || !dynamicGroupModel.dynamicData.MyActivities.IsClickedToDate)) {
+                message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
+                isValid = false;
+            }
+        }
+        if (dynamicGroupModel.dynamicData.MyActivities.IsNotClicked === true) {
+            if (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickInCampaignTypes) {
+                message = t('group.saveDynamicGroupResponse.notClickChannelRequired');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval.toString() === ActivtyTimeInterval.SpecificDates
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickedFromDate && !dynamicGroupModel.dynamicData.MyActivities.IsNotClickedToDate)) {
+                message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
+                isValid = false;
+            }
+        }
 
         if (isValid) {
             setLoader(true);
@@ -264,7 +290,7 @@ const EditDynamicGroup = ({ classes }: any) => {
             handleResponse(response.payload, isExit);
         }
         else {
-            showErrorToast(t('group.saveDynamicGroupResponse.incorrectValue'));
+            showErrorToast(t(message !== '' ? message : 'group.saveDynamicGroupResponse.incorrectValue'));
         }
     }
 
@@ -474,6 +500,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsClicked: null,
                                         IsClickedFromDate: null,
                                         IsClickedToDate: null,
+                                        IsClickInCampaignTypes: '0',
                                         IsClickedInterval: ActivtyTimeInterval.Last2Weeks
                                     }
                                 }
@@ -489,6 +516,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsNotClicked: null,
                                         IsNotClickedFromDate: null,
                                         IsNotClickedToDate: null,
+                                        IsNotClickInCampaignTypes: '0',
                                         IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks
                                     }
                                 }
