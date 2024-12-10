@@ -206,9 +206,7 @@ const ClientSearchResult = ({ classes }) => {
   useEffect(() => {
     const initExtraFields = async () => {
       dispatch(getAccountExtraData());
-      if (subAccountAllGroups.length === 0) {
-        dispatch(getAllGroupsBySubAccountId());
-      }
+      dispatch(getAllGroupsBySubAccountId());
     }
     const initSearchData = () => {
       let overwriteObject = location?.state;
