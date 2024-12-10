@@ -461,9 +461,10 @@
   "smsBulk": "חבילת SMS",
   "newsletterBulkTitle": "חבילות דיוור",
   "newsletterBulk": "חבילת דיוור",
-  "whatsappBulk": "חבילות Whatsapp",
+  "whatsappBulk": "יתרת Whatsapp",
   "smsBulkDescription": "רכישת חבילת SMS אונליין. אנא ביחרו את החבילה הנדרשת.",
   "newsletterBulkDescription": "רכישת חבילת דיוור אונליין. אנא ביחרו את החבילה הנדרשת",
+  "whatsappBulkDescription": "רכישת יתרת וואטסאפ אונליין.<br/>אנא הזינו את הסכום המבוקש",
   "select": "בחר",
   "endPurchase": "סיום רכישה",
   "Errors": "שגיאות",
@@ -855,5 +856,6 @@
   "pleaseWait": "אנא המתן...",
   "hide": "הסתר",
   "landingPageId": "מספר דף נחיתה",
-  "payAttention": "שים לב!"
+  "payAttention": "שים לב!",
+  "allChannels": "כל הערוצים"
 }

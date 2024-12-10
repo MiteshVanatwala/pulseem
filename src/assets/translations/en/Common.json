@@ -467,9 +467,10 @@
   "smsBulk": "SMS Bulk",
   "newsletterBulkTitle": "Newsletter Bulk",
   "newsletterBulk": "Newsletter Bulk",
-  "whatsappBulk": "Whatsapp Bulk",
+  "whatsappBulk": "Whatsapp Balance",
   "smsBulkDescription": "Purchase an SMS package online. Please select the desired quantity",
   "newsletterBulkDescription": "Purchase an Newsletter package online. Please select the desired quantity",
+  "whatsappBulkDescription": "Purchase an Whatsapp balance online.<br/>Please type the desired balance",
   "select": "Select",
   "endPurchase": "Complete Purchase",
   "productName": "Product Name",
@@ -861,5 +862,6 @@
   "pleaseWait": "Please wait...",
   "hide": "Hide",
   "landingPageId": "Landing Page ID",
-  "payAttention": "Pay attention!"
+  "payAttention": "Pay attention!",
+  "allChannels": "All Channels"
 }

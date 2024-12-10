@@ -19,8 +19,7 @@ import {
 import { ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
 import {
-  TablePagination,
-  SearchField,
+  TablePagination
 } from "../../components/managment/index";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -50,12 +49,12 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition, FlatObject, SwitchIsOptIn } from '../../helpers/Export/ExportHelper';
+import { ExportFile } from '../../helpers/Export/ExportFile';
+import { HandleExportData, SwitchStatusByCondition, SwitchIsOptIn } from '../../helpers/Export/ExportHelper';
 import { ClientStatus, DateFormats } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
-import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
+import { getAllGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
@@ -212,9 +211,7 @@ const ClientSearchResult = ({ classes }) => {
   useEffect(() => {
     const initExtraFields = async () => {
       dispatch(getAccountExtraData());
-      if (subAccountAllGroups.length === 0) {
-        dispatch(getGroupsBySubAccountId());
-      }
+      dispatch(getAllGroupsBySubAccountId());
     }
     const initSearchData = () => {
       let overwriteObject = location?.state;
@@ -1155,7 +1152,7 @@ const ClientSearchResult = ({ classes }) => {
     }));
     handleResponses(response, assignClientsActions);
     setLoader(false);
-    dispatch(getGroupsBySubAccountId());
+    dispatch(getAllGroupsBySubAccountId());
     getData();
   }
   const handleUnSubscribe = async (opt, notifyEmail) => {
