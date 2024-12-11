@@ -265,10 +265,34 @@ const EditDynamicGroup = ({ classes }: any) => {
                 message = t('group.saveDynamicGroupResponse.clickChannelRequired');
                 isValid = false;
             }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval === ActivtyTimeInterval.SpecificDates
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsClickedFromDate ||
+                    !dynamicGroupModel.dynamicData.MyActivities.IsClickedToDate)) {
+                message = t('group.saveDynamicGroupResponse.specificDateError');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval === ActivtyTimeInterval.DaysBack
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsClickedDaysBack ||
+                    dynamicGroupModel.dynamicData.MyActivities.IsClickedDaysBack === '')) {
+                message = t('group.saveDynamicGroupResponse.daysBackError');
+                isValid = false;
+            }
         }
         if (dynamicGroupModel.dynamicData.MyActivities.IsNotClicked === true) {
             if (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickInCampaignTypes) {
                 message = t('group.saveDynamicGroupResponse.notClickChannelRequired');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsNotClickedInterval === ActivtyTimeInterval.SpecificDates
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickedFromDate ||
+                    !dynamicGroupModel.dynamicData.MyActivities.IsNotClickedToDate)) {
+                message = t('group.saveDynamicGroupResponse.specificDateError');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsNotClickedInterval === ActivtyTimeInterval.DaysBack
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickedDaysBack ||
+                    dynamicGroupModel.dynamicData.MyActivities.IsNotClickedDaysBack === '')) {
+                message = t('group.saveDynamicGroupResponse.daysBackError');
                 isValid = false;
             }
         }
