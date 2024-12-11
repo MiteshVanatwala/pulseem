@@ -323,7 +323,7 @@ const ClientSearchResult = ({ classes }) => {
       }
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID) {
         updatingObject["SubmitDates"] = t('client.subscribedOn');
-        updatingObject["IsOptIn"] = t('landingPages.isOptIn');
+        // updatingObject["IsOptIn"] = t('landingPages.isOptIn');
       }
       updatingObject = {
         ...updatingObject,
@@ -453,9 +453,9 @@ const ClientSearchResult = ({ classes }) => {
               // CSV not supporting numeric extra fields order.
               result = await SwitchStatusByCondition(result, ClientStatus.Email, true);
               result = await SwitchStatusByCondition(result, ClientStatus.Sms, false);
-              if (searchData.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID) {
-                result = await SwitchIsOptIn(result);
-              }
+              // if (searchData.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID) {
+              //   result = await SwitchIsOptIn(result);
+              // }
 
               ExportFile({
                 data: result,
@@ -846,12 +846,12 @@ const ClientSearchResult = ({ classes }) => {
       className: classes.flex3,
       align: "center",
     },
-    searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID && {
-      label: t('landingPages.isOptIn'),
-      classes: cellStyle,
-      className: classes.flex2,
-      align: "center",
-    },
+    // searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID && {
+    //   label: t('landingPages.isOptIn'),
+    //   classes: cellStyle,
+    //   className: classes.flex2,
+    //   align: "center",
+    // },
   ];
   const getData = async () => {
     setLoader(true);
@@ -1602,7 +1602,8 @@ const ClientSearchResult = ({ classes }) => {
           <Grid container direction="row">
             <Grid item sm={12 - iconsCells}>
               {/* {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })} */}
-              {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate, SubmitDates, IsOptIn })}
+              {/* {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate, SubmitDates, IsOptIn })} */}
+              {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate, SubmitDates })}
             </Grid>
           </Grid>
         </TableCell>
@@ -1645,7 +1646,7 @@ const ClientSearchResult = ({ classes }) => {
                     style={{ fontWeight: "bold" }}
                     placement={"top"}
                     title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
-                    text={`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}
+                    text={<Box style={{ direction: 'ltr' }}>{`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}</Box>}
                   >
                   </CustomTooltip>
                 ),
@@ -1661,7 +1662,7 @@ const ClientSearchResult = ({ classes }) => {
             align="center"
           />
         </TableCell>
-        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FormID ? 'none' : null }}>
+        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: 'none' }}>
           <FlexGrid
             customStyle={{ justifyContent: 'space-between' }}
             gridArr={[
@@ -1682,9 +1683,9 @@ const ClientSearchResult = ({ classes }) => {
             align="center"
           />
         </TableCell>
-        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID && <TableCell classes={cellStyle} align="center" className={classes.flex2} style={{ border: 'none' }}>
+        {/* {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID && <TableCell classes={cellStyle} align="center" className={classes.flex2} style={{ border: 'none' }}>
           {IsOptIn ? <Typography className={clsx(classes.sendIconText, classes.bold)}>{t('landingPages.approved')}</Typography> : <Typography className={clsx(classes.grayTextCell, classes.bold)}>{t('landingPages.notApproved')}</Typography>}
-        </TableCell>}
+        </TableCell>} */}
       </TableRow>
     );
   };
