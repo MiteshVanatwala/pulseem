@@ -73,7 +73,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
       emptyRows: true,
       defaultRows: false,
     },
-    editorFonts: FONTS(),
+    editorFonts: FONTS(true),
     workspace: {
       type: 'default', // 'mixed'|'amp_only'|'html_only'
     },
