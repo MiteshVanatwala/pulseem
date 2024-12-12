@@ -28,6 +28,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { Title } from '../../../components/managment/Title';
 import DefaultScreen from '../../DefaultScreen';
 import { GiExitDoor } from 'react-icons/gi';
+import { M_AllCampaignChannelds } from '../../../Models/Common/CampaignTypes';
 
 const EditDynamicGroup = ({ classes }: any) => {
     const dispatch: any = useDispatch();
@@ -68,13 +69,13 @@ const EditDynamicGroup = ({ classes }: any) => {
                 IsClickedFromDate: null,
                 IsClickedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsClickedToDate: null,
-                IsClickInCampaignTypes: '0',
+                IsClickInCampaignTypes: M_AllCampaignChannelds.join(','),
 
                 IsNotClicked: null,
                 IsNotClickedFromDate: null,
                 IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks,
                 IsNotClickedToDate: null,
-                IsNotClickInCampaignTypes: '0',
+                IsNotClickInCampaignTypes: M_AllCampaignChannelds.join(','),
 
                 IsPurchased: null,
                 IsPurchasedComparingType: ActivityEvent.Any,
@@ -270,6 +271,12 @@ const EditDynamicGroup = ({ classes }: any) => {
                 message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
                 isValid = false;
             }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval === ActivtyTimeInterval.DaysBack
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsClickedDaysBack ||
+                    dynamicGroupModel.dynamicData.MyActivities.IsClickedDaysBack === '')) {
+                message = t('group.saveDynamicGroupResponse.daysBackError');
+                isValid = false;
+            }
         }
         if (dynamicGroupModel.dynamicData.MyActivities.IsNotClicked === true) {
             if (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickInCampaignTypes) {
@@ -279,6 +286,12 @@ const EditDynamicGroup = ({ classes }: any) => {
             else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval.toString() === ActivtyTimeInterval.SpecificDates
                 && (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickedFromDate && !dynamicGroupModel.dynamicData.MyActivities.IsNotClickedToDate)) {
                 message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsNotClickedInterval === ActivtyTimeInterval.DaysBack
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickedDaysBack ||
+                    dynamicGroupModel.dynamicData.MyActivities.IsNotClickedDaysBack === '')) {
+                message = t('group.saveDynamicGroupResponse.daysBackError');
                 isValid = false;
             }
         }
@@ -472,7 +485,6 @@ const EditDynamicGroup = ({ classes }: any) => {
     }
 
     const updateMyActivities = (keyName: string, value: string, object: any | never = null) => {
-
         if (object) {
             setDynamicGroupModel({
                 ...dynamicGroupModel, dynamicData: {
@@ -500,7 +512,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsClicked: null,
                                         IsClickedFromDate: null,
                                         IsClickedToDate: null,
-                                        IsClickInCampaignTypes: '0',
+                                        IsClickInCampaignTypes: M_AllCampaignChannelds.join(','),
                                         IsClickedInterval: ActivtyTimeInterval.Last2Weeks
                                     }
                                 }
@@ -516,7 +528,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsNotClicked: null,
                                         IsNotClickedFromDate: null,
                                         IsNotClickedToDate: null,
-                                        IsNotClickInCampaignTypes: '0',
+                                        IsNotClickInCampaignTypes: M_AllCampaignChannelds.join(','),
                                         IsNotClickedInterval: ActivtyTimeInterval.Last2Weeks
                                     }
                                 }
@@ -640,11 +652,15 @@ const EditDynamicGroup = ({ classes }: any) => {
                 resetValues(keyName, value);
             }
             else {
+                const allCampaignTypes = M_AllCampaignChannelds?.join(',');
+
                 setDynamicGroupModel({
                     ...dynamicGroupModel, dynamicData: {
                         ...dynamicGroupModel.dynamicData,
                         MyActivities: {
                             ...dynamicGroupModel.dynamicData.MyActivities,
+                            IsClickInCampaignTypes: !dynamicGroupModel.dynamicData.MyActivities.IsClickInCampaignTypes ? allCampaignTypes : dynamicGroupModel.dynamicData.MyActivities.IsClickInCampaignTypes,
+                            IsNotClickInCampaignTypes: !dynamicGroupModel.dynamicData.MyActivities.IsNotClickInCampaignTypes ? allCampaignTypes : dynamicGroupModel.dynamicData.MyActivities.IsNotClickInCampaignTypes,
                             [keyName]: value
                         }
                     }
