@@ -283,7 +283,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 message = t('group.saveDynamicGroupResponse.notClickChannelRequired');
                 isValid = false;
             }
-            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval.toString() === ActivtyTimeInterval.SpecificDates
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsNotClickedInterval.toString() === ActivtyTimeInterval.SpecificDates
                 && (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickedFromDate && !dynamicGroupModel.dynamicData.MyActivities.IsNotClickedToDate)) {
                 message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
                 isValid = false;

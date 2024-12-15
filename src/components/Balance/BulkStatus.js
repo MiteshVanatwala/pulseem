@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PurchaseWizard from './PaymentWizard/PurchaseWizard';
-import { GoPackage } from 'react-icons/go/index';
+import { GoPackage } from 'react-icons/go';
 import { Grid, Paper, Typography, Button, Box, Divider } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
