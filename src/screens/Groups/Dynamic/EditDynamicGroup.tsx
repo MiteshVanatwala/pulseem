@@ -271,7 +271,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
                 isValid = false;
             }
-            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval === ActivtyTimeInterval.DaysBack
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsClickedInterval.toString() === ActivtyTimeInterval.DaysBack
                 && (!dynamicGroupModel.dynamicData.MyActivities.IsClickedDaysBack ||
                     dynamicGroupModel.dynamicData.MyActivities.IsClickedDaysBack === '')) {
                 message = t('group.saveDynamicGroupResponse.daysBackError');
@@ -288,7 +288,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
                 isValid = false;
             }
-            else if (dynamicGroupModel.dynamicData.MyActivities.IsNotClickedInterval === ActivtyTimeInterval.DaysBack
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsNotClickedInterval.toString() === ActivtyTimeInterval.DaysBack
                 && (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickedDaysBack ||
                     dynamicGroupModel.dynamicData.MyActivities.IsNotClickedDaysBack === '')) {
                 message = t('group.saveDynamicGroupResponse.daysBackError');
