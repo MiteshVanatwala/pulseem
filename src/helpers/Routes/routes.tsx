@@ -338,6 +338,7 @@ export const getRoutes = (
           isShow: true,
         },
         {
+          key: 'create-automations',
           title: t("master.RadMenuItemCreateAutomationResource.Text"),
           href: `${sitePrefix}Automations/Create`,
           isShow: true,

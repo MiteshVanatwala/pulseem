@@ -80,8 +80,8 @@ const CreateAutomationTemplate = ({ classes }: any) => {
 
   return (
     <DefaultScreen
-      currentPage="newsletter"
-      subPage={"newsletterInfo"}
+      currentPage="automations"
+      subPage={"create-automations"}
       classes={classes}
       customPadding={true}
       containerClass={clsx(classes.mb50, classes.editorCont)}
