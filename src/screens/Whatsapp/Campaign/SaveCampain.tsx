@@ -145,7 +145,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			fieldName: 'mainReport.keepTrack',
 			type: '',
 			placeholder: '',
-			value: 'false',
+			value: 'true',
 		},
 	];
 	const phoneNumberField = [
