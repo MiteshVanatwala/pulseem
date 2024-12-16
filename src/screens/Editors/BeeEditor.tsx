@@ -674,7 +674,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               saveRef.current = {
                 //@ts-ignore
                 ...saveRef.current,
-                showGroupPopup: selectedGroups && selectedGroups?.length <= 0
+                showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
               };
               saveDesign(false, null, true)
             }}
@@ -698,7 +698,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                   saveRef.current = {
                     //@ts-ignore
                     ...saveRef.current,
-                    showGroupPopup: selectedGroups && selectedGroups?.length <= 0
+                    showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
                   };
                   saveDesign(true, null, false, true);
                 }}
@@ -720,7 +720,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
                   saveRef.current = {
                     //@ts-ignore
                     ...saveRef.current,
-                    showGroupPopup: selectedGroups && selectedGroups?.length <= 0
+                    showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
                   };
                   saveDesign(true, `${sitePrefix}EditRegistrationPage`, false, landingPage.Status === 2);
                 }}
