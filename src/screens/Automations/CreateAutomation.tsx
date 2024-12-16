@@ -47,7 +47,7 @@ const CreateAutomationTemplate = ({ classes }: any) => {
     return <Grid item md={4} sm={12} xs={12}>
       <Box className={clsx(classes.p10, classes.automationTemplate, classes.cursorPointer, template.AutomationId === selectedTemplate ? 'active': '')} onClick={() => setSelectedTemplate(template.AutomationId)}>
         <Box className={clsx(classes.semibold600, classes.f18, classes.colrPrimary)}>{template.Name}</Box>
-        <Box className={clsx(classes.pt15, classes.black)}>{template.Description}</Box>
+        <Box className={clsx(classes.pt10, classes.black)}>{template.Description.length > 50 ? `${template.Description.substring(0, isRTL ? 100 : 80)}...` : template.Description}</Box>
       </Box>
     </Grid>
   }

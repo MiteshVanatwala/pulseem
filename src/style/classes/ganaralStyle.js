@@ -4261,8 +4261,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '5px',
     boxShadow: '0px 0px 10px #898888',
     padding: '15px',
-    height: '80px',
+    height: '90px',
     transition: 'all 0.25s ease',
+    overflowY: 'hidden',
     "&:hover, &.active": {
       background: "linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)",
       boxShadow: '0px 0px 10px #ff3343',
