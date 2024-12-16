@@ -45,7 +45,8 @@
     "incorrectValue": "אחד מהנתונים או יותר שהוגדרו לא תקין",
     "clickChannelRequired": "יש לבחור לפחות ערוץ קמפיינים אחד לפחות על מנת לחפש לקוחות שהקליקו",
     "notClickChannelRequired": "יש לבחור לפחות ערוץ קמפיינים אחד לפחות על מנת לחפש לקוחות שלא הקליקו",
-    "specificDateIsRequired": "יש לבחור תאריכים ספציפיים"
+    "specificDateIsRequired": "יש לבחור תאריכים ספציפיים",
+    "daysBackError": "יש להזין מספר ימים אחורה"
   },
   "updateFrequency": "אופן העלאה",
   "results": "לחץ לתוצאות",

@@ -11,7 +11,7 @@ import moment from "moment";
 import { DateFormats } from '../../../../helpers/Constants';
 import SelectActivityInteval from '../Components/SelectActivityInteval';
 import SelectCampaignType from '../Components/SelectCampaignType';
-import { CampaignType } from '../../../../Models/Common/CampaignTypes';
+import { CampaignType, M_AllCampaignChannelds } from '../../../../Models/Common/CampaignTypes';
 
 const ActivityDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
@@ -245,14 +245,14 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                     Disabled={!data.dynamicData?.MyActivities?.IsClicked}
                     OnUpdate={(event: any) => {
                         if (event.target.value.indexOf(CampaignType.All) > -1) {
-                            const all = '0,1,2,3';
+                            const all = M_AllCampaignChannelds.join(',');
                             onUpdate('IsClickInCampaignTypes', all)
                         }
                         else {
                             onUpdate('IsClickInCampaignTypes', event.target.value.join(','))
                         }
                     }}
-                    Value={!data.dynamicData?.MyActivities?.IsClicked ? null : data.dynamicData?.MyActivities?.IsClickInCampaignTypes}
+                    Value={data.dynamicData?.MyActivities?.IsClickInCampaignTypes}
                     classes={classes}
                     key={'IsClickInCampaignTypes'}
                 />}
