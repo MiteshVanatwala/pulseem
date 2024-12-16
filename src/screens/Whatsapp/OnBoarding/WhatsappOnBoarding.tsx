@@ -381,7 +381,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		return (
 			<>
 				<Typography className={clsx(classes.semibold, classes.f22, classes.pb10)}>{t('WhatsappOnBoarding.virtualNumbers')}</Typography>
-				<TableContainer className={clsx(classes.tableStyle, windowSize !== 'xs' ? classes.w50 : classes.w100)}>
+				<TableContainer className={clsx(classes.tableStyle, windowSize !== 'xs' ? classes.w50 : classes.w100, classes.mb20)}>
 					<Table className={classes.tableContainer}>
 						{
 							windowSize !== 'xs' && (
@@ -515,7 +515,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		return (
 			<>
 				<Typography className={clsx(classes.semibold, classes.f22, classes.pb10)}>{t('WhatsappOnBoarding.businessStatus')}</Typography>
-				<TableContainer className={classes.tableStyle}>
+				<TableContainer className={clsx(classes.tableStyle, classes.mb20)}>
 					<Table className={classes.tableContainer}>
 						<TableHead>
 							<TableRow classes={rowStyle}>
@@ -697,7 +697,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 										{renderVirtualNumbers()}
 										{
 											phoneNumbers.length > 0 && (
-												<Box className={clsx(classes.pt20)}>
+												<Box>
 													{renderPhoneNumbersTable()}
 												</Box>
 											)
@@ -705,7 +705,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 									</Grid>
 									<Grid item md={6} sm={12} xs={12}>
 										{renderBusinessDetails()}
-										<Box className={clsx(classes.pt20)}>
+										<Box>
 											{renderIncomingMessages()}
 										</Box>
 									</Grid>
