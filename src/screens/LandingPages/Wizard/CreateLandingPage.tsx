@@ -241,10 +241,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				GoogleConvertionCode: '',
 				GoogleTagManagerCode: '',
 				FacebookPixelCode: '',
+				BaseLanguage: isRTL ? 0 : 1
 			});
 		}
-		// if (id) {
-		// }
 
 		if (subAccountAllGroups?.length === 0) {
 			dispatch(getGroupsBySubAccountId());
@@ -258,7 +257,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	useEffect(() => {
 		getData();
-	}, []);
+	}, [, isRTL]);
+
 
 	const handleSelectedImage = async (file: string, preventUpdateModel: boolean) => {
 		if (!file || file[0] === '') {

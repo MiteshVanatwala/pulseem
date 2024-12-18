@@ -61,7 +61,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
   return {
     uid: 'e945eb6b-249c-4dea-bee1-e4b98b8719cc', //needed for identify resources of the that user and billing stuff
     container: 'page-bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
-    language: Options.IsRTL ? 'he-IL' : 'en-US',
+    language: IsRTL ? 'he-IL' : 'en-US',
     customCss: 'https://www.pulseem.co.il/Pulseem/Css/beefreeRtlFixes.css',
     trackChanges: true,
     //autosave: AUTO_SAVE_SECONDS,
@@ -79,8 +79,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
     },
     defaultForm: {
       structure: {
-        title: 'כותרת הטופס',
-        description: "טופס הרשמה",
+        title: IsRTL ? 'כותרת הטופס' : 'Form Title',
+        description: IsRTL ? "טופס הרשמה" : 'Registeration Form',
         fields: {
           ...form,
           optIn: {
@@ -228,7 +228,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
       // https://docs.beefree.io/beefree-sdk/tracking-message-changes#content-codes - Codes
       // Every code should get "00" in the end
       switch (response.code) {
-        case '0780':{
+        case '0780': {
           return;
         }
         case "0900": {
@@ -328,16 +328,16 @@ export const DefaultContent = (IsRTL: Boolean) => {
       },
       form: {
         labelsOptions: {
-          align: "right"
+          align: IsRTL ? "right" : "left"
         },
         fieldsOptions: {
-          align: "right"
+          align: IsRTL ? "right" : "left"
         },
         buttonsOptions: {
-          align: "right"
+          align: IsRTL ? "right" : "left"
         },
         blockOptions: {
-          align: "right"
+          align: IsRTL ? "right" : "left"
         }
       }
     },

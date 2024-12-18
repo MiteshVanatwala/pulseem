@@ -145,7 +145,7 @@ const FormProperties = ({ classes, data, onUpdate, onSetDialog, errors, setError
                     native
                     variant="standard"
                     name="FromEmail"
-                    value={data.ID > 0 ? data.BaseLanguage : (isRTL ? 0 : 1)}
+                    value={data.BaseLanguage}
                     className={classes.pbt5}
                     onChange={(event, val) => {
                         onUpdate({ ...data, BaseLanguage: event.target.value });
