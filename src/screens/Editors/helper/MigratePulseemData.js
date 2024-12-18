@@ -57,8 +57,8 @@ export const initClientForm = (extraFields, t, isRTL) => {
                 Country: new BeeFormModel(ElementTypes.text, t('common.country'), true, { maxlength: '100', placeholder: t('landingPages.placeholder.country') }),
                 Address: new BeeFormModel(ElementTypes.text, t('common.address'), true, { maxlength: '100', placeholder: t('landingPages.placeholder.address') }),
                 Telephone: new BeeFormModel(ElementTypes.text, t('common.telephone'), true, { size: '100', pattern: '\\d*', placeholder: t('landingPages.placeholder.telephone') }),
-                BirthDate: new BeeFormModel(ElementTypes.text, t('common.birth_date'), true, { placeholder: t('landingPages.placeholder.birth_date') }, 'frm-1 bee-date'),
-                ReminderDate: new BeeFormModel(ElementTypes.text, t('common.reminder_date'), true, { placeholder: t('landingPages.placeholder.reminder_date') }, 'frm-1 bee-date'),
+                BirthDate: new BeeFormModel(ElementTypes.text, t('common.birth_date'), true, { placeholder: t('landingPages.placeholder.birth_date') }, 'frm-1 bee-date hasDatePicker'),
+                ReminderDate: new BeeFormModel(ElementTypes.text, t('common.reminder_date'), true, { placeholder: t('landingPages.placeholder.reminder_date') }, 'frm-1 bee-date hasDatePicker'),
                 PulseemSurvey1: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion'), true, { required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion'), name: "PulseemSurvey1" }, 'PulseemSurvey'),
                 PulseemSurvey2: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion2'), true, { required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion'), name: "PulseemSurvey2" }, 'PulseemSurvey'),
                 PulseemSurvey3: new BeeFormModel(ElementTypes.text, t('landingPages.surveyQuestion3'), true, { required: 'true', placeholder: t('landingPages.placeholder.surveyQuestion'), name: "PulseemSurvey3" }, 'PulseemSurvey'),
@@ -74,7 +74,7 @@ export const initClientForm = (extraFields, t, isRTL) => {
                 Object.keys(extraFields).forEach((key) => {
                     const val = extraFields[key];
                     if (val !== '') {
-                        clientForm[key] = new BeeFormModel(ElementTypes.text, val, true, { placeholder: t('landingPages.placeholder.typeHere') + ' ' + val, name: key }, key?.toLowerCase()?.indexOf('date') > -1 && 'frm-1 bee-date');
+                        clientForm[key] = new BeeFormModel(ElementTypes.text, val, true, { placeholder: t('landingPages.placeholder.typeHere') + ' ' + val, name: key }, key?.toLowerCase()?.indexOf('date') > -1 && 'frm-1 bee-date hasDatePicker');
                     }
                 });
             }

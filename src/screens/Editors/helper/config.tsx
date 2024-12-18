@@ -25,6 +25,7 @@ export interface ConfigOptions {
   t: any;
   form: any;
   onFormAdded: Function;
+  BasedOnRTL: any;
 }
 export const BeeConfig = (Options: ConfigOptions) => {
   const {
@@ -47,7 +48,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
     PulseemEditBlock,
     t,
     form,
-    onFormAdded
+    onFormAdded,
+    BasedOnRTL
   } = Options;
 
   const layout = [];
@@ -79,19 +81,19 @@ export const BeeConfig = (Options: ConfigOptions) => {
     },
     defaultForm: {
       structure: {
-        title: IsRTL ? 'כותרת הטופס' : 'Form Title',
-        description: IsRTL ? "טופס הרשמה" : 'Registeration Form',
+        title: BasedOnRTL ? 'כותרת הטופס' : 'Form Title',
+        description: BasedOnRTL ? "טופס הרשמה" : 'Registeration Form',
         fields: {
           ...form,
           optIn: {
-            type: 'checkbox', label: IsRTL ? 'אני מאשר/ת קבלת דיוור' : 'I agree to receiving marketing content',
+            type: 'checkbox', label: BasedOnRTL ? 'אני מאשר/ת קבלת דיוור' : 'I agree to receiving marketing content',
             canBeRemovedFromLayout: true,
-            attributes: { dir: IsRTL ? 'right' : 'left' }
+            attributes: { dir: BasedOnRTL ? 'right' : 'left' }
           },
           submit: {
             type: 'submit', label: '', canBeRemovedFromLayout: false,
             attributes: {
-              value: IsRTL ? 'שלח' : 'Submit',
+              value: BasedOnRTL ? 'שלח' : 'Submit',
               name: "submit_button",
               "data-action": "submit",
               "data-submit": 'true'
@@ -107,7 +109,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
           method: "post",
           novalidate: false,
           target: "_self",
-          dir: IsRTL ? 'rtl' : 'ltr'
+          dir: BasedOnRTL ? 'rtl' : 'ltr'
         },
       }
     },
