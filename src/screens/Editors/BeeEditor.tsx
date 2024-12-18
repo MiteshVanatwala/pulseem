@@ -1138,7 +1138,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       moduleType,
       classes,
       onSaveUserBlock,
-      IsRTL: isRTL,
+      IsRTL: (landingPage?.Data?.WebForm?.BaseLanguage === 0 || landingPage?.Data?.WebForm?.BaseLanguage === 8),
       EditRow: EditRow,
       openModal: openModal,
       Save: onSave,
