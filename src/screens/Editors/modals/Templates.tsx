@@ -142,13 +142,20 @@ const LPTemplates = ({
               title={templateDetails.Name} />
           } */}
           {
-            tabValue === EmailTemplateType.MY_TEMPLATES && <Box
+            tabValue === EmailTemplateType.MY_TEMPLATES && templateDetails?.ThumbnailUrl !== '' ? <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
               style={{
                 width: '100%',
                 height: 'auto',
                 overflowY: 'auto'
               }}
-              title={templateDetails.Name}>
+              alt={templateDetails.Name}
+              title={templateDetails.Name} /> : <Box
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  overflowY: 'auto'
+                }}
+                title={templateDetails.Name}>
               {RenderHtml(templateDetails.Html)}
             </Box>
           }
