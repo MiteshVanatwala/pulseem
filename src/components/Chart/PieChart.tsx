@@ -19,8 +19,8 @@ const PulseemPie = ({ data, onChartClick, colorPalette, gridSize = 12, selectedP
   const styles: any = {
     rtl: {
       margin: {
-        top: 20,
-        left: 400,
+        top: 40,
+        left: 0,
         right: 0,
         bottom: 20
       },
@@ -33,11 +33,11 @@ const PulseemPie = ({ data, onChartClick, colorPalette, gridSize = 12, selectedP
         horizontal: 'right',// | 'middle' | 'right',
         vertical: 'middle' // | 'middle' | 'top'
       },
-      padding: { bottom: 0, left: 0, right: 150, top: 0 }
+      padding: { bottom: 0, left: 400, right: 0, top: 0 }
     },
     ltr: {
       margin: {
-        top: 20,
+        top: 40,
         left: 400,
         right: 0,
         bottom: 20
@@ -51,7 +51,7 @@ const PulseemPie = ({ data, onChartClick, colorPalette, gridSize = 12, selectedP
         horizontal: 'left',// | 'middle' | 'right',
         vertical: 'middle' // | 'middle' | 'top'
       },
-      padding: { bottom: 0, left: 150, right: 0, top: 0 }
+      padding: { bottom: 0, left: 50, right: 0, top: 0 }
     },
 
   }
@@ -91,17 +91,17 @@ const PulseemPie = ({ data, onChartClick, colorPalette, gridSize = 12, selectedP
       width={windowSize !== 'sm' && windowSize !== 'xs' ? widthSizes[gridSize] : 250}
       height={heightSizes[gridSize]}
       margin={{
-        top: styles[isRTL ? 'rtl' : 'ltr'].margin.top,
-        left: styles[isRTL ? 'rtl' : 'ltr'].margin.left,
-        right: styles[isRTL ? 'rtl' : 'ltr'].margin.right,
-        bottom: styles[isRTL ? 'rtl' : 'ltr'].margin.bottom
+        top: styles['ltr'].margin.top,
+        left: styles['ltr'].margin.left,
+        right: styles['ltr'].margin.right,
+        bottom: styles['ltr'].margin.bottom
       }}
       onItemClick={onItemClick}
       slotProps={{
         legend: {
           // onItemClick: (e: any) => { console.log(e) },
           padding: styles[isRTL ? 'rtl' : 'ltr'].padding,
-          position: styles[isRTL ? 'rtl' : 'ltr'].position,
+          position: styles['ltr'].position,
           direction: 'column',
           markGap: gapSize[gridSize],
           itemMarkWidth: 15,
