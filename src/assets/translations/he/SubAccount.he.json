@@ -41,6 +41,7 @@
 	"SMSBulkAmount": "גודל חבילת SMS",
 	"MMSBulkAmount": "גודל חבילת MMS",
 	"email2FA": "מייל זה ישמש לאימות דו-שלבי",
+	"cellPhone2FA": "מספר זה ישמש לאימות דו-שלבי",
 	"accountDetails": "פרטי חשבון",
 	"creditDetails": "פרטי קרדיטים",
 	"addBulkEmails": "הוסף חבילת דיוור",

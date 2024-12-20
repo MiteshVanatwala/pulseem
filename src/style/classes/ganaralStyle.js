@@ -240,6 +240,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pl30: {
     paddingLeft: 30,
   },
+  pr30: {
+    paddingRight: 30,
+  },
   paddingSides10: {
     paddingRight: 10,
     paddingLeft: 10,
@@ -385,6 +388,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   w15VW: {
     width: "15vw",
+  },
+  w50VW: {
+    width: "50vw",
   },
   w70VW: {
     width: "70vw",
@@ -2676,7 +2682,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBlock: 20,
   },
   MuiChipRoot: {
-    backgroundColor: "#FF3343 !important",
+    // backgroundColor: "#FF3343 !important",
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     marginRight: 5,
     "& span": {
       color: "#fff",
@@ -2686,6 +2693,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: "#fff",
       fill: "currentColor",
     },
+  },
+  MuiChipBorder: {
+    border: 'solid 2px #FF3343 !important',
+    backgroundColor: '#FFF !important'
   },
   roundedBorder: {
     borderRadius: 50,

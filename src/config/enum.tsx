@@ -32,3 +32,9 @@ export enum ProductDetails {
   Description = '#description#',
   Price = '#price#'
 }
+
+export enum PermissionTypes {
+  Admin = 'Admin',
+  LimitedAccess = 'LimitedAccess',
+  ReadOnly = 'ReadOnly'
+}

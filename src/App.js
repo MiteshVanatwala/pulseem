@@ -83,6 +83,7 @@ import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
+import UserAndPermissions from './screens/UsersAndPermissions/UsersAndPermissions';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -468,6 +469,10 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`${sitePrefix}ApiSettings`}
         element={<ApiSettings classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}UsersAndPermissions`}
+        element={<UserAndPermissions classes={classes} />}
       />
       {/* Support */}
       <Route
