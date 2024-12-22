@@ -142,7 +142,7 @@ const LPTemplates = ({
               title={templateDetails.Name} />
           } */}
           {
-            tabValue === EmailTemplateType.MY_TEMPLATES && templateDetails?.Thumbnail !== '' ? <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
+            tabValue === EmailTemplateType.PULSEEM_TEMPLATES && templateDetails?.Thumbnail !== '' ? <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
               style={{
                 width: '100%',
                 height: 'auto',
@@ -300,7 +300,7 @@ const LPTemplates = ({
             className={clsx(classes.mr15, classes.ml15)}
             classes={{ indicator: classes.hideIndicator }}
           >
-            {/* <Tab value={EmailTemplateType.PULSEEM_TEMPLATES} label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} /> */}
+            <Tab value={EmailTemplateType.PULSEEM_TEMPLATES} label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
             <Tab value={EmailTemplateType.MY_TEMPLATES} label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
           </Tabs>
           <Box className={classes.pt15}>
