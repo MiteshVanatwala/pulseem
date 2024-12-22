@@ -7,14 +7,16 @@ import {
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon,
-  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SettingIcon
+  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SettingIcon,
+  SurveryResultsIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, RestorDialogContent, PopMassage,
 } from '../../../components/managment/index'
 import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
-  duplicteLandingPage, downloadReport, getPageHeight
+  duplicteLandingPage, downloadReport, getPageHeight,
+  exportSurvey
 } from '../../../redux/reducers/landingPagesSlice'
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
@@ -32,7 +34,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 import { sitePrefix } from '../../../config';
 import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
-import { FaChartPie } from "react-icons/fa";
+// import { FaChartPie } from "react-icons/fa";
 import { ClearPageState, GetPageNyName, SetPageState } from '../../../helpers/UI/SessionStorageManager';
 
 
@@ -128,11 +130,11 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     }
 
 
-    const handleKeyPress = (e) => {
-      if (e.charCode === 13) {
-        handleSearch()
-      }
-    }
+    // const handleKeyPress = (e) => {
+    //   if (e.charCode === 13) {
+    //     handleSearch()
+    //   }
+    // }
 
     const handleCampainNameChange = event => {
       setLandingPageNameSearch(event.target.value)
@@ -242,6 +244,30 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     )
   }
 
+  const onExportSurvey = async (id) => {
+    const surveysResponse = await dispatch(exportSurvey(id));
+    const surveys = surveysResponse?.payload;
+    const fields = surveys?.length > 0 && Object.keys(surveys[0]);
+    ExportFile({
+      data: surveys,
+      fileName: 'surveyReport',
+      exportType: 'xls',
+      fields: fields
+    });
+  }
+
+  const onExportPayment = async (id) => {
+    const purchasesResponse = await dispatch(downloadReport(id));
+    const purchases = purchasesResponse?.payload;
+    const fields = purchases?.length > 0 && Object.keys(purchases[0]);
+    ExportFile({
+      data: purchases,
+      fileName: 'purchaseReport',
+      exportType: 'xls',
+      fields: fields
+    });
+  }
+
   const renderCellIcons = (row) => {
     const { ID, IsPayment, PageLink, SurveyCount, Type, PageUrl, IsSurvey, IsNewEditor } = row
     const copyDataObject = {
@@ -282,37 +308,34 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     )
 
     const iconsMap = [
-      {
-        key: 'surveyGraph',
-        uIcon: FaChartPie,
-        lable: t('landingPages.SurveyExportTitle'),
-        remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
-        onClick: () => {
-          navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`, {
-            state: {
-              PageProperty: GetPageNyName('landingPagesManagement'),
-            }
-          })
-        },
-        rootClass: classes.paddingIcon,
-      },
+      // {
+      //   key: 'surveyGraph',
+      //   uIcon: FaChartPie,
+      //   lable: t('landingPages.SurveyExportTitle'),
+      //   remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
+      //   onClick: () => {
+      //     navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`, {
+      //       state: {
+      //         PageProperty: GetPageNyName('landingPagesManagement'),
+      //       }
+      //     })
+      //   },
+      //   rootClass: classes.paddingIcon,
+      // },
       {
         key: 'purchase/survey',
-        uIcon: ReportsIcon,
-        lable: t('landingPages.PurchaseExportTitle'),
-        remove: (windowSize === 'xs' || !IsPayment),
+        uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
+        lable: IsPayment ? t('landingPages.PurchaseExportTitle') : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
+        remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
         disable: accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) > -1,
         onClick: async () => {
-          const purchasesResponse = await dispatch(downloadReport(ID));
-          const purchases = purchasesResponse?.payload;
-          const fields = purchases?.length > 0 && Object.keys(purchases[0]);
-          ExportFile({
-            data: purchases,
-            fileName: 'purchaseReport',
-            exportType: 'xls',
-            fields: fields
-          });
+          if (IsPayment) {
+            onExportPayment(ID);
+          }
+          else {
+            onExportSurvey(ID);
+          }
         }
       },
       {
