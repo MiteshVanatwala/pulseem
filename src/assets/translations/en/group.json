@@ -58,6 +58,7 @@
   "daily": "Daily",
   "deleteUploadConfirmation": "Are you sure you want to cancel this upload?",
   "eCommerceEventNotice": "<b>Please notice:</b> These events will work only for accounts linked to eCommerce stores integrated with Pulseem.",
+  "typeGroupNameAutocomplete": "Type group name for Autocomplete",
   "uploadFiles": {
     "statuses": {
       "0": "Waiting For Upload",

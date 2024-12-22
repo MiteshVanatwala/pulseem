@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
+import BeeEditor from './screens/Editors/BeeEditor';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
@@ -78,6 +79,9 @@ import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 import { isSignupPage } from './helpers/Utils/common';
 import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
+import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
+import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
+import HtmlPreview from './screens/Preview/HtmlPreview';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
@@ -173,10 +177,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Campaigns/editor/:id`}
         element={<CampaignEditorBee classes={classes} />}
       />
-      {/* <Route
-        path={`${sitePrefix}BeeEditor/:type/:id`}
-        element={<BeeEditorPage classes={classes} />}
-      /> */}
+      <Route
+        path={`${sitePrefix}editor/:type/:id`}
+        element={<BeeEditor classes={classes} />}
+      />
       <Route
         path={`${sitePrefix}Campaigns/SendSettings/:id`}
         element={<NewsletterSendSettings classes={classes} />}
@@ -331,7 +335,15 @@ const renderRoutes = (classes, redirect) => {
         element={<CreateLandingPage classes={classes} />}
       />
       <Route
-        path={`/LandingPageWizard`}
+        path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
+        element={<SurveyDetails classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}LandingPages/summary/:id`}
+        element={<WebformSummary classes={classes} />}
+      />
+      <Route
+        path={`/Survey`}
         component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
       />
       <Route
@@ -543,6 +555,11 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}Campaigns/AmpRegistration`}
         element={<AmpRegistration classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Previewer/:type/:id`}
+        element={<HtmlPreview classes={classes} />}
       />
       <Route
         exact

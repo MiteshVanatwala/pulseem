@@ -1,0 +1,78 @@
+import { isProdMode } from "../../config";
+
+export enum ElementTypes {
+  text = 'text',
+  email = 'email',
+  tel = 'tel',
+  select = 'select',
+  checkbox = 'checkbox',
+  date = 'date',
+  textarea = 'textarea',
+  submit = 'submit',
+  number = 'number',
+  radio = 'radio'
+}
+export class BeeFormModel {
+  type?: ElementTypes;
+  label?: string;
+  canBeRemovedFromLayout?: boolean;
+  removeFromLayout?: boolean;
+  attributes?: any;
+  classes?: any;
+  constructor(_type: ElementTypes | never | any, _label: string | never | any, _removeFromLayout: boolean, _attr: any, _classes: string) {
+    this.type = _type || 'text';
+    this.label = _label || '';
+    this.canBeRemovedFromLayout = true;
+    this.removeFromLayout = _removeFromLayout ?? false
+    this.classes = _classes || '';
+    this.attributes = {
+      "class": _type !== ElementTypes.checkbox && _type !== ElementTypes.radio && `form-control ${_classes || ''}`,
+      ..._attr
+    };
+  }
+  beeForm() {
+    return { type: this.type, label: this.label, canBeRemovedFromLayout: this.canBeRemovedFromLayout };
+  }
+}
+export interface ClientForm {
+  Email?: BeeFormModel | any | never | null | undefined;
+  FirstName?: BeeFormModel | any | never;
+  LastName?: BeeFormModel | any | never;
+  Telephone?: BeeFormModel | any | never;
+  Cellphone?: BeeFormModel | any | never;
+  Address?: BeeFormModel | any | never;
+  City?: BeeFormModel | any | never;
+  State?: BeeFormModel | any | never;
+  Country?: BeeFormModel | any | never;
+  Zip?: BeeFormModel | any | never;
+  Company?: BeeFormModel | any | never;
+  ExtraDate1?: BeeFormModel | any | never;
+  ExtraDate2?: BeeFormModel | any | never;
+  ExtraDate3?: BeeFormModel | any | never;
+  ExtraDate4?: BeeFormModel | any | never;
+  ExtraField1?: BeeFormModel | any | never;
+  ExtraField2?: BeeFormModel | any | never;
+  ExtraField3?: BeeFormModel | any | never;
+  ExtraField4?: BeeFormModel | any | never;
+  ExtraField5?: BeeFormModel | any | never;
+  ExtraField6?: BeeFormModel | any | never;
+  ExtraField7?: BeeFormModel | any | never;
+  ExtraField8?: BeeFormModel | any | never;
+  ExtraField9?: BeeFormModel | any | never;
+  ExtraField10?: BeeFormModel | any | never;
+  ExtraField11?: BeeFormModel | any | never;
+  ExtraField12?: BeeFormModel | any | never;
+  ExtraField13?: BeeFormModel | any | never;
+  BirthDate?: BeeFormModel | any | never;
+  ReminderDate?: BeeFormModel | any | never;
+  PulseemSurvey1?: BeeFormModel | any | never;
+  PulseemSurvey2?: BeeFormModel | any | never;
+  PulseemSurvey3?: BeeFormModel | any | never;
+  PulseemSurvey4?: BeeFormModel | any | never;
+  PulseemSurvey5?: BeeFormModel | any | never;
+  PulseemSurvey6?: BeeFormModel | any | never;
+  PulseemSurvey7?: BeeFormModel | any | never;
+  PulseemSurvey8?: BeeFormModel | any | never;
+  PulseemSurvey9?: BeeFormModel | any | never;
+  PulseemSurvey10?: BeeFormModel | any | never;
+}

@@ -58,6 +58,7 @@
   "daily": "העלאה ישירה",
   "deleteUploadConfirmation": "האם אתה בטוח שברצונך לבטל העלאה זו?",
   "eCommerceEventNotice": "<b>שימו לב:</b> אירועים אלה יעבדו רק בחשבונות המקושרים לחנות אינטרנטית דרך אינטגרציה של פולסים.",
+  "typeGroupNameAutocomplete": "הזן שם קבוצה להשלמה אוטמטית",
   "uploadFiles": {
     "statuses": {
       "0": "ממתין להעלאה",

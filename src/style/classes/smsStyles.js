@@ -81,8 +81,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
                 color: '#fff !important'
             },
             '& .MuiChip-deleteIcon': {
-                color: '#fff !important'
-            }
+                color: '#fff !important',
+                margin: '0 5px 0 5px'
+            },
         },
         '& .MuiAutocomplete-inputRoot': {
             paddingRight: !isRTL ? '56 !important' : '0 !important',

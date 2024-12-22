@@ -807,6 +807,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt6: {
     marginTop: 30,
   },
+  mt50: {
+    marginTop: 50
+  },
   mb1: {
     marginBottom: 5,
   },
@@ -1360,7 +1363,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: 'pointer',
     '& svg': {
       marginInline: 2,
-    }
+    },
+    zIndex: 100
   },
   baseButtons: {
     display: "flex",
@@ -4190,7 +4194,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
     {
       paddingRight: isRTL ? '0px !important' : '0px',
-    }
+      paddingInlineEnd: 40
+    },
   },
   highlightExpandedRow: {
     backgroundColor: '#dbdbdb !important',
@@ -4202,6 +4207,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&.first': {
       borderTop: 'solid 2px #797979 !important',
     },
+  },
+  renderHtml: {
+    '& label': {
+      display: 'block !important',
+      '& select': {
+        backgroundPosition: isRTL ? 'left center' : 'right-center'
+      }
+    }
   },
   flexContainerGap25: {
     gap: 25,

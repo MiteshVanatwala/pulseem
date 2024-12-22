@@ -824,6 +824,8 @@
   "priceRangeError": "Maximum price cannot be larger then Minimum Price",
   "verifyByEmail": "Via Email",
   "verifyBySms": "Via SMS",
+  "notSet": "Not set",
+  "or": "Or",
   "dynamicProduct": "Dynamic Product",
   "latestPurchase": "Latest Purchase",
   "latestAbandonment": "Latest Abandonment",
@@ -832,6 +834,7 @@
   "URL": "URL",
   "fallbackURL": "Fallback URL",
   "invalidURL": "Please enter valid fallback URL",
+  "backToSettings": "Back to Settings",
   "confirmPasswordNotMatch": "Password confirmation doesnt match",
   "SMS": "SMS",
   "MMS": "MMS",
@@ -857,5 +860,8 @@
   "errorCode": "Error Code",
   "errorCodeSupport": "For more information or Support<br/><a href=\"tel:035240290\">03-5240290</a><br/><a href=\"mailto:support@pulseem.com\">support@pulseem.com</a>",
   "pleaseWait": "Please wait...",
+  "hide": "Hide",
+  "landingPageId": "Landing Page ID",
+  "payAttention": "Pay attention!",
   "allChannels": "All Channels"
 }
