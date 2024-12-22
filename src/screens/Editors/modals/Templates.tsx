@@ -142,7 +142,7 @@ const LPTemplates = ({
               title={templateDetails.Name} />
           } */}
           {
-            tabValue === EmailTemplateType.MY_TEMPLATES && templateDetails?.ThumbnailUrl !== '' ? <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
+            tabValue === EmailTemplateType.MY_TEMPLATES && templateDetails?.Thumbnail !== '' ? <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
               style={{
                 width: '100%',
                 height: 'auto',
