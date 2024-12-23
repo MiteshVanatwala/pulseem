@@ -5,7 +5,7 @@ import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 import Highlighter from 'react-highlight-words';
 import { ChatFooterContentProps } from '../Types/WhatsappChat.type';
 import { useTranslation } from 'react-i18next';
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import {
 	coreProps,
 	tagDataProps,
@@ -64,6 +64,8 @@ const ChatFooterContent = ({
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
 	const [textDirection, setTextDirection] = useState<string>('ltr');
 	const freeFormInputHeight = '17px';
+	const templateTextRef = useRef<HTMLTextAreaElement>(null);
+
 	useEffect(() => {
 		const textElement = document.getElementById('free-from-input');
 		if (textElement) {
@@ -119,8 +121,31 @@ const ChatFooterContent = ({
 			</strong>
 		);
 	};
+	
+	const focusOnMessage = () => {
+    const textArea = document.getElementById("free-from-input");
+    setTimeout(() => {
+      textArea?.focus();
+    }, 500)
+  }
+	
 	const onEmojiClick = (emoji: string) => {
-		setNewMessage(`${newMessage} ${emoji}`);
+		emoji = emoji.trim();
+    let afterUpdateCharCount = newMessage.length + emoji.length;
+		if (afterUpdateCharCount < 1024) {
+			const txtarea = document.getElementById('free-from-input') as HTMLTextAreaElement;
+			if (txtarea !== null) {
+				var startPos = txtarea.selectionStart || 0;
+				var endPos = txtarea.selectionEnd || 0;
+				var cursorPos = startPos;
+				setNewMessage(newMessage.substring(0, startPos) + emoji + newMessage.substring(endPos, newMessage.length))
+				setTimeout(() => {
+					cursorPos += emoji.length;
+					txtarea.selectionStart = txtarea.selectionEnd = cursorPos;
+				}, 10);
+			}
+			focusOnMessage();
+		}
 	};
 
 	const onEditableDivChange = (e: BaseSyntheticEvent) => {
@@ -187,6 +212,7 @@ const ChatFooterContent = ({
 									<textarea
 										className={`${classes.whatsappChat} chat__input s`}
 										id={'free-from-input'}
+										ref={templateTextRef}
 										style={{
 											direction:
 												newMessage?.length > 0
