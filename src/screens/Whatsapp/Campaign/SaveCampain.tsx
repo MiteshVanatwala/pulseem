@@ -95,6 +95,7 @@ import {
 	buttonTextLimits,
 	buttonTypes,
 	buttons,
+	errorToastData,
 	fieldNameIds,
 	resetToastData,
 	whatsappRoutes,
@@ -109,6 +110,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { DateFormats, FBBusiness } from '../../../helpers/Constants';
+import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from '../../../config/enum';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -127,6 +129,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	);
 	const { SubAccountSettings } = useSelector(
 		(state: { common: CommonRedux }) => state.common?.accountSettings
+	);
+	const { WhatsAppPlatformID } = useSelector(
+		(state: { common: CommonRedux }) => state.common
 	);
 	const websiteField = [
 		{
@@ -790,6 +795,16 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						) {
 							setNextMessageAvailable(quickSendData?.Data?.NextAvailableTime);
 						}
+					} else if (quickSendData?.StatusCode === WhatsappCampaignStatus.META_BUSINESS_NOTVERIFIED && WhatsAppPlatformID === WhatsAppPlatformIDEnum.META) {
+						setToastMessage({
+							...errorToastData,
+							message: translator('whatsappCampaign.metaBusinessNotVerified')
+						});
+					} else if (quickSendData?.StatusCode === WhatsappCampaignStatus.META_PHONENUMBER_NOTVERIFIED && WhatsAppPlatformID === WhatsAppPlatformIDEnum.META) {
+						setToastMessage({
+							...errorToastData,
+							message: translator('whatsappCampaign.metaPhoneNumberNotVerified')
+						});
 					} else {
 						setRandomlyCount('');
 						if (quickSendData?.Message === 'Invalid phonenumber') {

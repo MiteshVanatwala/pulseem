@@ -26,7 +26,7 @@ import {
   setRowsPerPage,
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
-import { getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
+import { GetAfterLoginInitialData, getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
@@ -87,6 +87,7 @@ import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
+import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -503,6 +504,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Integrations`}
         element={<Integrations classes={classes} />}
       />
+      <Route exact
+        path={`${sitePrefix}whatsapp-onboarding`}
+        element={<WhatsappOnBoarding classes={classes} />}
+      />
       <Route
         exact
         path={`${sitePrefix}reports/Inbound`}
@@ -676,6 +681,7 @@ const App = ({ screenSize }) => {
     !isSignup && initFeatures()
     !isSignup && dispatch(GetCurrencyList());
     !isSignup && dispatch(GetSmsCountries());
+    !isSignup && dispatch(GetAfterLoginInitialData());
   }, [dispatch])
 
 

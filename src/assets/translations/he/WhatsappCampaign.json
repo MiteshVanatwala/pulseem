@@ -76,5 +76,7 @@
 	"groupNameRequired": "שם הקבוצה - שדה חובה",
 	"validLink": "קישור אינו תקין",
 	"atTime": "בשעה",
-	"filterInputText": "לא לשלוח ללקוחות שקיבלו Whatsapp במספר הימים האחרונים"
+	"filterInputText": "לא לשלוח ללקוחות שקיבלו Whatsapp במספר הימים האחרונים",
+	"metaBusinessNotVerified": "Meta business is not verified",
+	"metaPhoneNumberNotVerified": "Meta phone number is not verified"
 }
