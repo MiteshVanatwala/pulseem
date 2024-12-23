@@ -138,7 +138,8 @@ export type CommonRedux = {
 	accountIsCurrencySymbolPrefix?: boolean;
 	isGlobal?: boolean,
 	countryCodeList?: any,
-	subAccount?: any
+	subAccount?: any,
+	WhatsAppPlatformID?: number | null
 };
 
 export type actionButtonProps = {

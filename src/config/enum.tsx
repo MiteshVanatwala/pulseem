@@ -32,3 +32,13 @@ export enum ProductDetails {
   Description = '#description#',
   Price = '#price#'
 }
+
+export enum WhatsappCampaignStatus {
+  META_BUSINESS_NOTVERIFIED = 11,
+  META_PHONENUMBER_NOTVERIFIED = 12
+}
+
+export enum WhatsAppPlatformIDEnum {
+  TWILLIO = 1,
+  META = 2
+}
