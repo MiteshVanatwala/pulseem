@@ -212,6 +212,12 @@ export const getTemplatePreviewData = (
 									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
 								},
+								{
+									fieldName: 'mainReport.keepTrack',
+									type: '',
+									placeholder: '',
+									value: button.keeptrackoflinks ? "true" : "false",
+								},
 							],
 						};
 					}
