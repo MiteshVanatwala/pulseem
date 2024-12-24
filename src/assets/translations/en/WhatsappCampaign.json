@@ -76,5 +76,7 @@
 	"groupNameRequired": "Group name - Required field",
 	"validLink": "Please enter valid link",
 	"atTime": "at",
-	"filterInputText": "Don't send to recipients that got Whatsapp Campaign in last previous days"
+	"filterInputText": "Don't send to recipients that got Whatsapp Campaign in last previous days",
+	"metaBusinessNotVerified": "Meta business is not verified",
+	"metaPhoneNumberNotVerified": "Meta phone number is not verified"
 }

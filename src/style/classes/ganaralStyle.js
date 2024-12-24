@@ -3809,7 +3809,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   callToAction: {
-    minWidth: '65vw',
+    minWidth: '50vw',
     "& .MuiDialog-paperWidthSm": {
       minWidth: '80vw',
       maxWidth: '80vw',
@@ -4265,5 +4265,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxWidthMinContent: {
     maxWidth: 'min-content !important'
+  },
+  connectedDot: {
+    '& .MuiBadge-dot': {
+      left: isRTL ? 'auto' : -10,
+      right: isRTL ? -10 : 'auto',
+      top: 10,
+      background: '#23ff23'
+    }
   }
 });

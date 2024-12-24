@@ -220,7 +220,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			fieldName: 'mainReport.keepTrack',
 			type: '',
 			placeholder: '',
-			value: 'false',
+			value: 'true',
 		},
 	];
 	const phoneNumberField = [

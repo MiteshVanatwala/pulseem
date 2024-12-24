@@ -21,6 +21,7 @@ import {
 } from './Campaign/Types/WhatsappCampaign.types';
 import { APIWhatsappChatVariablesData } from './Chat/Types/WhatsappChat.type';
 import { buttonTypes, fileTypes } from './Constant';
+import { Separator } from '../../helpers/Constants';
 
 //This regex will test dynamic field having two digits in side (i.e. {{10}});
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
@@ -210,6 +211,12 @@ export const getTemplatePreviewData = (
 									type: 'text',
 									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
+								},
+								{
+									fieldName: 'mainReport.keepTrack',
+									type: '',
+									placeholder: '',
+									value: button.keeptrackoflinks ? "true" : "false",
 								},
 							],
 						};
@@ -462,6 +469,17 @@ export const getWhatsappError = (message: string): string => {
 	} else if(message.indexOf('The \'To\' number whatsapp') > -1) {
 		return `WhatsappApiResponse.NoWhatsApp.message`;
 	}
+	return 'WhatsappApiResponse.common.error';
+};
+
+export const getMetaError = (message: string): string => {
+	const splittedError = message?.split(Separator);
+	const errorCodeList = [
+		"0", "3", "10", "190", "4", "80007", "130429", "131048", "131056", "133016", "368", "130497", "131031", "1", "2", "33", "100", "130472", "131000", "131005", "131008", "131009", "131016", "131021", "131026", "131042", "131045", "131047", "131049", "131051", "131052", "131053", "131057", "132000", "132001", "132005", "132007", "132012", "132015", "132016", "132068", "132069", "133000", "133004", "133005", "133006", "133008", "133009", "133010", "133015", "135000"
+	]
+	if (splittedError?.length > 0 && errorCodeList.indexOf(splittedError[0]) > -1) {
+		return `WhatsappOnBoarding.metaErrorCodes.${splittedError[0]}`;
+	} 
 	return 'WhatsappApiResponse.common.error';
 };
 

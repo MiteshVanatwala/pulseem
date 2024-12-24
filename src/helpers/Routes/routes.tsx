@@ -272,6 +272,12 @@ export const getRoutes = (
           href: whatsappRoutes.CHAT,
           isShow: true,
         },
+        {
+          key: 'onboarding',
+          title: t('WhatsappOnBoarding.title'),
+          href: whatsappRoutes.ONBOARDING,
+          isShow: true,
+        }
       ],
     },
     {
