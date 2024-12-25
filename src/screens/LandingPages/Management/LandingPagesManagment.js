@@ -34,7 +34,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 import { sitePrefix } from '../../../config';
 import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
-// import { FaChartPie } from "react-icons/fa";
+import { FaChartPie } from "react-icons/fa";
 import { ClearPageState, GetPageNyName, SetPageState } from '../../../helpers/UI/SessionStorageManager';
 
 
@@ -308,34 +308,37 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     )
 
     const iconsMap = [
-      // {
-      //   key: 'surveyGraph',
-      //   uIcon: FaChartPie,
-      //   lable: t('landingPages.SurveyExportTitle'),
-      //   remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
-      //   onClick: () => {
-      //     navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`, {
-      //       state: {
-      //         PageProperty: GetPageNyName('landingPagesManagement'),
-      //       }
-      //     })
-      //   },
-      //   rootClass: classes.paddingIcon,
-      // },
       {
-        key: 'purchase/survey',
-        uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
-        lable: IsPayment ? t('landingPages.PurchaseExportTitle') : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
-        rootClass: clsx(classes.paddingIcon, classes.minWidth95),
-        disable: accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) > -1,
-        onClick: async () => {
-          if (IsPayment) {
-            onExportPayment(ID);
+        key: IsNewEditor ? 'surveyGraph' : 'purchase/survey',
+        uIcon: IsNewEditor ? FaChartPie : SurveryResultsIcon,
+        lable: IsNewEditor ? t('landingPages.SurveyExportTitle') : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
+        remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
+        onClick: () => {
+          if (IsNewEditor) {
+            navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`, {
+              state: {
+                PageProperty: GetPageNyName('landingPagesManagement'),
+              }
+            })
           }
           else {
             onExportSurvey(ID);
           }
+        },
+        rootClass: classes.paddingIcon,
+      },
+      {
+        // uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
+        // lable: IsPayment ? t('landingPages.PurchaseExportTitle') : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
+        //remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
+        key: 'purchase/survey',
+        uIcon: ReportsIcon,
+        lable: t('landingPages.PurchaseExportTitle'),
+        remove: (windowSize === 'xs' || !IsPayment),
+        rootClass: clsx(classes.paddingIcon, classes.minWidth95),
+        disable: accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) > -1,
+        onClick: async () => {
+          onExportPayment(ID);
         }
       },
       {
