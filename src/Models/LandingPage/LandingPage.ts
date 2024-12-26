@@ -121,7 +121,8 @@ export interface LandingPageRowBehaviour {
 export interface SaveLandingPageArguments {
     HtmlData: string;
     JsonData: string;
-    campaignId: number
+    campaignId: number;
+    isPublish: boolean;
 }
 
 export interface LandingPageTemplate {
@@ -173,4 +174,49 @@ export enum PageLanguage {
     Portuguese = 11,
     Dutch = 12,
     Unicode = 13
+}
+
+export interface SurveyResponse {
+    ID?: any | never;
+    QuestionNumber: number;
+    Question: string;
+    QuestionType: eQuestionType;
+    Answers: string[];
+    AnswerAndCount: { [key: string]: number; };
+    AnswerWithText: { [key: string]: string; };
+    ShowAsPie?: boolean;
+    pieChart: SurveyDataPieChart[]
+    barChart: SurveyDataBarChart[]
+}
+
+export interface SurveyAnswers {
+    Answer1: string;
+    Answer2: string;
+    Answer3: string;
+    Answer4: string;
+    Answer5: string;
+    Answer6: string;
+    Answer7: string;
+    Answer8: string;
+    Answer9: string;
+    Answer10: string;
+}
+
+export enum eQuestionType {
+    Text = 1,
+    SingleSelect = 2,
+    MultipleSelect = 3
+}
+
+export interface SurveyDataPieChart {
+    id: string;
+    value: number;
+    label: string;
+    percentage: string;
+}
+
+export interface SurveyDataBarChart {
+    answer: number;
+    question: string;
+    percentage: string;
 }

@@ -23,8 +23,6 @@ import { BsInfoCircle } from 'react-icons/bs';
 import { getById, getAllLPTemplatesBySubaccountId, getLPPublicTemplates, saveLandingPage } from '../../../redux/reducers/landingPagesSlice';
 import { sitePrefix } from '../../../config';
 import { useNavigate, useParams } from 'react-router-dom';
-// import Templates from '../../HtmlCampaign/modals/Templates';
-// import Templates from '../../BeeEditorPage/modals/Templates';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import FormProperties from './Tabs/FormProperties';
 import OfflineProperties from './Tabs/OfflineProperties';
@@ -36,6 +34,7 @@ import { BeeEditorStoreModel, LandingPageModel } from '../../../Models/LandingPa
 import { PulseemResponse } from '../../../Models/APIResponse';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import Toast from '../../../components/Toast/Toast.component';
+import SubscriberGroup from './Tabs/SubscriberGroup';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
@@ -157,6 +156,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		(state: { landingPages: any }) => state.landingPages
 	);
 
+	enum EditorType {
+		SAVE_ONLY = 0,
+		BEE = 1,
+		OLD = 2
+	}
 	const ClientScriptsWrapper = {
 		Facebook_Pixel: '<!-- Facebook Pixel Start -->##code##<!-- Facebook Pixel End -->', // Head
 		Google_Analytics: '<!-- Google Analytics Start -->##code##<!-- Google Analytics End -->', // Head
@@ -212,6 +216,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				FacebookPixelCode: response.Data?.WebForm?.FacebookPixelCode || '',
 				GroupIDs: response.Data?.WebForm?.GroupIDs?.split(',') || [],
 				WebformsToReportLeadByApi: response.Data?.WebformsToReportLeadByApi || [],
+				IsNewEditor: response.Data?.WebForm?.IsNewEditor,
 				IsAccessibility: (lpId && lpId > 0) ? response.Data?.WebForm?.IsAccessibility : true,
 				AnswerType: (lpId && lpId > 0) ? response.Data?.WebForm?.AnswerType : 1,
 				IsResponsive: (lpId && lpId > 0) ? response.Data?.WebForm?.IsResponsive : true,
@@ -236,10 +241,9 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				GoogleConvertionCode: '',
 				GoogleTagManagerCode: '',
 				FacebookPixelCode: '',
+				BaseLanguage: isRTL ? 0 : 1
 			});
 		}
-		// if (id) {
-		// }
 
 		if (subAccountAllGroups?.length === 0) {
 			dispatch(getGroupsBySubAccountId());
@@ -253,7 +257,8 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	useEffect(() => {
 		getData();
-	}, []);
+	}, [, isRTL]);
+
 
 	const handleSelectedImage = async (file: string, preventUpdateModel: boolean) => {
 		if (!file || file[0] === '') {
@@ -524,7 +529,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		return result as string;
 	}
 
-	const save = async (redirectToNewEditor: number) => {
+	const save = async (editorType: EditorType) => {
 		const errorDump = {
 			...errors,
 			PageName: !landingPageModel.PageName?.trim() ? t('landingPages.formNameRequired') : '',
@@ -558,13 +563,15 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 				SelectedGroupList: null,
 				EmailsToReport: landingPageModel?.EmailsToReport?.join(','),
 				GroupIDs: landingPageModel?.GroupIDs?.join(','),
+				IsNewEditor: editorType === EditorType.BEE,
+				ID: landingPageModel.ID || id,
 				ClientJavaScript: headScript,
 				ClientBodyScript: bodyScript
 			};
 			//@ts-ignore
 			const response = await dispatch(saveLandingPage(req));
-			handleSaveResponse(response?.payload, redirectToNewEditor);
 			setIsLoader(false);
+			handleSaveResponse(response?.payload, editorType);
 			return true;
 		} else {
 			setDialogType({ type: 'validationDialog' })
@@ -573,10 +580,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 
 	const showErrorToast = (message: string) => setToastMessage({ severity: 'error', color: 'error', message, showAnimtionCheck: false } as any)
 
-	const handleSaveResponse = (response: any, redirectToNewEditor: number) => {
+	const handleSaveResponse = (response: any, editorType: EditorType) => {
 		switch (response.StatusCode) {
 			case 201: {
-				handleContinueToEditor(redirectToNewEditor, response.Data.ID);
+				handleContinueToEditor(editorType, response.Data.ID);
 				break;
 			}
 			case 400: {
@@ -615,26 +622,40 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		await save(2);
 	}
 
+	const saveAndContinue = async (editorType: EditorType) => {
+		await save(editorType);
+	}
+
 	// const saveAndContinueToNewEditor = async () => {
 	// 	await save(1);
 	// }
 
 	// navigateBeEditor
 	// 0 - Don't redirect, 1 - New Editor, 2 - Old Editor
-	const handleContinueToEditor = (navigateBeEditor = 0, savedPageID: number) => {
-		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && !navigateBeEditor);
-		let redirectUrl = isBeeEditor ? `${sitePrefix}BeeEditor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${id || savedPageID}` : `/Pulseem/NewWebForm/NewFormEdit/${id || savedPageID}?fromreact=true`;
-		if (!navigateBeEditor) {
-			if (!id && savedPageID) navigate(`${sitePrefix}LandingPages/Create/${savedPageID}`)
-			else {
+	const handleContinueToEditor = (editorType: EditorType, savedPageID: number) => {
+		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && editorType === EditorType.BEE);
+		const pageId = id || savedPageID;
+		let redirectUrl = isBeeEditor ? `${sitePrefix}editor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${pageId}` : `/Pulseem/NewWebForm/NewFormEdit/${pageId}?fromreact=true`;
+
+		switch (editorType) {
+			case EditorType.BEE: {
+				navigate(redirectUrl);
+				break;
+			}
+			case EditorType.OLD: {
+				window.location.href = redirectUrl;
+				break;
+			}
+			case EditorType.SAVE_ONLY:
+			default: {
+				if (!id && savedPageID) navigate(`${sitePrefix}LandingPages/Create/${savedPageID}`);
 				// @ts-ignore
 				setToastMessage(ToastMessages?.LANDING_PAGE_SAVED);
 				return false;
 			}
 		}
-		else if (navigateBeEditor === 1) navigate(redirectUrl);
-		else window.location.href = redirectUrl;
-	}
+
+	};
 
 	const renderButtons = () => {
 		const wizardButtons = [];
@@ -642,7 +663,19 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			wizardButtons.push(
 				<>
 					<Button
-						onClick={saveAndContinueToOldEditor}
+						onClick={() => { saveAndContinue(EditorType.SAVE_ONLY) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded,
+							classes.backButton
+						)}
+						style={{ margin: '8px' }}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+					>
+						{t("common.save")}
+					</Button>
+					<Button
+						onClick={() => { saveAndContinue(EditorType.OLD) }}
 						className={clsx(
 							classes.btn,
 							classes.btnRounded,
@@ -657,21 +690,42 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 			);
 		}
 		else {
-			wizardButtons.push(
-				<Button
-					onClick={saveAndContinueToOldEditor}
-					className={clsx(
-						classes.btn,
-						classes.btnRounded,
-						classes.backButton
-					)}
-					style={{ margin: '8px' }}
-					endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-					key="saveContinue"
-				>
-					<>{t('common.saveAndContinue')}</>
-				</Button>
-			);
+			if (!landingPageModel.IsNewEditor) {
+				wizardButtons.push(
+					<Button
+						onClick={() => { saveAndContinue(EditorType.OLD) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded,
+							classes.backButton
+						)}
+						style={{ margin: '8px' }}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						key="saveContinue"
+					>
+						<>{t('common.saveAndContinue')}</>
+					</Button>
+				);
+			}
+
+			if (landingPageModel.IsNewEditor || !id) {
+				wizardButtons.push(
+					<Button
+						onClick={() => { saveAndContinue(EditorType.BEE) }}
+						className={clsx(
+							classes.btn,
+							classes.btnRounded,
+							classes.backButton
+						)}
+						style={{ margin: '8px' }}
+						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+						key='newEditor'
+					>
+						{t('master.continueToNewEditor')}
+					</Button>
+				);
+			}
+
 		}
 		return wizardButtons.map((b) => b);
 	}
@@ -746,6 +800,12 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 						className={clsx(classes.iconTab, classes.f18)}
 						value='4'
 					/>
+					<Tab
+						label={t('common.Groups')}
+						classes={{ root: classes.tabText, selected: classes.activeTab }}
+						className={clsx(classes.iconTab, classes.f18)}
+						value='5'
+					/>
 				</Tabs>
 				<TabContext value={`${tabValue}`}>
 					<TabPanel value='1' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
@@ -819,6 +879,19 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							errors={errors}
 						/>
 					</TabPanel>
+					<TabPanel value='5' className={clsx(windowSize === 'xs' ? classes.noPadding : '')}>
+						<Typography title={t("landingPages.redirectURLWhenOffline")} className={clsx(classes.alignDir, classes.pb10, classes.bold, classes.font18)}>
+							{t("landingPages.addSubscribersToGroups")} {landingPageModel.PageType === 2 ? <i style={{ fontWeight: 400 }}>({t('landingPages.noRequiredGroupSelection')})</i> : ''}
+						</Typography>
+						<SubscriberGroup
+							classes={classes}
+							data={landingPageModel}
+							onUpdate={setLandingPageModel}
+							onSetDialog={setDialogType}
+							removeEmailId={removeEmailId}
+							errors={errors}
+						/>
+					</TabPanel>
 				</TabContext>
 
 				<Box>
@@ -837,11 +910,11 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 					/>
 				</Box>
 				<Loader isOpen={isLoader} />
-			</Box>
+			</Box >
 			{renderDialog()}
 			{toastMessage && renderToast()}
-		</DefaultScreen>
-	);
-};
+		</DefaultScreen >
+	)
+}
 
 export default CreateLandingPage;

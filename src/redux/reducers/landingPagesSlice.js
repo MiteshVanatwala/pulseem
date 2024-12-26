@@ -8,7 +8,7 @@ export const getLandingPagesData = createAsyncThunk(
   'landingpages/getLandingPages', async (_, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`landingpages/getLandingPages`);
-      return JSON.parse(response.data)
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -45,7 +45,7 @@ export const duplicteLandingPage = createAsyncThunk(
   })
 
 export const downloadReport = createAsyncThunk(
-  'report/ExportPurchase/', async ({ ID, Name }, thunkAPI) => {
+  'report/ExportPurchase/', async (ID, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`${apiURL}/report/ExportPurchase/${ID}`);
       return JSON.parse(response.data)
@@ -55,7 +55,7 @@ export const downloadReport = createAsyncThunk(
   })
 
 export const exportSurvey = createAsyncThunk(
-  'report/ExportSurvey/', async ({ ID, Name }, thunkAPI) => {
+  'report/ExportSurvey/', async (ID, thunkAPI) => {
     try {
 
       const response = await PulseemReactInstance.get(`${apiURL}/report/ExportSurvey/${ID}`);
@@ -79,19 +79,18 @@ export const saveLandingPage = createAsyncThunk(
 export const saveLPTemplateToAccount = createAsyncThunk(
   '/landingpages/SaveAsTemplate', async (data, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.post(`landingpages/SaveAsTemplate`, data);
-      // return response.data;
-      return {};
+      const response = await PulseemReactInstance.post(`LandingPages/SaveAsTemplate`, data);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
 
 export const getLPBeeToken = createAsyncThunk(
-  '/CampaignEditor/GetBeeLPToken/',
+  '/LandingPages/GetBeeLPToken',
   async (_, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.get(`/CampaignEditor/GetBeeLPToken`);
+      const response = await PulseemReactInstance.get(`/LandingPages/GetBeeLPToken`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -101,9 +100,8 @@ export const getLPBeeToken = createAsyncThunk(
 export const getLPPublicTemplates = createAsyncThunk(
   '/landingpages/GetPublicTemplates', async (isRTL, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
-      // return response.data
-      return { Data: [] };
+      const response = await PulseemReactInstance.get(`LandingPages/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -112,9 +110,8 @@ export const getLPPublicTemplates = createAsyncThunk(
 export const getAllLPTemplatesBySubaccountId = createAsyncThunk(
   '/landingpages/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
-      // return response.data
-      return { Data: [] };
+      const response = await PulseemReactInstance.get(`LandingPages/GetAllTemplatesBySubaccountId`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -123,11 +120,8 @@ export const getAllLPTemplatesBySubaccountId = createAsyncThunk(
 export const getLPTemplateById = createAsyncThunk(
   '/landingpages/GetTemplateById/', async (id, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.get(`/CampaignEditor/GetTemplateById/${id}`);
-      // return response.data
-      return {
-        Data: ''
-      };
+      const response = await PulseemReactInstance.get(`/LandingPages/GetTemplateById/${id}`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -136,9 +130,8 @@ export const getLPTemplateById = createAsyncThunk(
 export const saveLPUserBlock = createAsyncThunk(
   '/landingpages/SaveUserBlock/', async (block, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, block);
-      // return JSON.parse(response.data)
-      return {};
+      const response = await PulseemReactInstance.post(`/landingpages/SaveUserBlock/`, block);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -147,9 +140,8 @@ export const saveLPUserBlock = createAsyncThunk(
 export const getLPUserblocks = createAsyncThunk(
   '/landingpages/GetUserblocks/', async (thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.get(`/CampaignEditor/GetUserblocks`);
-      // return response.data
-      return {};
+      const response = await PulseemReactInstance.get(`/landingpages/GetUserblocks`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -158,9 +150,8 @@ export const getLPUserblocks = createAsyncThunk(
 export const deleteLPUserBlock = createAsyncThunk(
   '/landingpages/DeleteUserBlock/', async (id, thunkAPI) => {
     try {
-      // const response = await PulseemReactInstance.delete(`/CampaignEditor/DeleteUserBlock/${id}`);
-      // return JSON.parse(response.data)
-      return {};
+      const response = await PulseemReactInstance.delete(`/landingpages/DeleteUserBlock/${id}`);
+      return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -216,12 +207,71 @@ export const getPageHeight = createAsyncThunk(
     }
   });
 
+export const saveWebform = createAsyncThunk(
+  'landingpages/SaveWebform',
+  async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`landingpages/SaveWebform`, data);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
+export const publish = createAsyncThunk(
+  'landingpages/publish',
+  async (id, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.put(`landingpages/publish/${id}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
+export const setWebformGroups = createAsyncThunk(
+  'landingpages/SetWebformGroups',
+  async (model, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`landingpages/SetWebformGroups`, model);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
+export const deleteTemplateById = createAsyncThunk(
+  '/LandingPages/DeleteTemplateById/', async (id, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.delete(`/LandingPages/DeleteTemplateById/${id}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const updateTemplateMeta = createAsyncThunk(
+  '/LandingPages/UpdateTemplateMeta', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`LandingPages/UpdateTemplateMeta`, data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const getLandingPagePreview = createAsyncThunk(
+  'landingpages/GetPreview', async (campaignId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`landingpages/GetPreview/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 export const landingPagesSlice = createSlice({
-  name: 'newsletter',
+  name: 'landingPages',
   initialState: {
     LPBeeToken: null,
     landingPagesData: [],
@@ -236,25 +286,34 @@ export const landingPagesSlice = createSlice({
     ToastMessages: {
       LANDING_PAGE_SAVED: { severity: 'success', color: 'success', message: 'landingPages.landingPageSaved', showAnimtionCheck: true },
       TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
+      USER_BLOCK_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
+      MULTIPLE_FORMS_NOT_ALLOWED: { severity: 'error', color: 'error', message: 'landingPages.multipleFormsBlocked', showAnimtionCheck: false },
+      HTML_DOCTYPE_ERROR: { severity: 'error', color: 'error', message: 'campaigns.htmlDocTypeNotAllowed', showAnimtionCheck: false }
     },
   },
-  reducers: {},
+  reducers: {
+    updateLandingPage: (state, action) => {
+      state.landingPage = action.payload;
+    }
+  },
   extraReducers: builder => {
+    builder.addCase(saveWebform.fulfilled, (state, { payload }) => {
+      state.landingPage = payload;
+    })
     builder.addCase(getLandingPagesData.fulfilled, (state, { payload }) => {
       state.landingPagesData = payload.filter(row => !row.IsDeleted)
       state.landingPagesDeletedData = payload.filter(row => row.IsDeleted)
     })
     builder.addCase(getLPUserblocks.fulfilled, (state, { payload }) => {
-      // const blocks = payload?.map((b) => {
-      //     return {
-      //         uuid: b.uuid,
-      //         category: b.Category,
-      //         data: JSON.parse(b.Data),
-      //         tags: b?.TagsAsString?.split(',')
-      //     }
-      // });
-      // state.landingPageUserBlocks = blocks
-      state.landingPageUserBlocks = []
+      const blocks = payload?.map((b) => {
+        return {
+          uuid: b.uuid,
+          category: b.Category,
+          data: JSON.parse(b.Data),
+          tags: b?.TagsAsString?.split(',')
+        }
+      });
+      state.landingPageUserBlocks = blocks;
     })
     builder.addCase(getLandingPagesData.rejected, (state, action) => {
       state.landingPagesDataError = action.error.message
@@ -262,17 +321,20 @@ export const landingPagesSlice = createSlice({
     builder.addCase(getLPBeeToken.fulfilled, (state, { payload }) => {
       state.LPBeeToken = payload;
     })
+    builder.addCase(getById.fulfilled, (state, { payload }) => {
+      state.landingPage = payload;
+    })
     builder.addCase(downloadReport.fulfilled, () => console.log('api downloadReport success'))
     builder.addCase(duplicteLandingPage.fulfilled, () => console.log('api duplicteLandingPage success'))
     builder.addCase(deleteLandingPage.fulfilled, () => console.log('api deleteLandingPage success'))
     builder.addCase(restoreLandingPages.fulfilled, () => console.log('api restoreLandingPages success'))
     builder.addCase(getLPPublicTemplates.fulfilled, (state, action) => {
       state.publicTemplates = action.payload.Data || []
-      state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
+      state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'CategoryList');
     })
     builder.addCase(getAllLPTemplatesBySubaccountId.fulfilled, (state, action) => {
       state.templatesBySubAccount = action.payload.Data || [];
-      state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
+      state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'CategoryList');
     })
 
     builder.addCase(downloadReport.rejected, (_, action) => console.log('Error - api downloadReport: ' + action.error))
@@ -283,5 +345,5 @@ export const landingPagesSlice = createSlice({
 })
 
 
-
+export const { updateLandingPage } = landingPagesSlice.actions
 export default landingPagesSlice.reducer

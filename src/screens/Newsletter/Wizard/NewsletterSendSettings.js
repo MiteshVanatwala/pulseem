@@ -52,6 +52,8 @@ import { BsInfoCircle } from "react-icons/bs";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IsSharedDomain } from "../../../helpers/Functions/DomainVerificationHelper";
 import { sitePrefix } from "../../../config";
+import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from "../../../config/enum";
+import { errorToastData } from "../../Whatsapp/Constant";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -123,9 +125,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
     const { isRTL } = useSelector((state) => state.core);
-    const { verifiedEmails, accountSettings } = useSelector(state => state.common);
+    const { verifiedEmails, WhatsAppPlatformID } = useSelector(state => state.common);
     const { subAccountAllGroups } = useSelector((state) => state.group);
-    const { previousCampaignData, extraData, testGroups, previousLandingData } = useSelector((state) => state.sms);
+    const { previousCampaignData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
@@ -290,7 +292,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 await dispatch(getEmailSendSettings(params?.id));
                 await dispatch(getGroupsBySubAccountId());
                 await dispatch(getTestGroups());
-                await dispatch(getCommonFeatures());
                 resolve();
             } catch (error) {
                 reject(error)
@@ -436,6 +437,16 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         else if (response.StatusCode === 405 || response?.StatusCode === 402) {
             setNoCreditLeft(true);
+        } else if (response.StatusCode === WhatsappCampaignStatus.META_BUSINESS_NOTVERIFIED && WhatsAppPlatformID === WhatsAppPlatformIDEnum.META) {
+            setToastMessage({
+                ...errorToastData,
+                message: t('whatsappCampaign.metaBusinessNotVerified')
+            });
+        } else if (response.StatusCode === WhatsappCampaignStatus.META_PHONENUMBER_NOTVERIFIED && WhatsAppPlatformID === WhatsAppPlatformIDEnum.META) {
+            setToastMessage({
+                ...errorToastData,
+                message: t('whatsappCampaign.metaPhoneNumberNotVerified')
+            });
         }
         else {
             setDialogType(SEND_PROC[response?.StatusCode]);
@@ -585,7 +596,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
 
         let payload = {
-            SubAccountID: -1,
+            // SubAccountID: -1,
             GroupName: groupName,
             GroupIds: temp,
         };

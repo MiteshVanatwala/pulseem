@@ -11,7 +11,15 @@ export const getGroupsBySubAccountId = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
-
+export const getAllGroupsBySubAccountId = createAsyncThunk(
+    'Group/getAllGroupsBySubAccountId', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`Group/getAllGroupsBySubAccountId`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
 export const getGroups = createAsyncThunk(
     'Group/Get', async (data, thunkAPI) => {
         try {
@@ -196,6 +204,7 @@ export const groupSlice = createSlice({
             UNSUBSCRIBE_LIMIT: { severity: 'error', color: 'error', message: 'recipient.maximumRecordLimitation', showAnimtionCheck: false },
             MAX_GROUPS_EXCEEDED: { severity: 'error', color: 'error', message: 'group.maxGroupsExceeded', showAnimtionCheck: false },
             UPLOADING_RECIPIENT_AS_FILE: { severity: 'success', color: 'success', message: 'recipient.importResponses.fileUploaded', showAnimtionCheck: false },
+            NO_RECIPIENTS_TYPED: { severity: 'error', color: 'error', message: "recipient.responses.noRecipientsTyped", showAnimtionCheck: false },
         }
     },
     reducers: {
@@ -209,6 +218,9 @@ export const groupSlice = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(getGroupsBySubAccountId.fulfilled, (state, { payload }) => {
+            state.subAccountAllGroups = payload;
+        })
+        builder.addCase(getAllGroupsBySubAccountId.fulfilled, (state, { payload }) => {
             state.subAccountAllGroups = payload;
         })
         builder.addCase(getGroups.fulfilled, (state, { payload }) => {

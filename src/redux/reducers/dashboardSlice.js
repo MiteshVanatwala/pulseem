@@ -5,7 +5,7 @@ export const getPackagesDetails = createAsyncThunk(
   'dashboard/GetPackagesDetails', async (_, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`dashboard/GetPackagesDetails`);
-      return JSON.parse(response.data)
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

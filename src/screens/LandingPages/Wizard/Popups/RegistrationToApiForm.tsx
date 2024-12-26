@@ -98,7 +98,7 @@ const RegistrationToApiForm = ({
                 setRequestType('Post');
                 apiIntegration.RequestPostParams?.split('&')?.forEach((qs: any) => {
                     const val = qs?.split('=');
-                    if (availableParamKeys.indexOf(val[1].replace(/##/g, '')) > -1) updArr[val[1]] = qs;
+                    if (availableParamKeys.indexOf(val[1]?.replace(/##/g, '')) > -1) updArr[val[1]] = qs;
                     else extraParam[val[0]] = val[1]
                 })
             }
@@ -107,7 +107,7 @@ const RegistrationToApiForm = ({
                 const urlArr = apiIntegration.RequestUrl.split('?');
                 urlArr[1]?.split('&')?.forEach((qs: any) => {
                     const val = qs?.split('=');
-                    if (availableParamKeys.indexOf(val[1].replace(/##/g, '')) > -1) updArr[val[1]] = qs;
+                    if (availableParamKeys.indexOf(val[1]?.replace(/##/g, '')) > -1) updArr[val[1]] = qs;
                     else extraParam[val[0]] = val[1]
                 })
             }
@@ -140,7 +140,7 @@ const RegistrationToApiForm = ({
         const arr = Object.values(newObj);
 
         let reqUrl = requestType.toLowerCase() === 'get' ? `${regModel.RequestUrl?.split('?')[0]}?${arr.length > 0 ? arr.join('&') : ''}` : regModel.RequestUrl;
-        
+
         let extraParametersURL = '';
         if (Object.keys(extraParameters).length) {
             Object.keys(extraParameters).map((key: any) => {
@@ -249,8 +249,8 @@ const RegistrationToApiForm = ({
         const extraParams = { ...extraParameters };
         setRegModel({
             ...regModel,
-            RequestUrl: regModel?.RequestUrl?.replace(`&${item}=${extraParams[item]}`, ''), 
-            RequestPostParams: regModel?.RequestPostParams?.replace(`&${item}=${extraParams[item]}`, ''), 
+            RequestUrl: regModel?.RequestUrl?.replace(`&${item}=${extraParams[item]}`, ''),
+            RequestPostParams: regModel?.RequestPostParams?.replace(`&${item}=${extraParams[item]}`, ''),
         })
         delete extraParams[item];
         setExtraParameters(extraParams);
@@ -297,7 +297,7 @@ const RegistrationToApiForm = ({
             if (item.split('=')[0] === key) {
                 url += `${key}=${value}&`;
             } else {
-                url += `${item}&`; 
+                url += `${item}&`;
             }
         })
         setRegModel({
@@ -491,9 +491,9 @@ const RegistrationToApiForm = ({
                 <Grid container spacing={3} className={classes.p15}>
                     {
                         Object.keys(extraParameters).map((item: any) => {
-                            return <Grid key={`key_${item} `} item md={12} className={classes.dFlex} style={{ alignItems: 'center', height: 50 }}>
-                                <Grid item md={4} sm={6}>{item}</Grid>
-                                <Grid item md={4} sm={6}>
+                            return <Grid key={`key_${item} `} item md={12} xs={12} className={classes.dFlex} style={{ alignItems: 'center' }}>
+                                <Grid item md={6} sm={6}>{item}</Grid>
+                                <Grid item md={6} sm={6}>
                                     <TextField
                                         placeholder={`${t('landingPages.registrationApi.typeParamFor')} ${extraParameters[item]} `}
                                         id={item}

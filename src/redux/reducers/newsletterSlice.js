@@ -13,16 +13,6 @@ export const getNewslatterData = createAsyncThunk(
   }
 )
 
-export const getNewsletterReports = createAsyncThunk(
-  'reports/EmailReports/', async (demo = false, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.get(`reports/EmailReports?includeTestCampaign=${demo}`)
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  }
-)
 
 export const getGetEmailReportsManagement = createAsyncThunk(
   'reports/GetEmailReportsManagement', async (demo = false, thunkAPI) => {
@@ -235,6 +225,16 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
     }
   });
 
+export const getNewsletterPreview = createAsyncThunk(
+  'email/GetPreview', async (campaignId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`email/GetPreview/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const getNewslatterParentChildData = createAsyncThunk(
   'email/GetEmailCampaignsManagement', async (_, thunkAPI) => {
     try {
@@ -252,8 +252,6 @@ export const newsletterSlice = createSlice({
     newslettersData: [],
     newslettersDeletedData: [],
     newslettersDataError: '',
-    newslettersReports: [],
-    newslettersReportsError: '',
     directNewsletterReport: {},
     directNewsletterReportError: '',
     newsletterArchiveData: [],
@@ -305,12 +303,6 @@ export const newsletterSlice = createSlice({
     })
     builder.addCase(getNewslatterData.rejected, (state, action) => {
       state.newslettersDataError = action.error.message
-    })
-    builder.addCase(getNewsletterReports.fulfilled, (state, { payload }) => {
-      state.newslettersReports = payload
-    })
-    builder.addCase(getNewsletterReports.rejected, (state, action) => {
-      state.newslettersReportsError = action.error.message
     })
     builder.addCase(getArchiveCampaigns.fulfilled, (state, { payload }) => {
       state.newsletterArchiveData = payload

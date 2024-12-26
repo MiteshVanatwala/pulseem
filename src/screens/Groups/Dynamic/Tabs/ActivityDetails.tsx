@@ -10,6 +10,8 @@ import { DateField } from '../../../../components/managment';
 import moment from "moment";
 import { DateFormats } from '../../../../helpers/Constants';
 import SelectActivityInteval from '../Components/SelectActivityInteval';
+import SelectCampaignType from '../Components/SelectCampaignType';
+import { CampaignType, M_AllCampaignChannelds } from '../../../../Models/Common/CampaignTypes';
 
 const ActivityDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
@@ -238,7 +240,24 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
                     key={'IsClickedInterval'}
                 />
             </Grid>
-            <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
+            <Grid item xs={6} sm={6} md={2}>
+                {data.dynamicData?.MyActivities?.IsClicked && <SelectCampaignType
+                    Disabled={!data.dynamicData?.MyActivities?.IsClicked}
+                    OnUpdate={(event: any) => {
+                        if (event.target.value.indexOf(CampaignType.All) > -1) {
+                            const all = M_AllCampaignChannelds.join(',');
+                            onUpdate('IsClickInCampaignTypes', all)
+                        }
+                        else {
+                            onUpdate('IsClickInCampaignTypes', event.target.value.join(','))
+                        }
+                    }}
+                    Value={data.dynamicData?.MyActivities?.IsClickInCampaignTypes}
+                    classes={classes}
+                    key={'IsClickInCampaignTypes'}
+                />}
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} className={classes.pt5}>
                 {
                     data.dynamicData?.MyActivities.IsClickedInterval.toString() === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsClicked && (
                         <>
@@ -331,13 +350,32 @@ const ActivityDetails = ({ classes, data, onUpdate }: any) => {
             <Grid item xs={6} sm={6} md={2}>
                 <SelectActivityInteval
                     Disabled={!data.dynamicData?.MyActivities.IsNotClicked}
-                    OnUpdate={(event: any) => onUpdate('IsNotClickedInterval', event.target.value)}
+                    OnUpdate={(event: any) => {
+                        onUpdate('IsNotClickedInterval', event.target.value)
+                    }}
                     Value={!data.dynamicData?.MyActivities.IsNotClicked ? null : data.dynamicData?.MyActivities.IsNotClickedInterval}
                     classes={classes}
                     key={'IsNotClickedInterval'}
                 />
             </Grid>
-            <Grid item xs={12} sm={6} md={8} className={classes.pt5}>
+            <Grid item xs={6} sm={6} md={2}>
+                {data.dynamicData?.MyActivities.IsNotClicked && <SelectCampaignType
+                    Disabled={!data.dynamicData?.MyActivities?.IsNotClicked}
+                    OnUpdate={(event: any) => {
+                        if (event.target.value.indexOf(CampaignType.All) > -1) {
+                            const all = '0,1,2,3';
+                            onUpdate('IsNotClickInCampaignTypes', all)
+                        }
+                        else {
+                            onUpdate('IsNotClickInCampaignTypes', event.target.value.join(','))
+                        }
+                    }}
+                    Value={!data.dynamicData?.MyActivities?.IsNotClicked ? null : data.dynamicData?.MyActivities?.IsNotClickInCampaignTypes}
+                    classes={classes}
+                    key={'IsNotClickInCampaignTypes'}
+                />}
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} className={classes.pt5}>
                 {
                     data.dynamicData?.MyActivities.IsNotClickedInterval.toString() === ActivtyTimeInterval.SpecificDates && data.dynamicData?.MyActivities?.IsNotClicked && (
                         <>
