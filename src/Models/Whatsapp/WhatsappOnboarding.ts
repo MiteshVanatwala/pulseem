@@ -11,6 +11,8 @@ export type phoneNumbersInterface = {
   quality_rating: string;
   status: string;
   verified_name: string;
+  tier?: string;
+  limit?: number;
 };
 
 export type virtualNumbersInterface = {
