@@ -93,7 +93,10 @@
     "nonZero": "Value should be more than 0.",
     "fetchDataManually": "Fetch Data Manually",
     "fetchDataManualSuccess": "A request was sent to the store, the data will be fetched within the next 10 minutes",
-    "howToConnect": "Learn how to connect E-Shop"
+    "howToConnect": "Learn how to connect E-Shop",
+    "addRecipientsAsCustomer": "Add Recipients As E-Shop Customers",
+    "addAll":"Add all of the recipients",
+    "addFromGroups": "Add recipients from groups"
   },
   "wix": {
     "title": "Wix",

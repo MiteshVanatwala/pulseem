@@ -46,6 +46,8 @@ export interface EShopModel {
     Groups?: IntegrationGroups;
     IsDeleted?: boolean;
     SubAccountID?: string;
+    AutomaticDailyEmailsUnsubscribesAndActiveTypeID?: eAutomaticDailyEmailsUnsubscribesAndActiveTypeID;
+    AutomaticDailyEmailsGroups?: never | number[];
 }
 
 export interface KlaviyoModel {
@@ -62,4 +64,10 @@ export enum UnsubscribePreferenceType {
     Email = 1,
     Sms = 2,
     Both = 3
+}
+
+export enum eAutomaticDailyEmailsUnsubscribesAndActiveTypeID {
+    None = 0,
+    Subaccount = 1,
+    GroupID = 2
 }

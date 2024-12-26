@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PurchaseWizard from './PaymentWizard/PurchaseWizard';
-import { GoPackage } from 'react-icons/go/index';
+import { GoPackage } from 'react-icons/go';
 import { Grid, Paper, Typography, Button, Box, Divider } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
@@ -294,35 +294,33 @@ const BulkStatus = ({ classes }) => {
               <Divider />
             </>
           )}
-          {Whatsapp?.Credits > 0 && (
-            <>
-              <Grid
-                container
-                item sm={12} md={12} lg={12} xl={12}
-                className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-                justifyContent='space-between'
-              >
-                <Grid item md={5} xs={4}>
-                  <WhatsappIcon className={classes.shoppingCartIcon} />
-                  <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
-                </Grid>
-
-                <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-                  <Typography className={clsx(classes.bold, classes.elipsis, classes.noWrap)} style={{ whiteSpace: 'normal' }}>
-                    {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(Whatsapp)} ${t('common.NIS')}`}
-                  </Typography>
-                </Grid>
-
-                <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-                  <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: -1, title: t('common.whatsappBulk') })}>
-                    {t('dashboard.purchase')}
-                    {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                  </Button>
-                </Grid>
+          {Whatsapp.FeatureExist && (<>
+            <Grid
+              container
+              item sm={12} md={12} lg={12} xl={12}
+              className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+              justifyContent='space-between'
+            >
+              <Grid item md={5} xs={4}>
+                <WhatsappIcon className={classes.shoppingCartIcon} />
+                <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
               </Grid>
-              <Divider />
-            </>
-          )}
+
+              <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                <Typography className={clsx(classes.bold, classes.elipsis, classes.noWrap)} style={{ whiteSpace: 'normal' }}>
+                  {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(Whatsapp)} ${t('common.NIS')}`}
+                </Typography>
+              </Grid>
+
+              <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
+                {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })}>
+                  {t('dashboard.purchase')}
+                  {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                </Button>}
+              </Grid>
+            </Grid>
+            <Divider />
+          </>)}
         </Grid>
       </Paper>
     </>

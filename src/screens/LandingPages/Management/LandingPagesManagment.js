@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
@@ -7,17 +7,16 @@ import {
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon,
-  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon, SettingIcon
+  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SettingIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, RestorDialogContent, PopMassage, SearchField
+  TablePagination, ManagmentIcon, RestorDialogContent, PopMassage,
 } from '../../../components/managment/index'
 import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
-  duplicteLandingPage, downloadReport, exportSurvey, getPageHeight
+  duplicteLandingPage, downloadReport, getPageHeight
 } from '../../../redux/reducers/landingPagesSlice'
-import { openInNewTab } from '../../../helpers/Functions/functions'
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Loader } from '../../../components/Loader/Loader';
@@ -32,7 +31,9 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 import { sitePrefix } from '../../../config';
-import { rootDomain } from '../../../helpers/Routes/routes';
+import { BEE_EDITOR_TYPES } from '../../../helpers/Constants';
+import { FaChartPie } from "react-icons/fa";
+import { ClearPageState, GetPageNyName, SetPageState } from '../../../helpers/UI/SessionStorageManager';
 
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
@@ -55,6 +56,10 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   const dispatch = useDispatch()
   const [showLoader, setLoader] = useState(true);
 
+  const { state } = useLocation();
+  const from = state?.from || "/";
+  const pageProperty = useRef();
+
   const getData = async () => {
     await dispatch(getLandingPagesData())
     setLoader(false);
@@ -62,13 +67,57 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
   useEffect(() => {
     setLoader(true);
-    getData();
+    reSearch();
   }, [dispatch])
+
+  useEffect(() => {
+    reSearch();
+  }, [rowsPerPage]);
+
+  const reSearch = () => {
+    const queryState = from?.toLowerCase().indexOf('surveydetails') > -1;
+    pageProperty.current = GetPageNyName('landingPagesManagement');
+    let lastSearch = { PageSize: rowsPerPage };
+    if (queryState && pageProperty.current) {
+      let tempSearchData = pageProperty.current;
+      lastSearch = {
+        ...tempSearchData,
+        PageNumber: tempSearchData.SearchTerm !== '' ? 1 : (pageProperty.current?.PageNumber || 1)
+      };
+
+      getData().then(() => {
+        setLandingPageNameSearch(lastSearch.SearchTerm || landingPageNameSearch);
+        if (lastSearch.SearchTerm && lastSearch.SearchTerm !== '') {
+          handleSearch();
+        }
+        setPage((lastSearch?.SearchTerm && landingPageNameSearch) === '' ? lastSearch.PageNumber : 1);
+      });
+    }
+    else {
+      getData();
+    }
+  }
 
   const clearSearch = () => {
     setLandingPageNameSearch('');
     setSearchResults(null);
     setSearching(false);
+    ClearPageState();
+  }
+
+  const handleSearch = () => {
+    ClearPageState();
+    const searchTxt = landingPageNameSearch !== '' ? landingPageNameSearch : (pageProperty.current && pageProperty.current?.SearchTerm);
+    let sortData = landingPagesData?.filter((lp) => { return lp.Name.toLowerCase().indexOf(searchTxt.toLowerCase()) > -1 });
+    setSearchResults(sortData);
+    setSearching(true);
+    setPage(1);
+
+    SetPageState({
+      "PageName": "landingPagesManagement",
+      "PageNumber": 1,
+      "SearchTerm": searchTxt
+    });
   }
 
   const renderSearchLine = () => {
@@ -77,26 +126,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         handleSearch();
       }
     }
-    const handleSearch = () => {
-      const searchArray = [{
-        type: 'name',
-        campaignName: landingPageNameSearch
-      }];
 
-      const filtersObject = {
-        name: (row, values) => {
-          return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
-        }
-      }
-
-      let sortData = landingPagesData
-      searchArray.forEach(values => {
-        sortData = sortData.filter(row => filtersObject[values.type](row, values))
-      });
-      setSearchResults(sortData);
-      setSearching(true);
-      setPage(1);
-    }
 
     const handleKeyPress = (e) => {
       if (e.charCode === 13) {
@@ -168,7 +198,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching ? searchResults.length : landingPagesData.length} ${t('landingPages.landingPages')}`}
+            {`${isSearching ? searchResults?.length : landingPagesData?.length} ${t('landingPages.landingPages')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -213,7 +243,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   }
 
   const renderCellIcons = (row) => {
-    const { ID, IsPayment, PageLink, SurveyCount, Type, PageUrl, IsSurvey } = row
+    const { ID, IsPayment, PageLink, SurveyCount, Type, PageUrl, IsSurvey, IsNewEditor } = row
     const copyDataObject = {
       1: {
         icon: CopyIcon,
@@ -253,37 +283,36 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
     const iconsMap = [
       {
+        key: 'surveyGraph',
+        uIcon: FaChartPie,
+        lable: t('landingPages.SurveyExportTitle'),
+        remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
+        onClick: () => {
+          navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`, {
+            state: {
+              PageProperty: GetPageNyName('landingPagesManagement'),
+            }
+          })
+        },
+        rootClass: classes.paddingIcon,
+      },
+      {
         key: 'purchase/survey',
-        uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
-        lable: IsPayment ?
-          t('landingPages.PurchaseExportTitle')
-          : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
+        uIcon: ReportsIcon,
+        lable: t('landingPages.PurchaseExportTitle'),
+        remove: (windowSize === 'xs' || !IsPayment),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
         disable: accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) > -1,
         onClick: async () => {
-          if (IsPayment) {
-            const purchasesResponse = await dispatch(downloadReport(row));
-            const purchases = purchasesResponse?.payload;
-            const fields = purchases?.length > 0 && Object.keys(purchases[0]);
-            ExportFile({
-              data: purchases,
-              fileName: 'purchaseReport',
-              exportType: 'xls',
-              fields: fields
-            });
-          }
-          else {
-            const surveysResponse = await dispatch(exportSurvey(row));
-            const surveys = surveysResponse?.payload;
-            const fields = surveys?.length > 0 && Object.keys(surveys[0]);
-            ExportFile({
-              data: surveys,
-              fileName: 'surveyReport',
-              exportType: 'xls',
-              fields: fields
-            });
-          }
+          const purchasesResponse = await dispatch(downloadReport(ID));
+          const purchases = purchasesResponse?.payload;
+          const fields = purchases?.length > 0 && Object.keys(purchases[0]);
+          ExportFile({
+            data: purchases,
+            fileName: 'purchaseReport',
+            exportType: 'xls',
+            fields: fields
+          });
         }
       },
       {
@@ -304,7 +333,8 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         disable: !PageLink,
         rootClass: classes.paddingIcon,
         onClick: () => {
-          openInNewTab(PageLink)
+          const previewLink = `${sitePrefix}previewer/landingpage/${ID}`;
+          window.open(previewLink, '_blank');
         }
       },
       {
@@ -312,7 +342,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         uIcon: EditIcon,
         lable: t('landingPages.EditResource1.HeaderText'),
         remove: windowSize === 'xs',
-        href: `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
+        href: IsNewEditor ? `${sitePrefix}editor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${ID}` : `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -448,7 +478,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
   const seperateGroupNames = (groups) => {
     const splittedGroups = groups.split('##', -1);
-    if (splittedGroups.length === 1) {
+    if (splittedGroups?.length === 1) {
       return splittedGroups.join().replace('#', '');
     }
     return splittedGroups.join(', ').replace('#', '');
@@ -468,7 +498,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         />
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{seperateGroupNames(row.GroupNames)}</b></span>}
+          {row.GroupNames && row.GroupNames?.length > 0 && <span>{renderGroupNames()}<b>{seperateGroupNames(row.GroupNames)}</b></span>}
         </Typography>
       </>
 
@@ -584,10 +614,9 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-    let sortData = isSearching ? searchResults : landingPagesData;
     let rpp = parseInt(rowsPerPage)
-    sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
-    if (!sortData.length) {
+    const sortData = (isSearching ? searchResults : landingPagesData)?.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
+    if (!sortData?.length) {
       return (
         <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }} >
           <Typography>{t('common.NoDataTryFilter')}</Typography>
@@ -622,12 +651,19 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? searchResults.length : landingPagesData.length}
+        rows={isSearching ? searchResults?.length : landingPagesData?.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
-        onPageChange={setPage}
+        onPageChange={(e) => {
+          SetPageState({
+            "PageName": "landingPagesManagement",
+            "PageNumber": e,
+            "SearchTerm": landingPageNameSearch
+          });
+          setPage(e)
+        }}
       />
     )
   }

@@ -34,6 +34,8 @@ import FileUploads from './FileUploads.he.json';
 import affiliate from './Affiliate.he.json';
 import SubAccount from './SubAccount.he.json';
 import billing from './Billing.he.json';
+import TermsOfUse from './TermsOfUse.he.json'
+import WhatsappOnBoarding from './WhatsappOnBoarding.json';
 
 export const he = {
 	automations,
@@ -71,5 +73,7 @@ export const he = {
 	SimplyClub,
 	affiliate,
 	SubAccount,
-	billing
+	billing,
+	TermsOfUse,
+	WhatsappOnBoarding
 };
