@@ -322,7 +322,7 @@ const ClientSearchResult = ({ classes }) => {
         updatingObject["SentDate"] = t('sms.sendingTime');
       }
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID) {
-        updatingObject["SubmitDates"] = t('client.subscribedOn');
+        updatingObject["RegistrationOn"] = t('client.subscribedOn');
         // updatingObject["IsOptIn"] = t('landingPages.isOptIn');
       }
       updatingObject = {
