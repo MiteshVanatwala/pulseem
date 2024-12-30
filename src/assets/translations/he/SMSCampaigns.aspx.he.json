@@ -478,6 +478,7 @@
   "smsDialogWhen": "מתי",
   "smsDialogFor": "עבור",
   "smsSummaryDialogTotalRecipients": "סך הכל נמענים",
+  "smsSummaryDialogTotalVoiceRecipients": "סך הכל נמעני קול",
   "smsSummaryDetails": "פירוט",
   "smsSummaryClose": "סגור",
   "smsSummaryGroups": "קבוצות",
