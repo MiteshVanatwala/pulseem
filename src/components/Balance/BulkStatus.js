@@ -16,6 +16,8 @@ import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
 import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
+import { MdVoiceChat } from "react-icons/md";
+
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -27,7 +29,7 @@ const BulkStatus = ({ classes }) => {
   const dispatch = useDispatch();
   const Redirect = useRedirect();
 
-  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {} } = packagesDetails || {};
+  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
@@ -317,6 +319,29 @@ const BulkStatus = ({ classes }) => {
                   {t('dashboard.purchase')}
                   {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 </Button>}
+              </Grid>
+            </Grid>
+            <Divider />
+          </>)}
+          {SMSVC && SMSVC?.FeatureExist && (<>
+            <Grid
+              container
+              item sm={12} md={12} lg={12} xl={12}
+              className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+              justifyContent='space-between'
+            >
+              <Grid item md={11} xs={11}>
+                <MdVoiceChat className={classes.shoppingCartIcon} style={{opacity: '.3'}} />
+                <Typography className={classes.bulkTitle}>{t('common.smsVc')}</Typography>
+              </Grid>
+              <Grid item md={1}>
+                <Typography
+                  className={clsx(classes.bold)}
+                  title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
+                  aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
+                  {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(SMSVC)}`}
+                </Typography>
+
               </Grid>
             </Grid>
             <Divider />

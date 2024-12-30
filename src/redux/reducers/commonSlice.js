@@ -267,7 +267,8 @@ export const commonSlice = createSlice({
           DefaultCellNumber: data?.DefaultCellNumber,
           IsDirectAccount: data?.IsDirectAccount,
           SubAccountSettings: data?.SubAccountSettings,
-          DomainAddress: data?.DomainAddress
+          DomainAddress: data?.DomainAddress,
+          HasSmsVoice: data?.HasSmsVoice
         };
 
         state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
@@ -324,9 +325,9 @@ export const commonSlice = createSlice({
         })
       });
     builder
-    .addCase(GetAfterLoginInitialData.fulfilled, (state, { payload }) => {
-      state.WhatsAppPlatformID = get(payload, 'Data.WhatsappPlatformId', null)
-    });
+      .addCase(GetAfterLoginInitialData.fulfilled, (state, { payload }) => {
+        state.WhatsAppPlatformID = get(payload, 'Data.WhatsappPlatformId', null)
+      });
   },
   reducers: {
     updateDefaultFromEmail: (state, action) => {

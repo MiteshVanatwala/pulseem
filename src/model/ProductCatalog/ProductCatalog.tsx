@@ -431,6 +431,10 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       case 2:
         event = t('campaigns.cartAbandonment');
         break;
+      
+      case 3:
+        event = t('campaigns.lastViewedProduct');
+        break;
     }
     return event;
   }
