@@ -331,7 +331,7 @@ const BulkStatus = ({ classes }) => {
               justifyContent='space-between'
             >
               <Grid item md={11} xs={11}>
-                <MdVoiceChat className={classes.shoppingCartIcon} />
+                <MdVoiceChat className={classes.shoppingCartIcon} style={{opacity: '.3'}} />
                 <Typography className={classes.bulkTitle}>{t('common.smsVc')}</Typography>
               </Grid>
               <Grid item md={1}>
