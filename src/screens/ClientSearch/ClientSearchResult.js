@@ -323,7 +323,7 @@ const ClientSearchResult = ({ classes }) => {
         updatingObject["SentDate"] = t('sms.sendingTime');
       }
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID) {
-        updatingObject["SubmitDates"] = t('client.subscribedOn');
+        updatingObject["RegistrationOn"] = t('client.subscribedOn');
         // updatingObject["IsOptIn"] = t('landingPages.isOptIn');
       }
       updatingObject = {
@@ -641,7 +641,7 @@ const ClientSearchResult = ({ classes }) => {
       component: {
         mobile: ({ CreationDate = null, ...rest }) => (<>
           <Typography className={classes.bold}>
-            {t("sms.sendingTime")}
+            {t("client.subscribedOn")}
           </Typography>
           <Typography>
             {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FormID && CreationDate ? moment(CreationDate).format(DateFormats.DATE_TIME_24) : renderRegistrationDates(rest?.SubmitDates, rest?.ClientID)}
@@ -1423,7 +1423,7 @@ const ClientSearchResult = ({ classes }) => {
           )
         }
         <Typography className={classes.grayTextCell}>
-          {date ? `${text} ${date.format(DateFormats.DATE_TIME_24)}` : text}
+          {date ? `${text}-${date.format(DateFormats.DATE_TIME_24)}` : text}
         </Typography>
       </>
     );
@@ -1734,12 +1734,9 @@ const ClientSearchResult = ({ classes }) => {
             <Box className={classes.flex}>
               <Box className={clsx(classes.flex6, classes.w60)}>
                 <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
-                <Typography className={classes.elipsis}>
-                  {Email}
+                <Typography className={clsx(classes.elipsis, classes.dFlex)}>
+                  {Email}&nbsp;<Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
                 </Typography>
-              </Box>
-              <Box className={clsx(classes.flex4)}>
-                <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(true)}</Typography>
               </Box>
             </Box>
           </Box>
@@ -1747,10 +1744,7 @@ const ClientSearchResult = ({ classes }) => {
             <Box className={classes.flex}>
               <Box className={clsx(classes.flex6)}>
                 <Typography className={classes.bold}>{t("common.Cellphone")}</Typography>
-                <Typography >{Cellphone}</Typography>
-              </Box>
-              <Box className={clsx(classes.flex4)}>
-                <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(false)}</Typography>
+                <Typography className={classes.dFlex}>{Cellphone}&nbsp;<Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(false)})</Typography></Typography>
               </Box>
             </Box>
           </Box>
