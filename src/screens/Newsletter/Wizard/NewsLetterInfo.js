@@ -405,8 +405,15 @@ const NewsLetterInfo = ({ classes }) => {
                             }
                             else {
                                 if (obj && obj.ReplyTo && obj.FromEmail) {
-                                    setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
-                                    await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
+                                    setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
+                                    await dispatch(saveCampaignInfo({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
+
+                                    if (isFromAutomation) {
+                                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                                    }
+                                    else {
+                                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
+                                    }
                                 }
                             }
                             setShowDomainVerification(false);
