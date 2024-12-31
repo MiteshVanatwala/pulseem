@@ -36,6 +36,7 @@ const Integrations = ({ classes }: any) => {
       '4': { title: `${t('integrations.ecwid.title')}` },
       '5': { title: `${t('integrations.eShop.title')}` },
       '6': { title: `${t('integrations.wix.title')}` },
+      '10': { title: `${t('integrations.Klaviyo.title')}` },
     } as any;
 
     document.title = `${integrationTitles[tabValue].title} | ${t('master.pulseemSystem')}`;

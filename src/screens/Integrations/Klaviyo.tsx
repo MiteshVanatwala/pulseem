@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, MenuItem, FormControl } from "@material-ui/core";
+import { Box, Typography, Button, Grid, TextField, FormControlLabel, FormControl } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
 import { Loader } from "../../components/Loader/Loader";
-import { RunIntegrationService, authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
+import { authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
 import { KlaviyoModel, UnsubscribePreferenceType } from '../../Models/Integrations/Integration';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -24,8 +24,7 @@ const Klaviyo = ({ classes }: any) => {
   const dispatch = useDispatch();
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
   const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
-  const [showResetDialog, setShowResetDialog] = useState(false);
-  const [showManualFetchDialog, setManualFetchDialog] = useState(false);
+  const [dialogType, setDialogType] = useState<string>('');
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(false);
@@ -44,7 +43,8 @@ const Klaviyo = ({ classes }: any) => {
     DaysBackwards: null,
     IsDeleted: false,
     UnsubscribePreferenceTypeID: UnsubscribePreferenceType.None,
-    isSyncRecipients: false
+    isSyncRecipients: false,
+    IsInsertAsActive: false
   } as KlaviyoModel);
   const [isAuthenticated, setAuthenticated] = useState(false);
 
@@ -188,7 +188,8 @@ const Klaviyo = ({ classes }: any) => {
           UnsubscribePreferenceTypeID: 0,
           DaysBackwards: 1,
           IsDeleted: false,
-          isSyncRecipients: false
+          isSyncRecipients: false,
+          IsInsertAsActive: false
         });
         break;
       }
@@ -206,29 +207,11 @@ const Klaviyo = ({ classes }: any) => {
   }
 
   const resetStore = async () => {
-    setShowResetDialog(false);
     setShowLoader(true);
     const resetResponse = await dispatch(resetIntegration(LU_Plugin.Klaviyo)) as any;
     handleResetIntegrationResponse(resetResponse);
     setShowLoader(false);
-  }
-
-  const renderResetDialog = () => {
-    return (
-      <BaseDialog
-        classes={classes}
-        open={showResetDialog}
-        onClose={() => setShowResetDialog(false)}
-        onConfirm={() => resetStore()}
-        title=""
-      >
-        <Box className={clsx(classes.bodyTextDialog, classes.pb25)}>
-          <Typography>
-            {t("integrations.resetConfirmation")}
-          </Typography>
-        </Box>
-      </BaseDialog>
-    )
+    setDialogType('');
   }
 
   const authenticateStore = async () => {
@@ -301,6 +284,59 @@ const Klaviyo = ({ classes }: any) => {
       }
     }
   }
+
+  const renderResetDialog = () => ({
+    title: '',
+    showDivider: false,
+    content: (
+      <Box className={clsx(classes.bodyTextDialog, classes.pb25)}>
+        <Typography>
+          {t("integrations.resetConfirmation")}
+        </Typography>
+      </Box>
+    ),
+    onConfirm: async () => { resetStore() },
+    onClose: () => { setDialogType(''); }
+  })
+
+  const showNewRegisteredToActive = () => ({
+    title: t("common.notice"),
+    showDivider: false,
+    showDefaultButtons: false,
+    paperStyle: classes.maxWidth540,
+    content: (
+      <Typography style={{ wordBreak: 'break-word' }}>
+        <div>{RenderHtml(t("integrations.Klaviyo.newAsActiveDesc1"))}</div>
+        <div className={clsx(classes.pt5)}>{RenderHtml(t("integrations.Klaviyo.newAsActiveDesc2"))}</div>
+      </Typography>
+    ),
+    onConfirm: async () => {
+      setDialogType('');
+    },
+  })
+
+  const renderDialog = () => {
+		let currentDialog: any = {};
+		if (dialogType === 'resetDialog') {
+			currentDialog = renderResetDialog();
+		} else if (dialogType === 'newToActive') {
+			currentDialog = showNewRegisteredToActive();
+		}
+
+		if (dialogType) {
+			return (
+				dialogType && <BaseDialog
+					classes={classes}
+					open={dialogType}
+					onCancel={() => setDialogType('')}
+					onClose={() => setDialogType('')}
+					renderButtons={currentDialog?.renderButtons || null}
+					{...currentDialog}>
+					{currentDialog?.content}
+				</BaseDialog>
+			)
+		}
+	}
 
   return (
     <>
@@ -395,7 +431,7 @@ const Klaviyo = ({ classes }: any) => {
             </Grid>
             <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
               <Box className={clsx(windowSize !== 'xs' ? classes.justifyBetween : '')}>
-                <Box className={clsx(classes.pr10, classes.pe10)}>
+                <Box>
                   <Grid item xs={12}>
                     <FormControlLabel
                       style={{ display: 'flex', alignItems: 'start' }}
@@ -424,7 +460,7 @@ const Klaviyo = ({ classes }: any) => {
                     />
                   </Grid>
                 </Box>
-                <Box className={clsx(classes.pr10, classes.pe10)}>
+                {/* <Box className={clsx(classes.pr10, classes.pe10)}>
                   <Grid item xs={12}>
                     <FormControlLabel
                       style={{ display: 'flex', alignItems: 'start' }}
@@ -453,8 +489,8 @@ const Klaviyo = ({ classes }: any) => {
                     />
                   </Grid>
                   <Grid item xs={12} className={classes.pt20}>
-                    <Typography className={clsx(classes.bold, classes.font18)}>{t("common.remove")}</Typography>
-                    <FormControl className={clsx(classes.selectInputFormControl, classes.w100, classes.pt10)}>
+                    <Typography>{t("common.remove")}</Typography>
+                    <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
                       <Select
                         native
                         variant="standard"
@@ -486,20 +522,185 @@ const Klaviyo = ({ classes }: any) => {
                         <option value={UnsubscribePreferenceType.None}>{t('report.None')}</option>
                         <option value={UnsubscribePreferenceType.Email}>{t('common.email')}</option>
                         <option value={UnsubscribePreferenceType.Sms}>{t('common.SMS')}</option>
-                        <option value={UnsubscribePreferenceType.Both}>{t('common.both')}</option>
+                        <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</option>
                       </Select>
                     </FormControl>
                   </Grid>
-                </Box>
-              </Box >
-            </Grid >
+                </Box> */}
+              </Box>
+              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
+                <FormControlLabel
+                  style={{ display: 'flex', alignItems: 'start' }}
+                  control={
+                    <PulseemSwitch
+                      id={'UnsubscribePreferenceTypeID'}
+                      switchType='ios'
+                      classes={classes}
+                      checked={settings?.UnsubscribePreferenceTypeID > 0}
+                      height={20}
+                      width={48}
+                      className={{ [classes.rtlSwitch]: isRTL }}
+                      onChange={(e: any) => {
+                        handleSave({ ...settings, UnsubscribePreferenceTypeID: settings?.UnsubscribePreferenceTypeID === 0 ? UnsubscribePreferenceType.Both : UnsubscribePreferenceType.None });
+                      }}
+                    />
+                  }
+                  label={<Box className={classes.radio}>
+                    <Typography style={{ fontSize: "18px" }}>
+                      <b>{t("integrations.Klaviyo.unusbscribe")}</b>
+                    </Typography>
+                    <Typography style={{ maxWidth: 400, wordBreak: 'break-word' }}>
+                      {RenderHtml(t("integrations.Klaviyo.unsubscribeDesc"))}
+                    </Typography>
+                  </Box>}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
+                <Typography>{t("common.remove")}</Typography>
+                <FormControl className={clsx(classes.selectInputFormControl)} style={{ width: windowSize === 'xs' ? '100%' : '300px' }}>
+                  <Select
+                    native
+                    variant="standard"
+                    value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
+                    onChange={(event: any) => {
+                      setSettings({
+                        ...settings,
+                        UnsubscribePreferenceTypeID: event.target.value
+                      });
+
+                      handleSave({
+                        ...settings,
+                        UnsubscribePreferenceTypeID: event.target.value
+                      });
+                    }}
+                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300,
+                          direction: isRTL ? 'rtl' : 'ltr'
+                        },
+                      },
+                    }}
+                    style={{
+                      padding: 2
+                    }}
+                  >
+                    <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</option>
+                    <option value={UnsubscribePreferenceType.Email}>{t('integrations.Klaviyo.emailOnly')}</option>
+                    <option value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.SMSOnly')}</option>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
+                <Typography>{t("integrations.Klaviyo.unsubscribe")}</Typography>
+                <FormControl className={clsx(classes.selectInputFormControl)} style={{ width: windowSize === 'xs' ? '100%' : '300px' }}>
+                  <Select
+                    native
+                    variant="standard"
+                    value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
+                    onChange={(event: any) => {
+                      setSettings({
+                        ...settings,
+                        UnsubscribePreferenceTypeID: event.target.value
+                      });
+
+                      handleSave({
+                        ...settings,
+                        UnsubscribePreferenceTypeID: event.target.value
+                      });
+                    }}
+                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300,
+                          direction: isRTL ? 'rtl' : 'ltr'
+                        },
+                      },
+                    }}
+                    style={{
+                      padding: 2
+                    }}
+                  >
+                    <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</option>
+                    <option value={UnsubscribePreferenceType.Email}>{t('integrations.Klaviyo.emailOnly')}</option>
+                    <option value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.SMSOnly')}</option>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
+                <Typography>{t("integrations.Klaviyo.importFromKlaviyo")}</Typography>
+                <FormControl className={clsx(classes.selectInputFormControl)} style={{ width: windowSize === 'xs' ? '100%' : '300px' }}>
+                  <Select
+                    native
+                    variant="standard"
+                    value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
+                    onChange={(event: any) => {
+                      // setSettings({
+                      //   ...settings,
+                      //   UnsubscribePreferenceTypeID: event.target.value
+                      // });
+
+                      // handleSave({
+                      //   ...settings,
+                      //   UnsubscribePreferenceTypeID: event.target.value
+                      // });
+                    }}
+                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300,
+                          direction: isRTL ? 'rtl' : 'ltr'
+                        },
+                      },
+                    }}
+                    style={{
+                      padding: 2
+                    }}
+                  >
+                    <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.importAll')}</option>
+                    <option value={UnsubscribePreferenceType.Email}>{t('integrations.Klaviyo.importEmailsonly')}</option>
+                    <option value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.importCellphonesOnly')}</option>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
+                <FormControlLabel
+                  style={{ display: 'flex', alignItems: 'start' }}
+                  control={
+                    <PulseemSwitch
+                      id={'IsInsertAsActive'}
+                      switchType='ios'
+                      classes={classes}
+                      checked={settings?.IsInsertAsActive === true}
+                      height={20}
+                      width={48}
+                      className={{ [classes.rtlSwitch]: isRTL }}
+                      onChange={(e: any) => {
+                        handleSave({ ...settings, IsInsertAsActive: !settings?.IsInsertAsActive });
+                        if (!settings?.IsInsertAsActive) {
+                          setDialogType('newToActive');
+                        }
+                      }}
+                    />
+                  }
+                  label={<Box className={classes.radio}>
+                    <Typography style={{ fontSize: "18px" }}>
+                      <b>{t("integrations.Klaviyo.newAsActive")}</b>
+                    </Typography>
+                  </Box>}
+                />
+              </Grid>
+            </Grid>
           </Box>
         )
       }
       {isAuthenticated && <Box className={"formContainer"}>
         <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt20)}>
           <Button
-            onClick={() => setShowResetDialog(true)}
+            onClick={() => setDialogType('resetDialog')}
             variant='contained'
             size='medium'
             className={clsx(
@@ -513,7 +714,7 @@ const Klaviyo = ({ classes }: any) => {
         </Grid>
       </Box>}
       <Loader isOpen={showLoader} showBackdrop={true} />
-      {renderResetDialog()}
+      {renderDialog()}
     </>
   );
 };
