@@ -309,25 +309,21 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
     const iconsMap = [
       {
-        key: 'surveyGraph',
-        uIcon: SurveryResultsIcon,
-        lable:  `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        // key: IsNewEditor ? `${ID}_surveyGraph` : `${ID}_surveyExport`,
-        // uIcon: IsNewEditor ? FaChartPie : SurveryResultsIcon,
-        // lable: IsNewEditor ? t('landingPages.SurveyExportTitle') : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
+        key: IsNewEditor ? `${ID}_surveyGraph` : `${ID}_surveyExport`,
+        uIcon: IsNewEditor ? FaChartPie : SurveryResultsIcon,
+        lable: IsNewEditor ? t('landingPages.SurveyExportTitle') : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
         onClick: () => {
-          onExportSurvey(ID);
-          // if (IsNewEditor) {
-          //   navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`, {
-          //     state: {
-          //       PageProperty: GetPageNyName('landingPagesManagement'),
-          //     }
-          //   })
-          // }
-          // else {
-          //   onExportSurvey(ID);
-          // }
+          if (IsNewEditor) {
+            navigate(`${sitePrefix}LandingPages/SurveyDetails/${ID}`, {
+              state: {
+                PageProperty: GetPageNyName('landingPagesManagement'),
+              }
+            })
+          }
+          else {
+            onExportSurvey(ID);
+          }
         },
         rootClass: classes.paddingIcon,
       },
