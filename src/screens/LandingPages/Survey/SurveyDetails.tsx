@@ -242,12 +242,13 @@ const SurveyDetails = ({ classes }: any) => {
           <Grid container>
             {surveyResult && surveyResult?.map((item: SurveyResponse, idx: number) => {
               item.ID = !item.ID ? uuidv4() : item.ID;
+              const answerCount: any = item?.Answers.map(a => a.trim()).filter(a => a !== "")?.length;
               return <Grid item xs={12} key={`grid_${idx}`}>
                 <Paper elevation={2} key={idx} className={classes.surveyPapaerContainer}>
                   {item.QuestionType === eQuestionType.Text ? (
                     <ListSubheader className={clsx(classes.textAnswerDirection, classes.subHeaderInherit, classes.font16)}>
                       <b className={classes.font16}>{item?.Question?.replace('&nbsp;', '')}</b>&nbsp;({renderQuestionType(item.QuestionType)})
-                      <Box className={classes.font16}>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
+                      <Box className={classes.font16}>{`${answerCount} ${t('common.Comments')}`}</Box>
                     </ListSubheader>
                   ) : (
                     <Box className={classes.p15}>
@@ -272,7 +273,7 @@ const SurveyDetails = ({ classes }: any) => {
                                     setSurveyResult(newArr);
                                   },
                                   Title: 'show as Pie',
-                                  Enabled: item.ShowAsPie === true || (item.QuestionType === eQuestionType.SingleSelect && item.ShowAsPie === undefined)
+                                  Enabled: item?.ShowAsPie === true
                                 },
                                 {
                                   ID: uuidv4(),
@@ -287,13 +288,13 @@ const SurveyDetails = ({ classes }: any) => {
                                     setSurveyResult(newArr);
                                   },
                                   Title: 'show as graph',
-                                  Enabled: item.ShowAsPie === false || (item.QuestionType === eQuestionType.MultipleSelect && item.ShowAsPie === undefined)
+                                  Enabled: item?.ShowAsPie === false || item.ShowAsPie === undefined
                                 }]}
                             />
                           </Box>
                         }
                       </Box>
-                      <Box className={classes.font16}>{`${item?.Answers.length} ${t('common.Comments')}`}</Box>
+                      <Box className={classes.font16}>{`${answerCount} ${t('common.Comments')}`}</Box>
                     </Box>
                   )}
                   <Divider className={classes.mt15} />

@@ -242,37 +242,6 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </Grid>
           <Divider />
-          {
-            Mms.Credits > 0 && (
-              <>
-                <Grid
-                  container
-                  item sm={12} md={12} lg={12} xl={12}
-                  className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-                  justifyContent='space-between'
-                >
-                  <Grid item md={5} xs={4}>
-                    <SmsIcon className={classes.shoppingCartIcon} />
-                    <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
-                  </Grid>
-
-                  <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-                  </Grid>
-
-                  <Grid item md={1}>
-                    <Typography
-                      className={clsx(classes.bold)}
-                      title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
-                      aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
-                      {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
-                    </Typography>
-
-                  </Grid>
-                </Grid>
-                <Divider />
-              </>
-            )
-          }
           {Notifications.FeatureExist && (
             <>
               <Grid
@@ -323,6 +292,36 @@ const BulkStatus = ({ classes }) => {
             </Grid>
             <Divider />
           </>)}
+          {
+            Mms.Credits > 0 && (
+              <>
+                <Grid
+                  container
+                  item sm={12} md={12} lg={12} xl={12}
+                  className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+                  justifyContent='space-between'
+                >
+                  <Grid item md={4} xs={4}>
+                    <SmsIcon className={classes.shoppingCartIcon} />
+                    <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
+                  </Grid>
+                  <Grid item md={1} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                    <Typography
+                      className={clsx(classes.bold)}
+                      title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
+                      aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
+                      {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
+                    </Typography>
+                  </Grid>
+                  <Grid item md={5} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                    &nbsp;
+                  </Grid>
+                </Grid>
+                <Divider />
+              </>
+            )
+          }
+
           {SMSVC && SMSVC?.FeatureExist && (<>
             <Grid
               container
@@ -330,11 +329,11 @@ const BulkStatus = ({ classes }) => {
               className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
               justifyContent='space-between'
             >
-              <Grid item md={11} xs={11}>
-                <MdVoiceChat className={classes.shoppingCartIcon} style={{opacity: '.3'}} />
+              <Grid item md={4} xs={4}>
+                <MdVoiceChat className={classes.shoppingCartIcon} style={{ opacity: '.3' }} />
                 <Typography className={classes.bulkTitle}>{t('common.smsVc')}</Typography>
               </Grid>
-              <Grid item md={1}>
+              <Grid item md={1} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
                 <Typography
                   className={clsx(classes.bold)}
                   title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
@@ -343,8 +342,10 @@ const BulkStatus = ({ classes }) => {
                 </Typography>
 
               </Grid>
+              <Grid item md={5} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                &nbsp;
+              </Grid>
             </Grid>
-            <Divider />
           </>)}
         </Grid>
       </Paper>
