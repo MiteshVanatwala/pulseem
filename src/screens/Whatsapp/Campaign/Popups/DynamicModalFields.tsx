@@ -325,6 +325,24 @@ const DynamicModalFields = ({
 										>
 											{translator('common.latestAbandonment')}
 										</Button>
+										<Button
+											variant='outlined'
+											color='primary'
+											size='small'
+											className={clsx(
+												classes.btn,
+												classes.btnRounded,
+												classes.width160,
+												dynamicProductType === DynamicProductLink.LATEST_VIEWED_PRODUCT ? classes.redButton : ''
+											)}
+											onClick={() => setDynamicProductType(DynamicProductLink.LATEST_VIEWED_PRODUCT)}
+											style={{
+												marginLeft: windowSize === 'xs' ? 0 : 10,
+												marginTop: windowSize === 'xs' ? 10 : 5
+											}}
+										>
+											{translator('campaigns.lastViewedProduct')}
+										</Button>
 									</>
 								)
 							}

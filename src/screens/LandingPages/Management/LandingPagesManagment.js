@@ -309,7 +309,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
     const iconsMap = [
       {
-        key: IsNewEditor ? 'surveyGraph' : 'purchase/survey',
+        key: IsNewEditor ? `${ID}_surveyGraph` : `${ID}_surveyExport`,
         uIcon: IsNewEditor ? FaChartPie : SurveryResultsIcon,
         lable: IsNewEditor ? t('landingPages.SurveyExportTitle') : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (windowSize === 'xs' || (!IsSurvey || SurveyCount === 0)),
@@ -328,10 +328,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         rootClass: classes.paddingIcon,
       },
       {
-        // uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
-        // lable: IsPayment ? t('landingPages.PurchaseExportTitle') : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        //remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
-        key: 'purchase/survey',
+        key: `${ID}_purchase/survey`,
         uIcon: ReportsIcon,
         lable: t('landingPages.PurchaseExportTitle'),
         remove: (windowSize === 'xs' || !IsPayment),

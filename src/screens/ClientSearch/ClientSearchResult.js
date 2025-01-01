@@ -50,8 +50,8 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, SwitchStatusByCondition, SwitchIsOptIn } from '../../helpers/Export/ExportHelper';
-import { ClientStatus, DateFormats } from "../../helpers/Constants";
+import { HandleExportData, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
+import { ClientStatus, DateFormats, Separator } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getAllGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -64,9 +64,10 @@ import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
-import { getWhatsappError } from "../Whatsapp/Common";
+import { getMetaError, getWhatsappError } from "../Whatsapp/Common";
 import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 import { Link } from "react-router-dom";
+
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -103,7 +104,7 @@ const ClientSearchResult = ({ classes }) => {
     rowsPerPage,
     isRTL
   } = useSelector((state) => state.core);
-  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, WhatsAppPlatformID } = useSelector(state => state.common);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
@@ -787,13 +788,13 @@ const ClientSearchResult = ({ classes }) => {
           </Typography>
           <Typography className={classes.whatsappReportErrorCell}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(getWhatsappError(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         </>),
         web: ({ LogSms_ErrorType = '', ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(getWhatsappError(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         )
       },

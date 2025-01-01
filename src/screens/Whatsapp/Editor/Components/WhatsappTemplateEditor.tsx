@@ -11,11 +11,12 @@ import {
 	WhatsappCreatorProps,
 } from '../Types/WhatsappCreator.types';
 import clsx from 'clsx';
-import { Box, Button, makeStyles, Tooltip } from '@material-ui/core';
+import { Box, Button, Grid, makeStyles, Tooltip } from '@material-ui/core';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { ClassesType } from '../../../Classes.types';
 import { checkLanguage } from '../../Common';
 import { authenticationTypes } from '../../Constant';
+import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 
 const WhatsappTemplateEditor = ({
 	classes,
@@ -132,6 +133,32 @@ const WhatsappTemplateEditor = ({
 		return false;
 	};
 
+	const onAddText = (text: string) => {
+    text = text.trim();
+    let afterUpdateCharCount = templateText.length + text.length;
+    if (afterUpdateCharCount < 1024) {
+			const txtarea = document.getElementById('whatsapp-template-text') as HTMLTextAreaElement;
+			if (txtarea !== null) {
+				var startPos = txtarea.selectionStart || 0;
+				var endPos = txtarea.selectionEnd || 0;
+				var cursorPos = startPos;
+				setTemplateText(templateText.substring(0, startPos) + text + templateText.substring(endPos, templateText.length))
+				setTimeout(() => {
+					cursorPos += text.length;
+					txtarea.selectionStart = txtarea.selectionEnd = cursorPos;
+				}, 10);
+			}
+      focusOnMessage();
+    }
+  }
+
+	const focusOnMessage = () => {
+    const textArea = document.getElementById("whatsapp-template-text");
+    setTimeout(() => {
+      textArea?.focus();
+    }, 500)
+  }
+
 	return (
 		<>
 			<div className={classes.WhatsappTextareaWrapper}>
@@ -222,31 +249,44 @@ const WhatsappTemplateEditor = ({
 			{
 				category !== authenticationTypes.AUTHENTICATIONEN && category !== authenticationTypes.AUTHENTICATIONHEBREW && (
 					<Box className={classes.whatsappFuncDiv}>
-						<Box className={classes.whatsappBaseButtons}>
-							{actionButtons.map((button) => (
-								<Tooltip
-									disableFocusListener
-									title={<>{translator(button.tooltipTitle)}</>}
-									classes={{ tooltip: styles.customWidth }}
-									placement='top'
-									arrow
-									key={button.buttonTitle}>
-									{onButtonClick && (
-										<Button
-											className={clsx(
-												classes.btn,
-												classes.btnRounded,
-												isDisableButton(button.buttonTitle)
-													? classes.disabled
-													: null
+						<Grid container className={clsx(classes.h100)}>
+							<Grid item md={1} className={clsx(classes.pt10, classes.paddingSides10)}>
+								<EmojiPicker
+									classes={classes}
+									OnSelectEmoji={(emoji: any) => {
+										onAddText(emoji);
+									}}
+									boxStyles={{ alignItems: 'center' }}
+								/>
+							</Grid>
+							<Grid item md={11}>
+								<Box className={classes.whatsappBaseButtons}>
+									{actionButtons.map((button) => (
+										<Tooltip
+											disableFocusListener
+											title={<>{translator(button.tooltipTitle)}</>}
+											classes={{ tooltip: styles.customWidth }}
+											placement='top'
+											arrow
+											key={button.buttonTitle}>
+											{onButtonClick && (
+												<Button
+													className={clsx(
+														classes.btn,
+														classes.btnRounded,
+														isDisableButton(button.buttonTitle)
+															? classes.disabled
+															: null
+													)}
+													onClick={() => onButtonClick(button)}>
+													<>{translator(button.buttonTitle)}</>
+												</Button>
 											)}
-											onClick={() => onButtonClick(button)}>
-											<>{translator(button.buttonTitle)}</>
-										</Button>
-									)}
-								</Tooltip>
-							))}
-						</Box>
+										</Tooltip>
+									))}
+								</Box>
+							</Grid>
+						</Grid>
 					</Box>
 				)
 			}
