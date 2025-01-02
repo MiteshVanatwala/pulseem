@@ -493,7 +493,7 @@ const ClientSearchResult = ({ classes }) => {
     if (key === 'CreationDate' || key === 'Date') {
       setSearchData({
         ...searchData,
-        OrderBy: descSortDirection ? 0 : 1
+        OrderBy: descSortDirection ? 1 : 0
       });
       setSortDirection(!descSortDirection);
     }
@@ -1823,7 +1823,7 @@ const ClientSearchResult = ({ classes }) => {
               <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
                 onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.sortKey) }}
                 style={{ minWidth: 40 }}>
-                {descSortDirection ? <BiSortDown /> : <BiSortUp />}
+                {descSortDirection ? <BiSortUp /> : <BiSortDown />}
               </Button>
             </div>
           }
