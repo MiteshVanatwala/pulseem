@@ -492,6 +492,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         }
         else {
           setDialogType(null);
+          //@ts-ignore
+          saveRef.current = { ...saveRef.current, saveTemplate: false }
         }
         dispatch(getAllLPTemplatesBySubaccountId());
         setDialogType(null);
