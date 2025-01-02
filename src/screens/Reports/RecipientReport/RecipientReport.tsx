@@ -273,7 +273,7 @@ const RecipientReport = ({ classes }: any) => {
         <TablePagination
           style={{ 'justifyContent': 'center' } as any}
           classes={classes}
-          rows={recipientsReportData?.SmsCampaignStatistics?.Sent ?? 0}
+          rows={recipientsReportData?.SmsCampaignStatistics?.TotalSent ?? 0}
           rowsPerPage={5}
           page={filterRequest.SmsPageIndex}
           onPageChange={e => setFilterRequest({ ...filterRequest, SmsPageIndex: e })}
