@@ -56,6 +56,7 @@ export interface KlaviyoModel {
     IsDeleted: boolean;
     IntervalToRunService: string;
     UnsubscribePreferenceTypeID: UnsubscribePreferenceType;
+    EcommerceSyncOptionsID: number | null;
     isSyncRecipients?: boolean;
     IsInsertAsActive: boolean;
 }

@@ -8,7 +8,6 @@ import { Loader } from "../../components/Loader/Loader";
 import { authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
 import { KlaviyoModel, UnsubscribePreferenceType } from '../../Models/Integrations/Integration';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
-import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { StateType } from "../../Models/StateTypes";
@@ -22,8 +21,7 @@ import { IoIosArrowDown } from "react-icons/io";
 const Klaviyo = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { subAccountAllGroups } = useSelector((state: any) => state.group);
-  const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
+  const { isRTL } = useSelector((state: StateType) => state.core);
   const [dialogType, setDialogType] = useState<string>('');
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(false);
@@ -35,8 +33,7 @@ const Klaviyo = ({ classes }: any) => {
     DaysBackwards: '',
   });
   const [messages, setMessages] = useState({
-    authentication_message: '',
-    group_saved: ''
+    authentication_message: ''
   });
   const [settings, setSettings] = useState({
     ApiKey: '',
@@ -44,6 +41,7 @@ const Klaviyo = ({ classes }: any) => {
     IsDeleted: false,
     UnsubscribePreferenceTypeID: UnsubscribePreferenceType.None,
     isSyncRecipients: false,
+    EcommerceSyncOptionsID: UnsubscribePreferenceType.Both,
     IsInsertAsActive: false
   } as KlaviyoModel);
   const [isAuthenticated, setAuthenticated] = useState(false);
@@ -64,18 +62,13 @@ const Klaviyo = ({ classes }: any) => {
     setShowLoader(true);
     const settingResponse = await dispatch(getIntegration(LU_Plugin.Klaviyo)) as any;
     setShowLoader(false);
-    handleGetIntegrationResponse(settingResponse)
-    if (!subAccountAllGroups?.length) {
-      dispatch(getGroupsBySubAccountId());
-    }
+    handleGetIntegrationResponse(settingResponse);
     setIsPageLoading(false);
   }
 
   const handleSave = async (req: KlaviyoModel) => {
     setShowLoader(true);
-
     setSettings(req);
-
     setErrors({
       ...errors,
       unsubscribePreferenceTypeID: ''
@@ -93,48 +86,19 @@ const Klaviyo = ({ classes }: any) => {
   const handleSubmitFormResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        setMessages({
-          ...messages,
-          group_saved: t(`integrations.formSubmitResponses.201`),
-        });
-        setToastMessage({ severity: 'success', color: 'success', message: t(`integrations.formSubmitResponses.201`), showAnimtionCheck: false } as any);
-        setTimeout(() => {
-          setMessages({
-            ...errors,
-            group_saved: '',
-          });
-        }, 4000);
+        setToastMessage({ severity: 'success', color: 'success', message: t(`integrations.Klaviyo.integrationSaved`), showAnimtionCheck: false } as any);
         break;
       }
-      case 401: {
-        setErrors({
-          ...errors,
-          authentication_message: t(`integrations.formSubmitResponses.401`),
-        });
-        setToastMessage({ severity: 'error', color: 'error', message: t(`integrations.formSubmitResponses.401`), showAnimtionCheck: false } as any);
-        break;
-      }
+      case 400:
+      case 401:
       case 402:
-        setErrors({
-          ...errors,
-          authentication_message: t(`integrations.formSubmitResponses.402`),
-        });
-        setToastMessage({ severity: 'error', color: 'error', message: t(`integrations.formSubmitResponses.402`), showAnimtionCheck: false } as any);
-        break;
-      case 404: {
-        setErrors({
-          ...errors,
-          authentication_message: t(`integrations.authResponses.404`),
-        })
-        setToastMessage({ severity: 'error', color: 'error', message: t("integrations.authResponses.404"), showAnimtionCheck: false } as any);
-        break;
-      }
+      case 404:
       case 500: {
         setErrors({
           ...errors,
-          authentication_message: t(`integrations.formSubmitResponses.500`),
+          authentication_message: t(`integrations.formSubmitResponses.${response?.payload?.StatusCode}`),
         });
-        setToastMessage({ severity: 'error', color: 'error', message: t(`integrations.formSubmitResponses.500`), showAnimtionCheck: false } as any);
+        setToastMessage({ severity: 'error', color: 'error', message: t(`integrations.formSubmitResponses.${response?.payload?.StatusCode}`), showAnimtionCheck: false } as any);
         break;
       }
     }
@@ -189,6 +153,7 @@ const Klaviyo = ({ classes }: any) => {
           DaysBackwards: 1,
           IsDeleted: false,
           isSyncRecipients: false,
+          EcommerceSyncOptionsID: null,
           IsInsertAsActive: false
         });
         break;
@@ -429,106 +394,36 @@ const Klaviyo = ({ classes }: any) => {
                 <Typography style={{ fontSize: "18px", color: "#000" }}>{RenderHtml(t("integrations.Klaviyo.notice"))}</Typography>
               </Grid>
             </Grid>
-            <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.pb15, classes.pt14)}>
-              <Box className={clsx(windowSize !== 'xs' ? classes.justifyBetween : '')}>
-                <Box>
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      style={{ display: 'flex', alignItems: 'start' }}
-                      control={
-                        <PulseemSwitch
-                          id={'isSyncRecipients'}
-                          switchType='ios'
-                          classes={classes}
-                          checked={settings?.isSyncRecipients === true}
-                          height={20}
-                          width={48}
-                          className={{ [classes.rtlSwitch]: isRTL }}
-                          onChange={(e: any) => {
-                            handleSave({ ...settings, isSyncRecipients: !settings?.isSyncRecipients })
-                          }}
-                        />
-                      }
-                      label={<Box className={classes.radio}>
-                        <Typography style={{ fontSize: "18px" }}>
-                          <b>{t("integrations.Klaviyo.importListsAndRecipients")}</b>
-                        </Typography>
-                        <Typography style={{ maxWidth: 400, wordBreak: 'break-word' }}>
-                          {RenderHtml(t("integrations.Klaviyo.importListsAndRecipientsDesc"))}
-                        </Typography>
-                      </Box>}
+            <Grid container spacing={3}>
+              <Grid item md={5} xs={12}>
+                <FormControlLabel
+                  style={{ display: 'flex', alignItems: 'start' }}
+                  control={
+                    <PulseemSwitch
+                      id={'isSyncRecipients'}
+                      switchType='ios'
+                      classes={classes}
+                      checked={settings?.isSyncRecipients === true}
+                      height={20}
+                      width={48}
+                      className={{ [classes.rtlSwitch]: isRTL }}
+                      onChange={(e: any) => {
+                        handleSave({ ...settings, isSyncRecipients: !settings?.isSyncRecipients })
+                      }}
                     />
-                  </Grid>
-                </Box>
-                {/* <Box className={clsx(classes.pr10, classes.pe10)}>
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      style={{ display: 'flex', alignItems: 'start' }}
-                      control={
-                        <PulseemSwitch
-                          id={'UnsubscribePreferenceTypeID'}
-                          switchType='ios'
-                          classes={classes}
-                          checked={settings?.UnsubscribePreferenceTypeID > 0}
-                          height={20}
-                          width={48}
-                          className={{ [classes.rtlSwitch]: isRTL }}
-                          onChange={(e: any) => {
-                            handleSave({ ...settings, UnsubscribePreferenceTypeID: settings?.UnsubscribePreferenceTypeID === 0 ? UnsubscribePreferenceType.Both : UnsubscribePreferenceType.None });
-                          }}
-                        />
-                      }
-                      label={<Box className={classes.radio}>
-                        <Typography style={{ fontSize: "18px" }}>
-                          <b>{t("integrations.Klaviyo.unusbscribe")}</b>
-                        </Typography>
-                        <Typography style={{ maxWidth: 400, wordBreak: 'break-word' }}>
-                          {RenderHtml(t("integrations.Klaviyo.unsubscribeDesc"))}
-                        </Typography>
-                      </Box>}
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.pt20}>
-                    <Typography>{t("common.remove")}</Typography>
-                    <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
-                      <Select
-                        native
-                        variant="standard"
-                        value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
-                        onChange={(event: any) => {
-                          setSettings({
-                            ...settings,
-                            UnsubscribePreferenceTypeID: event.target.value
-                          });
+                  }
+                  label={<Box className={classes.radio}>
+                    <Typography style={{ fontSize: "18px" }}>
+                      <b>{t("integrations.Klaviyo.importListsAndRecipients")}</b>
+                    </Typography>
+                    <Typography style={{ maxWidth: 400, wordBreak: 'break-word' }}>
+                      {RenderHtml(t("integrations.Klaviyo.importListsAndRecipientsDesc"))}
+                    </Typography>
+                  </Box>}
+                />
+              </Grid>
 
-                          handleSave({
-                            ...settings,
-                            UnsubscribePreferenceTypeID: event.target.value
-                          });
-                        }}
-                        IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                        MenuProps={{
-                          PaperProps: {
-                            style: {
-                              maxHeight: 300,
-                              direction: isRTL ? 'rtl' : 'ltr'
-                            },
-                          },
-                        }}
-                        style={{
-                          padding: 2
-                        }}
-                      >
-                        <option value={UnsubscribePreferenceType.None}>{t('report.None')}</option>
-                        <option value={UnsubscribePreferenceType.Email}>{t('common.email')}</option>
-                        <option value={UnsubscribePreferenceType.Sms}>{t('common.SMS')}</option>
-                        <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</option>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </Box> */}
-              </Box>
-              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
+              <Grid item md={5} xs={12}>
                 <FormControlLabel
                   style={{ display: 'flex', alignItems: 'start' }}
                   control={
@@ -554,144 +449,102 @@ const Klaviyo = ({ classes }: any) => {
                     </Typography>
                   </Box>}
                 />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
-                <Typography>{t("common.remove")}</Typography>
-                <FormControl className={clsx(classes.selectInputFormControl)} style={{ width: windowSize === 'xs' ? '100%' : '300px' }}>
-                  <Select
-                    native
-                    variant="standard"
-                    value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
-                    onChange={(event: any) => {
-                      setSettings({
-                        ...settings,
-                        UnsubscribePreferenceTypeID: event.target.value
-                      });
 
-                      handleSave({
-                        ...settings,
-                        UnsubscribePreferenceTypeID: event.target.value
-                      });
-                    }}
-                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 300,
-                          direction: isRTL ? 'rtl' : 'ltr'
-                        },
-                      },
-                    }}
-                    style={{
-                      padding: 2
-                    }}
-                  >
-                    <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</option>
-                    <option value={UnsubscribePreferenceType.Email}>{t('integrations.Klaviyo.emailOnly')}</option>
-                    <option value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.SMSOnly')}</option>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
-                <Typography>{t("integrations.Klaviyo.unsubscribe")}</Typography>
-                <FormControl className={clsx(classes.selectInputFormControl)} style={{ width: windowSize === 'xs' ? '100%' : '300px' }}>
-                  <Select
-                    native
-                    variant="standard"
-                    value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
-                    onChange={(event: any) => {
-                      setSettings({
-                        ...settings,
-                        UnsubscribePreferenceTypeID: event.target.value
-                      });
-
-                      handleSave({
-                        ...settings,
-                        UnsubscribePreferenceTypeID: event.target.value
-                      });
-                    }}
-                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 300,
-                          direction: isRTL ? 'rtl' : 'ltr'
-                        },
-                      },
-                    }}
-                    style={{
-                      padding: 2
-                    }}
-                  >
-                    <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</option>
-                    <option value={UnsubscribePreferenceType.Email}>{t('integrations.Klaviyo.emailOnly')}</option>
-                    <option value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.SMSOnly')}</option>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
-                <Typography>{t("integrations.Klaviyo.importFromKlaviyo")}</Typography>
-                <FormControl className={clsx(classes.selectInputFormControl)} style={{ width: windowSize === 'xs' ? '100%' : '300px' }}>
-                  <Select
-                    native
-                    variant="standard"
-                    value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
-                    onChange={(event: any) => {
-                      // setSettings({
-                      //   ...settings,
-                      //   UnsubscribePreferenceTypeID: event.target.value
-                      // });
-
-                      // handleSave({
-                      //   ...settings,
-                      //   UnsubscribePreferenceTypeID: event.target.value
-                      // });
-                    }}
-                    IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 300,
-                          direction: isRTL ? 'rtl' : 'ltr'
-                        },
-                      },
-                    }}
-                    style={{
-                      padding: 2
-                    }}
-                  >
-                    <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.importAll')}</option>
-                    <option value={UnsubscribePreferenceType.Email}>{t('integrations.Klaviyo.importEmailsonly')}</option>
-                    <option value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.importCellphonesOnly')}</option>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.pb15, classes.pt14)}>
-                <FormControlLabel
-                  style={{ display: 'flex', alignItems: 'start' }}
-                  control={
-                    <PulseemSwitch
-                      id={'IsInsertAsActive'}
-                      switchType='ios'
-                      classes={classes}
-                      checked={settings?.IsInsertAsActive === true}
-                      height={20}
-                      width={48}
-                      className={{ [classes.rtlSwitch]: isRTL }}
-                      onChange={(e: any) => {
-                        handleSave({ ...settings, IsInsertAsActive: !settings?.IsInsertAsActive });
-                        if (!settings?.IsInsertAsActive) {
-                          setDialogType('newToActive');
-                        }
+                <Box className={clsx(classes.pt20)}>
+                  <Typography>{t("integrations.Klaviyo.unsubscribe")}</Typography>
+                  <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
+                    <Select
+                      native
+                      variant="standard"
+                      value={settings?.UnsubscribePreferenceTypeID || UnsubscribePreferenceType.None}
+                      onChange={(event: any) => {
+                        handleSave({
+                          ...settings,
+                          UnsubscribePreferenceTypeID: event.target.value
+                        });
                       }}
-                    />
-                  }
-                  label={<Box className={classes.radio}>
-                    <Typography style={{ fontSize: "18px" }}>
-                      <b>{t("integrations.Klaviyo.newAsActive")}</b>
-                    </Typography>
-                  </Box>}
-                />
+                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                      style={{
+                        padding: 2
+                      }}
+                    >
+                      <option value={UnsubscribePreferenceType.None}>{t('report.None')}</option>
+                      <option value={UnsubscribePreferenceType.Email}>{t('common.email')}</option>
+                      <option value={UnsubscribePreferenceType.Sms}>{t('common.SMS')}</option>
+                      <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.bothEmailSMS')}</option>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Grid>
+
+              <Grid item md={5} xs={12}>
+                <Box>
+                  <Typography>{t("integrations.Klaviyo.importFromKlaviyo")}</Typography>
+                  <FormControl className={clsx(classes.selectInputFormControl, classes.w100)}>
+                    <Select
+                      native
+                      variant="standard"
+                      value={settings?.EcommerceSyncOptionsID || UnsubscribePreferenceType.Both}
+                      onChange={(event: any) => {
+                        handleSave({
+                          ...settings,
+                          EcommerceSyncOptionsID: event.target.value
+                        });
+                      }}
+                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                      style={{
+                        padding: 2
+                      }}
+                    >
+                      <option value={UnsubscribePreferenceType.Both}>{t('integrations.Klaviyo.importAll')}</option>
+                      <option value={UnsubscribePreferenceType.Email}>{t('integrations.Klaviyo.importEmailsonly')}</option>
+                      <option value={UnsubscribePreferenceType.Sms}>{t('integrations.Klaviyo.importCellphonesOnly')}</option>
+                    </Select>
+                  </FormControl>
+                </Box>
+                <Box className={clsx(classes.pt20)}>
+                  <FormControlLabel
+                    style={{ display: 'flex', alignItems: 'start' }}
+                    control={
+                      <PulseemSwitch
+                        id={'IsInsertAsActive'}
+                        switchType='ios'
+                        classes={classes}
+                        checked={settings?.IsInsertAsActive === true}
+                        height={20}
+                        width={48}
+                        className={{ [classes.rtlSwitch]: isRTL }}
+                        onChange={(e: any) => {
+                          handleSave({ ...settings, IsInsertAsActive: !settings?.IsInsertAsActive });
+                          if (!settings?.IsInsertAsActive) {
+                            setDialogType('newToActive');
+                          }
+                        }}
+                      />
+                    }
+                    label={<Box className={classes.radio}>
+                      <Typography style={{ wordBreak: 'break-word', fontSize: '18px' }}>
+                        <b>{t("integrations.Klaviyo.newAsActive")}</b>
+                      </Typography>
+                    </Box>}
+                  />
+                </Box>
               </Grid>
             </Grid>
           </Box>
