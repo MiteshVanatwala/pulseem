@@ -434,7 +434,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
             if (response.payload?.StatusCode === 201) {
               if (isFromAutomation) {
-                window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${args.campaignId}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+                window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
               } else {
                 navigate(`${sitePrefix}landingpages/LandingPages/Summary/${args?.campaignId}`)
               }
@@ -447,7 +447,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           //@ts-ignore
           if (saveRef.current?.redirectAfterSave) {
             if (isFromAutomation) {
-              window.open(`/pulseem/CreateAutomations.aspx?AutomationID=${args.campaignId}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`, '_blank');
+              window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
             } else {
               localStorage.setItem('reloadLPBeeEditor', '1');
               //@ts-ignore
