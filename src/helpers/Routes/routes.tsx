@@ -303,7 +303,7 @@ export const getRoutes = (
         {
           title: t("master.FormTemplatesResource1.Text"),
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
-          isShow: true,
+          isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
         },
         {
           key: 'CreateLandingPage',
