@@ -729,6 +729,10 @@ const App = ({ screenSize }) => {
           element={<WebformSummary classes={classes} />}
         />
         <Route
+          path={`${sitePrefix}editor/:type/:id`}
+          element={<BeeEditor classes={classes} />}
+        />
+        <Route
           path={`${sitePrefix}AccountSettings/ExtraFields`}
           element={<ExtraFields classes={classes} />}
         />
