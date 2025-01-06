@@ -695,7 +695,59 @@ const App = ({ screenSize }) => {
   const renderRoutesByCondition = (classes, redirect) => {
     const ignoreCookie = getCookie('ignoreTerm')
     if (accountSettings && accountSettings?.SubAccountSettings?.IsTokenAccount) {
-      return tokenAccountRoutes(classes);
+      return <Routes>
+        <Route
+          path={`${sitePrefix}Groups`}
+          element={<Groups classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}ClientSearchResult`}
+          element={<ClientSearchResult classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}`}
+          element={<LandingPagesesManagment classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}EditRegistrationPage`}
+          element={<LandingPagesesManagment classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/Create`}
+          element={<CreateLandingPage classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/Create/:id`}
+          element={<CreateLandingPage classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
+          element={<SurveyDetails classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/summary/:id`}
+          element={<WebformSummary classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}AccountSettings/ExtraFields`}
+          element={<ExtraFields classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Previewer/:type/:id`}
+          element={<HtmlPreview classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Groups/Download`}
+          element={<DownloadFiles classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Groups/FileUploads`}
+          element={<FileUploads classes={classes} />}
+        />
+        <Route
+          path="*" element={<PageNotFound classes={classes} />}
+        />
+      </Routes>
     }
     if (!isAdmin && accountSettings && !accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount === 3 && ignoreCookie !== 'true') {
       return <Routes>
@@ -719,62 +771,6 @@ const App = ({ screenSize }) => {
       return renderRoutes(classes, redirect);
     }
 
-  }
-
-  const tokenAccountRoutes = ({ classes }) => {
-    return <Routes>
-      <Route
-        path={`${sitePrefix}Groups`}
-        element={<Groups classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}ClientSearchResult`}
-        element={<ClientSearchResult classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}`}
-        element={<LandingPagesesManagment classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}EditRegistrationPage`}
-        element={<LandingPagesesManagment classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}LandingPages/Create`}
-        element={<CreateLandingPage classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}LandingPages/Create/:id`}
-        element={<CreateLandingPage classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
-        element={<SurveyDetails classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}LandingPages/summary/:id`}
-        element={<WebformSummary classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}AccountSettings/ExtraFields`}
-        element={<ExtraFields classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}Previewer/:type/:id`}
-        element={<HtmlPreview classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}Groups/Download`}
-        element={<DownloadFiles classes={classes} />}
-      />
-      <Route
-        path={`${sitePrefix}Groups/FileUploads`}
-        element={<FileUploads classes={classes} />}
-      />
-      <Route
-        path="*" element={<PageNotFound classes={classes} />}
-      />
-    </Routes>
   }
 
   return (accountSettings || isSignup) && (
