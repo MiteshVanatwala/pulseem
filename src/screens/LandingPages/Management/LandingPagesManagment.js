@@ -38,7 +38,7 @@ import { FaChartPie } from "react-icons/fa";
 import { ClearPageState, GetPageNyName, SetPageState } from '../../../helpers/UI/SessionStorageManager';
 
 
-const LandingPagesesManagmentScreen = ({ classes }) => {
+const LandingPagesesManagment = ({ classes }) => {
   const navigate = useNavigate()
   const { windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { accountFeatures } = useSelector(state => state.common);
@@ -846,4 +846,4 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   )
 }
 
-export default LandingPagesesManagmentScreen
+export default LandingPagesesManagment
