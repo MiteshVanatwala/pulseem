@@ -447,7 +447,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           //@ts-ignore
           if (saveRef.current?.redirectAfterSave) {
             if (isFromAutomation) {
-              window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&landingPageid=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+              window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
             } else {
               localStorage.setItem('reloadLPBeeEditor', '1');
               //@ts-ignore
