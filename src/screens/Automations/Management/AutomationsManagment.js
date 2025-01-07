@@ -84,7 +84,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
       const filtersObject = {
         name: (row, values) => {
-          return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
+          return String(row?.Name?.toLowerCase()).includes(values?.campaineName?.toLowerCase());
         },
         date: (row, values) => {
           const { ModifiedDate, ActivatedOn } = row

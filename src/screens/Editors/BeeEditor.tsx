@@ -433,7 +433,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             response = await dispatch(publish(args?.campaignId));
 
             if (response.payload?.StatusCode === 201) {
-              navigate(`${sitePrefix}landingpages/LandingPages/Summary/${args?.campaignId}`)
+              if (isFromAutomation) {
+                window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+              } else {
+                navigate(`${sitePrefix}landingpages/LandingPages/Summary/${args?.campaignId}`)
+              }
             }
             else {
               // TODO: Handle publish response
@@ -442,10 +446,14 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
 
           //@ts-ignore
           if (saveRef.current?.redirectAfterSave) {
-            localStorage.setItem('reloadLPBeeEditor', '1');
-            //@ts-ignore
-            navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`);
-            return false;
+            if (isFromAutomation) {
+              window.location.href = `/pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&id=${args.campaignId}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+            } else {
+              localStorage.setItem('reloadLPBeeEditor', '1');
+              //@ts-ignore
+              navigate(saveRef.current?.redirectUrl ?? `${sitePrefix}LandingPages/Summary/${args.campaignId}`);
+              return false;
+            }
           }
           //@ts-ignore
           else if (saveRef.current?.showAnimation) {
@@ -759,6 +767,30 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           startIcon={<BiSave />}
           color="primary"
         >{t("common.save")}
+        </Button>
+        {/* @ts-ignore */}
+        <Button
+          onClick={() => {
+            setLoader(true);
+            saveRef.current = {
+              //@ts-ignore
+              ...saveRef.current,
+              showGroupPopup: showGroupSelection && selectedGroups?.length <= 0
+            };
+            saveDesign(true, null, false, true);
+          }}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.btn,
+            classes.btnRounded,
+            classes.backButton
+          )}
+          startIcon={<MdOutlinePublic />}
+          style={{ marginInlineStart: '8px' }}
+          color="primary"
+        >
+          {t('common.publish')}
         </Button>
         <Button onClick={() => {
           saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`, false);

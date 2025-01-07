@@ -38,6 +38,10 @@ import SubscriberGroup from './Tabs/SubscriberGroup';
 
 const CreateLandingPage = ({ classes }: ClassesType) => {
 	const { id } = useParams();
+	const queryParams = new URLSearchParams(window.location.search)
+	const isNew = queryParams.get("new")
+	const isFromAutomation = queryParams.get("FromAutomation")
+	const NodeToEdit = queryParams.get("NodeToEdit")
 	const dispatch: any = useDispatch();
 	const navigate = useNavigate();
 	const { t } = useTranslation();
@@ -636,6 +640,10 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 		const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && editorType === EditorType.BEE);
 		const pageId = id || savedPageID;
 		let redirectUrl = isBeeEditor ? `${sitePrefix}editor/${BEE_EDITOR_TYPES.LANDING_PAGE}/${pageId}` : `/Pulseem/NewWebForm/NewFormEdit/${pageId}?fromreact=true`;
+
+		if (isFromAutomation) {
+			redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
+		}
 
 		switch (editorType) {
 			case EditorType.BEE: {
