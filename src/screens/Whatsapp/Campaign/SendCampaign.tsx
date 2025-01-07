@@ -153,10 +153,11 @@ const SendCampaign = ({
 	});
 	
 	const [ pulseData, setPulseData ] = useState({
-		pulseAmount: "",
-		timeInterval: "",
+		pulseSettingsId: 0,
+		pulseAmount: 0,
+		timeInterval: 0,
 		pulseType: 2,
-		random: "",
+		random: 0,
 		timeType: 1,
 		pulsePer: "recipients",
 		pulseReci: "",
@@ -273,6 +274,7 @@ const SendCampaign = ({
 			const { payload: campaignSettings }: campaignSettingsData =
 				await dispatch<any>(getCampaignSettings(campaignID));
 			setIsLoader(false);
+			console.log(campaignSettings)
 			let apiGroups = campaignSettings?.Data?.Groups;
 			let apiFilterGroups = campaignSettings?.Data?.SendExeptional?.Groups;
 			let apiFilterCampaigns =
@@ -332,6 +334,26 @@ const SendCampaign = ({
 				);
 				setExceptionalDaysToggle(true);
 			}
+
+			const {
+				PulseSettings,
+				RandomSettings
+			} = campaignSettings?.Data;
+			setPulseData({
+				pulseSettingsId: PulseSettings?.PulseSettingsId || 0,
+				pulseAmount: PulseSettings?.PulseAmount || 0,
+				timeInterval: PulseSettings?.TimeInterval || 0,
+				pulseType: PulseSettings?.PulseType || 0,
+				random: RandomSettings?.RandomAmount || 0,
+				timeType: PulseSettings?.TimeType || 0,
+				pulsePer: PulseSettings?.PulseType === 2 ? "recipients" : "percent",
+				pulseReci: PulseSettings?.PulseType === 2 ? "Recipients" : "",
+				minName: PulseSettings?.TimeType === 1 ? "mins" : "",
+				hourName: PulseSettings?.TimeType === 2 ? "Hours" : "",
+				togglePulse: PulseSettings?.PulseSettingsId !== -1 ? true : false,
+				toggleRandom: RandomSettings?.RandomAmount !== 0 ? true : false,
+				pulsesOpen: false
+			})
 		}
 	};
 
@@ -411,6 +433,16 @@ const SendCampaign = ({
 					),
 					ExceptionalDays: exceptionalDaysToggle ? Number(exceptionalDays) : 0,
 				},
+				PulseSettings: {
+					PulseSettingsId: pulseData.pulseSettingsId,
+					PulseAmount: pulseData.pulseAmount,
+					PulseType: pulseData.pulseType,
+					TimeInterval: pulseData.timeInterval,
+					TimeType: pulseData.timeType
+				},
+				RandomSettings: {
+					RandomAmount: pulseData.random
+				}
 			};
 			if (sendType === '2') {
 				saveCampaignSettingsPayload['FutureDateTime'] = `${moment(sendDate)

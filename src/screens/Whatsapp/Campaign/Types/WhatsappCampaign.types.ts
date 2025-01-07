@@ -548,6 +548,13 @@ export type ApiSaveCampaignSettingsData = {
 		sendhour?: string;
 	};
 	FutureDateTime?: string;
+	PulseSettings?: {
+		PulseAmount: number;
+		PulseSettingsId: number;
+		PulseType: number;
+		TimeInterval: number;
+		TimeType: number;
+	};
 };
 
 export type ApiSaveCampaignSettingsPayload = {
@@ -634,6 +641,17 @@ export type campaignSettingsPayloadData = {
 		Campaigns?: number[];
 		ExceptionalDays?: number;
 		ExceptionalID?: number;
+	};
+	PulseSettings?: {
+		PulseAmount: number;
+		PulseSettingsId: number;
+		PulseType: number;
+		TimeInterval: number;
+		TimeType: number;
+	};
+	RandomSettings?: {
+		ID: number;
+		RandomAmount: number;
 	};
 	SpecialSettings?: {
 		DateFieldID?: number;
