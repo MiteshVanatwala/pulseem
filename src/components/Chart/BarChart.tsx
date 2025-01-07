@@ -55,7 +55,8 @@ const PulseemBarChart = ({ data, onChartClick, yAxis, title, colors, labels, gri
       layout="horizontal"
       margin={{ left: gridSize === 1 ? 400 : 250 }}
       barLabel={(item, context) => {
-        return `${item.value} (${data.filter((e: any) => e.answer === item.value)[0]?.percentage})`;
+        //@ts-ignore
+        return item?.value > 0 ? `${item.value} (${data.filter((e: any) => e.answer === item.value)[0]?.percentage})` : '';
       }}
       sx={{
         [`& .${barLabelClasses.root}`]: {
