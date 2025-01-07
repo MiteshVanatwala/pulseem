@@ -135,7 +135,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 			const {
 				businessInfo, phoneNumbers
 			} = Data;
-			console.log(Data)
 			setBusinessInfo(businessInfo);
 			setPhoneNumbers(phoneNumbers);
 		} else if (StatusCode === 4) {
