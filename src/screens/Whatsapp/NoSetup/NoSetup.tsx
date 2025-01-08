@@ -8,9 +8,9 @@ import { Link } from '@mui/material';
 import { WhiteLabelObject } from '../../../components/WhiteLabel/WhiteLabelMigrate';
 import { useEffect, useState } from 'react';
 
-const NoSetup = ({ classes, isCompact = false }: NoSetupProps) => {
+const NoSetup = ({ classes, isCompact = false, customMessage = '' }: NoSetupProps) => {
 	const { t: translator } = useTranslation();
-
+	const { windowSize } = useSelector((state: any) => state.core);
 	const { accountSettings } = useSelector((state: any) => state.common);
 	const [isWhiteLabel, setIsWhiteLabel] = useState<boolean>(false);
 
@@ -21,10 +21,18 @@ const NoSetup = ({ classes, isCompact = false }: NoSetupProps) => {
 
 	return (
 		<Grid container className={clsx(classes.whatsappNoSetupPage, isCompact ? classes.hAuto : '')}>
-			<Box>
+			<Box className={clsx(windowSize !== 'xs' ? classes.w30 : null)}>
 				<Box className={classes.whatsappNoSetupMessageWrapper}>
-					<div>{translator('whatsappCampaign.setupMessage1')}</div>
-					<div>{translator('whatsappCampaign.setupMessage2')}</div>
+					{
+						customMessage !== '' ? (
+							<div>{customMessage}</div>
+						) : (
+							<>
+								<div>{translator('whatsappCampaign.setupMessage1')}</div>
+								<div>{translator('whatsappCampaign.setupMessage2')}</div>
+							</>
+						)
+					}
 				</Box>
 				<Box className={classes.whatsappNoSetupContactWrapper}>
 					<Button className={classes.whatsappNoSetupContactButton}>

@@ -3,9 +3,7 @@ import { Box, Checkbox, FormControl, ListItemText, MenuItem, Select } from '@mat
 import 'moment/locale/he';
 import { IoIosArrowDown } from 'react-icons/io';
 import { useTranslation } from 'react-i18next';
-import { CampaignType } from '../../../../Models/Common/CampaignTypes';
-import { useEffect, useState } from 'react';
-
+import { CampaignType, M_AllCampaignChannelds } from '../../../../Models/Common/CampaignTypes';
 
 interface CampaignArgs {
   classes: any | never;
@@ -16,13 +14,9 @@ interface CampaignArgs {
 
 const SelectCampaignType = (args: CampaignArgs) => {
   const { t } = useTranslation();
-  const [allSelected, setAllSelected] = useState<boolean>(false);
 
   const { classes, Value, Disabled, OnUpdate }: CampaignArgs = args;
 
-  useEffect(() => {
-    setAllSelected(Value?.split(',')?.length > 3)
-  }, [Value]);
 
   return <>
     <FormControl
@@ -33,13 +27,13 @@ const SelectCampaignType = (args: CampaignArgs) => {
         disabled={Disabled}
         variant='standard'
         multiple
-        value={Value?.split(',') || []}
+        value={Value?.split(',') || M_AllCampaignChannelds}
         onChange={OnUpdate}
         IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-        className={clsx(classes.w100, classes.mt10, Disabled ? classes.disabled : null, (Value === null || Value === '') && classes.error)}
+        className={clsx(classes.w100, classes.mt10, Disabled ? classes.disabled : null)}
         renderValue={() => {
           const arr: string[] = [];
-          if (Value?.indexOf('0') > -1 || allSelected) {
+          if (!Value || Value?.indexOf('0') > -1) {
             return <Box className={classes.elipsis} style={{ maxWidth: 'calc(100% - 30px)' }}>{t('common.allChannels')}</Box>;
           }
 
@@ -70,19 +64,19 @@ const SelectCampaignType = (args: CampaignArgs) => {
         }}
       >
         <MenuItem key={CampaignType.All} value={CampaignType.All}>
-          <Checkbox checked={(Value?.indexOf(CampaignType.All) > -1 || allSelected)} />
+          <Checkbox checked={(!Value || Value?.indexOf(CampaignType.All) > -1)} />
           <ListItemText primary={t('common.allChannels')} />
         </MenuItem>
         <MenuItem key={CampaignType.Newsletter} value={CampaignType.Newsletter}>
-          <Checkbox disabled={Value?.indexOf(CampaignType.All) > -1} checked={Value?.indexOf(CampaignType.All) > -1 || Value?.indexOf(CampaignType.Newsletter) > -1} />
+          <Checkbox disabled={Value?.indexOf(CampaignType.All) > -1} checked={!Value || Value?.indexOf(CampaignType.All) > -1 || Value?.indexOf(CampaignType.Newsletter) > -1} />
           <ListItemText primary={t('master.RadMenuItemResource12.Text')} />
         </MenuItem>
         <MenuItem key={CampaignType.SMS} value={CampaignType.SMS}>
-          <Checkbox disabled={Value?.indexOf(CampaignType.All) > -1} checked={Value?.indexOf(CampaignType.All) > -1 || Value?.indexOf(CampaignType.SMS) > -1} />
+          <Checkbox disabled={Value?.indexOf(CampaignType.All) > -1} checked={!Value || Value?.indexOf(CampaignType.All) > -1 || Value?.indexOf(CampaignType.SMS) > -1} />
           <ListItemText primary={t('master.RadMenuItemResource100.Text')} />
         </MenuItem>
         <MenuItem key={CampaignType.Whatsapp} value={CampaignType.Whatsapp}>
-          <Checkbox disabled={Value?.indexOf(CampaignType.All) > -1} checked={Value?.indexOf(CampaignType.All) > -1 || Value?.indexOf(CampaignType.Whatsapp) > -1} />
+          <Checkbox disabled={Value?.indexOf(CampaignType.All) > -1} checked={!Value || Value?.indexOf(CampaignType.All) > -1 || Value?.indexOf(CampaignType.Whatsapp) > -1} />
           <ListItemText primary={t('master.whatsapp')} />
         </MenuItem>
       </Select>

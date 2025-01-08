@@ -41,4 +41,7 @@ export interface WebForm {
     CreatedDate: Date | string | null;
     UpdatedDate: Date | string | null;
     WebFormsToGroups: WebFormToGroup[];
+    JsonData: string | any | null;
+    HtmlData: string | any | null;
+    Blocks: string | any | null;
 }

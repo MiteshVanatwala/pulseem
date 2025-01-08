@@ -52,45 +52,41 @@ const SubscriberGroup = ({ classes, data, onUpdate, onShowTestGroups, errors }: 
     }, [data, subAccountAllGroups]);
 
     return (
-        <Grid container spacing={3} className={clsx(classes.p15)}>
-            <Grid item md={12} xs={12}>
-                <Box>
-                    <Groups
-                        classes={classes}
-                        list={
-                            subAccountAllGroups
-                        }
-                        // @ts-ignore
-                        showTestGroups={false}
-                        // test={showTestGroups}
-                        selectedList={selectedGroups}
-                        //@ts-ignore
-                        callbackSelectedGroups={callbackUpdateGroups}
-                        //@ts-ignore
-                        callbackSelectAll={callbackSelectAll}
-                        //@ts-ignore
-                        callbackShowTestGroup={() => onShowTestGroups(!showTestGroups)}
-                        callbackUpdateGroups={onRemoveGroup}
-                        showSortBy={true}
-                        showFilter={false}
-                        showSelectAll={true}
-                        isFilterSelected={false}
-                        bsDot={null}
-                        isNotifications={false}
-                        isSms={false}
-                        isCampaign={false}
-                        noSelectionText={''}
-                        //@ts-ignore
-                        innerHeight={325}
-                    />
-                    <Box className='textBoxWrapper'>
-                        <Typography className={clsx(errors.group ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                            {errors.group ?? errors.group}
-                        </Typography>
-                    </Box>
-                </Box>
-            </Grid>
-        </Grid>
+        <Box>
+            <Groups
+                classes={classes}
+                list={
+                    subAccountAllGroups
+                }
+                // @ts-ignore
+                showTestGroups={false}
+                // test={showTestGroups}
+                selectedList={selectedGroups}
+                //@ts-ignore
+                callbackSelectedGroups={callbackUpdateGroups}
+                //@ts-ignore
+                callbackSelectAll={callbackSelectAll}
+                //@ts-ignore
+                callbackShowTestGroup={() => onShowTestGroups(!showTestGroups)}
+                callbackUpdateGroups={onRemoveGroup}
+                showSortBy={true}
+                showFilter={false}
+                showSelectAll={true}
+                isFilterSelected={false}
+                bsDot={null}
+                isNotifications={false}
+                isSms={false}
+                isCampaign={false}
+                noSelectionText={''}
+                //@ts-ignore
+                innerHeight={325}
+            />
+            <Box className='textBoxWrapper'>
+                <Typography className={clsx(errors.group ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                    {errors.group ?? errors.group}
+                </Typography>
+            </Box>
+        </Box>
     )
 }
 

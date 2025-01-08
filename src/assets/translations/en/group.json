@@ -45,7 +45,8 @@
     "incorrectValue": "One",
     "clickChannelRequired": "At least one campaign channel must be selected in order to search for customers who clicked",
     "notClickChannelRequired": "At least one campaign channel must be selected in order to search for customers who did not click",
-    "specificDateIsRequired": "Please select specific dates"
+    "specificDateIsRequired": "Please select specific dates",
+    "daysBackError": "Enter several days back"
   },
   "updateFrequency": "Update Frequency",
   "results": "Results",
@@ -57,6 +58,7 @@
   "daily": "Daily",
   "deleteUploadConfirmation": "Are you sure you want to cancel this upload?",
   "eCommerceEventNotice": "<b>Please notice:</b> These events will work only for accounts linked to eCommerce stores integrated with Pulseem.",
+  "typeGroupNameAutocomplete": "Type group name for Autocomplete",
   "uploadFiles": {
     "statuses": {
       "0": "Waiting For Upload",

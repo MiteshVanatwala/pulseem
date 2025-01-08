@@ -48,6 +48,9 @@ export interface Client {
     LastEmailClicked: Date | string | null;
     BestEmailOpenTime: number | null;
     AdditionalData: string[];
+    RegistrationOn: string;
+    SubmitDates: string[] | null | any;
+
 }
 
 export interface AddClientData {

@@ -30,7 +30,7 @@ const SmsSummary = ({ classes,
   const { t } = useTranslation();
   let totalFiletered = groups?.length > 0 && groups.reduce(function (a, b) {
     return parseInt(a) + parseInt(b['Recipients']);
-  }, 0) - summaryPayload.FinalCount;
+  }, 0) - (summaryPayload.FinalCount + summaryPayload.FinalVoiceCount);
 
   if (!totalFiletered || isNaN(totalFiletered)) {
     totalFiletered = 0;
@@ -80,6 +80,10 @@ const SmsSummary = ({ classes,
                   {t("sms.smsSummaryDialogTotalRecipients")}:
                   <span className={classes.bodySum}> {summaryPayload.FinalCount?.toLocaleString()}</span>
                 </span>
+                {summaryPayload.FinalVoiceCount > 0 && <span className={classes.bodySum}>
+                  {t("sms.smsSummaryDialogTotalVoiceRecipients")}:
+                  <span className={classes.bodySum}> {summaryPayload.FinalVoiceCount?.toLocaleString()}</span>
+                </span>}
                 <Link onClick={() => { setdetailsHide(!detailsHide) }}
                   style={{
                     textDecoration: 'underline',
@@ -227,7 +231,7 @@ const SmsSummary = ({ classes,
                 classes.btn,
                 classes.btnRounded,
                 classes.middle,
-                summaryPayload.FinalCount <= 0 ? classes.disabled : null
+                (summaryPayload.FinalCount + summaryPayload.FinalVoiceCount) <= 0 ? classes.disabled : null
               )}
               style={{ marginInline: 15 }}>
 

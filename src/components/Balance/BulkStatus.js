@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PurchaseWizard from './PaymentWizard/PurchaseWizard';
-import { GoPackage } from 'react-icons/go/index';
+import { GoPackage } from 'react-icons/go';
 import { Grid, Paper, Typography, Button, Box, Divider } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +16,8 @@ import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
 import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
+import { MdVoiceChat } from "react-icons/md";
+
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -27,7 +29,7 @@ const BulkStatus = ({ classes }) => {
   const dispatch = useDispatch();
   const Redirect = useRedirect();
 
-  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {} } = packagesDetails || {};
+  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
@@ -240,37 +242,6 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </Grid>
           <Divider />
-          {
-            Mms.Credits > 0 && (
-              <>
-                <Grid
-                  container
-                  item sm={12} md={12} lg={12} xl={12}
-                  className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-                  justifyContent='space-between'
-                >
-                  <Grid item md={5} xs={4}>
-                    <SmsIcon className={classes.shoppingCartIcon} />
-                    <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
-                  </Grid>
-
-                  <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-                  </Grid>
-
-                  <Grid item md={1}>
-                    <Typography
-                      className={clsx(classes.bold)}
-                      title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
-                      aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
-                      {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
-                    </Typography>
-
-                  </Grid>
-                </Grid>
-                <Divider />
-              </>
-            )
-          }
           {Notifications.FeatureExist && (
             <>
               <Grid
@@ -320,6 +291,61 @@ const BulkStatus = ({ classes }) => {
               </Grid>
             </Grid>
             <Divider />
+          </>)}
+          {
+            Mms.Credits > 0 && (
+              <>
+                <Grid
+                  container
+                  item sm={12} md={12} lg={12} xl={12}
+                  className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+                  justifyContent='space-between'
+                >
+                  <Grid item md={4} xs={4}>
+                    <SmsIcon className={classes.shoppingCartIcon} />
+                    <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
+                  </Grid>
+                  <Grid item md={1} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                    <Typography
+                      className={clsx(classes.bold)}
+                      title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
+                      aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
+                      {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
+                    </Typography>
+                  </Grid>
+                  <Grid item md={5} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                    &nbsp;
+                  </Grid>
+                </Grid>
+                <Divider />
+              </>
+            )
+          }
+
+          {SMSVC && SMSVC?.FeatureExist && (<>
+            <Grid
+              container
+              item sm={12} md={12} lg={12} xl={12}
+              className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+              justifyContent='space-between'
+            >
+              <Grid item md={4} xs={4}>
+                <MdVoiceChat className={classes.shoppingCartIcon} style={{ opacity: '.3' }} />
+                <Typography className={classes.bulkTitle}>{t('common.smsVc')}</Typography>
+              </Grid>
+              <Grid item md={1} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                <Typography
+                  className={clsx(classes.bold)}
+                  title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
+                  aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
+                  {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(SMSVC)}`}
+                </Typography>
+
+              </Grid>
+              <Grid item md={5} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                &nbsp;
+              </Grid>
+            </Grid>
           </>)}
         </Grid>
       </Paper>

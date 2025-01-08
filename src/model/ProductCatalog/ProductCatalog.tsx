@@ -431,6 +431,10 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       case 2:
         event = t('campaigns.cartAbandonment');
         break;
+      
+      case 3:
+        event = t('campaigns.lastViewedProduct');
+        break;
     }
     return event;
   }
@@ -662,9 +666,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                             }}
                           >
                             <MenuItem value={EventTypes.All}>{t('campaigns.allEvents')}</MenuItem>
-                            {/* <MenuItem value={EventTypes.Page}>{t('campaigns.pageView')}</MenuItem> */}
                             <MenuItem value={EventTypes.Purchase}>{t('campaigns.purchase')}</MenuItem>
                             <MenuItem value={EventTypes.CartAbandon}>{t('campaigns.cartAbandonment')}</MenuItem>
+                            <MenuItem value={EventTypes.LastViewedProduct}>{t('campaigns.lastViewedProduct')}</MenuItem>
                           </Select>
                         </FormControl>
                       </div>

@@ -12,6 +12,9 @@ import {
   TableRow,
   TableCell,
   makeStyles,
+  List,
+  ListItem,
+  ListItemText,
 } from "@material-ui/core";
 import { ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
@@ -48,7 +51,7 @@ import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { ExportFile } from '../../helpers/Export/ExportFile';
 import { HandleExportData, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
-import { ClientStatus, DateFormats } from "../../helpers/Constants";
+import { ClientStatus, DateFormats, Separator } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getAllGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -61,8 +64,10 @@ import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
-import { getWhatsappError } from "../Whatsapp/Common";
+import { getMetaError, getWhatsappError } from "../Whatsapp/Common";
 import { getCookie, setCookie } from "../../helpers/Functions/cookies";
+import { Link } from "react-router-dom";
+
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -99,7 +104,7 @@ const ClientSearchResult = ({ classes }) => {
     rowsPerPage,
     isRTL
   } = useSelector((state) => state.core);
-  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, WhatsAppPlatformID } = useSelector(state => state.common);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
@@ -131,6 +136,7 @@ const ClientSearchResult = ({ classes }) => {
     FromDate: null,
     ToDate: null,
   });
+  const [showMoreElements, setShowMoreElements] = useState([]);
   const exportColumnHeader = useRef(null);
   const assignClientsActions =
   {
@@ -288,7 +294,7 @@ const ClientSearchResult = ({ classes }) => {
       let updatingObject = {
         "Status": t('common.Status'),
         "SmsStatus": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ? t('common.smsStatus') : t('common.whatsappStatus'),
-        "CreationDate": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
+        "CreationDate": t('common.CreationDate'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
         "Email": t("common.Mail"),
@@ -315,6 +321,10 @@ const ClientSearchResult = ({ classes }) => {
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID ||
         (searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID) {
         updatingObject["SentDate"] = t('sms.sendingTime');
+      }
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID) {
+        updatingObject["RegistrationOn"] = t('client.subscribedOn');
+        // updatingObject["IsOptIn"] = t('landingPages.isOptIn');
       }
       updatingObject = {
         ...updatingObject,
@@ -444,6 +454,9 @@ const ClientSearchResult = ({ classes }) => {
               // CSV not supporting numeric extra fields order.
               result = await SwitchStatusByCondition(result, ClientStatus.Email, true);
               result = await SwitchStatusByCondition(result, ClientStatus.Sms, false);
+              // if (searchData.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID) {
+              //   result = await SwitchIsOptIn(result);
+              // }
 
               ExportFile({
                 data: result,
@@ -480,7 +493,7 @@ const ClientSearchResult = ({ classes }) => {
     if (key === 'CreationDate' || key === 'Date') {
       setSearchData({
         ...searchData,
-        OrderBy: descSortDirection ? 0 : 1
+        OrderBy: descSortDirection ? 1 : 0
       });
       setSortDirection(!descSortDirection);
     }
@@ -556,6 +569,31 @@ const ClientSearchResult = ({ classes }) => {
       />
     </Grid>
     : null
+
+  const renderRegistrationDates = (datesString, rowIndex) => {
+    // setShowMoreElements
+    const exists = showMoreElements.indexOf(rowIndex) > -1;
+    return <Box>
+      <List>
+        {datesString?.slice(0, exists ? datesString.length : 1).map((regDate) => {
+          return <ListItem
+            key={regDate}
+            disableGutters
+            style={{ fontWeight: 700, padding: 0, margin: 0, marginTop: datesString?.length > 1 ? 15 : null }}
+          >
+            <Typography style={{ whiteSpace: 'nowrap', direction: 'ltr', fontWeight: 700 }}>{regDate}</Typography>
+          </ListItem>
+        })}
+      </List>
+      {datesString?.length > 1 &&
+        <Link
+          onClick={() => !exists ? setShowMoreElements([...showMoreElements, rowIndex]) : setShowMoreElements(showMoreElements.filter((x) => { return x !== rowIndex }))}
+          className={classes.alignCenter}
+          style={{ cursor: 'pointer', fontSize: 12, justifyContent: 'center' }}>{!exists ? t('common.SeeAll') : t('common.hide')}</Link>
+      }
+    </Box>
+  }
+
   const PageTypeObject = {
     '1': {
       title: t("common.OpenDate"),
@@ -603,15 +641,15 @@ const ClientSearchResult = ({ classes }) => {
       component: {
         mobile: ({ CreationDate = null, ...rest }) => (<>
           <Typography className={classes.bold}>
-            {t("sms.sendingTime")}
+            {t("client.subscribedOn")}
           </Typography>
           <Typography>
-            {CreationDate ? moment(CreationDate).format(DateFormats.DATE_TIME_24) : ''}
+            {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FormID && CreationDate ? moment(CreationDate).format(DateFormats.DATE_TIME_24) : renderRegistrationDates(rest?.SubmitDates, rest?.ClientID)}
           </Typography>
         </>),
         web: ({ CreationDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {CreationDate ? moment(CreationDate).format(DateFormats.DATE_TIME_24) : ''}
+            {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FormID && CreationDate ? moment(CreationDate).format(DateFormats.DATE_TIME_24) : renderRegistrationDates(rest?.SubmitDates, rest?.ClientID)}
           </Typography>
         )
       },
@@ -750,13 +788,13 @@ const ClientSearchResult = ({ classes }) => {
           </Typography>
           <Typography className={classes.whatsappReportErrorCell}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(getWhatsappError(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         </>),
         web: ({ LogSms_ErrorType = '', ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
             {/* {LogSms_ErrorType} */}
-            {LogSms_ErrorType && t(getWhatsappError(LogSms_ErrorType))}
+            {LogSms_ErrorType && t(LogSms_ErrorType.indexOf(Separator) === -1 ? getWhatsappError(LogSms_ErrorType) : getMetaError(LogSms_ErrorType))}
           </Typography>
         )
       },
@@ -809,6 +847,12 @@ const ClientSearchResult = ({ classes }) => {
       className: classes.flex3,
       align: "center",
     },
+    // searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID && {
+    //   label: t('landingPages.isOptIn'),
+    //   classes: cellStyle,
+    //   className: classes.flex2,
+    //   align: "center",
+    // },
   ];
   const getData = async () => {
     setLoader(true);
@@ -1379,16 +1423,17 @@ const ClientSearchResult = ({ classes }) => {
           )
         }
         <Typography className={classes.grayTextCell}>
-          {date ? `${text} ${date.format(DateFormats.DATE_TIME_24)}` : text}
+          {date ? `${text}-${date.format(DateFormats.DATE_TIME_24)}` : text}
         </Typography>
       </>
     );
   };
   const renderWebNameCell = (row, fullwidth) => {
     let date = null;
-    const { FirstName, LastName, CreationDate } = row;
+    const { FirstName, LastName, CreationDate, SubmitDates } = row;
     let text = t("common.UpdatedOn");
-    date = CreationDate ? moment(CreationDate, dateFormat) : null;
+    const d = SubmitDates[0] || CreationDate;
+    date = d ? moment(d, dateFormat) : null;
     return (
       <Grid container spacing={1}>
         <Grid item sm={12} style={{ textAlign: 'start' }}>
@@ -1417,7 +1462,7 @@ const ClientSearchResult = ({ classes }) => {
   };
   const RenderWebRow = (row) => {
     //TODO: Translation left, confirm keys
-    // const { t } = useTranslation();
+    // const {t} = useTranslation();
     const {
       Revenue,
       ClientID,
@@ -1433,7 +1478,9 @@ const ClientSearchResult = ({ classes }) => {
       LastSendDate,
       snt_OpeningDate,
       ErrorTypeText,
-      OpenTime
+      OpenTime,
+      SubmitDates,
+      IsOptIn
     } = row;
     let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
       return e === true
@@ -1556,7 +1603,8 @@ const ClientSearchResult = ({ classes }) => {
           <Grid container direction="row">
             <Grid item sm={12 - iconsCells}>
               {/* {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })} */}
-              {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate })}
+              {/* {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate, SubmitDates, IsOptIn })} */}
+              {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate, SubmitDates })}
             </Grid>
           </Grid>
         </TableCell>
@@ -1577,6 +1625,8 @@ const ClientSearchResult = ({ classes }) => {
               CreationDate: CreationDate,
               LogSms_ErrorType: ErrorTypeText,
               OpenTime: OpenTime,
+              SubmitDates: SubmitDates,
+              ClientID: ClientID
             })}
           </TableCell>}
         <TableCell classes={cellStyle} align="center" className={classes.flex4}>
@@ -1597,7 +1647,7 @@ const ClientSearchResult = ({ classes }) => {
                     style={{ fontWeight: "bold" }}
                     placement={"top"}
                     title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
-                    text={`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}
+                    text={<Box style={{ direction: 'ltr' }}>{`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}</Box>}
                   >
                   </CustomTooltip>
                 ),
@@ -1634,6 +1684,9 @@ const ClientSearchResult = ({ classes }) => {
             align="center"
           />
         </TableCell>
+        {/* {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID && <TableCell classes={cellStyle} align="center" className={classes.flex2} style={{ border: 'none' }}>
+          {IsOptIn ? <Typography className={clsx(classes.sendIconText, classes.bold)}>{t('landingPages.approved')}</Typography> : <Typography className={clsx(classes.grayTextCell, classes.bold)}>{t('landingPages.notApproved')}</Typography>}
+        </TableCell>} */}
       </TableRow>
     );
   };
@@ -1648,7 +1701,8 @@ const ClientSearchResult = ({ classes }) => {
       Cellphone,
       LogSms_ErrorType,
       LastSendDate,
-      snt_OpeningDate
+      snt_OpeningDate,
+      SubmitDates
     } = row;
 
     const switchStatus = (isEmail) => {
@@ -1673,25 +1727,16 @@ const ClientSearchResult = ({ classes }) => {
               {renderPhoneNameCell(row)}
             </Box>
             <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
-              {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType, SentDate: SentDate })}
-              {/* <Typography className={classes.bold}>
-                {t("common.campaignRevenue")}
-              </Typography>
-              <Typography>
-                {Revenue}
-              </Typography> */}
+              {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType, SentDate: SentDate, SubmitDates: SubmitDates })}
             </Box>
           </Box>
           <Box className={clsx(classes.mt5)} style={{ maxWidth: '90%' }}>
             <Box className={classes.flex}>
               <Box className={clsx(classes.flex6, classes.w60)}>
                 <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
-                <Typography className={classes.elipsis}>
-                  {Email}
+                <Typography className={clsx(classes.elipsis, classes.dFlex)}>
+                  {Email}&nbsp;<Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(true)})</Typography>
                 </Typography>
-              </Box>
-              <Box className={clsx(classes.flex4)}>
-                <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(true)}</Typography>
               </Box>
             </Box>
           </Box>
@@ -1699,10 +1744,7 @@ const ClientSearchResult = ({ classes }) => {
             <Box className={classes.flex}>
               <Box className={clsx(classes.flex6)}>
                 <Typography className={classes.bold}>{t("common.Cellphone")}</Typography>
-                <Typography >{Cellphone}</Typography>
-              </Box>
-              <Box className={clsx(classes.flex4)}>
-                <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{switchStatus(false)}</Typography>
+                <Typography className={classes.dFlex}>{Cellphone}&nbsp;<Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>({switchStatus(false)})</Typography></Typography>
               </Box>
             </Box>
           </Box>
@@ -1781,7 +1823,7 @@ const ClientSearchResult = ({ classes }) => {
               <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
                 onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.sortKey) }}
                 style={{ minWidth: 40 }}>
-                {descSortDirection ? <BiSortDown /> : <BiSortUp />}
+                {descSortDirection ? <BiSortUp /> : <BiSortDown />}
               </Button>
             </div>
           }

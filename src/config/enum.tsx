@@ -16,9 +16,9 @@ export enum Items {
 
 export enum EventTypes {
   All = 0,
-  // Page = 1,
   Purchase = 1,
-  CartAbandon = 2
+  CartAbandon = 2,
+  LastViewedProduct = 3
 }
 
 export enum AddProductCatalogType {
@@ -37,4 +37,13 @@ export enum PermissionTypes {
   Admin = 'Admin',
   LimitedAccess = 'LimitedAccess',
   ReadOnly = 'ReadOnly'
+}
+export enum WhatsappCampaignStatus {
+  META_BUSINESS_NOTVERIFIED = 11,
+  META_PHONENUMBER_NOTVERIFIED = 12
+}
+
+export enum WhatsAppPlatformIDEnum {
+  TWILLIO = 1,
+  META = 2
 }

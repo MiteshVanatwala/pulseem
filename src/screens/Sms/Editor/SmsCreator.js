@@ -323,7 +323,7 @@ const SmsCreator = ({ classes }) => {
     setLoader(true);
     setsummary(false);
     const groupIds = selectedGroup.map((g) => { return g.GroupID });
-    const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount };
+    const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount, VoiceCredits: getCampaignSum.FinalVoiceCount };
     const FinalPayloadData = {
       ...smsModel,
       fromNumber: campaignNumber,
@@ -777,7 +777,7 @@ const SmsCreator = ({ classes }) => {
     else {
       setremovalLinkDisabled(false);
     }
-    setDynamicProductButtonDisabled(smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT));
+    setDynamicProductButtonDisabled(smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT) || smsModel.Text.includes(DynamicProductLink.LATEST_VIEWED_PRODUCT));
   }
 
   const renderMsg = () => {
@@ -1010,6 +1010,17 @@ const SmsCreator = ({ classes }) => {
                     }}
                   >
                     {t("common.latestAbandonment")}
+                  </Button>
+                  <Button
+                    className={clsx(classes.dropCon, classes.redButtonLink)}
+                    onClick={() => {
+                      onAddText(DynamicProductLink.LATEST_VIEWED_PRODUCT);
+                      setDialogType({ type: 'dynamicProduct' });
+                      setDisplayDynamicProductOptions(false);
+                      setDynamicProductButtonDisabled(true);
+                    }}
+                  >
+                    {t("campaigns.lastViewedProduct")}
                   </Button>
                 </Box>
               ) : null}
