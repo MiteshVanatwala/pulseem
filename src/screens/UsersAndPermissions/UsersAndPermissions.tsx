@@ -18,96 +18,75 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { GetSubAccountList } from '../../redux/reducers/SubAccountSlice';
 import moment from 'moment';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
-import { UsersAndPermissionsInterface } from '../../Models/UsersAndPermissions/UsersAndPermissions';
 import { first, without } from 'lodash';
 import User from '../../components/User/User';
 import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword';
 import Permissions from '../../components/Permissions/Permissions';
 import PermissionsHistory from '../../components/PermissionsHistory/PermissionsHistory';
+import { getAllUsers } from '../../redux/reducers/SubUserSlice';
+import { SubUserModel } from '../../Models/SubUser/SubUsers';
 
 const UserAndPermissions = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [ isSearching, setIsSearching ] = useState<boolean>(false);
-  const [ showLoader, setShowLoader ] = useState<boolean>(true);
-  const [ toastMessage, setToastMessage ] = useState<toastProps['SUCCESS']>(resetToastData);
-  const [ totalRecord, setTotalRecord ] = useState<number>(4);
-  const [ openSaveUserDialog, setOpenSaveUserDialog ] = useState<boolean>(false);
-  const [ openChangePasswordDialog, setOpenChangePasswordDialog ] = useState<boolean>(false);
-  const [ openPermissionsDialog, setOpenPermissionsDialog ] = useState<boolean>(false);
-  const [ openPermissionsHistoryDialog, setOpenPermissionsHistoryDialog ] = useState<boolean>(false);
-  const [ searchData, setSearchData ] = useState<any>({
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [showLoader, setShowLoader] = useState<boolean>(true);
+  const [toastMessage, setToastMessage] = useState<toastProps['SUCCESS']>(resetToastData);
+  const [totalRecord, setTotalRecord] = useState<number>(4);
+  const [openSaveUserDialog, setOpenSaveUserDialog] = useState<boolean>(false);
+  const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState<boolean>(false);
+  const [openPermissionsDialog, setOpenPermissionsDialog] = useState<boolean>(false);
+  const [openPermissionsHistoryDialog, setOpenPermissionsHistoryDialog] = useState<boolean>(false);
+  const [searchData, setSearchData] = useState<any>({
     PageNo: 1,
     Search: "",
     CompanyAdmin: 0,
     IsPagination: true
   });
-  const [ dialogType, setDialogType ] = useState<{
+  const [dialogType, setDialogType] = useState<{
     type: string;
     data: any
   } | null>(null);
-  const [ userList, setUserList ] = useState<UsersAndPermissionsInterface[]>([
-    {
-      ID: 1,
-      UserName: 'Smith Martin',
-      Email: 'samith@pulseem.com',
-      Cellphone: '1234567890',
-      Permissions: 'Admin',
-      Date: '2024-08-12T05:18:09.427'
-    }, {
-      ID: 2,
-      UserName: 'John Doe',
-      Email: 'john@pulseem.com',
-      Cellphone: '1234567890',
-      Permissions: 'Limited Access|Allow Sending|Allow Export|Allow deleting',
-      Date: '2024-12-12T05:18:09.527'
-    }, {
-      ID: 2,
-      UserName: 'John Doe 123',
-      Email: 'john123@pulseem.com',
-      Cellphone: '1234567890',
-      Permissions: 'Read only',
-      Date: '2024-12-12T05:18:09.527'
-    }
-  ]);
+  const [userList, setUserList] = useState<SubUserModel[]>()
   const rowStyle = { head: clsx(classes.tableRowHead, classes.pt10, classes.pb10), root: classes.tableRowRoot }
   const cellStyle = { head: clsx(classes.tableCellHead, classes.noPadding, classes.f16), body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody, classes.f16), root: clsx(classes.tableCellRoot, classes.noPadding) }
   moment.locale(language);
 
-  useEffect(() => {
-    getInitialData();
-  }, []);
-  
-  useEffect(() => {
-    getData();
-  }, [rowsPerPage, searchData.PageNo]);
 
-  const getInitialData = async () => {
+  useEffect(() => {
     getData();
-  }
-  
+  }, []);
+
+
   const getData = async () => {
     setShowLoader(true);
-    // const response = await dispatch(GetSubAccountList({
-    //   ...searchData,
-    //   PageSize: rowsPerPage
-    // }));
+    const response = await dispatch(getAllUsers()) as any;
+    switch (response?.payload?.StatusCode) {
+      case 201: {
+        setUserList(response?.payload?.Data);
+        break;
+      }
+      case 500:
+      default: {
+        console.log(response?.payload?.Message);
+      }
+    }
     setShowLoader(false);
   }
 
   const renderToast = () => {
-		if (toastMessage.message?.length > 0) {
-			setTimeout(() => {
-				setToastMessage(resetToastData);
-			}, 4000);
-			return <Toast data={toastMessage} />;
-		}
-		return null;
-	};
+    if (toastMessage.message?.length > 0) {
+      setTimeout(() => {
+        setToastMessage(resetToastData);
+      }, 4000);
+      return <Toast data={toastMessage} />;
+    }
+    return null;
+  };
 
-  const renderCellIcons = (row: UsersAndPermissionsInterface) => {
+  const renderCellIcons = (row: SubUserModel) => {
     const iconsMap = [[
       {
         key: 'edit',
@@ -145,7 +124,7 @@ const UserAndPermissions = ({ classes }: any) => {
         showPhone: true,
         // remove: windowSize === 'xs',
         onClick: () => {
-          setDialogType({ type: 'Delete', data: row.ID });
+          setDialogType({ type: 'Delete', data: row.AspnetUserId });
         }
       }
     ]]
@@ -195,57 +174,57 @@ const UserAndPermissions = ({ classes }: any) => {
     };
 
     return (
-        <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
-          <Grid item>
-            <TextField
-              variant="outlined"
-              size="small"
-              value={searchData.Search}
-              onKeyPress={handleKeyDown}
-              onChange={(e: any) => setSearchData({
-                ...searchData,
-                Search: e.target.value
-              })}
-              className={clsx(classes.textField, classes.minWidth252)}
-              placeholder={t("common.search")}
-            />
-          </Grid>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+        <Grid item>
+          <TextField
+            variant="outlined"
+            size="small"
+            value={searchData.Search}
+            onKeyPress={handleKeyDown}
+            onChange={(e: any) => setSearchData({
+              ...searchData,
+              Search: e.target.value
+            })}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t("common.search")}
+          />
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => {
+              getData();
+              setIsSearching(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
+            {t("campaigns.btnSearchResource1.Text")}
+          </Button>
+        </Grid>
+        {isSearching && (
           <Grid item>
             <Button
-              onClick={() => {
-                getData();
-                setIsSearching(true);
+              onClick={async () => {
+                const searchObject = {
+                  PageNo: 1,
+                  Search: "",
+                  CompanyAdmin: 0,
+                  IsPagination: true
+                };
+                setSearchData(searchObject);
+
+                setShowLoader(true);
+                setIsSearching(false);
+                await dispatch(GetSubAccountList(searchObject));
+                setShowLoader(false);
               }}
               className={clsx(classes.btn, classes.btnRounded)}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
-              {t("campaigns.btnSearchResource1.Text")}
+              {t("common.clear")}
             </Button>
           </Grid>
-          {isSearching && (
-            <Grid item>
-              <Button
-                onClick={async () => {
-                  const searchObject = {
-                    PageNo: 1,
-                    Search: "",
-                    CompanyAdmin: 0,
-                    IsPagination: true
-                  };
-                  setSearchData(searchObject);
-
-                  setShowLoader(true);
-                  setIsSearching(false);
-                  await dispatch(GetSubAccountList(searchObject));
-                  setShowLoader(false);
-                }}
-                className={clsx(classes.btn, classes.btnRounded)}
-                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-              >
-                {t("common.clear")}
-              </Button>
-            </Grid>
-          )}
+        )}
       </Grid>
     );
   };
@@ -277,7 +256,7 @@ const UserAndPermissions = ({ classes }: any) => {
   }
 
   const renderTableBody = () => {
-    if (userList.length === 0) {
+    if (userList?.length === 0) {
       return (
         <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
           <Typography>{t("common.NoDataTryFilter")}</Typography>
@@ -287,7 +266,7 @@ const UserAndPermissions = ({ classes }: any) => {
 
     return (
       <TableBody>
-        {userList.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        {userList?.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
       </TableBody>
     )
   }
@@ -305,77 +284,77 @@ const UserAndPermissions = ({ classes }: any) => {
               )}
               endIcon={<MdOutlinePersonAddAlt />}
               onClick={() => setOpenSaveUserDialog(true)}>
-                {t('UsersAndPermissions.addUser')}
+              {t('UsersAndPermissions.addUser')}
             </Button>
           }
         </Grid>
         <Grid item md={4} xs={12} sm={12} className={clsx(classes.groupsLableContainer)} >
           <Typography className={classes.groupsLable}>
-            {`${userList.length} ${t('UsersAndPermissions.users')}`}
+            {`${userList?.length} ${t('UsersAndPermissions.users')}`}
           </Typography>
         </Grid>
       </Grid>
     )
   }
 
-  const renderRow = (row: UsersAndPermissionsInterface) => {
-    const limitedAccessPermissions = row.Permissions.split('|');
+  const renderRow = (row: SubUserModel) => {
+    const limitedAccessPermissions = row.UserPermissionsList;
     const subRights = without(limitedAccessPermissions, first(limitedAccessPermissions)).join(', ');
     return (
       <TableRow
-        key={row.ID}
+        key={row.AspnetUserId}
         classes={rowStyle}
       >
         <TableCell
           classes={cellBodyStyle}
           align='center'
           className={classes.flex2}>
-            <b>{row.UserName}</b>
-            <div>
-              {t('common.CreationDate')}: <b>{moment(row.Date).format(DateFormats.DATE_TIME_24)}</b>
-            </div>
+          <b>{row.UserName}</b>
+          <div>
+            {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}</b>
+          </div>
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
           className={classes.flex2}>
-            {row.Email}
+          {row.Email}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
           className={classes.flex2}>
-            {row.Cellphone}
+          {row.Cellphone}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex2, classes.p5, classes.dInlineBlock)}>
-            <b>{first(limitedAccessPermissions)}</b>
-            {
-              subRights !== '' && (
-                <span>
-                  <b> : </b>{subRights}
-                </span>
-              )
-            }
+          <b>{first(limitedAccessPermissions)}</b>
+          {
+            subRights !== '' && (
+              <span>
+                <b> : </b>{subRights}
+              </span>
+            )
+          }
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex2, classes.noBorderOnLastCell)}>
-            {renderCellIcons(row)}
+          {renderCellIcons(row)}
         </TableCell>
       </TableRow>
     )
   }
 
-  const renderPhoneRow = (row: UsersAndPermissionsInterface) => {
-    const limitedAccessPermissions = row.Permissions.split('|');
+  const renderPhoneRow = (row: SubUserModel) => {
+    const limitedAccessPermissions = row.SubUserPermissions;
     const subRights = without(limitedAccessPermissions, first(limitedAccessPermissions)).join(', ');
     return (
       <TableRow
-        key={row.ID}
+        key={row.AspnetUserId}
         component='div'
         classes={rowStyle}
       >
@@ -403,7 +382,7 @@ const UserAndPermissions = ({ classes }: any) => {
             {t("UsersAndPermissions.cellphone")}: {row.Cellphone}
           </Box>
           <Box className={clsx(classes.pt5)}>
-            {t("UsersAndPermissions.permissions")} :&nbsp; 
+            {t("UsersAndPermissions.permissions")} :&nbsp;
             {first(limitedAccessPermissions)}
             {
               subRights !== '' && (
@@ -414,7 +393,7 @@ const UserAndPermissions = ({ classes }: any) => {
             }
           </Box>
           <Box className={clsx(classes.pt5)}>
-            {t('common.CreationDate')}: <b>{moment(row.Date).format(DateFormats.DATE_TIME_24)}</b>
+            {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}</b>
           </Box>
           {renderCellIcons(row)}
         </TableCell>
@@ -441,41 +420,41 @@ const UserAndPermissions = ({ classes }: any) => {
   }
 
   const getDeleteDialog = (id: string = '') => ({
-		title: t('common.Delete'),
-		showDivider: false,
-		content: (
-			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				{t('UsersAndPermissions.deleteUserPrompt')}
-			</Typography>
-		),
-		cancelText: t('UsersAndPermissions.cancel'),
-		confirmText: t('UsersAndPermissions.delete'),
+    title: t('common.Delete'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {t('UsersAndPermissions.deleteUserPrompt')}
+      </Typography>
+    ),
+    cancelText: t('UsersAndPermissions.cancel'),
+    confirmText: t('UsersAndPermissions.delete'),
     onConfirm: async () => {
     },
     onCancel: () => setDialogType(null)
-	})
+  })
 
   // const saveUser = (id: string = '') => ({
-	// 	title: t('UsersAndPermissions.addUser'),
-	// 	showDivider: false,
+  // 	title: t('UsersAndPermissions.addUser'),
+  // 	showDivider: false,
   //   icon: <MdOutlinePersonAddAlt />,
-	// 	content: (
-	// 		<User classes={classes} />
-	// 	),
-	// 	cancelText: t('common.cancel'),
-	// 	confirmText: t('common.save'),
+  // 	content: (
+  // 		<User classes={classes} />
+  // 	),
+  // 	cancelText: t('common.cancel'),
+  // 	confirmText: t('common.save'),
   //   onConfirm: async () => {
   //   },
   //   onCancel: () => setDialogType(null)
-	// })
+  // })
 
   const renderDialog = () => {
     const { type, data } = dialogType || {}
 
     let currentDialog: any = {};
-		if (type === 'Delete') {
-			currentDialog = getDeleteDialog(data);
-		}
+    if (type === 'Delete') {
+      currentDialog = getDeleteDialog(data);
+    }
 
     if (type) {
       return (
