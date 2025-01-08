@@ -274,7 +274,6 @@ const SendCampaign = ({
 			const { payload: campaignSettings }: campaignSettingsData =
 				await dispatch<any>(getCampaignSettings(campaignID));
 			setIsLoader(false);
-			console.log(campaignSettings)
 			let apiGroups = campaignSettings?.Data?.Groups;
 			let apiFilterGroups = campaignSettings?.Data?.SendExeptional?.Groups;
 			let apiFilterCampaigns =
@@ -339,21 +338,23 @@ const SendCampaign = ({
 				PulseSettings,
 				RandomSettings
 			} = campaignSettings?.Data;
-			setPulseData({
-				pulseSettingsId: PulseSettings?.PulseSettingsId || 0,
-				pulseAmount: PulseSettings?.PulseAmount || 0,
-				timeInterval: PulseSettings?.TimeInterval || 0,
-				pulseType: PulseSettings?.PulseType || 0,
-				random: RandomSettings?.RandomAmount || 0,
-				timeType: PulseSettings?.TimeType || 0,
-				pulsePer: PulseSettings?.PulseType === 2 ? "recipients" : "percent",
-				pulseReci: PulseSettings?.PulseType === 2 ? "Recipients" : "",
-				minName: PulseSettings?.TimeType === 1 ? "mins" : "",
-				hourName: PulseSettings?.TimeType === 2 ? "Hours" : "",
-				togglePulse: PulseSettings?.PulseSettingsId !== -1 ? true : false,
-				toggleRandom: RandomSettings?.RandomAmount !== 0 ? true : false,
-				pulsesOpen: false
-			})
+			if (PulseSettings !== null && RandomSettings !== null) {
+				setPulseData({
+					pulseSettingsId: PulseSettings?.PulseSettingsId || 0,
+					pulseAmount: PulseSettings?.PulseAmount || 0,
+					timeInterval: PulseSettings?.TimeInterval || 0,
+					pulseType: PulseSettings?.PulseType || 0,
+					random: RandomSettings?.RandomAmount || 0,
+					timeType: PulseSettings?.TimeType || 0,
+					pulsePer: PulseSettings?.PulseType === 2 ? "recipients" : "percent",
+					pulseReci: PulseSettings?.PulseType === 2 ? "Recipients" : "",
+					minName: PulseSettings?.TimeType === 1 ? "mins" : "",
+					hourName: PulseSettings?.TimeType === 2 ? "Hours" : "",
+					togglePulse: PulseSettings?.PulseSettingsId !== -1 ? true : false,
+					toggleRandom: RandomSettings?.RandomAmount !== 0 ? true : false,
+					pulsesOpen: false
+				})
+			}
 		}
 	};
 
@@ -637,7 +638,6 @@ const SendCampaign = ({
 	};
 
 	const onFilter = () => {
-		console.log('onFilter');
 	};
 
 	const getApiGroupsData = async () => {
