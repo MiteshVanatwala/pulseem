@@ -397,7 +397,7 @@ const Klaviyo = ({ classes }: any) => {
             <Grid container spacing={3}>
               <Grid item md={5} xs={12}>
                 <FormControlLabel
-                  style={{ display: 'flex', alignItems: 'start' }}
+                  style={{ alignItems: 'start', marginRight: 0 }}
                   control={
                     <PulseemSwitch
                       id={'isSyncRecipients'}
@@ -425,7 +425,7 @@ const Klaviyo = ({ classes }: any) => {
 
               <Grid item md={5} xs={12}>
                 <FormControlLabel
-                  style={{ display: 'flex', alignItems: 'start' }}
+                  style={{ alignItems: 'start', marginRight: 0 }}
                   control={
                     <PulseemSwitch
                       id={'UnsubscribePreferenceTypeID'}
