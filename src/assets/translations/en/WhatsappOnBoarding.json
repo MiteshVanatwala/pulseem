@@ -19,6 +19,8 @@
 	"message": "Message",
 	"ID": "ID",
 	"phoneNumber": "Phone Number",
+	"tier": "Tier",
+	"limit": "limit",
 	"enterPin": "Enter Pin",
 	"pin": "Pin",
 	"registerPIN": "Register Pin",
