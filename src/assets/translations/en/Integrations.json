@@ -116,7 +116,7 @@
     "importListsAndRecipientsDesc": "All your Klaviyo list and recipients will be imported as groups to your Pulseem account in the selected timeframe<br/>Recipients who are removed or unsubscribe from your Klaviyo account will also be removed from your Pulseem account",
     "unusbscribe": "Sync Unsubscribes from Pulseem to Klaviyo",
     "unsubscribeDesc": "Recipients who are removed or unsubscribe from your Pulseem account will also be removed from your Klaviyo account",
-    "unsubscribe": "Unsubscribe",
+    "unsubscribe": "Synchronization type",
     "bothEmailSMS": "Both Email & SMS",
     "SMSOnly": "SMS Only",
     "emailOnly": "Email Only",
