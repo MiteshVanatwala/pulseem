@@ -25,6 +25,7 @@ import Permissions from '../../components/Permissions/Permissions';
 import PermissionsHistory from '../../components/PermissionsHistory/PermissionsHistory';
 import { getAllUsers } from '../../redux/reducers/SubUserSlice';
 import { SubUserModel } from '../../Models/SubUser/SubUsers';
+import PermissionList from './PermissionList';
 
 const UserAndPermissions = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
@@ -298,8 +299,6 @@ const UserAndPermissions = ({ classes }: any) => {
   }
 
   const renderRow = (row: SubUserModel) => {
-    const limitedAccessPermissions = row.UserPermissionsList;
-    const subRights = without(limitedAccessPermissions, first(limitedAccessPermissions)).join(', ');
     return (
       <TableRow
         key={row.AspnetUserId}
@@ -330,14 +329,7 @@ const UserAndPermissions = ({ classes }: any) => {
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex2, classes.p5, classes.dInlineBlock)}>
-          <b>{first(limitedAccessPermissions)}</b>
-          {
-            subRights !== '' && (
-              <span>
-                <b> : </b>{subRights}
-              </span>
-            )
-          }
+          <PermissionList list={row.UserPermissionsList} />
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
