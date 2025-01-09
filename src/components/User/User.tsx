@@ -39,54 +39,54 @@ const errorsInit = {
 }
 
 const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
-  const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
-  const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
-  const { t } = useTranslation();
-  const [ showPasswordTip, setShowPasswordTip ] = useState<boolean>(false);
-  const [ passwordValidation, setPasswordValidation ] = useState<ValidPassword>(passwordValidationInit as ValidPassword);
-  const [ userDetails, setUserDetails ] = useState<any>(userDetailsInit);
-  const [ errors, setErrors ] = useState(errorsInit);
-  
-  useEffect(() => {  
+	const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
+	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { t } = useTranslation();
+	const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
+	const [passwordValidation, setPasswordValidation] = useState<ValidPassword>(passwordValidationInit as ValidPassword);
+	const [userDetails, setUserDetails] = useState<any>(userDetailsInit);
+	const [errors, setErrors] = useState(errorsInit);
+
+	useEffect(() => {
 		if (isOpen) {
 			setPasswordValidation(passwordValidationInit);
 			setUserDetails(userDetailsInit)
 			setErrors(errorsInit);
 		}
-  }, [ isOpen ])
+	}, [isOpen])
 
-  const handleChange = (e: any) => {
-    setUserDetails({
-      ...userDetails,
-      password: e?.target?.value.trim()
-    });
-    let trimValue = e?.target?.value.trim();
-    const validPass = {
-      LowerChar: !!trimValue?.match(lowerCaseLetters),
-      SpecialChar: !!trimValue?.match(specialLetters),
-      UpperChar: !!trimValue?.match(upperCaseLetters),
-      PasswordLength: trimValue.length,
-      NumberChar: !!trimValue?.match(numbers),
-    } as ValidPassword;
+	const handleChange = (e: any) => {
+		setUserDetails({
+			...userDetails,
+			password: e?.target?.value.trim()
+		});
+		let trimValue = e?.target?.value.trim();
+		const validPass = {
+			LowerChar: !!trimValue?.match(lowerCaseLetters),
+			SpecialChar: !!trimValue?.match(specialLetters),
+			UpperChar: !!trimValue?.match(upperCaseLetters),
+			PasswordLength: trimValue.length,
+			NumberChar: !!trimValue?.match(numbers),
+		} as ValidPassword;
 
-    setPasswordValidation(validPass);
-  };
+		setPasswordValidation(validPass);
+	};
 
-  const saveUser = () => {
-    let errorsTemp = JSON.parse(JSON.stringify(errors))
+	const saveUser = () => {
+		let errorsTemp = JSON.parse(JSON.stringify(errors))
 		errorsTemp = {
-			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails.cellPhone.trim(), countryCodeList ) : !IsValidNonGlobalPhoneNumber(userDetails.cellPhone.trim())) ? t('recipient.errors.cellPhone') : '',
+			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails.cellPhone.trim(), countryCodeList) : !IsValidNonGlobalPhoneNumber(userDetails.cellPhone.trim())) ? t('recipient.errors.cellPhone') : '',
 			emailAddress: userDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
 			loginUserName: userDetails.loginUserName.trim() === '' ? t('common.requiredField') : '',
 			password: '',
 			confirmPassword: userDetails.confirmPassword.trim() !== '' && userDetails.confirmPassword.trim() === '' ? t('common.requiredField') : ''
 		};
 
-    if (userDetails.password.trim() !== '' && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
-      errorsTemp.password = t('SignUp.InvalidPassword');
-    } else if (userDetails.password.trim() === '') {
-      errorsTemp.password = t('SignUp.PasswordRequired');
-    }
+		if (userDetails.password.trim() !== '' && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
+			errorsTemp.password = t('SignUp.InvalidPassword');
+		} else if (userDetails.password.trim() === '') {
+			errorsTemp.password = t('SignUp.PasswordRequired');
+		}
 
 		if ((userDetails.password !== '' || userDetails.confirmPassword !== '') && userDetails.password !== userDetails.confirmPassword) {
 			errorsTemp = {
@@ -94,32 +94,32 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 				confirmPassword: t('common.confirmPasswordNotMatch')
 			}
 		} else if (userDetails.confirmPassword.trim() === '') {
-      errorsTemp.confirmPassword = t('SignUp.PasswordRequired');
-    }
+			errorsTemp.confirmPassword = t('SignUp.PasswordRequired');
+		}
 
-    if (!ValidateEmailAddress(userDetails.emailAddress)) {
+		if (!ValidateEmailAddress(userDetails.emailAddress)) {
 			errorsTemp = {
 				...errorsTemp,
 				emailAddress: t('common.invalidEmail')
 			}
 		}
-    setErrors(errorsTemp);
+		setErrors(errorsTemp);
 
-    if (errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '') {
+		if (errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '') {
 
-    }
-  }
+		}
+	}
 
-  return (
-    <BaseDialog
+	return (
+		<BaseDialog
 			classes={classes}
 			open={isOpen}
-			title={t('UsersAndPermissions.addUser')}
+			title={t('SubUsers.addUser')}
 			icon={<MdOutlinePersonAddAlt />}
 			showDivider={false}
 			onClose={() => onClose(false)}
 			onCancel={() => onClose(false)}
-			onConfirm={() => {}}
+			onConfirm={() => { }}
 			reduceTitle
 			style={{ minWidth: 240 }}
 			paperStyle={clsx(windowSize !== 'xs' ? classes.w50VW : null)}
@@ -157,10 +157,10 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 				</Grid>
 			)}
 		>
-      <Box>
-        <div className={clsx(classes.f18, classes.bold, classes.pb10)}>{t('UsersAndPermissions.userDetails')}</div>
-        <Divider className={clsx(classes.mb20, classes.bgBlack)} />
-        <Grid container spacing={3}>
+			<Box>
+				<div className={clsx(classes.f18, classes.bold, classes.pb10)}>{t('SubUsers.userDetails')}</div>
+				<Divider className={clsx(classes.mb20, classes.bgBlack)} />
+				<Grid container spacing={3}>
 					<Grid item md={4} xs={12}>
 						<Typography title={t("common.Email")} className={classes.alignDir}>
 							{t("common.Email")}
@@ -187,9 +187,9 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 						</Box>
 					</Grid>
 
-          <Grid item md={4} xs={12}>
-						<Typography title={t("UsersAndPermissions.cellphone")} className={classes.alignDir}>
-							{t("UsersAndPermissions.cellphone")}
+					<Grid item md={4} xs={12}>
+						<Typography title={t("SubUsers.cellphone")} className={classes.alignDir}>
+							{t("SubUsers.cellphone")}
 							<span className={clsx(classes.errorLabel, classes.pl5, classes.pe5)}>*</span>
 							<div className={clsx(classes.errorLabel)} style={{ marginTop: 0 }}>{t("SubAccount.cellPhone2FA")}</div>
 						</Typography>
@@ -205,7 +205,7 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 								...userDetails,
 								cellPhone: IsValidPhoneNumberKeyPress(e.target.value) ? e.target.value : ''
 							})}
-              inputProps={{ maxlength: 16 }}
+							inputProps={{ maxlength: 16 }}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.cellPhone ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -215,8 +215,8 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 					</Grid>
 				</Grid>
 
-        <div className={clsx(classes.f18, classes.bold, classes.pb10, classes.mt25, classes.pt10)}>{t('UsersAndPermissions.loginInformation')}</div>
-        <Divider className={clsx(classes.mb20, classes.bgBlack)} />
+				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.mt25, classes.pt10)}>{t('SubUsers.loginInformation')}</div>
+				<Divider className={clsx(classes.mb20, classes.bgBlack)} />
 				<Grid container className={clsx(classes.pb15, classes.pt10)} spacing={2}>
 					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.loginUserName")} className={classes.alignDir}>
@@ -305,9 +305,9 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 						</Box>
 					</Grid>
 				</Grid>
-      </Box> 
-    </BaseDialog>
-  )
+			</Box>
+		</BaseDialog>
+	)
 }
 
 export default User;

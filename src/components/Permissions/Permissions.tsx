@@ -13,27 +13,27 @@ import { CommonRedux } from "../../screens/Whatsapp/Editor/Types/WhatsappCreator
 import { ValidateEmailAddress } from "../../helpers/Utils/common";
 
 const Permissions = ({ classes, isOpen, onClose }: any) => {
-  const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
+	const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
 	const { isGlobal, countryCodeList } = useSelector((state: { common: CommonRedux }) => state.common);
-  const { t } = useTranslation();
-	const [ permissions, setPermissions ] = useState({
+	const { t } = useTranslation();
+	const [permissions, setPermissions] = useState({
 		accessType: '',
 		allowSending: false,
 		allowExport: false,
 		allowDeleting: false
 	})
-	const [ userDetails, setUserDetails ] = useState<any>({
+	const [userDetails, setUserDetails] = useState<any>({
 		cellPhone: '',
 		emailAddress: ''
 	});
-  const [ errors, setErrors ] = useState({
+	const [errors, setErrors] = useState({
 		cellPhone: '',
 		emailAddress: '',
 		accessType: '',
 		limitedAccess: '',
 	});
 
-  useEffect(() => {  
+	useEffect(() => {
 		if (!isOpen) {
 			setErrors({
 				cellPhone: '',
@@ -54,40 +54,40 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 				allowDeleting: false
 			})
 		}
-  }, [ isOpen ])
+	}, [isOpen])
 
-  const savePermissions = () => {
+	const savePermissions = () => {
 		let errorsTemp = JSON.parse(JSON.stringify(errors))
 		errorsTemp = {
-			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails.cellPhone.trim(), countryCodeList ) : !IsValidNonGlobalPhoneNumber(userDetails.cellPhone.trim())) ? t('recipient.errors.cellPhone') : '',
+			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails.cellPhone.trim(), countryCodeList) : !IsValidNonGlobalPhoneNumber(userDetails.cellPhone.trim())) ? t('recipient.errors.cellPhone') : '',
 			emailAddress: userDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
-			accessType: permissions.accessType === '' ? t('UsersAndPermissions.permissionIsRequired') : '',
-			limitedAccess: permissions.accessType === PermissionTypes.LimitedAccess && permissions.allowSending === false && permissions.allowExport === false && permissions.allowDeleting === false ? t('UsersAndPermissions.limitedPermissionIsRequired') : ''
+			accessType: permissions.accessType === '' ? t('SubUsers.permissionIsRequired') : '',
+			limitedAccess: permissions.accessType === PermissionTypes.LimitedAccess && permissions.allowSending === false && permissions.allowExport === false && permissions.allowDeleting === false ? t('SubUsers.limitedPermissionIsRequired') : ''
 		};
 
-    if (!ValidateEmailAddress(userDetails.emailAddress)) {
+		if (!ValidateEmailAddress(userDetails.emailAddress)) {
 			errorsTemp = {
 				...errorsTemp,
 				emailAddress: t('common.invalidEmail')
 			}
 		}
-    setErrors(errorsTemp);
+		setErrors(errorsTemp);
 
-    if (errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.accessType === '' && errorsTemp.limitedAccess === '') {
+		if (errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.accessType === '' && errorsTemp.limitedAccess === '') {
 
-    }
-  }
+		}
+	}
 
-  return (
-    <BaseDialog
+	return (
+		<BaseDialog
 			classes={classes}
 			open={isOpen}
-			title={t('UsersAndPermissions.permissions')}
+			title={t('SubUsers.permissions')}
 			icon={<MdTaskAlt />}
 			showDivider={false}
 			onClose={() => onClose(false)}
 			onCancel={() => onClose(false)}
-			onConfirm={() => {}}
+			onConfirm={() => { }}
 			reduceTitle
 			paperStyle={clsx(windowSize !== 'xs' ? classes.w50VW : null)}
 			childrenPadding={false}
@@ -124,7 +124,7 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 				</Grid>
 			)}
 		>
-      <Box>
+			<Box>
 				<Grid container spacing={2}>
 					<Grid item md={12} xs={12}>
 						<div className={clsx(classes.f18, classes.bold, classes.pb10)}>{t('SubAccount.loginInformation')}</div>
@@ -156,9 +156,9 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 						</Box>
 					</Grid>
 
-          <Grid item md={4} xs={12}>
-						<Typography title={t("UsersAndPermissions.cellphone")} className={classes.alignDir}>
-							{t("UsersAndPermissions.cellphone")}
+					<Grid item md={4} xs={12}>
+						<Typography title={t("SubUsers.cellphone")} className={classes.alignDir}>
+							{t("SubUsers.cellphone")}
 							<span className={clsx(classes.errorLabel, classes.pl5, classes.pe5)}>*</span>
 							<div className={clsx(classes.errorLabel)} style={{ marginTop: 0 }}>{t("SubAccount.cellPhone2FA")}</div>
 						</Typography>
@@ -174,7 +174,7 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 								...userDetails,
 								cellPhone: IsValidPhoneNumberKeyPress(e.target.value) ? e.target.value : ''
 							})}
-              inputProps={{ maxlength: 16 }}
+							inputProps={{ maxlength: 16 }}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.cellPhone ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -186,12 +186,12 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 
 				<Grid container className={clsx(isRTL ? classes.rowReverse : null)} spacing={2}>
 					<Grid item md={12} xs={12}>
-						<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('UsersAndPermissions.permissions')}</div>
+						<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubUsers.permissions')}</div>
 						<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 					</Grid>
 					<Grid item md={8} xs={8}>
 						<Typography>
-							{t('UsersAndPermissions.admin')}
+							{t('SubUsers.admin')}
 						</Typography>
 					</Grid>
 					<Grid item md={4} xs={4} className={clsx(classes.textRight)}>
@@ -228,7 +228,7 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 				<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
 					<Grid item md={8} xs={8} className={clsx(classes.pt10)}>
 						<Typography>
-							{t('UsersAndPermissions.limitedAccess')}
+							{t('SubUsers.limitedAccess')}
 							<Typography className={clsx(errors.limitedAccess ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
 								{errors.limitedAccess}
 							</Typography>
@@ -272,88 +272,88 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 							<>
 								<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
 									<Grid item md={8} xs={8} className={clsx(classes.pt10, isRTL ? classes.pr30 : classes.pl30)}>
-										{t('UsersAndPermissions.allowSending')}
+										{t('SubUsers.allowSending')}
 									</Grid>
 									<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
 										<FormControlLabel
-										control={
-											<PulseemSwitch
-												id="1"
-												switchType='ios'
-												classes={classes}
-												onColor="#0371ad"
-												handleDiameter={20}
-												boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-												height={15}
-												className={clsx({ [classes.rtlSwitch]: isRTL })}
-												checked={permissions.allowSending}
-												onChange={(e: any) => setPermissions({
-													...permissions,
-													allowSending: !permissions.allowSending
-												})}
-											/>
-										}
-										label=''
-									/>
+											control={
+												<PulseemSwitch
+													id="1"
+													switchType='ios'
+													classes={classes}
+													onColor="#0371ad"
+													handleDiameter={20}
+													boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+													activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+													height={15}
+													className={clsx({ [classes.rtlSwitch]: isRTL })}
+													checked={permissions.allowSending}
+													onChange={(e: any) => setPermissions({
+														...permissions,
+														allowSending: !permissions.allowSending
+													})}
+												/>
+											}
+											label=''
+										/>
 									</Grid>
 								</Grid>
 
 								<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
 									<Grid item md={8} xs={8} className={clsx(classes.pt10, isRTL ? classes.pr30 : classes.pl30)}>
-										{t('UsersAndPermissions.allowExport')}
+										{t('SubUsers.allowExport')}
 									</Grid>
 									<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
 										<FormControlLabel
-										control={
-											<PulseemSwitch
-												id="1"
-												switchType='ios'
-												classes={classes}
-												onColor="#0371ad"
-												handleDiameter={20}
-												boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-												height={15}
-												className={clsx({ [classes.rtlSwitch]: isRTL })}
-												checked={permissions.allowExport}
-												onChange={(e: any) => setPermissions({
-													...permissions,
-													allowExport: !permissions.allowExport
-												})}
-											/>
-										}
-										label=''
-									/>
+											control={
+												<PulseemSwitch
+													id="1"
+													switchType='ios'
+													classes={classes}
+													onColor="#0371ad"
+													handleDiameter={20}
+													boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+													activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+													height={15}
+													className={clsx({ [classes.rtlSwitch]: isRTL })}
+													checked={permissions.allowExport}
+													onChange={(e: any) => setPermissions({
+														...permissions,
+														allowExport: !permissions.allowExport
+													})}
+												/>
+											}
+											label=''
+										/>
 									</Grid>
 								</Grid>
 
 								<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
 									<Grid item md={8} xs={8} className={clsx(classes.pt10, isRTL ? classes.pr30 : classes.pl30)}>
-										{t('UsersAndPermissions.allowDeleting')}
+										{t('SubUsers.allowDeleting')}
 									</Grid>
 									<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
 										<FormControlLabel
-										control={
-											<PulseemSwitch
-												id="1"
-												switchType='ios'
-												classes={classes}
-												onColor="#0371ad"
-												handleDiameter={20}
-												boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-												activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-												height={15}
-												className={clsx({ [classes.rtlSwitch]: isRTL })}
-												checked={permissions.allowDeleting}
-												onChange={(e: any) => setPermissions({
-													...permissions,
-													allowDeleting: !permissions.allowDeleting
-												})}
-											/>
-										}
-										label=''
-									/>
+											control={
+												<PulseemSwitch
+													id="1"
+													switchType='ios'
+													classes={classes}
+													onColor="#0371ad"
+													handleDiameter={20}
+													boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+													activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+													height={15}
+													className={clsx({ [classes.rtlSwitch]: isRTL })}
+													checked={permissions.allowDeleting}
+													onChange={(e: any) => setPermissions({
+														...permissions,
+														allowDeleting: !permissions.allowDeleting
+													})}
+												/>
+											}
+											label=''
+										/>
 									</Grid>
 								</Grid>
 							</>
@@ -363,7 +363,7 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 
 				<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
 					<Grid item md={8} xs={8} className={clsx(classes.pt10)}>
-						{t('UsersAndPermissions.readOnly')}
+						{t('SubUsers.readOnly')}
 					</Grid>
 					<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
 						<FormControlLabel
@@ -401,9 +401,9 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 						{errors.accessType}
 					</Typography>
 				</Box>
-      </Box> 
-    </BaseDialog>
-  )
+			</Box>
+		</BaseDialog>
+	)
 }
 
 export default Permissions;

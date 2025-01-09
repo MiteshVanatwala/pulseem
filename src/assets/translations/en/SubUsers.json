@@ -11,6 +11,7 @@
   "allowSending": "Allow Sending",
   "allowExport": "Allow Export",
   "allowDeleting": "Allow deleting",
+  "userCreation": "Allow Sub User creation",
   "readOnly": "Read only",
   "hideRecipientData": "Hide Recipient Data",
   "edit": "Edit",

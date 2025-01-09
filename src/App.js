@@ -87,7 +87,7 @@ import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
-import UserAndPermissions from './screens/UsersAndPermissions/UsersAndPermissions';
+import SubUsers from './screens/UsersAndPermissions/SubUsers';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 
 const renderRoutes = (classes, redirect) => {
@@ -484,8 +484,8 @@ const renderRoutes = (classes, redirect) => {
         element={<ApiSettings classes={classes} />}
       />
       <Route
-        path={`${sitePrefix}UsersAndPermissions`}
-        element={<UserAndPermissions classes={classes} />}
+        path={`${sitePrefix}SubUsers`}
+        element={<SubUsers classes={classes} />}
       />
       {/* Support */}
       <Route

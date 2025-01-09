@@ -35,3 +35,10 @@ export interface SubUserToPermissions {
     SubIserId: number;
     SubUserPermission: number[];
 }
+
+export interface PermissionsHistoryInterface {
+    HistoryID: number;
+    PermissionType: string;
+    Permissions: string;
+    Date: Date | string;
+}

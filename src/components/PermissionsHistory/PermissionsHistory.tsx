@@ -7,54 +7,54 @@ import clsx from 'clsx';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { MdTaskAlt } from "react-icons/md";
 import moment from 'moment';
-import { PermissionsHistoryInterface } from "../../Models/UsersAndPermissions/UsersAndPermissions";
+import { PermissionsHistoryInterface } from "../../Models/SubUser/SubUsers";
 import { DateFormats } from "../../helpers/Constants";
 import { first } from "@amcharts/amcharts4/.internal/core/utils/Array";
 import { without } from "lodash";
 
 const PermissionsHistory = ({ classes, isOpen, onClose }: any) => {
   const { windowSize, language } = useSelector((state: StateType) => state.core);
-	const { t } = useTranslation();
-	const rowStyle = { head: clsx(classes.tableRowHead, classes.pt10, classes.pb10), root: classes.tableRowRoot }
+  const { t } = useTranslation();
+  const rowStyle = { head: clsx(classes.tableRowHead, classes.pt10, classes.pb10), root: classes.tableRowRoot }
   const cellStyle = { head: clsx(classes.tableCellHead, classes.noPadding, classes.f16), body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody, classes.f16), root: clsx(classes.tableCellRoot) }
-	const [ permissionsHistory, setPermissionsHistory ] = useState<PermissionsHistoryInterface[]>([
-		{
-			HistoryID: 1,
-			PermissionType: '',
-			Permissions: 'Limited Access|Allow Sending|Allow Export|Allow deleting',
+  const [permissionsHistory, setPermissionsHistory] = useState<PermissionsHistoryInterface[]>([
+    {
+      HistoryID: 1,
+      PermissionType: '',
+      Permissions: 'Limited Access|Allow Sending|Allow Export|Allow deleting',
       Date: '2024-12-12T05:18:09.527'
-		},
-		{
-			HistoryID: 2,
-			PermissionType: '',
-			Permissions: 'Read Only',
+    },
+    {
+      HistoryID: 2,
+      PermissionType: '',
+      Permissions: 'Read Only',
       Date: '2024-12-13T05:38:09.527'
-		},
-		{
-			HistoryID: 2,
-			PermissionType: '',
-			Permissions: 'Admin',
+    },
+    {
+      HistoryID: 2,
+      PermissionType: '',
+      Permissions: 'Admin',
       Date: '2024-12-15T05:28:09.527'
-		}
-	]);
+    }
+  ]);
   moment.locale(language);
-	
-	useEffect(() => {  
+
+  useEffect(() => {
   }, []);
 
-	const renderTableHead = () => {
+  const renderTableHead = () => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Dates")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("UsersAndPermissions.permissions")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.permissions")}</TableCell>
         </TableRow>
       </TableHead>
     )
   }
 
-	const renderTable = () => {
+  const renderTable = () => {
     return (
       <TableContainer className={classes.tableStyle} style={{ width: 'auto' }}>
         <Table>
@@ -81,8 +81,8 @@ const PermissionsHistory = ({ classes, isOpen, onClose }: any) => {
     )
   }
 
-	const renderPhoneRow = (row: PermissionsHistoryInterface) => {
-		const limitedAccessPermissions = row.Permissions.split('|');
+  const renderPhoneRow = (row: PermissionsHistoryInterface) => {
+    const limitedAccessPermissions = row.Permissions.split('|');
     const subRights = without(limitedAccessPermissions, first(limitedAccessPermissions)).join(', ');
     return (
       <TableRow
@@ -91,11 +91,11 @@ const PermissionsHistory = ({ classes, isOpen, onClose }: any) => {
         classes={rowStyle}
       >
         <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }}>
-					<Box className={clsx(classes.pt5)}>
+          <Box className={clsx(classes.pt5)}>
             <span className={clsx(classes.semibold)}>{t('common.CreationDate')}: </span><b>{moment(row.Date).format(DateFormats.DATE_TIME_24)}</b>
           </Box>
-					<Box className={clsx(classes.pt5)}>
-						<span className={clsx(classes.semibold)}>{t("UsersAndPermissions.permissions")} :&nbsp; </span>
+          <Box className={clsx(classes.pt5)}>
+            <span className={clsx(classes.semibold)}>{t("SubUsers.permissions")} :&nbsp; </span>
             {first(limitedAccessPermissions)}
             {
               subRights !== '' && (
@@ -110,7 +110,7 @@ const PermissionsHistory = ({ classes, isOpen, onClose }: any) => {
     )
   }
 
-	const renderRow = (row: PermissionsHistoryInterface) => {
+  const renderRow = (row: PermissionsHistoryInterface) => {
     const limitedAccessPermissions = row.Permissions.split('|');
     const subRights = without(limitedAccessPermissions, first(limitedAccessPermissions)).join(', ');
     return (
@@ -122,20 +122,20 @@ const PermissionsHistory = ({ classes, isOpen, onClose }: any) => {
           classes={cellBodyStyle}
           align='center'
           className={classes.flex1}>
-						{moment(row.Date).format(DateFormats.DATE_TIME_24)}
+          {moment(row.Date).format(DateFormats.DATE_TIME_24)}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex2, classes.p10, classes.dInlineBlock)}>
-						<b>{first(limitedAccessPermissions)}</b>
-            {
-              subRights !== '' && (
-                <span>
-                  <b> : </b>{subRights}
-                </span>
-              )
-            }
+          <b>{first(limitedAccessPermissions)}</b>
+          {
+            subRights !== '' && (
+              <span>
+                <b> : </b>{subRights}
+              </span>
+            )
+          }
         </TableCell>
       </TableRow>
     )
@@ -143,22 +143,22 @@ const PermissionsHistory = ({ classes, isOpen, onClose }: any) => {
 
   return (
     <BaseDialog
-			classes={classes}
-			open={isOpen}
-			title={t('UsersAndPermissions.permissionsHistory')}
-			icon={<MdTaskAlt />}
-			showDivider={false}
-			onClose={() => onClose(false)}
-			onCancel={() => onClose(false)}
-			onConfirm={() => {}}
-			reduceTitle
-			paperStyle={clsx(windowSize !== 'xs' ? classes.w50VW : null)}
-			childrenPadding={false}
-			renderButtons={() => (<></>)}
-		>
+      classes={classes}
+      open={isOpen}
+      title={t('SubUsers.permissionsHistory')}
+      icon={<MdTaskAlt />}
+      showDivider={false}
+      onClose={() => onClose(false)}
+      onCancel={() => onClose(false)}
+      onConfirm={() => { }}
+      reduceTitle
+      paperStyle={clsx(windowSize !== 'xs' ? classes.w50VW : null)}
+      childrenPadding={false}
+      renderButtons={() => (<></>)}
+    >
       <Box>
-				{renderTable()}
-      </Box> 
+        {renderTable()}
+      </Box>
     </BaseDialog>
   )
 }

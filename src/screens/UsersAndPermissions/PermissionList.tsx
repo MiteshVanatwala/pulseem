@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { eSubUserPermissions } from "../../Models/SubUser/SubUsers";
 
 // Define the props interface
@@ -6,20 +7,21 @@ interface PermissionListProps {
 }
 
 const PermissionList: React.FC<PermissionListProps> = ({ list }) => {
+  const { t } = useTranslation();
 
   // Function to convert enum value to text
   const getPermissionText = (permissionId: number) => {
     switch (permissionId) {
       case eSubUserPermissions.AllowSend:
-        return 'Allow Send';
+        return t('SubUsers.allowSending'); // 'Allow Send';
       case eSubUserPermissions.AllowExport:
-        return 'Allow Export';
+        return t('SubUsers.allowExport');
       case eSubUserPermissions.AllowDelete:
-        return 'Allow Delete';
+        return t('SubUsers.allowDeleting');
       case eSubUserPermissions.AllowSubUsers:
-        return 'Allow Sub Users';
+        return t('SubUsers.userCreation');
       case eSubUserPermissions.HideRecipietns:
-        return 'Hide Recipients';
+        return t('SubUsers.limitedAccess');
       default:
         return '';
     }

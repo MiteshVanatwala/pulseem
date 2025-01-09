@@ -27,7 +27,7 @@ import { getAllUsers } from '../../redux/reducers/SubUserSlice';
 import { SubUserModel } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
 
-const UserAndPermissions = ({ classes }: any) => {
+const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -102,7 +102,7 @@ const UserAndPermissions = ({ classes }: any) => {
         key: 'change-password',
         uIcon: MdPassword,
         disable: false,
-        lable: t('UsersAndPermissions.changePassword'),
+        lable: t('SubUsers.changePassword'),
         // remove: windowSize === 'xs',
         onClick: () => setOpenChangePasswordDialog(true),
         rootClass: clsx(classes.paddingIcon, classes.f18),
@@ -111,7 +111,7 @@ const UserAndPermissions = ({ classes }: any) => {
         key: 'permission-history',
         uIcon: PreviewIcon,
         disable: false,
-        lable: t('UsersAndPermissions.permissionsHistory'),
+        lable: t('SubUsers.permissionsHistory'),
         // remove: windowSize === 'xs',
         onClick: () => setOpenPermissionsHistoryDialog(true),
         rootClass: classes.paddingIcon,
@@ -234,10 +234,10 @@ const UserAndPermissions = ({ classes }: any) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("UsersAndPermissions.username")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("UsersAndPermissions.email")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("UsersAndPermissions.cellphone")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("UsersAndPermissions.permissions")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.username")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.email")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.cellphone")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.permissions")}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.noBorderOnLastCell)} align='center'>
           </TableCell>
         </TableRow>
@@ -285,13 +285,13 @@ const UserAndPermissions = ({ classes }: any) => {
               )}
               endIcon={<MdOutlinePersonAddAlt />}
               onClick={() => setOpenSaveUserDialog(true)}>
-              {t('UsersAndPermissions.addUser')}
+              {t('SubUsers.addUser')}
             </Button>
           }
         </Grid>
         <Grid item md={4} xs={12} sm={12} className={clsx(classes.groupsLableContainer)} >
           <Typography className={classes.groupsLable}>
-            {`${userList?.length} ${t('UsersAndPermissions.users')}`}
+            {`${userList?.length} ${t('SubUsers.users')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -368,13 +368,13 @@ const UserAndPermissions = ({ classes }: any) => {
             </CustomTooltip>
           </Box>
           <Box className={clsx(classes.pt5)}>
-            {t("UsersAndPermissions.email")}: {row.Email}
+            {t("SubUsers.email")}: {row.Email}
           </Box>
           <Box className={clsx(classes.pt5)}>
-            {t("UsersAndPermissions.cellphone")}: {row.Cellphone}
+            {t("SubUsers.cellphone")}: {row.Cellphone}
           </Box>
           <Box className={clsx(classes.pt5)}>
-            {t("UsersAndPermissions.permissions")} :&nbsp;
+            {t("SubUsers.permissions")} :&nbsp;
             {first(limitedAccessPermissions)}
             {
               subRights !== '' && (
@@ -416,18 +416,18 @@ const UserAndPermissions = ({ classes }: any) => {
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {t('UsersAndPermissions.deleteUserPrompt')}
+        {t('SubUsers.deleteUserPrompt')}
       </Typography>
     ),
-    cancelText: t('UsersAndPermissions.cancel'),
-    confirmText: t('UsersAndPermissions.delete'),
+    cancelText: t('SubUsers.cancel'),
+    confirmText: t('SubUsers.delete'),
     onConfirm: async () => {
     },
     onCancel: () => setDialogType(null)
   })
 
   // const saveUser = (id: string = '') => ({
-  // 	title: t('UsersAndPermissions.addUser'),
+  // 	title: t('SubUsers.addUser'),
   // 	showDivider: false,
   //   icon: <MdOutlinePersonAddAlt />,
   // 	content: (
@@ -471,7 +471,7 @@ const UserAndPermissions = ({ classes }: any) => {
       containerClass={clsx(classes.management, classes.mb50)}
     >
       <Box className={'topSection'}>
-        <Title Text={t('UsersAndPermissions.title')} classes={classes} />
+        <Title Text={t('SubUsers.title')} classes={classes} />
         {renderSearchSection()}
       </Box>
 
@@ -512,4 +512,4 @@ const UserAndPermissions = ({ classes }: any) => {
   )
 }
 
-export default UserAndPermissions
+export default SubUsers
