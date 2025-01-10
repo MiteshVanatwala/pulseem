@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, TextField } from '@material-ui/core';
+import { Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@material-ui/core';
 import { Box, Grid, Button } from '@material-ui/core';
 import {
 	CampaignDetailByIdData,
@@ -54,6 +54,9 @@ const SummaryModal = ({
 	setRandomlyCount,
 	resetRandomCount,
 }: SummaryModalProps) => {
+	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
+  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
+	
 	const dispatch = useDispatch();
 	const { campaignID } = useParams();
 	const [isLoader, setIsLoader] = useState<boolean>(false);
@@ -72,6 +75,7 @@ const SummaryModal = ({
 			state.whatsapp.ToastMessages
 	);
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { TierData } = useSelector((state: any) => state.common)
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 
@@ -382,13 +386,42 @@ const SummaryModal = ({
 		}
 	}
 
+	const renderTierData = () => {
+		if (TierData.length === 0) return <></>;
+
+		return (
+			<TableContainer  className={classes.tableStyle}>
+				<Table className={clsx(classes.tableContainer, classes.w100)}>
+					<TableHead>
+						<TableRow classes={rowStyle}>
+							<TableCell classes={cellStyle} className={classes.flex2} align='center'>{translator('WhatsappOnBoarding.phoneNumber')}</TableCell>
+							<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('WhatsappOnBoarding.tier')}</TableCell>
+							<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('WhatsappOnBoarding.limit')}</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{
+							TierData?.map((tier: any) => (
+								<TableRow classes={rowStyle}>
+									<TableCell classes={cellStyle} className={classes.flex2} align='center'>{tier?.FromNumber}</TableCell>
+									<TableCell classes={cellStyle} className={classes.flex1} align='center'>{tier?.Tier}</TableCell>
+									<TableCell classes={cellStyle} className={classes.flex1} align='center'>{tier?.Limit}</TableCell>
+								</TableRow>
+							))
+						}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		)
+	}
+
 	return (
 		<>
 			{renderToast()}
 			<div className={classes.summaryModal}>
 				<div className={classes.summaryModalContent}>
 					<div className={classes.testGroupModalContentWrapper}>
-						<Grid container style={{ justifyContent: 'space-between' }}>
+						<Grid container style={{ justifyContent: 'space-between' }} spacing={2}>
 							<Grid item lg={6}>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
@@ -444,7 +477,13 @@ const SummaryModal = ({
 												<>{translator('sms.smsSummaryClose')}</>
 											)}
 										</Link>
-									</span>
+									</span>									
+								</Box>
+								<Box className={clsx(classes.f16, classes.bold)}>
+									<div className={classes.campaignSummaryTextTitle}>
+										{translator('Tier')}
+									</div>
+									{renderTierData()}
 								</Box>
 								{isShowTierAlert(
 									campaignSummary?.WhatsappSmsLeft || 0,
@@ -571,16 +610,6 @@ const SummaryModal = ({
 											<>{translator('whatsappCampaign.summaryNote2')}</>
 											<br />
 											<>{translator('whatsappCampaign.summaryNote3')}</>
-											<br />
-											<span>
-												<a
-													target={'_blank'}
-													// href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-													href={FBBusiness}
-													rel='noreferrer'>
-													<>{translator('whatsappCampaign.limit')}</>
-												</a>
-											</span>
 										</b>
 									</div>
 								</Box>

@@ -1331,15 +1331,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 				<div className={classes.pt10}>
 					{translator('whatsappCampaign.note2')}{' '}
-					<>{translator('whatsappCampaign.checkLimit')}</>{' '}
-					<a
-						// href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-						href={FBBusiness}
-						target='_blank'
-						rel='noreferrer'
-					>
-						<>{translator('whatsappCampaign.here')}</>
-					</a>
 				</div>
 			</Grid>
 		)
