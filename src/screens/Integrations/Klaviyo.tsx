@@ -149,11 +149,11 @@ const Klaviyo = ({ classes }: any) => {
         setSettings({
           ApiKey: '',
           IntervalToRunService: '',
-          UnsubscribePreferenceTypeID: 0,
+          UnsubscribePreferenceTypeID: UnsubscribePreferenceType.None,
           DaysBackwards: 1,
           IsDeleted: false,
           isSyncRecipients: false,
-          EcommerceSyncOptionsID: null,
+          EcommerceSyncOptionsID: UnsubscribePreferenceType.Both,
           IsInsertAsActive: false
         });
         break;
