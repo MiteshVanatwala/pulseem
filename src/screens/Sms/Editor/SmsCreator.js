@@ -512,7 +512,7 @@ const SmsCreator = ({ classes }) => {
     const text = e.target.value;
     var lastChar = text.substring(text.length, text.length - 1);
     var isNumber = /^[0-9]*$/;
-    var english = /^[A-Za-z0-9 ]*$/;
+    var english = /^[A-Za-z0-9 -]*$/;
 
     if (!text.match(isNumber) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
@@ -542,7 +542,7 @@ const SmsCreator = ({ classes }) => {
     if (smsModel.Text === "") {
       isValid = false
     }
-    let english = /^[ A-Za-z0-9]*$/;
+    let english = /^[ A-Za-z0-9 -]*$/;
     if (campaignNumber === "" || !english.test(campaignNumber)) {
       setcampaignNumberValidated(true);
       isValid = false;
