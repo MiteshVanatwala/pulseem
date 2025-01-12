@@ -521,7 +521,7 @@ const SmsCreator = ({ classes }) => {
     if (text.match(onlyNumbersWithHyphen) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
     }
-    if (text.match(onlyNumbersWithHyphen) && !text.match(onlyNumbers)) {
+    if ((text.match(onlyNumbersWithHyphen) && !text.match(onlyNumbers)) || !text.match(english)) {
       e.target.value = e.target.value.replace(lastChar, '');
     }
 
