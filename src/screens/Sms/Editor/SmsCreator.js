@@ -180,8 +180,6 @@ const SmsCreator = ({ classes }) => {
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
-  const english = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s\S]*$/;
-  const isNumber = /^[0-9]*$/;
 
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
@@ -512,7 +510,9 @@ const SmsCreator = ({ classes }) => {
 
   const onCampaignNumber = (e) => {
     const text = e.target.value;
-    // var lastChar = text.substring(text.length, text.length - 1);
+    var lastChar = text.substring(text.length, text.length - 1);
+    var isNumber = /^[0-9]*$/;
+    var english = /^[A-Za-z0-9 -]*$/;
 
     if (!text.match(isNumber) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
@@ -520,9 +520,9 @@ const SmsCreator = ({ classes }) => {
     if (text.match(isNumber) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
     }
-    // if (!text.match(english)) {
-    //   e.target.value = e.target.value.replace(lastChar, '');
-    // }
+    if (!text.match(english)) {
+      e.target.value = e.target.value.replace(lastChar, '');
+    }
 
     setrestoreBool(false);
     setremovalMessageButtonDisabled(true);
@@ -543,7 +543,13 @@ const SmsCreator = ({ classes }) => {
       isValid = false
     }
 
-    if (campaignNumber === "" || (!english.test(campaignNumber) && campaignNumber.indexOf('-') > 0)) {
+    let validPattern = /^[A-Za-z0-9 -]*$/;
+    let onlyNumbersWithHyphen = /^[0-9-]*$/;
+    let onlyNumbers = /^[0-9]*$/;
+
+    if (campaignNumber === "" ||
+      (onlyNumbersWithHyphen.test(campaignNumber) && !onlyNumbers.test(campaignNumber)) ||
+      !validPattern.test(campaignNumber)) {
       setcampaignNumberValidated(true);
       isValid = false;
     }
@@ -1390,7 +1396,6 @@ const SmsCreator = ({ classes }) => {
     setmodalOpen(false);
     setremovalNumber(null);
     setDialogType(null);
-    validationCheckpoint(() => onSave(true, false));
   };
   const handleAlertoff = () => {
     setcampaignNumber(storedValue);
