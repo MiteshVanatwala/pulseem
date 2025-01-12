@@ -62,8 +62,6 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
   
 	useEffect(() => {
-		setIsLoader(false);
-
 		if (WhatsAppPlatformID !== WhatsAppPlatformIDEnum.TWILLIO) {
 			fetchMetaPhoneNumbers();
 			fetchWhatsAppSMSVirtualNumbers();
@@ -128,6 +126,7 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 		if (StatusCode === 1) {
 			setVirtualNumbersCodeList(flatten(Data));
 		}
+		setIsLoader(false);
 	}
 	
 	const handleMetaPhoneNumberResponse = (response: PulseemResponse) => {
@@ -288,6 +287,22 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 								{row?.display_phone_number}
 							</Typography>
 						</Box>
+						<Box className={classes.dFlex}>
+							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
+								{t("WhatsappOnBoarding.tier")}:
+							</Typography>
+							<Typography className={classes.f18}>
+								{row?.tier}
+							</Typography>
+						</Box>
+						<Box className={classes.dFlex}>
+							<Typography className={clsx(classes.f18, classes.bold, classes.pe15)}>
+								{t("WhatsappOnBoarding.limit")}:
+							</Typography>
+							<Typography className={classes.f18}>
+								{row?.limit}
+							</Typography>
+						</Box>
           </TableCell>
         </TableRow>
       </>
@@ -342,6 +357,18 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 				<TableCell
 					classes={cellStyle}
 					align='center'
+					className={classes.flex2}>
+						{row?.tier}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
+					className={classes.flex2}>
+						{row?.limit}
+				</TableCell>
+				<TableCell
+					classes={cellStyle}
+					align='center'
 					className={clsx(classes.flex2, classes.dInlineBlock, classes.textCapitalize)}>
 						{renderPhoneNumberStatus(row)}
 				</TableCell>
@@ -369,6 +396,8 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.phoneNumber')}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.ID')}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.tier')}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.limit')}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('WhatsappOnBoarding.status')}</TableCell>
         </TableRow>
       </TableHead>
