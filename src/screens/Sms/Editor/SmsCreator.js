@@ -180,6 +180,8 @@ const SmsCreator = ({ classes }) => {
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
+  const english = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s\S]*$/;
+  const isNumber = /^[0-9]*$/;
 
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
@@ -510,9 +512,7 @@ const SmsCreator = ({ classes }) => {
 
   const onCampaignNumber = (e) => {
     const text = e.target.value;
-    var lastChar = text.substring(text.length, text.length - 1);
-    var isNumber = /^[0-9]*$/;
-    var english = /^[A-Za-z0-9 -]*$/;
+    // var lastChar = text.substring(text.length, text.length - 1);
 
     if (!text.match(isNumber) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
@@ -520,9 +520,9 @@ const SmsCreator = ({ classes }) => {
     if (text.match(isNumber) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
     }
-    if (!text.match(english)) {
-      e.target.value = e.target.value.replace(lastChar, '');
-    }
+    // if (!text.match(english)) {
+    //   e.target.value = e.target.value.replace(lastChar, '');
+    // }
 
     setrestoreBool(false);
     setremovalMessageButtonDisabled(true);
@@ -542,8 +542,8 @@ const SmsCreator = ({ classes }) => {
     if (smsModel.Text === "") {
       isValid = false
     }
-    let english = /^[ A-Za-z0-9 -]*$/;
-    if (campaignNumber === "" || !english.test(campaignNumber)) {
+
+    if (campaignNumber === "" || (!english.test(campaignNumber) && campaignNumber.indexOf('-') > 0)) {
       setcampaignNumberValidated(true);
       isValid = false;
     }
@@ -1390,6 +1390,7 @@ const SmsCreator = ({ classes }) => {
     setmodalOpen(false);
     setremovalNumber(null);
     setDialogType(null);
+    validationCheckpoint(() => onSave(true, false));
   };
   const handleAlertoff = () => {
     setcampaignNumber(storedValue);
@@ -1764,7 +1765,7 @@ const SmsCreator = ({ classes }) => {
               </li> : null}
               {smsModel.Text === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
               {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
-                {t("mainReport.campaignFromRequire")}
+                {t("mainReport.campaignFromRequire")} / {t("common.invalid")}
               </li> : null}
             </ul>
           </div>
