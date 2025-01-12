@@ -488,7 +488,7 @@ const SubUsers = ({ classes }: any) => {
       />
 
       <ChangePassword
-        Text={'Enter new password'}
+        Text={t('settings.changePassword.enterNewPassword')}
         classes={classes}
         SetToast={setToastMessage}
         IsOpen={openChangePasswordDialog}

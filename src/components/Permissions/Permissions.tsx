@@ -12,7 +12,7 @@ import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNu
 import { CommonRedux } from "../../screens/Whatsapp/Editor/Types/WhatsappCreator.types";
 import { ValidateEmailAddress } from "../../helpers/Utils/common";
 
-const Permissions = ({ classes, isOpen, onClose }: any) => {
+const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 	const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
 	const { isGlobal, countryCodeList } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { t } = useTranslation();
@@ -87,7 +87,7 @@ const Permissions = ({ classes, isOpen, onClose }: any) => {
 			showDivider={false}
 			onClose={() => onClose(false)}
 			onCancel={() => onClose(false)}
-			onConfirm={() => { }}
+			onConfirm={() => onConfirm(permissions)}
 			reduceTitle
 			paperStyle={clsx(windowSize !== 'xs' ? classes.w50VW : null)}
 			childrenPadding={false}
