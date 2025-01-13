@@ -510,19 +510,22 @@ const SmsCreator = ({ classes }) => {
 
   const onCampaignNumber = (e) => {
     const text = e.target.value;
-    var lastChar = text.substring(text.length, text.length - 1);
-    var onlyNumbersWithHyphen = /^[0-9-]*$/;
+    // var lastChar = text.substring(text.length, text.length - 1);
+    var onlyNumbersWithHyphenAndSpace = /^[0-9 -]*$/;
     var onlyNumbers = /^[0-9]*$/;
     var english = /^[A-Za-z0-9 -]*$/
 
-    if (!text.match(onlyNumbersWithHyphen) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
-      e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS); // 11
+    if (!text.match(onlyNumbersWithHyphenAndSpace) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
+      e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
     }
-    if (text.match(onlyNumbersWithHyphen) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
+    if (text.match(onlyNumbersWithHyphenAndSpace) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
     }
-    if ((text.match(onlyNumbersWithHyphen) && !text.match(onlyNumbers)) || !text.match(english)) {
-      e.target.value = e.target.value.replace(lastChar, '');
+
+    if (text.match(onlyNumbersWithHyphenAndSpace) && !text.match(onlyNumbers)) {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    } else if (!text.match(english)) {
+      e.target.value = text.replace(/[^A-Za-z0-9 -]/g, '');
     }
 
     setrestoreBool(false);
