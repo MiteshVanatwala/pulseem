@@ -479,37 +479,34 @@ const SummaryModal = ({
 										</Link>
 									</span>									
 								</Box>
-								<Box className={clsx(classes.f16, classes.bold)}>
+								<Box className={clsx(classes.f16, classes.bold, classes.pb15)}>
 									<div className={classes.campaignSummaryTextTitle}>
 										{translator('Tier')}
-									</div>
-									{renderTierData()}
-								</Box>
-								{isShowTierAlert(
-									campaignSummary?.WhatsappSmsLeft || 0,
-									campaignSummary?.FinalCount || 0,
-									campaignSummary?.WhatsappTierID || 1,
-									sendType,
-									isIn24HrWindow
-								) && (
-										<Box className={classes.campaignSummaryExceedLimitWrapper}>
-											<div className={classes.campaignSummaryExceedLimitTierInfo}>
-												<>
-													{`${translator(
-														'settings.accountSettings.actDetails.fields.sendingTier'
-													)} ${translator(
-														tierSetting[
-															getIndexFromTierId(campaignSummary?.WhatsappTierID)
-														]?.name
-													)}`}
+										{
+											isShowTierAlert(
+												campaignSummary?.WhatsappSmsLeft || 0,
+												campaignSummary?.FinalCount || 0,
+												campaignSummary?.WhatsappTierID || 1,
+												sendType,
+												isIn24HrWindow
+											) && (
+												<>		
+													<span className={clsx(classes.f15, classes.paddingInline5)}>
+														({`${translator(
+															tierSetting[
+																getIndexFromTierId(campaignSummary?.WhatsappTierID)
+															]?.name
+														)}`})
+													</span>
 													<CustomTooltip
 														isSimpleTooltip={false}
 														arrow={true}
 														style={{
 															fontSize: 14,
 															width: 'auto',
-															paddingLeft: isRTL ? '0px' : '10px',
-															paddingRight: isRTL ? '10px' : '0px',
+															paddingLeft: isRTL ? '0px' : '5px',
+															paddingRight: isRTL ? '5px' : '0px',
+															display: 'inline-flex'
 														}}
 														classes={classes}
 														interactive={true}
@@ -524,7 +521,19 @@ const SummaryModal = ({
 														icon={undefined}>
 													</CustomTooltip>
 												</>
-											</div>
+											)
+										}
+									</div>
+									{renderTierData()}
+								</Box>
+								{isShowTierAlert(
+									campaignSummary?.WhatsappSmsLeft || 0,
+									campaignSummary?.FinalCount || 0,
+									campaignSummary?.WhatsappTierID || 1,
+									sendType,
+									isIn24HrWindow
+								) && (
+										<Box className={classes.campaignSummaryExceedLimitWrapper}>
 											<div className={classes.campaignSummaryExceedLimitText}>
 												<>
 													{translator(
