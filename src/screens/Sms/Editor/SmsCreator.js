@@ -511,16 +511,17 @@ const SmsCreator = ({ classes }) => {
   const onCampaignNumber = (e) => {
     const text = e.target.value;
     var lastChar = text.substring(text.length, text.length - 1);
-    var isNumber = /^[0-9]*$/;
-    var english = /^[A-Za-z0-9 -]*$/;
+    var onlyNumbersWithHyphen = /^[0-9-]*$/;
+    var onlyNumbers = /^[0-9]*$/;
+    var english = /^[A-Za-z0-9 -]*$/
 
-    if (!text.match(isNumber) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
-      e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
+    if (!text.match(onlyNumbersWithHyphen) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
+      e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS); // 11
     }
-    if (text.match(isNumber) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
+    if (text.match(onlyNumbersWithHyphen) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
     }
-    if (!text.match(english)) {
+    if ((text.match(onlyNumbersWithHyphen) && !text.match(onlyNumbers)) || !text.match(english)) {
       e.target.value = e.target.value.replace(lastChar, '');
     }
 
@@ -542,8 +543,14 @@ const SmsCreator = ({ classes }) => {
     if (smsModel.Text === "") {
       isValid = false
     }
-    let english = /^[ A-Za-z0-9 -]*$/;
-    if (campaignNumber === "" || !english.test(campaignNumber)) {
+
+    let validPattern = /^[A-Za-z0-9 -]*$/;
+    let onlyNumbersWithHyphen = /^[0-9-]*$/;
+    let onlyNumbers = /^[0-9]*$/;
+
+    if (campaignNumber === "" ||
+      (onlyNumbersWithHyphen.test(campaignNumber) && !onlyNumbers.test(campaignNumber)) ||
+      !validPattern.test(campaignNumber)) {
       setcampaignNumberValidated(true);
       isValid = false;
     }
@@ -1764,7 +1771,7 @@ const SmsCreator = ({ classes }) => {
               </li> : null}
               {smsModel.Text === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
               {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
-                {t("mainReport.campaignFromRequire")}
+                {t("mainReport.campaignFromRequire")} / {t("common.invalid")}
               </li> : null}
             </ul>
           </div>
