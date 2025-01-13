@@ -33,7 +33,7 @@ import clsx from 'clsx';
 import Toast from '../../../../components/Toast/Toast.component';
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
-import { FBBusiness } from '../../../../helpers/Constants';
+import { filter } from 'lodash';
 
 const SummaryModal = ({
 	classes,
@@ -96,6 +96,7 @@ const SummaryModal = ({
 		fileLink: '',
 		fileType: '',
 	});
+	const tierDataFromNumber = filter(TierData, {FromNumber: campaignDetails?.FromNumber}) || [];
 
 	useEffect(() => {
 		(async () => {
@@ -387,7 +388,7 @@ const SummaryModal = ({
 	}
 
 	const renderTierData = () => {
-		if (TierData.length === 0) return <></>;
+		if (tierDataFromNumber.length === 0) return <></>;
 
 		return (
 			<TableContainer  className={classes.tableStyle}>
@@ -401,7 +402,7 @@ const SummaryModal = ({
 					</TableHead>
 					<TableBody>
 						{
-							TierData?.map((tier: any) => (
+							tierDataFromNumber?.map((tier: any) => (
 								<TableRow classes={rowStyle}>
 									<TableCell classes={cellStyle} className={classes.flex2} align='center'>{tier?.FromNumber}</TableCell>
 									<TableCell classes={cellStyle} className={classes.flex1} align='center'>{tier?.Tier}</TableCell>
