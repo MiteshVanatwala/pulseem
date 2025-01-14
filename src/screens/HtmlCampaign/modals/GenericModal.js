@@ -31,9 +31,12 @@ const GenericModal = ({
         showDefaultButtons={modalData.showDefaultButtons}
         renderButtons={modalData.renderButtons}
       >
-        {modalData?.content !== null ? <>{modalData?.content}</> : <Box className={classes.dialogBox}>
-          <Typography>{RenderHtml(t(modalData.message))}</Typography>
-        </Box>}
+        {modalData?.content ? (<>{modalData?.content}</>)
+          :
+          (<Box className={classes.dialogBox}>
+            <Typography>{RenderHtml(t(modalData.message))}</Typography>
+          </Box>)
+        }
 
       </BaseDialog>
     );
