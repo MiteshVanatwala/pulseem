@@ -561,7 +561,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         setDialog(null);
       },
       onCancel: () => setDialog(null),
-      onClose: () => setDialog(null)
+      onClose: () => setDialog(DialogType.SAVE_TEMPLATE)
     });
     setDialog(DialogType.GENERIC);
   }
