@@ -12,7 +12,7 @@ import {
 } from "../../../redux/reducers/smsSlice";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
-const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) => {
+const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null, onSuccess = () => null }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [otpValue, setotpValue] = useState(null);
@@ -173,14 +173,14 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
                             classes.dialogButton,
                             classes.dialogConfirmButton
                         )}
-                        onClick={() => { setDialogType(null) }}>
+                        onClick={() => { setDialogType(null); onSuccess(); }}>
                         {t('common.Ok')}
                     </Button>
                 </Box>
             ),
             showDefaultButtons: false,
-            onClose: () => { setDialogType(null) },
-            onConfirm: () => { setDialogType(null) }
+            onClose: () => { setDialogType(null); onSuccess(); },
+            onConfirm: () => { setDialogType(null); onSuccess(); }
         }
     }
     const handleOtpResult = async (otpSendResult) => {
@@ -270,7 +270,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
     const handleAlertoff = () => {
         setDialogType(null);
     }
-    
+
     return (<>
         {renderDialog()}
         <Loader isOpen={showLoader} />
