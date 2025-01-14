@@ -235,7 +235,9 @@
     "HeaderText": "מחיקה",
     "ImageUrl": "~/Images/Document 1 delete.png",
     "SortExpression": "",
-    "Text": "מחק"
+    "Text": "מחק",
+    "existTemplateTitle": "שם וקטגורית התבנית קיימת!",
+    "existTemplateDescription": "האם אתה בטוח שברצונך לדרוס את התבנית הקיימת?"
   },
   "GridTemplateColumnResource1": {
     "CurrentFilterValue": "",

@@ -73,7 +73,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
   const { productList } = useSelector(state => state.product)
-  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
@@ -245,8 +245,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   //#endregion 
 
-  const getData = async () => {
-    setLoader(true);
+  const getData = async (defaultShowLoader = true) => {
+    setLoader(defaultShowLoader);
     await dispatch(getCampaignById(params?.id));
     await dispatch(getAccountExtraData());
     await dispatch(getPreviousLandingData());
@@ -470,11 +470,11 @@ const CampaignEditor = ({ classes, ...props }) => {
             }
             return false;
           }
-          else if (saveRef.current?.showAnimation) {
-            setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+          else if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
+            setToastMessage(ToastMessages.CAMPAIGN_SAVED);
           }
 
-          if (reInit) {
+          if (reInit && !saveRef.current?.saveTemplate) {
             getData();
           }
           break;
@@ -496,17 +496,16 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
 
       if (saveRef.current?.saveTemplate) {
-        const templateResponse = await dispatch(saveTemplateToAccount({
-          Name: saveRef.current?.templateName,
-          JsonData: finalJson,
-          HTML: finalHtml,
-          Category: saveRef.current?.templateCategory
-        }));
-        if (!templateResponse.payload.Data) {
-          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+        const isTemplateExists = templatesBySubAccount?.find((template) => {
+          return template?.Name === saveRef.current?.templateName && template?.Category === saveRef.current?.templateCategory
+        });
+
+        if (isTemplateExists) {
+          onExistTemplate(finalJson, finalHtml);
         }
-        dispatch(getAllTemplatesBySubaccountId());
-        getData();
+        else {
+          forceSaveTemplate(finalJson, finalHtml)
+        }
       }
     } catch (e) {
       console.error(e);
@@ -550,6 +549,37 @@ const CampaignEditor = ({ classes, ...props }) => {
     });
     setDialog(DialogType.GENERIC);
   }
+  const onExistTemplate = (finalJson, finalHtml) => {
+    setGenericModalData({
+      title: t('campaigns.GridButtonColumnResource2.existTemplateTitle'),
+      message: t("campaigns.GridButtonColumnResource2.existTemplateDescription"),
+      onConfirm: () => {
+        forceSaveTemplate(finalJson, finalHtml);
+        setDialog(null);
+      },
+      onCancel: () => setDialog(null),
+      onClose: () => setDialog(null)
+    });
+    setDialog(DialogType.GENERIC);
+  }
+
+  const forceSaveTemplate = async (finalJson, finalHtml) => {
+    const templateResponse = await dispatch(saveTemplateToAccount({
+      Name: saveRef.current?.templateName,
+      JsonData: finalJson,
+      HTML: finalHtml,
+      Category: saveRef.current?.templateCategory
+    }));
+    if (!templateResponse.payload.Data) {
+      setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+    }
+    else {
+      setToastMessage(ToastMessages.TEMPLATE_SAVED);
+    }
+    dispatch(getAllTemplatesBySubaccountId());
+    getData(false);
+  }
+
   const handleExitCampaign = (saveBeforeExit = true) => {
     setDialog(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
