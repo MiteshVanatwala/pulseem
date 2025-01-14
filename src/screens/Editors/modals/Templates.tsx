@@ -380,7 +380,8 @@ const LPTemplates = ({
         isOpen={displaySaveTemplate}
         name={templateDetails.Name}
         categoryName={templateDetails.Category}
-        categoryList={templateDetails.Category?.split(',')}
+        //@ts-ignore
+        categoryList={templateDetails.Category?.split(',') || []}
       />
       {renderToast()}
     </Box>
