@@ -501,7 +501,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         });
 
         if (isTemplateExists) {
-          onExistTemplate(finalJson, finalHtml);
+          onExistTemplate(finalJson, finalHtml, saveRef.current?.templateName, saveRef.current?.templateCategory);
         }
         else {
           forceSaveTemplate(finalJson, finalHtml)
@@ -549,10 +549,13 @@ const CampaignEditor = ({ classes, ...props }) => {
     });
     setDialog(DialogType.GENERIC);
   }
-  const onExistTemplate = (finalJson, finalHtml) => {
+  const onExistTemplate = (finalJson, finalHtml, name, category) => {
     setGenericModalData({
-      title: t('campaigns.GridButtonColumnResource2.existTemplateTitle'),
-      message: t("campaigns.GridButtonColumnResource2.existTemplateDescription"),
+      title: t('common.payAttention'),
+      content: <Box style={{ marginBottom: 25 }}>
+        <Typography>{RenderHtml(t("campaigns.GridButtonColumnResource2.existTemplateDescription").replace('#name#', name).replace('#category#', category))}</Typography>
+      </Box>,
+      message: null,
       onConfirm: () => {
         forceSaveTemplate(finalJson, finalHtml);
         setDialog(null);
