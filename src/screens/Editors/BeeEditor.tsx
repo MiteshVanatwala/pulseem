@@ -620,9 +620,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       saveRef.current = { ...saveRef.current, saveTemplate: false };
 
     }
-    dispatch(getAllLPTemplatesBySubaccountId());
     setDialogType(null);
     setLoader(false);
+    dispatch(getAllLPTemplatesBySubaccountId());
+    getData(false);
   }
 
   const handleExitLandingPage = (saveBeforeExit = true) => {
