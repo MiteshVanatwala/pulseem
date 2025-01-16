@@ -96,7 +96,7 @@ const SummaryModal = ({
 		fileLink: '',
 		fileType: '',
 	});
-	const tierDataFromNumber = filter(TierData, {FromNumber: campaignDetails?.FromNumber}) || [];
+	const tierDataFromNumber = filter(TierData, {FromNumber: campaignDetails?.FromNumber?.replace(/-/g, '')}) || [];
 
 	useEffect(() => {
 		(async () => {

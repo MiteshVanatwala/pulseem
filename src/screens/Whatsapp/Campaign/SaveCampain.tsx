@@ -111,6 +111,7 @@ import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { DateFormats, FBBusiness } from '../../../helpers/Constants';
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from '../../../config/enum';
+import { filter, first } from 'lodash';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -130,7 +131,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { SubAccountSettings } = useSelector(
 		(state: { common: CommonRedux }) => state.common?.accountSettings
 	);
-	const { WhatsAppPlatformID } = useSelector(
+	const { WhatsAppPlatformID, TierData } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
 	const websiteField = [
@@ -1323,15 +1324,21 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	}
 
 	const limitNotice = () => {
+		const tierDataFromNumber = from !== '' ? (filter(TierData, {FromNumber: from?.replace(/-/g, '')}) || []) : [];
 		return (
 			<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
 				<span style={{ lineHeight: '0' }}>
 					{translator('whatsappCampaign.note1')}
 				</span>
 
-				<div className={classes.pt10}>
-					{translator('whatsappCampaign.note2')}{' '}
-				</div>
+				{
+					tierDataFromNumber?.length > 0 && (
+						<div className={classes.pt10}>
+							<b>{translator('WhatsappOnBoarding.tier')}: {first(tierDataFromNumber)?.Tier},&nbsp;
+							{translator('WhatsappOnBoarding.limit')}: {first(tierDataFromNumber)?.Limit}</b>
+						</div>
+					)
+				}
 			</Grid>
 		)
 	}
