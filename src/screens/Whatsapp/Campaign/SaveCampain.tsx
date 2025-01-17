@@ -131,7 +131,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { SubAccountSettings } = useSelector(
 		(state: { common: CommonRedux }) => state.common?.accountSettings
 	);
-	const { WhatsAppPlatformID, TierData } = useSelector(
+	const { WhatsAppPlatformID } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
 	const websiteField = [

@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@material-ui/core';
+import { Link, TextField } from '@material-ui/core';
 import { Box, Grid, Button } from '@material-ui/core';
 import {
 	CampaignDetailByIdData,
@@ -53,9 +53,6 @@ const SummaryModal = ({
 	setRandomlyCount,
 	resetRandomCount,
 }: SummaryModalProps) => {
-	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
-  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
-	
 	const dispatch = useDispatch();
 	const { campaignID } = useParams();
 	const [isLoader, setIsLoader] = useState<boolean>(false);
@@ -74,7 +71,6 @@ const SummaryModal = ({
 			state.whatsapp.ToastMessages
 	);
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const { TierData } = useSelector((state: any) => state.common)
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 
