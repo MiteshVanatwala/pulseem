@@ -33,7 +33,6 @@ import clsx from 'clsx';
 import Toast from '../../../../components/Toast/Toast.component';
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
-import { filter } from 'lodash';
 
 const SummaryModal = ({
 	classes,
@@ -96,8 +95,7 @@ const SummaryModal = ({
 		fileLink: '',
 		fileType: '',
 	});
-	const tierDataFromNumber = filter(TierData, {FromNumber: campaignDetails?.FromNumber?.replace(/-/g, '')}) || [];
-
+	
 	useEffect(() => {
 		(async () => {
 			if (campaignID) {
@@ -387,35 +385,6 @@ const SummaryModal = ({
 		}
 	}
 
-	const renderTierData = () => {
-		if (tierDataFromNumber.length === 0) return <></>;
-
-		return (
-			<TableContainer  className={classes.tableStyle}>
-				<Table className={clsx(classes.tableContainer, classes.w100)}>
-					<TableHead>
-						<TableRow classes={rowStyle}>
-							<TableCell classes={cellStyle} className={classes.flex2} align='center'>{translator('WhatsappOnBoarding.phoneNumber')}</TableCell>
-							<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('WhatsappOnBoarding.tier')}</TableCell>
-							<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('WhatsappOnBoarding.limit')}</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{
-							tierDataFromNumber?.map((tier: any) => (
-								<TableRow classes={rowStyle}>
-									<TableCell classes={cellStyle} className={classes.flex2} align='center'>{tier?.FromNumber}</TableCell>
-									<TableCell classes={cellStyle} className={classes.flex1} align='center'>{tier?.Tier}</TableCell>
-									<TableCell classes={cellStyle} className={classes.flex1} align='center'>{tier?.Limit}</TableCell>
-								</TableRow>
-							))
-						}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		)
-	}
-
 	return (
 		<>
 			{renderToast()}
@@ -480,24 +449,18 @@ const SummaryModal = ({
 										</Link>
 									</span>									
 								</Box>
-								<Box className={clsx(classes.f16, classes.bold, classes.pb15)}>
-									<div className={classes.campaignSummaryTextTitle}>
-										{translator('Tier')}
-										{
-											isShowTierAlert(
-												campaignSummary?.WhatsappSmsLeft || 0,
-												campaignSummary?.FinalCount || 0,
-												campaignSummary?.WhatsappTierID || 1,
-												sendType,
-												isIn24HrWindow
-											) && (
-												<>		
-													<span className={clsx(classes.f15, classes.paddingInline5)}>
-														({`${translator(
+								{
+									campaignSummary?.WhatsappTierID !== 0 && (
+										<Box className={clsx(classes.f16, classes.bold, classes.pb15)}>
+											<div className={classes.campaignSummaryTextTitle}>
+												{translator('Tier')}
+												<div>
+													<span className={clsx(classes.f15)}>
+														{`${translator(
 															tierSetting[
 																getIndexFromTierId(campaignSummary?.WhatsappTierID)
 															]?.name
-														)}`})
+														)}`}
 													</span>
 													<CustomTooltip
 														isSimpleTooltip={false}
@@ -521,12 +484,11 @@ const SummaryModal = ({
 														text={<span className={classes.bodyInfo}>i</span>}
 														icon={undefined}>
 													</CustomTooltip>
-												</>
-											)
-										}
-									</div>
-									{renderTierData()}
-								</Box>
+												</div>
+											</div>
+										</Box>
+									)
+								}
 								{isShowTierAlert(
 									campaignSummary?.WhatsappSmsLeft || 0,
 									campaignSummary?.FinalCount || 0,

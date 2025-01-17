@@ -98,6 +98,7 @@ import {
 	errorToastData,
 	fieldNameIds,
 	resetToastData,
+	tierSetting,
 	whatsappRoutes,
 } from '../Constant';
 import { useParams } from 'react-router-dom';
@@ -111,7 +112,6 @@ import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { DateFormats, FBBusiness } from '../../../helpers/Constants';
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from '../../../config/enum';
-import { filter, first } from 'lodash';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -1323,8 +1323,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	}
 
+	const getIndexFromTierId = (tierId: number | undefined) => {
+		if (tierId) {
+			return Number(tierId) - 1;
+		}
+		return 0;
+	};
+
 	const limitNotice = () => {
-		const tierDataFromNumber = from !== '' ? (filter(TierData, {FromNumber: from?.replace(/-/g, '')}) || []) : [];
 		return (
 			<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
 				<span style={{ lineHeight: '0' }}>
@@ -1332,10 +1338,16 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				</span>
 
 				{
-					tierDataFromNumber?.length > 0 && (
+					campaignSummary?.WhatsappTierID !== 0 && (
 						<div className={classes.pt10}>
-							<b>{translator('WhatsappOnBoarding.tier')}: {first(tierDataFromNumber)?.Tier},&nbsp;
-							{translator('WhatsappOnBoarding.limit')}: {first(tierDataFromNumber)?.Limit}</b>
+							<div className={clsx(classes.dInlineBlock, classes.paddingInline5)}>{translator('Tier')}:</div>
+							<div className={classes.dInlineBlock}>
+								{`${translator(
+									tierSetting[
+										getIndexFromTierId(campaignSummary?.WhatsappTierID)
+									]?.name
+								)}`}
+							</div>
 						</div>
 					)
 				}
