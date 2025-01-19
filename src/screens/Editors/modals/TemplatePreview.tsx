@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import clsx from "clsx";
 import { Box } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
