@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { debounce, includes } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, TextField, Typography } from '@material-ui/core'
+import { Box, Button, Grid, TextField, Typography } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,7 +11,7 @@ import ResponseModal from './modals/ResponseModal'
 import Toast from '../../components/Toast/Toast.component';
 import { getAuthorizedEmails, getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import WizardActions from '../../components/Wizard/WizardActions';
-import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups, updateLandingPage } from '../../redux/reducers/landingPagesSlice';
+import { getById, deleteLPUserBlock, deleteLandingPage, getAllLPTemplatesBySubaccountId, getLPBeeToken, getLPPublicTemplates, getLPTemplateById, getLPUserblocks, saveLPTemplateToAccount, saveLPUserBlock, saveWebform, publish, setWebformGroups } from '../../redux/reducers/landingPagesSlice';
 import { initClientForm, initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/config';
 import { IoMdImages } from 'react-icons/io';
@@ -42,6 +42,7 @@ import { ClientForm } from '../../Models/BeeModels/BeeModel';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from '../../redux/reducers/smsSlice';
 import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
 import LPTemplates from './modals/Templates';
+import { GenericModal } from '../HtmlCampaign/components/GenericModal';
 
 const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -65,11 +66,15 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     data?: any;
   } | null>(null);
   const [mergeData, setPulseemMergeData] = useState({});
-  const [dialog, setDialog] = useState(null);
+  const [dialog, setDialog] = useState<any>(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
   const [isResponseModal, setIsResponseModal] = useState(false);
   const [alertLogout, setAlertLogout] = useState(false);
+  const [genericModalData, setGenericModalData] = useState<any>({
+    title: "",
+    message: ""
+  })
   const { modals, openModal } = useModals()
   const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI();
   const [showGallery, setShowGallery] = useState(false);
@@ -233,8 +238,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     setDialogType({ type: DialogType.LOGOUT })
   }
   //#endregion 
-  const getData = async () => {
-    setLoader(true);
+  const getData = async (defaultShowLoader: boolean = true) => {
+    setLoader(defaultShowLoader);
     //@ts-ignore
     await dispatch(getById(params.id))
     await dispatch(getAccountExtraData());
@@ -456,11 +461,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             }
           }
           //@ts-ignore
-          else if (saveRef.current?.showAnimation) {
+          else if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
             //@ts-ignore
-            setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.LANDING_PAGE_SAVED);
+            setToastMessage(ToastMessages.LANDING_PAGE_SAVED);
           }
-          if (reInit) {
+          //@ts-ignore
+          if (reInit && !saveRef.current?.saveTemplate) {
             getData();
           }
           break;
@@ -484,27 +490,26 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       }
       //@ts-ignore
       if (saveRef.current?.saveTemplate) {
-        //@ts-ignore
-        const templateResponse = await dispatch(saveLPTemplateToAccount({
+        const isTemplateExists = templatesBySubAccount?.find((template: any) => {
           //@ts-ignore
-          Name: saveRef.current?.templateName,
-          JsonData: finalJson,
-          HTML: finalHtml,
-          //@ts-ignore
-          Category: saveRef.current?.templateCategory
-        }));
-        //@ts-ignore
-        if (!templateResponse.payload.Data) {
-          //@ts-ignore
-          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+          return template?.Name === saveRef.current?.templateName && template?.Category === saveRef.current?.templateCategory
+        });
+        if (isTemplateExists) {
+          setDialogType({
+            type: DialogType.TEMPLAGE_EXISTS,
+            data: {
+              finalJson: finalJson,
+              finalHtml: finalHtml,
+              //@ts-ignore
+              name: saveRef.current?.templateName,
+              //@ts-ignore
+              category: saveRef.current?.templateCategory
+            }
+          })
         }
         else {
-          setDialogType(null);
-          //@ts-ignore
-          saveRef.current = { ...saveRef.current, saveTemplate: false }
+          forceSaveTemplate(finalJson, finalHtml);
         }
-        dispatch(getAllLPTemplatesBySubaccountId());
-        setDialogType(null);
       }
     } catch (e) {
       console.error(e);
@@ -544,6 +549,81 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     setDialogType({
       type: DialogType.DELETE
     })
+  }
+
+  const renderTemplateExistsDialog = (data: any) => {
+    const { finalJson, finalHtml, name, category } = data;
+    return {
+      showDivider: false,
+      title: t('common.payAttention'),
+      showDefaultButtons: false,
+      content: <Box style={{ marginBottom: 25 }}>
+        <Typography>{RenderHtml(t("campaigns.GridButtonColumnResource2.existTemplateDescription").replace('#name#', name).replace('#category#', category))}</Typography>
+      </Box>,
+      renderButtons: () => (
+        <Grid container
+          spacing={4}
+          className={clsx(classes.dialogButtonsContainer, classes.mt30, isRTL ? classes.rowReverse : null)}>
+          <Button
+            size='small'
+            variant='contained'
+            className={clsx(
+              classes.btn,
+              classes.btnRounded,
+              classes.marginInlineStart15,
+              classes.marginInlineEnd15
+            )}
+            onClick={() => {
+              forceSaveTemplate(finalJson, finalHtml);
+              setDialogType(null);
+            }}
+          >
+            {t('common.confirm')}
+          </Button>
+          <Button
+            size='small'
+            variant='contained'
+            className={clsx(
+              classes.btn,
+              classes.btnRounded
+            )}
+            onClick={() => setDialogType({ type: DialogType.SAVE_TEMPLATE })}
+          >
+            {t('common.cancel')}
+          </Button>
+        </Grid >
+      ),
+      onCancel: () => setDialogType(null),
+      onClose: () => setDialogType(null)
+    };
+  }
+  const forceSaveTemplate = async (finalJson: any, finalHtml: any) => {
+    setLoader(true);
+    //@ts-ignore
+    const templateResponse = await dispatch(saveLPTemplateToAccount({
+      //@ts-ignore
+      Name: saveRef.current?.templateName,
+      JsonData: finalJson,
+      HTML: finalHtml,
+      //@ts-ignore
+      Category: saveRef.current?.templateCategory
+    }));
+    //@ts-ignore
+    if (!templateResponse.payload.Data) {
+      //@ts-ignore
+      setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+    }
+    else {
+      //@ts-ignore
+      setToastMessage(ToastMessages.TEMPLATE_SAVED);
+      //@ts-ignore
+      saveRef.current = { ...saveRef.current, saveTemplate: false };
+
+    }
+    setDialogType(null);
+    setLoader(false);
+    dispatch(getAllLPTemplatesBySubaccountId());
+    getData(false);
   }
 
   const handleExitLandingPage = (saveBeforeExit = true) => {
@@ -1105,6 +1185,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       currentDialog = renderNoCreditLeftDialog(data);
     } else if (type === DialogType.GENERIC) {
       currentDialog = renderGenericDialog(data);
+    } else if (type === DialogType.TEMPLAGE_EXISTS) {
+      currentDialog = renderTemplateExistsDialog(data);
     }
     if (type) {
       return (
@@ -1206,6 +1288,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       {renderToast()}
       {showGalleryModal()}
       {showDocumentsModal()}
+      <GenericModal
+        classes={classes}
+        modalData={genericModalData}
+        isOpen={dialog && dialog === DialogType.GENERIC}
+      />
       <ResponseModal
         classes={classes}
         //@ts-ignore
