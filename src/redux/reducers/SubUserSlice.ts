@@ -14,6 +14,19 @@ export const getAllUsers = createAsyncThunk(
     }
   }
 );
+export const save = createAsyncThunk(
+  'SubUser/CreateOrEdit',
+  async (subUserModel: SubUserModel, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`SubUser/CreateOrEdit`, subUserModel);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+
 
 
 export const SubUserSlice = createSlice({

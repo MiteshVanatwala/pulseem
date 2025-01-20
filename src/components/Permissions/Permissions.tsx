@@ -11,8 +11,9 @@ import { PermissionTypes } from "../../config/enum";
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from "../../helpers/Utils/Validations";
 import { CommonRedux } from "../../screens/Whatsapp/Editor/Types/WhatsappCreator.types";
 import { ValidateEmailAddress } from "../../helpers/Utils/common";
+import { eSubUserPermissions, SubUserModel } from "../../Models/SubUser/SubUsers";
 
-const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
+const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 	const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
 	const { isGlobal, countryCodeList } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { t } = useTranslation();
@@ -20,12 +21,10 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 		accessType: '',
 		allowSending: false,
 		allowExport: false,
-		allowDeleting: false
+		allowDeleting: false,
+		allowSubUsers: false
 	})
-	const [userDetails, setUserDetails] = useState<any>({
-		cellPhone: '',
-		emailAddress: ''
-	});
+	const [userDetails, setUserDetails] = useState<SubUserModel | any>(null);
 	const [errors, setErrors] = useState({
 		cellPhone: '',
 		emailAddress: '',
@@ -33,39 +32,51 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 		limitedAccess: '',
 	});
 
-	useEffect(() => {
-		if (!isOpen) {
-			setErrors({
-				cellPhone: '',
-				emailAddress: '',
-				accessType: '',
-				limitedAccess: '',
-			});
+	const adminPermissions = [
+		eSubUserPermissions.AllowSend,
+		eSubUserPermissions.AllowDelete,
+		eSubUserPermissions.AllowExport,
+		eSubUserPermissions.AllowSubUsers,
+	];
 
-			setUserDetails({
-				cellPhone: '',
-				emailAddress: ''
-			})
+	const reloadForm = () => {
+		setErrors({
+			cellPhone: '',
+			emailAddress: '',
+			accessType: '',
+			limitedAccess: '',
+		});
 
+		const isAdmin = adminPermissions.every(permission =>
+			subUser?.UserPermissionsList?.indexOf(permission) > -1
+		);
+
+		if (isAdmin) {
 			setPermissions({
-				accessType: '',
-				allowSending: false,
-				allowExport: false,
-				allowDeleting: false
+				accessType: PermissionTypes.Admin,
+				allowSending: true,
+				allowExport: true,
+				allowDeleting: true,
+				allowSubUsers: true
 			})
 		}
+	}
+
+	useEffect(() => {
+		setUserDetails(subUser)
+		reloadForm();
 	}, [isOpen])
 
 	const savePermissions = () => {
 		let errorsTemp = JSON.parse(JSON.stringify(errors))
 		errorsTemp = {
-			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails.cellPhone.trim(), countryCodeList) : !IsValidNonGlobalPhoneNumber(userDetails.cellPhone.trim())) ? t('recipient.errors.cellPhone') : '',
-			emailAddress: userDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
+			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails?.Cellphone.trim(), countryCodeList) : !IsValidNonGlobalPhoneNumber(userDetails?.Cellphone.trim())) ? t('recipient.errors.cellPhone') : '',
+			emailAddress: userDetails?.Email?.trim() === '' ? t('common.requiredField') : '',
 			accessType: permissions.accessType === '' ? t('SubUsers.permissionIsRequired') : '',
 			limitedAccess: permissions.accessType === PermissionTypes.LimitedAccess && permissions.allowSending === false && permissions.allowExport === false && permissions.allowDeleting === false ? t('SubUsers.limitedPermissionIsRequired') : ''
 		};
 
-		if (!ValidateEmailAddress(userDetails.emailAddress)) {
+		if (!ValidateEmailAddress(userDetails?.Email)) {
 			errorsTemp = {
 				...errorsTemp,
 				emailAddress: t('common.invalidEmail')
@@ -74,7 +85,9 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 		setErrors(errorsTemp);
 
 		if (errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.accessType === '' && errorsTemp.limitedAccess === '') {
-
+			console.log(permissions)
+			console.log(userDetails);
+			onConfirm(userDetails)
 		}
 	}
 
@@ -87,7 +100,6 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 			showDivider={false}
 			onClose={() => onClose(false)}
 			onCancel={() => onClose(false)}
-			onConfirm={() => onConfirm(permissions)}
 			reduceTitle
 			paperStyle={clsx(windowSize !== 'xs' ? classes.w50VW : null)}
 			childrenPadding={false}
@@ -141,12 +153,12 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 							label=""
 							variant="outlined"
 							name="Name"
-							value={userDetails.emailAddress}
+							value={userDetails?.Email}
 							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 							autoComplete="off"
 							onChange={(e: any) => setUserDetails({
 								...userDetails,
-								emailAddress: e.target.value.trim()
+								Email: e.target.value.trim()
 							})}
 						/>
 						<Box className='textBoxWrapper'>
@@ -167,12 +179,12 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 							label=""
 							variant="outlined"
 							name="Name"
-							value={userDetails.cellPhone}
+							value={userDetails?.Cellphone}
 							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 							autoComplete="off"
 							onChange={(e: any) => setUserDetails({
 								...userDetails,
-								cellPhone: IsValidPhoneNumberKeyPress(e.target.value) ? e.target.value : ''
+								Cellphone: IsValidPhoneNumberKeyPress(e.target.value) ? e.target.value : ''
 							})}
 							inputProps={{ maxlength: 16 }}
 						/>
@@ -197,12 +209,6 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 					<Grid item md={4} xs={4} className={clsx(classes.textRight)}>
 						<FormControlLabel
 							control={
-								// <Radio
-								// 	checked={permissions.accessType === PermissionTypes.Admin}
-								// 	onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPermissions({ ...permissions, accessType: event.target.value })}
-								// 	value={PermissionTypes.Admin}
-								// 	name="access-type"
-								// />
 								<PulseemSwitch
 									id="1"
 									switchType='ios'
@@ -237,12 +243,6 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 					<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
 						<FormControlLabel
 							control={
-								// <Radio
-								// 	checked={permissions.accessType === PermissionTypes.LimitedAccess}
-								// 	onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPermissions({ ...permissions, accessType: event.target.value })}
-								// 	value={PermissionTypes.LimitedAccess}
-								// 	name="access-type"
-								// />
 								<PulseemSwitch
 									id="1"
 									switchType='ios'
@@ -254,10 +254,12 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 									height={15}
 									className={clsx({ [classes.rtlSwitch]: isRTL })}
 									checked={permissions.accessType === PermissionTypes.LimitedAccess}
-									onChange={(e: any) => setPermissions({
-										...permissions,
-										accessType: permissions.accessType === PermissionTypes.LimitedAccess ? '' : PermissionTypes.LimitedAccess
-									})}
+									onChange={(e: any) => {
+										setPermissions({
+											...permissions,
+											accessType: permissions.accessType === PermissionTypes.LimitedAccess ? '' : PermissionTypes.LimitedAccess
+										})
+									}}
 								/>
 							}
 							label=''
@@ -287,11 +289,26 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 													activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
 													height={15}
 													className={clsx({ [classes.rtlSwitch]: isRTL })}
-													checked={permissions.allowSending}
-													onChange={(e: any) => setPermissions({
-														...permissions,
-														allowSending: !permissions.allowSending
-													})}
+													checked={permissions.allowSending === true}
+													onChange={(e: any) => {
+														if (!e.target.checked) {
+															setPermissions({ ...permissions, allowSending: false })
+															setUserDetails({
+																...userDetails,
+																SubUserPermissions: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSend }).join(','),
+																UserPermissionsList: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSend })
+															})
+														}
+														else {
+															setPermissions({ ...permissions, allowSending: true })
+															setUserDetails({
+																...userDetails,
+																SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowSend].join(','),
+																UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowSend]
+															})
+
+														}
+													}}
 												/>
 											}
 											label=''
@@ -316,11 +333,26 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 													activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
 													height={15}
 													className={clsx({ [classes.rtlSwitch]: isRTL })}
-													checked={permissions.allowExport}
-													onChange={(e: any) => setPermissions({
-														...permissions,
-														allowExport: !permissions.allowExport
-													})}
+													checked={permissions.allowExport === true}
+													onChange={(e: any) => {
+														if (!e.target.checked) {
+															setPermissions({ ...permissions, allowExport: false })
+															setUserDetails({
+																...userDetails,
+																SubUserPermissions: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowExport }).join(','),
+																UserPermissionsList: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowExport })
+															})
+														}
+														else {
+															setPermissions({ ...permissions, allowExport: true })
+															setUserDetails({
+																...userDetails,
+																SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowExport].join(','),
+																UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowExport]
+															})
+
+														}
+													}}
 												/>
 											}
 											label=''
@@ -345,17 +377,77 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 													activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
 													height={15}
 													className={clsx({ [classes.rtlSwitch]: isRTL })}
-													checked={permissions.allowDeleting}
-													onChange={(e: any) => setPermissions({
-														...permissions,
-														allowDeleting: !permissions.allowDeleting
-													})}
+													checked={permissions.allowDeleting === true}
+													onChange={(e: any) => {
+														if (!e.target.checked) {
+															setPermissions({ ...permissions, allowDeleting: false })
+															setUserDetails({
+																...userDetails,
+																SubUserPermissions: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowDelete }).join(','),
+																UserPermissionsList: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowDelete })
+															})
+														}
+														else {
+															setPermissions({ ...permissions, allowDeleting: true })
+															setUserDetails({
+																...userDetails,
+																SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowDelete].join(','),
+																UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowDelete]
+															})
+
+														}
+													}}
 												/>
 											}
 											label=''
 										/>
 									</Grid>
 								</Grid>
+
+								<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
+									<Grid item md={8} xs={8} className={clsx(classes.pt10, isRTL ? classes.pr30 : classes.pl30)}>
+										{t('SubUsers.userCreation')}
+									</Grid>
+									<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
+										<FormControlLabel
+											control={
+												<PulseemSwitch
+													id="1"
+													switchType='ios'
+													classes={classes}
+													onColor="#0371ad"
+													handleDiameter={20}
+													boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+													activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+													height={15}
+													className={clsx({ [classes.rtlSwitch]: isRTL })}
+													checked={permissions.allowSubUsers === true}
+													onChange={(e: any) => {
+														if (!e.target.checked) {
+															setPermissions({ ...permissions, allowSubUsers: false })
+															setUserDetails({
+																...userDetails,
+																SubUserPermissions: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSubUsers }).join(','),
+																UserPermissionsList: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSubUsers })
+															})
+														}
+														else {
+															setPermissions({ ...permissions, allowSubUsers: true })
+															setUserDetails({
+																...userDetails,
+																SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowSubUsers].join(','),
+																UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowSubUsers]
+															})
+
+														}
+													}}
+												/>
+											}
+											label=''
+										/>
+									</Grid>
+								</Grid>
+
 							</>
 						)
 					}
@@ -368,12 +460,6 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 					<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
 						<FormControlLabel
 							control={
-								// <Radio
-								// 	checked={permissions.accessType === PermissionTypes.ReadOnly}
-								// 	onChange={(event: React.ChangeEvent<HTMLInputElement>) => setPermissions({ ...permissions, accessType: event.target.value })}
-								// 	value={PermissionTypes.ReadOnly}
-								// 	name="access-type"
-								// />
 								<PulseemSwitch
 									id="1"
 									switchType='ios'
@@ -385,10 +471,26 @@ const Permissions = ({ classes, isOpen, onClose, onConfirm }: any) => {
 									height={15}
 									className={clsx({ [classes.rtlSwitch]: isRTL })}
 									checked={permissions.accessType === PermissionTypes.ReadOnly}
-									onChange={(e: any) => setPermissions({
-										...permissions,
-										accessType: permissions.accessType === PermissionTypes.ReadOnly ? '' : PermissionTypes.ReadOnly
-									})}
+									onChange={(e: any) => {
+										if (permissions.accessType !== PermissionTypes.ReadOnly) {
+											setUserDetails({
+												...userDetails,
+												SubUserPermissions: '5',
+												UserPermissionsList: [eSubUserPermissions.HideRecipietns]
+											})
+										}
+										else {
+											setUserDetails({
+												...userDetails,
+												SubUserPermissions: '',
+												UserPermissionsList: []
+											})
+										}
+										setPermissions({
+											...permissions,
+											accessType: permissions.accessType === PermissionTypes.ReadOnly ? '' : PermissionTypes.ReadOnly
+										})
+									}}
 								/>
 							}
 							label=''

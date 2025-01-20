@@ -1,17 +1,17 @@
 export interface SubUserModel {
-    AspnetUserId: string;
-    FirstName: string;
-    LastName: string;
-    Cellphone: string;
-    Email: string;
-    UserName: string;
-    Password: string;
-    IsDeleted: boolean;
-    IsApproved: boolean;
-    UpdatedDate: string | null;
-    CreationDate: string | null;
-    SubUserPermissions: string;
-    UserPermissionsList: eSubUserPermissions[];
+    AspnetUserId?: string | null | any;
+    FirstName?: string | null | any;
+    LastName?: string | null | any;
+    Cellphone: string | null | any;
+    Email: string | null | any;
+    UserName?: string | null | any;
+    Password?: string | null | any;
+    IsDeleted?: boolean | null | any;
+    IsApproved?: boolean | null | any;
+    UpdatedDate?: string | null | any;
+    CreationDate?: string | null | any;
+    SubUserPermissions?: string | null | any;
+    UserPermissionsList?: eSubUserPermissions[] | null | any;
 }
 
 export enum eSubUserPermissions {

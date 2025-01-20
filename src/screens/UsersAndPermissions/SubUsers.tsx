@@ -23,9 +23,11 @@ import User from '../../components/User/User';
 import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword';
 import Permissions from '../../components/Permissions/Permissions';
 import PermissionsHistory from '../../components/PermissionsHistory/PermissionsHistory';
-import { getAllUsers } from '../../redux/reducers/SubUserSlice';
+import { getAllUsers, save } from '../../redux/reducers/SubUserSlice';
 import { SubUserModel } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
+import { PulseemResponse } from '../../Models/APIResponse';
+import { logout } from '../../helpers/Api/PulseemReactAPI';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
@@ -39,6 +41,7 @@ const SubUsers = ({ classes }: any) => {
   const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState<boolean>(false);
   const [openPermissionsDialog, setOpenPermissionsDialog] = useState<boolean>(false);
   const [openPermissionsHistoryDialog, setOpenPermissionsHistoryDialog] = useState<boolean>(false);
+  const [selectedSubUser, setSelectedSubUser] = useState<SubUserModel | any | null>(null);
   const [searchData, setSearchData] = useState<any>({
     PageNo: 1,
     Search: "",
@@ -87,6 +90,38 @@ const SubUsers = ({ classes }: any) => {
     return null;
   };
 
+  const saveUser = async (subUserItem: SubUserModel) => {
+    const response = await dispatch(save(subUserItem)) as any;
+    switch (response?.payload?.StatusCode) {
+      case 1: {
+        alert('no data provided');
+        break;
+      }
+      case 201: {
+        getData();
+        break;
+      }
+      case 400: {
+        alert('user not matched');
+        break;
+      }
+      case 401: {
+        logout();
+        break;
+      }
+      case 403: {
+        alert('xss is not allowed');
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
+
+
+  //#region Data Table
+
   const renderCellIcons = (row: SubUserModel) => {
     const iconsMap = [[
       {
@@ -95,7 +130,7 @@ const SubUsers = ({ classes }: any) => {
         disable: false,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         // remove: windowSize === 'xs',
-        onClick: () => setOpenPermissionsDialog(true),
+        onClick: () => { setSelectedSubUser(row); setOpenPermissionsDialog(true) },
         rootClass: classes.paddingIcon,
       },
       {
@@ -298,7 +333,7 @@ const SubUsers = ({ classes }: any) => {
     )
   }
 
-  const renderRow = (row: SubUserModel) => {
+  const renderRow = (row: SubUserModel | any) => {
     return (
       <TableRow
         key={row.AspnetUserId}
@@ -411,6 +446,8 @@ const SubUsers = ({ classes }: any) => {
     )
   }
 
+  //#endregion Data Table
+
   const getDeleteDialog = (id: string = '') => ({
     title: t('common.Delete'),
     showDivider: false,
@@ -496,11 +533,13 @@ const SubUsers = ({ classes }: any) => {
         oldPasswordRequired={false}
       />
 
-      <Permissions
+      {selectedSubUser && <Permissions
+        subUser={selectedSubUser}
         classes={classes}
         isOpen={openPermissionsDialog}
         onClose={() => setOpenPermissionsDialog(false)}
-      />
+        onConfirm={saveUser}
+      />}
 
       <PermissionsHistory
         classes={classes}
