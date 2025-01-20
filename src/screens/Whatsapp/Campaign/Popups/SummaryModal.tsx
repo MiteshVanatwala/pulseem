@@ -449,7 +449,7 @@ const SummaryModal = ({
 									campaignSummary?.WhatsappTierID !== 0 && (
 										<Box className={clsx(classes.f16, classes.bold, classes.pb15)}>
 											<div className={classes.campaignSummaryTextTitle}>
-												{translator('Tier')}
+												{translator('WhatsappOnBoarding.tier')}
 												<div>
 													<span className={clsx(classes.f15)}>
 														{`${translator(

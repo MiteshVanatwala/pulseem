@@ -1175,7 +1175,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				type: '',
 				data: ''
 			});
-		}
+		},
+		onClose: () => { setDialogType(null); }
 	})
 
 	const getExceedDailyLimit = () => ({
@@ -1338,13 +1339,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				</span>
 
 				{
-					campaignSummary?.WhatsappTierID !== 0 && (
+					SubAccountSettings?.WhatsappTierID !== '' && (
 						<div className={classes.pt10}>
-							<div className={clsx(classes.dInlineBlock, classes.paddingInline5)}>{translator('Tier')}:</div>
 							<div className={classes.dInlineBlock}>
 								{`${translator(
 									tierSetting[
-										getIndexFromTierId(campaignSummary?.WhatsappTierID)
+										getIndexFromTierId(Number(SubAccountSettings?.WhatsappTierID))
 									]?.name
 								)}`}
 							</div>
@@ -1369,11 +1369,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							<Title
 								Text={translator('whatsappCampaign.header')}
 								classes={classes}
-								subTitle={(windowSize === 'lg' || windowSize === 'md') && limitNotice()}
 							/>
 						</Box>
 						<Box className={'containerBody'}>
-							{(windowSize !== 'lg' && windowSize !== 'md') && limitNotice()}
+							{limitNotice()}
 							{renderToast()}
 							<br />
 							<form onSubmit={onSubmit}>
