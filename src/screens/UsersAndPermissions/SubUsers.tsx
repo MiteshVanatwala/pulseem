@@ -91,6 +91,8 @@ const SubUsers = ({ classes }: any) => {
   };
 
   const saveUser = async (subUserItem: SubUserModel) => {
+    setOpenPermissionsDialog(false);
+    setShowLoader(true);
     const response = await dispatch(save(subUserItem)) as any;
     switch (response?.payload?.StatusCode) {
       case 1: {
@@ -117,6 +119,7 @@ const SubUsers = ({ classes }: any) => {
         break;
       }
     }
+    setShowLoader(false);
   }
 
 

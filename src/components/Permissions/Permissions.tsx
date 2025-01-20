@@ -60,11 +60,22 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 				allowSubUsers: true
 			})
 		}
+		else {
+			setPermissions({
+				accessType: subUser.UserPermissionsList.indexOf(eSubUserPermissions.HideRecipietns) > -1 ? PermissionTypes.ReadOnly : PermissionTypes.LimitedAccess,
+				allowSending: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowSend) > -1,
+				allowExport: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowExport) > -1,
+				allowDeleting: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowDelete) > -1,
+				allowSubUsers: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowSubUsers) > -1
+			});
+		}
 	}
 
 	useEffect(() => {
-		setUserDetails(subUser)
-		reloadForm();
+		if (isOpen) {
+			setUserDetails(subUser)
+			reloadForm();
+		}
 	}, [isOpen])
 
 	const savePermissions = () => {
