@@ -235,7 +235,9 @@
     "HeaderText": "Delete",
     "ImageUrl": "~/Images/Document 1 delete.png",
     "SortExpression": "",
-    "Text": "Delete"
+    "Text": "Delete",
+    "existTemplateTitle": "Template Name/Category exists",
+    "existTemplateDescription": "You are about to overwrite an existing template named <b>#name#</b> in the category <b>#category#</b>.<br/>If you proceed, all changes made to the existing template will be lost and cannot be recovered.<br/>Are you sure you want to continue?"
   },
   "GridTemplateColumnResource1": {
     "CurrentFilterValue": "",

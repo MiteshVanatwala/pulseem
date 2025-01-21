@@ -435,5 +435,6 @@ export const DialogType = {
   LOGOUT: "logout",
   EXIT: "exit",
   RENDER_TEMPLATE_CONFIRMATION: "RenderTemplateConfirmation",
-  EDIT_ROW: "EditRow"
+  EDIT_ROW: "EditRow",
+  TEMPLAGE_EXISTS: "templateExists"
 };
