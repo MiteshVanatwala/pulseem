@@ -6,12 +6,14 @@ export interface SubUserModel {
     Email: string | null | any;
     UserName?: string | null | any;
     Password?: string | null | any;
+    ConfirmPassword?: string | null | any;
     IsDeleted?: boolean | null | any;
     IsApproved?: boolean | null | any;
     UpdatedDate?: string | null | any;
     CreationDate?: string | null | any;
     SubUserPermissions?: string | null | any;
     UserPermissionsList?: eSubUserPermissions[] | null | any;
+    SubUserAction?: eSubUserAction | null | any;
 }
 
 export enum eSubUserPermissions {
@@ -41,4 +43,12 @@ export interface PermissionsHistoryInterface {
     PermissionType: string;
     Permissions: string;
     Date: Date | string;
+}
+
+
+export enum eSubUserAction {
+    NewUser = 1,
+    Update = 2,
+    Delete = 3,
+    ChangePassword = 4
 }

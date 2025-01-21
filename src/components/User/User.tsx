@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { StateType } from "../../Models/StateTypes";
-import { Box, Button, Divider, Grid, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
+import { Box, Button, Divider, Grid, IconButton, InputAdornment, makeStyles, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
 import clsx from 'clsx';
 import PasswordHint from "../../screens/Settings/AccountSettings/Password/PasswordHint";
 import { ValidPassword } from "../../screens/Settings/AccountSettings/Password/Types";
@@ -13,6 +13,8 @@ import { CommonRedux } from "../../screens/Whatsapp/Editor/Types/WhatsappCreator
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from "../../helpers/Utils/Validations";
 import { ValidateEmailAddress } from "../../helpers/Utils/common";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
+import { eSubUserAction, SubUserModel } from "../../Models/SubUser/SubUsers";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 
 const passwordValidationInit = {
 	LowerChar: false,
@@ -20,14 +22,6 @@ const passwordValidationInit = {
 	UpperChar: false,
 	PasswordLength: 0,
 	NumberChar: false,
-}
-
-const userDetailsInit = {
-	cellPhone: '',
-	emailAddress: '',
-	loginUserName: '',
-	password: '',
-	confirmPassword: ''
 }
 
 const errorsInit = {
@@ -38,19 +32,43 @@ const errorsInit = {
 	confirmPassword: ''
 }
 
+const initSubUser = {
+	Cellphone: '',
+	Email: '',
+	FirstName: '',
+	LastName: '',
+	Password: '',
+	SubUserAction: eSubUserAction.NewUser,
+	SubUserPermissions: [],
+	UserName: '',
+	UserPermissionsList: '',
+	ConfirmPassword: ''
+} as SubUserModel;
+
+const useStyles = makeStyles({
+	pwdEveButton: {
+		width: 25,
+		padding: 5,
+		minWidth: 10,
+		marginRight: 5,
+	},
+});
+
 const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
+	const localClasses = useStyles();
 	const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
-	const { isGlobal, countryCodeList, accountCurrencySymbol, accountIsCurrencySymbolPrefix } = useSelector((state: { common: CommonRedux }) => state.common);
+	const { isGlobal, countryCodeList } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { t } = useTranslation();
 	const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
 	const [passwordValidation, setPasswordValidation] = useState<ValidPassword>(passwordValidationInit as ValidPassword);
-	const [userDetails, setUserDetails] = useState<any>(userDetailsInit);
+	const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+	const [userDetails, setUserDetails] = useState<SubUserModel>(initSubUser);
 	const [errors, setErrors] = useState(errorsInit);
 
 	useEffect(() => {
 		if (isOpen) {
 			setPasswordValidation(passwordValidationInit);
-			setUserDetails(userDetailsInit)
+			setUserDetails(initSubUser)
 			setErrors(errorsInit);
 		}
 	}, [isOpen])
@@ -58,7 +76,7 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 	const handleChange = (e: any) => {
 		setUserDetails({
 			...userDetails,
-			password: e?.target?.value.trim()
+			Password: e?.target?.value.trim()
 		});
 		let trimValue = e?.target?.value.trim();
 		const validPass = {
@@ -75,29 +93,29 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 	const saveUser = () => {
 		let errorsTemp = JSON.parse(JSON.stringify(errors))
 		errorsTemp = {
-			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails.cellPhone.trim(), countryCodeList) : !IsValidNonGlobalPhoneNumber(userDetails.cellPhone.trim())) ? t('recipient.errors.cellPhone') : '',
-			emailAddress: userDetails.emailAddress.trim() === '' ? t('common.requiredField') : '',
-			loginUserName: userDetails.loginUserName.trim() === '' ? t('common.requiredField') : '',
+			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails.Cellphone.trim(), countryCodeList) : !IsValidNonGlobalPhoneNumber(userDetails.Cellphone.trim())) ? t('recipient.errors.cellPhone') : '',
+			emailAddress: userDetails.Email.trim() === '' ? t('common.requiredField') : '',
+			loginUserName: userDetails.UserName.trim() === '' ? t('common.requiredField') : '',
 			password: '',
-			confirmPassword: userDetails.confirmPassword.trim() !== '' && userDetails.confirmPassword.trim() === '' ? t('common.requiredField') : ''
+			confirmPassword: userDetails.ConfirmPassword.trim() !== '' && userDetails.ConfirmPassword.trim() === '' ? t('common.requiredField') : ''
 		};
 
-		if (userDetails.password.trim() !== '' && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
+		if (userDetails.Password.trim() !== '' && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
 			errorsTemp.password = t('SignUp.InvalidPassword');
-		} else if (userDetails.password.trim() === '') {
+		} else if (userDetails.Password.trim() === '') {
 			errorsTemp.password = t('SignUp.PasswordRequired');
 		}
 
-		if ((userDetails.password !== '' || userDetails.confirmPassword !== '') && userDetails.password !== userDetails.confirmPassword) {
+		if ((userDetails.Password !== '' || userDetails.ConfirmPassword !== '') && userDetails.Password !== userDetails.ConfirmPassword) {
 			errorsTemp = {
 				...errorsTemp,
 				confirmPassword: t('common.confirmPasswordNotMatch')
 			}
-		} else if (userDetails.confirmPassword.trim() === '') {
+		} else if (userDetails.ConfirmPassword.trim() === '') {
 			errorsTemp.confirmPassword = t('SignUp.PasswordRequired');
 		}
 
-		if (!ValidateEmailAddress(userDetails.emailAddress)) {
+		if (!ValidateEmailAddress(userDetails.Email)) {
 			errorsTemp = {
 				...errorsTemp,
 				emailAddress: t('common.invalidEmail')
@@ -172,12 +190,12 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 							label=""
 							variant="outlined"
 							name="Name"
-							value={userDetails.emailAddress}
+							value={userDetails.Email}
 							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 							autoComplete="off"
 							onChange={(e: any) => setUserDetails({
 								...userDetails,
-								emailAddress: e.target.value.trim()
+								Email: e.target.value.trim()
 							})}
 						/>
 						<Box className='textBoxWrapper'>
@@ -198,12 +216,12 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 							label=""
 							variant="outlined"
 							name="Name"
-							value={userDetails.cellPhone}
+							value={userDetails.Cellphone}
 							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 							autoComplete="off"
 							onChange={(e: any) => setUserDetails({
 								...userDetails,
-								cellPhone: IsValidPhoneNumberKeyPress(e.target.value) ? e.target.value : ''
+								Cellphone: IsValidPhoneNumberKeyPress(e.target.value) ? e.target.value : ''
 							})}
 							inputProps={{ maxlength: 16 }}
 						/>
@@ -227,12 +245,12 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 							label=""
 							variant="outlined"
 							name="loginUserName"
-							value={userDetails.loginUserName}
+							value={userDetails.UserName}
 							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 							autoComplete="off"
 							onChange={(e: any) => setUserDetails({
 								...userDetails,
-								loginUserName: e.target.value.trim()
+								UserName: e.target.value.trim()
 							})}
 						/>
 						<Box className='textBoxWrapper'>
@@ -261,15 +279,31 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 								<TextField
 									onFocus={() => setShowPasswordTip(true)}
 									onBlur={() => setShowPasswordTip(false)}
-									type={userDetails.isPasswordVisible ? "text" : "password"}
+									type={passwordVisible ? "text" : "password"}
 									variant="outlined"
 									size="small"
 									name="Password"
-									value={userDetails.password}
+									value={userDetails.Password}
 									onChange={handleChange}
 									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 									error={!!errors.password}
-									inputProps={{ maxWidth: 50 }}
+									InputProps={{
+										endAdornment: (
+											<InputAdornment position="end">
+												<IconButton
+													onClick={() => setPasswordVisible(!passwordVisible)}
+													className={localClasses.pwdEveButton}
+													edge="end"
+												>
+													{!passwordVisible ? (
+														<VisibilityOff style={{ fontSize: 15 }} />
+													) : (
+														<Visibility style={{ fontSize: 15 }} />
+													)}
+												</IconButton>
+											</InputAdornment>
+										)
+									}}
 								/>
 							</Tooltip>
 						</Box>
@@ -285,18 +319,35 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 							{t("SubAccount.confirmPassword")}
 						</Typography>
 						<TextField
-							type="password"
+							type={passwordVisible ? "text" : "password"}
 							id="confirmPassword"
 							label=""
 							variant="outlined"
 							name="confirmPassword"
-							value={userDetails.confirmPassword}
+							value={userDetails.ConfirmPassword}
 							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
 							autoComplete="off"
 							onChange={(e: any) => setUserDetails({
 								...userDetails,
-								confirmPassword: e.target.value.trim()
+								ConfirmPassword: e.target.value.trim()
 							})}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position="end">
+										<IconButton
+											onClick={() => setPasswordVisible(!passwordVisible)}
+											className={localClasses.pwdEveButton}
+											edge="end"
+										>
+											{!passwordVisible ? (
+												<VisibilityOff style={{ fontSize: 15 }} />
+											) : (
+												<Visibility style={{ fontSize: 15 }} />
+											)}
+										</IconButton>
+									</InputAdornment>
+								)
+							}}
 						/>
 						<Box className='textBoxWrapper'>
 							<Typography className={clsx(errors.confirmPassword ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>

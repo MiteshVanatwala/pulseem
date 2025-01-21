@@ -11,7 +11,7 @@ import { PermissionTypes } from "../../config/enum";
 import { IsValidNonGlobalPhoneNumber, IsValidPhoneNumberKeyPress, IsValidPhoneNumberWithCountryCode } from "../../helpers/Utils/Validations";
 import { CommonRedux } from "../../screens/Whatsapp/Editor/Types/WhatsappCreator.types";
 import { ValidateEmailAddress } from "../../helpers/Utils/common";
-import { eSubUserPermissions, SubUserModel } from "../../Models/SubUser/SubUsers";
+import { eSubUserAction, eSubUserPermissions, SubUserModel } from "../../Models/SubUser/SubUsers";
 
 const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 	const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
@@ -73,7 +73,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 
 	useEffect(() => {
 		if (isOpen) {
-			setUserDetails(subUser)
+			setUserDetails({ ...subUser, SubUserAction: eSubUserAction.Update })
 			reloadForm();
 		}
 	}, [isOpen])
