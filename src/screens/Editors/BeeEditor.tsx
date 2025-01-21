@@ -105,7 +105,10 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
   const loadAccountExtraData = () => {
     return new Promise(async (resolve: any) => {
       const res: any = await dispatch(getAccountExtraData());
-      resolve(res?.payload);
+      const entries = res?.payload;
+      const cleanedObject = Object.entries(entries).filter(([key, value]) => value !== null)
+
+      resolve(cleanedObject);
     });
   }
   const initFields = () => {
