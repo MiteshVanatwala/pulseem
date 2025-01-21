@@ -212,12 +212,12 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 						<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubUsers.permissions')}</div>
 						<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 					</Grid>
-					<Grid item md={8} xs={8}>
+					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
 						<Typography>
 							{t('SubUsers.admin')}
 						</Typography>
 					</Grid>
-					<Grid item md={4} xs={4} className={clsx(classes.textRight)}>
+					<Grid item md={1} xs={1} className={clsx(classes.textRight)}>
 						<FormControlLabel
 							control={
 								<PulseemSwitch
@@ -231,10 +231,19 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 									height={15}
 									className={clsx({ [classes.rtlSwitch]: isRTL })}
 									checked={permissions.accessType === PermissionTypes.Admin}
-									onChange={(e: any) => setPermissions({
-										...permissions,
-										accessType: permissions.accessType === PermissionTypes.Admin ? '' : PermissionTypes.Admin
-									})}
+									onChange={(e: any) => {
+										if (e.target.checked) {
+											setUserDetails({
+												...userDetails,
+												SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowSubUsers].join(','),
+												UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowSubUsers]
+											})
+										}
+										setPermissions({
+											...permissions,
+											accessType: permissions.accessType === PermissionTypes.Admin ? '' : PermissionTypes.Admin
+										})
+									}}
 								/>
 							}
 							label=''
@@ -243,7 +252,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 				</Grid>
 
 				<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
-					<Grid item md={8} xs={8} className={clsx(classes.pt10)}>
+					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
 						<Typography>
 							{t('SubUsers.limitedAccess')}
 							<Typography className={clsx(errors.limitedAccess ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
@@ -251,7 +260,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 							</Typography>
 						</Typography>
 					</Grid>
-					<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
+					<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
 						<FormControlLabel
 							control={
 								<PulseemSwitch
@@ -274,20 +283,17 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 								/>
 							}
 							label=''
-							style={{
-								marginTop: '7px'
-							}}
 						/>
 					</Grid>
 
 					{
 						permissions.accessType === PermissionTypes.LimitedAccess && (
 							<>
-								<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
-									<Grid item md={8} xs={8} className={clsx(classes.pt10, isRTL ? classes.pr30 : classes.pl30)}>
+								<Grid container className={clsx(isRTL ? classes.rowReverse : null)} style={{ marginInline: 55 }}>
+									<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)} style={{ paddingInline: 10 }}>
 										{t('SubUsers.allowSending')}
 									</Grid>
-									<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
+									<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
 										<FormControlLabel
 											control={
 												<PulseemSwitch
@@ -327,11 +333,11 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 									</Grid>
 								</Grid>
 
-								<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
-									<Grid item md={8} xs={8} className={clsx(classes.pt10, isRTL ? classes.pr30 : classes.pl30)}>
+								<Grid container className={clsx(isRTL ? classes.rowReverse : null)} style={{ marginInline: 55 }}>
+									<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)} style={{ paddingInline: 10 }}>
 										{t('SubUsers.allowExport')}
 									</Grid>
-									<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
+									<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
 										<FormControlLabel
 											control={
 												<PulseemSwitch
@@ -371,11 +377,11 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 									</Grid>
 								</Grid>
 
-								<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
-									<Grid item md={8} xs={8} className={clsx(classes.pt10, isRTL ? classes.pr30 : classes.pl30)}>
+								<Grid container className={clsx(isRTL ? classes.rowReverse : null)} style={{ marginInline: 55 }}>
+									<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)} style={{ paddingInline: 10 }}>
 										{t('SubUsers.allowDeleting')}
 									</Grid>
-									<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
+									<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
 										<FormControlLabel
 											control={
 												<PulseemSwitch
@@ -415,11 +421,11 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 									</Grid>
 								</Grid>
 
-								<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
-									<Grid item md={8} xs={8} className={clsx(classes.pt10, isRTL ? classes.pr30 : classes.pl30)}>
+								<Grid container className={clsx(isRTL ? classes.rowReverse : null)} style={{ marginInline: 55 }}>
+									<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)} style={{ paddingInline: 10 }}>
 										{t('SubUsers.userCreation')}
 									</Grid>
-									<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
+									<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
 										<FormControlLabel
 											control={
 												<PulseemSwitch
@@ -465,10 +471,10 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 				</Grid>
 
 				<Grid container className={clsx(isRTL ? classes.rowReverse : null)}>
-					<Grid item md={8} xs={8} className={clsx(classes.pt10)}>
+					<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)}>
 						{t('SubUsers.readOnly')}
 					</Grid>
-					<Grid item md={4} xs={4} className={clsx(classes.textRight, classes.pt10)}>
+					<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
 						<FormControlLabel
 							control={
 								<PulseemSwitch

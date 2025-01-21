@@ -26,7 +26,6 @@ import PermissionsHistory from '../../components/PermissionsHistory/PermissionsH
 import { getAllUsers, save } from '../../redux/reducers/SubUserSlice';
 import { SubUserModel } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
-import { PulseemResponse } from '../../Models/APIResponse';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 
 const SubUsers = ({ classes }: any) => {
