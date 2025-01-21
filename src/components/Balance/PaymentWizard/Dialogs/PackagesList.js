@@ -1,10 +1,16 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next'
-import { Grid, Typography, Divider } from '@material-ui/core';
 import Package from '../../PackageBox/Package';
+import BalanceWizard from '../../BalanceWizard';
 
-const PackagesList = ({ data, classes, packageType, smsBulkData = null, newsletterBulkData = null, onSelect = () => null }) => {
+const PackagesList = ({ data, classes, packageType, smsBulkData = null, newsletterBulkData = null, whatsappBulkData = null, onSelect = () => null, onManualPrice = () => null }) => {
     const { t } = useTranslation();
+
+    const whatsapp_balanceSteps = [
+        { title: 'common.enterTopUpAmount', description: 'common.whatsappBulkDescription' },
+        { title: 'common.payment' },
+        { title: 'common.summary' },
+    ];
+
     if (data !== null) {
         const packageLength = data.length;
         let packPerLine = Math.ceil(12 / packageLength);
@@ -12,17 +18,17 @@ const PackagesList = ({ data, classes, packageType, smsBulkData = null, newslett
 
         const packageList = {
             2: { data: newsletterBulkData, title: t('common.newsletterBulkTitle'), description: t('common.newsletterBulkDescription') },
-            3: { data: smsBulkData, title: t('common.smsBulkTitle'), description: t('common.smsBulkDescription') }
+            3: { data: smsBulkData, title: t('common.smsBulkTitle'), description: t('common.smsBulkDescription') },
+            4: { data: whatsappBulkData, title: t('common.whatsappBulk'), description: t('common.whatsappBulkDescription') },
         };
 
         return (
             packageList[packageType].data &&
             <>
-                <Grid item xs={12}>
-                    <Typography>{packageList[packageType].description}</Typography>
-                    <Divider />
-                </Grid>
-                {
+                {packageType === 4 ? <BalanceWizard
+                    classes={classes}
+                    steps={whatsapp_balanceSteps}
+                /> : (<>{
                     packageList[packageType].data.sort((a, b) => a.Quantity - b.Quantity).map((d, index) => {
                         return (
                             <Package
@@ -34,7 +40,8 @@ const PackagesList = ({ data, classes, packageType, smsBulkData = null, newslett
                                 classes={classes} />
                         )
                     })
-                }
+                }</>)}
+
             </>
         );
     }

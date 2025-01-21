@@ -11,6 +11,7 @@ import { getCampaignEditorStyle } from './campaignEditorStyles';
 import { getGroupStyle } from './groupStyle'
 import { getWhatsappStyle } from './whatsappStyles';
 import { dynamicProductCatalog } from './dynamicProductCatalog';
+import { surveyStyle } from './surveyStyles';
 
 export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
@@ -24,5 +25,6 @@ export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getCampaignEditorStyle(windowSize, isRTL),
   ...getGroupStyle(windowSize, isRTL, theme),
   ...getWhatsappStyle(windowSize, isRTL, theme),
-  ...dynamicProductCatalog(isRTL)
+  ...dynamicProductCatalog(isRTL),
+  ...surveyStyle(windowSize, isRTL, theme)
 }))

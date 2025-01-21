@@ -35,6 +35,7 @@ import affiliate from './Affiliate.json';
 import SubAccount from './SubAccount.json'
 import billing from './Billing.json';
 import TermsOfUse from './TermsOfUse.json'
+import WhatsappOnBoarding from './WhatsappOnBoarding.json'
 
 export const en = {
 	automations,
@@ -73,5 +74,6 @@ export const en = {
 	affiliate,
 	SubAccount,
 	billing,
-	TermsOfUse
+	TermsOfUse,
+	WhatsappOnBoarding
 };

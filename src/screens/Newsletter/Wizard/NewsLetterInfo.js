@@ -26,7 +26,7 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { SharedEmailDomain, sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { MdArrowBackIos, MdArrowForwardIos, MdOutlineVerified } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
 import { DialogType } from '../../HtmlCampaign/helper/Config';
 import Templates from '../../HtmlCampaign/modals/Templates';
@@ -405,8 +405,15 @@ const NewsLetterInfo = ({ classes }) => {
                             }
                             else {
                                 if (obj && obj.ReplyTo && obj.FromEmail) {
-                                    setCampaingnValues({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
-                                    await dispatch(saveCampaignInfo({ ...campaingnValues, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
+                                    setCampaingnValues({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo });
+                                    await dispatch(saveCampaignInfo({ ...campaingnValues, CampaignID: saveInfo.CampaignID, FromEmail: obj.FromEmail, ReplyTo: obj.ReplyTo, IsNewEditor: isNewEditor }));
+
+                                    if (isFromAutomation) {
+                                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                                    }
+                                    else {
+                                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
+                                    }
                                 }
                             }
                             setShowDomainVerification(false);

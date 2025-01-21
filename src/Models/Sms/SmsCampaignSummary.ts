@@ -10,5 +10,6 @@
     Removed: number;
     Invalid: number;
     FinalCount: number;
+    FinalVoiceCount: number;
 
 }

@@ -53,7 +53,8 @@ export enum EmailTemplateType {
 
 export enum DynamicProductLink {
     LATEST_PURCHASE = 'https://dynamicProduct.com?Purchase',
-    LATEST_ABANDONMENT = 'https://dynamicProduct.com?Abandonment'
+    LATEST_ABANDONMENT = 'https://dynamicProduct.com?Abandonment',
+    LATEST_VIEWED_PRODUCT = 'https://dynamicProduct.com?LastViewedProduct',
 }
 
 export enum SortDirection {
