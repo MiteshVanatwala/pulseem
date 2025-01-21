@@ -118,7 +118,7 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
                       }} />
                     ))
                   }
-                  renderInput={(params) => <TextField {...params} className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)} />}
+                  renderInput={(params) => <TextField placeholder={t('common.CategoryName')} {...params} className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)} />}
                 />
               </Box>
             </Box>
