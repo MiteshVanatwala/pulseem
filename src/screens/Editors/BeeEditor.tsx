@@ -108,7 +108,20 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       const entries = res?.payload;
       const cleanedObject = Object.entries(entries).filter(([key, value]) => value !== null)
 
-      resolve(cleanedObject);
+      if (cleanedObject) {
+        interface FlatObject {
+          [key: string]: string; // This allows any string key with a string value
+        }
+        const flatObject: FlatObject = cleanedObject.reduce((acc: any, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, {} as FlatObject); // Type assertion to specify the initial value
+
+        resolve(flatObject);
+      }
+      else {
+        resolve(res?.payload);
+      }
     });
   }
   const initFields = () => {
