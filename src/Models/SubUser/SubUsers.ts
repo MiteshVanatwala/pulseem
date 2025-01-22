@@ -1,4 +1,4 @@
-export interface SubUserModel {
+export interface SubUserModel extends LoginPassword {
     AspnetUserId?: string | null | any;
     FirstName?: string | null | any;
     LastName?: string | null | any;
@@ -13,7 +13,12 @@ export interface SubUserModel {
     CreationDate?: string | null | any;
     SubUserPermissions?: string | null | any;
     UserPermissionsList?: eSubUserPermissions[] | null | any;
-    SubUserAction?: eSubUserAction | null | any;
+    ActionType?: eSubUserAction | null | any;
+}
+
+export interface LoginPassword {
+    OldPassword: string | null | any;
+    NewPassword: string | null | any;
 }
 
 export enum eSubUserPermissions {

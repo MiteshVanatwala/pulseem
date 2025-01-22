@@ -13,7 +13,7 @@ import { CommonRedux } from "../../screens/Whatsapp/Editor/Types/WhatsappCreator
 import { ValidateEmailAddress } from "../../helpers/Utils/common";
 import { eSubUserAction, eSubUserPermissions, SubUserModel } from "../../Models/SubUser/SubUsers";
 
-const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
+const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons }: any) => {
 	const { isRTL, windowSize } = useSelector((state: StateType) => state.core);
 	const { isGlobal, countryCodeList } = useSelector((state: { common: CommonRedux }) => state.common);
 	const { t } = useTranslation();
@@ -73,7 +73,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 
 	useEffect(() => {
 		if (isOpen) {
-			setUserDetails({ ...subUser, SubUserAction: eSubUserAction.Update })
+			setUserDetails({ ...subUser, ActionType: eSubUserAction.Update })
 			reloadForm();
 		}
 	}, [isOpen])
@@ -115,7 +115,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm }: any) => {
 			paperStyle={clsx(windowSize !== 'xs' ? classes.w50VW : null)}
 			childrenPadding={false}
 			renderButtons={() => (
-				<Grid
+				showButtons && <Grid
 					container
 					spacing={2}
 					className={clsx(

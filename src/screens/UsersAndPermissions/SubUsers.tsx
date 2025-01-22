@@ -536,6 +536,7 @@ const SubUsers = ({ classes }: any) => {
       />
 
       {selectedSubUser && <Permissions
+        showButtons={true}
         subUser={selectedSubUser}
         classes={classes}
         isOpen={openPermissionsDialog}

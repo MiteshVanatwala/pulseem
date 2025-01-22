@@ -15,6 +15,8 @@ import { ValidateEmailAddress } from "../../helpers/Utils/common";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { eSubUserAction, SubUserModel } from "../../Models/SubUser/SubUsers";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
+import Permissions from "../Permissions/Permissions";
+import PermissionItems from "../Permissions/PermissionItems";
 
 const passwordValidationInit = {
 	LowerChar: false,
@@ -29,7 +31,9 @@ const errorsInit = {
 	emailAddress: '',
 	loginUserName: '',
 	password: '',
-	confirmPassword: ''
+	confirmPassword: '',
+	firstName: '',
+	lastName: '',
 }
 
 const initSubUser = {
@@ -38,7 +42,7 @@ const initSubUser = {
 	FirstName: '',
 	LastName: '',
 	Password: '',
-	SubUserAction: eSubUserAction.NewUser,
+	ActionType: eSubUserAction.NewUser,
 	SubUserPermissions: [],
 	UserName: '',
 	UserPermissionsList: '',
@@ -64,6 +68,13 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 	const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 	const [userDetails, setUserDetails] = useState<SubUserModel>(initSubUser);
 	const [errors, setErrors] = useState(errorsInit);
+	const [permissions, setPermissions] = useState({
+		accessType: '',
+		allowSending: false,
+		allowExport: false,
+		allowDeleting: false,
+		allowSubUsers: false
+	})
 
 	useEffect(() => {
 		if (isOpen) {
@@ -231,6 +242,55 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 							</Typography>
 						</Box>
 					</Grid>
+					<Grid item md={4} xs={4}></Grid>
+					<Grid item md={4} xs={12}>
+						<Typography title={t("SignUp.FirstName")} className={classes.alignDir}>
+							{t("SignUp.FirstName")}
+							<span className={clsx(classes.errorLabel, classes.pl5, classes.pe5)}>*</span>
+						</Typography>
+						<TextField
+							id="firstName"
+							label=""
+							variant="outlined"
+							name="Name"
+							value={userDetails.FirstName}
+							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+							autoComplete="off"
+							onChange={(e: any) => setUserDetails({
+								...userDetails,
+								FirstName: e.target.value.trim()
+							})}
+						/>
+						<Box className='textBoxWrapper'>
+							<Typography className={clsx(errors.firstName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+								{errors.firstName}
+							</Typography>
+						</Box>
+					</Grid>
+					<Grid item md={4} xs={12}>
+						<Typography title={t("SignUp.LastName")} className={classes.alignDir}>
+							{t("SignUp.LastName")}
+							<span className={clsx(classes.errorLabel, classes.pl5, classes.pe5)}>*</span>
+						</Typography>
+						<TextField
+							id="lastName"
+							label=""
+							variant="outlined"
+							name="Name"
+							value={userDetails.LastName}
+							className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+							autoComplete="off"
+							onChange={(e: any) => setUserDetails({
+								...userDetails,
+								LastName: e.target.value.trim()
+							})}
+						/>
+						<Box className='textBoxWrapper'>
+							<Typography className={clsx(errors.lastName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+								{errors.lastName}
+							</Typography>
+						</Box>
+					</Grid>
 				</Grid>
 
 				<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.mt25, classes.pt10)}>{t('SubUsers.loginInformation')}</div>
@@ -239,6 +299,7 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.loginUserName")} className={classes.alignDir}>
 							{t("SubAccount.loginUserName")}
+							<span className={clsx(classes.errorLabel, classes.pl5, classes.pe5)}>*</span>
 						</Typography>
 						<TextField
 							id="loginUserName"
@@ -263,6 +324,7 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 					<Grid item md={4} xs={12}>
 						<Typography title={t("common.password")} className={classes.alignDir}>
 							{t("common.password")}
+							<span className={clsx(classes.errorLabel, classes.pl5, classes.pe5)}>*</span>
 						</Typography>
 						<Box className={classes.posRelative}>
 							<Tooltip
@@ -317,6 +379,7 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 					<Grid item md={4} xs={12}>
 						<Typography title={t("SubAccount.confirmPassword")} className={classes.alignDir}>
 							{t("SubAccount.confirmPassword")}
+							<span className={clsx(classes.errorLabel, classes.pl5, classes.pe5)}>*</span>
 						</Typography>
 						<TextField
 							type={passwordVisible ? "text" : "password"}
@@ -356,6 +419,14 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 						</Box>
 					</Grid>
 				</Grid>
+
+				<PermissionItems
+					classes={classes}
+					permissions={permissions}
+					updatePermissions={setPermissions}
+					updateSubUserDetails={setUserDetails}
+					userDetails={userDetails}
+				/>
 			</Box>
 		</BaseDialog>
 	)
