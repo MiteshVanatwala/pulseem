@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../Models/StateTypes";
 import { Box, Button, Divider, Grid, IconButton, InputAdornment, makeStyles, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
 import clsx from 'clsx';
@@ -15,7 +15,6 @@ import { ValidateEmailAddress } from "../../helpers/Utils/common";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { eSubUserAction, SubUserModel } from "../../Models/SubUser/SubUsers";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
-import Permissions from "../Permissions/Permissions";
 import PermissionItems from "../Permissions/PermissionItems";
 
 const passwordValidationInit = {
@@ -135,7 +134,7 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 		setErrors(errorsTemp);
 
 		if (errorsTemp.cellPhone === '' && errorsTemp.emailAddress === '' && errorsTemp.loginUserName === '' && errorsTemp.password === '' && errorsTemp.confirmPassword === '') {
-
+			onConfirm(userDetails);
 		}
 	}
 
@@ -148,7 +147,7 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 			showDivider={false}
 			onClose={() => onClose(false)}
 			onCancel={() => onClose(false)}
-			onConfirm={() => { }}
+			onConfirm={() => onConfirm(userDetails)}
 			reduceTitle
 			style={{ minWidth: 240 }}
 			paperStyle={clsx(windowSize !== 'xs' ? classes.w50VW : null)}

@@ -1,4 +1,5 @@
 export interface SubUserModel extends LoginPassword {
+    ID: number | null | any;
     AspnetUserId?: string | null | any;
     FirstName?: string | null | any;
     LastName?: string | null | any;

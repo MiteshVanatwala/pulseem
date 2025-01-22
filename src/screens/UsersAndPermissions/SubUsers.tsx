@@ -24,7 +24,7 @@ import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword'
 import Permissions from '../../components/Permissions/Permissions';
 import PermissionsHistory from '../../components/PermissionsHistory/PermissionsHistory';
 import { getAllUsers, save } from '../../redux/reducers/SubUserSlice';
-import { SubUserModel } from '../../Models/SubUser/SubUsers';
+import { eSubUserAction, SubUserModel } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 
@@ -95,14 +95,18 @@ const SubUsers = ({ classes }: any) => {
     const response = await dispatch(save(subUserItem)) as any;
     switch (response?.payload?.StatusCode) {
       case 1: {
+        // Show no data provided toast
         alert('no data provided');
         break;
       }
       case 201: {
+        // Show success toast
         getData();
+        setOpenSaveUserDialog(false)
         break;
       }
       case 400: {
+        // Show user not matched toast
         alert('user not matched');
         break;
       }
@@ -110,8 +114,24 @@ const SubUsers = ({ classes }: any) => {
         logout();
         break;
       }
+      case 402: {
+        // Show Invalid username toast
+        alert('Invalid username');
+        break;
+      }
       case 403: {
+        // Show xss is not allowed toast
         alert('xss is not allowed');
+        break;
+      }
+      case 405: {
+        // Show username already exists toast
+        alert('username already exists');
+        break;
+      }
+      case 406: {
+        // Show User rejected toast
+        alert('User rejected (password length, password attempts, email exists, question & answer required)');
         break;
       }
       default: {
@@ -150,7 +170,7 @@ const SubUsers = ({ classes }: any) => {
         disable: false,
         lable: t('SubUsers.permissionsHistory'),
         // remove: windowSize === 'xs',
-        onClick: () => setOpenPermissionsHistoryDialog(true),
+        onClick: () => { setSelectedSubUser(row); setOpenPermissionsHistoryDialog(true) },
         rootClass: classes.paddingIcon,
       },
       {
@@ -162,7 +182,7 @@ const SubUsers = ({ classes }: any) => {
         showPhone: true,
         // remove: windowSize === 'xs',
         onClick: () => {
-          setDialogType({ type: 'Delete', data: row.AspnetUserId });
+          setDialogType({ type: 'Delete', data: row });
         }
       }
     ]]
@@ -450,7 +470,7 @@ const SubUsers = ({ classes }: any) => {
 
   //#endregion Data Table
 
-  const getDeleteDialog = (id: string = '') => ({
+  const getDeleteDialog = (subUser: SubUserModel) => ({
     title: t('common.Delete'),
     showDivider: false,
     content: (
@@ -461,23 +481,18 @@ const SubUsers = ({ classes }: any) => {
     cancelText: t('SubUsers.cancel'),
     confirmText: t('SubUsers.delete'),
     onConfirm: async () => {
+      const response = await dispatch(save({ ...subUser, ActionType: eSubUserAction.Delete })) as any;
+      switch (response?.payload?.StatusCode) {
+        case 201: {
+          setDialogType(null);
+          getData();
+          break;
+        }
+      }
+
     },
     onCancel: () => setDialogType(null)
   })
-
-  // const saveUser = (id: string = '') => ({
-  // 	title: t('SubUsers.addUser'),
-  // 	showDivider: false,
-  //   icon: <MdOutlinePersonAddAlt />,
-  // 	content: (
-  // 		<User classes={classes} />
-  // 	),
-  // 	cancelText: t('common.cancel'),
-  // 	confirmText: t('common.save'),
-  //   onConfirm: async () => {
-  //   },
-  //   onCancel: () => setDialogType(null)
-  // })
 
   const renderDialog = () => {
     const { type, data } = dialogType || {}
@@ -524,6 +539,7 @@ const SubUsers = ({ classes }: any) => {
         classes={classes}
         isOpen={openSaveUserDialog}
         onClose={() => setOpenSaveUserDialog(false)}
+        onConfirm={(data: any) => saveUser(data)}
       />
 
       <ChangePassword
@@ -544,11 +560,13 @@ const SubUsers = ({ classes }: any) => {
         onConfirm={saveUser}
       />}
 
-      <PermissionsHistory
+      {openPermissionsHistoryDialog && <PermissionsHistory
         classes={classes}
         isOpen={openPermissionsHistoryDialog}
+        subUser={selectedSubUser}
         onClose={() => setOpenPermissionsHistoryDialog(false)}
       />
+      }
       <Loader isOpen={showLoader} zIndex={9999} />
     </DefaultScreen>
   )
