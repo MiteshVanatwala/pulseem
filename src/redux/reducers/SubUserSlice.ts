@@ -25,7 +25,17 @@ export const save = createAsyncThunk(
     }
   }
 );
-
+export const getChangeLog = createAsyncThunk(
+  'SubUser/GetAllUsers',
+  async (userId: number, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`SubUser/GetChangeLog/${userId}`);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
 
 
 

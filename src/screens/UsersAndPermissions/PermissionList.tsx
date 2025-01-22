@@ -10,8 +10,8 @@ const PermissionList: React.FC<PermissionListProps> = ({ list }) => {
   const { t } = useTranslation();
 
   // Function to convert enum value to text
-  const getPermissionText = (permissionId: number) => {
-    switch (permissionId) {
+  const getPermissionText = (permissionId: any) => {
+    switch (parseInt(permissionId)) {
       case eSubUserPermissions.AllowSend:
         return t('SubUsers.allowSending'); // 'Allow Send';
       case eSubUserPermissions.AllowExport:
