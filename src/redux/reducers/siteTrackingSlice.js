@@ -105,8 +105,8 @@ export const siteTrackingSlice = createSlice({
     eventError: null,
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'siteTracking.saved', showAnimtionCheck: true },
-      REVENUE_ADDED: { severity: 'success', color: 'success', message: 'siteTracking.saved', showAnimtionCheck: false },
-      REVENUE_REMOVED: { severity: 'success', color: 'success', message: 'siteTracking.saved', showAnimtionCheck: false },
+      REVENUE_ADDED: { severity: 'success', color: 'success', message: 'siteTracking.revenueFeatureAdded', showAnimtionCheck: false },
+      REVENUE_REMOVED: { severity: 'success', color: 'success', message: 'siteTracking.revenueFeatureRemoved', showAnimtionCheck: false },
       REVENUE_ERROR: { severity: 'error', color: 'error', message: 'common.Error', showAnimtionCheck: false }
     },
     siteScript: null,
