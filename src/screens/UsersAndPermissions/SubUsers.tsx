@@ -18,15 +18,14 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { GetSubAccountList } from '../../redux/reducers/SubAccountSlice';
 import moment from 'moment';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
-import { first, without } from 'lodash';
 import User from '../../components/User/User';
-import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword';
 import Permissions from '../../components/Permissions/Permissions';
 import PermissionsHistory from '../../components/PermissionsHistory/PermissionsHistory';
 import { getAllUsers, save } from '../../redux/reducers/SubUserSlice';
 import { eSubUserAction, SubUserModel } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
+import SubUserChangePassword from './SubUserChangePassword';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
@@ -161,7 +160,7 @@ const SubUsers = ({ classes }: any) => {
         disable: false,
         lable: t('SubUsers.changePassword'),
         // remove: windowSize === 'xs',
-        onClick: () => setOpenChangePasswordDialog(true),
+        onClick: () => { setSelectedSubUser(row); setOpenChangePasswordDialog(true) },
         rootClass: clsx(classes.paddingIcon, classes.f18),
       },
       {
@@ -250,7 +249,14 @@ const SubUsers = ({ classes }: any) => {
         <Grid item>
           <Button
             onClick={() => {
-              getData();
+              const filteredList = userList?.filter((user: SubUserModel) => {
+                return user.Email.indexOf(searchData.Search) > -1 ||
+                  user.UserName.indexOf(searchData.Search) > -1 ||
+                  user.FirstName.indexOf(searchData.Search) > -1 ||
+                  user.LastName.indexOf(searchData.Search) > -1 ||
+                  user.Cellphone.indexOf(searchData.Search) > -1
+              })
+              setUserList(filteredList);
               setIsSearching(true);
             }}
             className={clsx(classes.btn, classes.btnRounded)}
@@ -273,7 +279,7 @@ const SubUsers = ({ classes }: any) => {
 
                 setShowLoader(true);
                 setIsSearching(false);
-                await dispatch(GetSubAccountList(searchObject));
+                getData();
                 setShowLoader(false);
               }}
               className={clsx(classes.btn, classes.btnRounded)}
@@ -399,8 +405,6 @@ const SubUsers = ({ classes }: any) => {
   }
 
   const renderPhoneRow = (row: SubUserModel) => {
-    const limitedAccessPermissions = row.SubUserPermissions;
-    const subRights = without(limitedAccessPermissions, first(limitedAccessPermissions)).join(', ');
     return (
       <TableRow
         key={row.AspnetUserId}
@@ -431,15 +435,7 @@ const SubUsers = ({ classes }: any) => {
             {t("SubUsers.cellphone")}: {row.Cellphone}
           </Box>
           <Box className={clsx(classes.pt5)}>
-            {t("SubUsers.permissions")} :&nbsp;
-            {first(limitedAccessPermissions)}
-            {
-              subRights !== '' && (
-                <span>
-                  <b> - </b>{subRights}
-                </span>
-              )
-            }
+            <PermissionList list={row.UserPermissionsList} />
           </Box>
           <Box className={clsx(classes.pt5)}>
             {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}</b>
@@ -542,7 +538,8 @@ const SubUsers = ({ classes }: any) => {
         onConfirm={(data: any) => saveUser(data)}
       />
 
-      <ChangePassword
+      <SubUserChangePassword
+        SubUser={selectedSubUser}
         Text={t('settings.changePassword.enterNewPassword')}
         classes={classes}
         SetToast={setToastMessage}

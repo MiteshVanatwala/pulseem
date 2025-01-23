@@ -2,11 +2,10 @@ import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Loader } from "../../../../components/Loader/Loader";
+import { Loader } from "../../components/Loader/Loader";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
-import { LoginPassword } from "../../../../Models/Account/Password";
-import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
-import { changePassword } from "../../../../redux/reducers/AccountSettingsSlice";
+import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
+
 import {
   Box,
   Typography,
@@ -17,8 +16,10 @@ import {
 } from "@material-ui/core";
 import Tooltip from "@material-ui/core/Tooltip";
 import Zoom from "@material-ui/core/Zoom";
-import { ValidPassword } from "./Types";
-import PasswordHint from "./PasswordHint";
+import { ValidPassword } from "../Settings/AccountSettings/Password/Types";
+import PasswordHint from "../Settings/AccountSettings/Password/PasswordHint";
+import { save } from "../../redux/reducers/SubUserSlice";
+import { eSubUserAction, SubUserModel } from "../../Models/SubUser/SubUsers";
 
 const useStyles = makeStyles({
   dialogContainer: {
@@ -65,6 +66,7 @@ const useStyles = makeStyles({
 });
 
 export interface PasswordParams {
+  SubUser: SubUserModel;
   classes: any;
   IsOpen: boolean;
   OnClose: Function;
@@ -91,22 +93,18 @@ function BootstrapTooltip(props: any) {
   return <Tooltip arrow classes={classes} {...props} />;
 }
 
-const ChangePassword = ({
+const SubUserChangePassword = ({
   classes,
   IsOpen = false,
   OnClose,
   SetToast,
   Text,
+  SubUser,
   oldPasswordRequired = true
 }: PasswordParams) => {
   const { t } = useTranslation();
   const localClasses = useStyles();
   const { windowSize } = useSelector((state: any) => state.core);
-  const [loginPass, setLoginPass] = useState<LoginPassword>({
-    OldPassword: "",
-    NewPassword: "",
-    ConfirmPassword: "",
-  } as LoginPassword);
   const [oldPassError, setOldPassError] = useState<string>("");
   const [newPassError, setNewPassError] = useState<string>("");
   const [confirmPassError, setConfirmPassError] = useState<string>("");
@@ -121,6 +119,7 @@ const ChangePassword = ({
   } as ValidPassword);
   const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
   const [errors, setErrors] = useState([]);
+  const [userDetails, setUserDetails] = useState<SubUserModel>(SubUser);
 
   const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const lowerCaseLetters = /[a-z]/g;
@@ -133,11 +132,13 @@ const ChangePassword = ({
   useEffect(() => {
     if (IsOpen) {
       setErrors([]);
-      setLoginPass({
-        OldPassword: "",
-        NewPassword: "",
-        ConfirmPassword: "",
-      });
+      setUserDetails({
+        ...SubUser,
+        OldPassword: '',
+        NewPassword: '',
+        ConfirmPassword: '',
+        ActionType: eSubUserAction.ChangePassword
+      })
       setPasswordValidation({
         LowerChar: false,
         SpecialChar: false,
@@ -160,19 +161,19 @@ const ChangePassword = ({
       NumberChar: t("settings.changePassword.passwordHint.number"),
     };
     let isValid = true;
-    if (oldPasswordRequired && (!loginPass.OldPassword || loginPass.OldPassword === "")) {
+    if (oldPasswordRequired && (!userDetails.OldPassword || userDetails.OldPassword === "")) {
       isValid = false;
       setOldPassError(t("settings.changePassword.error.required"));
     }
-    if (!loginPass.NewPassword || loginPass.NewPassword === "") {
+    if (!userDetails.NewPassword || userDetails.NewPassword === "") {
       isValid = false;
       setNewPassError(t("settings.changePassword.error.required"));
     }
-    if (!loginPass.ConfirmPassword || loginPass.ConfirmPassword === "") {
+    if (!userDetails.ConfirmPassword || userDetails.ConfirmPassword === "") {
       isValid = false;
       setConfirmPassError(t("settings.changePassword.error.required"));
     }
-    if (loginPass.NewPassword !== loginPass.ConfirmPassword) {
+    if (userDetails.NewPassword !== userDetails.ConfirmPassword) {
       isValid = false;
       setConfirmPassError(t("settings.changePassword.error.notMatch"));
     }
@@ -195,7 +196,7 @@ const ChangePassword = ({
       setErrors([]);
       if (isValid) {
         setShowLoader(true);
-        const response = await dispatch(changePassword(loginPass));
+        const response = await dispatch(save(userDetails));
         handleResponses(response);
         setShowLoader(false);
       }
@@ -208,11 +209,10 @@ const ChangePassword = ({
     setOldPassError("");
     setNewPassError("");
     setConfirmPassError("");
-    setLoginPass({
-      ...loginPass,
-      [e?.target?.name]:
-        trimValue.length + 1 === actualValue?.length ? actualValue : trimValue,
-    });
+    setUserDetails({
+      ...userDetails,
+      [e?.target?.name]: trimValue.length + 1 === actualValue?.length ? actualValue : trimValue
+    })
 
     if (e?.target.name === "NewPassword") {
       const validPass = {
@@ -231,10 +231,11 @@ const ChangePassword = ({
     SetToast(ToastMessages.CHANGE_PASSWORD[response?.payload?.StatusCode]);
 
     if (response?.payload?.StatusCode === 201) {
-      setLoginPass({
+      setUserDetails({
+        ...userDetails,
         OldPassword: "",
         NewPassword: "",
-        ConfirmPassword: "",
+        ConfirmPassword: ""
       });
       OnClose();
     }
@@ -283,7 +284,7 @@ const ChangePassword = ({
                     name="OldPassword"
                     label=""
                     variant="outlined"
-                    value={loginPass.OldPassword}
+                    value={userDetails?.OldPassword}
                     className={clsx(
                       classes.textField,
                       classes.minWidth252,
@@ -349,7 +350,7 @@ const ChangePassword = ({
                     name="NewPassword"
                     label=""
                     variant="outlined"
-                    value={loginPass.NewPassword}
+                    value={userDetails?.NewPassword}
                     className={clsx(
                       classes.textField,
                       classes.minWidth252,
@@ -402,7 +403,7 @@ const ChangePassword = ({
                   name="ConfirmPassword"
                   label=""
                   variant="outlined"
-                  value={loginPass.ConfirmPassword}
+                  value={userDetails?.ConfirmPassword}
                   className={clsx(
                     classes.textField,
                     classes.minWidth252,
@@ -451,4 +452,4 @@ const ChangePassword = ({
   );
 };
 
-export default ChangePassword;
+export default SubUserChangePassword;
