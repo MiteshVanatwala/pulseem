@@ -1056,7 +1056,7 @@ const RecipientReport = ({ classes }: any) => {
         <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.SMS, recipientsReportData?.ClientSMSStatus))}</div>
       </Grid>
       <Grid item md='auto' xs={6} className={classes.flexGrow1}>
-        <div className={clsx(classes.bold)}>{t('common.createdDate')}</div>
+        <div className={clsx(classes.bold)}>{t('campaigns.LastEditDateResource1.HeaderText')}</div>
         <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(DateFormats.DATE_TIME_24)}</div>
       </Grid>
       <Grid item md={'auto'} xs={6} className={clsx(classes.flexGrow1, classes.pt15)}>

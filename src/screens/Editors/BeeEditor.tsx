@@ -43,6 +43,7 @@ import { getAccountExtraData, getPreviousLandingData, getTestGroups } from '../.
 import GroupSelectorPopUp from '../Groups/GroupSelectorPopUp';
 import LPTemplates from './modals/Templates';
 import { GenericModal } from '../HtmlCampaign/components/GenericModal';
+import SaveTemplate from '../HtmlCampaign/modals/SaveTemplate';
 
 const BeeEditor = ({ classes }: BeeEditorModel) => {
   //#region State
@@ -506,11 +507,11 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       }
       //@ts-ignore
       if (saveRef.current?.saveTemplate) {
-        const isTemplateExists = templatesBySubAccount?.find((template: any) => {
+        const isTemplateExists = templatesBySubAccount?.filter((template: any) => {
           //@ts-ignore
-          return template?.Name === saveRef.current?.templateName && template?.Category === saveRef.current?.templateCategory
+          return template?.Name === saveRef.current?.templateName && saveRef.current?.templateCategory?.split(',').indexOf(template?.Category) > -1
         });
-        if (isTemplateExists) {
+        if (isTemplateExists && isTemplateExists?.length > 0) {
           setDialogType({
             type: DialogType.TEMPLAGE_EXISTS,
             data: {
@@ -519,7 +520,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               //@ts-ignore
               name: saveRef.current?.templateName,
               //@ts-ignore
-              category: saveRef.current?.templateCategory
+              category: isTemplateExists?.map((item: any) => { return item?.Category })?.join(',')
             }
           })
         }
@@ -603,7 +604,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               classes.btn,
               classes.btnRounded
             )}
-            onClick={() => setDialogType({ type: DialogType.SAVE_TEMPLATE })}
+            onClick={() => { setDialogType(null); setDialog(DialogType.SAVE_TEMPLATE) }}
           >
             {t('common.cancel')}
           </Button>
@@ -699,12 +700,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       console.log(result);
     })
   }
-  const saveTemplate = async () => {
+  const saveTemplate = async (name: string, category: string) => {
     saveRef.current = {
       //@ts-ignore
       ...saveRef.current,
-      templateName: saveTemplateDetails.templateName,
-      templateCategory: saveTemplateDetails.categoryName,
+      templateName: name,
+      templateCategory: category,
       saveTemplate: true,
       showAnimation: true
     };
@@ -742,7 +743,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       >
         {t('common.templates')}
       </Button>
-      <Button onClick={() => setDialogType({ type: DialogType.SAVE_TEMPLATE })}
+      <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
         variant='contained'
         size='medium'
         className={clsx(
@@ -1009,68 +1010,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
       },
     };
   }
-  const renderSaveTemplateDialog = () => {
-    return {
-      showDivider: false,
-      title: t("common.saveTemplate"),
-      showDefaultButtons: true,
-      cancelText: 'common.cancel',
-      confirmText: 'common.save',
-      icon: false,
-      content: (
-        <>
-          <Box className={clsx(classes.mt15, classes.mb15)}>
-            <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.templateName')}</Typography>
-            <TextField
-              variant='outlined'
-              size='small'
-              value={saveTemplateDetails.templateName}
-              onChange={(event) => setSaveTemplateDetails({
-                ...saveTemplateDetails,
-                templateName: event?.target?.value
-              })}
-              className={clsx(classes.textField, classes.minWidth252)}
-              placeholder={t('common.templateName')}
-            />
-            <Box className='textBoxWrapper'>
-              <Typography className={clsx(errors.templateName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                {errors.templateName ?? errors.templateName}
-              </Typography>
-            </Box>
-          </Box>
-          <Box className={clsx(classes.mt15, classes.mb15)}>
-            <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.CategoryName')}</Typography>
-            <TextField
-              variant='outlined'
-              size='small'
-              value={saveTemplateDetails.categoryName}
-              onChange={(event) => setSaveTemplateDetails({
-                ...saveTemplateDetails,
-                categoryName: event?.target?.value
-              })}
-              className={clsx(classes.textField, classes.minWidth252)}
-              placeholder={t('common.CategoryName')}
-            />
-          </Box>
-        </>
-      ),
-      onConfirm: async () => {
-        if (!saveTemplateDetails.templateName.trim()) setErrors({ ...errors, templateName: t('common.templateNameIsRequired') });
-        else {
-          setErrors({ ...errors, templateName: '' });
-          saveTemplate();
-        }
-      },
-      onClose: () => {
-        setErrors({ ...errors, templateName: '' });
-        setDialogType(null);
-      },
-      onCancel: () => {
-        setErrors({ ...errors, templateName: '' });
-        setDialogType(null);
-      },
-    };
-  }
   const logoutDialog = () => {
     return {
       showDivider: false,
@@ -1186,8 +1125,6 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     let currentDialog = {};
     if (type === DialogType.Templates) {
       currentDialog = renderTemplateDialog();
-    } else if (type === DialogType.SAVE_TEMPLATE) {
-      currentDialog = renderSaveTemplateDialog();
     } else if (type === DialogType.LOGOUT) {
       currentDialog = logoutDialog();
     } else if (type === DialogType.EXIT) {
@@ -1362,6 +1299,15 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         onCancel={() => setShowGroupSelection(false)}
         selectedGroups={selectedGroups}
       />}
+
+      <SaveTemplate
+        classes={classes}
+        onClose={(resp: any) => {
+          setDialog(null);
+          if (resp !== undefined) saveTemplate(resp.name, resp.category);
+        }}
+        isOpen={dialog === DialogType.SAVE_TEMPLATE}
+      />
     </DefaultScreen>
   )
 }
