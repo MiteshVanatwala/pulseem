@@ -379,7 +379,6 @@ const ClientSearchResult = ({ classes }) => {
     }
     setDate({ ...date, FromDate: value });
   }
-
   const handleKeyDown = (event) => {
     if (event.keyCode === 13 || event.code === "Enter" || event.code === 'NumpadEnter') {
       setSearchData({
