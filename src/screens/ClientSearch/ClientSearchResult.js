@@ -1261,7 +1261,7 @@ const ClientSearchResult = ({ classes }) => {
             variant="outlined"
             size="small"
             value={searchStr}
-            onKeyPress={handleKeyDown}
+            // onKeyPress={handleKeyDown}
             onChange={(e) => setSearchStr(e.target.value)}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t("appBar.groups.search")}
