@@ -402,7 +402,6 @@ const ClientSearchResult = ({ classes }) => {
     }
   };
 
-
   const handleDownloadCsv = async (formatType, notifyEmail) => {
     setLoader(true);
     setDialog(null);
