@@ -170,6 +170,17 @@ export const setAuditLog = createAsyncThunk(
     }
   );
 
+export const SetRevenueFeature = createAsyncThunk(
+'AccountSettings/SetRevenueFeature',
+async (request: any, thunkAPI) => {
+    try {
+        const response = await PulseemReactInstance.post(`AccountSettings/SetRevenueFeature`, request);
+        return response.data;
+    } catch (error: any) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+    }
+})
+
 
 
 interface AuthorizationValues {
