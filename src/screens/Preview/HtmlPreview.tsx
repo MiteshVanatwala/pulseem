@@ -78,7 +78,8 @@ const HtmlPreview = ({ classes }: any) => {
         ID: response?.payload?.Data?.CampaignID,
         FromEmail: response?.payload?.Data?.FromEmail,
         FromName: response?.payload?.Data?.FromName,
-        PageUrl: response?.payload?.Data?.PageUrl
+        PageUrl: response?.payload?.Data?.PageUrl,
+        Subject: response?.payload?.Data?.Subject
       }
       setDetails(d);
       setShowLoader(false);
@@ -156,6 +157,9 @@ const HtmlPreview = ({ classes }: any) => {
         </Box>
         <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
           <Typography style={{ fontWeight: 600 }}>{t('report.FromName')}: </Typography><Typography style={{ fontSize: 15 }}>&nbsp;{details?.FromName}</Typography>
+        </Box>
+        <Box className={classes.dFlex} style={{ width: '100%', flexDirection: 'row' }}>
+          <Typography style={{ fontWeight: 600 }}>{t('report.Subject')}: </Typography><Typography style={{ fontSize: 15 }}>&nbsp;{details?.Subject}</Typography>
         </Box>
       </Box>
       }
