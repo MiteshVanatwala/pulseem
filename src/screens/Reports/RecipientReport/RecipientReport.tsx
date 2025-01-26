@@ -225,7 +225,7 @@ const RecipientReport = ({ classes }: any) => {
 
   useEffect(() => {
     getReportData();
-  }, [filterRequest.PageIndex, filterRequest.SmsPageIndex, filterRequest.WhatsappPageIndex, filterRequest.ArchiveAccess]);
+  }, [filterRequest.PageIndex, filterRequest.SmsPageIndex, filterRequest.WhatsappPageIndex, filterRequest.IsArchive]);
 
   const renderNewsLetterTableHead = () => {
     return (
@@ -1046,7 +1046,7 @@ const RecipientReport = ({ classes }: any) => {
               checked={filterRequest.IsArchive}
             />
           }
-          label={t("common.ArchiveAccess")}
+          label={t("common.IsArchive")}
         />
       </Grid>
 

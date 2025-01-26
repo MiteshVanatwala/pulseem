@@ -645,7 +645,7 @@
   "recipientGroups": "קבוצות נמענים",
   "noCampaignToRestore": "אין קמפיינים לשחזור",
   "doNotShow": "אל תציג שוב",
-  "ArchiveAccess": "כלול חיפוש שליחות מעל שנה (זמן החיפוש ארוך יותר)",
+  "IsArchive": "כלול חיפוש שליחות מעל שנה (זמן החיפוש ארוך יותר)",
   "birthdayFrom": "יום הולדת החל מ",
   "reminderFrom": "תאריך תזכורת החל מ",
   "birthdayWithoutYear": "יום הולדת ללא שנה",
