@@ -215,7 +215,7 @@ const RecipientReport = ({ classes }: any) => {
       WhatsappPageIndex: 1,
       Email: '',
       Cellphone: '',
-      ArchiveAccess: false
+      IsArchive: false
     })
     setErrors({
       Email: '',
