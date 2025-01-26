@@ -3,9 +3,9 @@ import { setCookie, getCookie } from '../../helpers/Functions/cookies'
 const rtlLanguages = ['he', 'ar']
 
 export const isSuperUserSelector = (state) => {
-  const requiredPermissions = [1, 2, 3, 4];
-  return requiredPermissions.every(permission =>
-    state.subUserPermissions.includes(permission)
+  const adminPermissions = [1, 2, 3, 4];
+  return adminPermissions?.every(permission =>
+    state.subUserPermissions?.indexOf(permission) > -1
   );
 };
 
