@@ -628,7 +628,7 @@ const App = ({ screenSize }) => {
       const jwt = jwt_decode(token);
       const {
         email = '',
-        // unique_name = '',
+        unique_name = '', // SubUser permissions
         nameid: companyName,
         certthumbprint: billingTypeId,
         role: isAdmin,
@@ -660,6 +660,7 @@ const App = ({ screenSize }) => {
           isAdmin,
           isAllowSwitchAccount,
           billingTypeId,
+          unique_name
         })
       );
       let lang = culture || locality; //||'he'

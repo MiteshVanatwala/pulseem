@@ -2,6 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies'
 const rtlLanguages = ['he', 'ar']
 
+export const isSuperUserSelector = (state) => {
+  const requiredPermissions = [1, 2, 3, 4];
+  return requiredPermissions.every(permission =>
+    state.subUserPermissions.includes(permission)
+  );
+};
+
 export const coreSlice = createSlice({
   name: 'core',
   initialState: {
@@ -21,6 +28,8 @@ export const coreSlice = createSlice({
     billingTypeId: null,
     accountFeatures: null,
     isDebtAccount: null,
+    subUserPermissions: [1, 2, 3, 4],
+    isSuperUser: true,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     }
@@ -52,6 +61,8 @@ export const coreSlice = createSlice({
       state.isAllowSwitchAccount = payload.isAllowSwitchAccount
       state.billingTypeId = payload.billingTypeId
       state.isDebtAccount = (payload.isDebtAccount === true || payload.isDebtAccount === 'True')
+      state.subUserPermissions = payload?.unique_name
+      state.isSuperUser = isSuperUserSelector(payload?.unique_name)
     }
   }
 })
