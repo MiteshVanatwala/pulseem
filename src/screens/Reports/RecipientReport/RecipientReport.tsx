@@ -90,7 +90,7 @@ const RecipientReport = ({ classes }: any) => {
     SmsPageIndex: number;
     WhatsappPageIndex: number;
     IsExport: boolean;
-    ArchiveAccess?: boolean
+    IsArchive?: boolean
   };
 
   const [filterRequest, setFilterRequest] = useState<reportRequest>({
@@ -100,7 +100,7 @@ const RecipientReport = ({ classes }: any) => {
     SmsPageIndex: 1,
     WhatsappPageIndex: 1,
     IsExport: false,
-    ArchiveAccess: false
+    IsArchive: false
   });
 
   const [errors, setErrors] = useState<any>({
@@ -348,6 +348,12 @@ const RecipientReport = ({ classes }: any) => {
           )}>
             {t(statusText)}
           </Typography>
+          {row.Status === 5 && row.UnsubscribeDate && <Typography className={clsx(
+            classes.middleText,
+            classes.f12
+          )}>
+            {t('common.FromDate')} {moment(row?.UnsubscribeDate).format(DateFormats.DATE_TIME_24)}
+          </Typography>}
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -415,6 +421,12 @@ const RecipientReport = ({ classes }: any) => {
                 )}>
                   {t(statusText)}
                 </Typography>
+                {row.Status === 5 && row.UnsubscribeDate && <Typography className={clsx(
+                  classes.middleText,
+                  classes.f12
+                )}>
+                  {t('common.FromDate')} {moment(row?.UnsubscribeDate).format(DateFormats.DATE_TIME_24)}
+                </Typography>}
               </Box>
               <Box className={clsx(classes.flex4)}>
                 <Typography className={classes.bold}>{t('common.Opened')}</Typography>
@@ -722,6 +734,13 @@ const RecipientReport = ({ classes }: any) => {
           align='center'
           className={clsx(classes.flex2, classes.f15, renderStatusClasses(row, campaignType))}>
           {t(`${campaignType === 'sms' ? ConvertSmsReceipientStatusText(`${row.SmsStatus}`) : ConvertWhatsappStatusText(row.SmsStatus, true)}`)}
+          {row.SmsStatus === 5 && row.UnsubscribeDate && <Typography className={clsx(
+            classes.middleText,
+            classes.f12
+          )}>
+            {t('common.FromDate')} {moment(row?.UnsubscribeDate).format(DateFormats.DATE_TIME_24)}
+          </Typography>
+          }
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -803,7 +822,13 @@ const RecipientReport = ({ classes }: any) => {
             <Box className={classes.flex}>
               <Box className={clsx(classes.flex6)}>
                 <Typography className={classes.bold}>{t('common.Status')}</Typography>
-                {renderStatusCell(row.SmsStatus)}
+                {t(`${campaignType === 'sms' ? ConvertSmsReceipientStatusText(`${row.SmsStatus}`) : ConvertWhatsappStatusText(row.SmsStatus, true)}`)}
+                {row.SmsStatus === 5 && row.UnsubscribeDate && <Typography className={clsx(
+                  classes.middleText,
+                  classes.f12
+                )}>
+                  {t('common.FromDate')} {moment(row?.UnsubscribeDate).format(DateFormats.DATE_TIME_24)}
+                </Typography>}
               </Box>
               <Box className={clsx(classes.flex4)}>
                 <Typography className={classes.bold}>{t('common.Clicked')}</Typography>
@@ -1008,7 +1033,7 @@ const RecipientReport = ({ classes }: any) => {
         }
       </Grid>
 
-      <Grid item style={{ display: 'none' }}>
+      <Grid item xs={12}>
         <FormControlLabel
           control={
             <Checkbox
@@ -1016,9 +1041,9 @@ const RecipientReport = ({ classes }: any) => {
               inputProps={{ "aria-label": "secondary checkbox" }}
               onClick={() => setFilterRequest({
                 ...filterRequest,
-                ArchiveAccess: !filterRequest.ArchiveAccess
+                IsArchive: !filterRequest.IsArchive
               })}
-              checked={filterRequest.ArchiveAccess}
+              checked={filterRequest.IsArchive}
             />
           }
           label={t("common.ArchiveAccess")}
