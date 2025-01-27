@@ -80,14 +80,6 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
             </Box>
             <Box className={clsx(classes.mt15, classes.mb15)}>
               <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.CategoryName')}</Typography>
-              {/* <TextField
-                variant='outlined'
-                size='small'
-                value={category}
-                onChange={(event) => setCategory(event?.target?.value)}
-                className={clsx(classes.textField, classes.minWidth252)}
-                placeholder={t('common.CategoryName')}
-              /> */}
               <Box>
                 <Autocomplete
                   clearIcon={false}
@@ -100,9 +92,6 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
                   onBlur={(event) => {
                     if (event.target.value !== '' && event.target.value.trim() !== '' && templateCategories?.length === 0) {
                       onUpdate(event.target.value);
-                    }
-                    else {
-                      console.log(templateCategories)
                     }
                   }}
                   onChange={(event, value, reason) => {
