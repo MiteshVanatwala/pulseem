@@ -327,7 +327,7 @@ export async function SwitchStatusByCondition(data: ExportData | any, statuses: 
             let status = statuses.find((s) => { return s.id === o.Status });
             if (status && status.value !== '') {
                 tempData.Status = i18n.t(status.value);
-                tempData.StatusName = i18n.t(status.value);
+                //tempData.StatusName = i18n.t(status.value);
             }
         }
         if (!isEmail && (o.SmsStatus || o.SmsStatus === 0)) {
