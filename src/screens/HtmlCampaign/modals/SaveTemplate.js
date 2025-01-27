@@ -98,11 +98,17 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
                   value={templateCategories || ''}
                   // @ts-ignore
                   onBlur={(event) => {
-                    if (event.target.value !== '' && event.target.value.trim() !== '') {
+                    if (event.target.value !== '' && event.target.value.trim() !== '' && templateCategories?.length === 0) {
                       onUpdate(event.target.value);
+                    }
+                    else {
+                      console.log(templateCategories)
                     }
                   }}
                   onChange={(event, value, reason) => {
+                    if (templateCategories?.length > 0) {
+                      return;
+                    }
                     const limitedValue = value.slice(-1);
                     if (reason === 'createOption') {
                       if (limitedValue[0]?.trim() !== '') {
@@ -110,7 +116,7 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
                       }
                     }
                     setTemplateCategories(limitedValue);
-                    setCategory(limitedValue.join(','));
+                    setCategory(limitedValue);
                   }}
                   renderTags={(value, props) =>
                     value.map((option, index) => (
@@ -121,7 +127,25 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
                       />
                     ))
                   }
-                  renderInput={(params) => <TextField placeholder={t('common.CategoryName')} {...params} className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)} />}
+                  renderInput={(params) => <TextField
+                    disabled={templateCategories?.length > 0}
+                    placeholder={t('common.CategoryName')}
+                    {...params}
+                    inputProps={{
+                      ...params.inputProps,
+                      onKeyDown: (e) => {
+                        if (templateCategories?.length > 0) {
+                          e.preventDefault();
+                        }
+                      },
+                      onClick: (e) => {
+                        if (templateCategories?.length > 0) {
+                          e.preventDefault();
+                        }
+                      }
+                    }}
+                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+                  />}
                 />
               </Box>
             </Box>
