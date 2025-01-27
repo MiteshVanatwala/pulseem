@@ -315,6 +315,16 @@ const RecipientReport = ({ classes }: any) => {
     )
   }
 
+  const handlePreviewClick = async (row: any) => {
+    setShowLoader(true);
+    await dispatch(getCampaignInfo(row.CampaignID));
+    setShowLoader(false);
+    setDialogType({
+      type: 'newsletterpreview',
+      data: row.CampaignID
+    })
+  }
+
   const renderNewsletterRow = (row: any) => {
     const statusText = ConvertNewsletterStatusText(row.Status);
     return (
@@ -365,16 +375,7 @@ const RecipientReport = ({ classes }: any) => {
           classes={noBorderCellStyle}
           className={clsx(classes.flex1, classes.f15)}>
           <ManagmentIcon
-            onClick={async () => {
-              // pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${row.CampaignID}&fromreact=true`)
-              setShowLoader(true);
-              const response: any = await dispatch(getCampaignInfo(row.CampaignID));
-              setShowLoader(false);
-              setDialogType({
-                type: 'newsletterpreview',
-                data: row.CampaignID
-              })
-            }}
+            onClick={() => handlePreviewClick(row)}
             classes={classes}
             icon={null}
             uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} />}
@@ -434,15 +435,7 @@ const RecipientReport = ({ classes }: any) => {
               </Box>
               <Box className={clsx(classes.flex4, classes.pt5, classes.textRight)}>
                 <ManagmentIcon
-                  onClick={async () => {
-                    setShowLoader(true);
-                    const response: any = await dispatch(getCampaignInfo(row.CampaignID));
-                    setShowLoader(false);
-                    setDialogType({
-                      type: 'newsletterpreview',
-                      data: row.CampaignID
-                    })
-                  }}
+                  onClick={() => handlePreviewClick(row)}
                   classes={classes}
                   icon={null}
                   uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} style={{ paddingTop: 10 }} />}
@@ -492,37 +485,11 @@ const RecipientReport = ({ classes }: any) => {
           </Box>
         ) : (
           <>
-            {campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map((row: any) => windowSize == "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType)) : recipientsReportData?.WhatsappCampaigns?.map((row: any) => windowSize == "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType))}
+            {campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map((row: any) => windowSize === "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType)) : recipientsReportData?.WhatsappCampaigns?.map((row: any) => windowSize === "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType))}
             {campaignType === 'sms' ? renderSmsPagination() : renderWhasappPagination()}
           </>
         )}
       </TableBody>
-    )
-  }
-
-  const renderStatusCell = (status: number) => {
-    const statuses = {
-      1: 'common.Created',
-      2: 'common.Sending',
-      3: 'campaigns.Stopped',
-      4: 'common.Sent',
-      5: 'campaigns.Canceled',
-      6: 'campaigns.Optin',
-      7: 'campaigns.Approve'
-    } as any;
-
-    return (
-      <Typography className={clsx(classes.middleText, classes.recipientsStatus,
-        {
-          [classes.recipientsStatusCreated]: status === 1,
-          [classes.recipientsStatusSent]: status === 4,
-          [classes.recipientsStatusSending]: status === 2,
-          [classes.recipientsStatusCanceled]: status === 5
-        }
-      )}
-      >
-        {t(statuses[status])}
-      </Typography>
     )
   }
 
@@ -1054,7 +1021,6 @@ const RecipientReport = ({ classes }: any) => {
   }
 
   const renderClientDetails = () => {
-    const dateTimeFormat = 'DD/MM/YYYY, HH:mm a';
     return <Grid container spacing={2} className={clsx(classes.mgmtTitleContainer, classes.pr25, classes.pe25)}>
       <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.first_name')}</div>
@@ -1171,6 +1137,7 @@ const RecipientReport = ({ classes }: any) => {
     content: (
       <Box style={{ minHeight: 'calc(70vh)', height: 'calc(70vh)' }}>
         <iframe
+          title={`preview_${templateData}`}
           src={`${actionURL}PreviewCampaign.aspx?CampaignID=${templateData}&fromreact=true`}
           style={{ border: "none !important", width: '100%', height: '100%' }}
         />
