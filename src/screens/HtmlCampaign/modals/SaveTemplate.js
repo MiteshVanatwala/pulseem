@@ -103,19 +103,22 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
                     }
                   }}
                   onChange={(event, value, reason) => {
+                    const limitedValue = value.slice(-1);
                     if (reason === 'createOption') {
-                      if (value[0].trim() !== '') {
-                        onUpdate(event.target.value);
+                      if (limitedValue[0]?.trim() !== '') {
+                        onUpdate(limitedValue[0]);
                       }
                     }
+                    setTemplateCategories(limitedValue);
+                    setCategory(limitedValue.join(','));
                   }}
                   renderTags={(value, props) =>
                     value.map((option, index) => (
                       <Chip label={option} {...props({ index })} className={clsx(classes.MuiChipRoot)} onDelete={() => {
-                        const filteredMeta = templateCategories?.filter((m) => { return m !== option });
-                        setTemplateCategories(filteredMeta);
-                        setCategory(filteredMeta.join(','));
-                      }} />
+                        setTemplateCategories([]);
+                        setCategory('');
+                      }}
+                      />
                     ))
                   }
                   renderInput={(params) => <TextField placeholder={t('common.CategoryName')} {...params} className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)} />}
