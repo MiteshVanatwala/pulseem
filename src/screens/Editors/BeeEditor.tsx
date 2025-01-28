@@ -604,7 +604,12 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
               classes.btn,
               classes.btnRounded
             )}
-            onClick={() => { setDialogType(null); setDialog(DialogType.SAVE_TEMPLATE) }}
+            onClick={() => {
+              //@ts-ignore
+              saveRef.current = { ...saveRef.current, saveTemplate: false };
+              setDialogType(null);
+              setDialog(DialogType.SAVE_TEMPLATE)
+            }}
           >
             {t('common.cancel')}
           </Button>
@@ -1304,6 +1309,8 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
         classes={classes}
         onClose={(resp: any) => {
           setDialog(null);
+          //@ts-ignore
+          saveRef.current = { ...saveRef.current, saveTemplate: false };
           if (resp !== undefined) saveTemplate(resp.name, resp.category);
         }}
         isOpen={dialog === DialogType.SAVE_TEMPLATE}
