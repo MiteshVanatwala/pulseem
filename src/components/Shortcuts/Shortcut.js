@@ -17,6 +17,7 @@ import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
   const { accountFeatures } = useSelector(state => state.common)
+  const { userRoles } = useSelector(state => state.core)
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});
@@ -28,7 +29,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const dispatch = useDispatch();
   const categories = { ...DASHBOARD_SHORTCUT };
   const Redirect = useRedirect();
-  
+
   if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf(PulseemFeatures.NOTIFICATION) > -1) {
     categories['appBar.notifications.title'] = {
       title: 'appBar.notifications.title',
@@ -289,9 +290,9 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
             <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5, classes.flex1,)} onClick={() => {
               Redirect({ url: data.ShortcutUrl })
             }}>{t(data.CategoryName)}</Typography>
-            <Link className={clsx('deleteShortcut', classes.p5)} style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
+            {userRoles.AllowDelete && <Link className={clsx('deleteShortcut', classes.p5)} style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
               onClick={deleteShortcut}
-            ><CgCloseO /></Link>
+            ><CgCloseO /></Link>}
           </Box>
           <Divider />
           <Typography

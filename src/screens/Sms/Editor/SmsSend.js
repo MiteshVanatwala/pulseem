@@ -1982,7 +1982,7 @@ const SmsSend = ({ classes, ...props }) => {
             onClick={() => { handlePreviousPage() }}>
             {t("smsReport.back")}
           </Button>
-          <Button
+          {userRoles.AllowDelete && <Button
 
             className={clsx(
               classes.btn,
@@ -1993,7 +1993,7 @@ const SmsSend = ({ classes, ...props }) => {
             onClick={onHandleDelete}
           >
             <BsTrash style={{ fontSize: "20", marginInlineStart: 0 }} />
-          </Button>
+          </Button>}
           <Button
             className={clsx(
               classes.btn,

@@ -47,7 +47,7 @@ const WizardActions = ({
                         {
                             helperText && <span className={clsx(classes.paddingSides5, classes.semibold)}>{helperText}</span>
                         }
-                        {onDelete &&
+                        {userRoles.AllowDelete && onDelete &&
                             <Button
                                 className={clsx(
                                     classes.btn,

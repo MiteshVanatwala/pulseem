@@ -90,7 +90,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { windowSize, rowsPerPage, isRTL } = useSelector(
+	const { windowSize, rowsPerPage, isRTL, userRoles } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const ToastMessages = useSelector(
@@ -583,6 +583,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'delete',
 				buttonKey: 'delete',
+				remove: !userRoles.AllowDelete,
 				uIcon: DeleteIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),

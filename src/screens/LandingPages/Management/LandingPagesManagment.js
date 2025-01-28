@@ -40,7 +40,7 @@ import { ClearPageState, GetPageNyName, SetPageState } from '../../../helpers/UI
 
 const LandingPagesesManagment = ({ classes }) => {
   const navigate = useNavigate()
-  const { windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { accountFeatures } = useSelector(state => state.common);
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
@@ -427,6 +427,7 @@ const LandingPagesesManagment = ({ classes }) => {
         uIcon: DeleteIcon,
         lable: t('landingPages.GridButtonColumnResource1.HeaderText'),
         showPhone: true,
+        remove: !userRoles.AllowDelete,
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({

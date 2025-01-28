@@ -824,7 +824,7 @@ const ClientSearchResult = ({ classes }) => {
     {
       label: t(""),
       classes: cellStyle,
-      className: classes.flex6,
+      className: userRoles.AllowDelete ? classes.flex6 : classes.flex1,
       align: "center",
     },
     {
@@ -1320,7 +1320,7 @@ const ClientSearchResult = ({ classes }) => {
             {t("group.new")}
           </Button>
         </Grid>
-        <Grid item xs={windowSize === "xs" && 12}>
+        {userRoles.AllowDelete && <Grid item xs={windowSize === "xs" && 12}>
           <Button
             className={clsx(classes.btn, classes.btnRounded)}
             onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
@@ -1328,8 +1328,8 @@ const ClientSearchResult = ({ classes }) => {
           >
             {t("recipient.unsubscribe")}
           </Button>
-        </Grid>
-        {windowSize !== "xs" && (
+        </Grid>}
+        {userRoles.AllowDelete && windowSize !== "xs" && (
           <Grid item>
             <Button
               className={clsx(classes.btn, classes.btnRounded)}
@@ -1500,6 +1500,7 @@ const ClientSearchResult = ({ classes }) => {
         {
           key: 'deleteFromGroups',
           uIcon: DeleteRecipient,
+          remove: !userRoles.AllowDelete,
           lable: t("recipient.deleteFromGroups"),
           rootClass: classes.paddingIcon,
           onClick: () => {
@@ -1510,6 +1511,7 @@ const ClientSearchResult = ({ classes }) => {
         {
           key: 'deleteFromEmail',
           uIcon: RemoveEmail,
+          remove: !userRoles.AllowDelete,
           lable: t("recipient.deleteEmail"),
           rootClass: classes.paddingIcon,
           onClick: () => {
@@ -1520,8 +1522,8 @@ const ClientSearchResult = ({ classes }) => {
         {
           key: 'deleteFromPhone',
           uIcon: RemovePhone,
+          remove: !userRoles.AllowDelete || windowSize === 'xs',
           lable: t("recipient.deletePhone"),
-          remove: windowSize === 'xs',
           rootClass: classes.paddingIcon,
           onClick: () => {
             setSelectedClients([ClientID])
@@ -1536,9 +1538,9 @@ const ClientSearchResult = ({ classes }) => {
           justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}
           className={localClasses.actionButtons}
         >
-          {iconsMap.map(icon => (
+          {iconsMap.filter((icon) => { return !icon.remove }).map(icon => (
             <Grid
-              style={{ flex: 1, alignItems: 'center', }}
+              style={{ flex: 1, alignItems: 'center' }}
               className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
               key={icon.key}
               item >
@@ -1603,7 +1605,7 @@ const ClientSearchResult = ({ classes }) => {
         <TableCell
           classes={cellStyle}
           align="center"
-          className={classes.flex6}
+          className={userRoles.AllowDelete ? classes.flex6 : classes.flex1}
         >
           {renderCellIcons()}
         </TableCell>

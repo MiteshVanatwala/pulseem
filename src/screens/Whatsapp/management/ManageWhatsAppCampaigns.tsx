@@ -94,7 +94,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { windowSize, rowsPerPage, isRTL } = useSelector(
+	const { windowSize, rowsPerPage, isRTL, userRoles } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const ToastMessages = useSelector(
@@ -303,26 +303,26 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const renderStatusCell = (status: number) => {
 		return (
 			// <Box className={classes.justifyBetween}>
-				<Typography
-					className={clsx(classes.middleText, classes.whatsappCampaignStatus, {
-						[classes.whatsappCampaignStatusCreated]:
-							status === campaignStatuses.CREATED,
-						[classes.whatsappCampaignStatusSending]:
-							status === campaignStatuses.SENDING,
-						[classes.whatsappCampaignStatusStopped]:
-							status === campaignStatuses.STOPPED,
-						[classes.whatsappCampaignStatusFinished]:
-							status === campaignStatuses.FINISHED,
-						[classes.whatsappCampaignStatusCanceled]:
-							status === campaignStatuses.CANCELED,
-					})}
-				>
-					{translator(
-						`whatsappManagement.${campaignStatus[
-							status
-						]?.toLocaleLowerCase()}`
-					)}
-				</Typography>
+			<Typography
+				className={clsx(classes.middleText, classes.whatsappCampaignStatus, {
+					[classes.whatsappCampaignStatusCreated]:
+						status === campaignStatuses.CREATED,
+					[classes.whatsappCampaignStatusSending]:
+						status === campaignStatuses.SENDING,
+					[classes.whatsappCampaignStatusStopped]:
+						status === campaignStatuses.STOPPED,
+					[classes.whatsappCampaignStatusFinished]:
+						status === campaignStatuses.FINISHED,
+					[classes.whatsappCampaignStatusCanceled]:
+						status === campaignStatuses.CANCELED,
+				})}
+			>
+				{translator(
+					`whatsappManagement.${campaignStatus[
+						status
+					]?.toLocaleLowerCase()}`
+				)}
+			</Typography>
 			// </Box>
 		);
 	};
@@ -526,7 +526,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						onSavedTemplateChange(templateData?.Data);
 					}
 				}
-				setDialogType({type: 'preview', data: previewTemplateId})
+				setDialogType({ type: 'preview', data: previewTemplateId })
 			} else {
 				templateData?.payload?.Message
 					? setToastMessage({
@@ -540,7 +540,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 	const onGroups = (campaignId: string) => {
 		let modalData: string[] = [];
-		setDialogType({type: 'group'})
+		setDialogType({ type: 'group' })
 		const campaign = campaignListData?.find(
 			(campaign: campaignDataProps) =>
 				campaignId === campaign.WACampaignID?.toString()
@@ -654,6 +654,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				buttonKey: 'delete',
 				uIcon: DeleteIcon,
 				icon: '',
+				remove: !userRoles.AllowDelete,
 				disable: AutomationID !== 0,
 				rootClass: classes.paddingIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
@@ -854,40 +855,40 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const getDeleteDialog = () => ({
-    title: translator('whatsappManagement.deleteCampaign'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {translator('whatsappManagement.deleteCampaignDesc')}
-      </Typography>
-    ),
+		title: translator('whatsappManagement.deleteCampaign'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsappManagement.deleteCampaignDesc')}
+			</Typography>
+		),
 		renderButtons: () => <ConfirmationButtons
 			classes={classes}
 			onConfirm={() => onDeleteCampaign()}
 			onCancel={() => setDialogType({})}
 		/>
-  })
+	})
 
 	const getDuplicateDialog = () => ({
-    title: translator('whatsappManagement.duplicateCampaign'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }}>
-        {translator('whatsappManagement.duplicateCampaignDesc')}
-      </Typography>
-    ),
+		title: translator('whatsappManagement.duplicateCampaign'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }}>
+				{translator('whatsappManagement.duplicateCampaignDesc')}
+			</Typography>
+		),
 		renderButtons: () => <ConfirmationButtons
 			classes={classes}
 			onConfirm={() => onDuplicateCampaign()}
 			onCancel={() => setDialogType({})}
 		/>
-  })
+	})
 
 	const getPreviewDialog = (templateId: string) => ({
-    title: translator('whatsappManagement.preview'),
-    showDivider: false,
-    content: (
-      <Box className={classes.alertModalContentMobile}>
+		title: translator('whatsappManagement.preview'),
+		showDivider: false,
+		content: (
+			<Box className={classes.alertModalContentMobile}>
 				<WhatsappMobilePreview
 					classes={classes}
 					templateData={templateData}
@@ -896,7 +897,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					templateId={templateId}
 				/>
 			</Box>
-    ),
+		),
 		renderButtons: () => (
 			<Grid
 				container
@@ -917,12 +918,12 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				</Grid>
 			</Grid>
 		)
-  })
-	
+	})
+
 	const getGroup = () => ({
-    title: translator('whatsappManagement.campaignGroups'),
-    showDivider: false,
-    content: (
+		title: translator('whatsappManagement.campaignGroups'),
+		showDivider: false,
+		content: (
 			<ul className={classes.validationAlertModalUl}>
 				{infoModalData?.map((requiredField: string, index: number) => (
 					<li key={index} className={classes.infoAlertModalLi}>
@@ -930,60 +931,60 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					</li>
 				))}
 			</ul>
-    ),
-    onConfirm: async () => {
+		),
+		onConfirm: async () => {
 			setDialogType({
 				type: '',
 				data: ''
 			});
-    }
-  })
+		}
+	})
 
 	const handleRestoreDeleteChange = (WACampaignID: any) => () => {
 		const found = restoreArray.includes(WACampaignID)
-    if (found) {
-      setRestoreArray(restoreArray.filter((restore: any) => restore !== WACampaignID))
-    } else {
-      setRestoreArray([...restoreArray, WACampaignID])
-    }
-  }
+		if (found) {
+			setRestoreArray(restoreArray.filter((restore: any) => restore !== WACampaignID))
+		} else {
+			setRestoreArray([...restoreArray, WACampaignID])
+		}
+	}
 
 	const getRestoreDeletedDialog = (data = []) => {
-    if (!data || !Array.isArray(data)) return null
-    return {
-      title: translator('whatsappManagement.restoreDeleted'),
-      showDivider: true,
-      icon: (
-        <div className={classes.dialogIconContent}>
-          {'\uE185'}
-        </div>
-      ),
-      content: (
-        <RestorDialogContent
-          classes={classes}
-          data={deletedCampaignListData}
-          currentChecked={restoreArray}
-          onChange={handleRestoreDeleteChange}
-          dataIdVar='WACampaignID'
-        />
-      ),
-      onConfirm: async () => {
+		if (!data || !Array.isArray(data)) return null
+		return {
+			title: translator('whatsappManagement.restoreDeleted'),
+			showDivider: true,
+			icon: (
+				<div className={classes.dialogIconContent}>
+					{'\uE185'}
+				</div>
+			),
+			content: (
+				<RestorDialogContent
+					classes={classes}
+					data={deletedCampaignListData}
+					currentChecked={restoreArray}
+					onChange={handleRestoreDeleteChange}
+					dataIdVar='WACampaignID'
+				/>
+			),
+			onConfirm: async () => {
 				setDialogType({
 					type: '',
 					data: ''
 				});
-        onRestoreDeleted();
-      }
-    }
-  }
+				onRestoreDeleted();
+			}
+		}
+	}
 
 	const renderDialog = () => {
-    const { type, data } = dialogType || {}
+		const { type, data } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'duplicate') {
-    	currentDialog = getDuplicateDialog();
+			currentDialog = getDuplicateDialog();
 		} else if (type === 'group') {
-    	currentDialog = getGroup();
+			currentDialog = getGroup();
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
 		} else if (type === 'preview') {
@@ -1005,25 +1006,25 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				</BaseDialog>
 			)
 		}
-  }
+	}
 
 	const renderTableHead = () => {
-    return (
-      <TableHead>
+		return (
+			<TableHead>
 				<TableRow classes={rowStyle}>
 					<TableCell classes={cellStyle} className={classes.flex3} align='center'>{translator('sms.GridBoundColumnResource2.HeaderText')}</TableCell>
 					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('campaigns.recipients')}</TableCell>
 					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('sms.CreditsResource1.HeaderText')}</TableCell>
 					<TableCell classes={cellStyle} className={classes.flex1} align='center'>{translator('sms.StatusResource1.HeaderText')}</TableCell>
-					<TableCell classes={{root: classes.tableCellRoot}} className={classes.flex5}></TableCell>
+					<TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex5}></TableCell>
 				</TableRow>
 			</TableHead>
-    )
-  }
+		)
+	}
 
 	const renderRow = (campaign: campaignDataProps) => {
-    return (
-      <TableRow
+		return (
+			<TableRow
 				key={campaign.WACampaignID}
 				classes={rowStyle}>
 				<TableCell
@@ -1072,25 +1073,25 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					{renderCellIcons(campaign)}
 				</TableCell>
 			</TableRow>
-    )
-  }
+		)
+	}
 
-  const renderPhoneRow = (campaign: campaignDataProps) => {
-    return (
+	const renderPhoneRow = (campaign: campaignDataProps) => {
+		return (
 			<TableRow
-        key={campaign.WACampaignID}
-        component='div'
-        classes={rowStyle}>
-        <TableCell style={{ flex: 2 }} classes={{ root: classes.tableCellRoot }}
-          className={classes.p20}>
-          <Box className={classes.justifyBetween}>
-            <Box className={classes.inlineGrid}>
-              {renderNameCell(campaign)}
-            </Box>
-            <Box className={classes.inlineGrid}>
-              {renderStatusCell(campaign.Status)}
-            </Box>
-          </Box>
+				key={campaign.WACampaignID}
+				component='div'
+				classes={rowStyle}>
+				<TableCell style={{ flex: 2 }} classes={{ root: classes.tableCellRoot }}
+					className={classes.p20}>
+					<Box className={classes.justifyBetween}>
+						<Box className={classes.inlineGrid}>
+							{renderNameCell(campaign)}
+						</Box>
+						<Box className={classes.inlineGrid}>
+							{renderStatusCell(campaign.Status)}
+						</Box>
+					</Box>
 					<Grid container className={classes.pt5}>
 						<Grid item sm={6} xs={6}>
 							<Typography className={classes.middleText}>
@@ -1104,12 +1105,12 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						</Grid>
 					</Grid>
 					<Box className={classes.pt10}>
-          	{renderCellIcons(campaign)}
+						{renderCellIcons(campaign)}
 					</Box>
-        </TableCell>
-      </TableRow>
-    )
-  }
+				</TableCell>
+			</TableRow>
+		)
+	}
 
 	const renderTableBody = () => {
 		if (campaignListData?.length === 0) {
@@ -1119,25 +1120,25 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				</Box>
 			)
 		}
-    return (
+		return (
 			<TableBody>
-				{ campaignListData?.map(windowSize === 'xs' ? renderPhoneRow : renderRow) }
+				{campaignListData?.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
 			</TableBody>
-    )
-  }
+		)
+	}
 
 	const renderTable = () => {
-    return (
-      <TableContainer className={clsx(classes.tableStyle, windowSize === 'xs' ? classes.mt20 : '')}>
-        <Table className={classes.tableContainer}>
+		return (
+			<TableContainer className={clsx(classes.tableStyle, windowSize === 'xs' ? classes.mt20 : '')}>
+				<Table className={classes.tableContainer}>
 					<>
 						{windowSize !== 'xs' && renderTableHead()}
 						{renderTableBody()}
 					</>
-        </Table>
-      </TableContainer>
-    )
-  }
+				</Table>
+			</TableContainer>
+		)
+	}
 
 	return (
 		<DefaultScreen

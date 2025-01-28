@@ -48,7 +48,7 @@ const BillingSettingsPage = ({ classes }: any) => {
   const dispatch = useDispatch();
   const Redirect = useRedirect();
   const debtPanel: any = useRef(null);
-  const { isRTL, windowSize, isAdmin, isDebtAccount } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize, isAdmin, isDebtAccount, userRoles } = useSelector((state: any) => state.core);
   const { accountFeatures } = useSelector((state: any) => state.common);
   const { creditCards } = useSelector((state: any) => state.payment);
   const { subAccount } = useSelector((state: any) => state.common)
@@ -502,7 +502,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                               onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
                               className={clsx(classes.font14)}
                               style={{ textDecoration: 'underline' }}
-                            >{t("settings.billingSettings.editCard")}</Link>{showEditCard && <> |
+                            >{t("settings.billingSettings.editCard")}</Link>{userRoles.AllowDelete && showEditCard && <> |
                               <Link
                                 onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); setConfirmDialog(true) }}
                                 className={clsx(classes.font14)}

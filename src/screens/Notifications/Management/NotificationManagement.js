@@ -36,7 +36,7 @@ import { DateFormats } from '../../../helpers/Constants';
 
 const NotificationManagement = ({ classes }) => {
   const Redirect = useRedirect();
-  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { notificationData, subAccountApiKey } = useSelector(state => state.notification)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -80,7 +80,7 @@ const NotificationManagement = ({ classes }) => {
   }
   useEffect(() => {
     setLoader(true);
-    
+
     const handleApiKey = async () => {
       await dispatch(getSubAccountApiKey());
       setLoader(false);
@@ -466,6 +466,7 @@ const NotificationManagement = ({ classes }) => {
         uIcon: DeleteIcon,
         lable: t('notifications.buttons.delete'),
         showPhone: true,
+        remove: !userRoles.AllowDelete,
         rootClass: classes.paddingIcon,
         onClick: async () => {
           setDialogType({

@@ -120,7 +120,7 @@ export const getRoutes = (
           key: 'downloadReports',
           title: t('master.fileDownload'),
           href: `${sitePrefix}groups/Download`,
-          isShow: userRoles?.AllowExport
+          isShow: true
         }
       ],
     },

@@ -357,7 +357,7 @@ const DynamicGroups = ({ classes }: any) => {
                         {t("group.new")}
                     </Button>
                 </Grid>
-                {windowSize !== "xs" && (
+                {userRoles.AllowDelete && windowSize !== "xs" && (
                     <Grid item>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -516,7 +516,7 @@ const DynamicGroups = ({ classes }: any) => {
                 key: 'reset',
                 uIcon: ResetIcon,
                 lable: t("recipient.reset"),
-                remove: windowSize === 'xs',
+                remove: !userRoles.AllowDelete || windowSize === 'xs',
                 rootClass: classes.paddingIcon,
                 onClick: () => {
                     setSelectedGroups([GroupID])
@@ -549,6 +549,7 @@ const DynamicGroups = ({ classes }: any) => {
                 key: 'delete',
                 uIcon: DeleteIcon,
                 lable: t("recipient.delete"),
+                remove: !userRoles.AllowDelete,
                 disable: (AutomationID || IsConnectedToWebForm || IsAutoResponder),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
@@ -563,7 +564,7 @@ const DynamicGroups = ({ classes }: any) => {
             <Grid
                 container
                 direction={windowSize === 'sm' ? 'column' : 'row'}
-                justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-between'}
+                justifyContent={windowSize === 'xs' ? 'flex-start' : 'center'}
                 className={classes.paddingSides15}
             >
                 {iconsMap.map(icon => (

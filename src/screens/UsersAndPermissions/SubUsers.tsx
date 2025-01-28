@@ -28,7 +28,7 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
 
 const SubUsers = ({ classes }: any) => {
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
+  const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector((state: any) => state.core);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -179,6 +179,7 @@ const SubUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
         disable: false,
         showPhone: true,
+        remove: !userRoles.AllowDelete,
         // remove: windowSize === 'xs',
         onClick: () => {
           setDialogType({ type: 'Delete', data: row });

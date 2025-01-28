@@ -27,6 +27,7 @@ const GroupTags = ({ classes,
 }) => {
     const { t } = useTranslation();
     const { subAccountAllGroups } = useSelector((state) => state.group);
+    const { userRoles } = useSelector((state) => state.core);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     const groupsToShow = dropDownProps?.groups !== null && dropDownProps?.groups?.length > 0 ? dropDownProps.groups : subAccountAllGroups;
@@ -76,6 +77,7 @@ const GroupTags = ({ classes,
             debug={true}
             className={classes.autoCompleteTag}
             disableCloseOnSelect
+            disabled={!userRoles.AllowDelete}
             options={groupsToShow ?? []}
             getOptionLabel={(option) => option?.GroupName}
             value={subAccountAllGroups.reduce((prevVal, newVal) => {

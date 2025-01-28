@@ -416,7 +416,7 @@ const Groups = ({ classes }) => {
                         {t("group.mergeGroup")}
                     </Button>
                 </Grid>
-                {windowSize !== "xs" && (
+                {userRoles.AllowDelete && windowSize !== "xs" && (
                     <Grid item>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -429,7 +429,7 @@ const Groups = ({ classes }) => {
                         </Button>
                     </Grid>
                 )}
-                <Grid item xs={colSize}>
+                {userRoles.AllowDelete && <Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -437,7 +437,7 @@ const Groups = ({ classes }) => {
                     >
                         {t("recipient.deleteRecipient")}
                     </Button>
-                </Grid>
+                </Grid>}
                 {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.SIMPLY_CLUB) > -1 && (<Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
@@ -618,7 +618,7 @@ const Groups = ({ classes }) => {
                 key: 'reset',
                 uIcon: ResetIcon,
                 lable: t("recipient.reset"),
-                remove: windowSize === 'xs',
+                remove: !userRoles.AllowDelete || windowSize === 'xs',
                 rootClass: classes.paddingIcon,
                 onClick: () => {
                     setSelectedGroups([GroupID])
@@ -651,6 +651,7 @@ const Groups = ({ classes }) => {
                 key: 'delete',
                 uIcon: DeleteIcon,
                 lable: t("recipient.delete"),
+                remove: !userRoles.AllowDelete,
                 disable: (AutomationID || IsConnectedToWebForm || IsAutoResponder),
                 rootClass: classes.paddingIcon,
                 onClick: () => {

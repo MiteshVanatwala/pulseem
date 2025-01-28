@@ -1505,7 +1505,7 @@ const SmsCreator = ({ classes }) => {
   const renderButtons = () => {
     return (
       <div style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto", paddingBottom: 40 }} className={clsx(classes.baseButtonsContainer, "baseButtonsContainer")}>
-        <Button
+        {userRoles.AllowDelete && <Button
           className={clsx(
             classes.btn,
             classes.btnRounded,
@@ -1514,7 +1514,7 @@ const SmsCreator = ({ classes }) => {
           onClick={() => { setDialogType({ type: 'deleteSms' }) }}
         >
           <BsTrash style={{ fontSize: "18", marginInlineStart: 0, color: '#000', padding: '3px' }} />
-        </Button>
+        </Button>}
         <Button
           className={clsx(
             classes.btn,
