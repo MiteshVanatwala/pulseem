@@ -193,7 +193,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
 export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const Redirect = useRedirect();
 
-  const { windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
+  const { windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal, userRoles } = useSelector(state => state.core) // smsOldVersion
   const { accountSettings, accountFeatures, subAccount } = useSelector(state => state.common);
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
@@ -211,7 +211,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   }
   const { t } = useTranslation();
   const { username } = useSelector(state => state.user)
-  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL) // smsOldVersion
+  const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
     (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false))
 

@@ -60,7 +60,7 @@ const Groups = ({ classes }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
-    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages, userRoles } = useSelector(state => state.core)
     const { accountFeatures } = useSelector(state => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
@@ -449,7 +449,7 @@ const Groups = ({ classes }) => {
                     </Button>
                 </Grid>)}
                 {
-                    accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
+                    userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}

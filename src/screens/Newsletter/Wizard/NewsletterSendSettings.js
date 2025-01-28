@@ -124,7 +124,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const params = useParams();
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
-    const { isRTL } = useSelector((state) => state.core);
+    const { isRTL, userRoles } = useSelector((state) => state.core);
     const { verifiedEmails, WhatsAppPlatformID } = useSelector(state => state.common);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, testGroups } = useSelector((state) => state.sms);
@@ -778,7 +778,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     color="primary"
                 >{t("common.save")}
                 </Button>
-                <Button
+                {userRoles.AllowSend && <Button
                     variant='contained'
                     size='medium'
                     className={clsx(
@@ -818,7 +818,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     }}
                 >
                     {t("mainReport.summary")}
-                </Button>
+                </Button>}
             </>
         );
     }

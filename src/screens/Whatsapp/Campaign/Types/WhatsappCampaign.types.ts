@@ -12,6 +12,7 @@ export type coreProps = {
 	windowSize: string;
 	isRTL: boolean;
 	language: string;
+	userRoles: any;
 };
 
 export type WhatsappCampaignProps = {

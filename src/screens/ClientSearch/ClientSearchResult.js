@@ -103,7 +103,8 @@ const ClientSearchResult = ({ classes }) => {
     language,
     windowSize,
     rowsPerPage,
-    isRTL
+    isRTL,
+    userRoles
   } = useSelector((state) => state.core);
   const { accountFeatures, currencySymbol, isCurrencySymbolPrefix, WhatsAppPlatformID } = useSelector(state => state.common);
   const { t } = useTranslation();
@@ -1340,7 +1341,7 @@ const ClientSearchResult = ({ classes }) => {
           </Grid>
         )}
         {
-          accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && <Grid item xs={windowSize === "xs" && 12}>
+          userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && <Grid item xs={windowSize === "xs" && 12}>
             <Button
               className={clsx(
                 !data ? classes.disabled : null,

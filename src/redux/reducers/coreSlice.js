@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies'
+import { eSubUserPermissions, UserRoles } from '../../Models/SubUser/SubUsers';
 const rtlLanguages = ['he', 'ar']
 
-export const isSuperUserSelector = (state) => {
+export const isSuperUserSelector = (permissions) => {
   const adminPermissions = [1, 2, 3, 4];
   return adminPermissions?.every(permission =>
-    state.subUserPermissions?.indexOf(permission) > -1
+    permissions?.indexOf(permission) > -1
   );
 };
 
@@ -28,8 +29,8 @@ export const coreSlice = createSlice({
     billingTypeId: null,
     accountFeatures: null,
     isDebtAccount: null,
-    subUserPermissions: [1, 2, 3, 4],
-    isSuperUser: true,
+    userRoles: UserRoles.Admin,
+    subUserPermissions: [],
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     }
@@ -61,8 +62,25 @@ export const coreSlice = createSlice({
       state.isAllowSwitchAccount = payload.isAllowSwitchAccount
       state.billingTypeId = payload.billingTypeId
       state.isDebtAccount = (payload.isDebtAccount === true || payload.isDebtAccount === 'True')
-      state.subUserPermissions = payload?.unique_name
-      state.isSuperUser = isSuperUserSelector(payload?.unique_name)
+
+      const userPermissions = payload?.unique_name;
+      const isAdmin = isSuperUserSelector(userPermissions);
+      const isReadOnly = userPermissions?.indexOf(5) > -1;
+
+      if (isAdmin) {
+        state.userRoles = UserRoles.Admin;
+      }
+      else if (isReadOnly) {
+        state.userRoles = UserRoles.ReadOnly;
+      }
+      else {
+        UserRoles.Restricted.AllowSend = userPermissions.indexOf(eSubUserPermissions.AllowSend) > -1
+        UserRoles.Restricted.AllowExport = userPermissions.indexOf(eSubUserPermissions.AllowExport) > -1
+        UserRoles.Restricted.AllowDelete = userPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1
+        UserRoles.Restricted.AllowSubUsers = userPermissions.indexOf(eSubUserPermissions.AllowSubUsers) > -1
+
+        state.userRoles = UserRoles.Restricted;
+      }
     }
   }
 })

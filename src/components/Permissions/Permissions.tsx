@@ -330,6 +330,11 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 									className={clsx({ [classes.rtlSwitch]: isRTL })}
 									checked={permissions.accessType === PermissionTypes.LimitedAccess}
 									onChange={(e: any) => {
+										setUserDetails({
+											...userDetails,
+											SubUserPermissions: '',
+											UserPermissionsList: []
+										})
 										setPermissions({
 											...permissions,
 											accessType: permissions.accessType === PermissionTypes.LimitedAccess ? '' : PermissionTypes.LimitedAccess

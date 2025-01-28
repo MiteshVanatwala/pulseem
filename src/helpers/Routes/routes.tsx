@@ -63,7 +63,8 @@ export const getRoutes = (
   features: any = null,
   accountSettings: any = null,
   windowSize: string | number | null = null,
-  isRTL: Boolean = false
+  isRTL: Boolean = false,
+  userRoles: any = null
 ) => [
     // smsOldVersion
     {
@@ -119,7 +120,7 @@ export const getRoutes = (
           key: 'downloadReports',
           title: t('master.fileDownload'),
           href: `${sitePrefix}groups/Download`,
-          isShow: true
+          isShow: userRoles?.AllowExport
         }
       ],
     },

@@ -25,6 +25,7 @@ export type CoreStateType = {
     isAllowSwitchAccount: boolean | null;
     billingTypeId: String | null;
     accountSettings: any;
+    userRoles: any;
 };
 
 export type StateType = {

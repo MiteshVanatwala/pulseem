@@ -40,7 +40,7 @@ const DEFAULT_FILTER = {
 const ProductsReport = ({ classes }) => {
     const navigate = useNavigate()
     const { accountFeatures, accountSettings, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
-    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core)
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
     const { t } = useTranslation()
     const [searchData, setSearchData] = useState(DEFAULT_FILTER)
@@ -261,7 +261,7 @@ const ProductsReport = ({ classes }) => {
         const dataLength = productsReportDetails?.TotalProducts ?? 0;
         return (
             <Grid container spacing={2} className={classes.linePadding}>
-                {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
+                {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         onClick={() => {

@@ -62,7 +62,7 @@ const DynamicGroups = ({ classes }: any) => {
     const { extraData } = useSelector((state: any) => state.sms);
     const { accountFeatures } = useSelector((state: any) => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state: any) => state.group);
-    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector((state: any) => state.core)
+    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages, userRoles } = useSelector((state: any) => state.core)
     const [selectedGroups, setSelectedGroups] = useState<any>([]);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot) };
@@ -371,7 +371,7 @@ const DynamicGroups = ({ classes }: any) => {
                     </Grid>
                 )}
                 {
-                    accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
+                    userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}

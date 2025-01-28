@@ -37,7 +37,7 @@ const NewslettersReport = ({ classes }) => {
   const { state } = useLocation();
   const from = state?.from || "/";
 
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core)
   const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { newslettersReportsParentCampaigns, newslettersReportsChildCampaigns } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -507,7 +507,7 @@ const NewslettersReport = ({ classes }) => {
             {t('common.clear')}
           </Button>
         </Grid>}
-        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid
+        {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid
           item
           style={{
             display: 'flex', flexDirection: 'row', alignItems: 'center', marginInlineStart: 'auto', marginInlineEnd: 45

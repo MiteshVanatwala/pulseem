@@ -72,7 +72,7 @@ const SmsSend = ({ classes, ...props }) => {
 
 
   const dispatch = useDispatch();
-  const { windowSize, isRTL } = useSelector(
+  const { windowSize, isRTL, userRoles } = useSelector(
     (state) => state.core
   );
   const [selectedGroups, setSelected] = useState([]);
@@ -2022,7 +2022,7 @@ const SmsSend = ({ classes, ...props }) => {
             }}>
             {t('mainReport.saveSms')}
           </Button>
-          <Button
+          {userRoles.AllowSend && <Button
             className={clsx(
               classes.btn,
               classes.btnRounded,
@@ -2042,7 +2042,7 @@ const SmsSend = ({ classes, ...props }) => {
               onSaveSettings(false)
             }}>
             {t("mainReport.summary")}
-          </Button>
+          </Button>}
         </div>
       </div>
     );

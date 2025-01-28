@@ -58,3 +58,24 @@ export enum eSubUserAction {
     Delete = 3,
     ChangePassword = 4
 }
+
+export const UserRoles = {
+    Admin: {
+        AllowSend: true,
+        AllowExport: true,
+        AllowDelete: true,
+        AllowSubUsers: true,
+    },
+    Restricted: {
+        AllowSend: false,
+        AllowExport: true,
+        AllowDelete: false,
+        AllowSubUsers: false,
+    },
+    ReadOnly: {
+        canSendCampaigns: false,
+        canExportFiles: false,
+        canDeleteCampaigns: false,
+        canAddSubUsers: false,
+    },
+};

@@ -33,7 +33,7 @@ const DEFAULT_FILTER = {
 
 const MmsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage, userRoles} = useSelector(state => state.core)
     const { accountFeatures } = useSelector(state => state.common);
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()
@@ -337,7 +337,7 @@ const MmsReport = ({ classes }) => {
         const dataLength = filteredResults.length;
         return (
             <Grid container spacing={2} className={classes.linePadding} >
-                {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
+                {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
                         className={clsx(
                             classes.btn, classes.btnRounded,

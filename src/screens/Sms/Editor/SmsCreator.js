@@ -124,7 +124,7 @@ const SmsCreator = ({ classes }) => {
 
   const Redirect = useRedirect();
   const dispatch = useDispatch();
-  const { windowSize, isRTL, CoreToastMessages } = useSelector(
+  const { windowSize, isRTL, CoreToastMessages, userRoles } = useSelector(
     (state) => state.core
   );
   const {
@@ -1107,7 +1107,7 @@ const SmsCreator = ({ classes }) => {
         <div
           className={classes.testDiv}
         >
-          <FormControlLabel
+          {userRoles.AllowSend && <FormControlLabel
             control={
               <PulseemSwitch
                 switchType='ios'
@@ -1129,7 +1129,7 @@ const SmsCreator = ({ classes }) => {
                 {t("mainReport.testDesc")}
               </span>
             </div>}
-          />
+          />}
         </div>
         {checked ? (
           <div className={classes.testRadios}>
@@ -2115,9 +2115,10 @@ const SmsCreator = ({ classes }) => {
             classes={classes}
             campaignNumber={campaignNumber}
             isOpen={otpOpen}
-            onClose={() => { 
-              setOTPOpen(false); 
-              setDialogType(null); }}
+            onClose={() => {
+              setOTPOpen(false);
+              setDialogType(null);
+            }}
             onSuccess={() => {
               setStaticNumber(campaignNumber);
             }} />}

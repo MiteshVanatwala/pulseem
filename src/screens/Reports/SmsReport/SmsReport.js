@@ -40,7 +40,7 @@ const SmsReport = ({ classes }) => {
   const { state } = useLocation();
   const from = state?.from || "/";
   const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
-  const { language, windowSize, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, userRoles } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
   const rowsOptions = [6, 10, 20, 50]
@@ -455,7 +455,7 @@ const SmsReport = ({ classes }) => {
     const dataLength = smsReport.length;
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
-        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && <Grid item>
+        {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && <Grid item>
           <Button
             className={clsx(
               classes.btn, classes.btnRounded,

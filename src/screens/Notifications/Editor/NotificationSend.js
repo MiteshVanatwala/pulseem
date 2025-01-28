@@ -27,7 +27,7 @@ const NotificationSend = ({ classes }) => {
     const { notificationGroups } = useSelector(state => state.notification)
     /* #region  Component settings constatns */
     const dispatch = useDispatch();
-    const { language, isRTL, windowSize } = useSelector(state => state.core)
+    const { language, isRTL, windowSize, userRoles } = useSelector(state => state.core)
     const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
     const [groupList, setGroupList] = useState(null);
     moment.locale(language);
@@ -349,7 +349,7 @@ const NotificationSend = ({ classes }) => {
                     onClick={() => saveSettings(true)}>
                     {t('notifications.saveAndExit')}
                 </Button>
-                <Button
+                {userRoles.AllowSend && <Button
                     className={clsx(
                         classes.btn,
                         classes.btnRounded,
@@ -360,7 +360,7 @@ const NotificationSend = ({ classes }) => {
                     style={{ margin: '8px' }}
                     onClick={() => saveSettings(false, true)}>
                     {t('notifications.summary')}
-                </Button>
+                </Button>}
             </Box>
         </div>)
     }
