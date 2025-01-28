@@ -355,16 +355,16 @@ const EShop = ({ classes }: any) => {
   const calculateDaysHoursMinutes = (str: string) => {
     const strSplit: any = str.split(':');
     if (strSplit.length > 2) {
-      setStoreRunInterval(Number(Number(strSplit[0]) === 0 ? strSplit[1] : strSplit[0]));
       setStoreRunIntervalType(Number(strSplit[0]) === 0 ? TimeType.Hours : TimeType.Days);
+      setStoreRunInterval(Number(Number(strSplit[0]) === 0 ? strSplit[1] : strSplit[0]));
     } else {
+      setInsertCartAsAbandonedTimeType(Number(strSplit[0]) === 0 ? TimeType.Minutes : TimeType.Hours);
       if (strSplit?.length >= 1 && strSplit[1]) {
         setInsertCartAsAbandonedTime(Number(Number(strSplit[0]) === 0 ? strSplit[1] : strSplit[0]));
       }
       else {
         setInsertCartAsAbandonedTime(10);
       }
-      setInsertCartAsAbandonedTimeType(Number(strSplit[0]) === 0 ? TimeType.Minutes : TimeType.Hours);
     }
   }
 

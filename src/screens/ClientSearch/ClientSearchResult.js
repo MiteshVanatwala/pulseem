@@ -67,6 +67,7 @@ import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { getMetaError, getWhatsappError } from "../Whatsapp/Common";
 import { getCookie, setCookie } from "../../helpers/Functions/cookies";
 import { Link } from "react-router-dom";
+import { debounce } from "lodash";
 
 const useStyles = makeStyles({
   groupName: {
@@ -379,39 +380,29 @@ const ClientSearchResult = ({ classes }) => {
     }
     setDate({ ...date, FromDate: value });
   }
+
+  const debouncedSearch = debounce((value) => {
+    setSearchData({
+      ...searchData,
+      PageIndex: 1,
+      PageSize: rowsPerPage,
+      FromDate: date.FromDate,
+      ToDate: date.ToDate,
+      SearchTerm: value,
+      MyActivities: null,
+      MyConditions: null
+    });
+    setPage(1);
+    handleFilter();
+  }, 300); // 300ms delay
+
   const handleKeyDown = (event) => {
-    if (event.keyCode === 13 || event.code === "Enter" || event.code === 'NumpadEnter') {
-      setSearchData({
-        ...searchData,
-        PageIndex: 1,
-        PageSize: rowsPerPage,
-        // PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-        FromDate: date.FromDate,
-        ToDate: date.ToDate,
-        SearchTerm: searchStr,
-        MyActivities: null,
-        MyConditions: null
-      });
-      setPage(1);
-      handleFilter();
+    if (event.key === 'Enter') {
+      debouncedSearch(searchStr);
     }
   };
-  const handleKeyPress = (e) => {
-    if (e.charCode === 13 || e.code === "Enter") {
-      setSearchData({
-        ...searchData,
-        PageIndex: 1,
-        PageSize: rowsPerPage,
-        FromDate: date.FromDate,
-        ToDate: date.ToDate,
-        SearchTerm: searchStr,
-        MyActivities: null,
-        MyConditions: null
-      });
-      setPage(1);
-      handleFilter();
-    }
-  };
+
+
   const handleDownloadCsv = async (formatType, notifyEmail) => {
     setLoader(true);
     setDialog(null);
@@ -1261,7 +1252,7 @@ const ClientSearchResult = ({ classes }) => {
             variant="outlined"
             size="small"
             value={searchStr}
-            onKeyPress={handleKeyDown}
+            onKeyDown={handleKeyDown}
             onChange={(e) => setSearchStr(e.target.value)}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t("appBar.groups.search")}
