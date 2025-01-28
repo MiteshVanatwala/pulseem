@@ -496,12 +496,12 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
 
       if (saveRef.current?.saveTemplate) {
-        const isTemplateExists = templatesBySubAccount?.find((template) => {
-          return template?.Name === saveRef.current?.templateName && template?.Category === saveRef.current?.templateCategory
+        const isTemplateExists = templatesBySubAccount?.filter((template) => {
+          return template?.Name === saveRef.current?.templateName && saveRef.current?.templateCategory?.split(',').indexOf(template?.Category) > -1
         });
-
-        if (isTemplateExists) {
-          onExistTemplate(finalJson, finalHtml, saveRef.current?.templateName, saveRef.current?.templateCategory);
+        if (isTemplateExists && isTemplateExists?.length > 0) {
+          const existsCategories = isTemplateExists?.map((item) => { return item?.Category })?.join(',');
+          onExistTemplate(finalJson, finalHtml, saveRef.current?.templateName, existsCategories);
         }
         else {
           forceSaveTemplate(finalJson, finalHtml)
