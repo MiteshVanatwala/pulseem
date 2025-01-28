@@ -15,7 +15,7 @@ import { deleteTemplateById, getAllLPTemplatesBySubaccountId, updateTemplateMeta
 import Toast from '../../../components/Toast/Toast.component';
 import { apiStatus } from '../../Whatsapp/Constant';
 import SaveTemplate from '../../HtmlCampaign/modals/SaveTemplate';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { RenderHtmlTemplate } from '../../../helpers/Utils/HtmlUtils';
 
 const LPTemplates = ({
   classes,
@@ -156,7 +156,7 @@ const LPTemplates = ({
                   overflowY: 'auto'
                 }}
                 title={templateDetails.Name}>
-              {RenderHtml(templateDetails.Html)}
+              {RenderHtmlTemplate(templateDetails.Html)}
             </Box>
           }
         </Box>
@@ -380,7 +380,8 @@ const LPTemplates = ({
         isOpen={displaySaveTemplate}
         name={templateDetails.Name}
         categoryName={templateDetails.Category}
-        categoryList={templateDetails.Category?.split(',')}
+        //@ts-ignore
+        categoryList={templateDetails.Category?.split(',') || []}
       />
       {renderToast()}
     </Box>

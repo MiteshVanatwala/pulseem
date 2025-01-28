@@ -374,6 +374,7 @@ const Templates = ({
         isOpen={displaySaveTemplate}
         name={templateDetails.Name}
         categoryName={templateDetails.Category}
+        //@ts-ignore
         categoryList={templateDetails.Category?.split(',')}
       />
       {renderToast()}
