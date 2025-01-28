@@ -7,6 +7,7 @@ import Toast from '../Toast/Toast.component';
 import { coreProps } from '../../model/Core/corePros.types';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
 import { Alert } from '@mui/material';
+import PulseemRadio from '../Controlls/PulseemRadio';
 
 const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: any) => {
 	const { t } = useTranslation();
@@ -44,7 +45,7 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
 			setminName(initialValues?.minName || "mins");
 			sethourName(initialValues?.hourName || "Hours");
 			settogglePulse(initialValues?.togglePulse || false);
-			settoggleRandom(initialValues?.toggleRandom || false);
+			settoggleRandom(!(initialValues?.togglePulse || false) && (initialValues?.toggleRandom || false));
 		}
 	}, [isOpen]);
 
@@ -58,15 +59,15 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
 	const handlePulseConfirm = () => {
     if (onPulseValidations()) {
 			onClose({
-				pulseAmount,
-				timeInterval,
-				pulseType,
-				random,
-				timeType,
-				pulsePer,
-				pulseReci,
-				minName,
-				hourName,
+				pulseAmount: togglePulse ? pulseAmount : null,
+				timeInterval: togglePulse ? timeInterval : null,
+				pulseType : togglePulse ? pulseType : null,
+				random: toggleRandom ? random : null,
+				timeType: togglePulse ? timeType : null,
+				pulsePer: togglePulse ? pulsePer : null,
+				pulseReci: togglePulse ? pulseReci : null,
+				minName: togglePulse ? minName : null,
+				hourName: togglePulse ? hourName : null,
 				togglePulse,
 				toggleRandom
 			})
@@ -86,7 +87,7 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
         isValid = false;
       }
     }
-    if (toggleRandom) {
+    else if (toggleRandom) {
       if (random === "") {
         setboolRandom(true);
         setsnackbarMainPulse(true);
@@ -171,79 +172,19 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
     }
   }
 
-	return (
-		<BaseDialog
-			classes={classes}
-			open={isOpen}
-			title={t(`smsReport.pulseSending`)}
-			icon={
-        <div className={clsx(classes.dialogIconContent, 'unicode')}>
-          {'\u0056'}
-        </div>
-			}
-			showDivider={false}
-			onClose={() => onClose(null)}
-			onCancel={() => onClose(null)}
-			onConfirm={() => {}}
-			reduceTitle
-			style={{ minWidth: 240 }}
-			renderButtons={() => (
-				<Grid
-					container
-					spacing={2}
-					className={clsx(
-						classes.dialogButtonsContainer,
-						isRTL ? classes.rowReverse : null
-					)}
-				>
-					<Grid item>
-						<Button
-							onClick={handlePulseConfirm}
-							className={clsx(
-								classes.btn,
-								classes.btnRounded,
-								"saveFixedDetails"
-							)}
-						>
-							{t("common.Save")}
-						</Button>
-					</Grid>
-					<Grid item>
-						<Button
-							variant='contained'
-							size='small'
-							onClick={() => onClose(null)}
-							className={clsx(classes.btn, classes.btnRounded)}
-						>
-							{t("common.cancel")}
-						</Button>
-					</Grid>
-				</Grid>
-			)}
-		>
-			<>
-				<Box className={clsx(classes.pulseDialog, classes.mb25)}>
-          <Box className={classes.mb15}
-          >
-            <Checkbox
-              style={{ marginRight: windowSize !== 'xs' ? -15 : -10, marginLeft: windowSize !== 'xs' ? -15 : -10 }}
-              checked={togglePulse}
-              color="primary"
-              inputProps={{ "aria-label": "secondary checkbox" }}
-              onClick={() => {
-                settogglePulse(!togglePulse);
-                setPulseAmount("");
-                setTimeInterval("");
-              }}
-            />
-            <Typography className={clsx(classes.ps15, classes.pe15, classes.bold, classes.dInlineBlock)}>{t("smsReport.packetSend")}</Typography>
-          </Box>
-          <Box className={classes.topPulseDiv}>
+  const renderPulseRadios = () => {
+    const radios = [
+      {
+        value: "1",
+        className: classes.radioButtonActive,
+        label: t("smsReport.packetSend"),
+        child: <>
+          <Box className={clsx(classes.topPulseDiv, classes.pt5)}>
             <Box>
               <span className={classes.noOfReci}>
                 {t("smsReport.noOfReciPulse")}
               </span>
-              <div className={classes.inputFieldDiv}>
+              <div className={clsx(classes.inputFieldDiv, classes.pt5)}>
                 <input
                   type="text"
                   placeholder={t("smsReport.insert")}
@@ -256,7 +197,7 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
                   value={pulseAmount}
                   onChange={handlePulseInput}
                 />
-								{/* @ts-ignore */}
+                {/* @ts-ignore */}
                 <div className={clsx(classes.commonFieldPulse, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'ltr' : 'none' }}>
                   <span
                     className={
@@ -315,7 +256,7 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
                   maxLength={3}
                 />
 
-								{/* @ts-ignore */}
+                {/* @ts-ignore */}
                 <Box className={clsx(classes.commonFieldPulse, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'ltr' : 'none' }}>
                   <span
                     className={
@@ -353,22 +294,13 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
               </Box>
             </Box>
           </Box>
-          <Box
-            className={classes.randomSendDiv}
-          >
-            <Checkbox
-              style={{ marginRight: windowSize !== 'xs' ? -15 : -10, marginLeft: windowSize !== 'xs' ? -15 : -10 }}
-              checked={toggleRandom}
-              color="primary"
-              inputProps={{ "aria-label": "secondary checkbox" }}
-              onClick={() => {
-                settoggleRandom(!toggleRandom);
-                setrandom("");
-              }}
-            />
-            <Typography className={clsx(classes.ps15, classes.pe15, classes.bold, classes.dInlineBlock)}>{t("smsReport.randomSend")}</Typography>
-          </Box>
-          <Box className={classes.randomRows}>
+        </>
+      }, {
+        value: "2",
+        className: classes.radioButtonActive,
+        label: t("smsReport.randomSend"),
+        child: <>
+          <Box className={clsx(classes.randomRows, classes.pt5)}>
             <span
               className={classes.randomReciSpan}
             >
@@ -387,7 +319,89 @@ const Pulse = ({ classes, isOpen, onClose, selectedGroups = [], initialValues}: 
               onChange={handleRandom}
             />
           </Box>
-        </Box>
+        </>
+    }];
+
+    return (
+      // @ts-ignore
+      <PulseemRadio
+        classes={classes}
+        name={"sendMethod"}
+        onChange={(e: any) => {
+          const activeTab = e.target.value.toString();
+          if (activeTab === "1") {
+            settogglePulse(true);
+            settoggleRandom(false);
+            setrandom("");
+          } else if (activeTab === "2") {
+            settogglePulse(false);
+            settoggleRandom(true);
+            setPulseAmount("");
+            setTimeInterval("");
+          }
+        }}
+        value={
+          togglePulse
+          ? "1" 
+          : (toggleRandom ? "2" : "")
+        }
+        radioOptions={radios}
+      />
+    )
+  }
+
+	return (
+		<BaseDialog
+			classes={classes}
+			open={isOpen}
+			title={t(`smsReport.pulseSending`)}
+			icon={
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
+          {'\u0056'}
+        </div>
+			}
+			showDivider={false}
+			onClose={() => onClose(null)}
+			onCancel={() => onClose(null)}
+			onConfirm={() => {}}
+			reduceTitle
+			style={{ minWidth: 240 }}
+			renderButtons={() => (
+				<Grid
+					container
+					spacing={2}
+					className={clsx(
+						classes.dialogButtonsContainer,
+						isRTL ? classes.rowReverse : null
+					)}
+				>
+					<Grid item>
+						<Button
+							onClick={handlePulseConfirm}
+							className={clsx(
+								classes.btn,
+								classes.btnRounded,
+								"saveFixedDetails"
+							)}
+						>
+							{t("common.Save")}
+						</Button>
+					</Grid>
+					<Grid item>
+						<Button
+							variant='contained'
+							size='small'
+							onClick={() => onClose(null)}
+							className={clsx(classes.btn, classes.btnRounded)}
+						>
+							{t("common.cancel")}
+						</Button>
+					</Grid>
+				</Grid>
+			)}
+		>
+			<>
+        {renderPulseRadios()}
 				{toastMessage && renderToast()}
 				<Snackbar
 					open={snackbarTimeBoolean || snackBarPulseBoolean || snackbarMainPulse}
