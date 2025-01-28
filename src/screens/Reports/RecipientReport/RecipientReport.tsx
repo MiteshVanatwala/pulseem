@@ -108,6 +108,10 @@ const RecipientReport = ({ classes }: any) => {
     Cellphone: '',
   });
 
+  useEffect(() => {
+    dispatch(resetRecipientReportData());
+  }, [])
+
   const getReportData = async () => {
     const formErrors = {
       Email: filterRequest.Email && (IsValidEmail(filterRequest.Email) ? '' : t('recipient.errors.email')),
