@@ -90,7 +90,7 @@ import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
 import SubUsers from './screens/UsersAndPermissions/SubUsers';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 
-const renderRoutes = (classes, redirect) => {
+const renderRoutes = (classes, redirect, userRoles) => {
   const transferUrl =
     (url = '', param = '') =>
       () => {
@@ -151,10 +151,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Groups`}
         element={<Groups classes={classes} />}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         path={`/ClientSearch`}
         component={transferUrl('/Pulseem/ClientSearch.aspx')}
-      />
+      />}
       {/* Newsletter */}
       <Route
         exact
@@ -316,14 +316,14 @@ const renderRoutes = (classes, redirect) => {
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         path={`${sitePrefix}ClientSearchResult/:referrer/:id`}
         element={<ClientSearchResult classes={classes} />}
-      />
-      <Route
+      />}
+      {!userRoles?.HideRecipients && <Route
         path={`${sitePrefix}ClientSearchResult`}
         element={<ClientSearchResult classes={classes} />}
-      />
+      />}
       <Route
         path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
@@ -483,10 +483,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}ApiSettings`}
         element={<ApiSettings classes={classes} />}
       />
-      <Route
+      {userRoles?.AllowSubUsers && <Route
         path={`${sitePrefix}SubUsers`}
         element={<SubUsers classes={classes} />}
-      />
+      />}
       {/* Support */}
       <Route
         path={`/Support`}
@@ -589,7 +589,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, userRoles } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
@@ -778,7 +778,7 @@ const App = ({ screenSize }) => {
       </Routes>
     }
     else {
-      return renderRoutes(classes, redirect);
+      return renderRoutes(classes, redirect, userRoles);
     }
 
   }

@@ -66,7 +66,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 		}
 		else {
 			setPermissions({
-				accessType: subUser.UserPermissionsList.indexOf(eSubUserPermissions.HideRecipietns) > -1 ? PermissionTypes.ReadOnly : PermissionTypes.LimitedAccess,
+				accessType: subUser.UserPermissionsList.indexOf(eSubUserPermissions.HideRecipients) > -1 ? PermissionTypes.ReadOnly : PermissionTypes.LimitedAccess,
 				allowSending: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowSend) > -1,
 				allowExport: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowExport) > -1,
 				allowDeleting: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowDelete) > -1,
@@ -553,7 +553,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 											setUserDetails({
 												...userDetails,
 												SubUserPermissions: '5',
-												UserPermissionsList: [eSubUserPermissions.HideRecipietns]
+												UserPermissionsList: [eSubUserPermissions.HideRecipients]
 											})
 										}
 										else {

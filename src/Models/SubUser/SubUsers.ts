@@ -27,7 +27,7 @@ export enum eSubUserPermissions {
     AllowExport = 2,
     AllowDelete = 3,
     AllowSubUsers = 4,
-    HideRecipietns = 5
+    HideRecipients = 5
 }
 
 export interface SubUserChangeLog {
@@ -65,17 +65,20 @@ export const UserRoles = {
         AllowExport: true,
         AllowDelete: true,
         AllowSubUsers: true,
+        HideRecipients: false
     },
     Restricted: {
         AllowSend: false,
         AllowExport: true,
         AllowDelete: false,
         AllowSubUsers: false,
+        HideRecipients: false
     },
     ReadOnly: {
-        canSendCampaigns: false,
-        canExportFiles: false,
-        canDeleteCampaigns: false,
-        canAddSubUsers: false,
+        AllowSend: false,
+        AllowExport: false,
+        AllowDelete: false,
+        AllowSubUsers: false,
+        HideRecipients: true
     },
 };

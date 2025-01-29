@@ -40,7 +40,7 @@ const PermissionList: React.FC<PermissionListProps> = ({ list }) => {
         return t('SubUsers.allowDeleting');
       case eSubUserPermissions.AllowSubUsers:
         return t('SubUsers.userCreation');
-      case eSubUserPermissions.HideRecipietns:
+      case eSubUserPermissions.HideRecipients:
         return t('SubUsers.readOnly');
       default:
         return '';

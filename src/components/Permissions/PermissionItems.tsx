@@ -339,7 +339,7 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
                   updateSubUserDetails({
                     ...userDetails,
                     SubUserPermissions: '5',
-                    UserPermissionsList: [eSubUserPermissions.HideRecipietns]
+                    UserPermissionsList: [eSubUserPermissions.HideRecipients]
                   })
                 }
                 else {
