@@ -13,6 +13,8 @@ import { createAutomation, getAutomationTemplates } from '../../redux/reducers/a
 import { AutomationTemplate } from '../../Models/Automations/Automation';
 import { BiSave } from 'react-icons/bi';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { pulseemNewTab } from '../../helpers/Functions/functions';
+import { URLS } from '../../config/enum';
 
 const CreateAutomationTemplate = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -44,10 +46,20 @@ const CreateAutomationTemplate = ({ classes }: any) => {
 	};
 
   const automationTemplate = (template: AutomationTemplate) => {
+    const templateDescription = isRTL ? template.DescriptionHe : template.Description;
     return <Grid item md={4} sm={12} xs={12}>
       <Box className={clsx(classes.p10, classes.automationTemplate, classes.cursorPointer, template.AutomationId === selectedTemplate ? 'active': '')} onClick={() => setSelectedTemplate(template.AutomationId)}>
-        <Box className={clsx(classes.semibold600, classes.f18, classes.colrPrimary)}>{template.Name}</Box>
-        <Box className={clsx(classes.pt10, classes.black)}>{template.Description.length > 50 ? `${template.Description.substring(0, isRTL ? 100 : 80)}...` : template.Description}</Box>
+        <Box className={clsx(classes.semibold600, classes.f18, classes.colrPrimary)}>{ isRTL ? template.NameHe : template.Name }</Box>
+        <Box className={clsx('description', classes.pt10, classes.black)}>{templateDescription.length > 80 ? `${templateDescription.substring(0, 80)}...` : templateDescription}</Box>
+        <Box className={clsx(isRTL ? classes.textLeft : classes.textRight)}>
+          <Button
+            className={clsx(classes.btn, classes.btnRounded, classes.f12)}
+            onClick={() => pulseemNewTab(`${URLS.AutomationTemplatePreview}${template.AutomationId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
+            {t('common.Preview')}
+          </Button>
+        </Box>
       </Box>
     </Grid>
   }

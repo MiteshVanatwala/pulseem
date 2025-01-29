@@ -23,8 +23,10 @@ export interface Automation {
 export interface AutomationTemplate {
     AutomationId: number;
     Name: string;
+    NameHe: string;
     IsDeleted: boolean | null;
     IsActive: boolean | null;
     Description: string;
+    DescriptionHe: string;
     CreatedDate: Date | string | null;
 }

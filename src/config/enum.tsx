@@ -32,3 +32,7 @@ export enum ProductDetails {
   Description = '#description#',
   Price = '#price#'
 }
+
+export enum URLS {
+  AutomationTemplatePreview = 'CreateAutomations.aspx?Mode=show&AutomationID='
+}

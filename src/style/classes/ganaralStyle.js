@@ -4261,7 +4261,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '5px',
     boxShadow: '0px 0px 10px #898888',
     padding: '15px',
-    height: '90px',
+    height: '110px',
     transition: 'all 0.25s ease',
     overflowY: 'hidden',
     "&:hover, &.active": {
@@ -4273,5 +4273,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         color: '#fff',
       }
     },
+    "& .description": {
+      height: '50px'
+    }
   }
 });
