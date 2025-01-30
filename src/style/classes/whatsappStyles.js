@@ -2920,12 +2920,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		borderTop: '1px solid rgba(0,0,0,0.1)',
 	},
 	summaryModalContent: {
-		maxHeight: '528px',
+		maxHeight: '550px',
 		padding: '8px 4px 0px 4px',
 		color: '#525252',
 		fontFamily: 'OpenSansHebrew',
-		fontSize: '12px',
-		overflowY: 'auto',
+		fontSize: '12px'
 	},
 	recipientsStatistics: {
 		fontSize: '12px',

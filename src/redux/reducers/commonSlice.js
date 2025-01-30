@@ -240,7 +240,8 @@ export const commonSlice = createSlice({
     showCurrencyReportCurrencyID: null,
     currencyList: [],
     countryCodeList: [],
-    WhatsAppPlatformID: null
+    WhatsAppPlatformID: null,
+    TierData: []
   },
   extraReducers: builder => {
     builder
@@ -327,6 +328,7 @@ export const commonSlice = createSlice({
     builder
       .addCase(GetAfterLoginInitialData.fulfilled, (state, { payload }) => {
         state.WhatsAppPlatformID = get(payload, 'Data.WhatsappPlatformId', null)
+        state.TierData = get(payload, 'Data.TierData', [])
       });
   },
   reducers: {
