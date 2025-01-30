@@ -242,6 +242,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const onTableCellClick = (cellName: string, campaignId: number) => {
+		if (userRoles.HideRecipients) {
+			return;
+		}
+
 		const pageTypeRequest: PageTypeRequest = {
 			Failed: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed,
 			Read: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRead,

@@ -110,8 +110,15 @@ const NewslettersReport = ({ classes }) => {
     ClickCountUnique: {
       title: t('common.Unique'),
       href: !userRoles.HideRecipients && `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
-      clickable: true,
-      onClick: (isParent = false) => {window.location = !userRoles.HideRecipients && `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true`}
+      clickable: !userRoles.HideRecipients,
+      onClick: (isParent = false) => {
+        if (!userRoles.HideRecipients)
+          return false;
+        else {
+          window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true`
+
+        }
+      }
       // onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
     },
     RemovedClients: {
@@ -133,17 +140,23 @@ const NewslettersReport = ({ classes }) => {
     SendError: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: !userRoles.HideRecipients && `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
-      onClick: (isParent = false) => { window.location = !userRoles.HideRecipients && `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true` }
-      // onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-      //   state: {
-      //     ...CLIENT_CONSTANTS.QUERY_PARAMS,
-      //     CampaignID: id,
-      //     PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-      //     TestStatusOfEmailElseSms: 1,
-      //     Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Invalid,
-      //     ResultTitle: t('common.charStatus.error') + ' - ' + t('common.campaignID') + ' ' + id
-      //   }
-      // }),
+      onClick: (isParent = false) => {
+        if (!userRoles.HideRecipients)
+          return false;
+        else {
+          window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true`
+        }
+        // onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        //   state: {
+        //     ...CLIENT_CONSTANTS.QUERY_PARAMS,
+        //     CampaignID: id,
+        //     PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+        //     TestStatusOfEmailElseSms: 1,
+        //     Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Invalid,
+        //     ResultTitle: t('common.charStatus.error') + ' - ' + t('common.campaignID') + ' ' + id
+        //   }
+        // }),
+      }
     },
     PercetangeRemovedClients: {
       title: t('mainReport.removedPercents'),
@@ -180,7 +193,7 @@ const NewslettersReport = ({ classes }) => {
     RemoveReasons: {
       title: t("mainReport.locRemovedReason.HeaderText"),
       href: `/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(`/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`),
+      onClick: () => !userRoles.HideRecipients && navigate(`/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`),
       icon: '\uE15D'
     },
     Revenue: {
@@ -695,7 +708,7 @@ const NewslettersReport = ({ classes }) => {
     const { title = '', href = '', icon = '', onClick } = data;
     // const innerHref = clickable ? href : '';
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }} >
+      <Box style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }} className={userRoles.HideRecipients && classes.disabled}>
         {/* <Typography component={innerHref ? 'a' : 'p'} */}
         <Typography component={'p'}
           // href={innerHref}
@@ -703,7 +716,6 @@ const NewslettersReport = ({ classes }) => {
           className={clsx(
             classes.middleTxt,
             colorTextStyle[type] || '',
-            userRoles.HideRecipients && classes.disabled,
             { [classes.iconsFont]: !!icon })}
           target="_blank">
           {icon ? icon : `${percentage?.toString().substring(0, 4) ?? '0'}%`}
@@ -730,7 +742,7 @@ const NewslettersReport = ({ classes }) => {
           tooltip: classes.tooltipBlack,
           arrow: classes.fBlack
         }}>
-        <Box className={classes.cellText}
+        <Box className={clsx(classes.cellText, userRoles.HideRecipients && classes.disabled)}
           style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}
           onClick={() => isLink ? onClick(isParent) : VoidFunction}>
           <Typography
@@ -755,7 +767,7 @@ const NewslettersReport = ({ classes }) => {
     const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 ? '' : t("notifications.tblBody.total"), onClick, textStyle = null, isRevenueCol = false } = data
     const isLink = (value > 0 && clickable) || isRevenueCol;
     return (
-      <Box className={classes.cellText}
+      <Box className={clsx(classes.cellText, userRoles.HideRecipients && classes.disabled)}
         onClick={() => isLink ? onClick(isParent) : VoidFunction}
         style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}>
         <Typography component={isLink ? 'a' : 'p'}
@@ -776,7 +788,7 @@ const NewslettersReport = ({ classes }) => {
   const renderRevenueData = (value, type, data = {}, isRootElement) => {
     const { textStyle = null, isRevenueCol = false, onClick = () => null } = data
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0 && !isRootElement) ? onClick : VoidFunction}>
+      <Box className={userRoles.HideRecipients && classes.disabled} style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0 && !isRootElement) ? onClick : VoidFunction}>
         <Typography
           component={'p'}
           style={{
@@ -784,7 +796,7 @@ const NewslettersReport = ({ classes }) => {
             pointerEvents: isRootElement && 'none',
             textDecoration: ((value > 0 || (isRevenueCol && value > 0)) && !isRootElement) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) && !isRootElement ? 'pointer' : null
           }}
-          className={clsx(classes.middleText, colorTextStyle[type] || '', userRoles.HideRecipients && classes.disabled)}
+          className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">
           {isCurrencySymbolPrefix ? currencySymbol : ''} {(value && value.toLocaleString()) || '0'} {!isCurrencySymbolPrefix ? currencySymbol : ''}
         </Typography>

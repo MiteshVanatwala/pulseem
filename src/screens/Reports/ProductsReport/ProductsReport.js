@@ -102,7 +102,7 @@ const ProductsReport = ({ classes }) => {
     const getHrefs = (id) => ({
         Purchased: {
             title: t('report.ProductsReport.purchased'),
-            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+            onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
                 state: {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
@@ -113,7 +113,7 @@ const ProductsReport = ({ classes }) => {
         },
         Abandoned: {
             title: t('report.ProductsReport.abandoned'),
-            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+            onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
                 state: {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
@@ -292,13 +292,13 @@ const ProductsReport = ({ classes }) => {
             onClick = null
         } = data
         return (
-            <Box style={{ display: 'flex', flexDirection: 'column' }} >
+            <Box style={{ display: 'flex', flexDirection: 'column' }} className={userRoles.HideRecipients && classes.disabled}>
                 <Typography component={'p'}
                     onClick={() => onClick?.()}
                     className={clsx(classes.middleText, colorTextStyle[type],
                         (onClick && value > 0) ? classes.link : '')}
                     target="_blank">
-                    { displayCurrency && isCurrencySymbolPrefix ? currencySymbol : '' } {value?.toLocaleString() ?? '0'} { displayCurrency && !isCurrencySymbolPrefix ? currencySymbol : '' }
+                    {displayCurrency && isCurrencySymbolPrefix ? currencySymbol : ''} {value?.toLocaleString() ?? '0'} {displayCurrency && !isCurrencySymbolPrefix ? currencySymbol : ''}
                 </Typography>
             </Box>
         )
@@ -409,7 +409,7 @@ const ProductsReport = ({ classes }) => {
                             </Typography>
                             <Typography className={clsx(classes.pt5, classes.f14, classes.semibold)}>
                                 <span className={classes.bold}>{t("report.ProductsReport.price")}:</span>
-                                { isCurrencySymbolPrefix ? currencySymbol : '' } {Price} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+                                {isCurrencySymbolPrefix ? currencySymbol : ''} {Price} {!isCurrencySymbolPrefix ? currencySymbol : ''}
                             </Typography>
 
                             <Grid container className={classes.pt5}>
