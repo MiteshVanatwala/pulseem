@@ -3838,6 +3838,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#aaa'
     }
   },
+  paddingInline5: {
+    paddingInline: 5
+  },
   paddingInline25: {
     paddingInline: 25
   },
