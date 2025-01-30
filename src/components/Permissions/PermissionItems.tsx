@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { StateType } from "../../Models/StateTypes";
 import { Divider, FormControlLabel, Grid, Typography } from "@material-ui/core";
@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import PulseemSwitch from "../Controlls/PulseemSwitch";
 import { PermissionTypes } from "../../config/enum";
 import { eSubUserPermissions, SubUserModel } from "../../Models/SubUser/SubUsers";
+import _ from "lodash";
 
 interface refs {
   classes: any;
@@ -27,6 +28,7 @@ interface Permissions {
 const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissions, updatePermissions }: refs) => {
   const { isRTL } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
+  const isFirstMount = useRef(true);
 
   const [errors, setErrors] = useState({
     accessType: '',
@@ -46,10 +48,19 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
       allowDeleting: false,
       allowSubUsers: false
     });
+
+    updateSubUserDetails({
+      ...userDetails,
+      SubUserPermissions: [eSubUserPermissions.HideRecipients].join(','),
+      UserPermissionsList: [eSubUserPermissions.HideRecipients]
+    })
   }
 
   useEffect(() => {
-    reloadForm();
+    if (isFirstMount.current) {
+      reloadForm();
+      isFirstMount.current = false;
+    }
   }, [])
 
   return <>
@@ -121,6 +132,12 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
               className={clsx({ [classes.rtlSwitch]: isRTL })}
               checked={permissions.accessType === PermissionTypes.LimitedAccess}
               onChange={(e: any) => {
+                const newPermissions = userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.HideRecipients });
+                updateSubUserDetails({
+                  ...userDetails,
+                  SubUserPermissions: newPermissions.join(','),
+                  UserPermissionsList: newPermissions
+                });
                 updatePermissions({
                   ...permissions,
                   accessType: permissions.accessType === PermissionTypes.LimitedAccess ? '' : PermissionTypes.LimitedAccess

@@ -15,7 +15,6 @@ import { DateFormats, rowsOptions } from '../../helpers/Constants';
 import { setRowsPerPage } from '../../redux/reducers/coreSlice';
 import { DeleteIcon, EditIcon, PreviewIcon } from '../../assets/images/managment';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
-import { GetSubAccountList } from '../../redux/reducers/SubAccountSlice';
 import moment from 'moment';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import User from '../../components/User/User';
@@ -26,6 +25,7 @@ import { eSubUserAction, SubUserModel } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
+import { get } from 'lodash';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector((state: any) => state.core);
@@ -34,7 +34,7 @@ const SubUsers = ({ classes }: any) => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const [toastMessage, setToastMessage] = useState<toastProps['SUCCESS']>(resetToastData);
-  const [totalRecord, setTotalRecord] = useState<number>(4);
+  const [totalRecord, setTotalRecord] = useState<number>(0);
   const [openSaveUserDialog, setOpenSaveUserDialog] = useState<boolean>(false);
   const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState<boolean>(false);
   const [openPermissionsDialog, setOpenPermissionsDialog] = useState<boolean>(false);
@@ -68,6 +68,7 @@ const SubUsers = ({ classes }: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
         setUserList(response?.payload?.Data);
+        setTotalRecord(Number(get(response, 'payload.Data.TotalRecord', 0)));
         break;
       }
       case 500:
