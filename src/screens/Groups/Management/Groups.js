@@ -115,6 +115,7 @@ const Groups = ({ classes }) => {
                 "Zip": t('common.zip'),
                 "Company": t('common.company'),
                 "ReminderDate": t('recipient.reminderDate'),
+                "GroupNames": t('common.Groups'),
             };
             updatingObject = {
                 ...updatingObject,
