@@ -24,7 +24,8 @@ const ConfirmRadioDialog = ({
     defaultValue = "",
     cookieName = "",
     showEmailToNotify = false,
-    icon = null
+    icon = null,
+    ...props
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
@@ -144,6 +145,11 @@ const ConfirmRadioDialog = ({
                             </Box>
                         </Box>
                     }
+                    <Grid item xs={12} className={clsx(classes.mb4)}>
+                        <Box>
+                            {props && props?.exportGroupNames}
+                        </Box>
+                    </Grid>
                 </Grid>
             </Grid>
         ),
