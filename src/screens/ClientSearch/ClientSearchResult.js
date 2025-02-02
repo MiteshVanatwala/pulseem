@@ -485,6 +485,7 @@ const ClientSearchResult = ({ classes }) => {
     }
     setLoader(false);
     setIsDownloadProgress(false);
+    setExportGroupNames(false);
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {

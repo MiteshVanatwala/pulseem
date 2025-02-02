@@ -1779,6 +1779,7 @@ const Groups = ({ classes }) => {
         }
         finally {
             setLoader(false);
+            setExportGroupNames(false);
         }
     }
     const renderConfirmDialog = () => {

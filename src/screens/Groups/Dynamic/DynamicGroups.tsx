@@ -1674,6 +1674,7 @@ const DynamicGroups = ({ classes }: any) => {
         }
         finally {
             setLoader(false);
+            setExportGroupNames(false);
         }
     }
     const renderConfirmDialog = () => {
@@ -1706,7 +1707,7 @@ const DynamicGroups = ({ classes }: any) => {
                 text={!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
                 radioTitle={csvOnly ? '' : t('common.SelectFormat')}
                 onConfirm={(e: any, notifyEmail: any) => handleConfirmExport(e, notifyEmail)}
-                onCancel={() => setShowConfirmDialog(false)}
+                onCancel={() => { setShowConfirmDialog(false); setExportGroupNames(false); }}
                 cookieName={'exportFormat'}
                 defaultValue={csvOnly ? 'csv' : 'xls'}
                 showEmailToNotify={csvOnly}
