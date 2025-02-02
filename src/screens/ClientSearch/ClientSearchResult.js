@@ -434,6 +434,9 @@ const ClientSearchResult = ({ classes }) => {
             searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
             deletedProperties.push("SendDate");
           }
+          if (!exportGroupNames) {
+            deletedProperties.push("GroupNames");
+          }
 
           Promise.all(promiseArray).then(() => {
             const fileName = searchData?.ResultTitle ? searchData?.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';

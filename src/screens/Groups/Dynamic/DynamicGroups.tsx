@@ -114,6 +114,7 @@ const DynamicGroups = ({ classes }: any) => {
                 "Zip": t('common.zip'),
                 "Company": t('common.company'),
                 "ReminderDate": t('recipient.reminderDate'),
+                "GroupNames": t('common.Groups')
             } as any;
             updatingObject = {
                 ...updatingObject,
@@ -1601,12 +1602,18 @@ const DynamicGroups = ({ classes }: any) => {
             return client;
         }, []);
 
+        //@ts-ignore
+        const fields = { ...exportColumnHeader?.current } as any;
+
+        delete fields["Revenue"];
+        delete fields["SendDate"];
+        !exportGroupNames && delete fields["GroupNames"];
+
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
             ConvertStatusToString: false,
-            Order: Object.keys(exportColumnHeader.current as any),
-            DeleteProperties: ["Revenue", "SendDate"],
+            Order: Object.keys(fields),
             ReplaceNull: true
         } as any;
 
@@ -1614,7 +1621,7 @@ const DynamicGroups = ({ classes }: any) => {
             ExportFile({
                 data: result,
                 exportType: formatType,
-                fields: exportColumnHeader.current,
+                fields: fields,
                 fileName: 'PulseemClientsExport'
             });
         });

@@ -1705,18 +1705,20 @@ const Groups = ({ classes }) => {
 
         const fields = { ...exportColumnHeader.current };
 
+        delete fields["Revenue"];
+        delete fields["SendDate"];
+        !exportGroupNames && delete fields["GroupNames"];
+
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
             ConvertStatusToString: false,
             Order: Object.keys(fields),
-            // DeleteProperties: ["Revenue", "SendDate"],
             ReplaceNull: true
         };
 
         HandleExportData(orderList, exportOptions).then(async (result) => {
-            delete fields["Revenue"];
-            delete fields["SendDate"];
+
             ExportFile({
                 data: result,
                 exportType: formatType,
