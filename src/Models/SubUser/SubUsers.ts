@@ -1,3 +1,9 @@
+export interface SubUserRequest {
+    PageNumber: number;
+    PageSize: number;
+    SearchTerm: string;
+}
+
 export interface SubUserModel extends LoginPassword {
     ID: number | null | any;
     AspnetUserId?: string | null | any;

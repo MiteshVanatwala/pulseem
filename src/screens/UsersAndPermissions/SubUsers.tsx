@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography } from '@material-ui/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlinePersonAddAlt, MdPassword } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import DefaultScreen from '../DefaultScreen';
@@ -21,7 +21,7 @@ import User from '../../components/User/User';
 import Permissions from '../../components/Permissions/Permissions';
 import PermissionsHistory from '../../components/PermissionsHistory/PermissionsHistory';
 import { getAllUsers, save } from '../../redux/reducers/SubUserSlice';
-import { eSubUserAction, SubUserModel } from '../../Models/SubUser/SubUsers';
+import { eSubUserAction, SubUserModel, SubUserRequest } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
@@ -40,11 +40,10 @@ const SubUsers = ({ classes }: any) => {
   const [openPermissionsDialog, setOpenPermissionsDialog] = useState<boolean>(false);
   const [openPermissionsHistoryDialog, setOpenPermissionsHistoryDialog] = useState<boolean>(false);
   const [selectedSubUser, setSelectedSubUser] = useState<SubUserModel | any | null>(null);
-  const [searchData, setSearchData] = useState<any>({
-    PageNo: 1,
-    Search: "",
-    CompanyAdmin: 0,
-    IsPagination: true
+  const [searchData, setSearchData] = useState<SubUserRequest>({
+    PageSize: rowsPerPage,
+    PageNumber: 1,
+    SearchTerm: ''
   });
   const [dialogType, setDialogType] = useState<{
     type: string;
@@ -55,20 +54,27 @@ const SubUsers = ({ classes }: any) => {
   const cellStyle = { head: clsx(classes.tableCellHead, classes.noPadding, classes.f16), body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody, classes.f16), root: clsx(classes.tableCellRoot, classes.noPadding) }
   moment.locale(language);
+  const isInitialRender = useRef(true);
 
 
   useEffect(() => {
-    getData();
-  }, []);
+    const fetchData = async () => {
+      if (isInitialRender.current) {
+        await getData();
+      }
+      isInitialRender.current = false;
+    };
 
+    fetchData();
+  }, [, isSearching, searchData]);
 
   const getData = async () => {
     setShowLoader(true);
-    const response = await dispatch(getAllUsers()) as any;
+    const response = await dispatch(getAllUsers({ ...searchData, PageSize: rowsPerPage })) as any;
     switch (response?.payload?.StatusCode) {
       case 201: {
-        setUserList(response?.payload?.Data);
-        setTotalRecord(Number(get(response, 'payload.Data.TotalRecord', 0)));
+        setUserList(response?.payload?.Data?.Users);
+        setTotalRecord(response?.payload?.Data?.TotalRecords);
         break;
       }
       case 500:
@@ -238,11 +244,10 @@ const SubUsers = ({ classes }: any) => {
           <TextField
             variant="outlined"
             size="small"
-            value={searchData.Search}
-            onKeyPress={handleKeyDown}
+            value={searchData.SearchTerm}
             onChange={(e: any) => setSearchData({
               ...searchData,
-              Search: e.target.value
+              SearchTerm: e.target.value
             })}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t("common.search")}
@@ -251,14 +256,7 @@ const SubUsers = ({ classes }: any) => {
         <Grid item>
           <Button
             onClick={() => {
-              const filteredList = userList?.filter((user: SubUserModel) => {
-                return user.Email.indexOf(searchData.Search) > -1 ||
-                  user.UserName.indexOf(searchData.Search) > -1 ||
-                  user.FirstName.indexOf(searchData.Search) > -1 ||
-                  user.LastName.indexOf(searchData.Search) > -1 ||
-                  user.Cellphone.indexOf(searchData.Search) > -1
-              })
-              setUserList(filteredList);
+              isInitialRender.current = true;
               setIsSearching(true);
             }}
             className={clsx(classes.btn, classes.btnRounded)}
@@ -271,18 +269,13 @@ const SubUsers = ({ classes }: any) => {
           <Grid item>
             <Button
               onClick={async () => {
-                const searchObject = {
-                  PageNo: 1,
-                  Search: "",
-                  CompanyAdmin: 0,
-                  IsPagination: true
-                };
-                setSearchData(searchObject);
-
-                setShowLoader(true);
+                isInitialRender.current = true;
+                setSearchData({
+                  PageNumber: 1,
+                  PageSize: rowsPerPage,
+                  SearchTerm: ''
+                });
                 setIsSearching(false);
-                getData();
-                setShowLoader(false);
               }}
               className={clsx(classes.btn, classes.btnRounded)}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -356,7 +349,7 @@ const SubUsers = ({ classes }: any) => {
         </Grid>
         <Grid item md={4} xs={12} sm={12} className={clsx(classes.groupsLableContainer)} >
           <Typography className={classes.groupsLable}>
-            {`${userList?.length} ${t('SubUsers.users')}`}
+            {`${totalRecord} ${t('SubUsers.users')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -454,14 +447,20 @@ const SubUsers = ({ classes }: any) => {
         classes={classes}
         rows={totalRecord}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={(val: any) => dispatch(setRowsPerPage(val))}
+        onRowsPerPageChange={(val: any) => {
+          dispatch(setRowsPerPage(val))
+        }}
         // @ts-ignore
         rowsPerPageOptions={rowsOptions}
-        page={searchData.PageNo}
-        onPageChange={(val: any) => setSearchData({
-          ...searchData,
-          PageNo: val
-        })}
+        page={searchData.PageNumber}
+        onPageChange={(val: any) => {
+          setSearchData({
+            ...searchData,
+            PageNumber: val,
+            PageSize: rowsPerPage
+          })
+          isInitialRender.current = true;
+        }}
       />
     )
   }

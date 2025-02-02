@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
 import { PulseemResponse } from "../../Models/APIResponse";
-import { SubUserModel } from "../../Models/SubUser/SubUsers";
+import { SubUserModel, SubUserRequest } from "../../Models/SubUser/SubUsers";
 
 export const getAllUsers = createAsyncThunk(
   'SubUser/GetAllUsers',
-  async (_, thunkAPI) => {
+  async (request: SubUserRequest, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.get(`SubUser/GetAllUsers`);
+      const response = await PulseemReactInstance.post(`SubUser/GetAllUsers`, request);
       return response.data as PulseemResponse;
     } catch (error: any) {
       return thunkAPI.rejectWithValue({ error: error.message });
