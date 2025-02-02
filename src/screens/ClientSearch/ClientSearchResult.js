@@ -15,6 +15,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  Checkbox,
+  FormControl,
+  FormGroup,
+  FormControlLabel,
 } from "@material-ui/core";
 import { ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
@@ -138,6 +142,7 @@ const ClientSearchResult = ({ classes }) => {
     ToDate: null,
   });
   const [showMoreElements, setShowMoreElements] = useState([]);
+  const [exportGroupNames, setExportGroupNames] = useState(false);
   const exportColumnHeader = useRef(null);
   const assignClientsActions =
   {
@@ -412,7 +417,7 @@ const ClientSearchResult = ({ classes }) => {
     setEmailToNotify(notifyEmail);
     const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
-    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount, ExportFileName: fileName, NotifyEmail: notifyEmail }));
+    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount, ExportFileName: fileName, NotifyEmail: notifyEmail, ExportGroupNames: exportGroupNames }));
     if (response && response.payload) {
       const data = response.payload;
 
@@ -480,6 +485,7 @@ const ClientSearchResult = ({ classes }) => {
     }
     setLoader(false);
     setIsDownloadProgress(false);
+    setExportGroupNames(false);
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {
@@ -2069,11 +2075,27 @@ const ClientSearchResult = ({ classes }) => {
         title={t('campaigns.exportFile')}
         radioTitle={TotalCount > 100000 ? '' : t('common.SelectFormat')}
         onConfirm={(e, notifyEmail) => handleDownloadCsv(e, notifyEmail)}
-        onCancel={() => setDialog(null)}
+        onCancel={() => { setDialog(null); setExportGroupNames(false) }}
         cookieName={'exportFormat'}
         defaultValue={TotalCount > 100000 ? "csv" : "xlsx"}
         showEmailToNotify={TotalCount > 100000}
         options={TotalCount > 100000 ? null : ExportFileTypes}
+        exportGroupNames={<FormControl>
+          <FormGroup>
+            <FormControlLabel
+              title={t('group.exportGroupNamesTooltip')}
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => setExportGroupNames(!exportGroupNames)}
+                  checked={exportGroupNames}
+                />
+              }
+              label={t("group.exportGroupNames")}
+            />
+          </FormGroup>
+        </FormControl>}
       />
       <Loader isOpen={showLoader} progress={downloadProgress} message={t("common.downloadInProgress")} isDownloadProgress={isDownloadProgress} />
     </DefaultScreen>

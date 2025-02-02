@@ -5,7 +5,10 @@ import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
     Box, Typography, TableBody, TableRow, TableCell,
-    Grid, Button, TextField, Checkbox
+    Grid, Button, TextField, Checkbox,
+    FormControl,
+    FormGroup,
+    FormControlLabel
 } from '@material-ui/core'
 import { PreviewIcon, AddRecipient, AddRecipients, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
@@ -95,6 +98,7 @@ const Groups = ({ classes }) => {
     const exportColumnHeader = useRef(null);
     const [sortDirection, setSortDirection] = useState(SortDirection.DESC);
     const [sortBySelected, setSortBy] = useState(SortColumns.UPDATE_DATE);
+    const [exportGroupNames, setExportGroupNames] = useState(false);
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -1731,7 +1735,8 @@ const Groups = ({ classes }) => {
             NotifyEmail: notifyEmail,
             FileType: formatType,
             Culture: isRTL ? 0 : 1,
-            FileName: selectedGroups.length === 1 ? group.GroupName : 'PulseemGroups'
+            FileName: selectedGroups.length === 1 ? group.GroupName : 'PulseemGroups',
+            ExportGroupNames: exportGroupNames
         };
 
         try {
@@ -1774,6 +1779,7 @@ const Groups = ({ classes }) => {
         }
         finally {
             setLoader(false);
+            setExportGroupNames(false);
         }
     }
     const renderConfirmDialog = () => {
@@ -1806,11 +1812,27 @@ const Groups = ({ classes }) => {
                 text={!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
                 radioTitle={csvOnly ? '' : t('common.SelectFormat')}
                 onConfirm={(e, notifyEmail) => handleConfirmExport(e, notifyEmail)}
-                onCancel={() => setShowConfirmDialog(false)}
+                onCancel={() => { setShowConfirmDialog(false); setExportGroupNames(false) }}
                 cookieName={'exportFormat'}
                 defaultValue={csvOnly ? 'csv' : 'xlsx'}
                 showEmailToNotify={csvOnly}
                 options={csvOnly ? null : exportTypeOptions}
+                exportGroupNames={<FormControl>
+                    <FormGroup>
+                        <FormControlLabel
+                            title={t('group.exportGroupNamesTooltip')}
+                            control={
+                                <Checkbox
+                                    color="primary"
+                                    inputProps={{ "aria-label": "secondary checkbox" }}
+                                    onClick={() => setExportGroupNames(!exportGroupNames)}
+                                    checked={exportGroupNames}
+                                />
+                            }
+                            label={t("group.exportGroupNames")}
+                        />
+                    </FormGroup>
+                </FormControl>}
             />
         );
     }
