@@ -309,6 +309,7 @@ const ClientSearchResult = ({ classes }) => {
         "Zip": t('common.zip'),
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
+        "GroupNames": t('common.Groups')
       };
       if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
