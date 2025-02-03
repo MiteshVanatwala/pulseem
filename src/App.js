@@ -305,12 +305,10 @@ const renderRoutes = (classes, redirect) => {
 
       <Route
         path={whatsappRoutes.CHAT}
-        element={<WhatsappChat classes={classes} key="wa-chate" />}
-      />
-      <Route
-        path={whatsappRoutes.CHAT_CONVERSATION}
-        element={<WhatsappChat classes={classes} key="wa-chat-conversation" />}
-      />
+      >
+        <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
+        <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
+      </Route>
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}

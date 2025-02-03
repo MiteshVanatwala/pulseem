@@ -226,7 +226,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	useEffect(() => {
 		(async () => {
-			setIsLoader(true);
 			const { payload: phoneNumberData }: phoneNumberAPIProps =
 				await dispatch<any>(userPhoneNumbers());
 			if (
@@ -238,7 +237,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					getDynamicModalValues();
 				}
 				getSavedTemplateFields();
-				setIsLoader(true);
 				await getPhoneNumber();
 				setIsAccountSetup(true);
 			} else {
@@ -362,7 +360,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		activeUser: string,
 		isInitial: boolean = false
 	) => {
-		setIsLoader(true);
 		if (!isInitial) {
 			setSideChatContacts([]);
 			setActiveChatContacts({
@@ -437,7 +434,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			await dispatch<any>(userPhoneNumbers());
 		if (phoneNumberData?.Data?.length > 0) {
 			setActivePhoneNumber(phoneNumberData?.Data[0]);
-			setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true);
+			await setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true);
 			setPhoneNumbersList(phoneNumberData?.Data);
 			return phoneNumberData?.Data;
 		} else {
@@ -984,6 +981,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									updateContactList={updateContactList}
 									personalFields={personalFields}
 									onChatTemplateDelete={onChatTemplateDelete}
+									setIsLoader={setIsLoader}
 								/>
 							</div>
 						</div>
