@@ -830,7 +830,7 @@ const SmsSend = ({ classes, ...props }) => {
             </IconButton>
           </Tooltip>
         </Grid>
-        <Grid item md={12} xs={12} className={classes.tabDiv} style={{ height: windowSize === 'xs' ? 40 : 50 }}>
+        <Grid item md={12} xs={12} className={classes.tabDiv} style={{ height: windowSize === 'xs' ? 40 : 50, gridTemplateColumns: !userRoles.HideRecipients ? '50% 50%' : '100%' }}>
           <Grid item md={12} xs={12}
             className={
               clsx(classes.tab1, classes.btnTab, !!groupClick ? classes.currentActiveTab : '', classes.w50)
@@ -845,7 +845,7 @@ const SmsSend = ({ classes, ...props }) => {
               {t("mainReport.groups")}
             </span>
           </Grid>
-          <Grid item md={12} xs={12}
+          {!userRoles.HideRecipients && <Grid item md={12} xs={12}
             className={
               clsx(classes.tab1, classes.btnTab, !!manualClick ? classes.currentActiveTab : '', classes.w50)
             }
@@ -868,10 +868,10 @@ const SmsSend = ({ classes, ...props }) => {
                 <BsInfoCircle />
               </IconButton>
             </Tooltip>
-          </Grid>
+          </Grid>}
 
         </Grid>
-        {manualClick ? (
+        {!userRoles.HideRecipients && manualClick ? (
           <Grid item md={12} xs={12} className={
             highlighted
               ? clsx(classes.greenManual)
@@ -923,7 +923,7 @@ const SmsSend = ({ classes, ...props }) => {
               innerHeight={325}
             />
           ) : null}
-          {groupClick && <div className={classes.groupsFooter}>
+          {!userRoles.HideRecipients && groupClick && <div className={classes.groupsFooter}>
             <div
               style={{
                 display: "flex",
