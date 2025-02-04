@@ -425,17 +425,23 @@ const ClientSearchResult = ({ classes }) => {
         case 201: {
           const promiseArray = [];
           let orderList = [];
-          const deletedProperties = [];
+          // const deletedProperties = [];
           orderList = data.Clients.map((ol) => ol);
+
+          const fields = { ...exportColumnHeader.current };
+
           if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && (searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) {
-            deletedProperties.push("Revenue");
+            // deletedProperties.push("Revenue");
+            delete fields["Revenue"];
           }
           if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
             searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-            deletedProperties.push("SendDate");
+            //deletedProperties.push("SendDate");
+            delete fields["SendDate"];
           }
           if (!exportGroupNames) {
-            deletedProperties.push("GroupNames");
+            //deletedProperties.push("GroupNames");
+            delete fields["GroupNames"];
           }
 
           Promise.all(promiseArray).then(() => {
@@ -444,8 +450,8 @@ const ClientSearchResult = ({ classes }) => {
               OrderItems: true,
               FormatDate: true,
               ConvertStatusToString: false,
-              DeleteProperties: deletedProperties.length > 0 ? deletedProperties : null,
-              Order: Object.keys(exportColumnHeader.current),
+              // DeleteProperties: deletedProperties.length > 0 ? deletedProperties : null,
+              Order: Object.keys(fields),
               ReplaceNull: true
             };
 
@@ -461,7 +467,7 @@ const ClientSearchResult = ({ classes }) => {
               ExportFile({
                 data: result,
                 exportType: formatType,
-                fields: exportColumnHeader.current,
+                fields: fields,
                 fileName: fileName
               });
             });
