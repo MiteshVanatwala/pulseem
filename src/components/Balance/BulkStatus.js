@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PurchaseWizard from './PaymentWizard/PurchaseWizard';
 import { GoPackage } from 'react-icons/go';
-import { Grid, Paper, Typography, Button, Box, Divider } from '@material-ui/core';
+import { Grid, Paper, Typography, Button, Box, Divider, Link } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -17,6 +17,7 @@ import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
 import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 import { MdVoiceChat } from "react-icons/md";
+import { GrContact } from 'react-icons/gr';
 
 
 const BulkStatus = ({ classes }) => {
@@ -28,6 +29,8 @@ const BulkStatus = ({ classes }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const Redirect = useRedirect();
+
+  const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
@@ -173,10 +176,21 @@ const BulkStatus = ({ classes }) => {
                   {t('dashboard.yourBulkStatus')}
                 </Typography>
               </Box>
-              <Box className={clsx(classes.mr15, 'bubbleNew')}>
+              {isWhiteLabel ? <Box className={clsx(classes.mr15, 'bubbleNew')}>
                 <Typography className='bubbleText'>{t('common.new')}</Typography>
                 <TooltipBubble />
-              </Box>
+              </Box> :
+                <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
+                  <Link
+                    className={clsx(classes.linkNoDesign, classes.mlr10, classes.font15)}
+                    href='https://site.pulseem.co.il/%d7%a6%d7%95%d7%a8-%d7%a7%d7%a9%d7%a8/'
+                    title={t('master.RadMenuItemResource21.Text')}
+                    target='_blank'>
+                    {t('master.RadMenuItemResource21.Text')}
+                  </Link>
+                  <GrContact className={classes.linkNoDesign} />
+                </Box>
+              }
             </Box>
           </Grid>
           <Grid

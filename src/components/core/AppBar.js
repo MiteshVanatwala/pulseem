@@ -117,7 +117,7 @@ const AppBarItem = ({
                             if (!option.href || option.href === '') {
                               onInnerClick(option)
                             }
-                            else Redirect({ url: option.href })
+                            else Redirect({ url: option.href, openNewTab: option.openInNewWindow })
                           }}
                           classes={{ root: classes.appBarItemMenuRoot }}
                           className={clsx(classes.appBarItemMenuItem, index !== row.length - 1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}
