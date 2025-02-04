@@ -22,7 +22,7 @@ const RecipientChart = ({ classes, }) => {
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
-    const { windowSize } = useSelector(state => state.core);
+    const { windowSize, userRoles } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
     const { Notifications = {}, Sms = {} } = packagesDetails || {};
 
@@ -213,12 +213,17 @@ const RecipientChart = ({ classes, }) => {
             responsive: true,
             cutout: 55,
             onClick: (e) => {
-                const chart = e.chart;
-                if (chart) {
-                    const activeChart = e.chart._active[0];
-                    setTimeout(() => {
-                        openReports(report.ReportSection, activeChart?.index);
-                    }, 100);
+                if (!userRoles.HideRecipients) {
+                    const chart = e.chart;
+                    if (chart) {
+                        const activeChart = e.chart._active[0];
+                        setTimeout(() => {
+                            openReports(report.ReportSection, activeChart?.index);
+                        }, 100);
+                    }
+                }
+                else {
+                    return false;
                 }
             },
             plugins: {
@@ -264,8 +269,13 @@ const RecipientChart = ({ classes, }) => {
                         href="#"
                         className={classes.chartLabel}
                         onClick={(e) => {
-                            e.preventDefault();
-                            openReports(report.ReportSection, "total");
+                            if (!userRoles.HideRecipients) {
+                                e.preventDefault();
+                                openReports(report.ReportSection, "total");
+                            }
+                            else {
+                                return false;
+                            }
                         }}
                     >
                         <Typography className={'centerText'}>{t(titles[index].mainTitle)}</Typography>

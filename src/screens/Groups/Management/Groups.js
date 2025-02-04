@@ -179,10 +179,10 @@ const Groups = ({ classes }) => {
         {
             label: t("recipient.sms/mms"),
             classes: cellStyle,
-            className: clsx(classes.flex3),
+            className: classes.flex3,
             align: "center",
         },
-        {
+        !userRoles?.HideRecipients && {
             label: "",
             classes: cellStyle,
             className: clsx(classes.flex5),
@@ -399,7 +399,7 @@ const Groups = ({ classes }) => {
         const colSize = windowSize === "xs" ? 12 : null;
         return (
             <Grid container spacing={2} className={classes.linePadding}>
-                <Grid item xs={colSize}>
+                {!userRoles.HideRecipients && <Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -408,8 +408,8 @@ const Groups = ({ classes }) => {
                     >
                         {t("group.new")}
                     </Button>
-                </Grid>
-                <Grid item xs={colSize}>
+                </Grid>}
+                {!userRoles.HideRecipients && <Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded, selectedGroups.length < 2 ? classes.disabled : null)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -420,7 +420,7 @@ const Groups = ({ classes }) => {
                     >
                         {t("group.mergeGroup")}
                     </Button>
-                </Grid>
+                </Grid>}
                 {userRoles.AllowDelete && windowSize !== "xs" && (
                     <Grid item>
                         <Button
@@ -443,7 +443,7 @@ const Groups = ({ classes }) => {
                         {t("recipient.deleteRecipient")}
                     </Button>
                 </Grid>}
-                {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.SIMPLY_CLUB) > -1 && (<Grid item xs={colSize}>
+                {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.SIMPLY_CLUB) > -1 && !userRoles.HideRecipients && (<Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -572,7 +572,7 @@ const Groups = ({ classes }) => {
                 lable: t("recipient.preview"),
                 remove: windowSize === 'xs',
                 rootClass: classes.paddingIcon,
-                disable: !userRoles?.HideRecipients && !((
+                disable: !((
                     (ActiveEmails || 0) +
                     (RemovedEmails || 0) +
                     (RestrictedEmails || 0) +
@@ -1188,13 +1188,13 @@ const Groups = ({ classes }) => {
                         align="center"
                     />
                 </TableCell>
-                <TableCell
+                {!userRoles?.HideRecipients && <TableCell
                     classes={noBorderCellStyle}
                     align="center"
                     className={clsx(classes.flex5, classes.p0)}
                 >
                     {renderCellIcons(row)}
-                </TableCell>
+                </TableCell>}
             </TableRow>
         )
 

@@ -276,7 +276,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
             root: classes.shortcutButton
           }}>
           <Box className={clsx(classes.flex, classes.hAuto)}>
-            <IconButton
+            {!userRoles.HideRecipients && <IconButton
               id="editIcon"
               style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
               className={clsx('shortcutEditIcon', classes.p5)}
@@ -286,7 +286,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
               }}
             >
               {'\uE09C'}
-            </IconButton>
+            </IconButton>}
             <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5, classes.flex1,)} onClick={() => {
               Redirect({ url: data.ShortcutUrl })
             }}>{t(data.CategoryName)}</Typography>
@@ -297,7 +297,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           <Divider />
           <Typography
             align='center'
-            className={classes.pageTitle}
+            className={classes.shortCutTitle}
             component="a"
             href={data.ShortcutUrl}
             onClick={(e) => {
