@@ -7,7 +7,8 @@ export interface ClientExportRequest {
     NotifyEmail: boolean,
     FileType: any,
     Culture: Number,
-    FileName: string
+    FileName: string,
+    ExportGroupNames: string | any | never
 };
 
 export const exportGroupsClients = createAsyncThunk(
