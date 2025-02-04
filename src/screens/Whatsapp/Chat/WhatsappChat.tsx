@@ -67,7 +67,6 @@ import {
 	whatsappChatStatuses,
 	whatsappRoutes,
 } from '../Constant';
-import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useParams } from 'react-router-dom';
 import Toast from '../../../components/Toast/Toast.component';
 import NoSetup from '../NoSetup/NoSetup';
@@ -982,10 +981,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									updateContactList={updateContactList}
 									personalFields={personalFields}
 									onChatTemplateDelete={onChatTemplateDelete}
-									setIsLoader={(value: boolean) => {
-										console.log(value);
-										dispatch(setIsLoader(value))
-									}}
+									setIsLoader={(value: boolean) => dispatch(setIsLoader(value))}
 								/>
 							</div>
 						</div>
