@@ -524,7 +524,7 @@ const SmsCreator = ({ classes }) => {
     // var lastChar = text.substring(text.length, text.length - 1);
     var onlyNumbersWithHyphenAndSpace = /^[0-9 -]*$/;
     var onlyNumbers = /^[0-9]*$/;
-    var english = /^[A-Za-z0-9 -]*$/
+    var english = /^[A-Za-z0-9_ -]*$/
 
     if (!text.match(onlyNumbersWithHyphenAndSpace) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
@@ -536,7 +536,7 @@ const SmsCreator = ({ classes }) => {
     if (text.match(onlyNumbersWithHyphenAndSpace) && !text.match(onlyNumbers)) {
       e.target.value = e.target.value.replace(/[^0-9]/g, '');
     } else if (!text.match(english)) {
-      e.target.value = text.replace(/[^A-Za-z0-9 -]/g, '');
+      e.target.value = text.replace(/[^A-Za-z0-9_ -]/g, '');
     }
 
     setrestoreBool(false);
@@ -2115,9 +2115,10 @@ const SmsCreator = ({ classes }) => {
             classes={classes}
             campaignNumber={campaignNumber}
             isOpen={otpOpen}
-            onClose={() => { 
-              setOTPOpen(false); 
-              setDialogType(null); }}
+            onClose={() => {
+              setOTPOpen(false);
+              setDialogType(null);
+            }}
             onSuccess={() => {
               setStaticNumber(campaignNumber);
             }} />}
