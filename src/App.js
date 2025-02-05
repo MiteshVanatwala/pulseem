@@ -76,7 +76,7 @@ import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import EditDynamicGroup from './screens/Groups/Dynamic/EditDynamicGroup';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
-import { isSignupPage } from './helpers/Utils/common';
+import { isSignupPage, isSubUserConfirmationPage } from './helpers/Utils/common';
 import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
 import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
@@ -89,6 +89,7 @@ import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
 import SubUsers from './screens/UsersAndPermissions/SubUsers';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
+import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
 
 const renderRoutes = (classes, redirect, userRoles) => {
   const transferUrl =
@@ -111,6 +112,11 @@ const renderRoutes = (classes, redirect, userRoles) => {
         exact
         path={`${sitePrefix}sign-up`}
         element={<SignUp classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}UserConfirmation`}
+        element={<SubUserConfirmationPage classes={classes} />}
       />
       <Route
         exact
@@ -594,9 +600,10 @@ const App = ({ screenSize }) => {
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
+  const isConfirmationPage = isSubUserConfirmationPage(location.pathname)
 
   React.useEffect(() => {
-    !isSignup && dispatch(getNotificationUpdates());
+    !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
   }, [location]);
 
   useEffect(() => {
@@ -604,7 +611,7 @@ const App = ({ screenSize }) => {
   }, [screenSize]);
 
   useEffect(() => {
-    if (!isSignup && currencyList?.length > 0) {
+    if (!isSignup && !isConfirmationPage && currencyList?.length > 0) {
       dispatch(GetGlobalAccountPackagesDetails());
     }
   }, [currencyList]);
@@ -683,11 +690,11 @@ const App = ({ screenSize }) => {
       if (!!cookieFunction)
         cookieFunction()
     })
-    !isSignup && updateToken()
-    !isSignup && initFeatures()
-    !isSignup && dispatch(GetCurrencyList());
-    !isSignup && dispatch(GetSmsCountries());
-    !isSignup && dispatch(GetAfterLoginInitialData());
+    !isSignup && !isConfirmationPage && updateToken()
+    !isSignup && !isConfirmationPage && initFeatures()
+    !isSignup && !isConfirmationPage && dispatch(GetCurrencyList());
+    !isSignup && !isConfirmationPage && dispatch(GetSmsCountries());
+    !isSignup && !isConfirmationPage && dispatch(GetAfterLoginInitialData());
   }, [dispatch])
 
 
@@ -783,7 +790,7 @@ const App = ({ screenSize }) => {
 
   }
 
-  return (accountSettings || isSignup) && (
+  return (accountSettings || isSignup || isConfirmationPage) && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
