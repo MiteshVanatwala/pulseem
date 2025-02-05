@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -182,13 +182,14 @@ const BulkStatus = ({ classes }) => {
               </Box> :
                 <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
                   <Link
-                    className={clsx(classes.linkNoDesign, classes.mlr10, classes.font15)}
+                    className={clsx(classes.linkNoDesign, classes.mlr10, classes.bold)}
                     href='https://site.pulseem.co.il/%d7%a6%d7%95%d7%a8-%d7%a7%d7%a9%d7%a8/'
                     title={t('master.RadMenuItemResource21.Text')}
+                    style={{ textDecoration: 'underline', fontSize: '100%' }}
                     target='_blank'>
                     {t('master.RadMenuItemResource21.Text')}
                   </Link>
-                  <GrContact className={classes.linkNoDesign} />
+                  <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30 }} />
                 </Box>
               }
             </Box>
