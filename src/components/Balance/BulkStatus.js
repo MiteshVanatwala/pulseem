@@ -17,8 +17,6 @@ import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
 import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 import { MdVoiceChat } from "react-icons/md";
-import { GrContact } from 'react-icons/gr';
-
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -182,14 +180,14 @@ const BulkStatus = ({ classes }) => {
               </Box> :
                 <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
                   <Link
-                    className={clsx(classes.linkNoDesign, classes.mlr10, classes.bold)}
+                    className={clsx(classes.mlr10, classes.bold)}
                     href='https://site.pulseem.co.il/%d7%a6%d7%95%d7%a8-%d7%a7%d7%a9%d7%a8/'
                     title={t('master.RadMenuItemResource21.Text')}
                     style={{ textDecoration: 'underline', fontSize: '100%' }}
                     target='_blank'>
                     {t('master.RadMenuItemResource21.Text')}
                   </Link>
-                  <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30 }} title={t('master.RadMenuItemResource21.Text')} />
+                  <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
                 </Box>
               }
             </Box>
