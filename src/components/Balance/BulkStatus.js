@@ -189,7 +189,7 @@ const BulkStatus = ({ classes }) => {
                     target='_blank'>
                     {t('master.RadMenuItemResource21.Text')}
                   </Link>
-                  <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30 }} />
+                  <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30 }} title={t('master.RadMenuItemResource21.Text')} />
                 </Box>
               }
             </Box>
