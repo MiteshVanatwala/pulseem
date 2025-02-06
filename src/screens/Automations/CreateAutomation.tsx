@@ -11,10 +11,10 @@ import DefaultScreen from '../DefaultScreen';
 import { Title } from '../../components/managment/Title';
 import { createAutomation, getAutomationTemplates } from '../../redux/reducers/automationsSlice';
 import { AutomationTemplate } from '../../Models/Automations/Automation';
-import { BiSave } from 'react-icons/bi';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { pulseemNewTab } from '../../helpers/Functions/functions';
 import { URLS } from '../../config/enum';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 
 const CreateAutomationTemplate = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
@@ -29,10 +29,26 @@ const CreateAutomationTemplate = ({ classes }: any) => {
   });
   const [ selectedTemplate, setSelectedTemplate ] = useState<number>(0);
   const [ automationName, setAutomationName ] = useState<string>('');
+  const [ search, setSearch ] = useState<string>('');
+  const [ searchKeyword, setSearchKeyword ] = useState<string>('');
+  const [ dialogType, setDialogType ] = useState<string | null>(null);
+  const scratchTemplate = {
+    AutomationId: 0,
+    Name: t("automations.startFromScratch"),
+    Description: t("automations.startFromScratchDesc"),
+    NameHe: t("automations.startFromScratch"),
+    DescriptionHe: t("automations.startFromScratchDesc"),
+    IsActive: true,
+    IsDeleted: null,
+    CreateDate: ""
+  }
 
   useEffect(() => {
-    setShowLoader(false);
-    dispatch(getAutomationTemplates());
+    const init = async () => {
+      await dispatch(getAutomationTemplates());
+      setShowLoader(false);
+    }
+    init();
   }, [])
 
   const renderToast = () => {
@@ -48,16 +64,32 @@ const CreateAutomationTemplate = ({ classes }: any) => {
   const automationTemplate = (template: AutomationTemplate) => {
     const templateDescription = isRTL ? template.DescriptionHe : template.Description;
     return <Grid item md={4} sm={12} xs={12}>
-      <Box className={clsx(classes.p10, classes.automationTemplate, classes.cursorPointer, template.AutomationId === selectedTemplate ? 'active': '')} onClick={() => setSelectedTemplate(template.AutomationId)}>
+      <Box
+        className={clsx(classes.p10, classes.automationTemplate, classes.cursorPointer)}
+        onClick={() => setSelectedTemplate(template.AutomationId)}
+      >
         <Box className={clsx(classes.semibold600, classes.f18, classes.colrPrimary)}>{ isRTL ? template.NameHe : template.Name }</Box>
         <Box className={clsx('description', classes.pt10, classes.black)}>{templateDescription.length > 80 ? `${templateDescription.substring(0, 80)}...` : templateDescription}</Box>
         <Box className={clsx(isRTL ? classes.textLeft : classes.textRight)}>
+          {
+            template.AutomationId > 0 && (
+              <Button
+                className={clsx(classes.btn, classes.btnRounded, classes.f12, classes.ml5)}
+                onClick={() => pulseemNewTab(`${URLS.AutomationTemplatePreview}${template.AutomationId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)}
+              >
+                {t('common.Preview')}
+              </Button>
+            )
+          }
           <Button
             className={clsx(classes.btn, classes.btnRounded, classes.f12)}
-            onClick={() => pulseemNewTab(`${URLS.AutomationTemplatePreview}${template.AutomationId}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)}
+            onClick={() => {
+              setSelectedTemplate(template.AutomationId);
+              setDialogType('AddTemplateName');
+            }}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
-            {t('common.Preview')}
+            {t('automations.selectTemplate')}
           </Button>
         </Box>
       </Box>
@@ -70,6 +102,7 @@ const CreateAutomationTemplate = ({ classes }: any) => {
     setErrors(errorsTemp);
     
     if (errorsTemp.automationName === '') {
+      setDialogType(null);
       setShowLoader(true);
       // @ts-ignore`
       const response = await dispatch(createAutomation({AutomationName: automationName})) as any;
@@ -90,24 +123,38 @@ const CreateAutomationTemplate = ({ classes }: any) => {
     }
   }
 
-  return (
-    <DefaultScreen
-      currentPage="automations"
-      subPage={"create-automations"}
-      classes={classes}
-      customPadding={true}
-      containerClass={clsx(classes.mb50, classes.editorCont)}
-    >
-      <Box className="head">
-        <Title Text={t('automations.createResource.Text')} classes={classes} />
-      </Box>
-      <Box className={clsx("containerBody", classes.pb25)}>
-        <Box>
-          <Typography title={t("automations.labelAutomationName")} className={clsx(classes.alignDir, classes.pb5, classes.bold, classes.f18)}>
-            {t("automations.labelAutomationName")}
-            <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-          </Typography>
-          <TextField
+  const renderDialog = () => {
+    let currentDialog: any = {};
+		if (dialogType === 'AddTemplateName') {
+			currentDialog = renderAutomationNameDialog();
+    }
+
+    if (dialogType) {
+      return (
+        dialogType && <BaseDialog
+          contentStyle={classes.maxWidth400}
+          classes={classes}
+          open={dialogType}
+          onClose={() => setDialogType(null)}
+          onCancel={() => setDialogType(null)}
+          {...currentDialog}>
+          {currentDialog.content}
+        </BaseDialog>
+      )
+    }
+    return <></>
+  }
+
+  const renderAutomationNameDialog = () => {
+    return {
+      title: t('automations.labelAutomationName'),
+      showDivider: true,
+      content: (
+        <Box style={{ maxWidth: 400 }} className={clsx(classes.mb20)}>
+					<Typography title={t("automations.labelAutomationName")} className={classes.bold}>
+						{t("automations.labelAutomationName")}
+					</Typography>
+					<TextField
             id="automationName"
             label=""
             variant="outlined"
@@ -125,51 +172,86 @@ const CreateAutomationTemplate = ({ classes }: any) => {
             </Typography>
           </Box>
         </Box>
-        <Box className={clsx(classes.pt30)}>
+      ),
+      showDefaultButtons: true,
+			confirmText: t("common.continue"),
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => saveAutomation()
+    }
+  }
+
+  const handleKeyDown = (event: any) => {
+    if (event.keyCode === 13 || event.code === 'Enter') {
+      setSearchKeyword(search);
+    }
+  }
+
+  return (
+    <DefaultScreen
+      currentPage="automations"
+      subPage={"create-automations"}
+      classes={classes}
+      customPadding={true}
+      containerClass={clsx(classes.mb50, classes.editorCont)}
+    >
+      <Box className="head">
+        <Title Text={t('automations.selectTemplate')} classes={classes} />
+      </Box>
+      <Box className={clsx("containerBody", classes.pb25)}>
+        <Grid container spacing={2} className={clsx(classes.pb10, classes.pt10)}>
+          <Grid item md={4}>
+            <TextField
+              variant='outlined'
+              size='small'
+              value={search}
+              onKeyPress={handleKeyDown}
+              onChange={(event) => setSearch(event.target.value)}
+              className={clsx(classes.textField, classes.minWidth252)}
+              placeholder={t('automations.searchemplate')}
+            />
+          </Grid>
+
+          <Grid item>
+            <Button
+              onClick={() => setSearchKeyword(search)}
+              className={clsx(classes.btn, classes.btnRounded)}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+              {t('campaigns.btnSearchResource1.Text')}
+            </Button>
+          </Grid>
+          {searchKeyword && <Grid item>
+            <Button
+              onClick={() => {
+                setSearch('');
+                setSearchKeyword('');
+              }}
+              className={clsx(classes.btn, classes.btnRounded)}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+              {t('common.clear')}
+            </Button>
+          </Grid>}
+        </Grid>
+        <Box className={clsx(classes.pt10)}>
           {
             automationTemplates.length > 0 && (
               <>
-                <Typography title={t("automations.selectTemplate")} className={clsx(classes.alignDir, classes.pb15, classes.bold, classes.f18)}>
-                  {t("automations.selectTemplate")}
-                </Typography>
                 <Grid container className={clsx(classes.pb15)} spacing={3}>
                   {
-                    automationTemplates.map((template: any) => automationTemplate(template))
+                    [scratchTemplate, ...automationTemplates].filter((template: AutomationTemplate) => searchKeyword !== '' ? (
+                      template.Name.toLowerCase().includes(searchKeyword.toLowerCase()) || 
+                      template.NameHe.toLowerCase().includes(searchKeyword.toLowerCase()) || 
+                      template.Description.toLowerCase().includes(searchKeyword.toLowerCase()) || 
+                      template.DescriptionHe.toLowerCase().includes(searchKeyword.toLowerCase())
+                    ) : true).map((template: any) => automationTemplate(template))
                   }
                 </Grid>
               </>
             )
           }
         </Box>
-
-        <Box
-          className={clsx(
-            classes.pt50, { 
-              [classes.flexJustifyCenter]: windowSize === 'xs', 
-              [classes.flexWrap]: windowSize === 'xs', 
-              [classes.textRight]: !isRTL,
-              [classes.textLeft]: isRTL
-          })}>
-          {/* @ts-ignore */}
-            <Button
-              onClick={saveAutomation}
-              className={clsx(
-                classes.btn,
-                classes.btnRounded,
-                classes.backButton,
-                {
-                  [classes.w100]: windowSize === 'xs'
-                }
-              )}
-              style={{ margin: '8px' }}
-              startIcon={<BiSave />}
-              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-              disabled={showLoader}
-            >{t("common.continue")}
-          </Button>
-        </Box>
       </Box>
       {renderToast()}
+      {renderDialog()}
       <Loader isOpen={showLoader} zIndex={9999} />
     </DefaultScreen>
   )
