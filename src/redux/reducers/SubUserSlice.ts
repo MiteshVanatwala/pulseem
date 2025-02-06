@@ -37,6 +37,18 @@ export const getChangeLog = createAsyncThunk(
   }
 );
 
+export const resendConfirmationEmail = createAsyncThunk(
+  'SubUser/ResendConfirmationEmail',
+  async (userId: number, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.put(`SubUser/ResendConfirmationEmail/${userId}`);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 
 
 export const SubUserSlice = createSlice({

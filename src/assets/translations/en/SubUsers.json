@@ -24,5 +24,9 @@
   "limitedPermissionIsRequired": "Atleast 1 limited permission is required",
   "users": "Users",
   "userDetails": "User Details",
-  "loginInformation": "Login Information"
+  "loginInformation": "Login Information",
+  "sendConfirmationEmail": "Send confirmation email",
+  "userActivation": "User Activation",
+  "activate": "Activate User",
+  "activateDescription": "You need to set a new password to activate your Pulseem account.<br/>After completing this process, you can log in to the system and start using it according to your account permissions."
 }

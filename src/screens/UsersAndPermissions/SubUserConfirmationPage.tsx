@@ -241,85 +241,121 @@ const SubUserConfirmationPage = ({ classes }: any) => {
         <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
         <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
       </div>
-      <SharedAppBar title={t('SignUp.Header')} classes={classes} />
-      <Box className={clsx(classes.pt50, windowSize !== 'sm' && windowSize !== 'xs' ? classes.pageContainer : '', windowSize === 'xs' || windowSize === 'sm' ? classes.pt90 : '')}>
-        <Box className={clsx(windowSize === 'xs' ? classes.pt50 : classes.pt20)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
-            {t('SignUp.PersonalInfo')}
-          </h3>
-          <Box className={"formContainer"} style={{ marginBottom: 10 }}>
-            <Grid container spacing={3} className={clsx("form")}>
-              <Grid item xs={12} className={"textBoxWrapper"}>
-                <Typography className={clsx(classes.f18)}>
-                  {t("common.Email")}
-                  <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+      <SharedAppBar title={t('SubUsers.userActivation')} classes={classes} />
+      <Box style={{ height: 'calc(100vh - 50px' }} className={clsx(classes.flexCenterOfCenter, classes.pt20)}>
+        <Box className={clsx(classes.pt20)} style={{ textAlign: isRTL ? 'right' : 'left', width: 430 }}>
+          <Box className={classes.loginForm}>
+            <Box className={clsx(classes.logref, classes.f20, classes.bold)} style={{ color: '#fff' }}>
+              {t('SignUp.LoginDetails')}
+            </Box>
+            <Box style={{ padding: 25 }}>
+              <Box>
+                <Typography style={{ textAlign: isRTL ? 'right' : 'left' }} className={clsx(classes.font15, classes.pb15, classes.bold)}>
+                  {RenderHtml(t('SubUsers.activateDescription'))}
                 </Typography>
-                <TextField
-                  type="email"
-                  variant="outlined"
-                  size="small"
-                  name="EmailLastName"
-                  value={qs?.emailId}
-                  onChange={(event: any) => setUserDetails({
-                    ...userDetails,
-                    EmailId: event.target.value
-                  })}
-                  className={clsx(classes.textField, classes.minWidth252)}
-                  error={!!errors.emailId}
-                  disabled={true}
-                  inputProps={{ maxLength: 100 }}
-                />
-                {!!errors.emailId && (
-                  <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
-                    {errors.emailId}
-                  </Typography>
-                )}
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-        <Box className={clsx(classes.pt10)}>
-          <h3 className={clsx(classes.colrPrimary, classes.mb5, classes.f25, classes.mt1)}>
-            {t('SignUp.LoginDetails')}
-          </h3>
-          <Box className={"formContainer"} style={{ marginBottom: 10 }}>
-            <Grid container className={clsx("form")} spacing={3}>
-              <Grid item xs={12} className={"textBoxWrapper"}>
-                <Box>
+              </Box>
+              <Box className={classes.dFelx}>
+                <Box className={classes.pb15}>
                   <Typography className={clsx(classes.f18)}>
-                    {t("SignUp.Password")}
-                    <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                    {t("common.Email")}
+                    <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}></span>
                   </Typography>
-                  <Box className={classes.posRelative}>
-                    <Tooltip
-                      TransitionComponent={Zoom}
-                      interactive={true}
-                      title={<PasswordHint
-                        Password={passwordValidation}
-                        classes={classes}
-                      />}
-                      arrow
-                      open={showPasswordTip}
-                      classes={useStylesBootstrapPasswordHint()}
-                    >
+                  <TextField
+                    type="email"
+                    variant="outlined"
+                    size="small"
+                    name="EmailLastName"
+                    value={qs?.emailId}
+                    onChange={(event: any) => setUserDetails({
+                      ...userDetails,
+                      EmailId: event.target.value
+                    })}
+                    className={clsx(classes.textField, classes.minWidth252)}
+                    error={!!errors.emailId}
+                    disabled={true}
+                    inputProps={{ maxLength: 100 }}
+                  />
+                  {!!errors.emailId && (
+                    <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                      {errors.emailId}
+                    </Typography>
+                  )}
+                </Box>
+                <Box className={classes.pb15}>
+                  <Box>
+                    <Typography className={clsx(classes.f18)}>
+                      {t("SignUp.Password")}
+                      <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                    </Typography>
+                    <Box className={classes.posRelative}>
+                      <Tooltip
+                        TransitionComponent={Zoom}
+                        interactive={true}
+                        title={<PasswordHint
+                          Password={passwordValidation}
+                          classes={classes}
+                        />}
+                        arrow
+                        open={showPasswordTip}
+                        classes={useStylesBootstrapPasswordHint()}
+                      >
+                        <TextField
+                          autoFocus
+                          onFocus={() => setShowPasswordTip(true)}
+                          onBlur={() => setShowPasswordTip(false)}
+                          type={userDetails.isPasswordVisible ? "text" : "password"}
+                          variant="outlined"
+                          size="small"
+                          name="Password"
+                          value={userDetails?.Password}
+                          onChange={handleChange}
+                          className={clsx(classes.textField, classes.minWidth252)}
+                          error={!!errors.password}
+                          inputProps={{ maxWidth: 50 }}
+                          InputProps={{
+                            endAdornment: (
+                              <span onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })}>
+                                {
+                                  userDetails.isPasswordVisible
+                                    ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
+                                    : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
+                                }
+                              </span>
+                            ),
+                          }}
+                        />
+                      </Tooltip>
+                    </Box>
+                    {!!errors.password && (
+                      <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                        {errors.password}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Box className={classes.pt15}>
+                    <Typography className={clsx(classes.f18)}>
+                      {t("SignUp.PasswordVerification")}
+                      <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                    </Typography>
+                    <Box>
                       <TextField
-                        autoFocus
-                        onFocus={() => setShowPasswordTip(true)}
-                        onBlur={() => setShowPasswordTip(false)}
-                        type={userDetails.isPasswordVisible ? "text" : "password"}
+                        type={userDetails.isConfirmPasswordVisible ? "text" : "password"}
                         variant="outlined"
                         size="small"
-                        name="Password"
-                        value={userDetails?.Password}
-                        onChange={handleChange}
+                        name="confirmPassword"
+                        value={userDetails?.confirmPassword}
+                        onChange={(event: any) => setUserDetails({
+                          ...userDetails,
+                          confirmPassword: event.target.value
+                        })}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        error={!!errors.password}
-                        inputProps={{ maxWidth: 50 }}
+                        error={!!errors.confirmPassword}
+                        inputProps={{ maxLength: 50 }}
                         InputProps={{
                           endAdornment: (
-                            <span onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })}>
+                            <span onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })}>
                               {
-                                userDetails.isPasswordVisible
+                                userDetails.isConfirmPasswordVisible
                                   ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
                                   : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
                               }
@@ -327,73 +363,34 @@ const SubUserConfirmationPage = ({ classes }: any) => {
                           ),
                         }}
                       />
-                    </Tooltip>
+                    </Box>
+                    {!!errors.confirmPassword && (
+                      <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                        {errors.confirmPassword}
+                      </Typography>
+                    )}
                   </Box>
-                  {!!errors.password && (
-                    <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
-                      {errors.password}
-                    </Typography>
-                  )}
                 </Box>
-                <Box>
-                  <Typography className={clsx(classes.f18)}>
-                    {t("SignUp.PasswordVerification")}
-                    <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
-                  </Typography>
-                  <Box>
-                    <TextField
-                      type={userDetails.isConfirmPasswordVisible ? "text" : "password"}
-                      variant="outlined"
-                      size="small"
-                      name="confirmPassword"
-                      value={userDetails?.confirmPassword}
-                      onChange={(event: any) => setUserDetails({
-                        ...userDetails,
-                        confirmPassword: event.target.value
-                      })}
-                      className={clsx(classes.textField, classes.minWidth252)}
-                      error={!!errors.confirmPassword}
-                      inputProps={{ maxLength: 50 }}
-                      InputProps={{
-                        endAdornment: (
-                          <span onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })}>
-                            {
-                              userDetails.isConfirmPasswordVisible
-                                ? <IoIosEye size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
-                                : <IoIosEyeOff size={20} className={clsx(classes.posAbsolute, classes.p5, classes.cursorPointer, classes.passwordVisibilityToggle)} />
-                            }
-                          </span>
-                        ),
-                      }}
-                    />
-                  </Box>
-                  {!!errors.confirmPassword && (
-                    <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
-                      {errors.confirmPassword}
-                    </Typography>
-                  )}
+                <Box className={clsx(classes.pt25, classes.pb25, classes.textCenter)}>
+                  <Button
+                    className={clsx(
+                      classes.btn,
+                      classes.btnRounded,
+                      classes.mr10,
+                      classes.p10,
+                      classes.f25,
+                      classes.colorWhite,
+                      classes.gradientBackground
+                    )}
+                    style={{ width: windowSize === 'xs' ? '100%' : '250px' }}
+                    onClick={saveSignup}
+                  >
+                    {t(`SubUsers.activate`)}
+                  </Button>
                 </Box>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </Box>
-        </Box>
-        <Box className={clsx(classes.pt25, classes.pb25, isRTL ? classes.textLeft : classes.textRight)}>
-          <Button
-            className={clsx(
-              classes.btn,
-              classes.btnRounded,
-              classes.mr10,
-              classes.p10,
-              classes.mb50,
-              classes.f25,
-              classes.colorWhite,
-              classes.gradientBackground
-            )}
-            style={{ width: windowSize === 'xs' ? '100%' : '250px', height: '50px' }}
-            onClick={saveSignup}
-          >
-            {t(`SignUp.Submit`)}
-          </Button>
         </Box>
       </Box>
       <Loader isOpen={showLoader} showBackdrop={true} zIndex={9999} />

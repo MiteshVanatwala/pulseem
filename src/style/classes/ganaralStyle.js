@@ -4287,5 +4287,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       top: 10,
       background: '#23ff23'
     }
+  },
+  loginForm: {
+    border: '1px solid #FF4D2A',
+    borderRadius: 15,
+    boxShadow: '0px 5px 5px rgba(0, 0, 0, .5)'
+  },
+  logref: {
+    background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+    height: 60,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopRightRadius: 14,
+    borderTopLeftRadius: 14
   }
 });

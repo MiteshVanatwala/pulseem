@@ -24,5 +24,9 @@
   "limitedPermissionIsRequired": "חובה לבחור הרשאה אחת לפחות",
   "users": "משתמשים",
   "userDetails": "פרטי משתמש",
-  "loginInformation": "פרטי התחברות"
+  "loginInformation": "פרטי התחברות",
+  "sendConfirmationEmail": "שלח מייל לאישור",
+  "userActivation": "הפעלת חשבון",
+  "activate": "הפעל חשבון",
+  "activateDescription": "עליך להגדיר סיסמא חדשה על מנת להפעיל את חשבונך בפולסים.<br/>בסיום התהליך, ניתן יהיה להשתמש בחשבון."
 }

@@ -8,7 +8,7 @@ import DefaultScreen from '../DefaultScreen';
 import { Title } from '../../components/managment/Title';
 import { Loader } from '../../components/Loader/Loader';
 import { toastProps } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
-import { resetToastData } from '../Whatsapp/Constant';
+import { errorToastData, resetToastData, successToastData } from '../Whatsapp/Constant';
 import Toast from '../../components/Toast/Toast.component';
 import { ManagmentIcon, TablePagination } from '../../components/managment';
 import { DateFormats, rowsOptions } from '../../helpers/Constants';
@@ -20,12 +20,13 @@ import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import User from '../../components/User/User';
 import Permissions from '../../components/Permissions/Permissions';
 import PermissionsHistory from '../../components/PermissionsHistory/PermissionsHistory';
-import { getAllUsers, save } from '../../redux/reducers/SubUserSlice';
+import { getAllUsers, resendConfirmationEmail, save } from '../../redux/reducers/SubUserSlice';
 import { eSubUserAction, SubUserModel, SubUserRequest } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
 import { get } from 'lodash';
+import { BiMailSend } from 'react-icons/bi';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector((state: any) => state.core);
@@ -147,6 +148,26 @@ const SubUsers = ({ classes }: any) => {
     setShowLoader(false);
   }
 
+  const resendConfirmation = async (userId: number) => {
+    const response = await dispatch(resendConfirmationEmail(userId)) as any;
+    switch (response?.payload?.StatusCode) {
+      case 201: {
+        setToastMessage(successToastData);
+        break;
+      }
+      case 401:
+      case 405: {
+        logout();
+        break;
+      }
+      case 406: {
+        setToastMessage(errorToastData);
+        break;
+      }
+    }
+
+  }
+
 
   //#region Data Table
 
@@ -191,13 +212,25 @@ const SubUsers = ({ classes }: any) => {
         onClick: () => {
           setDialogType({ type: 'Delete', data: row });
         }
+      },
+      {
+        key: 'resendConfirmation',
+        uIcon: BiMailSend,
+        lable: t('SubUsers.sendConfirmationEmail'),
+        rootClass: classes.paddingIcon,
+        disable: false,
+        showPhone: true,
+        remove: row.IsApproved,
+        onClick: () => {
+          resendConfirmation(row.ID);
+        },
       }
     ]]
     return (
       <Grid
         container
         direction={windowSize === 'sm' ? 'column' : 'row'}
-        justifyContent={windowSize !== 'xs' ? 'center' : (windowSize === 'xs' ? 'flex-start' : 'flex-end')}
+        justifyContent={'flex-end'}
       >
         {iconsMap.map((map, index) => (
           <Grid
@@ -208,20 +241,18 @@ const SubUsers = ({ classes }: any) => {
               className={windowSize === 'xs' ? classes.mt1 : ''}
             >
               {map.map(icon => (
-                <Grid
+                !icon.remove && <Grid
                   style={{ flex: 1, alignItems: 'center', position: 'relative', textAlign: 'center' }}
                   className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfTop)}
                   key={icon.key}
                   item>
-                  {/* {icon?.errorElement} */}
                   {/* @ts-ignore */}
                   <ManagmentIcon
                     classes={classes}
                     {...icon}
                     textClass={classes.f14}
-                    uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
+                    uIcon={<icon.uIcon style={{ fontSize: icon.key === 'resendConfirmation' ? 24 : 18 }} width={18} height={20} className={'rowIcon'} />}
                   />
-                  {/* {icon.key === 'copy' && renderCopyToClipoard} */}
                 </Grid>
               ))}
             </Grid>
@@ -294,7 +325,7 @@ const SubUsers = ({ classes }: any) => {
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.username")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.email")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.cellphone")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubUsers.cellphone")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.permissions")}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.noBorderOnLastCell)} align='center'>
           </TableCell>
@@ -380,7 +411,7 @@ const SubUsers = ({ classes }: any) => {
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={classes.flex2}>
+          className={classes.flex1}>
           {row.Cellphone}
         </TableCell>
         <TableCell
