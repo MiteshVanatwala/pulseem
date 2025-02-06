@@ -558,7 +558,7 @@ const SmsCreator = ({ classes }) => {
       isValid = false
     }
 
-    let validPattern = /^[A-Za-z0-9 -]*$/;
+    let validPattern = /^[A-Za-z0-9_ -]*$/;
     let onlyNumbersWithHyphen = /^[0-9-]*$/;
     let onlyNumbers = /^[0-9]*$/;
 
