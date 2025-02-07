@@ -89,7 +89,7 @@ const CreateAutomationTemplate = ({ classes }: any) => {
             }}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
-            {t('automations.selectTemplate')}
+            {t(template.AutomationId > 0 ? 'automations.selectTemplate' : 'common.select')}
           </Button>
         </Box>
       </Box>
@@ -104,11 +104,12 @@ const CreateAutomationTemplate = ({ classes }: any) => {
     if (errorsTemp.automationName === '') {
       setDialogType(null);
       setShowLoader(true);
-      // @ts-ignore`
+      // @ts-ignore
       const response = await dispatch(createAutomation({AutomationName: automationName})) as any;
       switch (response?.payload?.StatusCode) {
         case 1:
-            setToastMessage({ severity: 'success', color: 'success', message: t('automations.automationcreated'), showAnimtionCheck: false })
+            setToastMessage({ severity: 'success', color: 'success', message: t('automations.automationcreated'), showAnimtionCheck: false });
+            setAutomationName("");
             setTimeout(() => {
               window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${response?.payload?.Data?.AutomationID}&TemplateId=${selectedTemplate}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
             }, 2000);
@@ -175,7 +176,10 @@ const CreateAutomationTemplate = ({ classes }: any) => {
       ),
       showDefaultButtons: true,
 			confirmText: t("common.continue"),
-      onClose: () => { setDialogType(null) },
+      onClose: () => { 
+        setDialogType(null);
+        setAutomationName('');
+      },
       onConfirm: () => saveAutomation()
     }
   }

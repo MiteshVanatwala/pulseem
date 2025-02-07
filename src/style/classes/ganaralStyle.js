@@ -4265,8 +4265,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     transition: 'all 0.5s ease',
     overflowY: 'hidden',
     "&:hover, &.active": {
-      borderColor: "linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)",
+      background: '#fff8f8',
       boxShadow: '0px 0px 10px #ff3343',
+      borderColor: '#ff3343',
+      transform: 'scale(1.03)',
     },
     "& .description": {
       height: '50px'
