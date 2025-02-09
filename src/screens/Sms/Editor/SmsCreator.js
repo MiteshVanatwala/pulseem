@@ -716,7 +716,7 @@ const SmsCreator = ({ classes }) => {
             onChange={onCampaignNumber}
             inputProps={inputProps}
             value={campaignNumber}
-            dir={/^[0-9]/.test(campaignNumber) ? 'rtl' : 'ltr'}
+            dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
           />
           <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
             {t("mainReport.campRemovalDesc")}
