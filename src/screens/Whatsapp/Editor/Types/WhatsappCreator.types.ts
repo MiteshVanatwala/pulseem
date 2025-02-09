@@ -140,6 +140,7 @@ export type CommonRedux = {
 	countryCodeList?: any,
 	subAccount?: any,
 	WhatsAppPlatformID?: number | null
+	TierData?: any;
 };
 
 export type actionButtonProps = {
