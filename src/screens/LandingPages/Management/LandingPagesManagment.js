@@ -556,7 +556,7 @@ const LandingPagesesManagment = ({ classes }) => {
             } else { return false }
           }
           }
-          className={clsx(classes.middleText, classes.pt2, !userRoles?.HideRecipients && classes.disabled)}>
+          className={clsx(classes.middleText, classes.pt2, userRoles?.HideRecipients && classes.disabled)}>
           <Typography
             className={classes.middleText}>
             {(Submits && Submits.toLocaleString()) || 0}
