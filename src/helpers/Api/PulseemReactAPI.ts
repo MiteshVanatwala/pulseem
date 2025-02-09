@@ -7,8 +7,7 @@ const refreshTokenURL = `${actionURL}RefreshToken.ashx`
 const logoutURL = `${actionURL}LogoutSession.ashx`
 
 const redirectToLogin = () => {
-    // window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true'
-    return false;
+    window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true'
 }
 
 export const logout = async () => {

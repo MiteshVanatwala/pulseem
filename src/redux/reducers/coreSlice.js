@@ -64,7 +64,7 @@ export const coreSlice = createSlice({
       state.isDebtAccount = (payload.isDebtAccount === true || payload.isDebtAccount === 'True')
 
       const userPermissions = payload?.unique_name;
-      const isAdmin = userPermissions === '-1' || isSuperUserSelector(userPermissions);
+      const isAdmin = userPermissions === '-1' || userPermissions === -1 || isSuperUserSelector(userPermissions);
       const isReadOnly = userPermissions?.indexOf(5) > -1;
 
       if (isAdmin) {
