@@ -74,12 +74,16 @@ export const coreSlice = createSlice({
         state.userRoles = UserRoles.ReadOnly;
       }
       else {
-        UserRoles.Restricted.AllowSend = userPermissions.indexOf(eSubUserPermissions.AllowSend) > -1
-        UserRoles.Restricted.AllowExport = userPermissions.indexOf(eSubUserPermissions.AllowExport) > -1
-        UserRoles.Restricted.AllowDelete = userPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1
-        UserRoles.Restricted.AllowSubUsers = userPermissions.indexOf(eSubUserPermissions.AllowSubUsers) > -1
-
-        state.userRoles = UserRoles.Restricted;
+        const roles = {
+          ...UserRoles,
+          Restricted: {
+            AllowSend: userPermissions.indexOf(eSubUserPermissions.AllowSend) > -1,
+            AllowExport: userPermissions.indexOf(eSubUserPermissions.AllowExport) > -1,
+            AllowDelete: userPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1,
+            AllowSubUsers: userPermissions.indexOf(eSubUserPermissions.AllowSubUsers) > -1,
+          }
+        }
+        state.userRoles = roles.Restricted;
       }
     }
   }
