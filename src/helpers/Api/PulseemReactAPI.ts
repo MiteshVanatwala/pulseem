@@ -37,7 +37,8 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
         let token = jtoken
         if (isProdMode && NoAuthenticationAPIs.indexOf(config?.url || '') === -1) {
             if (!jtoken) {
-                redirectToLogin()
+                console.log(jtoken);
+                //redirectToLogin()
                 return Promise.reject('Unautorized')
             }
             const language = getCookie('Culture')
@@ -47,7 +48,8 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
                 }
             })
             if (refreshTokenURL !== request.responseURL) {
-                redirectToLogin()
+                console.log(request.responseURL);
+                //redirectToLogin()
                 return Promise.reject('Unautorized')
             }
             token = data
@@ -56,7 +58,8 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
         config.headers.Authorization = `Bearer ${token}`
         return config
     } catch (err) {
-        redirectToLogin()
+        console.log(err);
+        //redirectToLogin()
     }
 })
 
