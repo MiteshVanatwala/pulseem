@@ -681,7 +681,6 @@ const SmsCreator = ({ classes }) => {
             id="campaignName"
             type="text"
             placeholder={t("mainReport.campaignNamePlaceholder")}
-            // className={classes.textField}
             className={
               clsx(classes.textField, campaignBool ? classes.error : classes.success)
             }
@@ -717,6 +716,7 @@ const SmsCreator = ({ classes }) => {
             onChange={onCampaignNumber}
             inputProps={inputProps}
             value={campaignNumber}
+            dir={/^[0-9]/.test(campaignNumber) ? 'rtl' : 'ltr'}
           />
           <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
             {t("mainReport.campRemovalDesc")}
