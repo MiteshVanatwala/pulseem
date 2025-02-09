@@ -7,7 +7,8 @@ const refreshTokenURL = `${actionURL}RefreshToken.ashx`
 const logoutURL = `${actionURL}LogoutSession.ashx`
 
 const redirectToLogin = () => {
-    window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true'
+    // window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true'
+    return false;
 }
 
 export const logout = async () => {
@@ -37,8 +38,7 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
         let token = jtoken
         if (isProdMode && NoAuthenticationAPIs.indexOf(config?.url || '') === -1) {
             if (!jtoken) {
-                console.log(jtoken);
-                //redirectToLogin()
+                redirectToLogin()
                 return Promise.reject('Unautorized')
             }
             const language = getCookie('Culture')
@@ -48,8 +48,7 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
                 }
             })
             if (refreshTokenURL !== request.responseURL) {
-                console.log(request.responseURL);
-                //redirectToLogin()
+                redirectToLogin()
                 return Promise.reject('Unautorized')
             }
             token = data
@@ -58,8 +57,7 @@ PulseemReactInstance.interceptors.request.use(async (config: any) => {
         config.headers.Authorization = `Bearer ${token}`
         return config
     } catch (err) {
-        console.log(err);
-        //redirectToLogin()
+        redirectToLogin()
     }
 })
 
