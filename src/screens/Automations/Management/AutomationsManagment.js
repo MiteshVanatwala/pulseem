@@ -348,10 +348,13 @@ const AutomationsManagnentScreen = ({ classes }) => {
       false: t('automations.AutomatoionInActiveStatusText',)
     }
     return (
-      <Box>
+      <Box className={userRoles?.HideRecipients && classes.disabled}>
         <Switch
           checked={IsActive}
           onChange={() => {
+            if (userRoles?.HideRecipients) {
+              return;
+            }
             if (!row.HasNodes) {
               setErrorMessage(`${t('automations.NoNodesFound')}<br/>${t('automations.pressHereToEditAutomation').replace('##', row.ID)}`);
               setDialogType({
