@@ -115,7 +115,7 @@ const WhatsappInbound = ({ classes }: any) => {
       <>
         {/* <Divider /> */}
         <Grid container spacing={2}>
-          {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== "xs" && (
+          {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== "xs" && (
             <Grid item>
               <Button
                 variant="contained"

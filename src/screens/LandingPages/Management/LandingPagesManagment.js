@@ -427,7 +427,7 @@ const LandingPagesesManagment = ({ classes }) => {
         uIcon: DeleteIcon,
         lable: t('landingPages.GridButtonColumnResource1.HeaderText'),
         showPhone: true,
-        remove: !userRoles.AllowDelete,
+        remove: !userRoles?.AllowDelete,
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({

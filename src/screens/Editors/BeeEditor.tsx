@@ -288,7 +288,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
             isLocal: true,
             behaviors: {
               canEdit: true,
-              canDelete: userRoles.AllowDelete,
+              canDelete: userRoles?.AllowDelete,
             },
           };
           tempRows.push(tagObj);
@@ -700,7 +700,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
     });
   }
   const handleDeleteBlock = (e: any, row_id: string) => {
-    if (!userRoles.AllowDelete) {
+    if (!userRoles?.AllowDelete) {
       return false;
     }
     //@ts-ignore
@@ -1284,7 +1284,7 @@ const BeeEditor = ({ classes }: BeeEditorModel) => {
           }
         }
         //@ts-ignore
-        onDelete={userRoles.AllowDelete && fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
+        onDelete={userRoles?.AllowDelete && fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
         // onShowGallery={() => { setShowGallery(true) }}
         //@ts-ignore
         onShowDocuments={() => { setShowDocuments(true) }}

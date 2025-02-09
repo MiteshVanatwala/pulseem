@@ -213,7 +213,7 @@ const RecipientChart = ({ classes, }) => {
             responsive: true,
             cutout: 55,
             onClick: (e) => {
-                if (!userRoles.HideRecipients) {
+                if (!userRoles?.HideRecipients) {
                     const chart = e.chart;
                     if (chart) {
                         const activeChart = e.chart._active[0];
@@ -269,7 +269,7 @@ const RecipientChart = ({ classes, }) => {
                         href="#"
                         className={classes.chartLabel}
                         onClick={(e) => {
-                            if (!userRoles.HideRecipients) {
+                            if (!userRoles?.HideRecipients) {
                                 e.preventDefault();
                                 openReports(report.ReportSection, "total");
                             }

@@ -221,7 +221,7 @@ const CreditHistory = ({ classes, id = '' }: any) => {
 					>
 						{t("common.clear")}
 					</Button>
-					{userRoles.AllowExport && <Button
+					{userRoles?.AllowExport && <Button
 						onClick={() => setDialog('exportFormat')}
 						className={clsx(classes.btn, classes.btnRounded)}
 						endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}

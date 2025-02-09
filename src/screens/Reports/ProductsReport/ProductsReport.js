@@ -102,7 +102,7 @@ const ProductsReport = ({ classes }) => {
     const getHrefs = (id) => ({
         Purchased: {
             title: t('report.ProductsReport.purchased'),
-            onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
+            onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
                 state: {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
@@ -113,7 +113,7 @@ const ProductsReport = ({ classes }) => {
         },
         Abandoned: {
             title: t('report.ProductsReport.abandoned'),
-            onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
+            onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
                 state: {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
@@ -261,7 +261,7 @@ const ProductsReport = ({ classes }) => {
         const dataLength = productsReportDetails?.TotalProducts ?? 0;
         return (
             <Grid container spacing={2} className={classes.linePadding}>
-                {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
+                {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         onClick={() => {
@@ -292,7 +292,7 @@ const ProductsReport = ({ classes }) => {
             onClick = null
         } = data
         return (
-            <Box style={{ display: 'flex', flexDirection: 'column' }} className={userRoles.HideRecipients && classes.disabled}>
+            <Box style={{ display: 'flex', flexDirection: 'column' }} className={userRoles?.HideRecipients && classes.disabled}>
                 <Typography component={'p'}
                     onClick={() => onClick?.()}
                     className={clsx(classes.middleText, colorTextStyle[type],

@@ -126,7 +126,7 @@ const Buttons = ({
 				</Button>
 
 				{
-					userRoles.AllowSend && (showSendButton || isSummary) && (
+					userRoles?.AllowSend && (showSendButton || isSummary) && (
 						<Button
 							variant='contained'
 							size='medium'

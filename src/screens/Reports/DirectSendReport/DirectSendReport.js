@@ -446,7 +446,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
               >
                 {t('master.campaignsArchive')}
               </Button>}
-              {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <CustomTooltip
+              {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <CustomTooltip
                 style={{ fontSize: 14 }}
                 text={t('report.ExportLimitation')}
                 icon={<Button

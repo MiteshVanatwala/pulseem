@@ -47,7 +47,7 @@ const WizardActions = ({
                         {
                             helperText && <span className={clsx(classes.paddingSides5, classes.semibold)}>{helperText}</span>
                         }
-                        {userRoles.AllowDelete && onDelete &&
+                        {userRoles?.AllowDelete && onDelete &&
                             <Button
                                 className={clsx(
                                     classes.btn,
@@ -81,7 +81,7 @@ const WizardActions = ({
                                 {t("common.imageGallery")}
                             </Button>
                         }
-                        {onTestSend && userRoles.AllowSend &&
+                        {onTestSend && userRoles?.AllowSend &&
                             <Button
                                 onClick={() => onTestSend()}
                                 style={{ marginInline: 8, paddingInline: 10 }}

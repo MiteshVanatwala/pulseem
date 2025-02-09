@@ -119,7 +119,7 @@ const Templates = ({
                   setDisplaySaveTemplate(true);
                 }} />
               </Tooltip>
-              {userRoles.AllowDelete && <Tooltip title={t('common.Delete')}>
+              {userRoles?.AllowDelete && <Tooltip title={t('common.Delete')}>
                 <MdDelete onClick={() => {
                   setDisplayRemoveTemplateDialog(true);
                   setTemplateDetails({ ID: templateDetails.ID });

@@ -386,7 +386,7 @@ const SmsManagnentScreen = ({ classes }) => {
 				uIcon: DeleteIcon,
 				lable: t('campaigns.DeleteResource1.HeaderText'),
 				showPhone: true,
-				remove: !userRoles.AllowDelete,
+				remove: !userRoles?.AllowDelete,
 				disable: AutomationID !== 0,
 				rootClass: classes.paddingIcon,
 				onClick: () => {

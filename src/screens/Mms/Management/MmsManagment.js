@@ -316,7 +316,7 @@ const MmsManagnentScreen = ({ classes }) => {
         key: 'delete',
         uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
-        remove: !userRoles.AllowDelete,
+        remove: !userRoles?.AllowDelete,
         showPhone: true,
         rootClass: classes.paddingIcon,
         onClick: () => {

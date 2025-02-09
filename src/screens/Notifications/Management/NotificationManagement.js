@@ -466,7 +466,7 @@ const NotificationManagement = ({ classes }) => {
         uIcon: DeleteIcon,
         lable: t('notifications.buttons.delete'),
         showPhone: true,
-        remove: !userRoles.AllowDelete,
+        remove: !userRoles?.AllowDelete,
         rootClass: classes.paddingIcon,
         onClick: async () => {
           setDialogType({

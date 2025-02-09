@@ -77,7 +77,7 @@ const GroupTags = ({ classes,
             debug={true}
             className={classes.autoCompleteTag}
             disableCloseOnSelect
-            disabled={!userRoles.AllowDelete}
+            disabled={!userRoles?.AllowDelete}
             options={groupsToShow ?? []}
             getOptionLabel={(option) => option?.GroupName}
             value={subAccountAllGroups.reduce((prevVal, newVal) => {

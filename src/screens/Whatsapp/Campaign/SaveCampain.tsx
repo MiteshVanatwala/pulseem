@@ -1333,7 +1333,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const limitNotice = () => {
-		const tierDataFromNumber = from !== '' ? get(first(filter(TierData, {FromNumber: from?.replace(/-/g, '')}) || {}), 'WhatsappTierId', 0) : 0;
+		const tierDataFromNumber = from !== '' ? get(first(filter(TierData, { FromNumber: from?.replace(/-/g, '') }) || {}), 'WhatsappTierId', 0) : 0;
 		return (
 			<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
 				<span style={{ lineHeight: '0' }}>
@@ -1538,7 +1538,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												sm={12}
 												md={12}
 												lg={12}>
-												{userRoles.AllowSend && <Box
+												{userRoles?.AllowSend && <Box
 													className={clsx(
 														classes.switchDiv,
 														classes.testSendWrapper

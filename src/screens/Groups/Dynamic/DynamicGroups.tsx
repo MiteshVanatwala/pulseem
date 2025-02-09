@@ -362,7 +362,7 @@ const DynamicGroups = ({ classes }: any) => {
                         {t("group.new")}
                     </Button>
                 </Grid>
-                {userRoles.AllowDelete && windowSize !== "xs" && (
+                {userRoles?.AllowDelete && windowSize !== "xs" && (
                     <Grid item>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -376,7 +376,7 @@ const DynamicGroups = ({ classes }: any) => {
                     </Grid>
                 )}
                 {
-                    userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
+                    userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -523,7 +523,7 @@ const DynamicGroups = ({ classes }: any) => {
                 key: 'reset',
                 uIcon: ResetIcon,
                 lable: t("recipient.reset"),
-                remove: !userRoles.AllowDelete || windowSize === 'xs',
+                remove: !userRoles?.AllowDelete || windowSize === 'xs',
                 rootClass: classes.paddingIcon,
                 onClick: () => {
                     setSelectedGroups([GroupID])
@@ -556,7 +556,7 @@ const DynamicGroups = ({ classes }: any) => {
                 key: 'delete',
                 uIcon: DeleteIcon,
                 lable: t("recipient.delete"),
-                remove: !userRoles.AllowDelete,
+                remove: !userRoles?.AllowDelete,
                 disable: (AutomationID || IsConnectedToWebForm || IsAutoResponder),
                 rootClass: classes.paddingIcon,
                 onClick: () => {

@@ -533,7 +533,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         key: 'delete',
         uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
-        remove: !userRoles.AllowDelete,
+        remove: !userRoles?.AllowDelete,
         rootClass: classes.paddingIcon,
         disable: AutomationID !== 0,
         showPhone: true,

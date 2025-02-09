@@ -654,7 +654,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				buttonKey: 'delete',
 				uIcon: DeleteIcon,
 				icon: '',
-				remove: !userRoles.AllowDelete,
+				remove: !userRoles?.AllowDelete,
 				disable: AutomationID !== 0,
 				rootClass: classes.paddingIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),

@@ -242,7 +242,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const onTableCellClick = (cellName: string, campaignId: number) => {
-		if (userRoles.HideRecipients) {
+		if (userRoles?.HideRecipients) {
 			return;
 		}
 
@@ -563,7 +563,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		return (
 			<Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
 				{
-					userRoles.AllowExport && windowSize !== 'xs' && (
+					userRoles?.AllowExport && windowSize !== 'xs' && (
 						<Grid item>
 							<Button
 								className={clsx(

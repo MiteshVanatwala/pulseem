@@ -840,7 +840,7 @@ const ClientSearchResult = ({ classes }) => {
     {
       label: t(""),
       classes: cellStyle,
-      className: userRoles.AllowDelete ? classes.flex6 : classes.flex1,
+      className: userRoles?.AllowDelete ? classes.flex6 : classes.flex1,
       align: "center",
     },
     {
@@ -1336,7 +1336,7 @@ const ClientSearchResult = ({ classes }) => {
             {t("group.new")}
           </Button>
         </Grid>
-        {userRoles.AllowDelete && <Grid item xs={windowSize === "xs" && 12}>
+        {userRoles?.AllowDelete && <Grid item xs={windowSize === "xs" && 12}>
           <Button
             className={clsx(classes.btn, classes.btnRounded)}
             onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
@@ -1345,7 +1345,7 @@ const ClientSearchResult = ({ classes }) => {
             {t("recipient.unsubscribe")}
           </Button>
         </Grid>}
-        {userRoles.AllowDelete && windowSize !== "xs" && (
+        {userRoles?.AllowDelete && windowSize !== "xs" && (
           <Grid item>
             <Button
               className={clsx(classes.btn, classes.btnRounded)}
@@ -1357,7 +1357,7 @@ const ClientSearchResult = ({ classes }) => {
           </Grid>
         )}
         {
-          userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && <Grid item xs={windowSize === "xs" && 12}>
+          userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && <Grid item xs={windowSize === "xs" && 12}>
             <Button
               className={clsx(
                 !data ? classes.disabled : null,
@@ -1516,7 +1516,7 @@ const ClientSearchResult = ({ classes }) => {
         {
           key: 'deleteFromGroups',
           uIcon: DeleteRecipient,
-          remove: !userRoles.AllowDelete,
+          remove: !userRoles?.AllowDelete,
           lable: t("recipient.deleteFromGroups"),
           rootClass: classes.paddingIcon,
           onClick: () => {
@@ -1527,7 +1527,7 @@ const ClientSearchResult = ({ classes }) => {
         {
           key: 'deleteFromEmail',
           uIcon: RemoveEmail,
-          remove: !userRoles.AllowDelete,
+          remove: !userRoles?.AllowDelete,
           lable: t("recipient.deleteEmail"),
           rootClass: classes.paddingIcon,
           onClick: () => {
@@ -1538,7 +1538,7 @@ const ClientSearchResult = ({ classes }) => {
         {
           key: 'deleteFromPhone',
           uIcon: RemovePhone,
-          remove: !userRoles.AllowDelete || windowSize === 'xs',
+          remove: !userRoles?.AllowDelete || windowSize === 'xs',
           lable: t("recipient.deletePhone"),
           rootClass: classes.paddingIcon,
           onClick: () => {
@@ -1621,7 +1621,7 @@ const ClientSearchResult = ({ classes }) => {
         <TableCell
           classes={cellStyle}
           align="center"
-          className={userRoles.AllowDelete ? classes.flex6 : classes.flex1}
+          className={userRoles?.AllowDelete ? classes.flex6 : classes.flex1}
         >
           {renderCellIcons()}
         </TableCell>

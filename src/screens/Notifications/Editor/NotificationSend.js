@@ -349,7 +349,7 @@ const NotificationSend = ({ classes }) => {
                     onClick={() => saveSettings(true)}>
                     {t('notifications.saveAndExit')}
                 </Button>
-                {userRoles.AllowSend && <Button
+                {userRoles?.AllowSend && <Button
                     className={clsx(
                         classes.btn,
                         classes.btnRounded,

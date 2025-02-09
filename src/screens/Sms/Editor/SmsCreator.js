@@ -1107,7 +1107,7 @@ const SmsCreator = ({ classes }) => {
         <div
           className={classes.testDiv}
         >
-          {userRoles.AllowSend && <FormControlLabel
+          {userRoles?.AllowSend && <FormControlLabel
             control={
               <PulseemSwitch
                 switchType='ios'
@@ -1505,7 +1505,7 @@ const SmsCreator = ({ classes }) => {
   const renderButtons = () => {
     return (
       <div style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto", paddingBottom: 40 }} className={clsx(classes.baseButtonsContainer, "baseButtonsContainer")}>
-        {userRoles.AllowDelete && <Button
+        {userRoles?.AllowDelete && <Button
           className={clsx(
             classes.btn,
             classes.btnRounded,

@@ -285,7 +285,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       isLocal: true,
       behaviors: {
         canEdit: true,
-        canDelete: userRoles.AllowDelete,
+        canDelete: userRoles?.AllowDelete,
       }
     }]
     if (tags && tags?.length > 0) {
@@ -299,7 +299,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             isLocal: true,
             behaviors: {
               canEdit: true,
-              canDelete: userRoles.AllowDelete,
+              canDelete: userRoles?.AllowDelete,
             },
           };
           tempRows.push(tagObj);
@@ -1171,7 +1171,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             text: t('campaigns.newsletterSetUp')
           }
         }
-        onDelete={userRoles.AllowDelete && fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
+        onDelete={userRoles?.AllowDelete && fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}

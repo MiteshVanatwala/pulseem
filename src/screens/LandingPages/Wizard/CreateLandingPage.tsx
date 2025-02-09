@@ -910,7 +910,7 @@ const CreateLandingPage = ({ classes }: ClassesType) => {
 							callback: () => setDialogType({ type: 'confirmExit' })
 						}}
 						// @ts-ignore
-						onDelete={userRoles.AllowDelete && id ? () => setDialogType({ type: "delete" }) : null}
+						onDelete={userRoles?.AllowDelete && id ? () => setDialogType({ type: "delete" }) : null}
 						// @ts-ignore
 						onExit={() => setDialogType({ type: 'confirmExit' })}
 						// @ts-ignore

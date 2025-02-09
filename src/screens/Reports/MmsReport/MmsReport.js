@@ -78,14 +78,14 @@ const MmsReport = ({ classes }) => {
         TotalSendTo: {
             title: t('mmsreport.amountToSend'),
             href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-            onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID } }),
+            onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID } }),
             //TODO: UnComment OnCLick, Comment Href 
 
         },
         TotalSent: {
             title: t('common.Total'),
             href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=3&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-            onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID, Status: 3 } }),
+            onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID, Status: 3 } }),
             //TODO: UnComment OnCLick, Comment Href 
         },
         FutureSends: {
@@ -96,13 +96,13 @@ const MmsReport = ({ classes }) => {
         Failed: {
             title: windowSize === 'xs' ? '' : t("common.failedStatus"),
             href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=4&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-            onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID, Status: 4 } }),
+            onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID, Status: 4 } }),
             //TODO: UnComment OnCLick, Comment Href 
         },
         Removed: {
             title: windowSize === 'xs' ? '' : t('mmsreport.removal'),
             href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=5&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-            onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID, Status: 5 } }),
+            onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID, Status: 5 } }),
             //TODO: UnComment OnCLick, Comment Href 
         },
         CreditsPerMms: {
@@ -337,7 +337,7 @@ const MmsReport = ({ classes }) => {
         const dataLength = filteredResults.length;
         return (
             <Grid container spacing={2} className={classes.linePadding} >
-                {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
+                {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
                         className={clsx(
                             classes.btn, classes.btnRounded,
@@ -419,7 +419,7 @@ const MmsReport = ({ classes }) => {
         const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick = () => null } = data
         // const innerRef = clickable ? href : '';
         return (
-            <Box style={{ display: 'flex', flexDirection: 'column' }} className={userRoles.HideRecipients && classes.disabled} >
+            <Box style={{ display: 'flex', flexDirection: 'column' }} className={userRoles?.HideRecipients && classes.disabled} >
                 {/* <Typography component={innerRef && value > 0 ? 'a' : 'p'} */}
                 <Typography component={'p'}
                     // href={innerRef}

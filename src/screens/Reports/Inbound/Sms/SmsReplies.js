@@ -105,7 +105,7 @@ const SmsReplies = ({ classes }) => {
             <>
                 {/* <Divider /> */}
                 <Grid container spacing={2} className={clsx(classes.p20)}>
-                    {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
+                    {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                         <Button
                             className={clsx(
                                 classes.btn, classes.btnRounded,

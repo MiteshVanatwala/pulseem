@@ -64,7 +64,7 @@ const DownloadFiles = ({ classes }: any) => {
                     {/* @ts-ignore */}
                     <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.CreationDate")}</TableCell>
                     {/* @ts-ignore */}
-                    {userRoles.AllowExport && <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("master.download")}</TableCell>}
+                    {userRoles?.AllowExport && <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("master.download")}</TableCell>}
                 </TableRow>
             </TableHead>
         )
@@ -182,7 +182,7 @@ const DownloadFiles = ({ classes }: any) => {
                     className={classes.flex1}>
                     {moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}
                 </TableCell>
-                {userRoles.AllowExport && <TableCell
+                {userRoles?.AllowExport && <TableCell
                     classes={cellStyle}
                     align='center'
                     className={clsx(classes.flex1, classes.noBorderOnLastCell)}>

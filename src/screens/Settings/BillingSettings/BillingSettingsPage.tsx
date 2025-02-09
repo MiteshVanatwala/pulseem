@@ -502,7 +502,7 @@ const BillingSettingsPage = ({ classes }: any) => {
                               onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); handleShowCreditCardIframe() }}
                               className={clsx(classes.font14)}
                               style={{ textDecoration: 'underline' }}
-                            >{t("settings.billingSettings.editCard")}</Link>{userRoles.AllowDelete && showEditCard && <> |
+                            >{t("settings.billingSettings.editCard")}</Link>{userRoles?.AllowDelete && showEditCard && <> |
                               <Link
                                 onClick={(e: any) => { e.preventDefault(); e.stopPropagation(); setConfirmDialog(true) }}
                                 className={clsx(classes.font14)}

@@ -1065,7 +1065,7 @@ const RecipientReport = ({ classes }: any) => {
           {t('common.recipientGroups')}
         </div>
       </Grid>
-      {userRoles.AllowExport && <Grid item md={1} className={clsx(classes.flexGrow1, classes.pt20)}>
+      {userRoles?.AllowExport && <Grid item md={1} className={clsx(classes.flexGrow1, classes.pt20)}>
         <Button
           onClick={() => setDialogType({ type: 'exportFormat', data: '' })}
           className={clsx(classes.btn, classes.btnRounded, classes.mt1)}

@@ -189,7 +189,7 @@ const AccountUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
         disable: false,
         showPhone: true,
-        remove: !userRoles.AllowDelete || windowSize === 'xs' || !isGlobal,
+        remove: !userRoles?.AllowDelete || windowSize === 'xs' || !isGlobal,
         onClick: () => {
           setDialogType({ type: 'Delete', data: row.CustomGuidEnc });
         }
@@ -445,7 +445,7 @@ const AccountUsers = ({ classes }: any) => {
             {t('SubAccount.showHistory')}
           </Button>
           {
-            userRoles.AllowDelete && !isGlobal && selectedAccountId && (
+            userRoles?.AllowDelete && !isGlobal && selectedAccountId && (
               <Button
                 className={clsx(
                   classes.btn,

@@ -1070,7 +1070,7 @@ const AddRecipientPopup = ({ classes,
                 dropdown
                 dropDownProps={{
                     onChange: (e, val, reason, details) => {
-                        if (!userRoles.AllowDelete) {
+                        if (!userRoles?.AllowDelete) {
                             e.preventDefault();
                             e.stopPropagation();
                             return false;

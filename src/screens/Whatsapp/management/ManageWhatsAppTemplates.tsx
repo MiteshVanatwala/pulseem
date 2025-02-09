@@ -461,7 +461,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const onPreview = async (id: string) => {
 		const templateData = templateListData?.find(
 			(template) => template?.Id === Number(id)
-		);	
+		);
 		if (templateData) {
 			if (templateData.CategoryId === 3) {
 				renderAuthenticationPreview(templateData);
@@ -583,7 +583,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{
 				key: 'delete',
 				buttonKey: 'delete',
-				remove: !userRoles.AllowDelete,
+				remove: !userRoles?.AllowDelete,
 				uIcon: DeleteIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
 				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
@@ -740,40 +740,40 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const getDuplicateDialog = () => ({
-    title: translator('whatsappManagement.duplicate'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }}>
-        {translator('whatsappManagement.duplicateDesc')}
-      </Typography>
-    ),
+		title: translator('whatsappManagement.duplicate'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }}>
+				{translator('whatsappManagement.duplicateDesc')}
+			</Typography>
+		),
 		renderButtons: () => <ConfirmationButtons
 			classes={classes}
 			onConfirm={() => onDuplicaTemplate()}
 			onCancel={() => setDialogType({})}
 		/>
-  })
+	})
 
 	const getDeleteDialog = () => ({
-    title: translator('whatsappManagement.deleteTemplate'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        {translator('whatsapp.alertModal.DeleteTemplateTitle')}
-      </Typography>
-    ),
+		title: translator('whatsappManagement.deleteTemplate'),
+		showDivider: false,
+		content: (
+			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+				{translator('whatsapp.alertModal.DeleteTemplateTitle')}
+			</Typography>
+		),
 		renderButtons: () => <ConfirmationButtons
 			classes={classes}
 			onConfirm={() => onDeleteTemplate()}
 			onCancel={() => setDialogType({})}
 		/>
-  })
+	})
 
 	const getPreviewDialog = (templateId: string) => ({
-    title: translator('whatsappManagement.preview'),
-    showDivider: false,
-    content: (
-      <Box className={classes.alertModalContentMobile}>
+		title: translator('whatsappManagement.preview'),
+		showDivider: false,
+		content: (
+			<Box className={classes.alertModalContentMobile}>
 				<WhatsappMobilePreview
 					classes={classes}
 					templateData={templateData}
@@ -782,7 +782,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					templateId={templateId}
 				/>
 			</Box>
-    ),
+		),
 		renderButtons: () => (
 			<Grid
 				container
@@ -803,12 +803,12 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				</Grid>
 			</Grid>
 		)
-  })
+	})
 
 	const getSubmitTemplateDialog = () => ({
-    title: translator('whatsapp.alertModal.ConfirmText'),
-    showDivider: false,
-    content: (
+		title: translator('whatsapp.alertModal.ConfirmText'),
+		showDivider: false,
+		content: (
 			<>
 				<div className={clsx(classes.pb25)}>{translator('whatsapp.alertModal.ConfirmTitle')}</div>
 				<Box className={classes.alertModalContentMobile}>
@@ -820,21 +820,21 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					/>
 				</Box>
 			</>
-    ),
+		),
 		renderButtons: () => <ConfirmationButtons
 			classes={classes}
 			onConfirm={() => onSubmitTemplate()}
 			onCancel={() => setDialogType({})}
 		/>
-  })
+	})
 
-  const renderDialog = () => {
-    const { type, data } = dialogType || {}
+	const renderDialog = () => {
+		const { type, data } = dialogType || {}
 		let currentDialog: any = {};
 		if (type === 'duplicate') {
-    	currentDialog = getDuplicateDialog();
+			currentDialog = getDuplicateDialog();
 		} else if (type === 'errorDialog') {
-			currentDialog = TemplateErrorDialog({classes, failedTemplateResponse: data, setDialogType, translator, isRTL});
+			currentDialog = TemplateErrorDialog({ classes, failedTemplateResponse: data, setDialogType, translator, isRTL });
 		} else if (type === 'delete') {
 			currentDialog = getDeleteDialog();
 		} else if (type === 'preview') {
@@ -857,11 +857,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				</BaseDialog>
 			)
 		}
-  }
+	}
 
 	const renderTableHead = () => {
-    return (
-      <TableHead>
+		return (
+			<TableHead>
 				<TableRow classes={rowStyle}>
 					<TableCell classes={cellStyle} className={classes.flex3} align='center'>{translator('whatsapp.templateName')}</TableCell>
 					<TableCell classes={cellStyle} className={classes.flex2} align='center'>{translator('sms.StatusResource1.HeaderText')}</TableCell>
@@ -869,12 +869,12 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					<TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex5}></TableCell>
 				</TableRow>
 			</TableHead>
-    )
-  }
+		)
+	}
 
 	const renderRow = (row: templateListItemsProps, index: number) => {
-    return (
-      <TableRow
+		return (
+			<TableRow
 				key={`templateMaganement_${row.Id}_${index}`}
 				classes={rowStyle}>
 				<TableCell
@@ -914,25 +914,25 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					{renderCellIcons(row)}
 				</TableCell>
 			</TableRow>
-    )
-  }
+		)
+	}
 
-  const renderPhoneRow = (row: templateListItemsProps, index: number) => {
-    return (
+	const renderPhoneRow = (row: templateListItemsProps, index: number) => {
+		return (
 			<TableRow
-			key={`templateMaganement_${row.Id}_${index}`}
-        component='div'
-        classes={rowStyle}>
-        <TableCell style={{ flex: 2 }} classes={{ root: classes.tableCellRoot }}
-          className={classes.p20}>
-          <Box className={classes.justifyBetween}>
-            <Box className={classes.inlineGrid}>
+				key={`templateMaganement_${row.Id}_${index}`}
+				component='div'
+				classes={rowStyle}>
+				<TableCell style={{ flex: 2 }} classes={{ root: classes.tableCellRoot }}
+					className={classes.p20}>
+					<Box className={classes.justifyBetween}>
+						<Box className={classes.inlineGrid}>
 							{renderNameCell(row)}
-            </Box>
-            <Box className={classes.inlineGrid}>
+						</Box>
+						<Box className={classes.inlineGrid}>
 							{renderStatusCell(row)}
-            </Box>
-          </Box>
+						</Box>
+					</Box>
 					<Box className={classes.pt5}>
 						<Typography
 							className={clsx(classes.middleText)}
@@ -944,10 +944,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					<Box className={classes.pt10}>
 						{renderCellIcons(row)}
 					</Box>
-        </TableCell>
-      </TableRow>
-    )
-  }
+				</TableCell>
+			</TableRow>
+		)
+	}
 
 	const renderTableBody = () => {
 		if (templateListData?.length === 0) {
@@ -957,25 +957,25 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				</Box>
 			)
 		}
-    return (
+		return (
 			<TableBody>
-				{ templateListData?.map(windowSize === 'xs' ? renderPhoneRow : renderRow) }
+				{templateListData?.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
 			</TableBody>
-    )
-  }
+		)
+	}
 
 	const renderTable = () => {
-    return (
-      <TableContainer className={clsx(classes.tableStyle, windowSize === 'xs' ? classes.mt20 : '')}>
-        <Table className={classes.tableContainer}>
+		return (
+			<TableContainer className={clsx(classes.tableStyle, windowSize === 'xs' ? classes.mt20 : '')}>
+				<Table className={classes.tableContainer}>
 					<>
 						{windowSize !== 'xs' && renderTableHead()}
 						{renderTableBody()}
 					</>
-        </Table>
-      </TableContainer>
-    )
-  }
+				</Table>
+			</TableContainer>
+		)
+	}
 
 	return (
 		<DefaultScreen
@@ -1048,7 +1048,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 												})
 											}
 										</Select>
-									</FormControl>	
+									</FormControl>
 								</Box>
 							</Grid>
 

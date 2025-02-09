@@ -66,7 +66,7 @@ const SmsReport = ({ classes }) => {
   const getHrefs = (id) => ({
     TotalSendTo: {
       href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
+      onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -77,7 +77,7 @@ const SmsReport = ({ classes }) => {
       title: t('common.Unique'),
       href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => {
-        if (userRoles.HideRecipients) {
+        if (userRoles?.HideRecipients) {
           return;
         }
         window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=unique&Culture=${isRTL ? 'he-IL' : 'en-US'}`
@@ -87,7 +87,7 @@ const SmsReport = ({ classes }) => {
       title: t('mainReport.verifiedCount'),
       href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => {
-        if (userRoles.HideRecipients) {
+        if (userRoles?.HideRecipients) {
           return;
         }
         window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&type=verified&Culture=${isRTL ? 'he-IL' : 'en-US'}`
@@ -102,7 +102,7 @@ const SmsReport = ({ classes }) => {
       title: t('mainReport.locUniqueClicksPercents.HeaderText'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => {
-        if (userRoles.HideRecipients) {
+        if (userRoles?.HideRecipients) {
           return;
         }
         window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
@@ -111,7 +111,7 @@ const SmsReport = ({ classes }) => {
     Failed: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("common.failedStatus"),
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
+      onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -120,7 +120,7 @@ const SmsReport = ({ classes }) => {
     },
     Removed: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.removed'),
-      onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
+      onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -131,7 +131,7 @@ const SmsReport = ({ classes }) => {
       title: t('common.Total'),
       href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
       onClick: () => {
-        if (userRoles.HideRecipients) {
+        if (userRoles?.HideRecipients) {
           return;
         }
         window.location = `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
@@ -140,7 +140,7 @@ const SmsReport = ({ classes }) => {
     DLR: {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => !userRoles.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
+      onClick: () => !userRoles?.HideRecipients && navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SuccessCountSMSCampaignID,
           PageProperty: GetPageNyName('reports/SMSMainReport')
@@ -475,7 +475,7 @@ const SmsReport = ({ classes }) => {
     const dataLength = smsReport.length;
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)} >
-        {userRoles.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && <Grid item>
+        {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && SizeOptionsOfHandHeldDevices.indexOf(windowSize) === -1 && <Grid item>
           <Button
             className={clsx(
               classes.btn, classes.btnRounded,
@@ -560,7 +560,7 @@ const SmsReport = ({ classes }) => {
     const { title = SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
     const isLink = value > 0 && !!onClick;
     return (
-      <Box className={userRoles.HideRecipients && classes.disabled} style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
+      <Box className={userRoles?.HideRecipients && classes.disabled} style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
         onClick={isLink ? onClick : VoidFunction}>
         <Typography
           component={'a'}
@@ -580,7 +580,7 @@ const SmsReport = ({ classes }) => {
   const renderRevenueData = (value, type, data = {}) => {
     const { textStyle = null, onClick = null } = data
     return (
-      <Box className={userRoles.HideRecipients && classes.disabled} style={{ display: 'flex', flexDirection: 'column' }} >
+      <Box className={userRoles?.HideRecipients && classes.disabled} style={{ display: 'flex', flexDirection: 'column' }} >
         <Typography component={value > 0 ? 'a' : 'p'}
           onClick={() => {
             if (value > 0) {

@@ -29,7 +29,7 @@ export const coreSlice = createSlice({
     billingTypeId: null,
     accountFeatures: null,
     isDebtAccount: null,
-    userRoles: UserRoles.Admin,
+    userRoles: UserRoles?.Admin,
     subUserPermissions: [],
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }

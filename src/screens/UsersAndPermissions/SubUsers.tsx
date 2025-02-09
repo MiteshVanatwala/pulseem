@@ -207,7 +207,7 @@ const SubUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
         disable: false,
         showPhone: true,
-        remove: !userRoles.AllowDelete,
+        remove: !userRoles?.AllowDelete,
         // remove: windowSize === 'xs',
         onClick: () => {
           setDialogType({ type: 'Delete', data: row });
