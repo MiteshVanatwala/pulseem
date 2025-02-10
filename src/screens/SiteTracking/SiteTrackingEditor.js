@@ -22,6 +22,8 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 import { Title } from '../../components/managment/Title';
 import { InputAdornment } from '@mui/material';
+import { getCommonFeatures } from '../../redux/reducers/commonSlice';
+import { SetRevenueFeature } from '../../redux/reducers/AccountSettingsSlice';
 
 const SiteTrackingEditor = ({ classes }) => {
     const { isRTL, windowSize } = useSelector(state => state.core);
@@ -113,12 +115,14 @@ const SiteTrackingEditor = ({ classes }) => {
             else {
                 request.id = response?.payload?.data?.id;
                 dispatch(setPurchase(request));
+                updateRevenueFeature(isEnable);                
                 await dispatch(setDomain({ DomainAddress: event?.domain }));
             }
         }
         else {
             const response = await dispatch(deleteSiteTrackingEvent(purchaseEvent.id));
             setPurchase(response?.payload?.data);
+            updateRevenueFeature(isEnable);
             if (event && event.id !== '') {
                 return;
             }
@@ -129,6 +133,20 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         setPurchaseToggleDisabled(false);
     }
+
+    const updateRevenueFeature = async (isEnable) => {
+        const revenueResponse = await dispatch(SetRevenueFeature({
+            FeatureName: "revenue",
+            ToggleFeature: isEnable
+        }));
+        if (revenueResponse.payload.StatusCode === 200) {
+            setToastMessage(isEnable ? ToastMessages.REVENUE_ADDED : ToastMessages.REVENUE_REMOVED);
+            await dispatch(getCommonFeatures());
+        } else {
+            setToastMessage(ToastMessages.REVENUE_ERROR);
+        }
+    }
+
     const onSave = async () => {
         setShowLoader(true);
         if (validateForm()) {
