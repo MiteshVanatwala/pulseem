@@ -8,7 +8,8 @@ export enum LU_Plugin {
     CashCow = 1,
     Shopify = 2,
     Isracard = 3,
-    EShop = 5
+    EShop = 5,
+    Klaviyo = 10
 }
 export enum LU_PluginGroupType {
     PURCHASED = 1,
@@ -47,6 +48,24 @@ export interface EShopModel {
     SubAccountID?: string;
     AutomaticDailyEmailsUnsubscribesAndActiveTypeID?: eAutomaticDailyEmailsUnsubscribesAndActiveTypeID;
     AutomaticDailyEmailsGroups?: never | number[];
+}
+
+export interface KlaviyoModel {
+    ApiKey: string;
+    DaysBackwards: number | null;
+    IsDeleted: boolean;
+    IntervalToRunService: string;
+    UnsubscribePreferenceTypeID: UnsubscribePreferenceType;
+    EcommerceSyncOptionsID: number | null;
+    isSyncRecipients?: boolean;
+    IsInsertAsActive: boolean;
+}
+
+export enum UnsubscribePreferenceType {
+    None = 0,
+    Email = 1,
+    Sms = 2,
+    Both = 3
 }
 
 export enum eAutomaticDailyEmailsUnsubscribesAndActiveTypeID {
