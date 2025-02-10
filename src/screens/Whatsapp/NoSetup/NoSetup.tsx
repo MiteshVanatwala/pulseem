@@ -21,7 +21,7 @@ const NoSetup = ({ classes, isCompact = false, customMessage = '' }: NoSetupProp
 
 	return (
 		<Grid container className={clsx(classes.whatsappNoSetupPage, isCompact ? classes.hAuto : '')}>
-			<Box className={clsx(windowSize !== 'xs' ? classes.w30 : null)}>
+			<Box>
 				<Box className={classes.whatsappNoSetupMessageWrapper}>
 					{
 						customMessage !== '' ? (

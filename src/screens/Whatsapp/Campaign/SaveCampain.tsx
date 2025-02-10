@@ -912,9 +912,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								: setToastMessage(ToastMessages.ERROR);
 						}
 					}
+					setIsLoader(false);
 				}
 			}
-			setIsLoader(false);
 		} else {
 			setDialogType({
 				type: 'validation'
