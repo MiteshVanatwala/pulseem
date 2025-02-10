@@ -51,10 +51,16 @@ export const resendConfirmationEmail = createAsyncThunk(
 
 
 
-export const SubUserSlice = createSlice({
+const SubUserSlice = createSlice({
   name: "SubUser",
   initialState: {
-    subUsers: [] as SubUserModel[]
+    subUsers: [] as SubUserModel[],
+    ToastMessages: {
+      LINK_EXPIRED: { severity: 'error', color: 'error', message: 'SubUsers.activationLinkExpired', showAnimtionCheck: false },
+      404: { severity: 'error', color: 'error', message: 'SubUsers.activateFailed.404', showAnimtionCheck: false },
+      405: { severity: 'error', color: 'error', message: 'SubUsers.activateFailed.405', showAnimtionCheck: false },
+    },
+    test: 'hello'
   },
   reducers: {},
   extraReducers: (builder) => {

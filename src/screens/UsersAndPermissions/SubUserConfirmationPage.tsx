@@ -25,9 +25,12 @@ import SharedAppBar from "../../components/core/SharedAppBar";
 const SubUserConfirmationPage = ({ classes }: any) => {
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector((state: StateType) => state.core);
+  const { ToastMessages } = useSelector((state: any) => state?.subUser);
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false);
+  const [linkIsValid, setLinkIsValid] = useState<boolean | null>(null);
   const qs = queryString.parse(window.location.search);
+  const passwordHintStyle = useStylesBootstrapPasswordHint();
   const [userDetails, setUserDetails] = useState({
     EmailId: qs?.emailid || '',
     Password: '',
@@ -62,11 +65,12 @@ const SubUserConfirmationPage = ({ classes }: any) => {
 
     switch (StatusCode) {
       case 201: {
+        setLinkIsValid(true);
         setLoader(false);
         break;
       }
       case 406: {
-        alert('Confirmation code expired')
+        setLinkIsValid(false);
         setLoader(false);
         break;
       }
@@ -121,7 +125,7 @@ const SubUserConfirmationPage = ({ classes }: any) => {
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-        מזל טוב!<br />חשבונך אומת.<br />אנחנו מזמינים אותך להתחבר
+        {RenderHtml(t('SubUsers.activationSuccess'))}
       </Typography>
     ),
     showDefaultButtons: false,
@@ -178,10 +182,12 @@ const SubUserConfirmationPage = ({ classes }: any) => {
             setDialogType({ type: 'confirmation' });
             break;
           }
-          case 404: {
+          case 404: { // user is not approved
+            setToastMessage(ToastMessages[404])
             break;
           }
-          case 405: {
+          case 405: { // illegal password or empty
+            setToastMessage(ToastMessages[405])
             break;
           }
           case 500:
@@ -243,8 +249,8 @@ const SubUserConfirmationPage = ({ classes }: any) => {
       </div>
       <SharedAppBar title={t('SubUsers.userActivation')} classes={classes} />
       <Box style={{ height: 'calc(100vh - 50px' }} className={clsx(classes.flexCenterOfCenter, classes.pt20)}>
-        <Box className={clsx(classes.pt20)} style={{ textAlign: isRTL ? 'right' : 'left', width: 430 }}>
-          <Box className={classes.loginForm}>
+        <Box className={clsx(classes.pt20)} style={{ textAlign: linkIsValid ? (isRTL ? 'right' : 'left') : 'center', width: linkIsValid ? 430 : '100%' }}>
+          {linkIsValid ? <Box className={classes.loginForm}>
             <Box className={clsx(classes.logref, classes.f20, classes.bold)} style={{ color: '#fff' }}>
               {t('SignUp.LoginDetails')}
             </Box>
@@ -297,7 +303,7 @@ const SubUserConfirmationPage = ({ classes }: any) => {
                         />}
                         arrow
                         open={showPasswordTip}
-                        classes={useStylesBootstrapPasswordHint()}
+                        classes={passwordHintStyle}
                       >
                         <TextField
                           autoFocus
@@ -390,7 +396,11 @@ const SubUserConfirmationPage = ({ classes }: any) => {
                 </Box>
               </Box>
             </Box>
-          </Box>
+          </Box> : linkIsValid === null ? (<></>) : (<Box>
+            <Typography style={{ fontSize: 40 }}>
+              {RenderHtml(t("SubUsers.activationLinkExpired"))}
+            </Typography>
+          </Box>)}
         </Box>
       </Box>
       <Loader isOpen={showLoader} showBackdrop={true} zIndex={9999} />

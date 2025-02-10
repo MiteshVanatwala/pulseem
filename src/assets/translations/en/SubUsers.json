@@ -28,5 +28,11 @@
   "sendConfirmationEmail": "Send confirmation email",
   "userActivation": "User Activation",
   "activate": "Activate User",
-  "activateDescription": "You need to set a new password to activate your Pulseem account.<br/>After completing this process, you can log in to the system and start using it according to your account permissions."
+  "activateDescription": "You need to set a new password to activate your Pulseem account.<br/>After completing this process, you can log in to the system and start using it according to your account permissions.",
+  "activationLinkExpired": "Confirmation link expired.<br/>Please request a new link from Administrator.",
+  "activationSuccess": "Congrats!<br />Your account has been successfully verified.<br />We invite you to log in",
+  "activateFailed": {
+    "404": "User is not approved",
+    "405": "Illegal or empty Passwrod"
+  }
 }
