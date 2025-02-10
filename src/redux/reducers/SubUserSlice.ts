@@ -59,6 +59,16 @@ const SubUserSlice = createSlice({
       LINK_EXPIRED: { severity: 'error', color: 'error', message: 'SubUsers.activationLinkExpired', showAnimtionCheck: false },
       404: { severity: 'error', color: 'error', message: 'SubUsers.activateFailed.404', showAnimtionCheck: false },
       405: { severity: 'error', color: 'error', message: 'SubUsers.activateFailed.405', showAnimtionCheck: false },
+      NO_DATA_PROVIDED: { severity: 'error', color: 'error', message: 'SubUsers.form.noDataProvided', showAnimtionCheck: false },
+      USER_NOT_MATCHED: { severity: 'error', color: 'error', message: 'SubUsers.form.userNotMached', showAnimtionCheck: false },
+      INVALID_USERNAME: { severity: 'error', color: 'error', message: 'SubUsers.form.invalidUserName', showAnimtionCheck: false },
+      XSS_NOT_ALLOWD: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false },
+      USERNAME_ALREADY_EXISTS: { severity: 'error', color: 'error', message: 'SubUsers.form.usernameAlreadyExists', showAnimtionCheck: false },
+      USER_REJECTED: { severity: 'error', color: 'error', message: 'SubUsers.form.userRejected', showAnimtionCheck: false },
+      USER_CREATED_SUCCESSFULLY: { severity: 'success', color: 'success', message: 'SubUsers.form.userCreatedSuccessfuly', showAnimtionCheck: true },
+      CONFIRMATION_SENT: { severity: 'success', color: 'success', message: 'SubUsers.form.confirmationLinkSent', showAnimtionCheck: true },
+      USER_DELETED: { severity: 'success', color: 'success', message: 'SubUsers.form.deleteUserSuccess', showAnimtionCheck: true },
+
     },
     test: 'hello'
   },

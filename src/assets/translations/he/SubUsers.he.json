@@ -34,5 +34,15 @@
   "activateFailed": {
     "404": "אקטיבציה נכשלה",
     "405": "סיסמא ריקה או לא חוקית"
+  },
+  "form": {
+    "noDataProvided": "לא סופקו נתונים המאפשרים יצירת משתמש",
+    "userNotMached": "שם המשתמש אינו תואם",
+    "invalidUserName": "שם המשתמש לא חוקי",
+    "usernameAlreadyExists": "שם המשתמש כבר קיים",
+    "userRejected": "המשתמש נדחה (אורך סיסמה, ניסיונות סיסמה, אימייל קיים)",
+    "userCreatedSuccessfuly": "המשתמש נוצר בהצלחה",
+    "confirmationLinkSent": "קישור להפעלת חשבון נשלח בהצלחה",
+    "deleteUserSuccess": "תת משתמש נמחק!"
   }
 }

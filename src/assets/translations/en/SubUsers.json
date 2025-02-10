@@ -34,5 +34,15 @@
   "activateFailed": {
     "404": "User is not approved",
     "405": "Illegal or empty Passwrod"
+  },
+  "form": {
+    "noDataProvided": "No data provided",
+    "userNotMached": "User is not matched",
+    "invalidUserName": "Invalid Username",
+    "usernameAlreadyExists": "Username already exists",
+    "userRejected": "User rejected (password length, password attempts, email exists, question & answer required)",
+    "userCreatedSuccessfuly": "User created successfully",
+    "confirmationLinkSent": "Confirmation Link has been sent successfully",
+    "deleteUserSuccess": "Sub user deleted!"
   }
 }

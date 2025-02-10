@@ -30,6 +30,7 @@ import { BiMailSend } from 'react-icons/bi';
 
 const SubUsers = ({ classes }: any) => {
   const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector((state: any) => state.core);
+  const { ToastMessages } = useSelector((state: any) => state?.subUser);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -102,19 +103,17 @@ const SubUsers = ({ classes }: any) => {
     const response = await dispatch(save(subUserItem)) as any;
     switch (response?.payload?.StatusCode) {
       case 1: {
-        // Show no data provided toast
-        alert('no data provided');
+        setToastMessage(ToastMessages.NO_DATA_PROVIDED);
         break;
       }
       case 201: {
-        // Show success toast
+        setToastMessage(ToastMessages.USER_CREATED_SUCCESSFULLY);
         getData();
         setOpenSaveUserDialog(false)
         break;
       }
       case 400: {
-        // Show user not matched toast
-        alert('user not matched');
+        setToastMessage(ToastMessages.USER_NOT_MATCHED);
         break;
       }
       case 401: {
@@ -122,23 +121,19 @@ const SubUsers = ({ classes }: any) => {
         break;
       }
       case 402: {
-        // Show Invalid username toast
-        alert('Invalid username');
+        setToastMessage(ToastMessages.INVALID_USERNAME);
         break;
       }
       case 403: {
-        // Show xss is not allowed toast
-        alert('xss is not allowed');
+        setToastMessage(ToastMessages.XSS_NOT_ALLOWD);
         break;
       }
       case 405: {
-        // Show username already exists toast
-        alert('username already exists');
+        setToastMessage(ToastMessages.USERNAME_ALREADY_EXISTS);
         break;
       }
       case 406: {
-        // Show User rejected toast
-        alert('User rejected (password length, password attempts, email exists, question & answer required)');
+        setToastMessage(ToastMessages.USER_REJECTED);
         break;
       }
       default: {
@@ -152,7 +147,7 @@ const SubUsers = ({ classes }: any) => {
     const response = await dispatch(resendConfirmationEmail(userId)) as any;
     switch (response?.payload?.StatusCode) {
       case 201: {
-        setToastMessage(successToastData);
+        setToastMessage(ToastMessages.CONFIRMATION_SENT);
         break;
       }
       case 401:
@@ -512,6 +507,7 @@ const SubUsers = ({ classes }: any) => {
       const response = await dispatch(save({ ...subUser, ActionType: eSubUserAction.Delete })) as any;
       switch (response?.payload?.StatusCode) {
         case 201: {
+          setToastMessage(ToastMessages.USER_DELETED)
           setDialogType(null);
           getData();
           break;
