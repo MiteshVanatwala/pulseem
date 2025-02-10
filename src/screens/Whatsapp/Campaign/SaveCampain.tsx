@@ -847,6 +847,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							TestGroupsIds: (selectedTestGroupDummy || selectedTestGroup)?.map((group) => group?.GroupID),
 						})
 					);
+				setIsLoader(false);
 				if (quickSendGroupsData?.Status !== apiStatus.SUCCESS) {
 					quickSendGroupsData?.Message
 						? setToastMessage({
