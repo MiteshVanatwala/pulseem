@@ -253,8 +253,8 @@ export const NoAuthenticationAPIs = [
     'User/ResendEmail',
     'User/CheckRef',
     'User/SetupNewEmail',
-    'User/CheckSubUserRef',
-    'User/ConfirmSubUser'
+    'SubUser/CheckSubUserRef',
+    'SubUser/ConfirmSubUser'
 ]
 
 export const FieldOfActivities = [
