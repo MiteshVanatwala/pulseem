@@ -201,6 +201,18 @@ export const GetSmsCountries = createAsyncThunk(
   }
 );
 
+export const GetAfterLoginInitialData = createAsyncThunk(
+  'AfterLoginInitialData',
+  async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`AfterLoginInitialData`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
@@ -227,7 +239,9 @@ export const commonSlice = createSlice({
     VAT: null,
     showCurrencyReportCurrencyID: null,
     currencyList: [],
-    countryCodeList: []
+    countryCodeList: [],
+    WhatsAppPlatformID: null,
+    TierData: []
   },
   extraReducers: builder => {
     builder
@@ -254,7 +268,8 @@ export const commonSlice = createSlice({
           DefaultCellNumber: data?.DefaultCellNumber,
           IsDirectAccount: data?.IsDirectAccount,
           SubAccountSettings: data?.SubAccountSettings,
-          DomainAddress: data?.DomainAddress
+          DomainAddress: data?.DomainAddress,
+          HasSmsVoice: data?.HasSmsVoice
         };
 
         state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
@@ -309,6 +324,11 @@ export const commonSlice = createSlice({
           Name: 'Default',
           SmsCountryPhoneCode: '0'
         })
+      });
+    builder
+      .addCase(GetAfterLoginInitialData.fulfilled, (state, { payload }) => {
+        state.WhatsAppPlatformID = get(payload, 'Data.WhatsappPlatformId', null)
+        state.TierData = get(payload, 'Data.TierData', [])
       });
   },
   reducers: {

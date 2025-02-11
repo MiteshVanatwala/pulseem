@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 //import { getCookie } from '../Functions/cookies';
-import { googleFonts } from './GoogleFonts';
+import { googleFonts, HebrewFonts } from './GoogleFonts';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 
 interface font {
@@ -8,7 +8,7 @@ interface font {
     customFonts: [] | any
 }
 
-export const FONTS = () => {
+export const FONTS = (isLandingPage: boolean = false) => {
     const { accountFeatures } = useSelector((state: any) => state.common);
 
     const allowedFonts = {
@@ -16,8 +16,13 @@ export const FONTS = () => {
         customFonts: []
     } as font;
 
-    if (accountFeatures?.indexOf(PulseemFeatures.BEE_ENABLE_GOOGLE_FONTS) > -1) { // EnableBeeGoogleFonts
-        allowedFonts.customFonts.push(googleFonts.Rubik);
+    if (isLandingPage) {
+        allowedFonts.customFonts = HebrewFonts;
+    }
+    else {
+        if (accountFeatures?.indexOf(PulseemFeatures.BEE_ENABLE_GOOGLE_FONTS) > -1) { // EnableBeeGoogleFonts
+            allowedFonts.customFonts.push(googleFonts.Rubik);
+        }
     }
 
     return allowedFonts;

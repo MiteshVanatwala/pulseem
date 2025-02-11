@@ -332,7 +332,7 @@ const FORM_ACCOUNT_DETAILS = ({
 						</Grid>
 
 						{/* Tier Setting */}
-						<Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
+						{/* <Grid item xs={12} sm={6} md={3} className={'textBoxWrapper'}>
 							<Typography>
 								<>
 									{t(
@@ -381,7 +381,7 @@ const FORM_ACCOUNT_DETAILS = ({
 									})}
 								</Select>
 							</FormControl>
-						</Grid>
+						</Grid> */}
 					</Grid>
 				</Grid>
 				{accountFeatures?.indexOf(PulseemFeatures.DISABLE_OPTIN_PLUGIN) > -1 && <Grid container>

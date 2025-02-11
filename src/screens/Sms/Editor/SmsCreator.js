@@ -323,7 +323,7 @@ const SmsCreator = ({ classes }) => {
     setLoader(true);
     setsummary(false);
     const groupIds = selectedGroup.map((g) => { return g.GroupID });
-    const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount };
+    const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount, VoiceCredits: getCampaignSum.FinalVoiceCount };
     const FinalPayloadData = {
       ...smsModel,
       fromNumber: campaignNumber,
@@ -372,6 +372,7 @@ const SmsCreator = ({ classes }) => {
     if (!accountSettings || Object.keys(accountSettings).length === 0)
       await dispatch(getCommonFeatures());
     setInitFromNumber(true);
+    setOTPOpen(false);
   }
 
   useEffect(() => {
@@ -396,9 +397,19 @@ const SmsCreator = ({ classes }) => {
       }
 
       setcampaignNumber(fromNumber);
-      setStaticNumber(virtualNumber.payload.Number);
+
+      if (smsModel && smsModel.FromNumber && smsModel.SMSCampaignID > 0) {
+        setStaticNumber(smsModel.FromNumber);
+      }
+      else {
+        setStaticNumber(virtualNumber.payload.Number);
+      }
+
       setremovalNumber(virtualNumber.payload.RemovalKey);
-      setstoredValue(accountSettings.DefaultCellNumber);
+
+      if (virtualNumber.payload.RemovalKey && virtualNumber.payload.Number) {
+        setstoredValue(virtualNumber.payload.Number)
+      }
       if (fromNumber !== virtualNumber.payload.Number) {
         setrestoreBool(false);
         setremovalMessageButtonDisabled(true);
@@ -510,18 +521,22 @@ const SmsCreator = ({ classes }) => {
 
   const onCampaignNumber = (e) => {
     const text = e.target.value;
-    var lastChar = text.substring(text.length, text.length - 1);
-    var isNumber = /^[0-9]*$/;
-    var english = /^[A-Za-z0-9 ]*$/;
+    // var lastChar = text.substring(text.length, text.length - 1);
+    var onlyNumbersWithHyphenAndSpace = /^[0-9 -]*$/;
+    var onlyNumbers = /^[0-9]*$/;
+    var english = /^[A-Za-z0-9_ -]*$/
 
-    if (!text.match(isNumber) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
+    if (!text.match(onlyNumbersWithHyphenAndSpace) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
     }
-    if (text.match(isNumber) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
+    if (text.match(onlyNumbersWithHyphenAndSpace) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
     }
-    if (!text.match(english)) {
-      e.target.value = e.target.value.replace(lastChar, '');
+
+    if (text.match(onlyNumbersWithHyphenAndSpace) && !text.match(onlyNumbers)) {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    } else if (!text.match(english)) {
+      e.target.value = text.replace(/[^A-Za-z0-9_ -]/g, '');
     }
 
     setrestoreBool(false);
@@ -542,8 +557,14 @@ const SmsCreator = ({ classes }) => {
     if (smsModel.Text === "") {
       isValid = false
     }
-    let english = /^[ A-Za-z0-9]*$/;
-    if (campaignNumber === "" || !english.test(campaignNumber)) {
+
+    let validPattern = /^[A-Za-z0-9_ -]*$/;
+    let onlyNumbersWithHyphen = /^[0-9-]*$/;
+    let onlyNumbers = /^[0-9]*$/;
+
+    if (campaignNumber === "" ||
+      (onlyNumbersWithHyphen.test(campaignNumber) && !onlyNumbers.test(campaignNumber)) ||
+      !validPattern.test(campaignNumber)) {
       setcampaignNumberValidated(true);
       isValid = false;
     }
@@ -602,14 +623,9 @@ const SmsCreator = ({ classes }) => {
       setToastMessage(ToastMessages.INVALID_NUMBER);
     }
   };
-  const onLeave = (e) => {
-    if (!modalOpen && campaignNumber !== storedValue) {
-      setDialogType({ type: 'alert' });
-    }
-  }
   const handleRestore = async () => {
     setrestoreBool(true);
-    setcampaignNumber(StaticNumber);
+    // setcampaignNumber(StaticNumber);
     setLoader(true);
     let response = await dispatch(getSMSVirtualNumber(accountSettings.DefaultCellNumber));
     setLoader(false);
@@ -665,7 +681,6 @@ const SmsCreator = ({ classes }) => {
             id="campaignName"
             type="text"
             placeholder={t("mainReport.campaignNamePlaceholder")}
-            // className={classes.textField}
             className={
               clsx(classes.textField, campaignBool ? classes.error : classes.success)
             }
@@ -701,7 +716,7 @@ const SmsCreator = ({ classes }) => {
             onChange={onCampaignNumber}
             inputProps={inputProps}
             value={campaignNumber}
-            onBlur={onLeave}
+            dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
           />
           <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
             {t("mainReport.campRemovalDesc")}
@@ -777,7 +792,7 @@ const SmsCreator = ({ classes }) => {
     else {
       setremovalLinkDisabled(false);
     }
-    setDynamicProductButtonDisabled(smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT));
+    setDynamicProductButtonDisabled(smsModel.Text.includes(DynamicProductLink.LATEST_PURCHASE) || smsModel.Text.includes(DynamicProductLink.LATEST_ABANDONMENT) || smsModel.Text.includes(DynamicProductLink.LATEST_VIEWED_PRODUCT));
   }
 
   const renderMsg = () => {
@@ -1010,6 +1025,17 @@ const SmsCreator = ({ classes }) => {
                     }}
                   >
                     {t("common.latestAbandonment")}
+                  </Button>
+                  <Button
+                    className={clsx(classes.dropCon, classes.redButtonLink)}
+                    onClick={() => {
+                      onAddText(DynamicProductLink.LATEST_VIEWED_PRODUCT);
+                      setDialogType({ type: 'dynamicProduct' });
+                      setDisplayDynamicProductOptions(false);
+                      setDynamicProductButtonDisabled(true);
+                    }}
+                  >
+                    {t("campaigns.lastViewedProduct")}
                   </Button>
                 </Box>
               ) : null}
@@ -1247,6 +1273,16 @@ const SmsCreator = ({ classes }) => {
       else {
         callbackFunc();
       }
+    }
+  }
+
+  const onBeforeSave = (isOnlySave, returnToAutomation = false) => {
+    if (campaignNumber !== StaticNumber && campaignNumber !== accountSettings.DefaultCellNumber) {
+      setDialogType({ type: 'alert', isOnlySave: isOnlySave, returnToAutomation: returnToAutomation });
+    }
+    else {
+      setOTPOpen(false);
+      onSave(isOnlySave, returnToAutomation);
     }
   }
 
@@ -1501,7 +1537,7 @@ const SmsCreator = ({ classes }) => {
           color="primary"
           style={{ margin: '8px' }}
           onClick={() => {
-            validationCheckpoint(() => onSave(true, isFromAutomation));
+            validationCheckpoint(() => onBeforeSave(true, isFromAutomation));
           }}>
           {t('mainReport.saveSms')}
         </Button>
@@ -1516,7 +1552,7 @@ const SmsCreator = ({ classes }) => {
           color="primary"
           style={{ margin: '8px' }}
           onClick={() => {
-            validationCheckpoint(() => onSave(false, isFromAutomation));
+            validationCheckpoint(() => onBeforeSave(false, isFromAutomation));
           }}>
           {!isFromAutomation ? t("mainReport.continue") : t("sms.saveAndExit")}
         </Button>
@@ -1753,7 +1789,7 @@ const SmsCreator = ({ classes }) => {
               </li> : null}
               {smsModel.Text === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
               {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
-                {t("mainReport.campaignFromRequire")}
+                {t("mainReport.campaignFromRequire")} / {t("common.invalid")}
               </li> : null}
             </ul>
           </div>
@@ -1875,7 +1911,7 @@ const SmsCreator = ({ classes }) => {
       onConfirm: () => { validationCheckpoint(() => handleExit(true)); }
     }
   }
-  const alertDialog = () => {
+  const alertDialog = (isOnlySave, returnToAutomation) => {
     return {
       title: t('mainReport.pleaseNote'),
       showDivider: true,
@@ -1891,7 +1927,10 @@ const SmsCreator = ({ classes }) => {
       ),
       showDefaultButtons: true,
       onClose: () => { handleAlertoff() },
-      onConfirm: () => { handlecaution() }
+      onConfirm: () => {
+        setDialogType(null);
+        onSave(isOnlySave, returnToAutomation);
+      }
     }
   }
 
@@ -1981,7 +2020,7 @@ const SmsCreator = ({ classes }) => {
     }
   }
   const renderDialog = () => {
-    const { type, data } = dialogType || {}
+    const { type, data, isOnlySave, returnToAutomation } = dialogType || {}
 
     const dialogContent = {
       latestLP: lpDialog(),
@@ -1991,7 +2030,7 @@ const SmsCreator = ({ classes }) => {
       valiateError: validationDialog(),
       groups: groupDialog(),
       exit: exitDialog(),
-      alert: alertDialog(),
+      alert: alertDialog(isOnlySave, returnToAutomation),
       noCredit: noCreditDialog(),
       linkStatisticAlert: siteTrackingLinkDialog(data),
       englishLetterDialog: englishLetterNotAllowed(),
@@ -2072,7 +2111,17 @@ const SmsCreator = ({ classes }) => {
           </Grid >
           {renderDialog()}
           {renderSummary()}
-          {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+          {otpOpen && <OTP
+            classes={classes}
+            campaignNumber={campaignNumber}
+            isOpen={otpOpen}
+            onClose={() => {
+              setOTPOpen(false);
+              setDialogType(null);
+            }}
+            onSuccess={() => {
+              setStaticNumber(campaignNumber);
+            }} />}
           <Loader isOpen={showLoader} />
         </Box>
       </Box>

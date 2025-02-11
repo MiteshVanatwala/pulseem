@@ -23,7 +23,9 @@ const ConfirmRadioDialog = ({
     onConfirm,
     defaultValue = "",
     cookieName = "",
-    showEmailToNotify = false
+    showEmailToNotify = false,
+    icon = null,
+    ...props
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
@@ -56,7 +58,7 @@ const ConfirmRadioDialog = ({
     const dialog = {
         title: title,
         showDivider: true,
-        icon: <FaCloudDownloadAlt />,
+        icon: icon || <FaCloudDownloadAlt />,
         content: (
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.mb4)}>
@@ -143,6 +145,11 @@ const ConfirmRadioDialog = ({
                             </Box>
                         </Box>
                     }
+                    <Grid item xs={12} className={clsx(classes.mb4)}>
+                        <Box>
+                            {props && props?.exportGroupNames}
+                        </Box>
+                    </Grid>
                 </Grid>
             </Grid>
         ),

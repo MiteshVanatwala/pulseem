@@ -807,6 +807,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt6: {
     marginTop: 30,
   },
+  mt50: {
+    marginTop: 50
+  },
   mb1: {
     marginBottom: 5,
   },
@@ -1360,7 +1363,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: 'pointer',
     '& svg': {
       marginInline: 2,
-    }
+    },
+    zIndex: 100
   },
   baseButtons: {
     display: "flex",
@@ -3805,7 +3809,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   callToAction: {
-    minWidth: '65vw',
+    minWidth: '50vw',
     "& .MuiDialog-paperWidthSm": {
       minWidth: '80vw',
       maxWidth: '80vw',
@@ -3822,6 +3826,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .keep-track-desc': {
       color: '#aaa'
     }
+  },
+  paddingInline5: {
+    paddingInline: 5
   },
   paddingInline25: {
     paddingInline: 25
@@ -4190,7 +4197,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
     {
       paddingRight: isRTL ? '0px !important' : '0px',
-    }
+      paddingInlineEnd: 40
+    },
   },
   highlightExpandedRow: {
     backgroundColor: '#dbdbdb !important',
@@ -4202,6 +4210,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&.first': {
       borderTop: 'solid 2px #797979 !important',
     },
+  },
+  renderHtml: {
+    '& label': {
+      display: 'block !important',
+      '& select': {
+        backgroundPosition: isRTL ? 'left center' : 'right-center'
+      }
+    }
   },
   flexContainerGap25: {
     gap: 25,
@@ -4252,5 +4268,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxWidthMinContent: {
     maxWidth: 'min-content !important'
+  },
+  connectedDot: {
+    '& .MuiBadge-dot': {
+      left: isRTL ? 'auto' : -10,
+      right: isRTL ? -10 : 'auto',
+      top: 10,
+      background: '#23ff23'
+    }
   }
 });

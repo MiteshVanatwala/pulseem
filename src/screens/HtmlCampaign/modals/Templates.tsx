@@ -128,8 +128,9 @@ const Templates = ({
             </Box>
           )
         }
-        <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')} style={{ 
-          overflowY: 'auto', direction: 'ltr' }}>
+        <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')} style={{
+          overflowY: 'auto', direction: 'ltr'
+        }}>
           {
             tabValue === EmailTemplateType.PULSEEM_TEMPLATES && <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
               style={{
@@ -373,6 +374,7 @@ const Templates = ({
         isOpen={displaySaveTemplate}
         name={templateDetails.Name}
         categoryName={templateDetails.Category}
+        //@ts-ignore
         categoryList={templateDetails.Category?.split(',')}
       />
       {renderToast()}

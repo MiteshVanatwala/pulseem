@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
+import BeeEditor from './screens/Editors/BeeEditor';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
@@ -25,7 +26,7 @@ import {
   setRowsPerPage,
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
-import { getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
+import { GetAfterLoginInitialData, getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
@@ -78,11 +79,16 @@ import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 import { isSignupPage } from './helpers/Utils/common';
 import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
+import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
+import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
+import HtmlPreview from './screens/Preview/HtmlPreview';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
+import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
+import { Loader } from './components/Loader/Loader';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -173,10 +179,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Campaigns/editor/:id`}
         element={<CampaignEditorBee classes={classes} />}
       />
-      {/* <Route
-        path={`${sitePrefix}BeeEditor/:type/:id`}
-        element={<BeeEditorPage classes={classes} />}
-      /> */}
+      <Route
+        path={`${sitePrefix}editor/:type/:id`}
+        element={<BeeEditor classes={classes} />}
+      />
       <Route
         path={`${sitePrefix}Campaigns/SendSettings/:id`}
         element={<NewsletterSendSettings classes={classes} />}
@@ -300,12 +306,10 @@ const renderRoutes = (classes, redirect) => {
 
       <Route
         path={whatsappRoutes.CHAT}
-        element={<WhatsappChat classes={classes} key="wa-chate" />}
-      />
-      <Route
-        path={whatsappRoutes.CHAT_CONVERSATION}
-        element={<WhatsappChat classes={classes} key="wa-chat-conversation" />}
-      />
+      >
+        <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
+        <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
+      </Route>
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
@@ -331,7 +335,15 @@ const renderRoutes = (classes, redirect) => {
         element={<CreateLandingPage classes={classes} />}
       />
       <Route
-        path={`/LandingPageWizard`}
+        path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
+        element={<SurveyDetails classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}LandingPages/summary/:id`}
+        element={<WebformSummary classes={classes} />}
+      />
+      <Route
+        path={`/Survey`}
         component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
       />
       <Route
@@ -491,6 +503,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Integrations`}
         element={<Integrations classes={classes} />}
       />
+      <Route exact
+        path={`${sitePrefix}whatsapp-onboarding`}
+        element={<WhatsappOnBoarding classes={classes} />}
+      />
       <Route
         exact
         path={`${sitePrefix}reports/Inbound`}
@@ -546,6 +562,11 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
+        path={`${sitePrefix}Previewer/:type/:id`}
+        element={<HtmlPreview classes={classes} />}
+      />
+      <Route
+        exact
         path={`${sitePrefix}AffiliateManagement`}
         element={<AffiliateProgram classes={classes} />}
       />
@@ -562,7 +583,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
@@ -659,6 +680,7 @@ const App = ({ screenSize }) => {
     !isSignup && initFeatures()
     !isSignup && dispatch(GetCurrencyList());
     !isSignup && dispatch(GetSmsCountries());
+    !isSignup && dispatch(GetAfterLoginInitialData());
   }, [dispatch])
 
 
@@ -671,6 +693,65 @@ const App = ({ screenSize }) => {
 
   const renderRoutesByCondition = (classes, redirect) => {
     const ignoreCookie = getCookie('ignoreTerm')
+    if (accountSettings && accountSettings?.SubAccountSettings?.IsTokenAccount) {
+      return <Routes>
+        <Route
+          path={`${sitePrefix}Groups`}
+          element={<Groups classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}ClientSearchResult`}
+          element={<ClientSearchResult classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}`}
+          element={<LandingPagesesManagment classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}EditRegistrationPage`}
+          element={<LandingPagesesManagment classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/Create`}
+          element={<CreateLandingPage classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/Create/:id`}
+          element={<CreateLandingPage classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
+          element={<SurveyDetails classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/summary/:id`}
+          element={<WebformSummary classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}editor/:type/:id`}
+          element={<BeeEditor classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}AccountSettings/ExtraFields`}
+          element={<ExtraFields classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Previewer/:type/:id`}
+          element={<HtmlPreview classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Groups/Download`}
+          element={<DownloadFiles classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Groups/FileUploads`}
+          element={<FileUploads classes={classes} />}
+        />
+        <Route
+          path="*" element={<PageNotFound classes={classes} />}
+        />
+      </Routes>
+    }
     if (!isAdmin && accountSettings && !accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount === 3 && ignoreCookie !== 'true') {
       return <Routes>
         <Route
@@ -701,6 +782,7 @@ const App = ({ screenSize }) => {
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
           {renderRoutesByCondition(classes, redirect)}
         </div>
+        <Loader isOpen={isLoader} showBackdrop={true} />
       </MuiThemeProvider>
     </MuiPickersUtilsProvider >
 

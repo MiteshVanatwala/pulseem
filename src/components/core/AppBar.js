@@ -117,7 +117,7 @@ const AppBarItem = ({
                             if (!option.href || option.href === '') {
                               onInnerClick(option)
                             }
-                            else Redirect({ url: option.href })
+                            else Redirect({ url: option.href, openNewTab: option.openInNewWindow })
                           }}
                           classes={{ root: classes.appBarItemMenuRoot }}
                           className={clsx(classes.appBarItemMenuItem, index !== row.length - 1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}
@@ -377,7 +377,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
               Redirect({ url: routes[0].href })
             }}
             // className={clsx(classes.pulseemAppBarLogo, isRTL ? 'logoRTL' : 'logoLTR')}
-            className={clsx(classes.pulseemAppBarLogo, 'logo')}
+            className={clsx(accountSettings?.SubAccountSettings?.IsTokenAccount ? classes.tokenAppBarLogo : classes.pulseemAppBarLogo, 'logo')}
           >
             {imageURL !== '' ? (<Box
               component='img'

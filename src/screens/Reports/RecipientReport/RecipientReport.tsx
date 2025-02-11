@@ -90,7 +90,7 @@ const RecipientReport = ({ classes }: any) => {
     SmsPageIndex: number;
     WhatsappPageIndex: number;
     IsExport: boolean;
-    ArchiveAccess?: boolean
+    IsArchive?: boolean
   };
 
   const [filterRequest, setFilterRequest] = useState<reportRequest>({
@@ -100,13 +100,17 @@ const RecipientReport = ({ classes }: any) => {
     SmsPageIndex: 1,
     WhatsappPageIndex: 1,
     IsExport: false,
-    ArchiveAccess: false
+    IsArchive: false
   });
 
   const [errors, setErrors] = useState<any>({
     Email: '',
     Cellphone: '',
   });
+
+  useEffect(() => {
+    dispatch(resetRecipientReportData());
+  }, [])
 
   const getReportData = async () => {
     const formErrors = {
@@ -155,7 +159,7 @@ const RecipientReport = ({ classes }: any) => {
           "|": "|",
           [`${t('common.smsCampaignName')}`]: ind < SmsCampaignsLength ? `${SmsCampaigns[ind]['Name']}` : '',
           [`${t('common.smsCampaignDates')}`]: ind < SmsCampaignsLength ? FormatDate(SmsCampaigns[ind]['SendDate']) : '',
-          [`${t('common.smsCampaignStatus')}`]: ind < SmsCampaignsLength ? renderSMSStatus(SmsCampaigns[ind]['SmsStatus']) : '',
+          [`${t('common.smsCampaignStatus')}`]: ind < SmsCampaignsLength ? t(ConvertSmsReceipientStatusText(`${SmsCampaigns[ind]['SmsStatus']}`)) : '',
           [`${t('common.smsCampaignClicked')}`]: ind < SmsCampaignsLength ? t(`common.${SmsCampaigns[ind]['ClicksCount'] > 0 ? 'Yes' : 'No'}`) : '',
           "||": "|",
           [`${t('common.whatsappCampaignName')}`]: ind < WhatsappCampaignLength ? `${WhatsappCampaigns[ind]['Name']}` : '',
@@ -215,7 +219,7 @@ const RecipientReport = ({ classes }: any) => {
       WhatsappPageIndex: 1,
       Email: '',
       Cellphone: '',
-      ArchiveAccess: false
+      IsArchive: false
     })
     setErrors({
       Email: '',
@@ -225,7 +229,7 @@ const RecipientReport = ({ classes }: any) => {
 
   useEffect(() => {
     getReportData();
-  }, [filterRequest.PageIndex, filterRequest.SmsPageIndex, filterRequest.WhatsappPageIndex, filterRequest.ArchiveAccess]);
+  }, [filterRequest.PageIndex, filterRequest.SmsPageIndex, filterRequest.WhatsappPageIndex, filterRequest.IsArchive]);
 
   const renderNewsLetterTableHead = () => {
     return (
@@ -273,7 +277,7 @@ const RecipientReport = ({ classes }: any) => {
         <TablePagination
           style={{ 'justifyContent': 'center' } as any}
           classes={classes}
-          rows={recipientsReportData?.SmsCampaignStatistics?.Sent ?? 0}
+          rows={recipientsReportData?.SmsCampaignStatistics?.TotalSent ?? 0}
           rowsPerPage={5}
           page={filterRequest.SmsPageIndex}
           onPageChange={e => setFilterRequest({ ...filterRequest, SmsPageIndex: e })}
@@ -315,6 +319,16 @@ const RecipientReport = ({ classes }: any) => {
     )
   }
 
+  const handlePreviewClick = async (row: any) => {
+    setShowLoader(true);
+    await dispatch(getCampaignInfo(row.CampaignID));
+    setShowLoader(false);
+    setDialogType({
+      type: 'newsletterpreview',
+      data: row.CampaignID
+    })
+  }
+
   const renderNewsletterRow = (row: any) => {
     const statusText = ConvertNewsletterStatusText(row.Status);
     return (
@@ -348,6 +362,12 @@ const RecipientReport = ({ classes }: any) => {
           )}>
             {t(statusText)}
           </Typography>
+          {row.Status === 5 && row.UnsubscribeDate && <Typography className={clsx(
+            classes.middleText,
+            classes.f12
+          )}>
+            {t('common.FromDate')} {moment(row?.UnsubscribeDate).format(DateFormats.DATE_TIME_24)}
+          </Typography>}
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -359,16 +379,7 @@ const RecipientReport = ({ classes }: any) => {
           classes={noBorderCellStyle}
           className={clsx(classes.flex1, classes.f15)}>
           <ManagmentIcon
-            onClick={async () => {
-              // pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${row.CampaignID}&fromreact=true`)
-              setShowLoader(true);
-              const response: any = await dispatch(getCampaignInfo(row.CampaignID));
-              setShowLoader(false);
-              setDialogType({
-                type: 'newsletterpreview',
-                data: row.CampaignID
-              })
-            }}
+            onClick={() => handlePreviewClick(row)}
             classes={classes}
             icon={null}
             uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} />}
@@ -415,6 +426,12 @@ const RecipientReport = ({ classes }: any) => {
                 )}>
                   {t(statusText)}
                 </Typography>
+                {row.Status === 5 && row.UnsubscribeDate && <Typography className={clsx(
+                  classes.middleText,
+                  classes.f12
+                )}>
+                  {t('common.FromDate')} {moment(row?.UnsubscribeDate).format(DateFormats.DATE_TIME_24)}
+                </Typography>}
               </Box>
               <Box className={clsx(classes.flex4)}>
                 <Typography className={classes.bold}>{t('common.Opened')}</Typography>
@@ -422,15 +439,7 @@ const RecipientReport = ({ classes }: any) => {
               </Box>
               <Box className={clsx(classes.flex4, classes.pt5, classes.textRight)}>
                 <ManagmentIcon
-                  onClick={async () => {
-                    setShowLoader(true);
-                    const response: any = await dispatch(getCampaignInfo(row.CampaignID));
-                    setShowLoader(false);
-                    setDialogType({
-                      type: 'newsletterpreview',
-                      data: row.CampaignID
-                    })
-                  }}
+                  onClick={() => handlePreviewClick(row)}
                   classes={classes}
                   icon={null}
                   uIcon={<PreviewIcon width={18} height={20} className={'rowIcon'} style={{ paddingTop: 10 }} />}
@@ -480,37 +489,11 @@ const RecipientReport = ({ classes }: any) => {
           </Box>
         ) : (
           <>
-            {campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map((row: any) => windowSize == "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType)) : recipientsReportData?.WhatsappCampaigns?.map((row: any) => windowSize == "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType))}
+            {campaignType === 'sms' ? recipientsReportData?.SmsCampaigns?.map((row: any) => windowSize === "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType)) : recipientsReportData?.WhatsappCampaigns?.map((row: any) => windowSize === "xs" ? renderPhoneRow(row, campaignType) : renderRow(row, campaignType))}
             {campaignType === 'sms' ? renderSmsPagination() : renderWhasappPagination()}
           </>
         )}
       </TableBody>
-    )
-  }
-
-  const renderStatusCell = (status: number) => {
-    const statuses = {
-      1: 'common.Created',
-      2: 'common.Sending',
-      3: 'campaigns.Stopped',
-      4: 'common.Sent',
-      5: 'campaigns.Canceled',
-      6: 'campaigns.Optin',
-      7: 'campaigns.Approve'
-    } as any;
-
-    return (
-      <Typography className={clsx(classes.middleText, classes.recipientsStatus,
-        {
-          [classes.recipientsStatusCreated]: status === 1,
-          [classes.recipientsStatusSent]: status === 4,
-          [classes.recipientsStatusSending]: status === 2,
-          [classes.recipientsStatusCanceled]: status === 5
-        }
-      )}
-      >
-        {t(statuses[status])}
-      </Typography>
     )
   }
 
@@ -722,6 +705,13 @@ const RecipientReport = ({ classes }: any) => {
           align='center'
           className={clsx(classes.flex2, classes.f15, renderStatusClasses(row, campaignType))}>
           {t(`${campaignType === 'sms' ? ConvertSmsReceipientStatusText(`${row.SmsStatus}`) : ConvertWhatsappStatusText(row.SmsStatus, true)}`)}
+          {row.SmsStatus === 5 && row.UnsubscribeDate && <Typography className={clsx(
+            classes.middleText,
+            classes.f12
+          )}>
+            {t('common.FromDate')} {moment(row?.UnsubscribeDate).format(DateFormats.DATE_TIME_24)}
+          </Typography>
+          }
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -803,7 +793,13 @@ const RecipientReport = ({ classes }: any) => {
             <Box className={classes.flex}>
               <Box className={clsx(classes.flex6)}>
                 <Typography className={classes.bold}>{t('common.Status')}</Typography>
-                {renderStatusCell(row.SmsStatus)}
+                {t(`${campaignType === 'sms' ? ConvertSmsReceipientStatusText(`${row.SmsStatus}`) : ConvertWhatsappStatusText(row.SmsStatus, true)}`)}
+                {row.SmsStatus === 5 && row.UnsubscribeDate && <Typography className={clsx(
+                  classes.middleText,
+                  classes.f12
+                )}>
+                  {t('common.FromDate')} {moment(row?.UnsubscribeDate).format(DateFormats.DATE_TIME_24)}
+                </Typography>}
               </Box>
               <Box className={clsx(classes.flex4)}>
                 <Typography className={classes.bold}>{t('common.Clicked')}</Typography>
@@ -1008,7 +1004,7 @@ const RecipientReport = ({ classes }: any) => {
         }
       </Grid>
 
-      <Grid item style={{ display: 'none' }}>
+      <Grid item xs={12}>
         <FormControlLabel
           control={
             <Checkbox
@@ -1016,12 +1012,12 @@ const RecipientReport = ({ classes }: any) => {
               inputProps={{ "aria-label": "secondary checkbox" }}
               onClick={() => setFilterRequest({
                 ...filterRequest,
-                ArchiveAccess: !filterRequest.ArchiveAccess
+                IsArchive: !filterRequest.IsArchive
               })}
-              checked={filterRequest.ArchiveAccess}
+              checked={filterRequest.IsArchive}
             />
           }
-          label={t("common.ArchiveAccess")}
+          label={t("common.IsArchive")}
         />
       </Grid>
 
@@ -1029,7 +1025,6 @@ const RecipientReport = ({ classes }: any) => {
   }
 
   const renderClientDetails = () => {
-    const dateTimeFormat = 'DD/MM/YYYY, HH:mm a';
     return <Grid container spacing={2} className={clsx(classes.mgmtTitleContainer, classes.pr25, classes.pe25)}>
       <Grid item md='auto' xs={6} className={classes.flexGrow1}>
         <div className={clsx(classes.bold)}>{t('common.first_name')}</div>
@@ -1056,7 +1051,7 @@ const RecipientReport = ({ classes }: any) => {
         <div className={classes.pt10}>{t(ConvertClientStatus(SourceType.SMS, recipientsReportData?.ClientSMSStatus))}</div>
       </Grid>
       <Grid item md='auto' xs={6} className={classes.flexGrow1}>
-        <div className={clsx(classes.bold)}>{t('common.createdDate')}</div>
+        <div className={clsx(classes.bold)}>{t('campaigns.LastEditDateResource1.HeaderText')}</div>
         <div className={classes.pt10}>{moment(recipientsReportData?.ClientCreationDate).format(DateFormats.DATE_TIME_24)}</div>
       </Grid>
       <Grid item md={'auto'} xs={6} className={clsx(classes.flexGrow1, classes.pt15)}>
@@ -1146,6 +1141,7 @@ const RecipientReport = ({ classes }: any) => {
     content: (
       <Box style={{ minHeight: 'calc(70vh)', height: 'calc(70vh)' }}>
         <iframe
+          title={`preview_${templateData}`}
           src={`${actionURL}PreviewCampaign.aspx?CampaignID=${templateData}&fromreact=true`}
           style={{ border: "none !important", width: '100%', height: '100%' }}
         />

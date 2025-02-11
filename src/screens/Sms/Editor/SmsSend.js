@@ -1558,14 +1558,14 @@ const SmsSend = ({ classes, ...props }) => {
     if (
       pulseType === 2
     ) {
-      addTime = (Math.ceil(((summary.FinalCount - pulseAmount) / pulseAmount))) * timeInterval
+      addTime = (Math.ceil((((summary.FinalCount + summary.FinalVoiceCount) - pulseAmount) / pulseAmount))) * timeInterval
     } else {
       let recipientPercents =
-        (summary.FinalCount *
+        ((summary.FinalCount + summary.FinalVoiceCount) *
           pulseAmount) /
         100;
       addTime =
-        ((summary.FinalCount - recipientPercents.toFixed(1)) *
+        (((summary.FinalCount + summary.FinalVoiceCount) - recipientPercents.toFixed(1)) *
           timeInterval) /
         recipientPercents.toFixed(1);
     }
@@ -1624,7 +1624,8 @@ const SmsSend = ({ classes, ...props }) => {
     let payload = {
       "SmsCampaignID": id,
       "Credits": dataSaved.CreditPerSms,
-      "TotalRecipients": getCampaignSum.FinalCount
+      "TotalRecipients": getCampaignSum.FinalCount,
+      "VoiceCredits": getCampaignSum.FinalVoiceCount
     }
 
     let r = await dispatch(sendSms(payload))
@@ -2594,7 +2595,7 @@ const SmsSend = ({ classes, ...props }) => {
               </Box>
             </Box>
           </Box>
-          <Box
+          {accountSettings && !accountSettings?.HasSmsVoice && <><Box
             className={classes.randomSendDiv}
           >
             <Checkbox
@@ -2609,26 +2610,27 @@ const SmsSend = ({ classes, ...props }) => {
             />
             <Typography className={clsx(classes.ps15, classes.pe15, classes.bold, classes.dInlineBlock)}>{t("smsReport.randomSend")}</Typography>
           </Box>
-          <Box className={classes.randomRows}>
-            <span
-              className={classes.randomReciSpan}
-            >
-              {t("smsReport.noOfReci")}
-            </span>
-            <input
-              type="text"
-              placeholder={t("smsReport.insert")}
-              disabled={toggleRandom ? false : true}
-              className={
-                toggleRandom
-                  ? boolRandom ? clsx(classes.ml5, classes.mr5, classes.pulseActive, classes.error) : clsx(classes.pulseActive, classes.ml5, classes.mr5)
-                  : clsx(classes.pulseInsert, classes.ml5, classes.mr5)
-              }
-              value={random}
-              onChange={handleRandom}
-            />
-          </Box>
-        </Box>
+            <Box className={classes.randomRows}>
+              <span
+                className={classes.randomReciSpan}
+              >
+                {t("smsReport.noOfReci")}
+              </span>
+              <input
+                type="text"
+                placeholder={t("smsReport.insert")}
+                disabled={toggleRandom ? false : true}
+                className={
+                  toggleRandom
+                    ? boolRandom ? clsx(classes.ml5, classes.mr5, classes.pulseActive, classes.error) : clsx(classes.pulseActive, classes.ml5, classes.mr5)
+                    : clsx(classes.pulseInsert, classes.ml5, classes.mr5)
+                }
+                value={random}
+                onChange={handleRandom}
+              />
+            </Box>
+          </>}
+        </Box >
       ),
       showDefaultButtons: true,
       onClose: () => { handlePulseClose() },

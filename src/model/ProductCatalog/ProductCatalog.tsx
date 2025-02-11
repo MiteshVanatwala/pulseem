@@ -12,7 +12,7 @@ import {
   Typography
 } from '@material-ui/core'
 import clsx from 'clsx';
-import { get, range } from 'lodash';
+import { first, get, range } from 'lodash';
 import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulRow } from '../../screens/HtmlCampaign/helper/Template';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
@@ -431,6 +431,10 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       case 2:
         event = t('campaigns.cartAbandonment');
         break;
+      
+      case 3:
+        event = t('campaigns.lastViewedProduct');
+        break;
     }
     return event;
   }
@@ -440,7 +444,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       ...staticProduct,
       [selectedStaticProduct]: {
         ...prodDetails,
-        ImageURLs: prodDetails.ImageURLs || NO_IMAGE_URL,
+        ImageURLs: first(prodDetails.ImageURLs.split(',')) || NO_IMAGE_URL,
         MaxPrice: `${prodDetails.MaxPrice} ${t('common.NIS')}`
       }
     });
@@ -662,9 +666,9 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                             }}
                           >
                             <MenuItem value={EventTypes.All}>{t('campaigns.allEvents')}</MenuItem>
-                            {/* <MenuItem value={EventTypes.Page}>{t('campaigns.pageView')}</MenuItem> */}
                             <MenuItem value={EventTypes.Purchase}>{t('campaigns.purchase')}</MenuItem>
                             <MenuItem value={EventTypes.CartAbandon}>{t('campaigns.cartAbandonment')}</MenuItem>
+                            <MenuItem value={EventTypes.LastViewedProduct}>{t('campaigns.lastViewedProduct')}</MenuItem>
                           </Select>
                         </FormControl>
                       </div>

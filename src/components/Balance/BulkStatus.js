@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PurchaseWizard from './PaymentWizard/PurchaseWizard';
-import { GoPackage } from 'react-icons/go/index';
-import { Grid, Paper, Typography, Button, Box, Divider } from '@material-ui/core';
+import { GoPackage } from 'react-icons/go';
+import { Grid, Paper, Typography, Button, Box, Divider, Link } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -16,6 +16,7 @@ import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
 import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
+import { MdVoiceChat } from "react-icons/md";
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -27,7 +28,9 @@ const BulkStatus = ({ classes }) => {
   const dispatch = useDispatch();
   const Redirect = useRedirect();
 
-  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {} } = packagesDetails || {};
+  const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
+
+  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
   const getBillingTypeText = (product) => {
     switch (product?.eBillingType) {
@@ -171,10 +174,22 @@ const BulkStatus = ({ classes }) => {
                   {t('dashboard.yourBulkStatus')}
                 </Typography>
               </Box>
-              <Box className={clsx(classes.mr15, 'bubbleNew')}>
+              {isWhiteLabel ? <Box className={clsx(classes.mr15, 'bubbleNew')}>
                 <Typography className='bubbleText'>{t('common.new')}</Typography>
                 <TooltipBubble />
-              </Box>
+              </Box> :
+                <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
+                  <Link
+                    className={clsx(classes.mlr10, classes.bold)}
+                    href='https://site.pulseem.co.il/%d7%a6%d7%95%d7%a8-%d7%a7%d7%a9%d7%a8/'
+                    title={t('master.RadMenuItemResource21.Text')}
+                    style={{ textDecoration: 'underline', fontSize: '100%' }}
+                    target='_blank'>
+                    {t('master.RadMenuItemResource21.Text')}
+                  </Link>
+                  <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
+                </Box>
+              }
             </Box>
           </Grid>
           <Grid
@@ -240,37 +255,6 @@ const BulkStatus = ({ classes }) => {
             </Grid>
           </Grid>
           <Divider />
-          {
-            Mms.Credits > 0 && (
-              <>
-                <Grid
-                  container
-                  item sm={12} md={12} lg={12} xl={12}
-                  className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-                  justifyContent='space-between'
-                >
-                  <Grid item md={5} xs={4}>
-                    <SmsIcon className={classes.shoppingCartIcon} />
-                    <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
-                  </Grid>
-
-                  <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-                  </Grid>
-
-                  <Grid item md={1}>
-                    <Typography
-                      className={clsx(classes.bold)}
-                      title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
-                      aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
-                      {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
-                    </Typography>
-
-                  </Grid>
-                </Grid>
-                <Divider />
-              </>
-            )
-          }
           {Notifications.FeatureExist && (
             <>
               <Grid
@@ -294,35 +278,88 @@ const BulkStatus = ({ classes }) => {
               <Divider />
             </>
           )}
-          {Whatsapp?.Credits > 0 && (
-            <>
-              <Grid
-                container
-                item sm={12} md={12} lg={12} xl={12}
-                className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
-                justifyContent='space-between'
-              >
-                <Grid item md={5} xs={4}>
-                  <WhatsappIcon className={classes.shoppingCartIcon} />
-                  <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
-                </Grid>
-
-                <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
-                  <Typography className={clsx(classes.bold, classes.elipsis, classes.noWrap)} style={{ whiteSpace: 'normal' }}>
-                    {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(Whatsapp)} ${t('common.NIS')}`}
-                  </Typography>
-                </Grid>
-
-                <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
-                  <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: -1, title: t('common.whatsappBulk') })}>
-                    {t('dashboard.purchase')}
-                    {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                  </Button>
-                </Grid>
+          {Whatsapp.FeatureExist && (<>
+            <Grid
+              container
+              item sm={12} md={12} lg={12} xl={12}
+              className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+              justifyContent='space-between'
+            >
+              <Grid item md={5} xs={4}>
+                <WhatsappIcon className={classes.shoppingCartIcon} />
+                <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
               </Grid>
-              <Divider />
-            </>
-          )}
+
+              <Grid item md={3} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                <Typography className={clsx(classes.bold, classes.elipsis, classes.noWrap)} style={{ whiteSpace: 'normal' }}>
+                  {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(Whatsapp)} ${t('common.NIS')}`}
+                </Typography>
+              </Grid>
+
+              <Grid item md={4} xs={4} className={isRTL ? classes.textLeft : classes.textRight}>
+                {Whatsapp?.FeatureAllowed && <Button className={clsx(classes.btn, classes.btnRounded, classes.f12)} onClick={() => showPackageDialogType({ type: 4, title: t('common.whatsappBulk') })}>
+                  {t('dashboard.purchase')}
+                  {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                </Button>}
+              </Grid>
+            </Grid>
+            <Divider />
+          </>)}
+          {
+            Mms.Credits > 0 && (
+              <>
+                <Grid
+                  container
+                  item sm={12} md={12} lg={12} xl={12}
+                  className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+                  justifyContent='space-between'
+                >
+                  <Grid item md={4} xs={4}>
+                    <SmsIcon className={classes.shoppingCartIcon} />
+                    <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
+                  </Grid>
+                  <Grid item md={1} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                    <Typography
+                      className={clsx(classes.bold)}
+                      title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
+                      aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
+                      {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
+                    </Typography>
+                  </Grid>
+                  <Grid item md={5} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                    &nbsp;
+                  </Grid>
+                </Grid>
+                <Divider />
+              </>
+            )
+          }
+
+          {SMSVC && SMSVC?.FeatureExist && (<>
+            <Grid
+              container
+              item sm={12} md={12} lg={12} xl={12}
+              className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
+              justifyContent='space-between'
+            >
+              <Grid item md={4} xs={4}>
+                <MdVoiceChat className={classes.shoppingCartIcon} style={{ opacity: '.3' }} />
+                <Typography className={classes.bulkTitle}>{t('common.smsVc')}</Typography>
+              </Grid>
+              <Grid item md={1} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                <Typography
+                  className={clsx(classes.bold)}
+                  title={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}
+                  aria-label={`${getBillingTypeText(Mms)} ${t('report.Credits')}`}>
+                  {billingTypeId === "1" ? t('dashboard.perUsage') : `${getBillingTypeText(SMSVC)}`}
+                </Typography>
+
+              </Grid>
+              <Grid item md={5} xs={4} className={clsx(classes.paddingSides10, windowSize === 'xs' ? classes.textRight : '')}>
+                &nbsp;
+              </Grid>
+            </Grid>
+          </>)}
         </Grid>
       </Paper>
     </>

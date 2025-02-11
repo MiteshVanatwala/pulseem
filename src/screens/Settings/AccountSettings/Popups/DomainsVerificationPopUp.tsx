@@ -199,7 +199,7 @@ const DomainsVerificationPopUp = ({ classes, isOpen, onClose, onConfirm }: any) 
                             target="_blank"
                             title={t('common.dnsRecordsGuide')}
                             aria-label={t('common.dnsRecordsGuide')}
-                            href="https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%9B%D7%99%D7%9D/%d7%9e%d7%a1%d7%9e%d7%9a-%d7%94%d7%a1%d7%91%d7%a8-%d7%9c%d7%94%d7%95%d7%a1%d7%a4%d7%aa-spf-dkim/">
+                            href="https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%99%D7%9B%D7%99%D7%9D/%D7%94%D7%A1%D7%91%D7%A8-%D7%9C%D7%94%D7%95%D7%A1%D7%A4%D7%AA-%D7%A8%D7%A9%D7%95%D7%9E%D7%95%D7%AA-%D7%93%D7%95%D7%9E%D7%99%D7%99%D7%9F/">
                             {t('common.dnsRecordsGuide')}
                         </Link>
                     </Box>

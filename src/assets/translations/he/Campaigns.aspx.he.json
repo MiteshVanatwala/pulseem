@@ -235,7 +235,9 @@
     "HeaderText": "מחיקה",
     "ImageUrl": "~/Images/Document 1 delete.png",
     "SortExpression": "",
-    "Text": "מחק"
+    "Text": "מחק",
+    "existTemplateTitle": "שם וקטגורית התבנית קיימת!",
+    "existTemplateDescription": "אתה עומד לדרוס תבנית קיימת בשם <b>#name#</b> בקטגוריה <b>#category#</b>.<br/>אם תמשיך, כל השינויים שביצעת בתבנית הקיימת יאבדו ולא ניתן יהיה לשחזרם.<br/>האם אתה בטוח שברצונך להמשיך?"
   },
   "GridTemplateColumnResource1": {
     "CurrentFilterValue": "",
@@ -705,6 +707,7 @@
   "pageView": "צפיה בעמוד",
   "purchase": "רכישה",
   "cartAbandonment": "נטישת עגלה",
+  "lastViewedProduct": "מוצרים שנצפו לאחרונה",
   "byProductCategory": "קטגוריית מוצר",
   "allCategories": "כל המוצרים",
   "display": "הצג",

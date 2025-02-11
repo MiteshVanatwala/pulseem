@@ -327,7 +327,7 @@ export async function SwitchStatusByCondition(data: ExportData | any, statuses: 
             let status = statuses.find((s) => { return s.id === o.Status });
             if (status && status.value !== '') {
                 tempData.Status = i18n.t(status.value);
-                tempData.StatusName = i18n.t(status.value);
+                //tempData.StatusName = i18n.t(status.value);
             }
         }
         if (!isEmail && (o.SmsStatus || o.SmsStatus === 0)) {
@@ -339,6 +339,22 @@ export async function SwitchStatusByCondition(data: ExportData | any, statuses: 
         if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
             tempData.Attachments = i18n.t('emailStatus.noAttachments');
         }
+        retValData.push(tempData);
+    });
+    return retValData as ExportData;
+}
+
+export async function SwitchIsOptIn(data: ExportData | any) {
+    const retValData: any = [];
+    data.forEach((o: any) => {
+        const tempData = { ...o } as any;
+        if (o?.IsOptIn && (o?.IsOptIn === true || o?.IsOptIn?.toLowerCase() === 'true')) {
+            tempData.IsOptIn = i18n.t('landingPages.approved');
+        }
+        else {
+            tempData.IsOptIn = i18n.t('landingPages.notApproved');
+        }
+        delete tempData.StatusName
         retValData.push(tempData);
     });
     return retValData as ExportData;
