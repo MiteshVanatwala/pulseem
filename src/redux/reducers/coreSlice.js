@@ -33,7 +33,8 @@ export const coreSlice = createSlice({
     subUserPermissions: [],
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
-    }
+    },
+    isLoader: false,
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -85,10 +86,13 @@ export const coreSlice = createSlice({
         }
         state.userRoles = roles.Restricted;
       }
+    },
+    setIsLoader: (state, { payload }) => {
+      state.isLoader = payload
     }
   }
 })
 
-export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal } = coreSlice.actions // setSmsOldVersion
+export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

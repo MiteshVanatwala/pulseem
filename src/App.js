@@ -90,6 +90,7 @@ import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
 import SubUsers from './screens/UsersAndPermissions/SubUsers';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
+import { Loader } from './components/Loader/Loader';
 
 const renderRoutes = (classes, redirect, userRoles) => {
   const transferUrl =
@@ -312,12 +313,10 @@ const renderRoutes = (classes, redirect, userRoles) => {
 
       <Route
         path={whatsappRoutes.CHAT}
-        element={<WhatsappChat classes={classes} key="wa-chate" />}
-      />
-      <Route
-        path={whatsappRoutes.CHAT_CONVERSATION}
-        element={<WhatsappChat classes={classes} key="wa-chat-conversation" />}
-      />
+      >
+        <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
+        <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
+      </Route>
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
@@ -595,7 +594,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, userRoles } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
@@ -796,6 +795,7 @@ const App = ({ screenSize }) => {
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
           {renderRoutesByCondition(classes, redirect)}
         </div>
+        <Loader isOpen={isLoader} showBackdrop={true} />
       </MuiThemeProvider>
     </MuiPickersUtilsProvider >
 

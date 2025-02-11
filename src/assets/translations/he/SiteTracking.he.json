@@ -58,5 +58,7 @@
     "addEvent": "הוסף אירוע",
     "minimumRevenue": "מינימום הכנסה",
     "maximumRevenue": "מקסימום הכנסה",
-    "enablePurchase": "אפשר מעקב רכישות"
+    "enablePurchase": "אפשר מעקב רכישות",
+    "revenueFeatureAdded": "פיצ'ר הכנסות נוסף בהצלחה",
+    "revenueFeatureRemoved": "פיצ'ר הכנסות בוטל בהצלחה"
 }

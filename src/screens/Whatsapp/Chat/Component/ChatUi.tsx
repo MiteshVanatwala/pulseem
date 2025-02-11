@@ -14,7 +14,6 @@ import { apiStatus } from '../../Constant';
 import { useDispatch } from 'react-redux';
 import { getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
 import ChatTemplate from './ChatTemplate';
-import { Loader } from '../../../../components/Loader/Loader';
 import ChatFooterContent from './ChatFooterContent';
 import clsx from 'clsx';
 import ChatHeaderContent from './ChatHeaderContent';
@@ -54,14 +53,14 @@ const ChatUi = ({
 	isContactLoader,
 	updateContactList,
 	personalFields,
-	onChatTemplateDelete
+	onChatTemplateDelete,
+	setIsLoader
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const [dialogType, setDialogType] = useState<{
 		type: string;
 	} | null>(null);
-	const [isLoader, setIsLoader] = useState<boolean>(false);
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -330,7 +329,6 @@ const ChatUi = ({
 					{chatFooter()}
 				</div>
 				{renderDialog()}
-				<Loader isOpen={isLoader} showBackdrop={true} />
 			</div>
 		</>
 	);
