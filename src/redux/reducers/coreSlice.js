@@ -23,7 +23,8 @@ export const coreSlice = createSlice({
     isDebtAccount: null,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
-    }
+    },
+    isLoader: false,
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -52,10 +53,13 @@ export const coreSlice = createSlice({
       state.isAllowSwitchAccount = payload.isAllowSwitchAccount
       state.billingTypeId = payload.billingTypeId
       state.isDebtAccount = (payload.isDebtAccount === true || payload.isDebtAccount === 'True')
+    },
+    setIsLoader: (state, { payload }) => {
+      state.isLoader = payload
     }
   }
 })
 
-export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal } = coreSlice.actions // setSmsOldVersion
+export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

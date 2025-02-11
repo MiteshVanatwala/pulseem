@@ -847,6 +847,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							TestGroupsIds: (selectedTestGroupDummy || selectedTestGroup)?.map((group) => group?.GroupID),
 						})
 					);
+				setIsLoader(false);
 				if (quickSendGroupsData?.Status !== apiStatus.SUCCESS) {
 					quickSendGroupsData?.Message
 						? setToastMessage({
@@ -912,9 +913,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								: setToastMessage(ToastMessages.ERROR);
 						}
 					}
+					setIsLoader(false);
 				}
 			}
-			setIsLoader(false);
 		} else {
 			setDialogType({
 				type: 'validation'

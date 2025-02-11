@@ -3,7 +3,7 @@ import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Tab, Button, Box, Link, Divider, Tabs } from '@material-ui/core'
+import { Grid, Tab, Button, Box, Link, Divider, Tabs, FormControlLabel } from '@material-ui/core'
 import EventToGroups from './EventToGroups'
 import { useDispatch, useSelector } from 'react-redux'
 import { addMetaData } from '../../redux/reducers/siteTrackingSlice'
@@ -77,18 +77,22 @@ const EventTabs = ({ classes,
     }
     const renderPurchase = () => {
         return <Box style={{ marginBlock: 20 }}>
-            <PulseemSwitch
-                classes={classes}
-                id="enablePurchase"
-                onChange={async () => {
-                    await onPurchaseChanged(!togglePurchase);
-                }}
-                checked={togglePurchase}
-                isRTL={isRTL}
-                switchType="ios"
-                props={{ disabled: purchaseToggleDisabled }}
+            <FormControlLabel
+                control={
+                    <PulseemSwitch
+                        classes={classes}
+                        id="enablePurchase"
+                        onChange={async () => {
+                            await onPurchaseChanged(!togglePurchase);
+                        }}
+                        checked={togglePurchase}
+                        isRTL={isRTL}
+                        switchType="ios"
+                        props={{ disabled: purchaseToggleDisabled }}
+                    />
+                }
+                label={t('siteTracking.enablePurchase')}
             />
-            {t('siteTracking.enablePurchase')}
         </Box>
     }
 

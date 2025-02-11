@@ -12,7 +12,7 @@ import {
   Typography
 } from '@material-ui/core'
 import clsx from 'clsx';
-import { get, range } from 'lodash';
+import { first, get, range } from 'lodash';
 import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulRow } from '../../screens/HtmlCampaign/helper/Template';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
@@ -444,7 +444,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       ...staticProduct,
       [selectedStaticProduct]: {
         ...prodDetails,
-        ImageURLs: prodDetails.ImageURLs || NO_IMAGE_URL,
+        ImageURLs: first(prodDetails.ImageURLs.split(',')) || NO_IMAGE_URL,
         MaxPrice: `${prodDetails.MaxPrice} ${t('common.NIS')}`
       }
     });
