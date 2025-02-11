@@ -39,7 +39,7 @@ const Templates = ({
   const { publicTemplates, templatesBySubAccount, publicTemplateCategories, templatesBySubAccountCategories } = useSelector(
     (state: { campaignEditor: any }) => state.campaignEditor
   );
-  const { windowSize } = useSelector(
+  const { windowSize, userRoles } = useSelector(
     (state: { core: any }) => state.core
   );
 
@@ -119,12 +119,12 @@ const Templates = ({
                   setDisplaySaveTemplate(true);
                 }} />
               </Tooltip>
-              <Tooltip title={t('common.Delete')}>
+              {userRoles?.AllowDelete && <Tooltip title={t('common.Delete')}>
                 <MdDelete onClick={() => {
                   setDisplayRemoveTemplateDialog(true);
                   setTemplateDetails({ ID: templateDetails.ID });
                 }} />
-              </Tooltip>
+              </Tooltip>}
             </Box>
           )
         }

@@ -76,7 +76,7 @@ import DynamicGroups from './screens/Groups/Dynamic/DynamicGroups';
 import EditDynamicGroup from './screens/Groups/Dynamic/EditDynamicGroup';
 import CreateLandingPage from './screens/LandingPages/Wizard/CreateLandingPage';
 import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
-import { isSignupPage } from './helpers/Utils/common';
+import { isSignupPage, isSubUserConfirmationPage } from './helpers/Utils/common';
 import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
 import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
@@ -87,10 +87,12 @@ import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
 import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
+import SubUsers from './screens/UsersAndPermissions/SubUsers';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
+import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
 import { Loader } from './components/Loader/Loader';
 
-const renderRoutes = (classes, redirect) => {
+const renderRoutes = (classes, redirect, userRoles) => {
   const transferUrl =
     (url = '', param = '') =>
       () => {
@@ -111,6 +113,11 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}sign-up`}
         element={<SignUp classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}UserConfirmation`}
+        element={<SubUserConfirmationPage classes={classes} />}
       />
       <Route
         exact
@@ -151,10 +158,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Groups`}
         element={<Groups classes={classes} />}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         path={`/ClientSearch`}
         component={transferUrl('/Pulseem/ClientSearch.aspx')}
-      />
+      />}
       {/* Newsletter */}
       <Route
         exact
@@ -314,14 +321,14 @@ const renderRoutes = (classes, redirect) => {
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
-      <Route
+      {!userRoles?.HideRecipients && <Route
         path={`${sitePrefix}ClientSearchResult/:referrer/:id`}
         element={<ClientSearchResult classes={classes} />}
-      />
-      <Route
+      />}
+      {!userRoles?.HideRecipients && <Route
         path={`${sitePrefix}ClientSearchResult`}
         element={<ClientSearchResult classes={classes} />}
-      />
+      />}
       <Route
         path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
@@ -481,6 +488,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}ApiSettings`}
         element={<ApiSettings classes={classes} />}
       />
+      {userRoles?.AllowSubUsers && <Route
+        path={`${sitePrefix}SubUsers`}
+        element={<SubUsers classes={classes} />}
+      />}
       {/* Support */}
       <Route
         path={`/Support`}
@@ -583,14 +594,15 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
+  const isConfirmationPage = isSubUserConfirmationPage(location.pathname)
 
   React.useEffect(() => {
-    !isSignup && dispatch(getNotificationUpdates());
+    !isSignup && !isConfirmationPage && dispatch(getNotificationUpdates());
   }, [location]);
 
   useEffect(() => {
@@ -598,7 +610,7 @@ const App = ({ screenSize }) => {
   }, [screenSize]);
 
   useEffect(() => {
-    if (!isSignup && currencyList?.length > 0) {
+    if (!isSignup && !isConfirmationPage && currencyList?.length > 0) {
       dispatch(GetGlobalAccountPackagesDetails());
     }
   }, [currencyList]);
@@ -622,7 +634,7 @@ const App = ({ screenSize }) => {
       const jwt = jwt_decode(token);
       const {
         email = '',
-        // unique_name = '',
+        unique_name = '', // SubUser permissions
         nameid: companyName,
         certthumbprint: billingTypeId,
         role: isAdmin,
@@ -654,6 +666,7 @@ const App = ({ screenSize }) => {
           isAdmin,
           isAllowSwitchAccount,
           billingTypeId,
+          unique_name
         })
       );
       let lang = culture || locality; //||'he'
@@ -676,11 +689,11 @@ const App = ({ screenSize }) => {
       if (!!cookieFunction)
         cookieFunction()
     })
-    !isSignup && updateToken()
-    !isSignup && initFeatures()
-    !isSignup && dispatch(GetCurrencyList());
-    !isSignup && dispatch(GetSmsCountries());
-    !isSignup && dispatch(GetAfterLoginInitialData());
+    !isSignup && !isConfirmationPage && updateToken()
+    !isSignup && !isConfirmationPage && initFeatures()
+    !isSignup && !isConfirmationPage && dispatch(GetCurrencyList());
+    !isSignup && !isConfirmationPage && dispatch(GetSmsCountries());
+    !isSignup && !isConfirmationPage && dispatch(GetAfterLoginInitialData());
   }, [dispatch])
 
 
@@ -771,12 +784,12 @@ const App = ({ screenSize }) => {
       </Routes>
     }
     else {
-      return renderRoutes(classes, redirect);
+      return renderRoutes(classes, redirect, userRoles);
     }
 
   }
 
-  return (accountSettings || isSignup) && (
+  return (accountSettings || isSignup || isConfirmationPage) && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>

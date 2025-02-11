@@ -40,7 +40,7 @@ import { ClearPageState, GetPageNyName, SetPageState } from '../../../helpers/UI
 
 const LandingPagesesManagment = ({ classes }) => {
   const navigate = useNavigate()
-  const { windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { accountFeatures } = useSelector(state => state.common);
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
@@ -427,6 +427,7 @@ const LandingPagesesManagment = ({ classes }) => {
         uIcon: DeleteIcon,
         lable: t('landingPages.GridButtonColumnResource1.HeaderText'),
         showPhone: true,
+        remove: !userRoles?.AllowDelete,
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
@@ -534,7 +535,7 @@ const LandingPagesesManagment = ({ classes }) => {
       <>
         <Link
           component='a'
-          href={`${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({
+          href={!userRoles?.HideRecipients && `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({
             ...CLIENT_CONSTANTS.QUERY_PARAMS,
             CampaignID: ID,
             PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
@@ -543,7 +544,7 @@ const LandingPagesesManagment = ({ classes }) => {
           style={{ cursor: subscribtions ? 'pointer' : null, textDecoration: subscribtions ? 'underline' : null }}
           onClick={(e) => {
             e.preventDefault();
-            if (Submits && Submits > 0) {
+            if (Submits && Submits > 0 && !userRoles?.HideRecipients) {
               navigate(CLIENT_CONSTANTS.BASEURL, {
                 state: {
                   ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -555,7 +556,7 @@ const LandingPagesesManagment = ({ classes }) => {
             } else { return false }
           }
           }
-          className={clsx(classes.middleText, classes.pt2)}>
+          className={clsx(classes.middleText, classes.pt2, userRoles?.HideRecipients && classes.disabled)}>
           <Typography
             className={classes.middleText}>
             {(Submits && Submits.toLocaleString()) || 0}

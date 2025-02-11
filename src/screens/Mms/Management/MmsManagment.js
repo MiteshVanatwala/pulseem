@@ -27,7 +27,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { DateFormats } from '../../../helpers/Constants';
 
 const MmsManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { mmsData, mmsDeletedData } = useSelector(state => state.mms)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -316,6 +316,7 @@ const MmsManagnentScreen = ({ classes }) => {
         key: 'delete',
         uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
+        remove: !userRoles?.AllowDelete,
         showPhone: true,
         rootClass: classes.paddingIcon,
         onClick: () => {

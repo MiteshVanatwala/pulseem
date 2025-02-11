@@ -60,7 +60,7 @@ import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import { DateFormats } from '../../../helpers/Constants';
 
 const SmsManagnentScreen = ({ classes }) => {
-	const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
+	const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core) // smsOldVersion, isRTL
 	const { smsData, smsDeletedData } = useSelector(state => state.sms)
 	const { t } = useTranslation()
 	const [fromDate, handleFromDate] = useState(null);
@@ -386,6 +386,7 @@ const SmsManagnentScreen = ({ classes }) => {
 				uIcon: DeleteIcon,
 				lable: t('campaigns.DeleteResource1.HeaderText'),
 				showPhone: true,
+				remove: !userRoles?.AllowDelete,
 				disable: AutomationID !== 0,
 				rootClass: classes.paddingIcon,
 				onClick: () => {

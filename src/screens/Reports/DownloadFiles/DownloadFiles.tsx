@@ -19,7 +19,7 @@ import { ERROR_TYPE } from '../../../helpers/Types/common';
 import { Title } from '../../../components/managment/Title';
 
 const DownloadFiles = ({ classes }: any) => {
-    const { language, windowSize, rowsPerPage } = useSelector((state: any) => state.core)
+    const { language, windowSize, rowsPerPage, userRoles } = useSelector((state: any) => state.core)
     const { t } = useTranslation();
     const [page, setPage] = useState(1);
     const [fileDownoadList, setFileDownloadList] = useState([]);
@@ -64,7 +64,7 @@ const DownloadFiles = ({ classes }: any) => {
                     {/* @ts-ignore */}
                     <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.CreationDate")}</TableCell>
                     {/* @ts-ignore */}
-                    <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("master.download")}</TableCell>
+                    {userRoles?.AllowExport && <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("master.download")}</TableCell>}
                 </TableRow>
             </TableHead>
         )
@@ -142,22 +142,22 @@ const DownloadFiles = ({ classes }: any) => {
         window.open(`/Pulseem/DownloadFile.aspx?fileFormat=${Type}&fileId=${fileID}`);
     }
 
-  const renderNameCell = (row: any) => {
-    return (
-      <CustomTooltip
-        key={row.id}
-        isSimpleTooltip={false}
-        classes={classes}
-        interactive={true}
-        arrow={true}
-        placement={'top'}
-        titleStyle={undefined}
-        title={<Typography noWrap={false}>{row.FileName}</Typography>}
-        text={row.FileName} icon={undefined} style={undefined}>
-          <Typography noWrap={false}>{row.SourceFileName && row.SourceFileName != '' && row.SourceFileName != null ? row.SourceFileName : row.FileName}</Typography>
-      </CustomTooltip>
-    )
-  }
+    const renderNameCell = (row: any) => {
+        return (
+            <CustomTooltip
+                key={row.id}
+                isSimpleTooltip={false}
+                classes={classes}
+                interactive={true}
+                arrow={true}
+                placement={'top'}
+                titleStyle={undefined}
+                title={<Typography noWrap={false}>{row.FileName}</Typography>}
+                text={row.FileName} icon={undefined} style={undefined}>
+                <Typography noWrap={false}>{row.SourceFileName && row.SourceFileName != '' && row.SourceFileName != null ? row.SourceFileName : row.FileName}</Typography>
+            </CustomTooltip>
+        )
+    }
 
     const renderRow = (row: any) => {
         return (
@@ -182,12 +182,12 @@ const DownloadFiles = ({ classes }: any) => {
                     className={classes.flex1}>
                     {moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}
                 </TableCell>
-                <TableCell
+                {userRoles?.AllowExport && <TableCell
                     classes={cellStyle}
                     align='center'
                     className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
                     {renderActionCell(row)}
-                </TableCell>
+                </TableCell>}
             </TableRow>
         )
     }

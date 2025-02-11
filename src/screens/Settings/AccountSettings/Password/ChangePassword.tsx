@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "../../../../components/Loader/Loader";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
@@ -19,7 +19,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Zoom from "@material-ui/core/Zoom";
 import { ValidPassword } from "./Types";
 import PasswordHint from "./PasswordHint";
-import { StateType } from "../../../../Models/StateTypes";
 
 const useStyles = makeStyles({
   dialogContainer: {
@@ -71,6 +70,7 @@ export interface PasswordParams {
   OnClose: Function;
   SetToast: Function;
   Text: string | null | undefined;
+  oldPasswordRequired?: boolean
 }
 
 const useStylesBootstrap = makeStyles((theme) => ({
@@ -97,9 +97,11 @@ const ChangePassword = ({
   OnClose,
   SetToast,
   Text,
+  oldPasswordRequired = true
 }: PasswordParams) => {
   const { t } = useTranslation();
   const localClasses = useStyles();
+  const { windowSize } = useSelector((state: any) => state.core);
   const [loginPass, setLoginPass] = useState<LoginPassword>({
     OldPassword: "",
     NewPassword: "",
@@ -128,6 +130,27 @@ const ChangePassword = ({
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (IsOpen) {
+      setErrors([]);
+      setLoginPass({
+        OldPassword: "",
+        NewPassword: "",
+        ConfirmPassword: "",
+      });
+      setPasswordValidation({
+        LowerChar: false,
+        SpecialChar: false,
+        UpperChar: false,
+        PasswordLength: 0,
+        NumberChar: false,
+      })
+      setOldPassError('')
+      setNewPassError('');
+      setConfirmPassError('');
+    }
+  }, [IsOpen])
+
   const handleConfirm = async () => {
     const missingErrorsObj: any = {
       LowerChar: t("settings.changePassword.passwordHint.lowerChar"),
@@ -137,7 +160,7 @@ const ChangePassword = ({
       NumberChar: t("settings.changePassword.passwordHint.number"),
     };
     let isValid = true;
-    if (!loginPass.OldPassword || loginPass.OldPassword === "") {
+    if (oldPasswordRequired && (!loginPass.OldPassword || loginPass.OldPassword === "")) {
       isValid = false;
       setOldPassError(t("settings.changePassword.error.required"));
     }
@@ -231,7 +254,7 @@ const ChangePassword = ({
         <Grid
           container
           className={clsx(classes.mb4)}
-          style={{ maxWidth: "calc(25vw)" }}
+          style={{ maxWidth: windowSize !== 'xs' ? "400px" : '' }}
         >
           <Grid item xs={12}>
             <Typography>
@@ -239,72 +262,72 @@ const ChangePassword = ({
             </Typography>
           </Grid>
           {/* Old Password */}
-          <Grid
-            item
-            xs={10}
-            className={clsx(
-              classes.customDialogContentBox,
-              classes.flex,
-              classes.mt4
-            )}
-          >
-            <Grid item xs={6}>
-              <Typography>
-                {t("settings.changePassword.oldPassword")}:
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                type={showPassword ? "text" : "password"}
-                id="outlined-basic"
-                name="OldPassword"
-                label=""
-                variant="outlined"
-                value={loginPass.OldPassword}
+          {
+            oldPasswordRequired && (
+              <Grid
+                item
+                xs={12}
                 className={clsx(
-                  classes.textField,
-                  classes.minWidth252,
-                  oldPassError !== "" ? classes.textFieldError : ""
+                  classes.mt4
                 )}
-                inputProps={{ autocomplete: "old-password" }}
-                onChange={handleChange}
-                helperText={oldPassError}
-                InputProps={{
-                  endAdornment: (
-                    <Button
-                      onClick={() => setShowPassword(!showPassword)}
-                      className={localClasses.pwdEveButton}
-                    >
-                      {" "}
-                      {showPassword ? (
-                        <VisibilityOff style={{ fontSize: 15 }} />
-                      ) : (
-                        <Visibility style={{ fontSize: 15 }} />
-                      )}
-                    </Button>
-                  ),
-                }}
-              />
-            </Grid>
-          </Grid>
+              >
+                <Grid item xs={12}>
+                  <Typography>
+                    {t("settings.changePassword.oldPassword")}:
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    type={showPassword ? "text" : "password"}
+                    id="outlined-basic"
+                    name="OldPassword"
+                    label=""
+                    variant="outlined"
+                    value={loginPass.OldPassword}
+                    className={clsx(
+                      classes.textField,
+                      classes.minWidth252,
+                      oldPassError !== "" ? classes.textFieldError : ""
+                    )}
+                    inputProps={{ autocomplete: "old-password" }}
+                    onChange={handleChange}
+                    helperText={oldPassError}
+                    InputProps={{
+                      endAdornment: (
+                        <Button
+                          onClick={() => setShowPassword(!showPassword)}
+                          className={localClasses.pwdEveButton}
+                        >
+                          {" "}
+                          {showPassword ? (
+                            <VisibilityOff style={{ fontSize: 15 }} />
+                          ) : (
+                            <Visibility style={{ fontSize: 15 }} />
+                          )}
+                        </Button>
+                      ),
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            )
+          }
           {/* New Password */}
           <Grid
             item
-            xs={10}
+            xs={12}
             className={clsx(
-              classes.customDialogContentBox,
-              classes.flex,
               classes.mt4
             )}
           >
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Box className={classes.flex1}>
                 <Typography>
                   {t("settings.changePassword.newPassword")}:
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Box className={classes.flex2}>
                 <BootstrapTooltip
                   TransitionComponent={Zoom}
@@ -359,21 +382,19 @@ const ChangePassword = ({
           {/* Confirm Password */}
           <Grid
             item
-            xs={10}
+            xs={12}
             className={clsx(
-              classes.customDialogContentBox,
-              classes.flex,
               classes.mt4
             )}
           >
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Box className={classes.flex1}>
                 <Typography>
                   {t("settings.changePassword.confirmPassword")}:
                 </Typography>
               </Box>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Box className={classes.flex2}>
                 <TextField
                   type={showPassword ? "text" : "password"}

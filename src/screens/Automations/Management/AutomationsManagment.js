@@ -32,7 +32,7 @@ import { DateFormats } from '../../../helpers/Constants';
 
 const AutomationsManagnentScreen = ({ classes }) => {
   const Redirect = useNavigate();
-  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -307,6 +307,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
+        remove: !userRoles?.AllowDelete,
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
@@ -347,10 +348,13 @@ const AutomationsManagnentScreen = ({ classes }) => {
       false: t('automations.AutomatoionInActiveStatusText',)
     }
     return (
-      <Box>
+      <Box className={userRoles?.HideRecipients && classes.disabled}>
         <Switch
           checked={IsActive}
           onChange={() => {
+            if (userRoles?.HideRecipients) {
+              return;
+            }
             if (!row.HasNodes) {
               setErrorMessage(`${t('automations.NoNodesFound')}<br/>${t('automations.pressHereToEditAutomation').replace('##', row.ID)}`);
               setDialogType({

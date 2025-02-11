@@ -46,7 +46,7 @@ import { SEND_1, PULSE_1, DateFormats } from '../../../helpers/Constants';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
-  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { newslettersDeletedData, newslettersParentCampaigns, newslettersChildCampaigns } = useSelector(state => state.newsletter)
   const { ToastMessages } = useSelector(state => state.client);
   const { t } = useTranslation()
@@ -533,6 +533,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         key: 'delete',
         uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
+        remove: !userRoles?.AllowDelete,
         rootClass: classes.paddingIcon,
         disable: AutomationID !== 0,
         showPhone: true,

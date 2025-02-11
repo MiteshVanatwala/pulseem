@@ -196,7 +196,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isLoader, setIsLoader] = useState<boolean>(true);
-	const { isRTL, windowSize } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize, userRoles } = useSelector((state: { core: coreProps }) => state.core);
 	// const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [campaignName, setCampaignName] = useState<string>('');
 	const [from, setFrom] = useState<string>('');
@@ -1334,7 +1334,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const limitNotice = () => {
-		const tierDataFromNumber = from !== '' ? get(first(filter(TierData, {FromNumber: from?.replace(/-/g, '')}) || {}), 'WhatsappTierId', 0) : 0;
+		const tierDataFromNumber = from !== '' ? get(first(filter(TierData, { FromNumber: from?.replace(/-/g, '') }) || {}), 'WhatsappTierId', 0) : 0;
 		return (
 			<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
 				<span style={{ lineHeight: '0' }}>
@@ -1539,7 +1539,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												sm={12}
 												md={12}
 												lg={12}>
-												<Box
+												{userRoles?.AllowSend && <Box
 													className={clsx(
 														classes.switchDiv,
 														classes.testSendWrapper
@@ -1563,7 +1563,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 															<>{translator('whatsappCampaign.tsendDesc')}</>
 														</Typography>
 													</Box>
-												</Box>
+												</Box>}
 
 												{
 													isTestSend && (

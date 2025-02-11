@@ -41,6 +41,7 @@
 	"SMSBulkAmount": "SMS Bulk Amount",
 	"MMSBulkAmount": "MMS Bulk Amount",
 	"email2FA": "This Email will be used for 2FA",
+	"cellPhone2FA": "This Cellphone will be used for 2FA",
 	"accountDetails": "Account Details",
 	"creditDetails": "Credit Details",
 	"addBulkEmails": "Add Bulk Emails",

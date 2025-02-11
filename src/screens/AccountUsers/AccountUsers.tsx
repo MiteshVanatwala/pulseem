@@ -31,31 +31,31 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 
 const AccountUsers = ({ classes }: any) => {
   const navigate = useNavigate();
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector((state: any) => state.core);
+  const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector((state: any) => state.core);
   const { isGlobal, accountCurrencySymbol, accountIsCurrencySymbolPrefix, subAccount } = useSelector((state: { common: CommonRedux }) => state.common);
   const { subAccountList } = useSelector((state: any) => state.subAccount);
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [ isDirectAccount, setIsDirectAccount ] = useState<boolean>(false);
-  const [ isSearching, setIsSearching ] = useState<boolean>(false);
-  const [ showLoader, setShowLoader ] = useState<boolean>(true);
-  const [ toastMessage, setToastMessage ] = useState<toastProps['SUCCESS']>(resetToastData);
-  const [ selectedAccountId, setSelectedAccountId ] = useState('');
-  const [ totalRecord, setTotalRecord ] = useState<number>(0);
-  const [ searchData, setSearchData ] = useState<any>({
+  const [isDirectAccount, setIsDirectAccount] = useState<boolean>(false);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [showLoader, setShowLoader] = useState<boolean>(true);
+  const [toastMessage, setToastMessage] = useState<toastProps['SUCCESS']>(resetToastData);
+  const [selectedAccountId, setSelectedAccountId] = useState('');
+  const [totalRecord, setTotalRecord] = useState<number>(0);
+  const [searchData, setSearchData] = useState<any>({
     PageNo: 1,
     Search: "",
     CompanyAdmin: 0,
     IsPagination: true
   });
-  const [ dialogType, setDialogType ] = useState<{
+  const [dialogType, setDialogType] = useState<{
     type: string;
     data: any
   } | null>(null);
   const rowStyle = { head: clsx(classes.tableRowHead, classes.pt10, classes.pb10), root: classes.tableRowRoot }
   const cellStyle = { head: clsx(classes.tableCellHead, classes.noPadding, classes.f16), body: classes.tableCellBody, root: clsx(classes.tableCellRoot, classes.p0) }
   const cellBodyStyle = { body: clsx(classes.tableCellBody, classes.f16), root: clsx(classes.tableCellRoot, classes.noPadding) }
-  const [ direct, setDirect ] = useState<{
+  const [direct, setDirect] = useState<{
     emailDirect: null | number,
     SMSDirect: null | number,
     MMSDirect: null | number,
@@ -66,7 +66,7 @@ const AccountUsers = ({ classes }: any) => {
     MMSDirect: null,
     GlobalBalance: null
   })
-  const [ packageDetails, setPackageDetails ] = useState<{
+  const [packageDetails, setPackageDetails] = useState<{
     email: null | number,
     SMS: null | number,
     whatsApp: null | number,
@@ -81,7 +81,7 @@ const AccountUsers = ({ classes }: any) => {
     if (get(subAccount, 'CompanyAdmin', false) === false) navigate(`${sitePrefix}`);
     else getInitialData();
   }, []);
-  
+
   useEffect(() => {
     getData();
   }, [rowsPerPage, searchData.PageNo]);
@@ -92,7 +92,7 @@ const AccountUsers = ({ classes }: any) => {
       ...searchData,
       CompanyAdmin: 1
     }));
-  
+
     if ((directData?.payload?.Data?.Items || []).length > 0) {
       setDirect({
         emailDirect: directData?.payload?.Data?.Items[0]['DirectBulkEmails'],
@@ -114,7 +114,7 @@ const AccountUsers = ({ classes }: any) => {
       })
     }
   }
-  
+
   const getData = async () => {
     setShowLoader(true);
     const response = await dispatch(GetSubAccountList({
@@ -126,14 +126,14 @@ const AccountUsers = ({ classes }: any) => {
   }
 
   const renderToast = () => {
-		if (toastMessage.message?.length > 0) {
-			setTimeout(() => {
-				setToastMessage(resetToastData);
-			}, 4000);
-			return <Toast data={toastMessage} />;
-		}
-		return null;
-	};
+    if (toastMessage.message?.length > 0) {
+      setTimeout(() => {
+        setToastMessage(resetToastData);
+      }, 4000);
+      return <Toast data={toastMessage} />;
+    }
+    return null;
+  };
 
   const renderCellIcons = (row: SubAccountUsers) => {
     const iconsMap = [[
@@ -189,7 +189,7 @@ const AccountUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
         disable: false,
         showPhone: true,
-        remove: windowSize === 'xs' || !isGlobal,
+        remove: !userRoles?.AllowDelete || windowSize === 'xs' || !isGlobal,
         onClick: () => {
           setDialogType({ type: 'Delete', data: row.CustomGuidEnc });
         }
@@ -241,57 +241,57 @@ const AccountUsers = ({ classes }: any) => {
     };
 
     return (
-        <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
-          <Grid item>
-            <TextField
-              variant="outlined"
-              size="small"
-              value={searchData.Search}
-              onKeyPress={handleKeyDown}
-              onChange={(e: any) => setSearchData({
-                ...searchData,
-                Search: e.target.value
-              })}
-              className={clsx(classes.textField, classes.minWidth252)}
-              placeholder={t("common.search")}
-            />
-          </Grid>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
+        <Grid item>
+          <TextField
+            variant="outlined"
+            size="small"
+            value={searchData.Search}
+            onKeyPress={handleKeyDown}
+            onChange={(e: any) => setSearchData({
+              ...searchData,
+              Search: e.target.value
+            })}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t("common.search")}
+          />
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => {
+              getData();
+              setIsSearching(true);
+            }}
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
+            {t("campaigns.btnSearchResource1.Text")}
+          </Button>
+        </Grid>
+        {isSearching && (
           <Grid item>
             <Button
-              onClick={() => {
-                getData();
-                setIsSearching(true);
+              onClick={async () => {
+                const searchObject = {
+                  PageNo: 1,
+                  Search: "",
+                  CompanyAdmin: 0,
+                  IsPagination: true
+                };
+                setSearchData(searchObject);
+
+                setShowLoader(true);
+                setIsSearching(false);
+                await dispatch(GetSubAccountList(searchObject));
+                setShowLoader(false);
               }}
               className={clsx(classes.btn, classes.btnRounded)}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
-              {t("campaigns.btnSearchResource1.Text")}
+              {t("common.clear")}
             </Button>
           </Grid>
-          {isSearching && (
-            <Grid item>
-              <Button
-                onClick={async () => {
-                  const searchObject = {
-                    PageNo: 1,
-                    Search: "",
-                    CompanyAdmin: 0,
-                    IsPagination: true
-                  };
-                  setSearchData(searchObject);
-
-                  setShowLoader(true);
-                  setIsSearching(false);
-                  await dispatch(GetSubAccountList(searchObject));
-                  setShowLoader(false);
-                }}
-                className={clsx(classes.btn, classes.btnRounded)}
-                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-              >
-                {t("common.clear")}
-              </Button>
-            </Grid>
-          )}
+        )}
       </Grid>
     );
   };
@@ -445,7 +445,7 @@ const AccountUsers = ({ classes }: any) => {
             {t('SubAccount.showHistory')}
           </Button>
           {
-            !isGlobal && selectedAccountId && (
+            userRoles?.AllowDelete && !isGlobal && selectedAccountId && (
               <Button
                 className={clsx(
                   classes.btn,
@@ -482,16 +482,16 @@ const AccountUsers = ({ classes }: any) => {
           classes={cellBodyStyle}
           align='center'
           className={isGlobal ? classes.flex1 : classes.flex2}>
-            <b>{row.SubAccountName}</b>
-            <div>
-              {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}</b>
-            </div>
+          <b>{row.SubAccountName}</b>
+          <div>
+            {t('common.CreationDate')}: <b>{moment(row.CreationDate).format(DateFormats.DATE_TIME_24)}</b>
+          </div>
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
           className={isGlobal ? classes.flex1 : classes.flex2}>
-            {row.SubAccountManager}
+          {row.SubAccountManager}
         </TableCell>
         {
           isGlobal && (
@@ -499,9 +499,9 @@ const AccountUsers = ({ classes }: any) => {
               classes={cellBodyStyle}
               align='center'
               className={isGlobal ? classes.flex1 : classes.flex2}>
-                <Typography className={clsx(classes.middleText, classes.bold)}>
-                  { accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' } {row.FinalGlobalBalance} { !accountIsCurrencySymbolPrefix ? accountCurrencySymbol : '' }
-                </Typography>
+              <Typography className={clsx(classes.middleText, classes.bold)}>
+                {accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''} {row.FinalGlobalBalance} {!accountIsCurrencySymbolPrefix ? accountCurrencySymbol : ''}
+              </Typography>
             </TableCell>
           )
         }
@@ -512,13 +512,13 @@ const AccountUsers = ({ classes }: any) => {
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.BulkEmail}
+                {row.BulkEmail}
               </TableCell>
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.BulkSMS}
+                {row.BulkSMS}
               </TableCell>
               {/* <TableCell
                 classes={cellBodyStyle}
@@ -542,13 +542,13 @@ const AccountUsers = ({ classes }: any) => {
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.DirectBulkEmails}
+                {row.DirectBulkEmails}
               </TableCell>
               <TableCell
                 classes={cellBodyStyle}
                 align='center'
                 className={classes.flex1}>
-                  {row.DirectSMSCredits}
+                {row.DirectSMSCredits}
               </TableCell>
               {/* <TableCell
                 classes={cellBodyStyle}
@@ -563,7 +563,7 @@ const AccountUsers = ({ classes }: any) => {
           classes={cellBodyStyle}
           align='center'
           className={clsx(isGlobal ? classes.flex3 : classes.flex1, classes.noBorderOnLastCell)}>
-            {renderCellIcons(row)}
+          {renderCellIcons(row)}
         </TableCell>
       </TableRow>
     )
@@ -625,50 +625,50 @@ const AccountUsers = ({ classes }: any) => {
   }
 
   const renderHistoryDialog = (id: string = '') => {
-		return {
-			showDivider: false,
-			title: t("SubAccount.showHistory"),
-			content: <CreditHistory classes={classes} id={id} />,
-			onConfirm: () => setDialogType(null),
-			onCancel: () => setDialogType(null),
+    return {
+      showDivider: false,
+      title: t("SubAccount.showHistory"),
+      content: <CreditHistory classes={classes} id={id} />,
+      onConfirm: () => setDialogType(null),
+      onCancel: () => setDialogType(null),
       showDefaultButtons: false
-		};
-	}
+    };
+  }
 
   const getDeleteDialog = (id: string = '') => ({
-		title: t('common.Delete'),
-		showDivider: false,
-		content: (
-			<Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
-				{t('SubAccount.deleteSubAccount')}
-			</Typography>
-		),
-		cancelText: t('common.No'),
-		confirmText: t('common.Yes'),
+    title: t('common.Delete'),
+    showDivider: false,
+    content: (
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+        {t('SubAccount.deleteSubAccount')}
+      </Typography>
+    ),
+    cancelText: t('common.No'),
+    confirmText: t('common.Yes'),
     onConfirm: async () => {
       setDialogType(null);
       setShowLoader(true);
       const response: any = await dispatch(DeleteSubAccounts(id));
       if (response?.payload?.StatusCode === 1) {
-        setToastMessage({ severity: 'success', color: 'success', message: t('SubAccount.subAccountDeleted'), showAnimtionCheck: false });  
+        setToastMessage({ severity: 'success', color: 'success', message: t('SubAccount.subAccountDeleted'), showAnimtionCheck: false });
         getInitialData();
       } else {
-        setToastMessage({ severity: 'error', color: 'error', message: t('SubAccount.subAccountDeletionFailed'), showAnimtionCheck: false });  
+        setToastMessage({ severity: 'error', color: 'error', message: t('SubAccount.subAccountDeletionFailed'), showAnimtionCheck: false });
       }
       setShowLoader(false);
     },
     onCancel: () => setDialogType(null)
-	})
+  })
 
   const renderDialog = () => {
     const { type, data } = dialogType || {}
 
     let currentDialog: any = {};
-		if (type === 'HistoryDialog') {
-			currentDialog = renderHistoryDialog(data);
+    if (type === 'HistoryDialog') {
+      currentDialog = renderHistoryDialog(data);
     } else if (type === 'Delete') {
-			currentDialog = getDeleteDialog(data);
-		}
+      currentDialog = getDeleteDialog(data);
+    }
 
     if (type) {
       return (
@@ -707,7 +707,7 @@ const AccountUsers = ({ classes }: any) => {
       </Box>
 
       {renderManagmentLine()}
-      { isGlobal !== null && renderTable()}
+      {isGlobal !== null && renderTable()}
       {renderTablePagination()}
       {
         !isGlobal && (

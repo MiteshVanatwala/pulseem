@@ -1,6 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies'
+import { eSubUserPermissions, UserRoles } from '../../Models/SubUser/SubUsers';
 const rtlLanguages = ['he', 'ar']
+
+export const isSuperUserSelector = (permissions) => {
+  const adminPermissions = [1, 2, 3, 4];
+  return adminPermissions?.every(permission =>
+    permissions?.indexOf(permission) > -1
+  );
+};
 
 export const coreSlice = createSlice({
   name: 'core',
@@ -21,6 +29,8 @@ export const coreSlice = createSlice({
     billingTypeId: null,
     accountFeatures: null,
     isDebtAccount: null,
+    userRoles: UserRoles?.Admin,
+    subUserPermissions: [],
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     },
@@ -53,6 +63,29 @@ export const coreSlice = createSlice({
       state.isAllowSwitchAccount = payload.isAllowSwitchAccount
       state.billingTypeId = payload.billingTypeId
       state.isDebtAccount = (payload.isDebtAccount === true || payload.isDebtAccount === 'True')
+
+      const userPermissions = payload?.unique_name;
+      const isAdmin = userPermissions === '-1' || userPermissions === -1 || isSuperUserSelector(userPermissions);
+      const isReadOnly = userPermissions?.indexOf(5) > -1;
+
+      if (isAdmin) {
+        state.userRoles = UserRoles.Admin;
+      }
+      else if (isReadOnly) {
+        state.userRoles = UserRoles.ReadOnly;
+      }
+      else {
+        const roles = {
+          ...UserRoles,
+          Restricted: {
+            AllowSend: userPermissions.indexOf(eSubUserPermissions.AllowSend) > -1,
+            AllowExport: userPermissions.indexOf(eSubUserPermissions.AllowExport) > -1,
+            AllowDelete: userPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1,
+            AllowSubUsers: userPermissions.indexOf(eSubUserPermissions.AllowSubUsers) > -1,
+          }
+        }
+        state.userRoles = roles.Restricted;
+      }
     },
     setIsLoader: (state, { payload }) => {
       state.isLoader = payload

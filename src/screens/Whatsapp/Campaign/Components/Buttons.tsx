@@ -20,7 +20,7 @@ const Buttons = ({
 }: ButtonsProps) => {
 	const { t: translator } = useTranslation();
 
-	const { isRTL, windowSize } = useSelector(
+	const { isRTL, windowSize, userRoles } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { campaignID } = useParams();
@@ -88,7 +88,7 @@ const Buttons = ({
 					size='medium'
 					className={clsx(
 						classes.btn,
-            classes.btnRounded
+						classes.btnRounded
 					)}
 					style={{ margin: '8px' }}
 					onClick={(e) => onFormButtonClick(buttons.DELETE)}>
@@ -100,7 +100,7 @@ const Buttons = ({
 					size='medium'
 					className={clsx(
 						classes.btn,
-            classes.btnRounded
+						classes.btnRounded
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
@@ -115,7 +115,7 @@ const Buttons = ({
 					size='medium'
 					className={clsx(
 						classes.btn,
-            classes.btnRounded
+						classes.btnRounded
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
@@ -126,7 +126,7 @@ const Buttons = ({
 				</Button>
 
 				{
-					(showSendButton || isSummary) && (
+					userRoles?.AllowSend && (showSendButton || isSummary) && (
 						<Button
 							variant='contained'
 							size='medium'

@@ -29,7 +29,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const ArchiveManagementScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { accountFeatures } = useSelector(state => state.common);
   const { newsletterArchiveData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -236,7 +236,7 @@ const ArchiveManagementScreen = ({ classes }) => {
 
     const list = searchResults ?? newsletterArchiveData;
 
-    const fields = {...exportColumnHeader};
+    const fields = { ...exportColumnHeader };
 
     const exportOptions = {
       OrderItems: true,
@@ -251,7 +251,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       const result = await HandleExportData(list, exportOptions);
 
       delete fields["Status"];
-      
+
       ExportFile({
         data: result,
         fileName: 'emailReport',
@@ -274,7 +274,7 @@ const ArchiveManagementScreen = ({ classes }) => {
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={clsx(classes.linePadding, classes.pb10)}>
-        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
+        {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'

@@ -150,6 +150,7 @@
 		"oldPassword": "סיסמא ישנה",
 		"newPassword": "סיסמא חדשה",
 		"confirmPassword": "אימות סיסמא",
+		"enterNewPassword": "הקלד סיסמא חדשה",
 		"error": {
 			"required": "שדה חובה",
 			"notMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה"

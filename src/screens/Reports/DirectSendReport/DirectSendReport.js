@@ -35,7 +35,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
   const { accountFeatures } = useSelector(state => state.common);
-  const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+  const { windowSize, isRTL, rowsPerPage, userRoles } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
   const { directWhatsappReport } = useSelector(state => state.whatsapp);
@@ -441,11 +441,12 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 className={clsx(
                   classes.btn, classes.btnRounded
                 )}
+                style={{ marginInline: 15 }}
                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               >
                 {t('master.campaignsArchive')}
               </Button>}
-              {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <CustomTooltip
+              {userRoles?.AllowExport && accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <CustomTooltip
                 style={{ fontSize: 14 }}
                 text={t('report.ExportLimitation')}
                 icon={<Button
