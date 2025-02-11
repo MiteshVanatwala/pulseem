@@ -60,7 +60,7 @@ const SubUserConfirmationPage = ({ classes }: any) => {
   const onInitRef = async () => {
     setLoader(true);
 
-    const response: any = await PulseemReactInstance.post(`SubUser/CheckSubUserRef  `, { EmailId: qs?.emailId, ConfirmationId: qs?.cid });
+    const response: any = await PulseemReactInstance.post(`User/CheckSubUserRef`, { EmailId: qs?.emailId, ConfirmationId: qs?.cid });
     const { StatusCode = 200 } = response?.data;
 
     switch (StatusCode) {
@@ -169,7 +169,7 @@ const SubUserConfirmationPage = ({ classes }: any) => {
 
     if (!errorsTemp.password && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
       setLoader(true);
-      const { data: { Message, StatusCode }, status } = await PulseemReactInstance.post(`SubUser/ConfirmSubUser`, {
+      const { data: { Message, StatusCode }, status } = await PulseemReactInstance.post(`User/ConfirmSubUser`, {
         Password: userDetails.Password,
         EmailId: qs?.emailId,
         ConfirmationId: qs?.cid
