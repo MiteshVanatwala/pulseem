@@ -82,7 +82,7 @@ const SubUserConfirmationPage = ({ classes }: any) => {
     dispatch(setLanguage(qs?.culture || 'he'));
     i18n.changeLanguage('he-IL');
 
-    if ((qs?.cid && qs?.cid !== '' && qs?.emailId && qs?.emailId !== '')) {
+    if (qs?.cid && qs?.cid !== '' && ((qs?.emailId && qs?.emailId !== '') || (qs?.emailid && qs?.emailid !== ''))) {
       onInitRef();
     }
   }, []);
