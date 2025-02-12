@@ -20,7 +20,8 @@
     "genericError": "Generic error"
   },
   "logPageHeaderResource1": {
-    "Text": "Recipient search result"
+    "Text": "Recipient search result",
+    "search": "Recipient Search"
   },
   "avaregeIncome": "Average income:",
   "makeInvalid": "Make invalid",
@@ -56,7 +57,7 @@
       "Pending": "Pending"
     },
     "sms": {
-      "NoSms": "No Status", 
+      "NoSms": "No Status",
       "Active": "Active",
       "Removed": "Removed",
       "Invalid": "Invalid",

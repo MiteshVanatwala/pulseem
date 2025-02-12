@@ -89,6 +89,7 @@ import AccountUsers from './screens/AccountUsers/AccountUsers';
 import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 import { Loader } from './components/Loader/Loader';
+import ClientSearch from './screens/ClientSearch/ClientSearch';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -150,10 +151,6 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`${sitePrefix}Groups`}
         element={<Groups classes={classes} />}
-      />
-      <Route
-        path={`/ClientSearch`}
-        component={transferUrl('/Pulseem/ClientSearch.aspx')}
       />
       {/* Newsletter */}
       <Route
@@ -574,6 +571,11 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`${sitePrefix}TermsOfUse`}
         element={<TermsOfUsePage classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}ClientSearch`}
+        element={<ClientSearch classes={classes} />}
       />
     </Routes>
   )

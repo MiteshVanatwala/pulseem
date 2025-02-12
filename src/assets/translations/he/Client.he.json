@@ -20,7 +20,8 @@
     "genericError": "שגיאה כללית"
   },
   "logPageHeaderResource1": {
-    "Text": "תוצאות חיפוש לקוחות"
+    "Text": "תוצאות חיפוש לקוחות",
+    "search": "חיפוש לקוחות"
   },
   "avaregeIncome": "הכנסה ממוצעת:",
   "makeInvalid": "הפוך לשגויים",
