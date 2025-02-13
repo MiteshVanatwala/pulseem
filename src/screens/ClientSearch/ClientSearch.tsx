@@ -23,7 +23,7 @@ const ClientSearch = ({ classes }: any) => {
   const { windowSize, isRTL } = useSelector((state: any) => state.core);
   const { t } = useTranslation();
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
-  const [openPanels, setOpenPanels] = useState<string[]>([qs?.p || '1']);
+  const [openPanels, setOpenPanels] = useState<string[]>([qs?.p || '1', '6']);
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
   const { testGroups } = useSelector((state: any) => state.sms);
   const [selectedGroups, setSelectedGroups] = useState<any>([]);
@@ -86,12 +86,12 @@ const ClientSearch = ({ classes }: any) => {
         ReminderTo: null,
         CreatedFrom: null,
         CreatedTo: null,
-        ExtraField1: null,
-        ExtraField1Cond: 0,
         Status: 0,
         StatusCond: 0,
         SmsStatus: 0,
         SmsStatusCond: 0,
+        ExtraField1: null,
+        ExtraField1Cond: 0,
         ExtraField2: null,
         ExtraField2Cond: 0,
         ExtraField3: null,
@@ -314,7 +314,7 @@ const ClientSearch = ({ classes }: any) => {
           </AccordionSummary>
           <AccordionDetails>
             <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-              <ClientSearchExtraFields classes={classes} />
+              <ClientSearchExtraFields classes={classes} data={searchModel} onUpdate={updateMyConditions} />
             </Box>
           </AccordionDetails>
         </Accordion>
