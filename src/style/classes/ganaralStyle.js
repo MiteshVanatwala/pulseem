@@ -1089,6 +1089,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& path': {
         stroke: 'inherit'
       },
+      '& path:nth-of-type(2)': {
+        fill: '#000'
+      }
     },
   },
   redButtonLink: {
@@ -4276,5 +4279,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       top: 10,
       background: '#23ff23'
     }
+  },
+  stickBottom: {
+    top: 'auto',
+    bottom: 0,
+    height: 70,
+    background: '#F0F5FF',
+    width: '100%',
+    right: 0,
+    left: 0,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    borderTop: '0.5px solid #FF3343'
   }
 });

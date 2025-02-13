@@ -1,6 +1,8 @@
 import { Grid, TextField } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
+import React, { useCallback } from "react";
+import { debounce } from "lodash";
 
 export const ClientSearchLocation = ({ classes, data, onUpdate, onEnter }: any) => {
   const { t } = useTranslation();
@@ -10,6 +12,13 @@ export const ClientSearchLocation = ({ classes, data, onUpdate, onEnter }: any) 
     }
   };
 
+  const debounceUpdate = useCallback(
+    debounce((keyName: string, value: string) => {
+      onUpdate(keyName, value);
+    }, 300),
+    []
+  );
+
   return <Grid container spacing={3}>
     <Grid item xs={8} sm={8} md={8}>
       <TextField
@@ -18,7 +27,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate, onEnter }: any) 
         size='small'
         value={data?.Address}
         onKeyDown={handleKeyDown}
-        onChange={(event: any) => onUpdate('Address', event.target.value)}
+        onChange={(event: any) => debounceUpdate('Address', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
@@ -34,7 +43,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate, onEnter }: any) 
         size='small'
         value={data?.Country}
         onKeyDown={handleKeyDown}
-        onChange={(event: any) => onUpdate('Country', event.target.value)}
+        onChange={(event: any) => debounceUpdate('Country', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
@@ -50,7 +59,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate, onEnter }: any) 
         size='small'
         value={data?.State}
         onKeyDown={handleKeyDown}
-        onChange={(event: any) => onUpdate('State', event.target.value.trim())}
+        onChange={(event: any) => debounceUpdate('State', event.target.value.trim())}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
@@ -66,7 +75,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate, onEnter }: any) 
         size='small'
         value={data?.City}
         onKeyDown={handleKeyDown}
-        onChange={(event: any) => onUpdate('City', event.target.value)}
+        onChange={(event: any) => debounceUpdate('City', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
@@ -82,7 +91,7 @@ export const ClientSearchLocation = ({ classes, data, onUpdate, onEnter }: any) 
         size='small'
         value={data?.Zip}
         onKeyDown={handleKeyDown}
-        onChange={(event: any) => onUpdate('Zip', event.target.value)}
+        onChange={(event: any) => debounceUpdate('Zip', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
@@ -94,4 +103,4 @@ export const ClientSearchLocation = ({ classes, data, onUpdate, onEnter }: any) 
   </Grid>
 }
 
-export default ClientSearchLocation;
+export default React.memo(ClientSearchLocation);

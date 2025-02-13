@@ -1,11 +1,12 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountExtraData } from "../../redux/reducers/smsSlice";
 import { Grid, TextField } from "@material-ui/core";
 import clsx from 'clsx';
+import { debounce } from "lodash";
 
-export const ClientSearchExtraFields = ({ classes, data, onUpdate }: any) => {
+export const ClientSearchExtraFields = ({ classes, data, onUpdate, onEnter }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { extraData } = useSelector((state: any) => state.sms);
@@ -14,6 +15,19 @@ export const ClientSearchExtraFields = ({ classes, data, onUpdate }: any) => {
       dispatch(getAccountExtraData());
     }
   }, [])
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      onEnter?.();
+    }
+  };
+
+  const debounceUpdate = useCallback(
+    debounce((keyName: string, value: string) => {
+      onUpdate(keyName, value);
+    }, 300),
+    []
+  );
 
   const mergedExtraFields = {
     "ExtraField1": extraData.ExtraField1 && extraData.ExtraField1 !== '' ? extraData.ExtraField1 : t('common.ExtraField1'),
@@ -42,11 +56,12 @@ export const ClientSearchExtraFields = ({ classes, data, onUpdate }: any) => {
         <>
         </>) : (<Grid item xs={12} sm={3} md={3} className={clsx(classes.p10)}>
           <TextField
-            label={fieldName ?? field}
+            label={fieldName || field}
             variant='standard'
             size='small'
             value={data.MyConditions[0][field]}
-            onChange={(event: any) => onUpdate(field, event.target.value)}
+            onKeyDown={handleKeyDown}
+            onChange={(event: any) => debounceUpdate(field, event.target.value)}
             className={clsx(classes.w100, classes.textField, classes.mt25)}
             InputLabelProps={{
               style: {

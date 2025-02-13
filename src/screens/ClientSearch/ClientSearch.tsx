@@ -2,9 +2,9 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography 
 import DefaultScreen from "../DefaultScreen";
 import { Title } from "../../components/managment/Title";
 import clsx from 'clsx'
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import queryString from 'query-string';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
@@ -18,9 +18,13 @@ import ClientSearchExtraFields from "./ClientSearchExtraFields";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { useNavigate } from "react-router-dom";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { getTestGroups } from "../../redux/reducers/smsSlice";
+import { debounce } from "lodash";
+import { ActivityGroup, ClientSearchModel, Conditions } from "../../Models/Clients/ClientSearch";
+import { DEFAULT_CLIENT_SEARCH } from "../../helpers/Constants";
 
 const ClientSearch = ({ classes }: any) => {
-  const { windowSize, isRTL } = useSelector((state: any) => state.core);
+  const { isRTL } = useSelector((state: any) => state.core);
   const { t } = useTranslation();
   const qs = (window.location.search && queryString.parse(window.location.search)) as any;
   const [openPanels, setOpenPanels] = useState<string[]>([qs?.p || '1', '6']);
@@ -29,111 +33,30 @@ const ClientSearch = ({ classes }: any) => {
   const [selectedGroups, setSelectedGroups] = useState<any>([]);
   const [allGroupsSelected, setAllGroupsSelected] = useState(false);
   const [showTestGroups, setShowTestGroups] = useState(false);
-  const [searchModel, setSearchModel] = useState<any>({
-    IsSearchByFilter: true,
-    IsAdvanced: true,
-    PageSize: 6,
-    PageIndex: 1,
-    SearchTerm: '',
-    Status: null,
-    PageType: null,
-    ReportType: 10,
-    TestStatusOfEmailElseSms: null,
-    Switch: '',
-    CountryOrRegion: '',
-    GroupIds: [],
-    NodeID: '',
-    OrderBy: 0,
-    MyActivities: {
-      IsOpened: null,
-      IsOpenedInterval: 0,
-      IsOpenedFromDate: null,
-      IsOpenedToDate: null,
-      IsNotOpened: null,
-      IsNotOpenedInterval: 0,
-      IsNotOpenedFromDate: null,
-      IsNotOpenedToDate: null
-    },
-    MyConditions: [
-      {
-        FirstName: null,
-        FirstNameCond: 2,
-        LastName: null,
-        LastNameCond: 0,
-        Email: null,
-        EmailCond: 0,
-        Address: null,
-        AddressCond: 0,
-        City: null,
-        CityCond: 0,
-        Country: null,
-        CountryCond: 0,
-        State: null,
-        StateCond: 0,
-        Zip: null,
-        ZipCond: 0,
-        Telephone: null,
-        TelephoneCond: 0,
-        Cellphone: null,
-        CellphoneCond: 2,
-        Company: null,
-        ComapnyCond: 0,
-        BirthDateFrom: null,
-        BirthDateTo: null,
-        BirthDateFromWithoutYear: null,
-        BirthDateToWithoutYear: null,
-        ReminderFrom: null,
-        ReminderTo: null,
-        CreatedFrom: null,
-        CreatedTo: null,
-        Status: 0,
-        StatusCond: 0,
-        SmsStatus: 0,
-        SmsStatusCond: 0,
-        ExtraField1: null,
-        ExtraField1Cond: 0,
-        ExtraField2: null,
-        ExtraField2Cond: 0,
-        ExtraField3: null,
-        ExtraField3Cond: 0,
-        ExtraField4: null,
-        ExtraField4Cond: 0,
-        ExtraField5: null,
-        ExtraField5Cond: 0,
-        ExtraField6: null,
-        ExtraField6Cond: 0,
-        ExtraField7: null,
-        ExtraField7Cond: 0,
-        ExtraField8: null,
-        ExtraField8Cond: 0,
-        ExtraField9: null,
-        ExtraField9Cond: 0,
-        ExtraField10: null,
-        ExtraField10Cond: 0,
-        ExtraField11: null,
-        ExtraField11Cond: 0,
-        ExtraField12: null,
-        ExtraField12Cond: 0,
-        ExtraField13: null,
-        ExtraField13Cond: 0,
-        ExtraDate1From: null,
-        ExtraDate1To: null,
-        ExtraDate2From: null,
-        ExtraDate2To: null,
-        ExtraDate3From: null,
-        ExtraDate3To: null,
-        ExtraDate4From: null,
-        ExtraDate4To: null
-      }
-    ],
-    MyGroups: [],
-    ShowOpened: false,
-    ShowNotOpened: false,
-    ShowClicked: false,
-    ShowNotClicked: false
-  });
+  const dispatch = useDispatch();
+  const [searchModel, setSearchModel] = useState<ClientSearchModel>(DEFAULT_CLIENT_SEARCH);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (subAccountAllGroups.length === 0) {
+      dispatch(getGroupsBySubAccountId());
+      dispatch(getTestGroups());
+    }
+  }, [])
+
+  useEffect(() => {
+    const selectedgroupsList = [] as Group[];
+    if (subAccountAllGroups?.length > 0 && searchModel?.MyGroups?.length > 0) {
+      searchModel?.MyGroups.forEach((gl: number) => {
+        const exist = subAccountAllGroups?.filter((g: Group) => { return g.GroupID === gl });
+        if (exist && exist.length > 0) {
+          selectedgroupsList.push(exist[0]);
+        }
+      });
+    }
+    setSelectedGroups(selectedgroupsList);
+  }, [searchModel, subAccountAllGroups])
 
   const onSearch = () => {
     navigate(CLIENT_CONSTANTS.BASEURL, {
@@ -159,16 +82,19 @@ const ClientSearch = ({ classes }: any) => {
 
   const callbackUpdateGroups = (groups: any, event: any) => {
     if (event) {
-      setSearchModel({ ...searchModel, groups: groups.map((value: Group) => value.GroupID) });
+      setSelectedGroups(groups);
+      setSearchModel({ ...searchModel, MyGroups: groups.map((value: Group) => value.GroupID) });
     }
     else {
       const found = selectedGroups.map((group: Group) => { return group.GroupID; }).includes(groups.GroupID);
       const groupList: Group[] = found
         ? selectedGroups.filter((g: Group) => g.GroupID !== groups.GroupID)
         : [...selectedGroups, groups];
-      setSelectedGroups(groupList);
+
+      setSearchModel({ ...searchModel, MyGroups: groupList.map((value: Group) => value.GroupID) });
     }
   }
+
   const callbackSelectAll = () => {
     let groupList: Group[] = [];
     if (!allGroupsSelected) {
@@ -180,6 +106,7 @@ const ClientSearch = ({ classes }: any) => {
     }
     setSelectedGroups(groupList);
     setAllGroupsSelected(!allGroupsSelected);
+    setSearchModel({ ...searchModel, MyGroups: groupList?.map((value: Group) => value.GroupID) });
   }
 
   const handlePanels = (panelName: string) => {
@@ -314,7 +241,7 @@ const ClientSearch = ({ classes }: any) => {
           </AccordionSummary>
           <AccordionDetails>
             <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-              <ClientSearchExtraFields classes={classes} data={searchModel} onUpdate={updateMyConditions} />
+              <ClientSearchExtraFields classes={classes} data={searchModel} onUpdate={updateMyConditions} onEnter={onSearch} />
             </Box>
           </AccordionDetails>
         </Accordion>
@@ -336,19 +263,47 @@ const ClientSearch = ({ classes }: any) => {
             />
           </AccordionSummary>
           <AccordionDetails>
-            <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-              {/* groups */}
+            <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={clsx(classes.dFlex, classes.w100)}>
+              <Box className={clsx(classes.fullWidth)}>
+                <Groups
+                  classes={classes}
+                  list={
+                    showTestGroups
+                      ? [...subAccountAllGroups, ...testGroups]
+                      : [...subAccountAllGroups]
+                  }
+                  selectedList={selectedGroups}
+                  callbackSelectedGroups={callbackUpdateGroups}
+                  callbackUpdateGroups={callbackUpdateGroups}
+                  callbackSelectAll={callbackSelectAll}
+                  callbackReciFilter={() => { }}
+                  callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+                  key={"searchGroups"}
+                  uniqueKey={'searchGroups1'}
+                  innerHeight={325}
+                  showSortBy={true}
+                  showFilter={false}
+                  showSelectAll={true}
+                  bsDot={null}
+                  isNotifications={false}
+                  isSms={true}
+                  isCampaign={false}
+                  noSelectionText={''}
+                />
+              </Box>
             </Box>
           </AccordionDetails>
         </Accordion>
       </Box>
-      <Box className={clsx(classes.flex, classes.pt25)} style={{ justifyContent: 'start', paddingInlineStart: 25 }}>
-        <Button
-          onClick={onSearch}
-          className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
-          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
-          {t('notifications.buttons.search')}
-        </Button>
+      <Box position={'fixed'} className={clsx(classes.flex, classes.stickBottom)}>
+        <Box style={{ width: '80%', margin: '0 auto', justifyContent: 'flex-end' }} className={clsx(classes.flex)}>
+          <Button
+            onClick={onSearch}
+            className={clsx(classes.btn, classes.btnRounded, classes.redButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
+            {t('notifications.buttons.search')}
+          </Button>
+        </Box>
       </Box>
     </Box>
   </DefaultScreen>

@@ -188,8 +188,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0][`${extraData.ExtraDate1}From`] && moment(data?.MyConditions[0][`${extraData.ExtraDate1}From`]).diff('0001-01-01') > 0 ? data?.MyConditions[0][`${extraData.ExtraDate1}From`] : null}
-              onChange={(value: any) => onUpdate(`${extraData.ExtraDate1}From`, moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={data?.MyConditions[0]['ExtraDate1From'] && moment(data?.MyConditions[0]['ExtraDate1From']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate1From'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate1From', moment(value).format(DateFormats.FULL_DATE_START))}
               placeholder={t('common.FromDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -201,7 +201,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               minDate={undefined}
             />
             {
-              data?.MyConditions[0][`${extraData.ExtraDate1}From`] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0][`${extraData.ExtraDate1}From`], null)}>{t("recipient.reset")}</Button>
+              data?.MyConditions[0]['ExtraDate1From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate1From'], null)}>{t("recipient.reset")}</Button>
             }
           </Grid>
 
@@ -210,8 +210,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0][`${extraData.ExtraDate1}To`] && moment(data?.MyConditions[0][`${extraData.ExtraDate1}To`]).diff('0001-01-01') > 0 ? data?.MyConditions[0][`${extraData.ExtraDate1}To`] : null}
-              onChange={(value: any) => onUpdate(`${extraData.ExtraDate1}To`, moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={data?.MyConditions[0]['ExtraDate1To'] && moment(data?.MyConditions[0]['ExtraDate1To']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate1To'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate1To', moment(value).format(DateFormats.FULL_DATE_END))}
               placeholder={t('common.ToDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -223,7 +223,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               minDate={undefined}
             />
             {
-              data?.MyConditions[0][`${extraData.ExtraDate1}To`] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0][`${extraData.ExtraDate1}To`], null)}>{t("recipient.reset")}</Button>
+              data?.MyConditions[0]['ExtraDate1To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate1To'], null)}>{t("recipient.reset")}</Button>
             }
           </Grid>
         </Grid>
@@ -236,8 +236,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0][`${extraData.ExtraDate2}From`] && moment(data?.MyConditions[0][`${extraData.ExtraDate2}From`]).diff('0001-01-01') > 0 ? data?.MyConditions[0][`${extraData.ExtraDate2}From`] : null}
-              onChange={(value: any) => onUpdate(`${extraData.ExtraDate2}From`, moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={data?.MyConditions[0]['ExtraDate2From'] && moment(data?.MyConditions[0]['ExtraDate2From']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate2From'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate2From', moment(value).format(DateFormats.FULL_DATE_START))}
               placeholder={t('common.FromDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -249,7 +249,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               minDate={undefined}
             />
             {
-              data?.MyConditions[0][`${extraData.ExtraDate2}From`] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0][`${extraData.ExtraDate2}From`], null)}>{t("recipient.reset")}</Button>
+              data?.MyConditions[0]['ExtraDate2From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate2From'], null)}>{t("recipient.reset")}</Button>
             }
           </Grid>
 
@@ -258,8 +258,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0][`${extraData.ExtraDate2}To`] && moment(data?.MyConditions[0][`${extraData.ExtraDate2}To`]).diff('0001-01-01') > 0 ? data?.MyConditions[0][`${extraData.ExtraDate2}To`] : null}
-              onChange={(value: any) => onUpdate(`${extraData.ExtraDate2}To`, moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={data?.MyConditions[0]['ExtraDate2To'] && moment(data?.MyConditions[0]['ExtraDate2To']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate2To'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate2To', moment(value).format(DateFormats.FULL_DATE_END))}
               placeholder={t('common.ToDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -271,7 +271,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               minDate={undefined}
             />
             {
-              data?.MyConditions[0][`${extraData.ExtraDate2}To`] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0][`${extraData.ExtraDate2}To`], null)}>{t("recipient.reset")}</Button>
+              data?.MyConditions[0]['ExtraDate2To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate2To'], null)}>{t("recipient.reset")}</Button>
             }
           </Grid>
         </Grid>
@@ -284,8 +284,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0][`${extraData.ExtraDate3}From`] && moment(data?.MyConditions[0][`${extraData.ExtraDate3}From`]).diff('0001-01-01') > 0 ? data?.MyConditions[0][`${extraData.ExtraDate3}From`] : null}
-              onChange={(value: any) => onUpdate(`${extraData.ExtraDate3}From`, moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={data?.MyConditions[0]['ExtraDate3From'] && moment(data?.MyConditions[0]['ExtraDate3From']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate3From'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate3From', moment(value).format(DateFormats.FULL_DATE_START))}
               placeholder={t('common.FromDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -297,7 +297,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               minDate={undefined}
             />
             {
-              data?.MyConditions[0][`${extraData.ExtraDate3}From`] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0][`${extraData.ExtraDate3}From`], null)}>{t("recipient.reset")}</Button>
+              data?.MyConditions[0]['ExtraDate3From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate3From'], null)}>{t("recipient.reset")}</Button>
             }
           </Grid>
 
@@ -306,8 +306,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0][`${extraData.ExtraDate3}To`] && moment(data?.MyConditions[0][`${extraData.ExtraDate3}To`]).diff('0001-01-01') > 0 ? data?.MyConditions[0][`${extraData.ExtraDate3}To`] : null}
-              onChange={(value: any) => onUpdate(`${extraData.ExtraDate3}To`, moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={data?.MyConditions[0]['ExtraDate3To'] && moment(data?.MyConditions[0]['ExtraDate3To']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate3To'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate3To', moment(value).format(DateFormats.FULL_DATE_END))}
               placeholder={t('common.ToDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -319,7 +319,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               minDate={undefined}
             />
             {
-              data?.MyConditions[0][`${extraData.ExtraDate3}To`] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0][`${extraData.ExtraDate3}To`], null)}>{t("recipient.reset")}</Button>
+              data?.MyConditions[0]['ExtraDate3To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate3To'], null)}>{t("recipient.reset")}</Button>
             }
           </Grid>
         </Grid>
@@ -332,8 +332,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0][`${extraData.ExtraDate4}From`] && moment(data?.MyConditions[0][`${extraData.ExtraDate4}From`]).diff('0001-01-01') > 0 ? data?.MyConditions[0][`${extraData.ExtraDate4}From`] : null}
-              onChange={(value: any) => onUpdate(`${extraData.ExtraDate4}From`, moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={data?.MyConditions[0]['ExtraDate4From'] && moment(data?.MyConditions[0]['ExtraDate4From']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate4From'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate4From', moment(value).format(DateFormats.FULL_DATE_START))}
               placeholder={t('common.FromDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -345,7 +345,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               minDate={undefined}
             />
             {
-              data?.MyConditions[0][`${extraData.ExtraDate4}From`] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0][`${extraData.ExtraDate4}From`], null)}>{t("recipient.reset")}</Button>
+              data?.MyConditions[0]['ExtraDate4From'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate4From'], null)}>{t("recipient.reset")}</Button>
             }
           </Grid>
 
@@ -354,8 +354,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={data?.MyConditions[0][`${extraData.ExtraDate4}To`] && moment(data?.MyConditions[0][`${extraData.ExtraDate4}To`]).diff('0001-01-01') > 0 ? data?.MyConditions[0][`${extraData.ExtraDate4}To`] : null}
-              onChange={(value: any) => onUpdate(`${extraData.ExtraDate4}To`, moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={data?.MyConditions[0]['ExtraDate4To'] && moment(data?.MyConditions[0]['ExtraDate4To']).diff('0001-01-01') > 0 ? data?.MyConditions[0]['ExtraDate4To'] : null}
+              onChange={(value: any) => onUpdate('ExtraDate4To', moment(value).format(DateFormats.FULL_DATE_END))}
               placeholder={t('common.ToDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -367,7 +367,7 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
               minDate={undefined}
             />
             {
-              data?.MyConditions[0][`${extraData.ExtraDate4}To`] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0][`${extraData.ExtraDate4}To`], null)}>{t("recipient.reset")}</Button>
+              data?.MyConditions[0]['ExtraDate4To'] && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate(data?.MyConditions[0]['ExtraDate4To'], null)}>{t("recipient.reset")}</Button>
             }
           </Grid>
         </Grid>
