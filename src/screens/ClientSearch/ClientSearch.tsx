@@ -4,7 +4,7 @@ import { Title } from "../../components/managment/Title";
 import clsx from 'clsx'
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import queryString from 'query-string';
 import { getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
@@ -19,8 +19,7 @@ import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { useNavigate } from "react-router-dom";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { getTestGroups } from "../../redux/reducers/smsSlice";
-import { debounce } from "lodash";
-import { ActivityGroup, ClientSearchModel, Conditions } from "../../Models/Clients/ClientSearch";
+import { ClientSearchModel } from "../../Models/Clients/ClientSearch";
 import { DEFAULT_CLIENT_SEARCH } from "../../helpers/Constants";
 
 const ClientSearch = ({ classes }: any) => {
