@@ -28,6 +28,7 @@ import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { DateFormats } from '../../../helpers/Constants';
+import { sitePrefix } from '../../../config';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -212,8 +213,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            onClick={() => Redirect('create')}
-            // href={`/Pulseem/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+            onClick={() => Redirect(`${sitePrefix}Automations/create`)}
             className={clsx(classes.btn, classes.btnRounded)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('automations.createResource.Text')}
