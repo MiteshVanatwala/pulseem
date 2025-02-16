@@ -1,18 +1,33 @@
 import { Grid, TextField } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { debounce } from "lodash";
 
 export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
   const { t } = useTranslation();
+  const [localValues, setLocalValues] = useState<{ [key: string]: string }>({});
 
   const debounceUpdate = useCallback(
-    debounce((keyName: string, value: string, forceUpdate: boolean = false) => {
-      onUpdate(keyName, value, forceUpdate);
-    }, 300),
-    []
+    debounce((keyName: string, value: string, forceSearch: boolean = false) => {
+      onUpdate(keyName, value, forceSearch);
+    }, 300), [onUpdate]
   );
+
+
+  const handleChange = (field: string, value: string) => {
+    // Update local state immediately
+    setLocalValues((prev: any) => ({ ...prev, [field]: value }));
+    // Debounce the parent update
+    debounceUpdate(field, value, false);
+  };
+
+  const handleKeyDown = (field: string, event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      debounceUpdate.cancel();
+      onUpdate(field, localValues[field] || '', true);
+    }
+  };
 
   return <Grid container spacing={3}>
     <Grid item xs={8} sm={8} md={8}>
@@ -21,8 +36,8 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
         variant='standard'
         size='small'
         value={data?.Address}
-        onKeyDown={(event: any) => debounceUpdate('Address', event.target.value, event.key === 'Enter')}
-        onChange={(event: any) => debounceUpdate('Address', event.target.value)}
+        onKeyDown={(event) => handleKeyDown('Address', event)}
+        onChange={(event) => handleChange('Address', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
@@ -37,8 +52,8 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
         variant='standard'
         size='small'
         value={data?.Country}
-        onKeyDown={(event: any) => debounceUpdate('Country', event.target.value, event.key === 'Enter')}
-        onChange={(event: any) => debounceUpdate('Country', event.target.value)}
+        onKeyDown={(event) => handleKeyDown('Country', event)}
+        onChange={(event) => handleChange('Country', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
@@ -53,8 +68,8 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
         variant='standard'
         size='small'
         value={data?.State}
-        onKeyDown={(event: any) => debounceUpdate('State', event.target.value.trim(), event.key === 'Enter')}
-        onChange={(event: any) => debounceUpdate('State', event.target.value.trim())}
+        onKeyDown={(event) => handleKeyDown('State', event)}
+        onChange={(event) => handleChange('State', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
@@ -69,8 +84,8 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
         variant='standard'
         size='small'
         value={data?.City}
-        onKeyDown={(event: any) => debounceUpdate('City', event.target.value, event.key === 'Enter')}
-        onChange={(event: any) => debounceUpdate('City', event.target.value)}
+        onKeyDown={(event) => handleKeyDown('City', event)}
+        onChange={(event) => handleChange('City', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
@@ -85,8 +100,8 @@ export const ClientSearchLocation = ({ classes, data, onUpdate }: any) => {
         variant='standard'
         size='small'
         value={data?.Zip}
-        onKeyDown={(event: any) => debounceUpdate('Zip', event.target.value, event.key === 'Enter')}
-        onChange={(event: any) => debounceUpdate('Zip', event.target.value)}
+        onKeyDown={(event) => handleKeyDown('Zip', event)}
+        onChange={(event) => handleChange('Zip', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
           style: {
