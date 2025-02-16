@@ -6,7 +6,7 @@ import { Grid, TextField } from "@material-ui/core";
 import clsx from 'clsx';
 import { debounce } from "lodash";
 
-export const ClientSearchExtraFields = ({ classes, data, onUpdate, onEnter }: any) => {
+export const ClientSearchExtraFields = ({ classes, data, onUpdate }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { extraData } = useSelector((state: any) => state.sms);
@@ -16,15 +16,9 @@ export const ClientSearchExtraFields = ({ classes, data, onUpdate, onEnter }: an
     }
   }, [])
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      onEnter?.();
-    }
-  };
-
   const debounceUpdate = useCallback(
-    debounce((keyName: string, value: string) => {
-      onUpdate(keyName, value);
+    debounce((keyName: string, value: string, forceUpdate: boolean = false) => {
+      onUpdate(keyName, value, forceUpdate);
     }, 300),
     []
   );
@@ -60,7 +54,7 @@ export const ClientSearchExtraFields = ({ classes, data, onUpdate, onEnter }: an
             variant='standard'
             size='small'
             value={data.MyConditions[0][field]}
-            onKeyDown={handleKeyDown}
+            onKeyDown={(event: any) => debounceUpdate(field, event.target.value, event.key === 'Enter')}
             onChange={(event: any) => debounceUpdate(field, event.target.value)}
             className={clsx(classes.w100, classes.textField, classes.mt25)}
             InputLabelProps={{

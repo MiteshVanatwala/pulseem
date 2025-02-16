@@ -4,18 +4,12 @@ import { debounce } from 'lodash';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export const ClientSearchPersonalDetails = ({ classes, data, onUpdate, onEnter }: any) => {
+export const ClientSearchPersonalDetails = ({ classes, data, onUpdate }: any) => {
   const { t } = useTranslation();
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      onEnter?.();
-    }
-  };
-
   const debounceUpdate = useCallback(
-    debounce((keyName: string, value: string) => {
-      onUpdate(keyName, value);
+    debounce((keyName: string, value: string, forceUpdate: boolean = false) => {
+      onUpdate(keyName, value, forceUpdate);
     }, 300),
     []
   );
@@ -27,7 +21,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate, onEnter }
         variant='standard'
         size='small'
         value={data?.FirstName}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(event: any) => debounceUpdate('FirstName', event.target.value, event.key === 'Enter')}
         onChange={(event: any) => debounceUpdate('FirstName', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
@@ -43,7 +37,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate, onEnter }
         variant='standard'
         size='small'
         value={data?.LastName}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(event: any) => debounceUpdate('LastName', event.target.value, event.key === 'Enter')}
         onChange={(event: any) => debounceUpdate('LastName', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
@@ -59,7 +53,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate, onEnter }
         variant='standard'
         size='small'
         value={data?.Email}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(event: any) => debounceUpdate('Email', event.target.value.trim(), event.key === 'Enter')}
         onChange={(event: any) => debounceUpdate('Email', event.target.value.trim())}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
@@ -76,7 +70,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate, onEnter }
         size='small'
         type='number'
         value={data?.Cellphone}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(event: any) => debounceUpdate('Cellphone', event.target.value, event.key === 'Enter')}
         onChange={(event: any) => debounceUpdate('Cellphone', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
@@ -92,7 +86,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate, onEnter }
         variant='standard'
         size='small'
         value={data?.Telephone}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(event: any) => debounceUpdate('Telephone', event.target.value, event.key === 'Enter')}
         onChange={(event: any) => debounceUpdate('Telephone', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{
@@ -108,7 +102,7 @@ export const ClientSearchPersonalDetails = ({ classes, data, onUpdate, onEnter }
         variant='standard'
         size='small'
         value={data?.Company}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(event: any) => debounceUpdate('Company', event.target.value, event.key === 'Enter')}
         onChange={(event: any) => debounceUpdate('Company', event.target.value)}
         className={clsx(classes.w100, classes.textField, classes.mt25)}
         InputLabelProps={{

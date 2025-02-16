@@ -67,8 +67,8 @@ const ClientSearch = ({ classes }: any) => {
     setSearchModel({ ...searchModel, [keyName]: value })
   }
 
-  const updateMyConditions = (keyName: string, value: string) => {
-    setSearchModel({
+  const updateMyConditions = (keyName: string, value: string, forceSearch: boolean = false) => {
+    const updatedModel = {
       ...searchModel,
       MyConditions: [
         {
@@ -76,7 +76,15 @@ const ClientSearch = ({ classes }: any) => {
           [keyName]: value
         }
       ]
-    })
+    };
+    setSearchModel(updatedModel)
+    if (forceSearch) {
+      // newModel
+      navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: updatedModel
+      })
+
+    }
   }
 
   const callbackUpdateGroups = (groups: any, event: any) => {
@@ -148,7 +156,7 @@ const ClientSearch = ({ classes }: any) => {
           </AccordionSummary>
           <AccordionDetails>
             <Box style={{ paddingInline: 25, paddingBlock: 20, width: '100%' }} className={classes.dFlex}>
-              <ClientSearchPersonalDetails classes={classes} data={searchModel} onUpdate={updateMyConditions} onEnter={onSearch} />
+              <ClientSearchPersonalDetails classes={classes} data={searchModel} onUpdate={updateMyConditions} />
             </Box>
           </AccordionDetails>
         </Accordion>
@@ -171,7 +179,7 @@ const ClientSearch = ({ classes }: any) => {
           </AccordionSummary>
           <AccordionDetails>
             <Box style={{ paddingInline: 25, paddingBlock: 20, width: '100%' }} className={classes.dFlex}>
-              <ClientSearchLocation classes={classes} data={searchModel} onUpdate={updateMyConditions} onEnter={onSearch} />
+              <ClientSearchLocation classes={classes} data={searchModel} onUpdate={updateMyConditions} />
             </Box>
           </AccordionDetails>
         </Accordion>
@@ -240,7 +248,7 @@ const ClientSearch = ({ classes }: any) => {
           </AccordionSummary>
           <AccordionDetails>
             <Box style={{ paddingInline: 25, paddingBlock: 20 }} className={classes.dFlex}>
-              <ClientSearchExtraFields classes={classes} data={searchModel} onUpdate={updateMyConditions} onEnter={onSearch} />
+              <ClientSearchExtraFields classes={classes} data={searchModel} onUpdate={updateMyConditions} />
             </Box>
           </AccordionDetails>
         </Accordion>
