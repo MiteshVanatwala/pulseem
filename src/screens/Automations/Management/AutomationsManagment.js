@@ -14,7 +14,7 @@ import {
 import {
   getAutomationsData, deleteAutomations, duplicateAutomations, restoreAutomations, activateAutomation
 } from '../../../redux/reducers/automationsSlice'
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
@@ -29,10 +29,11 @@ import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { DateFormats } from '../../../helpers/Constants';
 import { sitePrefix } from '../../../config';
+import useRedirect from '../../../helpers/Routes/Redirect';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
-  const Redirect = useNavigate();
+  const Redirect = useRedirect();
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
@@ -213,7 +214,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            onClick={() => Redirect(`${sitePrefix}Automations/create`)}
+            onClick={() => Redirect({ url: `${sitePrefix}Automations/create` })}
             className={clsx(classes.btn, classes.btnRounded)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('automations.createResource.Text')}
