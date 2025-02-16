@@ -180,6 +180,7 @@ const SmsCreator = ({ classes }) => {
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
+  const [controller, setController] = useState(null);
 
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
@@ -310,6 +311,11 @@ const SmsCreator = ({ classes }) => {
 
   useEffect(() => {
     getcredits(characterCount);
+    return () => {
+      if (controller) {
+        controller.abort();
+      }
+    };
   }, [characterCount])
 
   const handleSmsModelChange = (name, value) => {
@@ -500,6 +506,13 @@ const SmsCreator = ({ classes }) => {
   }
 
   const getcredits = (count) => {
+    if (controller) {
+      controller.abort();
+    }
+    // Create new controller
+    const newController = new AbortController();
+    setController(newController);
+
     setButtonsDisabled(true);
     dispatch(getCreditsforSMS(count)).then((res) => {
       let credits = res.payload?.split("#");
