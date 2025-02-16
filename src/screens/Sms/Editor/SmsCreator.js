@@ -441,7 +441,7 @@ const SmsCreator = ({ classes }) => {
         setmessageCount(response.payload.CreditsPerSms);
         setSmsModel(response.payload);
         setIsLinksStatistics(response.payload.IsLinksStatistics);
-        setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
+        //setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
         setEditDynamicProductFallbackURL(response.payload.FallbackUrl);
         setDynamicProductFallbackURL(response.payload.FallbackUrl);
         return response.payload;
