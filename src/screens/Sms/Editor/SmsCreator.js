@@ -215,7 +215,7 @@ const SmsCreator = ({ classes }) => {
     ResponseToEmail: "",
     IsTestCampaign: false,
     IsResponse: false,
-    IsLinksStatistics: isLinksStatistics,
+    IsLinksStatistics: smsModel.IsLinksStatistics,
     SendDate: Date.now(),
     SendingMethod: 0,
     IsTest: isTestCampaign,
@@ -307,7 +307,7 @@ const SmsCreator = ({ classes }) => {
       setEditDynamicProductFallbackURL('');
       setDynamicProductFallbackURL('');
     }
-  }, [smsModel, isSiteTracking, isLinksStatistics])
+  }, [smsModel, isSiteTracking])
 
   useEffect(() => {
     getcredits(characterCount);
@@ -338,7 +338,6 @@ const SmsCreator = ({ classes }) => {
       TestGroupsIds: groupIds,
       IsTestCampaign: isTestCampaign,
       IsTest: true,
-      IsLinksStatistics: isLinksStatistics,
       LogData: logData,
       SmsCampaignID: smsCampaignId
     }
@@ -440,7 +439,7 @@ const SmsCreator = ({ classes }) => {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
         setSmsModel(response.payload);
-        setIsLinksStatistics(response.payload.IsLinksStatistics);
+        // setIsLinksStatistics(response.payload.IsLinksStatistics);
         //setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
         setEditDynamicProductFallbackURL(response.payload.FallbackUrl);
         setDynamicProductFallbackURL(response.payload.FallbackUrl);
@@ -457,7 +456,8 @@ const SmsCreator = ({ classes }) => {
     setIsTestCampaign(!isTestCampaign)
   };
   const toggleKeep = () => {
-    setIsLinksStatistics(!isLinksStatistics);
+    setSmsModel({ ...smsModel, IsLinksStatistics: !smsModel.IsLinksStatistics })
+    // setIsLinksStatistics(!isLinksStatistics);
   };
 
   const linkCalculation = () => {
@@ -478,7 +478,7 @@ const SmsCreator = ({ classes }) => {
         }, []);
 
         setlinkCount(links.length);
-        if (isLinksStatistics) {
+        if (smsModel.IsLinksStatistics) {
           setSplittedLinks(links);
           for (var i = 0; i < links.length; i++) {
             var linkLength = links[i].length;
@@ -594,7 +594,7 @@ const SmsCreator = ({ classes }) => {
     if (phone !== "" && (isGlobal ? IsValidPhoneNumberWithCountryCode(phone, countryCodeList) : IsValidNonGlobalPhoneNumber(phone))) {
       if (id) {
         const smsQuickSendData = {
-          ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+          ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, CreditsPerSms: messageCount, LogData: {
             SmsCampaignID: id, Credits: messageCount,
             TotalRecipients: 1
           }
@@ -607,7 +607,7 @@ const SmsCreator = ({ classes }) => {
       else {
         if (smsCampaignId !== "") {
           const smsQuickSendData = {
-            ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, CreditsPerSms: messageCount, LogData: {
               SmsCampaignID: smsCampaignId, Credits: messageCount,
               TotalRecipients: 1
             }
@@ -620,7 +620,7 @@ const SmsCreator = ({ classes }) => {
         }
         else {
           const smsQuickSendData = {
-            ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, CreditsPerSms: messageCount, LogData: {
               SmsCampaignID: -1, Credits: messageCount,
               TotalRecipients: 1
             }
@@ -652,7 +652,7 @@ const SmsCreator = ({ classes }) => {
     text = text.trim();
     let afterUpdateCharCount =
       smsModel.Text.length + text.length;
-    if (isLinksStatistics) {
+    if (smsModel.IsLinksStatistics) {
       afterUpdateCharCount = characterCount + text.length;
     }
     if (afterUpdateCharCount < 1000) {
@@ -769,7 +769,7 @@ const SmsCreator = ({ classes }) => {
     onAddText(t('sms.smsUnsubscribeMessage'));
     let total = splittedMsg;
     total.push(t('sms.smsUnsubscribeMessage'))
-    if (isLinksStatistics && SplittedLinks !== null) {
+    if (smsModel.IsLinksStatistics && SplittedLinks !== null) {
       setremovalLinkDisabled(true);
     }
     else {
@@ -835,7 +835,7 @@ const SmsCreator = ({ classes }) => {
               </Typography>
               <Box className={classes.dFlex} style={{ justifyContent: 'space-between', gap: 5 }}>
                 {buttonsDisabled ? <Loader isOpen={buttonsDisabled} showBackdrop={false} size={10} contained />
-                  : <Typography style={{ position: 'relative' }}>{messageCount}</Typography>} <Typography style={{ marginInlineEnd: "18px", position: 'relative' }}>{messageCount === 1 ? t("sms.message") : t("sms.messages")}</Typography>
+                  : <Typography style={{ position: 'relative' }}>{messageCount}</Typography>} <Typography style={{ marginInlineEnd: "18px", position: 'relative' }}>{messageCount === 1 || messageCount === '1' ? t("sms.message") : t("sms.messages")}</Typography>
               </Box>
               <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
             </Box>
@@ -1074,7 +1074,7 @@ const SmsCreator = ({ classes }) => {
                   <PulseemSwitch
                     switchType='ios'
                     classes={classes}
-                    checked={isLinksStatistics}
+                    checked={smsModel.IsLinksStatistics}
                     height={20}
                     width={48}
                     className={{ [classes.rtlSwitch]: isRTL }}
@@ -1263,7 +1263,7 @@ const SmsCreator = ({ classes }) => {
     if (validationCheck()) {
       if (isSiteTracking === true) {
         const smsMessagValue = smsMessageRef.current.value;
-        if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') === -1) {
+        if (!smsModel.Text.indexOf('ref') > -1 && smsModel.IsLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') === -1) {
           let text = smsModel.Text;
           const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
           const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
@@ -1276,7 +1276,7 @@ const SmsCreator = ({ classes }) => {
             return currentState;
           });
         }
-        if (!isLinksStatistics) {
+        if (!smsModel.IsLinksStatistics) {
           setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
         }
         else {
@@ -1301,7 +1301,7 @@ const SmsCreator = ({ classes }) => {
 
   const onSave = async (isSave, returnToAutomation = false) => {
     linkCalculation();
-    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, SmsCampaignID: smsCampaignId, FallbackURL: dynamicProductFallbackURL }
+    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsTest: isTestCampaign, SmsCampaignID: smsCampaignId, FallbackURL: dynamicProductFallbackURL }
     setLoader(true);
     let r = await dispatch(smsSave(payloadToPush));
     const campaignId = r.payload.Message;
@@ -1440,8 +1440,7 @@ const SmsCreator = ({ classes }) => {
         SmsCampaignID: smsCampaignId,
         fromNumber: campaignNumber,
         Name: smsModel.Name,
-        Text: smsModel.Text,
-        IsLinksStatistics: isLinksStatistics
+        Text: smsModel.Text
       }
       let saveResponse = await dispatch(smsSave(payloadToPush));
       if (saveResponse) {
