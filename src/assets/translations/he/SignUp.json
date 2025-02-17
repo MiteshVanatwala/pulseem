@@ -85,5 +85,6 @@
   "EmailSent": "אימייל נשלח בהצלחה",
   "EmailNotSent": "ישנה בעיה בשליחת המייל, אנא המתינו מעט ונסו שוב",
   "typeEmailForSignUp": "הזן כתובת מייל",
-  "typeEmailForSignUpDesc": "יש להזין כתובת מייל עבור פתיחת החשבון"
+  "typeEmailForSignUpDesc": "יש להזין כתובת מייל עבור פתיחת החשבון",
+  "accountCreated": "Account has been created successfully."
 }

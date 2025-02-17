@@ -85,5 +85,6 @@
   "EmailSent": "Email has been sent successfully.",
   "EmailNotSent": "There is an issue while sending an email. Please try after some time.",
   "typeEmailForSignUp": "Type Email Address",
-  "typeEmailForSignUpDesc": "Type email address for Account Creation process"
+  "typeEmailForSignUpDesc": "Type email address for Account Creation process",
+  "accountCreated": "Account has been created successfully."
 }

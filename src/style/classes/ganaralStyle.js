@@ -546,6 +546,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mlr10: {
     marginInline: 10,
   },
+  mlr30: {
+    marginInline: 30,
+  },
   ml0: {
     marginLeft: 0,
     marginInlineStart: 0,
@@ -4303,5 +4306,25 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   overflowHidden: {
     overflow: 'hidden'
+  },
+  signupContainer: {
+    height: '100vh',
+    width: '100vw',
+    position: 'absolute',
+    background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    '& .widgetContainer': {
+      background: '#fff',
+      width: '30%',
+      margin: 'auto',
+      height: '50%',
+      marginTop: '5%',
+      borderRadius: '50px',
+      padding: '20px 50px'
+    },
+    '& .stepper': {
+      width: 400,
+      margin: 'auto',
+      marginTop: 10,
+    }
   }
 });
