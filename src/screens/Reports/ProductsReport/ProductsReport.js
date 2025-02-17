@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, MenuItem, Checkbox, ListItemText, Chip } from '@material-ui/core'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
 import Select from '@mui/material/Select';
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
