@@ -11,7 +11,19 @@ export const getAutomationsData = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  })
+})
+
+export const createAutomation = createAsyncThunk(
+  'automation/CreateAutomation', async (payload, thunkAPI) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await PulseemReactInstance.post(`automation/CreateAutomation`, payload);
+        resolve(response.data)
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
+});
 
 export const deleteAutomations = createAsyncThunk(
   'automation/deleteAutomation/', async (id, thunkAPI) => {
@@ -57,12 +69,23 @@ export const activateAutomation = createAsyncThunk(
   }
 )
 
+export const getAutomationTemplates = createAsyncThunk(
+  'automation/getAutomationTemplates', async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`automation/getAutomationTemplates`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+})
+
 export const automationsSlice = createSlice({
   name: 'newsletter',
   initialState: {
     automationsData: [],
     automationsDeletedData: [],
-    automationsDataError: ''
+    automationsDataError: '',
+    automationTemplates: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -72,6 +95,9 @@ export const automationsSlice = createSlice({
     })
     builder.addCase(getAutomationsData.rejected, (state, action) => {
       state.automationsDataError = action.error.message
+    })
+    builder.addCase(getAutomationTemplates.fulfilled, (state, { payload }) => {
+      state.automationTemplates = payload.filter(row => !row?.IsDeleted)
     })
     builder.addCase(deleteAutomations.fulfilled, () => console.log('api deleteAutomations success'))
     builder.addCase(duplicateAutomations.fulfilled, () => console.log('api duplicateAutomations success'))

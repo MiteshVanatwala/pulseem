@@ -343,7 +343,16 @@ const ProductsReport = ({ classes }) => {
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    <Typography>{CategoryName}</Typography>
+                    <Box sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        maxHeight: '80px',
+                        overflowY: 'auto'
+                    }}>
+                        {CategoryName.split(',').map((category, index) => (
+                            <Typography>{category}{index < CategoryName?.split(',')?.length - 1 && ','}&nbsp;</Typography>
+                        ))}
+                    </Box>
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
@@ -369,7 +378,7 @@ const ProductsReport = ({ classes }) => {
                     className={classes.flex2}>
                     {renderIntData(TotalRevenue, hrefs.TotalRevenue, null, true)}
                 </TableCell>
-            </TableRow>
+            </TableRow >
         )
     }
 

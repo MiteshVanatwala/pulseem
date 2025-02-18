@@ -14,7 +14,7 @@ import {
 import {
   getAutomationsData, deleteAutomations, duplicateAutomations, restoreAutomations, activateAutomation
 } from '../../../redux/reducers/automationsSlice'
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
@@ -28,10 +28,12 @@ import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { DateFormats } from '../../../helpers/Constants';
+import { sitePrefix } from '../../../config';
+import useRedirect from '../../../helpers/Routes/Redirect';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
-  const Redirect = useNavigate();
+  const Redirect = useRedirect();
   const { language, windowSize, rowsPerPage, isRTL, userRoles } = useSelector(state => state.core)
   const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
@@ -212,15 +214,15 @@ const AutomationsManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            href={`/Pulseem/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
-            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            onClick={() => Redirect({ url: `${sitePrefix}Automations/create` })}
+            className={clsx(classes.btn, classes.btnRounded)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('automations.createResource.Text')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            className={clsx(classes.btn, classes.btnRounded)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({
               type: 'restore',
