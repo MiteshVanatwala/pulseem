@@ -43,6 +43,7 @@
     "userRejected": "המשתמש נדחה (אורך סיסמה, ניסיונות סיסמה, אימייל קיים)",
     "userCreatedSuccessfuly": "המשתמש נוצר בהצלחה",
     "confirmationLinkSent": "קישור להפעלת חשבון נשלח בהצלחה",
-    "deleteUserSuccess": "תת משתמש נמחק!"
+    "deleteUserSuccess": "תת משתמש נמחק!",
+    "emailAlreadyExists": "כתובת מייל כבר קיימת"
   }
 }
