@@ -42,3 +42,7 @@ export enum WhatsAppPlatformIDEnum {
   TWILLIO = 1,
   META = 2
 }
+
+export enum URLS {
+  AutomationTemplatePreview = 'CreateAutomations.aspx?Mode=show&AutomationID='
+}

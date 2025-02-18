@@ -12,7 +12,7 @@ String.prototype.toValidLPName = function (value: string) {
     return '';
   }
 
-  return newVal?.replace(/ /g, '_').replaceAll('.', '_').replaceAll('/', '_').trim();
+  return newVal?.replace(/ /g, '_').replaceAll('.', '_').replaceAll('/', '_').replaceAll('+', '_').replaceAll('-', '_').trim();
 };
 
 export { }

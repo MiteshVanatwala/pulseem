@@ -298,7 +298,7 @@ const ProductsReport = ({ classes }) => {
                     className={clsx(classes.middleText, colorTextStyle[type],
                         (onClick && value > 0) ? classes.link : '')}
                     target="_blank">
-                    { displayCurrency && isCurrencySymbolPrefix ? currencySymbol : '' } {value?.toLocaleString() ?? '0'} { displayCurrency && !isCurrencySymbolPrefix ? currencySymbol : '' }
+                    {displayCurrency && isCurrencySymbolPrefix ? currencySymbol : ''} {value?.toLocaleString() ?? '0'} {displayCurrency && !isCurrencySymbolPrefix ? currencySymbol : ''}
                 </Typography>
             </Box>
         )
@@ -343,7 +343,16 @@ const ProductsReport = ({ classes }) => {
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    <Typography>{CategoryName}</Typography>
+                    <Box sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        maxHeight: '80px',
+                        overflowY: 'auto'
+                    }}>
+                        {CategoryName.split(',').map((category, index) => (
+                            <Typography>{category}{index < CategoryName?.split(',')?.length - 1 && ','}&nbsp;</Typography>
+                        ))}
+                    </Box>
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
@@ -369,7 +378,7 @@ const ProductsReport = ({ classes }) => {
                     className={classes.flex2}>
                     {renderIntData(TotalRevenue, hrefs.TotalRevenue, null, true)}
                 </TableCell>
-            </TableRow>
+            </TableRow >
         )
     }
 
@@ -409,7 +418,7 @@ const ProductsReport = ({ classes }) => {
                             </Typography>
                             <Typography className={clsx(classes.pt5, classes.f14, classes.semibold)}>
                                 <span className={classes.bold}>{t("report.ProductsReport.price")}:</span>
-                                { isCurrencySymbolPrefix ? currencySymbol : '' } {Price} { !isCurrencySymbolPrefix ? currencySymbol : '' }
+                                {isCurrencySymbolPrefix ? currencySymbol : ''} {Price} {!isCurrencySymbolPrefix ? currencySymbol : ''}
                             </Typography>
 
                             <Grid container className={classes.pt5}>
