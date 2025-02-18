@@ -91,6 +91,7 @@ import SubUsers from './screens/UsersAndPermissions/SubUsers';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
 import { Loader } from './components/Loader/Loader';
+import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 
 const renderRoutes = (classes, redirect, userRoles) => {
   const transferUrl =
@@ -421,6 +422,10 @@ const renderRoutes = (classes, redirect, userRoles) => {
       <Route
         path={`/CreateAutomations`}
         component={transferUrl('/Pulseem/CreateAutomations.aspx')}
+      />
+      <Route
+        path={`${sitePrefix}Automations/Create`}
+        element={<CreateAutomationTemplate classes={classes} />}
       />
 
       <Route
