@@ -86,7 +86,7 @@
   "EmailNotSent": "ישנה בעיה בשליחת המייל, אנא המתינו מעט ונסו שוב",
   "typeEmailForSignUp": "הזן כתובת מייל",
   "typeEmailForSignUpDesc": "יש להזין כתובת מייל עבור פתיחת החשבון",
-  "accountCreated": "Account has been created successfully.",
-  "fullName": "Full Name",
-  "fullNameRequired": "Full Name is required"
+  "accountCreated": "החשבון נוצר בהצלחה",
+  "fullName": "שם מלא",
+  "fullNameRequired": "שם מלא הוא שדה חובה"
 }
