@@ -22,13 +22,13 @@
   "FieldOfInterest": "תחומי עניין",
   "FieldOfInterestRequired": "אנא בחרו לפחות אפשרות אחת",
   "FieldOfInterestDesc": "מהם השירותים עליהם תרצה לקבל מידע? (ניתן לבחור יותר משירות אחד)",
-  "BulkEmail": "דואר אלקטרוני",
-  "BulkSMS": "SMS",
+  "Bulk Email": "דואר אלקטרוני",
+  "Bulk SMS": "SMS",
   "WhatsApp": "WhatsApp",
-  "LandingPages": "דפי נחיתה",
-  "Ecommerce": "פתרונות eCommerce",
-  "Notification": "הודעות Web Push",
-  "MarketingAutomation": "אוטומציות שיווקיות",
+  "Landing Pages": "דפי נחיתה",
+  "eCommerce Solutions": "פתרונות eCommerce",
+  "Web Push Notifications": "הודעות Web Push",
+  "Marketing Automation": "אוטומציות שיווקיות",
   "FieldOfActivity": "תחום פעילות",
   "FieldOfActivityRequired": "יש למלא תחום פעילות",
   "UpdateTrainingContentCheckbox": "אני מאשר.ת קבלת עדכונים, תכנים מקצועיים ומידע פרסומי מחברת Pulseem",
@@ -86,5 +86,7 @@
   "EmailNotSent": "ישנה בעיה בשליחת המייל, אנא המתינו מעט ונסו שוב",
   "typeEmailForSignUp": "הזן כתובת מייל",
   "typeEmailForSignUpDesc": "יש להזין כתובת מייל עבור פתיחת החשבון",
-  "accountCreated": "Account has been created successfully."
+  "accountCreated": "Account has been created successfully.",
+  "fullName": "Full Name",
+  "fullNameRequired": "Full Name is required"
 }

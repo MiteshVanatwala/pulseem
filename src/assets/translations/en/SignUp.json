@@ -22,13 +22,13 @@
   "FieldOfInterest": "Field of interest",
   "FieldOfInterestRequired": "Field of interest is required",
   "FieldOfInterestDesc": "Which services would you like to receive information about? (Multiple selections possible)",
-  "BulkEmail": "Email",
-  "BulkSMS": "SMS",
+  "Bulk Email": "Email",
+  "Bulk SMS": "SMS",
   "WhatsApp": "WhatsApp",
-  "LandingPages": "Landing Pages",
-  "Ecommerce": "eCommerce Solutions",
-  "Notification": "Web Push Notifications",
-  "MarketingAutomation": "Marketing Automation",
+  "Landing Pages": "Landing Pages",
+  "eCommerce Solutions": "eCommerce Solutions",
+  "Web Push Notifications": "Web Push Notifications",
+  "Marketing Automation": "Marketing Automation",
   "FieldOfActivity": "Field of Activity",
   "FieldOfActivityRequired": "Field of Activity is required",
   "UpdateTrainingContentCheckbox": "I confirm receiving updates, professional content, and promotional information from Pulseem",
@@ -86,5 +86,7 @@
   "EmailNotSent": "There is an issue while sending an email. Please try after some time.",
   "typeEmailForSignUp": "Type Email Address",
   "typeEmailForSignUpDesc": "Type email address for Account Creation process",
-  "accountCreated": "Account has been created successfully."
+  "accountCreated": "Account has been created successfully.",
+  "fullName": "Full Name",
+  "fullNameRequired": "Full Name is required"
 }

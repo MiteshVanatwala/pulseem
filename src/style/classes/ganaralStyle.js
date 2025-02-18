@@ -4308,18 +4308,24 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflow: 'hidden'
   },
   signupContainer: {
-    height: '100vh',
-    width: '100vw',
+    minHeight: '100vh',
+    height: 'auto',
+    width: '100%',
     position: 'absolute',
+    paddingBottom: '50px',
     background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
-    '& .widgetContainer': {
-      background: '#fff',
-      width: '30%',
-      margin: 'auto',
-      height: '50%',
+    overflowX: 'hidden',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+    '& .signUpContainer': {
       marginTop: '5%',
-      borderRadius: '50px',
-      padding: '20px 50px'
+      '& .widgetContainer': {
+        background: '#fff',
+        width: '30%',
+        margin: 'auto',
+        height: '50%',
+        borderRadius: '50px',
+        padding: '20px 50px'
+      },
     },
     '& .stepper': {
       width: 400,

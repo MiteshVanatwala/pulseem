@@ -5,12 +5,10 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { FieldOfActivities, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
+import { FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
 import { MdDvr, MdKeyboardArrowDown, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
-import Illustration_BG_BL from "../../assets/images/Illustration_BG_BL";
-import Illustration_BG_BR from "../../assets/images/Illustration_BG_BR";
 import PasswordHint from "../Settings/AccountSettings/Password/PasswordHint";
 import { ValidPassword } from "../Settings/AccountSettings/Password/Types";
 import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
@@ -23,6 +21,10 @@ import { IsValidEmail, IsValidPhoneNumber } from "../../helpers/Utils/Validation
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { CompanyWebsiteRequest } from "../../Models/CompanyWebsite/CompanyWebSite";
 import { actionURL } from "../../config";
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { setCookie } from "../../helpers/Functions/cookies";
+import EnImage from '../../assets/images/british.svg';
+import IsraelImage from "../../assets/images/israel-flag-icon.svg";
 
 const SignUpNew = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -31,8 +33,7 @@ const SignUpNew = ({ classes }: any) => {
   const [showLoader, setLoader] = useState(false);
   const qs = queryString.parse(window.location.search);
   const [userDetails, setUserDetails] = useState({
-    firstName: '',
-    lastName: '',
+    fullName: '',
     emailId: qs?.emailid || '',
     phone: '',
     cellPhone: '',
@@ -42,23 +43,19 @@ const SignUpNew = ({ classes }: any) => {
     confirmPassword: '',
     isConfirmPasswordVisible: false,
     companyName: '',
-    website: '',
-    fieldOfActivity: '',
     fieldOfInterest: [],
     chkUpdate: false,
     chkPolicy: false,
     referralID: qs?.refId || ''
   });
   const [errors, setErrors] = useState({
-    firstName: '',
-    lastName: '',
+    fullName: '',
     emailId: '',
     cellPhone: '',
     userName: '',
     password: '',
     confirmPassword: '',
     companyName: '',
-    fieldOfActivity: '',
     fieldOfInterest: '',
     chkPolicy: '',
     chkUpdate: '',
@@ -71,7 +68,6 @@ const SignUpNew = ({ classes }: any) => {
     NumberChar: false,
   } as ValidPassword);
   const [toastMessage, setToastMessage] = useState<any | never>(null);
-  const [filterFieldOfActivity, setFilterFieldOfActivity] = useState<string[]>([]);
   const [dialogType, setDialogType] = useState<{
     type: string;
   } | null>(null);
@@ -91,19 +87,23 @@ const SignUpNew = ({ classes }: any) => {
   });
   const [invalidEmail, setInvalidEmail] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState(0);
+  const passwordHintClasses = useStylesBootstrapPasswordHint();
+
+  const changeLanguage = (value: any) => {
+    setCookie('Culture', `${value}-${value === 'he' ? 'IL' : 'US'}`);
+    i18n.changeLanguage(value);
+    dispatch(setLanguage(value));
+  }
 
   const getUserInfo = async () => {
     setLoader(true);
     const { data: { Message, Data }, status } = await PulseemReactInstance.get(`User/GetStepWiseAccountInfo/${qs?.id}`);
     setLoader(false);
-    console.log(Message)
-    console.log(Data)
     if (status === 200) {
       if (Message === 'Success') {
         setUserDetails({
           ...userDetails,
-          firstName: Data?.FirstName,
-          lastName: Data?.LastName,
+          fullName: `${Data?.FirstName} ${Data?.LastName}`,
           emailId: qs?.emailid || '',
           cellPhone: Data?.Mobile,
           companyName: Data?.Company,
@@ -127,7 +127,7 @@ const SignUpNew = ({ classes }: any) => {
       ProductType: '',
       UserID: qs?.id,
     }
-    errorsTemp.firstName = userDetails.firstName ? '' : t('SignUp.FirstNameRequired');
+    errorsTemp.fullName = userDetails.fullName ? '' : t('SignUp.fullNameRequired');
     errorsTemp.cellPhone = userDetails.cellPhone ? '' : t('SignUp.CellPhoneRequired');
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
@@ -135,13 +135,14 @@ const SignUpNew = ({ classes }: any) => {
       ...errors,
       ...errorsTemp
     });
-    if (errorsTemp.firstName || errorsTemp.cellPhone || errorsTemp.emailId) {
+    if (errorsTemp.fullName || errorsTemp.cellPhone || errorsTemp.emailId) {
       if (activeStep > 0) setActiveStep(0)
       return false;
     }
     else {
-      payload.FirstName = userDetails.firstName;
-      payload.LastName = userDetails.lastName;
+      const nameArr = userDetails.fullName.split(' ');
+      payload.FirstName = nameArr[0];
+      payload.LastName = nameArr.slice(1).join(" ");
       payload.Mobile = userDetails.cellPhone;
       payload.Email = userDetails.emailId;
     }
@@ -158,11 +159,20 @@ const SignUpNew = ({ classes }: any) => {
       if (errorsTemp.companyName || errorsTemp.fieldOfInterest) {
         return false;
       } else {
-        const interests: any = [];
-        userDetails.fieldOfInterest.map((item: any) => interests.push(t(`SignUp.${item}`)))
+        if (userDetails.fieldOfInterest.length > 0) {
+          const interests: any = [];
+          userDetails.fieldOfInterest.map((item: any) => item !== '' && interests.push(item));
+          payload.ProductType = interests.join(',');
+        }
         payload.Company = userDetails.companyName;
+      }
+    } else {
+      if (userDetails.fieldOfInterest.length > 0) {
+        const interests: any = [];
+        userDetails.fieldOfInterest.map((item: any) => item !== '' && interests.push(item));
         payload.ProductType = interests.join(',');
       }
+      payload.Company = userDetails.companyName;
     }
 
     setLoader(true);
@@ -186,11 +196,8 @@ const SignUpNew = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    // dispatch(setLanguage(qs?.culture || 'he'));
-    // i18n.changeLanguage('he-IL');
-    dispatch(setLanguage(qs?.culture || 'en'));
-    i18n.changeLanguage('en-US');
-    populateFieldOfActivities();
+    dispatch(setLanguage(qs?.culture || 'he'));
+    i18n.changeLanguage('he-IL');
 
     getUserInfo();
     if ((qs?.refId && qs?.refId !== '') && ((!qs?.emailid || qs?.emailid === '') || !qs?.id)) {
@@ -201,15 +208,8 @@ const SignUpNew = ({ classes }: any) => {
   }, []);
 
   useEffect(() => {
-    // i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
-    populateFieldOfActivities();
+    i18n.changeLanguage(isRTL ? 'he-IL' : 'en-US');
   }, [isRTL]);
-
-  const populateFieldOfActivities = () => {
-    const interests: string[] = [];
-    FieldOfActivities.map((item: any) => interests.push(t(`SignUp.${item}`)));
-    setFilterFieldOfActivity(interests);
-  }
 
   const renderToast = () => {
     if (toastMessage) {
@@ -225,25 +225,25 @@ const SignUpNew = ({ classes }: any) => {
 
   const renderInterestIcon = (icon: string) => {
     switch (icon) {
-      case 'BulkEmail':
+      case FieldOfInterest[0]:
         return <MdOutlineMarkEmailRead className={clsx(classes.p5)} />;
 
-      case 'BulkSMS':
+      case FieldOfInterest[1]:
         return <MdMobileFriendly className={clsx(classes.p5)} />;
 
-      case 'WhatsApp':
+      case FieldOfInterest[2]:
         return <MdOutlineWhatsapp className={clsx(classes.p5)} />;
 
-      case 'LandingPages':
+      case FieldOfInterest[3]:
         return <MdDvr className={clsx(classes.p5)} />;
 
-      case 'Ecommerce':
+      case FieldOfInterest[4]:
         return <MdOutlineAddShoppingCart className={clsx(classes.p5)} />;
 
-      case 'Notification':
+      case FieldOfInterest[5]:
         return <MdNotifications className={clsx(classes.p5)} />;
 
-      case 'MarketingAutomation':
+      case FieldOfInterest[6]:
         return <MdOutlineAutoMode className={clsx(classes.p5)} />;
 
       default:
@@ -257,14 +257,12 @@ const SignUpNew = ({ classes }: any) => {
 
   const saveSignup = async () => {
     let errorsTemp = errors;
-    errorsTemp.firstName = userDetails.firstName ? '' : t('SignUp.FirstNameRequired');
-    // errorsTemp.lastName = userDetails.lastName ? '' : t('SignUp.LastNameRequired');
+    errorsTemp.fullName = userDetails.fullName ? '' : t('SignUp.fullNameRequired');
     errorsTemp.cellPhone = userDetails.cellPhone ? '' : t('SignUp.CellPhoneRequired');
     errorsTemp.userName = userDetails.userName ? '' : t('SignUp.UserNameRequired');
     errorsTemp.password = '';
     errorsTemp.confirmPassword = userDetails.confirmPassword === '' ? t('SignUp.ConfirmPasswordRequired') : (userDetails.password === userDetails.confirmPassword ? '' : t("settings.changePassword.error.notMatch"));
     errorsTemp.companyName = userDetails.companyName ? '' : t('SignUp.BusinessNameRequired');
-    errorsTemp.fieldOfActivity = userDetails.fieldOfActivity ? '' : t('SignUp.FieldOfActivityRequired');
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('SignUp.FieldOfInterestRequired');
     errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.requiredField');
     errorsTemp.chkUpdate = userDetails.chkUpdate ? '' : t('common.requiredField');
@@ -280,20 +278,21 @@ const SignUpNew = ({ classes }: any) => {
       ...errorsTemp
     });
 
-    if (!errorsTemp.firstName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfActivity && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.chkUpdate && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
+    if (!errorsTemp.fullName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.chkUpdate && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
+      const nameArr = userDetails.fullName.split(' ');
       setLoader(true);
       const interests: any = [];
-      userDetails.fieldOfInterest.map((item: any) => interests.push(t(`SignUp.${item}`)))
+      userDetails.fieldOfInterest.map((item: any) => item !== '' && interests.push(item));
       const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
-        FirstName: userDetails.firstName,
-        LastName: userDetails.lastName,
+        FirstName: nameArr[0],
+        LastName: nameArr.slice(1).join(" "),
         Mobile: userDetails.cellPhone,
         Phone: userDetails.phone,
         UserName: userDetails.userName,
         Password: userDetails.password,
         Company: userDetails.companyName,
-        Website: userDetails.website,
-        ActivityField: userDetails.fieldOfActivity,
+        Website: '',
+        ActivityField: '',
         ProductType: interests.join(','),
         UserID: qs?.id,
         chkMailingApproval: userDetails.chkUpdate,
@@ -304,6 +303,7 @@ const SignUpNew = ({ classes }: any) => {
       if (status === 200) {
         if (Message === 'ok') {
           setDialogType({ type: 'confirmation' });
+          setActiveStep(activeStep + 1);
           // @ts-ignore
           window?.dataLayer?.push({
             'event': 'formSubmission',
@@ -311,13 +311,13 @@ const SignUpNew = ({ classes }: any) => {
             'formPosition': 'Footer'
           });
         } else if (Message === 'internalerror') {
-          setDialogType({ type: 'internalError' });
+          // setDialogType({ type: 'internalError' });
+          setActiveStep(activeStep + 1);
         } else {
           showMessage(`SignUp.Message.${Message}`);
         }
       } else {
         setDialogType({ type: 'internalError' });
-        // showMessage(`SignUp.Message.internalerror`);
       }
     }
   }
@@ -540,7 +540,7 @@ const SignUpNew = ({ classes }: any) => {
     }
   }
 
-  const step1 = () => {
+  const Step1 = () => {
     return <Box className={clsx(classes.pb25)}>
       <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f25)}>
         {t('SignUp.PersonalInfo')}
@@ -548,20 +548,20 @@ const SignUpNew = ({ classes }: any) => {
       <Box>
         <Box className={clsx(classes.paddingInline30)}>
           <Typography className={clsx(classes.f18)}>
-            {t("SignUp.FirstName")}
+            {t("SignUp.fullName")}
             <span className={clsx(classes.pl5, classes.colrPrimary)}>*</span>
           </Typography>
           <TextField
             variant="outlined"
             size="small"
-            name="FirstName"
-            value={userDetails?.firstName}
+            name="fullName"
+            value={userDetails?.fullName}
             onChange={(event: any) => setUserDetails({
               ...userDetails,
-              firstName: event.target.value
+              fullName: event.target.value
             })}
             className={clsx(classes.textField, classes.minWidth252)}
-            error={!!errors.firstName}
+            error={!!errors.fullName}
             inputProps={{
               maxLength: 50,
               style: {
@@ -569,9 +569,9 @@ const SignUpNew = ({ classes }: any) => {
               }
             }}
           />
-          {!!errors.firstName && (
+          {!!errors.fullName && (
             <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
-              {errors.firstName}
+              {errors.fullName}
             </Typography>
           )}
         </Box>
@@ -615,7 +615,7 @@ const SignUpNew = ({ classes }: any) => {
             type="email"
             variant="outlined"
             size="small"
-            name="EmailLastName"
+            name="Email"
             value={userDetails?.emailId}
             onChange={(event: any) => setUserDetails({
               ...userDetails,
@@ -641,7 +641,7 @@ const SignUpNew = ({ classes }: any) => {
     </Box>
   }
 
-  const step2 = () => {
+  const Step2 = () => {
     return <Box className={clsx(classes.pb25)}>
       <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f25)}>
         {t('SignUp.BusinessDetail')}
@@ -722,7 +722,7 @@ const SignUpNew = ({ classes }: any) => {
     </Box>
   }
 
-  const step3 = () => {
+  const Step3 = () => {
     return <Box className={clsx(classes.pb25)}>
       <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f25)}>
         {t('SignUp.LoginDetails')}
@@ -773,7 +773,7 @@ const SignUpNew = ({ classes }: any) => {
               />}
               arrow
               open={showPasswordTip}
-              // classes={useStylesBootstrapPasswordHint()}
+              classes={passwordHintClasses}
             >
               <TextField
                 autoFocus
@@ -895,7 +895,7 @@ const SignUpNew = ({ classes }: any) => {
     </Box>
   }
 
-  const step4 = () => {
+  const Step4 = () => {
     return <Box>
       <Typography style={{ fontSize: 80 }} className={clsx(classes.textCenter)}>😊</Typography>
       <Typography style={{ fontSize: 25 }} className={clsx(classes.textCenter)}>
@@ -908,6 +908,40 @@ const SignUpNew = ({ classes }: any) => {
     </Box>
   }
 
+  const languageSelector = () => {
+    return (
+      <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)}>
+        <Select
+          variant="standard"
+          value={isRTL ? 'he' : 'en'}
+          name='TwoFactorAuthOptionID'
+          onChange={(e: SelectChangeEvent) => changeLanguage(e.target.value)}
+          IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} style={{ right: isRTL ? 15 : 'auto', left: isRTL ? 'auto' : 15 }} />}
+          MenuProps={{
+            PaperProps: {
+              style: {
+                width: 100,
+                maxHeight: 200,
+                direction: isRTL ? 'rtl' : 'ltr'
+              },
+            },
+          }}
+          className={clsx(classes.SignUpLanguageDropdown)}
+        >
+          <MenuItem value={'he'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+            <img width={35} src={IsraelImage} alt={t('languages.langCodes.hebrew')} />
+            <label>{t('languages.langCodes.hebrew')}</label>
+          </MenuItem>
+
+          <MenuItem value={'en'} className={clsx(classes.SignUpLanguageDropdown, classes.cursorPointer)}>
+            <img width={35} src={EnImage} alt={t('languages.langCodes.english')} />
+            <label>{t('languages.langCodes.english')}</label>
+          </MenuItem>
+        </Select>
+      </FormControl>
+    )
+  }
+
   return (
     <Container
       maxWidth='xl'
@@ -915,29 +949,36 @@ const SignUpNew = ({ classes }: any) => {
       style={{ direction: isRTL ? 'rtl' : 'ltr' }}
     >
       <Box className={clsx(classes.posRelative)}>
-        <Box className={clsx('widgetContainer', classes.whiteBox, classes.textCenter)}>
-          { activeStep === 0 && step1() }
-          { activeStep === 1 && step2() }
-          { activeStep === 2 && step3() }
-          { activeStep === 3 && step4() }
+        <Box className={clsx(classes.textCenter, 'signUpContainer')}>
+          {languageSelector()}
+          <Box className={clsx('widgetContainer', classes.whiteBox, classes.textCenter)}>
+            { activeStep === 0 && Step1() }
+            { activeStep === 1 && Step2() }
+            { activeStep === 2 && Step3() }
+            { activeStep === 3 && Step4() }
+          </Box>
         </Box>
-        <MobileStepper
-          variant="dots"
-          steps={4}
-          position="static"
-          activeStep={activeStep}
-          className={clsx("stepper", classes.mt20, classes.borderRadius30)}
-          nextButton={
-            <Button size="small" onClick={() => activeStep == 2 ? saveSignup() : saveUserInfo()} disabled={activeStep === 3}>
-              Next
-            </Button>
-          }
-          backButton={
-            <Button size="small" onClick={handleBack} disabled={activeStep === 0 || activeStep === 3}>
-              Back
-            </Button>
-          }
-        />
+        {
+          activeStep < 3 && (
+            <MobileStepper
+              variant="dots"
+              steps={4}
+              position="static"
+              activeStep={activeStep}
+              className={clsx("stepper", classes.mt20, classes.borderRadius30)}
+              nextButton={
+                <Button size="small" onClick={() => activeStep === 2 ? saveSignup() : saveUserInfo()} disabled={activeStep === 3}>
+                  {t(`common.${activeStep === 2 ? 'finish' : 'next'}`)}
+                </Button>
+              }
+              backButton={
+                <Button size="small" onClick={handleBack} disabled={activeStep === 0 || activeStep === 3}>
+                  {t('common.back')}
+                </Button>
+              }
+            />
+          )
+        }
       </Box>
       <Loader isOpen={showLoader} showBackdrop={true} zIndex={9999} />
       {renderToast()}
