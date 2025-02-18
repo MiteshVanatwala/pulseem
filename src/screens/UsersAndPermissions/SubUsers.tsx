@@ -136,6 +136,10 @@ const SubUsers = ({ classes }: any) => {
         setToastMessage(ToastMessages.USER_REJECTED);
         break;
       }
+      case 410: {
+        setToastMessage(ToastMessages.EMAIL_ALREADY_EXISTS);
+        break;
+      }
       default: {
         break;
       }

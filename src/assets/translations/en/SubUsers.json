@@ -43,6 +43,7 @@
     "userRejected": "User rejected (password length, password attempts, email exists, question & answer required)",
     "userCreatedSuccessfuly": "User created successfully",
     "confirmationLinkSent": "Confirmation Link has been sent successfully",
-    "deleteUserSuccess": "Sub user deleted!"
+    "deleteUserSuccess": "Sub user deleted!",
+    "emailAlreadyExists": "Email already exists"
   }
 }
