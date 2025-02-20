@@ -353,8 +353,9 @@ export const getRoutes = (
           isShow: features && features?.indexOf(PulseemFeatures.AUTOMATION_TEMPLATE) > -1,
         },
         {
+          key: 'create-automations',
           title: t("master.RadMenuItemCreateAutomationResource.Text"),
-          href: `${rootDomain}/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+          href: `${sitePrefix}Automations/Create`,
           isShow: true,
         },
         {
