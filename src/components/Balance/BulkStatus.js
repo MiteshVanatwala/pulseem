@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PurchaseWizard from './PaymentWizard/PurchaseWizard';
 import { GoPackage } from 'react-icons/go';
-import { Grid, Paper, Typography, Button, Box, Divider, Link } from '@material-ui/core';
+import { Grid, Paper, Typography, Button, Box, Divider, Tooltip, IconButton } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -17,6 +17,7 @@ import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
 import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 import { MdVoiceChat } from "react-icons/md";
+import { URLS } from '../../config/enum';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -179,15 +180,20 @@ const BulkStatus = ({ classes }) => {
                 <TooltipBubble />
               </Box> :
                 <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
-                  <Link
-                    className={clsx(classes.mlr10, classes.bold)}
-                    href='https://site.pulseem.co.il/%d7%a6%d7%95%d7%a8-%d7%a7%d7%a9%d7%a8/'
+                  <Tooltip
+                    arrow
                     title={t('master.RadMenuItemResource21.Text')}
-                    style={{ textDecoration: 'underline', fontSize: '100%' }}
-                    target='_blank'>
-                    {t('master.RadMenuItemResource21.Text')}
-                  </Link>
-                  <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
+                    placement={"top"}
+                    open
+                    classes={{
+                      tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement, classes.f14),
+                      arrow: classes.fBlack
+                    }}
+                  >
+                    <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.ContactUs, '_blank')}>
+                      <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
+                    </IconButton>
+                  </Tooltip>
                 </Box>
               }
             </Box>

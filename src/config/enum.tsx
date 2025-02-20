@@ -44,5 +44,6 @@ export enum WhatsAppPlatformIDEnum {
 }
 
 export enum URLS {
-  AutomationTemplatePreview = 'CreateAutomations.aspx?Mode=show&AutomationID='
+  AutomationTemplatePreview = 'CreateAutomations.aspx?Mode=show&AutomationID=',
+  ContactUs = 'https://site.pulseem.co.il/%d7%a6%d7%95%d7%a8-%d7%a7%d7%a9%d7%a8/'
 }
