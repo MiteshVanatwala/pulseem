@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { getTips } from '../../redux/reducers/dashboardSlice';
 import { HornIcon, IllustrationTipulseem } from '../../assets/images/dashboard/index'
 import { URLS } from '../../config/enum';
-import { MdSupportAgent } from 'react-icons/md';
+import { MdLibraryBooks } from 'react-icons/md';
 
 const PulseemTips = ({ classes, t, isRTL }) => {
   const { tips } = useSelector(state => state.dashboard);
@@ -74,7 +74,7 @@ const PulseemTips = ({ classes, t, isRTL }) => {
         <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
           <Tooltip
             arrow
-            title={t('master.RadMenuItemResource21.Text')}
+            title={t('common.UserGuides')}
             placement={"top"}
             open
             classes={{
@@ -82,8 +82,8 @@ const PulseemTips = ({ classes, t, isRTL }) => {
               arrow: classes.colrPrimary
             }}
           >
-            <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.ContactUs, '_blank')}>
-              <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
+            <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.UserGuide, '_blank')}>
+              <MdLibraryBooks className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('common.UserGuides')} />
             </IconButton>
           </Tooltip>
         </Box>
