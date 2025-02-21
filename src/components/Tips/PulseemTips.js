@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { IconButton, Box, Grid, Paper, Typography } from '@material-ui/core';
+import { IconButton, Box, Grid, Paper, Typography, Tooltip } from '@material-ui/core';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import clsx from 'clsx';
 import { getTips } from '../../redux/reducers/dashboardSlice';
 import { HornIcon, IllustrationTipulseem } from '../../assets/images/dashboard/index'
+import { URLS } from '../../config/enum';
+import { MdSupportAgent } from 'react-icons/md';
 
 const PulseemTips = ({ classes, t, isRTL }) => {
   const { tips } = useSelector(state => state.dashboard);
@@ -60,13 +62,31 @@ const PulseemTips = ({ classes, t, isRTL }) => {
 
   return (
     <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.tipMargin, classes.carouselTips)}>
-      <Box className={clsx(classes.tipsTitle, classes.dashBoxtitleSection, classes.mb15)}>
-        <HornIcon className={clsx(classes.marginInlineEnd15, classes.marginInlineStart5)} style={{ verticalAlign: 'middle' }} />
-        <Typography
-          className={clsx(classes.dInline, classes.pe10, 'title')}
-        >
-          {t('dashboard.tip')}{t('dashboard.ulseem')}
-        </Typography>
+      <Box className={clsx(classes.tipsTitle, classes.dashBoxtitleSection, classes.mb15, classes.spaceBetween)}>
+        <Box>
+          <HornIcon className={clsx(classes.marginInlineEnd15, classes.marginInlineStart5)} style={{ verticalAlign: 'middle' }} />
+          <Typography
+            className={clsx(classes.dInline, classes.pe10, 'title')}
+          >
+            {t('dashboard.tip')}{t('dashboard.ulseem')}
+          </Typography>
+        </Box>
+        <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
+          <Tooltip
+            arrow
+            title={t('master.RadMenuItemResource21.Text')}
+            placement={"top"}
+            open
+            classes={{
+              tooltip: clsx(classes.tooltipPrimary, classes.f12),
+              arrow: classes.colrPrimary
+            }}
+          >
+            <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.ContactUs, '_blank')}>
+              <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
+            </IconButton>
+          </Tooltip>
+        </Box>
       </Box>
       <Box className={classes.flexJustifyCenter}>
         {/* <IllustrationTipulseem /> */}

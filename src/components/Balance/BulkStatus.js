@@ -186,8 +186,8 @@ const BulkStatus = ({ classes }) => {
                     placement={"top"}
                     open
                     classes={{
-                      tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement, classes.f14),
-                      arrow: classes.fBlack
+                      tooltip: clsx(classes.tooltipPrimary, classes.f12),
+                      arrow: classes.colrPrimary
                     }}
                   >
                     <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.ContactUs, '_blank')}>
