@@ -24,6 +24,7 @@ import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
+import { MdOutlineWhatsapp } from 'react-icons/md';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
 
@@ -240,7 +241,7 @@ export const getRoutes = (
       key: 'whatsapp',
       title: 'Whatsapp',
       pageTitle: t('whatsapp.Title'),
-      // iconUnicode: '\ue181',
+      iconUnicode: <MdOutlineWhatsapp />,
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
       isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
       icon: <WhatsappIcon className='header-whatsapp-icon' />,
