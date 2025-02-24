@@ -65,6 +65,8 @@ const Integrations = ({ classes }: any) => {
           onChange={(e, value) => setTabValue(value)}
           className={clsx(classes.mr15, classes.ml15)}
           classes={{ indicator: classes.hideIndicator }}
+          variant="scrollable"
+          scrollButtons="auto"
         >
           <Tab
             // @ts-ignore
