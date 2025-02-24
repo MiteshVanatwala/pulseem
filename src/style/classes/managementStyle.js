@@ -1863,6 +1863,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: "16px!important",
     textAlign: "center",
   },
+  tooltipPrimary: {
+    backgroundColor: "#ff1946",
+    maxWidth: 300,
+    fontSize: "12px!important",
+    textAlign: "center",
+    "&.MuiTooltip-arrow": {
+      color: '#ff1946'
+    }
+  },
   tooltipPlacement: {
     "&.MuiTooltip-tooltipPlacementTop": {
       margin: "10px 0px!important",
