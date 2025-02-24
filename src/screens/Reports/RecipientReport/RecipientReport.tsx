@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import uniqid from 'uniqid';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Box, Button, Grid, TextField, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Typography, FormControlLabel, Checkbox, FormControl } from '@material-ui/core';
 import { Title } from '../../../components/managment/Title';
 import { downloadRecipientsReportData, getRecipientsReportData } from '../../../redux/reducers/recipientsReportSlice';
 import { useEffect, useState } from 'react';
@@ -108,6 +108,8 @@ const RecipientReport = ({ classes }: any) => {
     Cellphone: '',
   });
 
+  const [exportSmsContent, setExportSmsContent] = useState<boolean>(false);
+
   useEffect(() => {
     dispatch(resetRecipientReportData());
   }, [])
@@ -135,7 +137,8 @@ const RecipientReport = ({ classes }: any) => {
     //@ts-ignore
     const reportData = await dispatch(downloadRecipientsReportData({
       ...filterRequest,
-      IsExport: true
+      IsExport: true,
+      IsSmsContent: exportSmsContent
     })) as any;
 
     const {
@@ -161,6 +164,9 @@ const RecipientReport = ({ classes }: any) => {
           [`${t('common.smsCampaignDates')}`]: ind < SmsCampaignsLength ? FormatDate(SmsCampaigns[ind]['SendDate']) : '',
           [`${t('common.smsCampaignStatus')}`]: ind < SmsCampaignsLength ? t(ConvertSmsReceipientStatusText(`${SmsCampaigns[ind]['SmsStatus']}`)) : '',
           [`${t('common.smsCampaignClicked')}`]: ind < SmsCampaignsLength ? t(`common.${SmsCampaigns[ind]['ClicksCount'] > 0 ? 'Yes' : 'No'}`) : '',
+          ...(exportSmsContent && ind < SmsCampaignsLength && SmsCampaigns[ind]['SmsText'] ? {
+            [`${t('report.smsContent')}`]: SmsCampaigns[ind]['SmsText']
+          } : {}),
           "||": "|",
           [`${t('common.whatsappCampaignName')}`]: ind < WhatsappCampaignLength ? `${WhatsappCampaigns[ind]['Name']}` : '',
           [`${t('common.whatsappCampaignDates')}`]: ind < WhatsappCampaignLength ? FormatDate(WhatsappCampaigns[ind]['SendDate']) : '',
@@ -169,27 +175,30 @@ const RecipientReport = ({ classes }: any) => {
         })
       }
 
+      const fields = [
+        t('common.newsletterCampaignName'),
+        t('common.newsletterCampaignDates'),
+        t('common.newsletterCampaignStatus'),
+        t('common.newsletterCampaignOpened'),
+        "|",
+        t('common.smsCampaignName'),
+        t('common.smsCampaignDates'),
+        t('common.smsCampaignStatus'),
+        t('common.smsCampaignClicked'),
+        ...(exportSmsContent ? [t('report.smsContent')] : []),
+        "||",
+        t('common.whatsappCampaignName'),
+        t('common.whatsappCampaignDates'),
+        t('common.whatsappCampaignStatus'),
+        t('common.whatsappCampaignClicked'),
+      ] as any;
+
       try {
         await ExportFile({
           data: exportData,
           fileName: 'RecipientReport',
           exportType: format,
-          fields: [
-            t('common.newsletterCampaignName'),
-            t('common.newsletterCampaignDates'),
-            t('common.newsletterCampaignStatus'),
-            t('common.newsletterCampaignOpened'),
-            "|",
-            t('common.smsCampaignName'),
-            t('common.smsCampaignDates'),
-            t('common.smsCampaignStatus'),
-            t('common.smsCampaignClicked'),
-            "||",
-            t('common.whatsappCampaignName'),
-            t('common.whatsappCampaignDates'),
-            t('common.whatsappCampaignStatus'),
-            t('common.whatsappCampaignClicked'),
-          ]
+          fields: fields
         });
       } catch (error) {
         setToastMessage({
@@ -199,6 +208,7 @@ const RecipientReport = ({ classes }: any) => {
       }
       finally {
         setShowLoader(false);
+        setExportSmsContent(false)
       }
     } else {
       setShowLoader(false);
@@ -1268,10 +1278,26 @@ const RecipientReport = ({ classes }: any) => {
         title={t('campaigns.exportFile')}
         radioTitle={t('common.SelectFormat')}
         onConfirm={(format: string) => downloadRecipientReport(format)}
-        onCancel={() => setDialogType(null)}
+        onCancel={() => { setDialogType(null); setExportSmsContent(false) }}
         cookieName={'exportFormat'}
         defaultValue="xlsx"
         options={ExportFileTypes}
+        checkbox={<FormControl>
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                inputProps={{ "aria-label": "secondary checkbox" }}
+                onClick={(e: any) => {
+                  console.log(exportSmsContent)
+                  setExportSmsContent(e.target.checked);
+                }}
+                checked={exportSmsContent}
+              />
+            }
+            label={t("report.exportSmsContent")}
+          />
+        </FormControl>}
       />
       {groupModal()}
       {renderDialog()}
