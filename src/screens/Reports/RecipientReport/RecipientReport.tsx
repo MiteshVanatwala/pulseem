@@ -164,7 +164,9 @@ const RecipientReport = ({ classes }: any) => {
           [`${t('common.smsCampaignDates')}`]: ind < SmsCampaignsLength ? FormatDate(SmsCampaigns[ind]['SendDate']) : '',
           [`${t('common.smsCampaignStatus')}`]: ind < SmsCampaignsLength ? t(ConvertSmsReceipientStatusText(`${SmsCampaigns[ind]['SmsStatus']}`)) : '',
           [`${t('common.smsCampaignClicked')}`]: ind < SmsCampaignsLength ? t(`common.${SmsCampaigns[ind]['ClicksCount'] > 0 ? 'Yes' : 'No'}`) : '',
-          [`${t('report.smsContent')}`]: ind < SmsCampaignsLength ? SmsCampaigns[ind]['SmsText'] : '',
+          ...(exportSmsContent && ind < SmsCampaignsLength && SmsCampaigns[ind]['SmsText'] ? {
+            [`${t('report.smsContent')}`]: SmsCampaigns[ind]['SmsText']
+          } : {}),
           "||": "|",
           [`${t('common.whatsappCampaignName')}`]: ind < WhatsappCampaignLength ? `${WhatsappCampaigns[ind]['Name']}` : '',
           [`${t('common.whatsappCampaignDates')}`]: ind < WhatsappCampaignLength ? FormatDate(WhatsappCampaigns[ind]['SendDate']) : '',
@@ -173,28 +175,30 @@ const RecipientReport = ({ classes }: any) => {
         })
       }
 
+      const fields = [
+        t('common.newsletterCampaignName'),
+        t('common.newsletterCampaignDates'),
+        t('common.newsletterCampaignStatus'),
+        t('common.newsletterCampaignOpened'),
+        "|",
+        t('common.smsCampaignName'),
+        t('common.smsCampaignDates'),
+        t('common.smsCampaignStatus'),
+        t('common.smsCampaignClicked'),
+        ...(exportSmsContent ? [t('report.smsContent')] : []),
+        "||",
+        t('common.whatsappCampaignName'),
+        t('common.whatsappCampaignDates'),
+        t('common.whatsappCampaignStatus'),
+        t('common.whatsappCampaignClicked'),
+      ] as any;
+
       try {
         await ExportFile({
           data: exportData,
           fileName: 'RecipientReport',
           exportType: format,
-          fields: [
-            t('common.newsletterCampaignName'),
-            t('common.newsletterCampaignDates'),
-            t('common.newsletterCampaignStatus'),
-            t('common.newsletterCampaignOpened'),
-            "|",
-            t('common.smsCampaignName'),
-            t('common.smsCampaignDates'),
-            t('common.smsCampaignStatus'),
-            t('common.smsCampaignClicked'),
-            t('report.smsContent'),
-            "||",
-            t('common.whatsappCampaignName'),
-            t('common.whatsappCampaignDates'),
-            t('common.whatsappCampaignStatus'),
-            t('common.whatsappCampaignClicked'),
-          ]
+          fields: fields
         });
       } catch (error) {
         setToastMessage({
