@@ -118,7 +118,7 @@ const DuplicateCampaign = ({
                     checked={duplicateOptions.indexOf(CloneOptions.SupportedForBee) > -1}
                   />
                 }
-                label={"duplicate supported by bee"}
+                label={t("campaigns.newsLetterEditor.duplicateAsBee")}
               />
             }
           </FormGroup>

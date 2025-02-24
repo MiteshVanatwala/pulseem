@@ -1057,8 +1057,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
             setPage(1)
             await dispatch(duplicteCampaign({ CampaignID: duplicateDialog?.id, CloneOptions: selectedOptions }))
             getData()
-            setLoader(false);
           }
+          setLoader(false);
         }}
         campaignName={duplicateDialog?.name}
       />
