@@ -185,7 +185,7 @@ const RenderRow = ({
               classes={cellStyle}
               align='center'
               className={classes.flex1}>
-              {row.Status > 7 ? (<CustomTooltip
+              {row.Status > 7 && row?.ErrorData !== '' ? (<CustomTooltip
                 isSimpleTooltip={false}
                 interactive={true}
                 forceDirection={'ltr'}
