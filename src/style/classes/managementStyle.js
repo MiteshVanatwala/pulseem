@@ -1523,6 +1523,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: '#FF0054 !important',
     fontSize: 18
   },
+  icon_Info_black: {
+    color: '#000 !important',
+    fontSize: 18
+  },
   noRecipients: {
     color: "#AAAAAA",
     marginTop: 40,

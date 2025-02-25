@@ -130,5 +130,7 @@
   "smsReplies": "דו\"ח SMS נכנסים",
   "virtualNumber": "מספר וירטואלי",
   "WhatsappBalance": "יתרת וואטסאפ",
-  "removalRequest": "בקשת הסרה"
+  "removalRequest": "בקשת הסרה",
+  "exportSmsContent": "ייצא תוכן הודעת סמס",
+  "smsContent": "תוכן ההודעה"
 }
