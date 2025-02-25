@@ -638,7 +638,8 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsPageViewedMinPrice: null,
                                         IsPageViewedMaxPrice: null,
                                         IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
-                                        PageViewedPrice: null
+                                        PageViewedPrice: null,
+                                        IsPageViewedProductCategory: null
                                     }
                                 }
                             });

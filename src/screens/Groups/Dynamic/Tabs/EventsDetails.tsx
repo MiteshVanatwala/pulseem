@@ -406,13 +406,13 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <SelectProductCategories
                         classes={classes}
                         disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
-                        data={data.dynamicData?.MyActivities?.NotPurchasedProductCategory?.split(',')}
+                        data={data.dynamicData?.MyActivities?.IsPageViewedProductCategory?.split(',')}
                         onUpdate={(value: any) => {
                             if (value !== null) {
-                                onUpdate('NotPurchasedProductCategory', value.join(','))
+                                onUpdate('IsPageViewedProductCategory', value.join(','))
                             }
                             else {
-                                onUpdate('NotPurchasedProductCategory', value)
+                                onUpdate('IsPageViewedProductCategory', value)
                             }
                         }} />
                 </Grid>
@@ -667,7 +667,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         </Select>
                     </FormControl>
                 </Grid>
-                {(data.dynamicData?.MyActivities.IsPageViewedPriceType.toString() === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsPageViewedPriceType.toString() === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsPageViewed && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
+                {(data.dynamicData?.MyActivities?.IsPageViewedPriceType?.toString() === ActivityEvent.LessThan || data.dynamicData?.MyActivities?.IsPageViewedPriceType?.toString() === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsPageViewed && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
                             <InputLabel className={classes.fBlack}>{t('common.price')}:</InputLabel>
@@ -684,7 +684,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                 </Grid>)
                 }
 
-                {data.dynamicData?.MyActivities.IsPageViewedPriceType.toString() === ActivityEvent.Range && data.dynamicData?.MyActivities.IsPageViewed && <Grid item xs={12} sm={4} md={4} className={classes.pt5}>
+                {data.dynamicData?.MyActivities.IsPageViewedPriceType?.toString() === ActivityEvent.Range && data.dynamicData?.MyActivities.IsPageViewed && <Grid item xs={12} sm={4} md={4} className={classes.pt5}>
 
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
@@ -712,6 +712,20 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     </Grid>
                 </Grid>
                 }
+                <Grid item xs={6} sm={6} md={2}>
+                    <SelectProductCategories
+                        classes={classes}
+                        disabled={!data.dynamicData?.MyActivities.IsPageViewed}
+                        data={data.dynamicData?.MyActivities?.IsPageViewedCategory?.split(',')}
+                        onUpdate={(value: any) => {
+                            if (value !== null) {
+                                onUpdate('IsPageViewedCategory', value.join(','))
+                            }
+                            else {
+                                onUpdate('IsPageViewedCategory', value)
+                            }
+                        }} />
+                </Grid>
             </Grid>
 
         );
@@ -724,7 +738,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
         {renderIsPurchased()}
         {renderIsNotPurchased()}
         {renderAbandoned()}
-        {/* {renderPageViewed()} */}
+        {renderPageViewed()}
     </>
     )
 }
