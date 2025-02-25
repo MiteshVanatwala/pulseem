@@ -742,7 +742,9 @@ const WhatsappOnBoarding = ({ classes }: ClassesType) => {
 							</Box>
 						</>		
 					) : (
-						<NoSetup classes={classes} customMessage={t('WhatsappOnBoarding.NoMeta')} />
+						<Box className={clsx(windowSize !== 'xs' ? classes.w30 : null)} style={{ margin: 'auto' }}>
+							<NoSetup classes={classes} customMessage={t('WhatsappOnBoarding.NoMeta')} />
+						</Box>
 					)
 				}
 			</Box>

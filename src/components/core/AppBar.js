@@ -117,7 +117,7 @@ const AppBarItem = ({
                             if (!option.href || option.href === '') {
                               onInnerClick(option)
                             }
-                            else Redirect({ url: option.href })
+                            else Redirect({ url: option.href, openNewTab: option.openInNewWindow })
                           }}
                           classes={{ root: classes.appBarItemMenuRoot }}
                           className={clsx(classes.appBarItemMenuItem, index !== row.length - 1 ? classes.appBarItemBorder : '', option.title === t("appBar.logout") ? 'active' : '')}
@@ -213,7 +213,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const { username } = useSelector(state => state.user)
   const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
-    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false))
+    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username.length > 20 ? `${username.slice(0, 20)}...` : username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false))
 
   const returnToAdmin = () => {
     window.location = '/Pulseem/ReactRedirect.aspx';

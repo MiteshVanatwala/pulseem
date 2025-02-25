@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PurchaseWizard from './PaymentWizard/PurchaseWizard';
 import { GoPackage } from 'react-icons/go';
-import { Grid, Paper, Typography, Button, Box, Divider } from '@material-ui/core';
+import { Grid, Paper, Typography, Button, Box, Divider, Tooltip, IconButton } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdSupportAgent } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -17,7 +17,7 @@ import useRedirect from '../../helpers/Routes/Redirect';
 import { sitePrefix } from '../../config';
 import { WhiteLabelObject } from '../WhiteLabel/WhiteLabelMigrate';
 import { MdVoiceChat } from "react-icons/md";
-
+import { URLS } from '../../config/enum';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, windowSize, isRTL } = useSelector(state => state.core)
@@ -28,6 +28,8 @@ const BulkStatus = ({ classes }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const Redirect = useRedirect();
+
+  const isWhiteLabel = accountSettings.Account?.ReferrerID > 0 && WhiteLabelObject[accountSettings.Account?.ReferrerID] !== undefined;
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {}, SMSVC } = packagesDetails || {};
 
@@ -173,10 +175,27 @@ const BulkStatus = ({ classes }) => {
                   {t('dashboard.yourBulkStatus')}
                 </Typography>
               </Box>
-              <Box className={clsx(classes.mr15, 'bubbleNew')}>
+              {isWhiteLabel ? <Box className={clsx(classes.mr15, 'bubbleNew')}>
                 <Typography className='bubbleText'>{t('common.new')}</Typography>
                 <TooltipBubble />
-              </Box>
+              </Box> :
+                <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
+                  <Tooltip
+                    arrow
+                    title={t('master.RadMenuItemResource21.Text')}
+                    placement={"top"}
+                    open
+                    classes={{
+                      tooltip: clsx(classes.tooltipPrimary, classes.f12),
+                      arrow: classes.colrPrimary
+                    }}
+                  >
+                    <IconButton size="small" className={clsx(classes.noPadding)} onClick={() => window.open(URLS.ContactUs, '_blank')}>
+                      <MdSupportAgent className={classes.linkNoDesign} style={{ fontSize: 30, color: '#ff3343' }} title={t('master.RadMenuItemResource21.Text')} />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              }
             </Box>
           </Grid>
           <Grid

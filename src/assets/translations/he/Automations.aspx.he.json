@@ -56,5 +56,11 @@
   "duplicateContent": "האם ברצונך לשכפל את האוטומציה?",
   "restoreCampaignTitle": "בחר את האוטומציות שברצונך לשחזר",
   "NoNodesFound": "לאוטומציה לא נשמרת זרימת עבודה, אנא צור תחילה זרימת עבודה.",
-  "pressHereToEditAutomation": "לחץ <b>אישור</b> כדי לערוך את האוטומציה"
+  "pressHereToEditAutomation": "לחץ <b>אישור</b> כדי לערוך את האוטומציה",
+  "selectTemplate": "בחירת תבנית",
+  "searchemplate": "חיפוש תבנית",
+  "automationNameIsRequired": "יש למלא שם לאוטמציה",
+  "automationcreated": "אוטומציה נוצרה בהצלחה",
+  "startFromScratch": "התחל מחדש",
+  "startFromScratchDesc": "מעוניין לבחור את הטריגר והפעולות שלך? התחל מחדש"
 }
