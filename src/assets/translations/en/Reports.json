@@ -127,8 +127,10 @@
   "ReadyForDownload": "Ready For Download",
   "InProcess": "In Process",
   "Failed": "Failed",
-  "Completed": "completed" ,
+  "Completed": "completed",
   "smsReplies": "SMS Incoming report",
   "WhatsappBalance": "Whatsapp Balance",
-  "removalRequest": "Removal request"
+  "removalRequest": "Removal request",
+  "exportSmsContent": "Export SMS content",
+  "smsContent": "SMS content"
 }
