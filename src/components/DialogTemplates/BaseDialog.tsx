@@ -196,7 +196,7 @@ export const BaseDialog = ({
   return (
     <Dialog
       disableEnforceFocus
-      style={{ ...style, zIndex: 1501 }}
+      style={style}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
       onClose={(event, reason) => {
