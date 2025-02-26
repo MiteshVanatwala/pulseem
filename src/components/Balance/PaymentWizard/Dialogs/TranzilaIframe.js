@@ -25,7 +25,7 @@ const TranzilaIframe = ({
             if (e.data) {
                 try {
                     const message = JSON.parse(e.data);
-                    if (message["result"] !== null) {
+                    if (message["result"] !== null && message["result"] !== undefined) {
                         onComplete(message);
                     }
                 }
