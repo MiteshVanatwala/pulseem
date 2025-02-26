@@ -24,6 +24,8 @@ import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
 import { GetGlobalAccountPackagesDetails } from '../../../redux/reducers/commonSlice';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { BsInfoCircle } from 'react-icons/bs';
 
 const RenderRow = ({
   classes,
@@ -183,7 +185,31 @@ const RenderRow = ({
               classes={cellStyle}
               align='center'
               className={classes.flex1}>
-              {renderCell(row.Status, 'status')}
+              {row.Status > 7 && row?.ErrorData !== '' ? (<CustomTooltip
+                isSimpleTooltip={false}
+                interactive={true}
+                forceDirection={'ltr'}
+                classes={{
+                  tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                  arrow: classes.fBlack,
+                }}
+                arrow={true}
+                style={{ fontSize: 15 }}
+                placement={"top"}
+                title={<Typography noWrap={false}>{row.ErrorData}</Typography>}
+              >
+                <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                  <Typography>
+                    {renderCell(row.Status, 'status')}
+                  </Typography>
+                  {row.Status > 7 && <IconButton className={clsx(classes.icon_Info_black, classes.noPadding, classes.ml5)}>
+                    <BsInfoCircle />
+                  </IconButton>}
+                </Box>
+              </CustomTooltip>) : (<Typography>
+                {renderCell(row.Status, 'status')}
+              </Typography>)
+              }
             </TableCell>
             <TableCell
               classes={cellStyle}
@@ -199,7 +225,7 @@ const RenderRow = ({
             </TableCell>
           </>
         )}
-      </TableRow>
+      </TableRow >
       {renderCollapsibleRow(row)}
     </>
   )

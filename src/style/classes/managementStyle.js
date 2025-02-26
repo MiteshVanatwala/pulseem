@@ -1516,6 +1516,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: '#FF0054 !important',
     fontSize: 18
   },
+  icon_Info_black: {
+    color: '#000 !important',
+    fontSize: 18
+  },
   noRecipients: {
     color: "#AAAAAA",
     marginTop: 40,
@@ -1855,6 +1859,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 300,
     fontSize: "16px!important",
     textAlign: "center",
+  },
+  tooltipPrimary: {
+    backgroundColor: "#ff1946",
+    maxWidth: 300,
+    fontSize: "12px!important",
+    textAlign: "center",
+    "&.MuiTooltip-arrow": {
+      color: '#ff1946'
+    }
   },
   tooltipPlacement: {
     "&.MuiTooltip-tooltipPlacementTop": {

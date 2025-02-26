@@ -57,5 +57,7 @@
   "addEvent": "Add Event",
   "minimumRevenue": "Min Revenue",
   "maximumRevenue": "Max Revenue",
-  "enablePurchase": "Enable Purchase's Tracking"
+  "enablePurchase": "Enable Purchase's Tracking",
+  "revenueFeatureAdded": "Revenue feature has been added.",
+  "revenueFeatureRemoved": "Revenue feature has been removed."
 }

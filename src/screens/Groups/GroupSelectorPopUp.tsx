@@ -48,7 +48,7 @@ const GroupSelectorPopUp = ({
         if (subAccountAllGroups?.length <= 0) {
             getGroups();
         }
-    });
+    }, []);
     useEffect(() => {
         if (subAccountAllGroups?.length > 0) {
             setShowLoader(false);

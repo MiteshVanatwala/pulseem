@@ -152,12 +152,6 @@ const SideBarContactList = ({
 															{contact.Unread}
 														</span>
 													)}
-													<button aria-label='sidebar-contact__btn'>
-														<Icon
-															id='downArrow'
-															className={`${classes.whatsappChat} sidebar-contact__icon sidebar-contact__icon--dropdown`}
-														/>
-													</button>
 												</div>
 											</div>
 										</div>

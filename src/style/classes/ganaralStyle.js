@@ -682,6 +682,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   semibold: {
     fontWeight: 500,
   },
+  semibold600: {
+    fontWeight: 600,
+  },
   disabled: {
     opacity: ".65",
     pointerEvents: "none !important",
@@ -3827,6 +3830,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#aaa'
     }
   },
+  paddingInline5: {
+    paddingInline: 5
+  },
   paddingInline25: {
     paddingInline: 25
   },
@@ -4272,6 +4278,24 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       right: isRTL ? -10 : 'auto',
       top: 10,
       background: '#23ff23'
+    }
+  },
+  automationTemplate: {
+    border: 'solid 1.5px #fefefe',
+    borderRadius: '5px',
+    boxShadow: '0px 0px 10px #898888',
+    padding: '15px',
+    height: '110px',
+    transition: 'all 0.5s ease',
+    overflowY: 'hidden',
+    "&:hover, &.active": {
+      background: '#fff8f8',
+      boxShadow: '0px 0px 10px #ff3343',
+      borderColor: '#ff3343',
+      transform: 'scale(1.03)',
+    },
+    "& .description": {
+      height: '50px'
     }
   }
 });

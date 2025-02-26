@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
 import clsx from "clsx";
 import { Box } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { RenderHtmlTemplate } from '../../../helpers/Utils/HtmlUtils';
 
 const TemplatePreview = ({
   classes,
@@ -13,14 +13,6 @@ const TemplatePreview = ({
   isMyTemplate = false
 }: any) => {
   const { t } = useTranslation();
-  const renderHtml = (html: any) => {
-    function createMarkup() {
-      return { __html: html };
-    }
-    return (
-      <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-  }
 
   return <BaseDialog
     classes={classes}
@@ -40,7 +32,7 @@ const TemplatePreview = ({
   >
     <Box className={clsx(classes.templateModal)} style={{ direction: 'ltr' }}>
       {isMyTemplate
-        ? renderHtml(templateDetails.Html)
+        ? RenderHtmlTemplate(templateDetails.Html)
         : (
           <img src={decodeURIComponent(templateDetails?.ThumbnailUrl)}
             style={{

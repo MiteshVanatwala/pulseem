@@ -98,6 +98,7 @@ import {
 	errorToastData,
 	fieldNameIds,
 	resetToastData,
+	tierSetting,
 	whatsappRoutes,
 } from '../Constant';
 import { useParams } from 'react-router-dom';
@@ -111,6 +112,7 @@ import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { DateFormats, FBBusiness } from '../../../helpers/Constants';
 import { WhatsappCampaignStatus, WhatsAppPlatformIDEnum } from '../../../config/enum';
+import { filter, first, get } from 'lodash';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -130,7 +132,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { SubAccountSettings } = useSelector(
 		(state: { common: CommonRedux }) => state.common?.accountSettings
 	);
-	const { WhatsAppPlatformID } = useSelector(
+	const { WhatsAppPlatformID, TierData } = useSelector(
 		(state: { common: CommonRedux }) => state.common
 	);
 	const websiteField = [
@@ -845,6 +847,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							TestGroupsIds: (selectedTestGroupDummy || selectedTestGroup)?.map((group) => group?.GroupID),
 						})
 					);
+				setIsLoader(false);
 				if (quickSendGroupsData?.Status !== apiStatus.SUCCESS) {
 					quickSendGroupsData?.Message
 						? setToastMessage({
@@ -910,9 +913,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								: setToastMessage(ToastMessages.ERROR);
 						}
 					}
+					setIsLoader(false);
 				}
 			}
-			setIsLoader(false);
 		} else {
 			setDialogType({
 				type: 'validation'
@@ -1174,7 +1177,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				type: '',
 				data: ''
 			});
-		}
+		},
+		onClose: () => { setDialogType(null); }
 	})
 
 	const getExceedDailyLimit = () => ({
@@ -1322,25 +1326,34 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	}
 
+	const getIndexFromTierId = (tierId: number | undefined) => {
+		if (tierId) {
+			return Number(tierId) - 1;
+		}
+		return 0;
+	};
+
 	const limitNotice = () => {
+		const tierDataFromNumber = from !== '' ? get(first(filter(TierData, {FromNumber: from?.replace(/-/g, '')}) || {}), 'WhatsappTierId', 0) : 0;
 		return (
 			<Grid item md={12} lg={12} className={classes.WhatsappCampainNotice}>
 				<span style={{ lineHeight: '0' }}>
 					{translator('whatsappCampaign.note1')}
 				</span>
 
-				<div className={classes.pt10}>
-					{translator('whatsappCampaign.note2')}{' '}
-					<>{translator('whatsappCampaign.checkLimit')}</>{' '}
-					<a
-						// href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-						href={FBBusiness}
-						target='_blank'
-						rel='noreferrer'
-					>
-						<>{translator('whatsappCampaign.here')}</>
-					</a>
-				</div>
+				{
+					tierDataFromNumber !== 0 && (
+						<div className={classes.pt10}>
+							<div className={classes.dInlineBlock}>
+								{`${translator(
+									tierSetting[
+										getIndexFromTierId(Number(tierDataFromNumber))
+									]?.name
+								)}`}
+							</div>
+						</div>
+					)
+				}
 			</Grid>
 		)
 	}
@@ -1359,11 +1372,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							<Title
 								Text={translator('whatsappCampaign.header')}
 								classes={classes}
-								subTitle={(windowSize === 'lg' || windowSize === 'md') && limitNotice()}
 							/>
 						</Box>
 						<Box className={'containerBody'}>
-							{(windowSize !== 'lg' && windowSize !== 'md') && limitNotice()}
+							{limitNotice()}
 							{renderToast()}
 							<br />
 							<form onSubmit={onSubmit}>

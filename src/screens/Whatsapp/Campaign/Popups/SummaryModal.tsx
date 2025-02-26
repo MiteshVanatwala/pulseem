@@ -33,7 +33,6 @@ import clsx from 'clsx';
 import Toast from '../../../../components/Toast/Toast.component';
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
-import { FBBusiness } from '../../../../helpers/Constants';
 
 const SummaryModal = ({
 	classes,
@@ -92,7 +91,7 @@ const SummaryModal = ({
 		fileLink: '',
 		fileType: '',
 	});
-
+	
 	useEffect(() => {
 		(async () => {
 			if (campaignID) {
@@ -388,7 +387,7 @@ const SummaryModal = ({
 			<div className={classes.summaryModal}>
 				<div className={classes.summaryModalContent}>
 					<div className={classes.testGroupModalContentWrapper}>
-						<Grid container style={{ justifyContent: 'space-between' }}>
+						<Grid container style={{ justifyContent: 'space-between' }} spacing={2}>
 							<Grid item lg={6}>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
@@ -444,33 +443,30 @@ const SummaryModal = ({
 												<>{translator('sms.smsSummaryClose')}</>
 											)}
 										</Link>
-									</span>
+									</span>									
 								</Box>
-								{isShowTierAlert(
-									campaignSummary?.WhatsappSmsLeft || 0,
-									campaignSummary?.FinalCount || 0,
-									campaignSummary?.WhatsappTierID || 1,
-									sendType,
-									isIn24HrWindow
-								) && (
-										<Box className={classes.campaignSummaryExceedLimitWrapper}>
-											<div className={classes.campaignSummaryExceedLimitTierInfo}>
-												<>
-													{`${translator(
-														'settings.accountSettings.actDetails.fields.sendingTier'
-													)} ${translator(
-														tierSetting[
-															getIndexFromTierId(campaignSummary?.WhatsappTierID)
-														]?.name
-													)}`}
+								{
+									campaignSummary?.WhatsappTierID !== 0 && (
+										<Box className={clsx(classes.f16, classes.bold, classes.pb15)}>
+											<div className={classes.campaignSummaryTextTitle}>
+												{translator('WhatsappOnBoarding.tier')}
+												<div>
+													<span className={clsx(classes.f15)}>
+														{`${translator(
+															tierSetting[
+																getIndexFromTierId(campaignSummary?.WhatsappTierID)
+															]?.name
+														)}`}
+													</span>
 													<CustomTooltip
 														isSimpleTooltip={false}
 														arrow={true}
 														style={{
 															fontSize: 14,
 															width: 'auto',
-															paddingLeft: isRTL ? '0px' : '10px',
-															paddingRight: isRTL ? '10px' : '0px',
+															paddingLeft: isRTL ? '0px' : '5px',
+															paddingRight: isRTL ? '5px' : '0px',
+															display: 'inline-flex'
 														}}
 														classes={classes}
 														interactive={true}
@@ -484,8 +480,19 @@ const SummaryModal = ({
 														text={<span className={classes.bodyInfo}>i</span>}
 														icon={undefined}>
 													</CustomTooltip>
-												</>
+												</div>
 											</div>
+										</Box>
+									)
+								}
+								{isShowTierAlert(
+									campaignSummary?.WhatsappSmsLeft || 0,
+									campaignSummary?.FinalCount || 0,
+									campaignSummary?.WhatsappTierID || 1,
+									sendType,
+									isIn24HrWindow
+								) && (
+										<Box className={classes.campaignSummaryExceedLimitWrapper}>
 											<div className={classes.campaignSummaryExceedLimitText}>
 												<>
 													{translator(
@@ -571,16 +578,6 @@ const SummaryModal = ({
 											<>{translator('whatsappCampaign.summaryNote2')}</>
 											<br />
 											<>{translator('whatsappCampaign.summaryNote3')}</>
-											<br />
-											<span>
-												<a
-													target={'_blank'}
-													// href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-													href={FBBusiness}
-													rel='noreferrer'>
-													<>{translator('whatsappCampaign.limit')}</>
-												</a>
-											</span>
 										</b>
 									</div>
 								</Box>

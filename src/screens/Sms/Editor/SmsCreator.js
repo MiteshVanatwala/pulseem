@@ -180,6 +180,7 @@ const SmsCreator = ({ classes }) => {
   const [editDynamicProductFallbackURL, setEditDynamicProductFallbackURL] = useState('');
   const [dynamicProductButtonDisabled, setDynamicProductButtonDisabled] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
+  const [controller, setController] = useState(null);
 
   const [smsModel, setSmsModel] = useState({
     CreditsPerSms: "1",
@@ -214,7 +215,7 @@ const SmsCreator = ({ classes }) => {
     ResponseToEmail: "",
     IsTestCampaign: false,
     IsResponse: false,
-    IsLinksStatistics: isLinksStatistics,
+    IsLinksStatistics: smsModel.IsLinksStatistics,
     SendDate: Date.now(),
     SendingMethod: 0,
     IsTest: isTestCampaign,
@@ -306,10 +307,15 @@ const SmsCreator = ({ classes }) => {
       setEditDynamicProductFallbackURL('');
       setDynamicProductFallbackURL('');
     }
-  }, [smsModel, isSiteTracking, isLinksStatistics])
+  }, [smsModel, isSiteTracking])
 
   useEffect(() => {
     getcredits(characterCount);
+    return () => {
+      if (controller) {
+        controller.abort();
+      }
+    };
   }, [characterCount])
 
   const handleSmsModelChange = (name, value) => {
@@ -332,7 +338,6 @@ const SmsCreator = ({ classes }) => {
       TestGroupsIds: groupIds,
       IsTestCampaign: isTestCampaign,
       IsTest: true,
-      IsLinksStatistics: isLinksStatistics,
       LogData: logData,
       SmsCampaignID: smsCampaignId
     }
@@ -372,6 +377,7 @@ const SmsCreator = ({ classes }) => {
     if (!accountSettings || Object.keys(accountSettings).length === 0)
       await dispatch(getCommonFeatures());
     setInitFromNumber(true);
+    setOTPOpen(false);
   }
 
   useEffect(() => {
@@ -396,9 +402,19 @@ const SmsCreator = ({ classes }) => {
       }
 
       setcampaignNumber(fromNumber);
-      setStaticNumber(virtualNumber.payload.Number);
+
+      if (smsModel && smsModel.FromNumber && smsModel.SMSCampaignID > 0) {
+        setStaticNumber(smsModel.FromNumber);
+      }
+      else {
+        setStaticNumber(virtualNumber.payload.Number);
+      }
+
       setremovalNumber(virtualNumber.payload.RemovalKey);
-      setstoredValue(accountSettings.DefaultCellNumber);
+
+      if (virtualNumber.payload.RemovalKey && virtualNumber.payload.Number) {
+        setstoredValue(virtualNumber.payload.Number)
+      }
       if (fromNumber !== virtualNumber.payload.Number) {
         setrestoreBool(false);
         setremovalMessageButtonDisabled(true);
@@ -423,8 +439,8 @@ const SmsCreator = ({ classes }) => {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
         setSmsModel(response.payload);
-        setIsLinksStatistics(response.payload.IsLinksStatistics);
-        setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
+        // setIsLinksStatistics(response.payload.IsLinksStatistics);
+        //setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
         setEditDynamicProductFallbackURL(response.payload.FallbackUrl);
         setDynamicProductFallbackURL(response.payload.FallbackUrl);
         return response.payload;
@@ -440,7 +456,8 @@ const SmsCreator = ({ classes }) => {
     setIsTestCampaign(!isTestCampaign)
   };
   const toggleKeep = () => {
-    setIsLinksStatistics(!isLinksStatistics);
+    setSmsModel({ ...smsModel, IsLinksStatistics: !smsModel.IsLinksStatistics })
+    // setIsLinksStatistics(!isLinksStatistics);
   };
 
   const linkCalculation = () => {
@@ -461,7 +478,7 @@ const SmsCreator = ({ classes }) => {
         }, []);
 
         setlinkCount(links.length);
-        if (isLinksStatistics) {
+        if (smsModel.IsLinksStatistics) {
           setSplittedLinks(links);
           for (var i = 0; i < links.length; i++) {
             var linkLength = links[i].length;
@@ -489,6 +506,13 @@ const SmsCreator = ({ classes }) => {
   }
 
   const getcredits = (count) => {
+    if (controller) {
+      controller.abort();
+    }
+    // Create new controller
+    const newController = new AbortController();
+    setController(newController);
+
     setButtonsDisabled(true);
     dispatch(getCreditsforSMS(count)).then((res) => {
       let credits = res.payload?.split("#");
@@ -510,18 +534,22 @@ const SmsCreator = ({ classes }) => {
 
   const onCampaignNumber = (e) => {
     const text = e.target.value;
-    var lastChar = text.substring(text.length, text.length - 1);
-    var isNumber = /^[0-9]*$/;
-    var english = /^[A-Za-z0-9 ]*$/;
+    // var lastChar = text.substring(text.length, text.length - 1);
+    var onlyNumbersWithHyphenAndSpace = /^[0-9 -]*$/;
+    var onlyNumbers = /^[0-9]*$/;
+    var english = /^[A-Za-z0-9_ -]*$/
 
-    if (!text.match(isNumber) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
+    if (!text.match(onlyNumbersWithHyphenAndSpace) && text.match(english) && text.length >= FROM_NUMBER_MAX_LETTERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_LETTERS);
     }
-    if (text.match(isNumber) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
+    if (text.match(onlyNumbersWithHyphenAndSpace) && text.length >= FROM_NUMBER_MAX_NUMBERS) {
       e.target.value = text.substring(0, FROM_NUMBER_MAX_NUMBERS);
     }
-    if (!text.match(english)) {
-      e.target.value = e.target.value.replace(lastChar, '');
+
+    if (text.match(onlyNumbersWithHyphenAndSpace) && !text.match(onlyNumbers)) {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    } else if (!text.match(english)) {
+      e.target.value = text.replace(/[^A-Za-z0-9_ -]/g, '');
     }
 
     setrestoreBool(false);
@@ -542,8 +570,14 @@ const SmsCreator = ({ classes }) => {
     if (smsModel.Text === "") {
       isValid = false
     }
-    let english = /^[ A-Za-z0-9]*$/;
-    if (campaignNumber === "" || !english.test(campaignNumber)) {
+
+    let validPattern = /^[A-Za-z0-9_ -]*$/;
+    let onlyNumbersWithHyphen = /^[0-9-]*$/;
+    let onlyNumbers = /^[0-9]*$/;
+
+    if (campaignNumber === "" ||
+      (onlyNumbersWithHyphen.test(campaignNumber) && !onlyNumbers.test(campaignNumber)) ||
+      !validPattern.test(campaignNumber)) {
       setcampaignNumberValidated(true);
       isValid = false;
     }
@@ -560,7 +594,7 @@ const SmsCreator = ({ classes }) => {
     if (phone !== "" && (isGlobal ? IsValidPhoneNumberWithCountryCode(phone, countryCodeList) : IsValidNonGlobalPhoneNumber(phone))) {
       if (id) {
         const smsQuickSendData = {
-          ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+          ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, CreditsPerSms: messageCount, LogData: {
             SmsCampaignID: id, Credits: messageCount,
             TotalRecipients: 1
           }
@@ -573,7 +607,7 @@ const SmsCreator = ({ classes }) => {
       else {
         if (smsCampaignId !== "") {
           const smsQuickSendData = {
-            ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, CreditsPerSms: messageCount, LogData: {
               SmsCampaignID: smsCampaignId, Credits: messageCount,
               TotalRecipients: 1
             }
@@ -586,7 +620,7 @@ const SmsCreator = ({ classes }) => {
         }
         else {
           const smsQuickSendData = {
-            ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, CreditsPerSms: messageCount, LogData: {
               SmsCampaignID: -1, Credits: messageCount,
               TotalRecipients: 1
             }
@@ -602,14 +636,9 @@ const SmsCreator = ({ classes }) => {
       setToastMessage(ToastMessages.INVALID_NUMBER);
     }
   };
-  const onLeave = (e) => {
-    if (!modalOpen && campaignNumber !== storedValue) {
-      setDialogType({ type: 'alert' });
-    }
-  }
   const handleRestore = async () => {
     setrestoreBool(true);
-    setcampaignNumber(StaticNumber);
+    // setcampaignNumber(StaticNumber);
     setLoader(true);
     let response = await dispatch(getSMSVirtualNumber(accountSettings.DefaultCellNumber));
     setLoader(false);
@@ -623,7 +652,7 @@ const SmsCreator = ({ classes }) => {
     text = text.trim();
     let afterUpdateCharCount =
       smsModel.Text.length + text.length;
-    if (isLinksStatistics) {
+    if (smsModel.IsLinksStatistics) {
       afterUpdateCharCount = characterCount + text.length;
     }
     if (afterUpdateCharCount < 1000) {
@@ -665,7 +694,6 @@ const SmsCreator = ({ classes }) => {
             id="campaignName"
             type="text"
             placeholder={t("mainReport.campaignNamePlaceholder")}
-            // className={classes.textField}
             className={
               clsx(classes.textField, campaignBool ? classes.error : classes.success)
             }
@@ -701,7 +729,7 @@ const SmsCreator = ({ classes }) => {
             onChange={onCampaignNumber}
             inputProps={inputProps}
             value={campaignNumber}
-            onBlur={onLeave}
+            dir={/^[0-9]/.test(campaignNumber) && isRTL ? 'rtl' : 'ltr'}
           />
           <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
             {t("mainReport.campRemovalDesc")}
@@ -741,7 +769,7 @@ const SmsCreator = ({ classes }) => {
     onAddText(t('sms.smsUnsubscribeMessage'));
     let total = splittedMsg;
     total.push(t('sms.smsUnsubscribeMessage'))
-    if (isLinksStatistics && SplittedLinks !== null) {
+    if (smsModel.IsLinksStatistics && SplittedLinks !== null) {
       setremovalLinkDisabled(true);
     }
     else {
@@ -807,7 +835,7 @@ const SmsCreator = ({ classes }) => {
               </Typography>
               <Box className={classes.dFlex} style={{ justifyContent: 'space-between', gap: 5 }}>
                 {buttonsDisabled ? <Loader isOpen={buttonsDisabled} showBackdrop={false} size={10} contained />
-                  : <Typography style={{ position: 'relative' }}>{messageCount}</Typography>} <Typography style={{ marginInlineEnd: "18px", position: 'relative' }}>{messageCount === 1 ? t("sms.message") : t("sms.messages")}</Typography>
+                  : <Typography style={{ position: 'relative' }}>{messageCount}</Typography>} <Typography style={{ marginInlineEnd: "18px", position: 'relative' }}>{messageCount === 1 || messageCount === '1' ? t("sms.message") : t("sms.messages")}</Typography>
               </Box>
               <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
             </Box>
@@ -1046,7 +1074,7 @@ const SmsCreator = ({ classes }) => {
                   <PulseemSwitch
                     switchType='ios'
                     classes={classes}
-                    checked={isLinksStatistics}
+                    checked={smsModel.IsLinksStatistics}
                     height={20}
                     width={48}
                     className={{ [classes.rtlSwitch]: isRTL }}
@@ -1235,7 +1263,7 @@ const SmsCreator = ({ classes }) => {
     if (validationCheck()) {
       if (isSiteTracking === true) {
         const smsMessagValue = smsMessageRef.current.value;
-        if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') === -1) {
+        if (!smsModel.Text.indexOf('ref') > -1 && smsModel.IsLinksStatistics && smsMessagValue.indexOf('ref=##ClientIDEnc##') === -1) {
           let text = smsModel.Text;
           const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
           const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
@@ -1248,7 +1276,7 @@ const SmsCreator = ({ classes }) => {
             return currentState;
           });
         }
-        if (!isLinksStatistics) {
+        if (!smsModel.IsLinksStatistics) {
           setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
         }
         else {
@@ -1261,9 +1289,19 @@ const SmsCreator = ({ classes }) => {
     }
   }
 
+  const onBeforeSave = (isOnlySave, returnToAutomation = false) => {
+    if (campaignNumber !== StaticNumber && campaignNumber !== accountSettings.DefaultCellNumber) {
+      setDialogType({ type: 'alert', isOnlySave: isOnlySave, returnToAutomation: returnToAutomation });
+    }
+    else {
+      setOTPOpen(false);
+      onSave(isOnlySave, returnToAutomation);
+    }
+  }
+
   const onSave = async (isSave, returnToAutomation = false) => {
     linkCalculation();
-    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, SmsCampaignID: smsCampaignId, FallbackURL: dynamicProductFallbackURL }
+    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsTest: isTestCampaign, SmsCampaignID: smsCampaignId, FallbackURL: dynamicProductFallbackURL }
     setLoader(true);
     let r = await dispatch(smsSave(payloadToPush));
     const campaignId = r.payload.Message;
@@ -1402,8 +1440,7 @@ const SmsCreator = ({ classes }) => {
         SmsCampaignID: smsCampaignId,
         fromNumber: campaignNumber,
         Name: smsModel.Name,
-        Text: smsModel.Text,
-        IsLinksStatistics: isLinksStatistics
+        Text: smsModel.Text
       }
       let saveResponse = await dispatch(smsSave(payloadToPush));
       if (saveResponse) {
@@ -1512,7 +1549,7 @@ const SmsCreator = ({ classes }) => {
           color="primary"
           style={{ margin: '8px' }}
           onClick={() => {
-            validationCheckpoint(() => onSave(true, isFromAutomation));
+            validationCheckpoint(() => onBeforeSave(true, isFromAutomation));
           }}>
           {t('mainReport.saveSms')}
         </Button>
@@ -1527,7 +1564,7 @@ const SmsCreator = ({ classes }) => {
           color="primary"
           style={{ margin: '8px' }}
           onClick={() => {
-            validationCheckpoint(() => onSave(false, isFromAutomation));
+            validationCheckpoint(() => onBeforeSave(false, isFromAutomation));
           }}>
           {!isFromAutomation ? t("mainReport.continue") : t("sms.saveAndExit")}
         </Button>
@@ -1764,7 +1801,7 @@ const SmsCreator = ({ classes }) => {
               </li> : null}
               {smsModel.Text === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
               {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
-                {t("mainReport.campaignFromRequire")}
+                {t("mainReport.campaignFromRequire")} / {t("common.invalid")}
               </li> : null}
             </ul>
           </div>
@@ -1886,7 +1923,7 @@ const SmsCreator = ({ classes }) => {
       onConfirm: () => { validationCheckpoint(() => handleExit(true)); }
     }
   }
-  const alertDialog = () => {
+  const alertDialog = (isOnlySave, returnToAutomation) => {
     return {
       title: t('mainReport.pleaseNote'),
       showDivider: true,
@@ -1902,7 +1939,10 @@ const SmsCreator = ({ classes }) => {
       ),
       showDefaultButtons: true,
       onClose: () => { handleAlertoff() },
-      onConfirm: () => { handlecaution() }
+      onConfirm: () => {
+        setDialogType(null);
+        onSave(isOnlySave, returnToAutomation);
+      }
     }
   }
 
@@ -1992,7 +2032,7 @@ const SmsCreator = ({ classes }) => {
     }
   }
   const renderDialog = () => {
-    const { type, data } = dialogType || {}
+    const { type, data, isOnlySave, returnToAutomation } = dialogType || {}
 
     const dialogContent = {
       latestLP: lpDialog(),
@@ -2002,7 +2042,7 @@ const SmsCreator = ({ classes }) => {
       valiateError: validationDialog(),
       groups: groupDialog(),
       exit: exitDialog(),
-      alert: alertDialog(),
+      alert: alertDialog(isOnlySave, returnToAutomation),
       noCredit: noCreditDialog(),
       linkStatisticAlert: siteTrackingLinkDialog(data),
       englishLetterDialog: englishLetterNotAllowed(),
@@ -2083,7 +2123,17 @@ const SmsCreator = ({ classes }) => {
           </Grid >
           {renderDialog()}
           {renderSummary()}
-          {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+          {otpOpen && <OTP
+            classes={classes}
+            campaignNumber={campaignNumber}
+            isOpen={otpOpen}
+            onClose={() => {
+              setOTPOpen(false);
+              setDialogType(null);
+            }}
+            onSuccess={() => {
+              setStaticNumber(campaignNumber);
+            }} />}
           <Loader isOpen={showLoader} />
         </Box>
       </Box>
