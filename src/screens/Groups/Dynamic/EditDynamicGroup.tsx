@@ -105,13 +105,11 @@ const EditDynamicGroup = ({ classes }: any) => {
                 AbandonedPrice: null,
 
                 IsPageViewed: null,
-                IsPageViewedComparingType: ActivityEvent.Any,
                 IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
-                IsPageViewedMinPrice: null,
-                IsPageViewedMaxPrice: null,
                 IsPageViewedFromDate: null,
                 IsPageViewedToDate: null,
                 PageViewedPrice: null,
+                PageViewedUrlIDs: null,
 
                 ProductCategory: null
             } as MyActivities,

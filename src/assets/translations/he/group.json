@@ -71,5 +71,6 @@
   "mergeGroup": "מזג קבוצות",
   "mergeGroupDesc": "מיזוג הקבוצות יצור קבוצה חדשה  <br/>המורכבת מכל הנמענים מכל הקבוצות שנבחרו",
   "exportGroupNames": "ייצא גם שמות קבוצות (עלול לקחת יותר זמן)",
-  "exportGroupNamesTooltip": "This will take a little bit more time"
+  "exportGroupNamesTooltip": "This will take a little bit more time",
+  "selectePages": "בחר עמודים"
 }
