@@ -651,7 +651,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         minDate={undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
-                                        value={data.dynamicData?.MyActivities?.IsAbandoned && data.dynamicData?.MyActivities.IsPageViewedFromDate}
+                                        value={data.dynamicData?.MyActivities?.IsPageViewed && data.dynamicData?.MyActivities.IsPageViewedFromDate}
                                         onChange={(value: any) => onUpdate('IsPageViewedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.FromDate')}
                                         timePickerOpen={true}
@@ -674,7 +674,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                                         minDate={data.dynamicData?.MyActivities.IsPageViewedFromDate || undefined}
                                         maximumDate={moment().add(100, 'y')}
                                         classes={classes}
-                                        value={data.dynamicData?.MyActivities?.IsAbandoned && data.dynamicData?.MyActivities.IsPageViewedToDate}
+                                        value={data.dynamicData?.MyActivities?.IsPageViewed && data.dynamicData?.MyActivities.IsPageViewedToDate}
                                         onChange={(value: any) => onUpdate('IsPageViewedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
                                         placeholder={t('common.ToDate')}
                                         timePickerOpen={false}
