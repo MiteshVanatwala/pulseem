@@ -24,7 +24,8 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
     useEffect(() => {
         setOptionDisabled(data.dynamicData?.MyActivities.IsPurchased ||
             data.dynamicData?.MyActivities.IsNotPurchased ||
-            data.dynamicData?.MyActivities.IsAbandoned /* || data.dynamicData?.MyActivities.IsPageViewed */
+            data.dynamicData?.MyActivities.IsAbandoned ||
+            data.dynamicData?.MyActivities.IsPageViewed
         )
     }, [data.dynamicData?.MyActivities]);
 
