@@ -22,6 +22,7 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { updateTermsOfUse } from '../../redux/reducers/TermsOfUseSlice';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
+import BusinessSectorActivity from './Popup/BusinessSectorActivity';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, isAdmin } = useSelector(state => state.core);
@@ -34,6 +35,7 @@ const DashboardScreen = ({ classes }) => {
   const [termOfUse, setTermOfUse] = useState({
     IsTermsApproved: false
   });
+  const [showBusinessSectorActivity, setShowBusinessSectorActivity] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -52,12 +54,17 @@ const DashboardScreen = ({ classes }) => {
           if (member?.NextRequiredChange <= 14) {
             setShowChangePassword(true);
           }
+          else if (accountSettings?.SubAccountSettings?.RequestBusinessActivity) {
+            setShowBusinessSectorActivity(true);
+          }
         }
       }
 
       if (!hasCookie && !isAdmin) {
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
       }
+
+      setShowBusinessSectorActivity(true);
     }
     if (accountSettings) {
       initialize();
@@ -153,6 +160,24 @@ const DashboardScreen = ({ classes }) => {
       >
         <Box style={{ height: 230 }}>
           <TermsOfUse classes={classes} />
+        </Box>
+      </BaseDialog>
+      <BaseDialog
+        paperStyle={classes.maxWidthMinContent}
+        disableBackdropClick
+        classes={classes}
+        open={showBusinessSectorActivity}
+        showDefaultButtons={false}
+        title={t('dashboard.businessSectorActivity.title')}
+        onCancel={() => {
+          setShowBusinessSectorActivity(false);
+        }}
+        onClose={() => {
+          setShowBusinessSectorActivity(false);
+        }}
+      >
+        <Box style={{ height: 230 }}>
+          <BusinessSectorActivity classes={classes} />
         </Box>
       </BaseDialog>
     </DefaultScreen>
