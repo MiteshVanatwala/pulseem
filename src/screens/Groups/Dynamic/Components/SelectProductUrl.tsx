@@ -5,7 +5,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import clsx from 'clsx';
 import { useTranslation } from "react-i18next";
 import { getProductURLS } from "../../../../redux/reducers/productSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -13,7 +13,8 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
   const { productUrls } = useSelector((state: StateType) => state.product)
   const { t } = useTranslation();
   const dispatch = useDispatch();
-
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   const getUrls = async () => {
     await dispatch(getProductURLS());
@@ -23,9 +24,63 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
     getUrls();
   }, [])
 
-  const handleSearchTerm = (e: any) => {
-    setSearchTerm(e.target.value);
-  }
+  useEffect(() => {
+    if (menuOpen && inputRef.current) {
+      // Use a small timeout to ensure the focus happens after any other rendering
+      const timeoutId = setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, 50);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [menuOpen, searchTerm]);
+
+  // Stop propagation to prevent Select from capturing events
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
+  };
+
+  // Use a clean handler for input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+  };
+
+  // Prevent event bubbling
+  const handleInputClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  // Handle menu open/close
+  const handleMenuOpen = () => {
+    setMenuOpen(true);
+  };
+
+  const handleMenuClose = () => {
+    setMenuOpen(false);
+  };
+
+  // Function to highlight search term in text
+  const highlightText = (text: string, highlight: string) => {
+    if (!highlight.trim() || !text) {
+      return <span>{text}</span>;
+    }
+
+    const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+
+    return (
+      <span>
+        {parts.map((part, index) =>
+          regex.test(part) ? <strong key={index}>{part}</strong> : <span key={index}>{part}</span>
+        )}
+      </span>
+    );
+  };
 
   return <>
     <FormControl
@@ -37,6 +92,9 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
         labelId="pages"
         id="pages"
         multiple
+        open={menuOpen}
+        onOpen={handleMenuOpen}
+        onClose={handleMenuClose}
         placeholder={t('group.selectePages')}
         inputProps={{
           placeholder: t('group.selectePages'),
@@ -69,19 +127,33 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
           },
         }}
       >
-        <Box style={{ padding: 5 }}>
+        <Box style={{ padding: 5, position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white' }} onClick={handleInputClick}>
           <TextField
+            inputRef={inputRef}
             variant="outlined"
             type="text"
-            onChange={handleSearchTerm}
-            value={searchTerm} placeholder={t('common.searchInput')}></TextField>
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onFocus={(e) => e.stopPropagation()}
+            onBlur={(e) => e.preventDefault()}
+            value={searchTerm}
+            placeholder={t('common.searchInput')}
+            fullWidth
+            autoFocus
+          />
         </Box>
         {productUrls.filter((pc: any) => {
           return searchTerm === '' || pc.URL?.toLowerCase()?.indexOf(searchTerm?.toLowerCase()) > -1
         })?.map((item: any) => {
           return (<MenuItem key={item?.ID?.toString()} value={item?.ID?.toString()}>
             <Checkbox checked={data?.indexOf(item?.ID?.toString()) > -1} />
-            <ListItemText primary={item?.URL} />
+            <ListItemText
+              primary={
+                searchTerm.trim() ?
+                  highlightText(item?.URL, searchTerm) :
+                  item?.URL
+              }
+            />
           </MenuItem>)
         })}
       </Select>
