@@ -120,7 +120,7 @@
 	},
 	"billingSettings": {
 		"title": "הגדרות פרטי חיוב",
-		"titleBillingInfo": "פרטי חיוב",
+		"pageTitle": "הגדרות תשלום ופרטי חיובים",
 		"fields": {
 			"compRegNumber": "מספר ח.פ.",
 			"invoiceEmail": "דואל לחשבוניות",
@@ -139,7 +139,10 @@
 			"invalidId": "מספר תעודת זהות לא תקין בצע"
 		},
 		"btnUpdate": "עדכן פרטי חיוב",
-		"btnAddCard": "הוסף כרטיס אשראי"
+		"btnAddCard": "הוסף כרטיס אשראי",
+		"lastPurchases": "רכישות אחרונות",
+		"openInvoices": "רכישות לחיוב",
+		"editCard": "ערוך כרטיס אשראי"
 	},
 	"changePassword": {
 		"title": "שנה סיסמא",
@@ -183,5 +186,6 @@
 		"mainApi": "כתובת URL API ראשי",
 		"directApi": "כתובת URL API שליחה ישירה",
 		"noAPIKeyAccess": "על מנת להשתמש ב-API שלנו, אנא פנו לצוות התמיכה שלנו ב <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
-	}
+	},
+	"displayRevenueIn": "הצג הכנסות ב"
 }

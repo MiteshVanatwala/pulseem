@@ -1,7 +1,5 @@
 export interface AccountSettings {
-    SubAccountId: number;
     LoginUserName: string;
-    AccountID: number | null;
     CompanyAdmin: boolean;
     CompanyName: string;
     ContactName: string;
@@ -15,11 +13,6 @@ export interface AccountSettings {
     DefaultFromMail: string;
     DefaultFromName: string;
     DefaultCellNumber: string;
-    MaxMailSendingForMonth: number | null;
-    MaxSMSSendingForMonth: number | null;
-    BulkEmail: number | null;
-    BulkSMS: number | null;
-    BulkMMS: number | null;
     UnsubscribeType: boolean;
     IsSmsImmediateUnsubscribeLink: boolean;
     TwoFactorAuthEnabled: boolean | null;
@@ -29,4 +22,5 @@ export interface AccountSettings {
     TwoFactorAuthOverrideDateTime: Date | string | null;
     ExpiryDate: Date | string | null;
     DisablePluginOTP: boolean;
+    RevenueCurrencyId?: number | null;
 }

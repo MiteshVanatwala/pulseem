@@ -182,5 +182,7 @@ export const PulseemFeatures = {
   DISABLE_OPTIN_PLUGIN: '56',
   AUTOMATION_TEMPLATE: '57',
   SHOW_OLD_API_CREDENTIAL: '58',
-  AFFILIATE: '59'
+  AFFILIATE: '59',
+  WhatsAppOnboardingVirtualNumbers: '61',
+  DisableTermOfUse: '62'
 }

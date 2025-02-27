@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translations/BeeEditor/Languages';
 import { FONTS } from '../../../helpers/Fonts/Init';
 import ProductCatalog from '../../../model/ProductCatalog/ProductCatalog';
-import { EventTypes } from '../../../config/enum';
+import { AddProductCatalogType } from '../../../config/enum';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
@@ -54,6 +54,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
+        customCss: 'https://pulseem.co.il/pulseem/css/beefreeRtlFixes.css',
         trackChanges: true,
         //autosave: AUTO_SAVE_SECONDS,
         loadingSpinnerDisableOnSave: true,
@@ -117,14 +118,16 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     if (newRow === '') reject();
                     else {
                         newRow['uuid'] = uuidv4();
-                        newRow['container']['style']['event-type-enabled'] = newRow?.metadata?.EventTypeEnabled;
-                        newRow['container']['style']['event-type'] = newRow?.metadata?.EventType;
-                        newRow['container']['style']['category-enabled'] = newRow?.metadata?.ProductCategoryEnabled;
-                        newRow['container']['style']['category'] = newRow?.metadata?.ProductCategory;
-                        newRow['container']['style']['product-count'] = newRow?.metadata?.NumOfProdcuts;
+                        if (newRow?.metadata?.StaticOrDynamic === AddProductCatalogType.Dynamic) {
+                            newRow['container']['style']['event-type-enabled'] = newRow?.metadata?.EventTypeEnabled;
+                            newRow['container']['style']['event-type'] = newRow?.metadata?.EventType;
+                            newRow['container']['style']['category-enabled'] = newRow?.metadata?.ProductCategoryEnabled;
+                            newRow['container']['style']['category'] = newRow?.metadata?.ProductCategory;
+                            newRow['container']['style']['product-count'] = newRow?.metadata?.NumOfProdcuts;
+                        }
                         newRow['metadata']['uuid'] = uuidv4();
                         newRow['metadata']['name'] = `#${newRow?.metadata?.NumOfProdcuts} - ${newRow?.metadata?.EventType} - ${newRow?.metadata?.category} - ${newRow?.metadata?.order} - ${newRow?.metadata?.direction}`;
-                        newRow['metadata']['tags'] = 'product-catalog';
+                        newRow['metadata']['tags'] = newRow?.metadata?.StaticOrDynamic === AddProductCatalogType.Dynamic ? 'Dynamic-Products' : 'Products';
                         await onSaveUserBlock(JSON.stringify(newRow), newRow)
                         resolve();
                     }

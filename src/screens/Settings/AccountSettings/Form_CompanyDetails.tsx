@@ -23,6 +23,8 @@ import { DateField } from "../../../components/managment";
 import {
   IsNumberField,
   IsValidEmail,
+  IsValidNonGlobalPhoneNumber,
+  IsValidPhoneNumberWithCountryCode,
 } from "../../../helpers/Utils/Validations";
 import {
   CompDtlPropTypes
@@ -48,7 +50,7 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, accountFeatures } = useSelector((state: any) => state.common);
+  const { accountSettings, accountFeatures, currencyList, countryCodeList, isGlobal } = useSelector((state: any) => state.common);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -99,8 +101,7 @@ const FORM_COMPANY_DETAILS = ({
         CellPhone: t("settings.accountSettings.fixedComDetails.errors.reqMobile"),
       };
     } else if (
-      companyDetails?.CellPhone.length > 16 ||
-      companyDetails?.CellPhone.length < 9
+      isGlobal ? !IsValidPhoneNumberWithCountryCode(companyDetails?.CellPhone, countryCodeList) : !IsValidNonGlobalPhoneNumber(companyDetails?.CellPhone)
     ) {
       isValid = false;
       tempErrors = {
@@ -158,10 +159,10 @@ const FORM_COMPANY_DETAILS = ({
     dispatch(resetTwoFA());
 
   }
-
+  // Not in use
   const handleQueryString2FA = () => {
     //@ts-ignore
-    if (searchParams.has('2fa') && Settings?.SubAccountId > 0 && !Settings.TwoFactorAuthEnabled) {
+    if (searchParams.has('2fa') && !Settings.TwoFactorAuthEnabled) {
       searchParams.delete('2fa');
       setSearchParams(searchParams);
       const req = { ...companyDetails, TwoFactorAuthEnabled: true };
@@ -343,7 +344,7 @@ const FORM_COMPANY_DETAILS = ({
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
                 error={!!errors.CellPhone}
-                inputProps={{ maxLength: 13 }}
+                inputProps={{ maxLength: 16 }}
               />
               {!!errors.CellPhone && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -410,6 +411,46 @@ const FORM_COMPANY_DETAILS = ({
                 className={clsx(classes.textField, classes.minWidth252)}
               />
             </Grid>
+            {
+              isGlobal && (
+                <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
+                  <Typography>
+                    {t("settings.displayRevenueIn")}
+                  </Typography>
+                  <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
+                    <Select
+                      variant="standard"
+                      autoWidth
+                      value={`${companyDetails?.RevenueCurrencyId || 0}`}
+                      name="revenueCurrencyId"
+                      onChange={(e: SelectChangeEvent) => setCompanyDetails({
+                        ...companyDetails,
+                        RevenueCurrencyId: Number(e.target.value)
+                      } as AccountSettings)}
+                      IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            direction: isRTL ? 'rtl' : 'ltr'
+                          },
+                        },
+                      }}
+                    >
+                      {currencyList.map((currency: any) => {
+                        return (
+                          <MenuItem
+                            key={currency?.ID}
+                            value={currency?.ID}
+                          >
+                            {currency?.Name}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              )
+            }
           </Grid>
         </Box>
         <Title

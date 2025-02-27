@@ -1,0 +1,121 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { PulseemReactInstance } from "../../helpers/Api/PulseemReactAPI";
+import { PulseemResponse } from "../../Models/APIResponse";
+import { BulkHistory, SubAccountUsers } from "../../Models/SubAccount/SubAccounts";
+
+export const GetDirectAccountDetails = createAsyncThunk(
+  'AccountSubUsers/GetAccountUsers',
+  async (filters: any, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/GetAccountUsers`, filters);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const DeleteSubAccounts = createAsyncThunk(
+  'AccountSubUsers/DeleteSubAccounts',
+  async (CustomGuidEnc: string, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/DeleteSubAccounts`, { CustomGuidEnc });
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const GetSubAccountList = createAsyncThunk(
+  'AccountSubUsers/GetAccountUsers',
+  async (filters: any, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/GetAccountUsers`, filters);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const GetGroupsAccountSubUsers = createAsyncThunk(
+  'AccountSubUsers/GetGroupsAccountSubUsers',
+  async (CustomGuidEnc: string, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/GetGroupsAccountSubUsers`, { CustomGuidEnc });
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const GetBulkHistory = createAsyncThunk(
+  'AccountSubUsers/GetBulkHistory',
+  async (filters: any, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/GetBulkHistory`, {
+        ...filters,
+        type: filters.type === '' ? null : filters.type,
+        accountType: filters.accountType === '' ? null : filters.accountType
+      });
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const AddEditDirectAccounts = createAsyncThunk(
+  'AccountSubUsers/AddEditDirectAccounts',
+  async (payload: any, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/AddEditDirectAccounts`, payload);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const AddEditSubAccounts = createAsyncThunk(
+  'AccountSubUsers/AddEditSubAccounts',
+  async (payload: any, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/AddEditSubAccounts`, payload);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const UpdateShowCurrencyReportCurrencyID = createAsyncThunk(
+  'AccountSubUsers/UpdateShowCurrencyReportCurrencyID',
+  async (payload: any, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSubUsers/UpdateShowCurrencyReportCurrencyID`, payload);
+      return response.data as PulseemResponse;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+
+export const SubAccountSlice = createSlice({
+  name: "SubAccount",
+  initialState: {
+    subAccountList: [] as SubAccountUsers[],
+    bulkHistory: [] as BulkHistory[],
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(GetSubAccountList.fulfilled, (state, { payload }) => {
+      state.subAccountList = payload?.Data?.Items || [];
+    });
+  },
+});
+
+export default SubAccountSlice.reducer;

@@ -10,7 +10,7 @@ import 'moment/locale/he';
 import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { MMSReportStatus } from '../../../helpers/Constants';
+import { DateFormats, MMSReportStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
@@ -364,11 +364,11 @@ const MmsReport = ({ classes }) => {
 
         const date = SendDate ? moment(SendDate) : ''
         const udate = UpdateDate ? moment(UpdateDate) : '';
-        const showDate = SendDate ? date.format('L') : ''
-        const showTime = SendDate ? date.format('LT') : ''
+        const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
+        const showTime = SendDate ? date.format(DateFormats.TIME_ONLY) : ''
         const isSchedule = moment(SendDate) > moment();
-        const showUpdateDate = UpdateDate ? udate.format('L') : '';
-        const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
+        const showUpdateDate = UpdateDate ? udate.format(DateFormats.DATE_ONLY) : '';
+        const showTimeUpdate = UpdateDate ? udate.format(DateFormats.TIME_ONLY) : '';
 
         return (
             <>
@@ -401,12 +401,12 @@ const MmsReport = ({ classes }) => {
                 {SendDate !== null ?
                     (
                         <Typography className={classes.grayTextCell}>
-                            {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
+                            {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format(DateFormats.DATE_ONLY)} ${showTime}`}
                         </Typography>
                     ) :
                     (
                         <Typography className={classes.grayTextCell}>
-                            {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+                            {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
                         </Typography>
                     )
                 }

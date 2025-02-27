@@ -45,7 +45,7 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-import Templates from './modals/Templates.tsx';
+import Templates from './modals/Templates';
 import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
 import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
@@ -55,7 +55,7 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice';
 import DomainVerification from '../../Shared/Dialogs/DomainVerification';
 import { SharedEmailDomain } from '../../config';
-import { getCategories } from '../../redux/reducers/productSlice';
+import { getCategories, GetProductsList } from '../../redux/reducers/productSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { NO_IMAGE_URL } from '../../helpers/Constants';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
@@ -72,7 +72,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
-  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates } = useSelector(state => state.campaignEditor);
+  const { productList } = useSelector(state => state.product)
+  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures, verifiedEmails } = useSelector(state => state.common)
@@ -177,6 +178,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       } else getData();
     }
     if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
+    if (!productList?.length) dispatch(GetProductsList());
     dispatch(getAllTemplatesBySubaccountId());
   }, []);
 
@@ -243,8 +245,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   //#endregion 
 
-  const getData = async () => {
-    setLoader(true);
+  const getData = async (defaultShowLoader = true) => {
+    setLoader(defaultShowLoader);
     await dispatch(getCampaignById(params?.id));
     await dispatch(getAccountExtraData());
     await dispatch(getPreviousLandingData());
@@ -276,9 +278,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
     let tempRows = [{
-      name: 'product-catalog',
-      value: 'product-catalog',
-      handle: 'product-catalog',
+      name: 'Dynamic-Products',
+      value: 'Dynamic-Products',
+      handle: 'Dynamic-Products',
       isLocal: true,
       behaviors: {
         canEdit: true,
@@ -288,7 +290,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];
       tags?.forEach((tag, idx) => {
-        if (tag && tag !== undefined && tag !== null && tag.trim() !== 'product-catalog') {
+        if (tag && tag !== undefined && tag !== null && tag.trim() !== 'Dynamic-Products') {
           const tagObj = {
             name: tag.trim(),
             value: tag.replace(' ', ''),
@@ -443,7 +445,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
 
       const response = await dispatch(saveCampaign({
-        Name: campaign.Name,
+        Name: campaign?.Name || '',
         campaignId: args.campaignId,
         JsonData: finalJson,
         HTML: finalHtml,
@@ -468,11 +470,11 @@ const CampaignEditor = ({ classes, ...props }) => {
             }
             return false;
           }
-          else if (saveRef.current?.showAnimation) {
-            setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
+          else if (saveRef.current?.showAnimation && !saveRef.current?.saveTemplate) {
+            setToastMessage(ToastMessages.CAMPAIGN_SAVED);
           }
 
-          if (reInit) {
+          if (reInit && !saveRef.current?.saveTemplate) {
             getData();
           }
           break;
@@ -494,17 +496,16 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
 
       if (saveRef.current?.saveTemplate) {
-        const templateResponse = await dispatch(saveTemplateToAccount({
-          Name: saveRef.current?.templateName,
-          JsonData: finalJson,
-          HTML: finalHtml,
-          Category: saveRef.current?.templateCategory
-        }));
-        if (!templateResponse.payload.Data) {
-          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+        const isTemplateExists = templatesBySubAccount?.filter((template) => {
+          return template?.Name === saveRef.current?.templateName && saveRef.current?.templateCategory?.split(',').indexOf(template?.Category) > -1
+        });
+        if (isTemplateExists && isTemplateExists?.length > 0) {
+          const existsCategories = isTemplateExists?.map((item) => { return item?.Category })?.join(',');
+          onExistTemplate(finalJson, finalHtml, saveRef.current?.templateName, existsCategories);
         }
-        dispatch(getAllTemplatesBySubaccountId());
-        getData();
+        else {
+          forceSaveTemplate(finalJson, finalHtml)
+        }
       }
     } catch (e) {
       console.error(e);
@@ -548,6 +549,40 @@ const CampaignEditor = ({ classes, ...props }) => {
     });
     setDialog(DialogType.GENERIC);
   }
+  const onExistTemplate = (finalJson, finalHtml, name, category) => {
+    setGenericModalData({
+      title: t('common.payAttention'),
+      content: <Box style={{ marginBottom: 25 }}>
+        <Typography>{RenderHtml(t("campaigns.GridButtonColumnResource2.existTemplateDescription").replace('#name#', name).replace('#category#', category))}</Typography>
+      </Box>,
+      message: null,
+      onConfirm: () => {
+        forceSaveTemplate(finalJson, finalHtml);
+        setDialog(null);
+      },
+      onCancel: () => setDialog(null),
+      onClose: () => setDialog(DialogType.SAVE_TEMPLATE)
+    });
+    setDialog(DialogType.GENERIC);
+  }
+
+  const forceSaveTemplate = async (finalJson, finalHtml) => {
+    const templateResponse = await dispatch(saveTemplateToAccount({
+      Name: saveRef.current?.templateName,
+      JsonData: finalJson,
+      HTML: finalHtml,
+      Category: saveRef.current?.templateCategory
+    }));
+    if (!templateResponse.payload.Data) {
+      setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+    }
+    else {
+      setToastMessage(ToastMessages.TEMPLATE_SAVED);
+    }
+    dispatch(getAllTemplatesBySubaccountId());
+    getData(false);
+  }
+
   const handleExitCampaign = (saveBeforeExit = true) => {
     setDialog(null);
     const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';

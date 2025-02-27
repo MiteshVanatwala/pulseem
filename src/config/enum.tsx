@@ -16,7 +16,35 @@ export enum Items {
 
 export enum EventTypes {
   All = 0,
-  // Page = 1,
   Purchase = 1,
-  CartAbandon = 2
+  CartAbandon = 2,
+  LastViewedProduct = 3
+}
+
+export enum AddProductCatalogType {
+  Static = 'static',
+  Dynamic = 'dynamic'
+}
+
+export enum ProductDetails {
+  Image = '#productsrc#',
+  Name = '#name#',
+  Description = '#description#',
+  Price = '#price#'
+}
+
+export enum WhatsappCampaignStatus {
+  META_BUSINESS_NOTVERIFIED = 11,
+  META_PHONENUMBER_NOTVERIFIED = 12
+}
+
+export enum WhatsAppPlatformIDEnum {
+  TWILLIO = 1,
+  META = 2
+}
+
+export enum URLS {
+  AutomationTemplatePreview = 'CreateAutomations.aspx?Mode=show&AutomationID=',
+  ContactUs = 'https://site.pulseem.co.il/%d7%a6%d7%95%d7%a8-%d7%a7%d7%a9%d7%a8/',
+  UserGuide = 'https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%99%D7%9B%D7%99%D7%9D/'
 }

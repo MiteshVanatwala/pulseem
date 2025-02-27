@@ -67,7 +67,6 @@ import {
 	whatsappChatStatuses,
 	whatsappRoutes,
 } from '../Constant';
-import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useParams } from 'react-router-dom';
 import Toast from '../../../components/Toast/Toast.component';
 import NoSetup from '../NoSetup/NoSetup';
@@ -75,6 +74,8 @@ import moment from 'moment';
 import { Typography } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { SelectChangeEvent } from '@mui/material';
+import { DateFormats } from '../../../helpers/Constants';
+import { setIsLoader } from '../../../redux/reducers/coreSlice';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -87,9 +88,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
-	const [isLoader, setIsLoader] = useState<boolean>(true);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [dialogType, setDialogType] = useState<any>({});
@@ -224,8 +224,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		});
 
 	useEffect(() => {
+		dispatch(setIsLoader(true));
 		(async () => {
-			setIsLoader(true);
 			const { payload: phoneNumberData }: phoneNumberAPIProps =
 				await dispatch<any>(userPhoneNumbers());
 			if (
@@ -237,12 +237,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					getDynamicModalValues();
 				}
 				getSavedTemplateFields();
-				setIsLoader(true);
 				await getPhoneNumber();
 				setIsAccountSetup(true);
 			} else {
-				setIsLoader(false);
 				setIsAccountSetup(false);
+				dispatch(setIsLoader(false));
 			}
 		})();
 		/**
@@ -291,7 +290,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		Sendernumber: string,
 		ClientNumber: string
 	) => {
-		setIsLoader(true);
+		dispatch(setIsLoader(true));
 		const whatsAppChatConversationStatusData: APIWhatsappChatConversationStatusData =
 			await dispatch<any>(
 				manageWhatsappChatCoversationStatus({
@@ -300,7 +299,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					StatusId,
 				})
 			);
-		setIsLoader(false);
+		dispatch(setIsLoader(false));
 		if (
 			whatsAppChatConversationStatusData?.payload?.Status === apiStatus.SUCCESS
 		) {
@@ -361,7 +360,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		activeUser: string,
 		isInitial: boolean = false
 	) => {
-		setIsLoader(true);
 		if (!isInitial) {
 			setSideChatContacts([]);
 			setActiveChatContacts({
@@ -388,7 +386,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					ChatStatus: filterBySelected,
 				})
 			);
-		setIsLoader(false);
+		dispatch(setIsLoader(false));
 		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
 			const contactData = whatsAppChatContactsData.payload.Data.Items;
 			const updatedActiveChat = contactData[0];
@@ -436,11 +434,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			await dispatch<any>(userPhoneNumbers());
 		if (phoneNumberData?.Data?.length > 0) {
 			setActivePhoneNumber(phoneNumberData?.Data[0]);
-			setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true);
+			await setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true);
 			setPhoneNumbersList(phoneNumberData?.Data);
 			return phoneNumberData?.Data;
 		} else {
-			setIsLoader(false);
+			dispatch(setIsLoader(false));
 			setToastMessage(ToastMessages.ERROR);
 			setContactsPaginationSetting({
 				...contactsPaginationSetting,
@@ -669,10 +667,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				chatReqPayload.TextMessage = newMessage;
 				chatReqPayload.mediaUrl = '';
 			}
-			setIsLoader(true);
+			dispatch(setIsLoader(true));
 			const { payload: sendWhatsappChat }: APISendWhatsappChat =
 				await dispatch<any>(sendWhatsAppMessage(chatReqPayload));
-			setIsLoader(false);
+			dispatch(setIsLoader(false));
 			if (sendWhatsappChat?.Status === apiStatus?.SUCCESS) {
 				const sentChat = sendWhatsappChat?.Data?.Data?.Items;
 				if (allWhatsappChat && sentChat && sentChat?.TODAY?.length > 0) {
@@ -745,7 +743,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	) => {
 		if (activePhoneNumber && activePhoneNumber?.length > 0) {
 			if (isPaginationReset) {
-				setIsLoader(true);
+				dispatch(setIsLoader(true));
 			}
 			const {
 				payload: whatsAppChatContactsData,
@@ -759,7 +757,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					ChatStatus: ChatStatus,
 				})
 			);
-			setIsLoader(false);
+			dispatch(setIsLoader(false));
 			if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
 				setContactsPaginationSetting({
 					...contactsPaginationSetting,
@@ -821,8 +819,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				{`${translator(
 					'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
 				)} ${nextMessageAvailable
-					? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
-					: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+					? moment(nextMessageAvailable).format(DateFormats.DATE_TIME_24)
+					: moment().add(1, 'd').format(DateFormats.DATE_TIME_24)
 					}`}
 			</Typography>
 		),
@@ -918,7 +916,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				customPadding={false}
 				containerClass={clsx(classes.mb75)}
 			>
-				{isAccountSetup ? (
+				{isAccountSetup === true && (
 					<>
 						{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
 						<div className={`${classes.whatsappChat} app`}>
@@ -983,15 +981,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									updateContactList={updateContactList}
 									personalFields={personalFields}
 									onChatTemplateDelete={onChatTemplateDelete}
+									setIsLoader={(value: boolean) => dispatch(setIsLoader(value))}
 								/>
 							</div>
 						</div>
 					</>
-				) : (
+				)}
+				{isAccountSetup === false && (
 					!isLoader && <NoSetup classes={classes} />
 				)}
 				{renderDialog()}
-				<Loader isOpen={isLoader} showBackdrop={true} />
 			</DefaultScreen >
 		</>
 	);

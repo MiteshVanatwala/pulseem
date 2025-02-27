@@ -97,7 +97,8 @@
   "responses": {
     "serverFoundWithNoResponse": "הבקשה התקבלה בשרת, אך לא התקבלה תגובה. יש לפנות לתמיכה.",
     "notFound": "לא נמצאו נמענים להסרה",
-    "noRecipientsInGroup": "לא נמצאו נמענים בקבוצה שנבחרה"
+    "noRecipientsInGroup": "לא נמצאו נמענים בקבוצה שנבחרה",
+    "noRecipientsTyped": "לא נמצאו נמענים ברשימה שהזנת"
   },
   "unsubscribed": {
     "succeeded": "הנמענים שהזנת הוסרו מהקבוצות שנבחרו בהצלחה.",
@@ -136,5 +137,6 @@
   "newsletterCampaign": "קמפיין ניוזלטר",
   "smsCampaign": "קמפיין SMS",
   "maxUploadLimitation": "באפשרותך להעלות עד 5,000 נמענים בבת אחת",
-  "whatsappCampaign": "קמפיין Whatsapp"
+  "whatsappCampaign": "קמפיין Whatsapp",
+  "backgroundImport": "<b>שימו לב</b><br/>ביקשתם להעלות כמות גדולה של נמענים<br/>המערכת מבצעת את ההעלאה ברקע.<br/>את תוצאות ההעלאה ניתן לראות בעמוד העלאת קבצים"
 }

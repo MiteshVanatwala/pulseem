@@ -17,6 +17,7 @@ type Stats = {
     RealClicks?: number;
     ReadCount?: number;
     UniqueClicksCount?: number;
+    TotalSent?: number;
 }
 
 const SummaryLine = ({ classes, Stats, CampaignType }: SummaryObj) => {
@@ -61,6 +62,11 @@ const SummaryLine = ({ classes, Stats, CampaignType }: SummaryObj) => {
                     <Box className={clsx(classes.bold)}>{t('common.failedStatus')}</Box>
                     <Box className={classes.pt10}>{Stats?.ErrorCount}</Box>
                 </Grid>
+                {CampaignType === 'sms' &&
+                    <Grid item md={2} xs={6} className={classes.flexGrow1}>
+                        <Box className={clsx(classes.bold)}>{t('report.TotalRecords')}</Box>
+                        <Box className={classes.pt10}>{Stats?.TotalSent}</Box>
+                    </Grid>}
             </Grid>
         </Box >
     }

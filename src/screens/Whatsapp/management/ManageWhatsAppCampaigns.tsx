@@ -88,6 +88,7 @@ import { RestorDialogContent, TablePagination } from '../../../components/managm
 import { sitePrefix } from '../../../config';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { pulseemNewTab } from '../../../helpers/Functions/functions';
+import { DateFormats } from '../../../helpers/Constants';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -269,7 +270,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					icon={undefined}
 				/>
 				<Typography className={classes.grayTextCell}>
-					{`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+					{`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
 				</Typography>
 			</>
 		);

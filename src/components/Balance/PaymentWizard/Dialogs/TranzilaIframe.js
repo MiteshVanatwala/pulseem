@@ -12,9 +12,9 @@ const TranzilaIframe = ({
     data,
     isRTL,
     packageId,
+    onStepBack,
     paymentUrl = null,
-    onStepBack = () => null,
-    onComplete = () => null
+    onComplete = () => { }
 }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -25,7 +25,7 @@ const TranzilaIframe = ({
             if (e.data) {
                 try {
                     const message = JSON.parse(e.data);
-                    if (message["result"] !== null) {
+                    if (message["result"] !== null && message["result"] !== undefined) {
                         onComplete(message);
                     }
                 }
@@ -43,13 +43,13 @@ const TranzilaIframe = ({
     }, []);
 
     return <Grid container>
-        <Grid item xs={12}>
+        {onStepBack && <Grid item xs={12}>
             <Box className={classes.justifyBetween} style={{ alignItems: 'center' }}>
                 <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t("payment.updateCreditCard")}</Typography>
                 <Link onClick={onStepBack} style={{ cursor: 'pointer' }}>{t("smsReport.back")}</Link>
             </Box>
             <Divider />
-        </Grid>
+        </Grid>}
         <Grid item className={clsx(classes.mt25, classes.fullFlexItem)}>
             <PurchaseSummary data={data}
                 classes={classes}

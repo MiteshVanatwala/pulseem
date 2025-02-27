@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
-// import BeeEditorPage from './screens/BeeEditorPage/BeeEditorPage.tsx';
+import BeeEditor from './screens/Editors/BeeEditor';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
@@ -26,7 +26,7 @@ import {
   setRowsPerPage,
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
-import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
+import { GetAfterLoginInitialData, getCommonFeatures, GetCurrencyList, GetGlobalAccountPackagesDetails, GetSmsCountries, isClalAccount } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
@@ -56,7 +56,7 @@ import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
-import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
+import BillingSettingsPage from './screens/Settings/BillingSettings/BillingSettingsPage';
 import { sitePrefix } from './config/index'
 // import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
@@ -79,9 +79,17 @@ import ExtraFields from './screens/Settings/ExtraFields/ExtraFields';
 import { isSignupPage } from './helpers/Utils/common';
 import './helpers/global';
 import SignUp from './screens/SignUp/SignUp.tsx';
+import SurveyDetails from './screens/LandingPages/Survey/SurveyDetails';
+import WebformSummary from './screens/LandingPages/Wizard/WebformSummary';
+import HtmlPreview from './screens/Preview/HtmlPreview';
 import FileUploads from './screens/Groups/FileUploads/FileUploads';
 import AmpRegistration from './screens/Newsletter/AMP/AmpRegistration';
 import AffiliateProgram from './screens/Affiliate/Management/AffiliateProgram';
+import AccountUsers from './screens/AccountUsers/AccountUsers';
+import TermsOfUsePage from './screens/TermsOfUse/TermsOfUsePage';
+import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
+import { Loader } from './components/Loader/Loader';
+import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -172,10 +180,10 @@ const renderRoutes = (classes, redirect) => {
         path={`${sitePrefix}Campaigns/editor/:id`}
         element={<CampaignEditorBee classes={classes} />}
       />
-      {/* <Route
-        path={`${sitePrefix}BeeEditor/:type/:id`}
-        element={<BeeEditorPage classes={classes} />}
-      /> */}
+      <Route
+        path={`${sitePrefix}editor/:type/:id`}
+        element={<BeeEditor classes={classes} />}
+      />
       <Route
         path={`${sitePrefix}Campaigns/SendSettings/:id`}
         element={<NewsletterSendSettings classes={classes} />}
@@ -299,12 +307,10 @@ const renderRoutes = (classes, redirect) => {
 
       <Route
         path={whatsappRoutes.CHAT}
-        element={<WhatsappChat classes={classes} key="wa-chate" />}
-      />
-      <Route
-        path={whatsappRoutes.CHAT_CONVERSATION}
-        element={<WhatsappChat classes={classes} key="wa-chat-conversation" />}
-      />
+      >
+        <Route index element={<WhatsappChat classes={classes} key="wa-chate" />} />
+        <Route path=":contactID" element={<WhatsappChat classes={classes} key="wa-chat-conversation" />} />
+      </Route>
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
@@ -330,7 +336,15 @@ const renderRoutes = (classes, redirect) => {
         element={<CreateLandingPage classes={classes} />}
       />
       <Route
-        path={`/LandingPageWizard`}
+        path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
+        element={<SurveyDetails classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}LandingPages/summary/:id`}
+        element={<WebformSummary classes={classes} />}
+      />
+      <Route
+        path={`/Survey`}
         component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
       />
       <Route
@@ -402,6 +416,10 @@ const renderRoutes = (classes, redirect) => {
         path={`/CreateAutomations`}
         component={transferUrl('/Pulseem/CreateAutomations.aspx')}
       />
+      <Route
+        path={`${sitePrefix}Automations/Create`}
+        element={<CreateAutomationTemplate classes={classes} />}
+      />
 
       <Route
         path="/EditAutomations/:id"
@@ -445,15 +463,16 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}BillingSettings`}
-        element={<BillingSettingsEditor classes={classes} />}
+        element={<BillingSettingsPage classes={classes} />}
       />
       <Route
         path={`/AccountBilling`}
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
       <Route
-        path={`/AccountUsers`}
-        component={transferUrl('/Pulseem/AccountUsers.aspx')}
+        exact
+        path={`${sitePrefix}AccountUsers`}
+        element={<AccountUsers classes={classes} />}
       />
       <Route
         path={`/AccountUsersReport`}
@@ -488,6 +507,10 @@ const renderRoutes = (classes, redirect) => {
       <Route exact
         path={`${sitePrefix}Integrations`}
         element={<Integrations classes={classes} />}
+      />
+      <Route exact
+        path={`${sitePrefix}whatsapp-onboarding`}
+        element={<WhatsappOnBoarding classes={classes} />}
       />
       <Route
         exact
@@ -544,8 +567,18 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
+        path={`${sitePrefix}Previewer/:type/:id`}
+        element={<HtmlPreview classes={classes} />}
+      />
+      <Route
+        exact
         path={`${sitePrefix}AffiliateManagement`}
         element={<AffiliateProgram classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}TermsOfUse`}
+        element={<TermsOfUsePage classes={classes} />}
       />
     </Routes>
   )
@@ -555,8 +588,8 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal } = useSelector(state => state.core)
-  const { accountSettings } = useSelector(state => state.common)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader } = useSelector(state => state.core)
+  const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
   const isSignup = isSignupPage(location.pathname);
@@ -568,6 +601,12 @@ const App = ({ screenSize }) => {
   useEffect(() => {
     screenSize && dispatch(setWindowSize(screenSize));
   }, [screenSize]);
+
+  useEffect(() => {
+    if (!isSignup && currencyList?.length > 0) {
+      dispatch(GetGlobalAccountPackagesDetails());
+    }
+  }, [currencyList]);
 
   useEffect(() => {
     const initFeatures = async () => {
@@ -593,7 +632,7 @@ const App = ({ screenSize }) => {
         certthumbprint: billingTypeId,
         role: isAdmin,
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone':
-        phone = '',
+        isDebtAccount = '',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality':
         locality = 'he-IL',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince':
@@ -608,12 +647,11 @@ const App = ({ screenSize }) => {
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
         isAllowSwitchAccount = '',
       } = jwt;
-
       dispatch(
         setCoreData({
           email,
           basename,
-          phone,
+          isDebtAccount,
           imageURL,
           isWhiteLabel,
           companyName,
@@ -645,7 +683,9 @@ const App = ({ screenSize }) => {
     })
     !isSignup && updateToken()
     !isSignup && initFeatures()
-
+    !isSignup && dispatch(GetCurrencyList());
+    !isSignup && dispatch(GetSmsCountries());
+    !isSignup && dispatch(GetAfterLoginInitialData());
   }, [dispatch])
 
 
@@ -656,12 +696,98 @@ const App = ({ screenSize }) => {
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
+  const renderRoutesByCondition = (classes, redirect) => {
+    const ignoreCookie = getCookie('ignoreTerm')
+    if (accountSettings && accountSettings?.SubAccountSettings?.IsTokenAccount) {
+      return <Routes>
+        <Route
+          path={`${sitePrefix}Groups`}
+          element={<Groups classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}ClientSearchResult`}
+          element={<ClientSearchResult classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}`}
+          element={<LandingPagesesManagment classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}EditRegistrationPage`}
+          element={<LandingPagesesManagment classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/Create`}
+          element={<CreateLandingPage classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/Create/:id`}
+          element={<CreateLandingPage classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/SurveyDetails/:id`}
+          element={<SurveyDetails classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}LandingPages/summary/:id`}
+          element={<WebformSummary classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}editor/:type/:id`}
+          element={<BeeEditor classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}AccountSettings/ExtraFields`}
+          element={<ExtraFields classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Previewer/:type/:id`}
+          element={<HtmlPreview classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Groups/Download`}
+          element={<DownloadFiles classes={classes} />}
+        />
+        <Route
+          path={`${sitePrefix}Groups/FileUploads`}
+          element={<FileUploads classes={classes} />}
+        />
+        <Route
+          path="*" element={<PageNotFound classes={classes} />}
+        />
+      </Routes>
+    }
+    if (!isAdmin && accountSettings && !accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount === 3 && ignoreCookie !== 'true') {
+      return <Routes>
+        <Route
+          exact
+          path="*"
+          element={<TermsOfUsePage classes={classes} />}
+        />
+      </Routes>
+    }
+    if (!isAdmin && isDebtAccount === true) {
+      return <Routes>
+        <Route
+          exact
+          path="*"
+          element={<BillingSettingsPage classes={classes} />}
+        />
+      </Routes>
+    }
+    else {
+      return renderRoutes(classes, redirect);
+    }
+
+  }
+
   return (accountSettings || isSignup) && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
-          {renderRoutes(classes, redirect)}
+          {renderRoutesByCondition(classes, redirect)}
         </div>
+        <Loader isOpen={isLoader} showBackdrop={true} />
       </MuiThemeProvider>
     </MuiPickersUtilsProvider >
 

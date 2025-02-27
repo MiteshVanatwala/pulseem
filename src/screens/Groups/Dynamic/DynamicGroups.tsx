@@ -5,7 +5,10 @@ import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
     Box, Typography, TableBody, TableRow, TableCell,
-    Grid, Button, TextField, Checkbox, GridSize
+    Grid, Button, TextField, Checkbox, GridSize,
+    FormControl,
+    FormGroup,
+    FormControlLabel
 } from '@material-ui/core'
 import { PreviewIcon, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon, EditIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
@@ -40,7 +43,7 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
-import { ClientStatus } from '../../../helpers/Constants';
+import { ClientStatus, DateFormats, rowsOptions } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { Client } from '../../../Models/Clients/Client';
@@ -63,7 +66,6 @@ const DynamicGroups = ({ classes }: any) => {
     const { accountFeatures } = useSelector((state: any) => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state: any) => state.group);
     const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector((state: any) => state.core)
-    const rowsOptions = [6, 10, 20, 50];
     const [selectedGroups, setSelectedGroups] = useState<any>([]);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot) };
@@ -91,6 +93,7 @@ const DynamicGroups = ({ classes }: any) => {
     const exportColumnHeader = useRef(null);
     const [sortDirection, setSortDirection] = useState(SortDirection.DESC);
     const [sortBySelected, setSortBy] = useState(SortColumns.UPDATE_DATE);
+    const [exportGroupNames, setExportGroupNames] = useState(false);
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -111,6 +114,7 @@ const DynamicGroups = ({ classes }: any) => {
                 "Zip": t('common.zip'),
                 "Company": t('common.company'),
                 "ReminderDate": t('recipient.reminderDate'),
+                "GroupNames": t('common.Groups')
             } as any;
             updatingObject = {
                 ...updatingObject,
@@ -443,7 +447,7 @@ const DynamicGroups = ({ classes }: any) => {
                         </Typography>
                     </CustomTooltip>
                     <Typography className={clsx(classes.grayTextCell, classes.date)}>
-                        {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+                        {`${text} ${date.format(DateFormats.DATE_TIME_24)}`}
                     </Typography>
                 </Grid>
             </Grid>
@@ -1598,12 +1602,18 @@ const DynamicGroups = ({ classes }: any) => {
             return client;
         }, []);
 
+        //@ts-ignore
+        const fields = { ...exportColumnHeader?.current } as any;
+
+        delete fields["Revenue"];
+        delete fields["SendDate"];
+        !exportGroupNames && delete fields["GroupNames"];
+
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
             ConvertStatusToString: false,
-            Order: Object.keys(exportColumnHeader.current as any),
-            DeleteProperties: ["Revenue", "SendDate"],
+            Order: Object.keys(fields),
             ReplaceNull: true
         } as any;
 
@@ -1611,7 +1621,7 @@ const DynamicGroups = ({ classes }: any) => {
             ExportFile({
                 data: result,
                 exportType: formatType,
-                fields: exportColumnHeader.current,
+                fields: fields,
                 fileName: 'PulseemClientsExport'
             });
         });
@@ -1626,7 +1636,8 @@ const DynamicGroups = ({ classes }: any) => {
             NotifyEmail: notifyEmail,
             FileType: formatType,
             Culture: isRTL ? 0 : 1,
-            FileName: selectedGroups.length === 1 ? group.GroupName : 'PulseemGroups'
+            FileName: selectedGroups.length === 1 ? group.GroupName : 'PulseemGroups',
+            ExportGroupNames: exportGroupNames
         };
 
         try {
@@ -1670,6 +1681,7 @@ const DynamicGroups = ({ classes }: any) => {
         }
         finally {
             setLoader(false);
+            setExportGroupNames(false);
         }
     }
     const renderConfirmDialog = () => {
@@ -1702,11 +1714,27 @@ const DynamicGroups = ({ classes }: any) => {
                 text={!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
                 radioTitle={csvOnly ? '' : t('common.SelectFormat')}
                 onConfirm={(e: any, notifyEmail: any) => handleConfirmExport(e, notifyEmail)}
-                onCancel={() => setShowConfirmDialog(false)}
+                onCancel={() => { setShowConfirmDialog(false); setExportGroupNames(false); }}
                 cookieName={'exportFormat'}
                 defaultValue={csvOnly ? 'csv' : 'xls'}
                 showEmailToNotify={csvOnly}
                 options={csvOnly ? null : exportTypeOptions}
+                exportGroupNames={<FormControl>
+                    <FormGroup>
+                        <FormControlLabel
+                            title={t('group.exportGroupNamesTooltip')}
+                            control={
+                                <Checkbox
+                                    color="primary"
+                                    inputProps={{ "aria-label": "secondary checkbox" }}
+                                    onClick={() => setExportGroupNames(!exportGroupNames)}
+                                    checked={exportGroupNames}
+                                />
+                            }
+                            label={t("group.exportGroupNames")}
+                        />
+                    </FormGroup>
+                </FormControl>}
             />
         );
     }

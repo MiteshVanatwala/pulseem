@@ -15,7 +15,7 @@ import { getNewsletterDirectReport, getArchiveDirectReport } from '../../../redu
 import { reactivateEmail } from '../../../redux/reducers/clientSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
-import { EmailStatus } from '../../../helpers/Constants';
+import { DateFormats, EmailStatus } from '../../../helpers/Constants';
 import { ConvertColorStatus, ConvertEmailStatusText, EllipsisText, SourceType } from '../../../helpers/UI/TableText';
 import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';
@@ -23,6 +23,9 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
+import { GetGlobalAccountPackagesDetails } from '../../../redux/reducers/commonSlice';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { BsInfoCircle } from 'react-icons/bs';
 
 const RenderRow = ({
   classes,
@@ -42,7 +45,7 @@ const RenderRow = ({
     let text = data;
     if (dataType === 'date') {
       text = moment(text);
-      text = `${text.format('DD/MM/YYYY')} ${text.format('LT')}`
+      text = `${text.format(DateFormats.DATE_TIME_24)}`
     }
     if (dataType === 'status') {
       text = t(ConvertEmailStatusText(`${data}`))
@@ -182,7 +185,31 @@ const RenderRow = ({
               classes={cellStyle}
               align='center'
               className={classes.flex1}>
-              {renderCell(row.Status, 'status')}
+              {row.Status > 7 && row?.ErrorData !== '' ? (<CustomTooltip
+                isSimpleTooltip={false}
+                interactive={true}
+                forceDirection={'ltr'}
+                classes={{
+                  tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                  arrow: classes.fBlack,
+                }}
+                arrow={true}
+                style={{ fontSize: 15 }}
+                placement={"top"}
+                title={<Typography noWrap={false}>{row.ErrorData}</Typography>}
+              >
+                <Box style={{ display: 'flex', flexDirection: 'row' }}>
+                  <Typography>
+                    {renderCell(row.Status, 'status')}
+                  </Typography>
+                  {row.Status > 7 && <IconButton className={clsx(classes.icon_Info_black, classes.noPadding, classes.ml5)}>
+                    <BsInfoCircle />
+                  </IconButton>}
+                </Box>
+              </CustomTooltip>) : (<Typography>
+                {renderCell(row.Status, 'status')}
+              </Typography>)
+              }
             </TableCell>
             <TableCell
               classes={cellStyle}
@@ -198,7 +225,7 @@ const RenderRow = ({
             </TableCell>
           </>
         )}
-      </TableRow>
+      </TableRow >
       {renderCollapsibleRow(row)}
     </>
   )
@@ -227,6 +254,7 @@ const DirectEmailReportTab = ({
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
+  const { isGlobal } = useSelector((state) => state.common)
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
 
@@ -255,6 +283,7 @@ const DirectEmailReportTab = ({
 
     setLoader(true)
     await dispatch(isArchive ? getArchiveDirectReport(searchObjects) : getNewsletterDirectReport(searchObjects))
+    if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
     handleSearching('email', true);
     handlePageChange(1);
     setLoader(false)
@@ -551,11 +580,11 @@ const DirectEmailReportTab = ({
 
     const date = SendDate ? moment(SendDate) : ''
     const udate = UpdateDate ? moment(UpdateDate) : '';
-    const showDate = SendDate ? date.format('L') : ''
-    const showTime = SendDate ? date.format('LT') : ''
+    const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
+    const showTime = SendDate ? date.format(DateFormats.TIME_ONLY) : ''
     const isSchedule = moment(SendDate) > moment();
-    const showUpdateDate = UpdateDate ? udate.format('L') : '';
-    const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
+    const showUpdateDate = UpdateDate ? udate.format(DateFormats.DATE_ONLY) : '';
+    const showTimeUpdate = UpdateDate ? udate.format(DateFormats.TIME_ONLY) : '';
 
     return (
       <>
@@ -565,12 +594,12 @@ const DirectEmailReportTab = ({
         {SendDate !== null ?
           (
             <Typography className={classes.grayTextCell}>
-              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
+              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format(DateFormats.DATE_ONLY)} ${showTime}`}
             </Typography>
           ) :
           (
             <Typography className={classes.grayTextCell}>
-              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
             </Typography>
           )
         }

@@ -24,7 +24,6 @@ const ExtraFieldsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch: any = useDispatch();
   const { isRTL } = useSelector((state: StateType) => state.core);
-  const { extraData } = useSelector((state: StateType) => state.extraFields);
   const [toastMessage, setToastMessage] = useState<any | never>(null);
   const { subAccount } = useSelector((state: any) => state.common)
   const [showLoader, setLoader] = useState(true);

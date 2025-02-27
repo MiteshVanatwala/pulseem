@@ -28,15 +28,17 @@ import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampai
 import { updateWhatsappTier } from '../../../redux/reducers/whatsappSlice';
 import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.types';
 import { apiStatus } from '../../Whatsapp/Constant';
-import { getCommonFeatures, updateDefaultFromEmail } from '../../../redux/reducers/commonSlice';
+import { getCommonFeatures, GetGlobalAccountPackagesDetails, updateDefaultFromEmail } from '../../../redux/reducers/commonSlice';
 import { ListIcon } from '../../../assets/images/managment';
 import DomainsVerificationPopUp from './Popups/DomainsVerificationPopUp';
 import queryString from 'query-string';
+import { UpdateShowCurrencyReportCurrencyID } from '../../../redux/reducers/SubAccountSlice';
 
 const AccountSettingsEditor = ({ classes }: any) => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
+	const { showCurrencyReportCurrencyID } = useSelector((state: any) => state.common);
 	const { account, ToastMessages } = useSelector((state: any) => state?.accountSettings);
 	const { WhatsappTierID } = useSelector(
 		(state: {
@@ -54,9 +56,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 	const [emailToVerify, setEmailToVerify] = useState<string>('');
 	const [cellphoneToVerify, setCellphoneToVerify] = useState<string>('');
 	const [settingRequest, setSettingRequest] = useState<AccountSettings>({
-		SubAccountId: -1,
 		LoginUserName: '',
-		AccountID: -1,
 		CompanyAdmin: false,
 		CompanyName: '',
 		ContactName: '',
@@ -70,11 +70,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		DefaultFromMail: '',
 		DefaultFromName: '',
 		DefaultCellNumber: '',
-		MaxMailSendingForMonth: null,
-		MaxSMSSendingForMonth: null,
-		BulkEmail: null,
-		BulkSMS: null,
-		BulkMMS: null,
 		UnsubscribeType: false,
 		IsSmsImmediateUnsubscribeLink: false,
 		TwoFactorAuthEnabled: null,
@@ -83,8 +78,8 @@ const AccountSettingsEditor = ({ classes }: any) => {
 		TwoFactorAuthRetries: null,
 		TwoFactorAuthOverrideDateTime: null,
 		ExpiryDate: null,
-		DisablePluginOTP: false
-
+		DisablePluginOTP: false,
+		RevenueCurrencyId: showCurrencyReportCurrencyID
 	} as AccountSettings);
 	const [selectedTier, setSelectedTier] = useState<string>('1');
 	const [showVerificationDomains, setShowVerificationDomains] = useState<boolean>(false);
@@ -107,7 +102,10 @@ const AccountSettingsEditor = ({ classes }: any) => {
 	}, []);
 
 	useEffect(() => {
-		setSettingRequest(account?.Data);
+		setSettingRequest({
+			...settingRequest,
+			...account?.Data
+		});
 	}, [account]);
 
 	useEffect(() => {
@@ -115,6 +113,13 @@ const AccountSettingsEditor = ({ classes }: any) => {
 			setSelectedTier(WhatsappTierID);
 		}
 	}, [WhatsappTierID]);
+
+	useEffect(() => {
+		setSettingRequest({
+			...settingRequest,
+			RevenueCurrencyId: showCurrencyReportCurrencyID
+		});
+	}, [showCurrencyReportCurrencyID]);
 
 	const handleUpdate = async (
 		updatedObject: AccountSettings,
@@ -142,6 +147,8 @@ const AccountSettingsEditor = ({ classes }: any) => {
 			catch (ex) { }
 			finally {
 				handleResponses(response, updatedObject);
+				response = await dispatch(UpdateShowCurrencyReportCurrencyID({ CurrencyID: updatedObject.RevenueCurrencyId }));
+				await dispatch(GetGlobalAccountPackagesDetails());
 				setShowLoader(false);
 			}
 		}
@@ -153,6 +160,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
 			case 201: {
 				setToastMessage(ToastMessages.SETTINGS_SAVED);
 				dispatch(updateDefaultFromEmail(updatedObject.DefaultFromMail));
+				dispatch(getCommonFeatures());
 				break;
 			}
 			case 401: {

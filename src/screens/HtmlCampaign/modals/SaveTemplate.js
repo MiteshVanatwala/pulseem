@@ -80,14 +80,6 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
             </Box>
             <Box className={clsx(classes.mt15, classes.mb15)}>
               <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.CategoryName')}</Typography>
-              {/* <TextField
-                variant='outlined'
-                size='small'
-                value={category}
-                onChange={(event) => setCategory(event?.target?.value)}
-                className={clsx(classes.textField, classes.minWidth252)}
-                placeholder={t('common.CategoryName')}
-              /> */}
               <Box>
                 <Autocomplete
                   clearIcon={false}
@@ -98,27 +90,51 @@ const SaveTemplate = ({ onClose, isOpen, classes, name = '', categoryName = '', 
                   value={templateCategories || ''}
                   // @ts-ignore
                   onBlur={(event) => {
-                    if (event.target.value !== '' && event.target.value.trim() !== '') {
+                    if (event.target.value !== '' && event.target.value.trim() !== '' && templateCategories?.length === 0) {
                       onUpdate(event.target.value);
                     }
                   }}
                   onChange={(event, value, reason) => {
+                    if (templateCategories?.length > 0) {
+                      return;
+                    }
+                    const limitedValue = value.slice(-1);
                     if (reason === 'createOption') {
-                      if (value[0].trim() !== '') {
-                        onUpdate(event.target.value);
+                      if (limitedValue[0]?.trim() !== '') {
+                        onUpdate(limitedValue[0]);
                       }
                     }
+                    setTemplateCategories(limitedValue);
+                    setCategory(limitedValue);
                   }}
                   renderTags={(value, props) =>
                     value.map((option, index) => (
                       <Chip label={option} {...props({ index })} className={clsx(classes.MuiChipRoot)} onDelete={() => {
-                        const filteredMeta = templateCategories?.filter((m) => { return m !== option });
-                        setTemplateCategories(filteredMeta);
-                        setCategory(filteredMeta.join(','));
-                      }} />
+                        setTemplateCategories([]);
+                        setCategory('');
+                      }}
+                      />
                     ))
                   }
-                  renderInput={(params) => <TextField {...params} className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)} />}
+                  renderInput={(params) => <TextField
+                    disabled={templateCategories?.length > 0}
+                    placeholder={t('common.CategoryName')}
+                    {...params}
+                    inputProps={{
+                      ...params.inputProps,
+                      onKeyDown: (e) => {
+                        if (templateCategories?.length > 0) {
+                          e.preventDefault();
+                        }
+                      },
+                      onClick: (e) => {
+                        if (templateCategories?.length > 0) {
+                          e.preventDefault();
+                        }
+                      }
+                    }}
+                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+                  />}
                 />
               </Box>
             </Box>

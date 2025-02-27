@@ -10,7 +10,6 @@ export const coreSlice = createSlice({
     windowSize: 'lg',
     basename: '',
     email: '',
-    phone: '',
     imageURL: '',
     isWhiteLabel: false,
     companyName: '',
@@ -21,9 +20,11 @@ export const coreSlice = createSlice({
     isAllowSwitchAccount: null,
     billingTypeId: null,
     accountFeatures: null,
+    isDebtAccount: null,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
-    }
+    },
+    isLoader: false,
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -43,7 +44,7 @@ export const coreSlice = createSlice({
     setCoreData: (state, { payload }) => {
       state.basename = payload.basename
       state.email = payload.email
-      state.phone = payload.phone
+      // state.phone = payload.phone
       state.imageURL = payload.imageURL
       state.isWhiteLabel = payload.isWhiteLabel
       state.companyName = payload.companyName || payload.basename
@@ -51,10 +52,14 @@ export const coreSlice = createSlice({
       state.isAdmin = payload.isAdmin
       state.isAllowSwitchAccount = payload.isAllowSwitchAccount
       state.billingTypeId = payload.billingTypeId
+      state.isDebtAccount = (payload.isDebtAccount === true || payload.isDebtAccount === 'True')
+    },
+    setIsLoader: (state, { payload }) => {
+      state.isLoader = payload
     }
   }
 })
 
-export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal } = coreSlice.actions // setSmsOldVersion
+export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setIsLoader } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

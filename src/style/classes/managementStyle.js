@@ -82,7 +82,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 1050,
   },
   mgmtTitleContainer: {
-    width: 'auto !important',
+    // width: 'auto !important',
     background: '#F0F5FF',
     padding: 15,
     borderTopRightRadius: 10,
@@ -113,6 +113,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginBlock: 0,
     borderBottom: 0,
     padding: "16px 10px!important",
+    '&:nth-child(1)': {
+      borderTopLeftRadius: 10,
+    },
+    '&:last-child': {
+      borderTopRightRadius: 10,
+    }
   },
   tableCellBody: {
     borderInlineEnd: "2px solid #F0F5FF",
@@ -605,6 +611,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       '& .MuiTableRow-root': {
         borderColor: 'transparent',
         backgroundColor: '#F0F5FF',
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
       }
     },
     '& .tableBodyContainer': {
@@ -723,6 +731,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
           '& *.MuiTypography-root': {
             fontSize: 16,
           }
+        },
+        '&.MuiTableRow-hover': {
+          cursor: "pointer"
+        },
+        '&.Mui-selected': {
+          backgroundColor: '#ff434466 !important',
         }
       }
     }
@@ -1364,6 +1378,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     margin: '0 5px',
     cursor: 'pointer',
     textUnderlineOffset: '4px',
+    backgroundColor: 'transparent',
     "&:hover": {
       textDecoration: 'none',
     }
@@ -1499,6 +1514,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   icon_Info: {
     color: '#FF0054 !important',
+    fontSize: 18
+  },
+  icon_Info_black: {
+    color: '#000 !important',
     fontSize: 18
   },
   noRecipients: {
@@ -1840,6 +1859,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 300,
     fontSize: "16px!important",
     textAlign: "center",
+  },
+  tooltipPrimary: {
+    backgroundColor: "#ff1946",
+    maxWidth: 300,
+    fontSize: "12px!important",
+    textAlign: "center",
+    "&.MuiTooltip-arrow": {
+      color: '#ff1946'
+    }
   },
   tooltipPlacement: {
     "&.MuiTooltip-tooltipPlacementTop": {

@@ -5,7 +5,7 @@ export const getAccountCards = createAsyncThunk(
   'payment/GetAccountCards', async (_, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`Payment/GetAccountCards`);
-      return JSON.parse(response.data);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -41,14 +41,36 @@ export const getPaymentURL = createAsyncThunk(
     }
   });
 
+export const getGlobalPaymentURL = createAsyncThunk(
+  'Payment/GetGlobalAccountPaymentURL', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`Payment/GetGlobalAccountPaymentURL`, data);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const getManualPaymentURL = createAsyncThunk(
+  'Payment/GetManualPaymentURL', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`Payment/GetManualPaymentURL`, data);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const paymentSlice = createSlice({
   name: 'payment',
   initialState: {
     tranzillaUrl: null,
     paymentUrl: null,
+    globalPaymentUrl: null,
     creditCards: null,
     paymentConfirmation: null,
-    dialogMaxWidth: null
+    dialogMaxWidth: null,
+    manualPaymentUrl: null
   },
   reducers: {
     setDialogWidth: (state, action) => {
@@ -63,6 +85,18 @@ export const paymentSlice = createSlice({
       .addCase(getPaymentURL.rejected, (state, action) => {
         state.paymentUrl = action.error.message
       })
+      .addCase(getGlobalPaymentURL.fulfilled, (state, { payload }) => {
+        state.globalPaymentUrl = payload
+      })
+      .addCase(getGlobalPaymentURL.rejected, (state, action) => {
+        state.globalPaymentUrl = action.error.message
+      })
+      .addCase(getManualPaymentURL.fulfilled, (state, { payload }) => {
+        state.manualPaymentUrl = payload
+      })
+      .addCase(getManualPaymentURL.rejected, (state, action) => {
+        state.manualPaymentUrl = action.error.message
+      })
       .addCase(getTranzillaURL.fulfilled, (state, { payload }) => {
         state.tranzillaUrl = payload
       })
@@ -70,7 +104,7 @@ export const paymentSlice = createSlice({
         state.tranzillaUrl = action.error.message
       })
       .addCase(getAccountCards.fulfilled, (state, { payload }) => {
-        state.creditCards = payload
+        state.creditCards = payload?.Data
       })
       .addCase(getAccountCards.rejected, (state, action) => {
         state.creditCards = null

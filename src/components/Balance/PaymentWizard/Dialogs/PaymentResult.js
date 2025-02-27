@@ -5,7 +5,7 @@ import {
     CheckAnimation
 } from '../../../../assets/images/settings/index'
 
-const PaymentResult = ({ t, classes, paymentObject, onStepBack = () => null }) => {
+const PaymentResult = ({ t, classes, paymentObject, onStepBack = () => {} }) => {
     return <Grid container>
         <Grid item xs={12}>
             {paymentObject.result === true ? (<Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
@@ -21,10 +21,9 @@ const PaymentResult = ({ t, classes, paymentObject, onStepBack = () => null }) =
                         variant='contained'
                         size='medium'
                         className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen,
-                            classes.backButton,
-                            classes.mt50
+                            classes.btn,
+                            classes.btnRounded,
+                            classes.mt6
                         )}
                         onClick={() => onStepBack()}>{t("payment.tryAgain")}</Button>
                 </Box>)

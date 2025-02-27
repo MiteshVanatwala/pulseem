@@ -13,6 +13,7 @@ const UIApiSwaggerURL = process.env.REACT_APP_UI_API_SWAGGER_URL;
 const DirectApiSwaggerURL = process.env.REACT_APP_DIRECT_API_SWAGGER_URL;
 const SharedEmailDomain = 'pulseem.co'
 const loginURL = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true';
+const tawkToPropertyId = process.env.REACT_APP_TAWK_TO_PROPERTY_ID;
 
 
 export {
@@ -26,5 +27,6 @@ export {
   UIApiSwaggerURL,
   DirectApiSwaggerURL,
   SharedEmailDomain,
-  loginURL
+  loginURL,
+  tawkToPropertyId
 };

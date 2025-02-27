@@ -120,7 +120,7 @@
 	},
 	"billingSettings": {
 		"title": "Billing settings",
-		"titleBillingInfo": "Billing Information",
+		"pageTitle": "Billing Settings And Payment Information",
 		"fields": {
 			"compRegNumber": "Company register number",
 			"invoiceEmail": "Email for invoices",
@@ -139,7 +139,10 @@
 			"invalidId": "Invalid ID number"
 		},
 		"btnUpdate": "Update billing",
-		"btnAddCard": "Add credit card"
+		"btnAddCard": "Add credit card",
+		"lastPurchases": "Last Purchases",
+		"openInvoices": "Open Invoices",
+		"editCard": "Edit Credit Card"
 	},
 	"changePassword": {
 		"title": "Change Password",
@@ -182,5 +185,6 @@
 		"mainApi": "Main API URL Address",
 		"directApi": "Direct Send API URL Address",
 		"noAPIKeyAccess": "In order to start using our API, please contact our support team on <a href = 'mailto:support@pulseem.com'>support@pulseem.com</a> / <a href='tel:03-7172274'>03-7172274</a>"
-	}
+	},
+	"displayRevenueIn": "Display revenue in"
 }

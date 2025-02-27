@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
-import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, MenuItem } from '@material-ui/core';
+import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, MenuItem, Checkbox } from '@material-ui/core';
 import Select from '@mui/material/Select';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { useState, useEffect } from 'react';
@@ -23,7 +23,9 @@ const ConfirmRadioDialog = ({
     onConfirm,
     defaultValue = "",
     cookieName = "",
-    showEmailToNotify = false
+    showEmailToNotify = false,
+    icon = null,
+    ...props
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
@@ -56,7 +58,7 @@ const ConfirmRadioDialog = ({
     const dialog = {
         title: title,
         showDivider: true,
-        icon: <FaCloudDownloadAlt />,
+        icon: icon || <FaCloudDownloadAlt />,
         content: (
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.mb4)}>
@@ -143,6 +145,12 @@ const ConfirmRadioDialog = ({
                             </Box>
                         </Box>
                     }
+                    {props?.checkbox && <Grid item xs={12} className={clsx(classes.mb4)}>{props?.checkbox}</Grid>}
+                    <Grid item xs={12} className={clsx(classes.mb4)}>
+                        <Box>
+                            {props && props?.exportGroupNames}
+                        </Box>
+                    </Grid>
                 </Grid>
             </Grid>
         ),

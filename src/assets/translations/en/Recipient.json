@@ -97,7 +97,8 @@
   "responses": {
     "serverFoundWithNoResponse": "The request accepted by server, but no response has been sent. Please contact support",
     "notFound": "No recipients has been found for unsubscribe",
-    "noRecipientsInGroup": "No recipienets found in the selected group"
+    "noRecipientsInGroup": "No recipienets found in the selected group",
+    "noRecipientsTyped": "No recipienets found in your query"
   },
   "unsubscribed": {
     "succeeded": "The recipients successfully unsubscribed from the selected groups",
@@ -136,5 +137,6 @@
   "newsletterCampaign": "Newsletter Campaign",
   "smsCampaign": "SMS Campaign",
   "maxUploadLimitation": "You are able to upload up to 5,000 recipients at once",
-  "whatsappCampaign": "Whatsapp Campaign"
+  "whatsappCampaign": "Whatsapp Campaign",
+  "backgroundImport": "<b>Please note</b><br/>You requested to upload a large amount of recipients<br/>The system performs the upload in the background.<br/>The results of the upload can be seen on the File upload page"
 }

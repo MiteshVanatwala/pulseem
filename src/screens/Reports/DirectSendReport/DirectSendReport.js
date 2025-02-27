@@ -29,6 +29,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import Title from '../../../components/Wizard/Title';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { GetGlobalAccountPackagesDetails } from '../../../redux/reducers/commonSlice';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
@@ -38,6 +39,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
   const { directWhatsappReport } = useSelector(state => state.whatsapp);
+  const { isGlobal } = useSelector((state) => state.common)
   const [searchData, setSearchData] = useState({});
   const [isSearching, setSearching] = useState({});
   const [tabValue, setTabValue] = useState(0);
@@ -155,6 +157,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       await getSMSReportData();
       await getWhatsappReportData();
 
+      if (isGlobal) dispatch(GetGlobalAccountPackagesDetails());
       setLoader(false);
     }
     initData();

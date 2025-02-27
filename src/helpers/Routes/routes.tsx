@@ -24,6 +24,7 @@ import { sitePrefix, isProdMode } from "../../config";
 import { WhatsappIcon } from '../../assets/images/drawer/index';
 import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 import { WhiteLabelObject } from '../../components/WhiteLabel/WhiteLabelMigrate';
+import { MdOutlineWhatsapp } from 'react-icons/md';
 // export const rootDomain = !isProdMode ? 'http://localhost:58123' : '/Pulseem/';
 export const rootDomain = '/Pulseem';
 
@@ -35,21 +36,24 @@ export const getSettingsItem = (
   isRTL: Boolean = false,
   accountSettings: any,
   features: any = null,
+  companyAdmin: boolean = false
 ) => ({
   key: "settings",
   title: title,
   href: `${sitePrefix}AccountSettings`,
   options: [
-    { key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: `${sitePrefix}AccountSettings`, iconSrc: SettingsMenuIcon, isShow: true },
-    { title: t('master.linkAccountBilling.Text'), href: `${rootDomain}/AccountBilling.aspx?fromreact=true`, iconSrc: DolarMenuIcon, isShow: true },
-    { key: 'affiliateManagement', title: t('master.affiliateManagement'), href: `${sitePrefix}AffiliateManagement`, iconSrc: DolarMenuIcon, isShow: features && features?.indexOf(PulseemFeatures.AFFILIATE) > -1, },
-    { title: t('master.RadMenuItemResource3.Text'), href: `${rootDomain}/AccountUsers.aspx?fromreact=true`, iconSrc: GroupMenuIcon, isShow: isAllowSwitchAccount },
-    { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount },
+    { key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: `${sitePrefix}AccountSettings`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    { key: 'billingSettings', title: t('master.linkAccountBilling.Text'), href: `${sitePrefix}BillingSettings`, iconSrc: DolarMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    { key: 'affiliateManagement', title: t('master.affiliateManagement'), href: `${sitePrefix}AffiliateManagement`, iconSrc: DolarMenuIcon, isShow: features && features?.indexOf(PulseemFeatures.AFFILIATE) > -1 && !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    { title: t('master.RadMenuItemResource3.Text'), href: `${sitePrefix}AccountUsers`, iconSrc: GroupMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount },
     { title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
     //@ts-ignore
-    { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0) ? true : false },
-    { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: true },
-    { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: true },
+    { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false },
+    { key: 'SiteTracking', title: t('master.siteTracking'), href: `${sitePrefix}SiteTracking`, iconSrc: FaBinoculars, isFaIcon: true, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    { key: 'Integrations', title: t('integrations.title'), href: `${sitePrefix}Integrations`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    //@ts-ignore
+    { key: 'Guides', title: t('common.UserGuides'), href: `https://site.pulseem.co.il/%D7%9E%D7%93%D7%A8%D7%99%D7%9B%D7%99%D7%9D/`, iconSrc: SettingsMenuIcon, isShow: (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false, openInNewWindow: true },
     { title: t("appBar.logout"), onClick: logout, iconSrc: isRTL ? HiArrowLeft : HiArrowRight, isFaIcon: true, isShow: true },
   ],
 });
@@ -59,7 +63,7 @@ export const getRoutes = (
   t: (text: string) => null | VoidFunction = (par: string) => null,
   isClalAccount: Boolean | string = false,
   features: any = null,
-  subAccountSettings: any = null,
+  accountSettings: any = null,
   windowSize: string | number | null = null,
   isRTL: Boolean = false
 ) => [
@@ -100,7 +104,7 @@ export const getRoutes = (
           key: "dynamicGroups",
           title: t("master.RadMenuItemResourceDynamicGroups.Text"),
           href: `${sitePrefix}Groups/Dynamic`,
-          isShow: true,
+          isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
         },
         {
           key: 'EditDynamicGroup',
@@ -127,7 +131,7 @@ export const getRoutes = (
       pageTitle: t("campaigns.logPageHeaderResource1.Text"),
       iconUnicode: "\ue0a1",
       href: `${sitePrefix}Campaigns`,
-      isShow: true,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
       icon: <img alt="Newsletter" src={NewsletterIcon} />,
       options: [
         {
@@ -147,13 +151,13 @@ export const getRoutes = (
           isShow: false,
         },
         {
-          title: t("master.linkAbTestingsResource1.Text"),
-          href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
+          title: t("master.RadMenuItemResource9a.Text"),
+          href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
           isShow: true,
         },
         {
-          title: t("master.RadMenuItemResource9a.Text"),
-          href: `${rootDomain}/AutoSendPlans.aspx?fromreact=true`,
+          title: 'A/B Test',
+          href: `${rootDomain}/CampaignsAbTestings.aspx?fromreact=true`,
           isShow: true,
         },
         // {
@@ -196,7 +200,8 @@ export const getRoutes = (
         features &&
         !features.error &&
         features !== null &&
-        features.indexOf("7") > -1,
+        features.indexOf("7") > -1 &&
+        !accountSettings?.SubAccountSettings?.IsTokenAccount,
       icon: <img alt="Sms" src={SmsIcon} />,
       options: [
         {
@@ -236,9 +241,9 @@ export const getRoutes = (
       key: 'whatsapp',
       title: 'Whatsapp',
       pageTitle: t('whatsapp.Title'),
-      // iconUnicode: '\ue181',
+      iconUnicode: <MdOutlineWhatsapp />,
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
-      isShow: true,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
       icon: <WhatsappIcon className='header-whatsapp-icon' />,
       options: [
         {
@@ -271,6 +276,12 @@ export const getRoutes = (
           href: whatsappRoutes.CHAT,
           isShow: true,
         },
+        {
+          key: 'onboarding',
+          title: t('WhatsappOnBoarding.title'),
+          href: whatsappRoutes.ONBOARDING,
+          isShow: true,
+        }
       ],
     },
     {
@@ -295,7 +306,7 @@ export const getRoutes = (
         {
           title: t("master.FormTemplatesResource1.Text"),
           href: `${rootDomain}/FormTemplates.aspx?fromreact=true`,
-          isShow: true,
+          isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
         },
         {
           key: 'CreateLandingPage',
@@ -308,6 +319,18 @@ export const getRoutes = (
           title: t("landingPages.editLandingPage"),
           href: ``,
           isShow: false,
+        },
+        {
+          key: 'campaignEditor',
+          title: t("landingPages.editLandingPage"),
+          href: ``,
+          isShow: false
+        },
+        {
+          key: 'previewer',
+          title: t("landingPages.editLandingPage"),
+          href: ``,
+          isShow: false
         }
       ],
     },
@@ -317,7 +340,7 @@ export const getRoutes = (
       pageTitle: t("automations.logPageHeaderResource1.Text"),
       iconUnicode: "\ue087",
       href: `${sitePrefix}Automations`,
-      isShow: true,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
       icon: <img alt="Automations" src={AutomationsIcon} />,
       options: [
         {
@@ -331,8 +354,9 @@ export const getRoutes = (
           isShow: features && features?.indexOf(PulseemFeatures.AUTOMATION_TEMPLATE) > -1,
         },
         {
+          key: 'create-automations',
           title: t("master.RadMenuItemCreateAutomationResource.Text"),
-          href: `${rootDomain}/CreateAutomations.aspx?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+          href: `${sitePrefix}Automations/Create`,
           isShow: true,
         },
         {
@@ -352,7 +376,8 @@ export const getRoutes = (
         features &&
         !features.error &&
         features !== null &&
-        features.indexOf("35") > -1,
+        features.indexOf("35") > -1 &&
+        !accountSettings?.SubAccountSettings?.IsTokenAccount,
       icon: <img alt="Notifications" src={NotificationsIcon} />,
       options: [
         {
@@ -374,7 +399,7 @@ export const getRoutes = (
       pageTitle: t("mainReport.logPageHeaderResource1.Text"),
       iconUnicode: "\ue049",
       href: `${sitePrefix}Reports/NewsletterReports`,
-      isShow: true,
+      isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount,
       icon: <img alt="Reports" src={ReportsIcon} />,
       options: [
         { title: t('master.clalCollage'), href: `${rootDomain}/ClalReport.aspx?fromreact=true`, isShow: (isClalAccount === 'true' || isClalAccount === true) },
@@ -389,10 +414,11 @@ export const getRoutes = (
         { title: t('master.RadMenuItemResource30.Text'), href: `${rootDomain}/EmailAutoReports.aspx?fromreact=true`, isShow: true },
         { title: t('master.locRemovedReason.Text'), href: `${rootDomain}/RemovedStats.aspx?fromreact=true`, isShow: true },
         { key: 'productsReport', title: t('report.ProductsReport.products'), href: `${sitePrefix}Reports/ProductsReport`, isShow: true },
-        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: true },
-        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: true },
+        { key: 'directSendReport', title: t('report.DirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings && accountSettings?.IsDirectAccount === true },
+        { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: `${sitePrefix}Reports/DirectSendReport/Archive`, isShow: accountSettings && accountSettings?.IsDirectAccount === true },
         { title: t('master.OpenedClickedReport'), href: `${rootDomain}/EmailCampaignStatistics.aspx?fromreact=true`, isShow: true },
         { key: 'inboundMessages', title: t('master.responses'), href: `${sitePrefix}Reports/Inbound`, isShow: true },
       ],
     },
+    { key: 'termOfUse', title: t('TermsOfUse.title'), href: `${sitePrefix}TermsOfUse`, iconSrc: '', isShow: false }
   ];

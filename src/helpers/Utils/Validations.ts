@@ -1,3 +1,7 @@
+import { map, sortBy } from "lodash";
+import { CountryCode } from "../../model/Common/commonProps.types";
+import { PhoneNumberRegEx } from "../Constants";
+
 export const IsValidEmail = (value: string) => {
   if (value === "" || value === undefined) {
     return false;
@@ -27,6 +31,17 @@ export const IsNumberField = (event: any) => {
 export const IsValidPhoneNumber = (number: string) => {
   var NumberRegEx = /^(\+\d{1,3}[- ]?)?\d{0,12}$/;
   return NumberRegEx.test(number);
+};
+
+export const IsValidPhoneNumberKeyPress = (phoneNumber: string) => {
+  return PhoneNumberRegEx.test(phoneNumber);
+};
+
+export const IsValidNonGlobalPhoneNumber = (phoneNumber: string) => {
+  if (phoneNumber === "" || phoneNumber === undefined || (phoneNumber.charAt(0) === '0' ? phoneNumber.length < 10 : phoneNumber.length < 11) || phoneNumber.length > 16) {
+    return false;
+  }
+  return PhoneNumberRegEx.test(phoneNumber) && (phoneNumber.substring(0,2) === '05' || phoneNumber.substring(0,4) === '9725');
 };
 
 export const IsValidURL = (value: string) => {
@@ -66,4 +81,20 @@ export const VerifyGetUrl = (value: string) => {
       reject(false);
     }
   });
+};
+
+export const IsValidPhoneNumberWithCountryCode = (phoneNumber: string, countryCodeList: CountryCode[] = []) => {
+  
+  if (phoneNumber === "" || phoneNumber === undefined || (phoneNumber.charAt(0) === '0' ? phoneNumber.length < 10 : phoneNumber.length < 11) || !phoneNumber.match(PhoneNumberRegEx)) {
+    return false;
+  }
+  const countryCode = sortBy(countryCodeList, 'SmsCountryPhoneCode').reverse();
+  let isMatched = false;
+  map(countryCode, (code: CountryCode) => {
+    if (phoneNumber.replace('+', '').substring(0, code.SmsCountryPhoneCode.toString().length) === code.SmsCountryPhoneCode.toString()) {
+      isMatched = true;
+      return true;
+    }
+  })
+  return isMatched;
 };

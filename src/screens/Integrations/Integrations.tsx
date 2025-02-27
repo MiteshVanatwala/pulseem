@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, Tab, Box } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../DefaultScreen";
@@ -11,6 +11,7 @@ import ShopifyIcon from '../../assets/images/shopify.png';
 import WooCommerceIcon from '../../assets/images/woocommerce.png';
 import CashCowIcon from '../../assets/images/cashCow.png';
 import EShopIcon from '../../assets/images/e-shop.jpg';
+import KlaviyoIcon from '../../assets/images/KlaviyoIcon.png'
 import { Title } from "../../components/managment/Title";
 import IsraCardIcon from '../../assets/images/isracard.png';
 import WixIcon from '../../assets/images/wix.png';
@@ -19,17 +20,33 @@ import EcwidIcon from '../../assets/images/ecwid.png';
 import Ecwid from "./Ecwid";
 import EShop from "./EShop";
 import Wix from "./Wix";
+import Klaviyo from "./Klaviyo";
 
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState('0');
 
+  useEffect(() => {
+    const integrationTitles = {
+      '0': { title: `${t('integrations.shopify.title')}` },
+      '1': { title: `${t('integrations.wooCommerce.title')}` },
+      '2': { title: `${t('integrations.cashCow.title')}` },
+      '3': { title: `${t('integrations.Istores.title')}` },
+      '4': { title: `${t('integrations.ecwid.title')}` },
+      '5': { title: `${t('integrations.eShop.title')}` },
+      '6': { title: `${t('integrations.wix.title')}` },
+      '10': { title: `${t('integrations.Klaviyo.title')}` },
+    } as any;
+
+    document.title = `${integrationTitles[tabValue].title} | ${t('master.pulseemSystem')}`;
+  }, [, tabValue]);
+
   return (
     <DefaultScreen
       currentPage="settings"
-      subPage="soptifySettings"
-      key="spotifySettings"
+      subPage="Integrations"
+      key="Integrations"
       classes={classes}
       containerClass={clsx(classes.editorCont)}
 
@@ -48,6 +65,8 @@ const Integrations = ({ classes }: any) => {
           onChange={(e, value) => setTabValue(value)}
           className={clsx(classes.mr15, classes.ml15)}
           classes={{ indicator: classes.hideIndicator }}
+          variant="scrollable"
+          scrollButtons="auto"
         >
           <Tab
             // @ts-ignore
@@ -107,6 +126,13 @@ const Integrations = ({ classes }: any) => {
             className={classes.iconTab}
             value='5'
           />
+          <Tab
+            label={t('integrations.Klaviyo.title')}
+            icon={<img src={KlaviyoIcon} alt={t('integrations.Klaviyo.title')} />}
+            classes={{ root: classes.tabText, selected: classes.activeTab }}
+            className={classes.iconTab}
+            value='10'
+          />
         </Tabs>
         <TabContext value={`${tabValue}`}>
           <TabPanel value='0' className={clsx(classes.pt0)}>
@@ -135,6 +161,9 @@ const Integrations = ({ classes }: any) => {
 
           <TabPanel value='6'>
             <Wix classes={classes} />
+          </TabPanel>
+          <TabPanel value='10'>
+            <Klaviyo classes={classes} />
           </TabPanel>
         </TabContext>
       </Box>

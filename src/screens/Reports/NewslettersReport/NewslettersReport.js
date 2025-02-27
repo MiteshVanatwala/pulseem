@@ -13,11 +13,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import 'moment/locale/he';
-import { getGetEmailReportsManagement, getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
+import { getGetEmailReportsManagement } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices } from '../../../helpers/Constants';
+import { EmailStatus, SEND_1, PULSE_1, SizeOptionsOfHandHeldDevices, DateFormats } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
@@ -38,7 +38,7 @@ const NewslettersReport = ({ classes }) => {
   const from = state?.from || "/";
 
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
-  const { accountFeatures } = useSelector(state => state.common);
+  const { accountFeatures, currencySymbol, isCurrencySymbolPrefix } = useSelector(state => state.common);
   const { newslettersReportsParentCampaigns, newslettersReportsChildCampaigns } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -224,7 +224,6 @@ const NewslettersReport = ({ classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    await dispatch(getNewsletterReports(isDemoSend));
     await dispatch(getGetEmailReportsManagement(isDemoSend));
     setLoader(false);
     const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
@@ -592,11 +591,11 @@ const NewslettersReport = ({ classes }) => {
     const { CampaignID, Name, SendDate, isChecked = false, Status, LastEditDate } = row
 
     const date = SendDate ? moment(SendDate) : ''
-    const showDate = SendDate ? date.format('L') : ''
-    const showTime = SendDate ? date.format('LT') : ''
+    const showDate = SendDate ? date.format(DateFormats.DATE_ONLY) : ''
+    const showTime = SendDate ? date.format(DateFormats.TIME_ONLY) : ''
     const udate = LastEditDate ? moment(LastEditDate) : '';
-    const showUpdateDate = LastEditDate ? udate.format('L') : '';
-    const showTimeUpdate = LastEditDate ? udate.format('LT') : '';
+    const showUpdateDate = LastEditDate ? udate.format(DateFormats.DATE_ONLY) : '';
+    const showTimeUpdate = LastEditDate ? udate.format(DateFormats.TIME_ONLY) : '';
     const isParentCampaignWithChild = parentCampaignsWithChild.indexOf(row.CampaignID) > -1;
 
     if (SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1) {
@@ -623,7 +622,7 @@ const NewslettersReport = ({ classes }) => {
             ) :
             (
               <Typography className={clsx(classes.grayTextCell)}>
-                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
               </Typography>
             )
           }
@@ -679,7 +678,7 @@ const NewslettersReport = ({ classes }) => {
             ) :
             (
               <Typography className={classes.grayTextCell}>
-                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format(DateFormats.DATE_ONLY)} ${showTimeUpdate}`}
               </Typography>
             )}
         </Grid>
@@ -779,12 +778,14 @@ const NewslettersReport = ({ classes }) => {
       <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0 && !isRootElement) ? onClick : VoidFunction}>
         <Typography
           component={'p'}
-          style={{ ...textStyle, 
+          style={{
+            ...textStyle,
             pointerEvents: isRootElement && 'none',
-            textDecoration: ((value > 0 || (isRevenueCol && value > 0)) && !isRootElement) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) && !isRootElement ? 'pointer' : null }}
+            textDecoration: ((value > 0 || (isRevenueCol && value > 0)) && !isRootElement) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) && !isRootElement ? 'pointer' : null
+          }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">
-          {(value && value.toLocaleString()) || '0'}  {t("common.NIS")}
+          {isCurrencySymbolPrefix ? currencySymbol : ''} {(value && value.toLocaleString()) || '0'} {!isCurrencySymbolPrefix ? currencySymbol : ''}
         </Typography>
       </Box>
     )
@@ -835,7 +836,7 @@ const NewslettersReport = ({ classes }) => {
     } = getParentChildSum(row);
 
     const hasChildren = isParent && newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID)?.length > 0;
-    
+
     const hrefs = getHrefs(CampaignID, Revenue, hasChildren)
     return (
       <>

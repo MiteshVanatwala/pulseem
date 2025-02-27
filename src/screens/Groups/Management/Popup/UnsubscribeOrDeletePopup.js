@@ -625,8 +625,25 @@ const UnsubscribeOrDeletePopup = ({
             title: t('recipient.deleteRecipients'),
             onClose: onClose,
             onConfirm: () => {
-                handleFinalData(enteredValue);
-                setConfirmDelete(true);
+                if (!enteredValue || enteredValue?.length <= 0) {
+                    handleResponses({
+                        payload: {
+                            StatusCode: 404,
+                            Message: '',
+                            Data: null
+                        }
+                    }, {
+                        default: {
+                            code: 404,
+                            message: ToastMessages.NO_RECIPIENTS_TYPED,
+                            Func: () => null
+                        }
+                    });
+                }
+                else {
+                    handleFinalData(enteredValue);
+                    setConfirmDelete(true);
+                }
             },
             summaryOnClose: () => { setConfirm(false); setConfirmDelete(false); },
             onSummaryConfirm: () => {
@@ -680,8 +697,8 @@ const UnsubscribeOrDeletePopup = ({
                         style={{ margin: '0 auto' }}
                         onClick={() => { setLimitationWarning(false) }}
                         className={clsx(
-                            classes.dialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.Ok')}
                     </Button>
