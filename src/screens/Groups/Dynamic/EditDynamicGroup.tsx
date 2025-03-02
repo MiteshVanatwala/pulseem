@@ -293,6 +293,23 @@ const EditDynamicGroup = ({ classes }: any) => {
                 isValid = false;
             }
         }
+        if (dynamicGroupModel.dynamicData.MyActivities.IsPageViewed === true) {
+            if (dynamicGroupModel.dynamicData.MyActivities.IsPageViewedInterval.toString() === ActivtyTimeInterval.SpecificDates
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsPageViewedFromDate && !dynamicGroupModel.dynamicData.MyActivities.IsPageViewedToDate)) {
+                message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsPageViewedInterval.toString() === ActivtyTimeInterval.DaysBack
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsPageViewedDaysBack ||
+                    dynamicGroupModel.dynamicData.MyActivities.IsPageViewedDaysBack === '')) {
+                message = t('group.saveDynamicGroupResponse.daysBackError');
+                isValid = false;
+            }
+            else if (!dynamicGroupModel.dynamicData.MyActivitiesPageViewedUrlIDs?.split(',')) {
+                message = t('group.saveDynamicGroupResponse.pageUrlRequired');
+                isValid = false;
+            }
+        }
 
         if (isValid) {
             setLoader(true);

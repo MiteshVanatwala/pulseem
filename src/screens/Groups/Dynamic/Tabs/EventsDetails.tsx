@@ -29,19 +29,6 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
         )
     }, [data.dynamicData?.MyActivities]);
 
-    // useEffect(() => {
-    //     if (data.dynamicData?.MyActivities?.IsAbandonedComparingType?.toString() === ActivityEvent.Any ||
-    //         data.dynamicData?.MyActivities?.IsPurchasedComparingType?.toString() === ActivityEvent.Any ||
-    //         data.dynamicData?.MyActivities?.IsNotPurchasedComparingType?.toString() === ActivityEvent.Any) {
-    //         onResetPrices();
-    //     }
-
-    // }, [
-    //     data.dynamicData?.MyActivities?.IsAbandonedComparingType,
-    //     data.dynamicData?.MyActivities?.IsPurchasedComparingType,
-    //     data.dynamicData?.MyActivities?.IsNotPurchasedComparingType
-    // ]);
-
     const renderIsPurchased = () => {
         return (
             <Grid container spacing={4} className={classes.pt25}>

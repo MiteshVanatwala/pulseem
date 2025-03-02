@@ -46,7 +46,8 @@
     "clickChannelRequired": "יש לבחור לפחות ערוץ קמפיינים אחד לפחות על מנת לחפש לקוחות שהקליקו",
     "notClickChannelRequired": "יש לבחור לפחות ערוץ קמפיינים אחד לפחות על מנת לחפש לקוחות שלא הקליקו",
     "specificDateIsRequired": "יש לבחור תאריכים ספציפיים",
-    "daysBackError": "יש להזין מספר ימים אחורה"
+    "daysBackError": "יש להזין מספר ימים אחורה",
+    "pageUrlRequired": "יש לבחור עמוד אחד לפחות מרשימת העמודים"
   },
   "updateFrequency": "אופן העלאה",
   "results": "לחץ לתוצאות",
