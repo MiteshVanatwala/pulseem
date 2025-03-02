@@ -474,7 +474,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
             const campaign = newslettersParentCampaigns?.find((e) => { return parseInt(e.CampaignID) === parseInt(CampaignID) });
             setDuplicateDialog({
               id: CampaignID,
-              name: campaign?.Name
+              name: campaign?.Name,
+              IsNewEditor: IsNewEditor
             });
           }
         }
@@ -1061,6 +1062,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           setLoader(false);
         }}
         campaignName={duplicateDialog?.name}
+        IsNewEditor={duplicateDialog?.IsNewEditor}
       />
       {/* Here we are using DomainVerification as a component and not via React Store */}
       <DomainVerification

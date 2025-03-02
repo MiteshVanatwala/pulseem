@@ -15,7 +15,8 @@ const DuplicateCampaign = ({
   isOpen,
   handleClose,
   campaignName,
-  isSms = false
+  isSms = false,
+  IsNewEditor
 }: any) => {
   const { t } = useTranslation();
   const [duplicateOptions, setDuplicateOptions] = useState<Number[]>([]);
@@ -113,7 +114,7 @@ const DuplicateCampaign = ({
               label={t("smsReport.pulseSending")}
             />
             {
-              isSms === false && accountFeatures?.indexOf(PulseemFeatures.DuplicateOldCampaignToBee) > -1 && <FormControlLabel
+              !IsNewEditor && isSms === false && accountFeatures?.indexOf(PulseemFeatures.DuplicateOldCampaignToBee) > -1 && <FormControlLabel
                 control={
                   <Checkbox
                     color="primary"
