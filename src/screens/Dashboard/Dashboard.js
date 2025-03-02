@@ -42,6 +42,7 @@ const DashboardScreen = ({ classes }) => {
   useEffect(() => {
     const initialize = async () => {
       const hasCookie = getCookie('ignoreTerm');
+      const dontShowAgainBusinessSector = getCookie('dontShowAgainBusinessSector');
 
       if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
         const member = accountSettings?.SubAccountSettings?.MembershipDetails;
@@ -54,9 +55,6 @@ const DashboardScreen = ({ classes }) => {
           if (member?.NextRequiredChange <= 14) {
             setShowChangePassword(true);
           }
-          else if (accountSettings?.SubAccountSettings?.RequestBusinessActivity) {
-            setShowBusinessSectorActivity(true);
-          }
         }
       }
 
@@ -64,7 +62,7 @@ const DashboardScreen = ({ classes }) => {
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
       }
 
-      setShowBusinessSectorActivity(true);
+      setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
     }
     if (accountSettings) {
       initialize();
@@ -92,6 +90,15 @@ const DashboardScreen = ({ classes }) => {
       await dispatch(getCommonFeatures());
     }
   }
+
+  const onIgnoreBusinessSector = () => {
+    const count = getCookie('businessSectorActivityIgnore') || 0;
+    const nextCount = parseInt(count) + 1;
+    setCookie('businessSectorActivityIgnore', nextCount);
+    setShowBusinessSectorActivity(false);
+  }
+
+
   return (
     <DefaultScreen
       currentPage='dashboard'
@@ -170,15 +177,15 @@ const DashboardScreen = ({ classes }) => {
         showDefaultButtons={false}
         title={t('dashboard.businessSectorActivity.title')}
         onCancel={() => {
-          setShowBusinessSectorActivity(false);
+          onIgnoreBusinessSector();
         }}
         onClose={() => {
-          setShowBusinessSectorActivity(false);
+          onIgnoreBusinessSector();
         }}
       >
-        <Box style={{ height: 230 }}>
-          <BusinessSectorActivity classes={classes} />
-        </Box>
+        <BusinessSectorActivity classes={classes} onDone={() => {
+          setShowBusinessSectorActivity(false);
+        }} />
       </BaseDialog>
     </DefaultScreen>
   )
