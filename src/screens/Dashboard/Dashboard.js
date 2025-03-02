@@ -58,16 +58,15 @@ const DashboardScreen = ({ classes }) => {
             setShowChangePassword(true);
           }
         }
+        if (!popupShowing) {
+          setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
+        }
       }
-
-
       if (!hasCookie && !isAdmin) {
         popupShowing = true;
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
       }
-      if (!popupShowing) {
-        setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
-      }
+
     }
     if (accountSettings) {
       initialize();
