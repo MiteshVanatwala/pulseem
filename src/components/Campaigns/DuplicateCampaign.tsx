@@ -7,6 +7,7 @@ import { CloneOptions } from "../../Models/Campaigns/CloneOptions";
 import { GrDuplicate } from "react-icons/gr";
 import { useSelector } from "react-redux";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
+import { StateType } from "../../Models/StateTypes";
 
 const DuplicateCampaign = ({
   title,
@@ -18,7 +19,7 @@ const DuplicateCampaign = ({
 }: any) => {
   const { t } = useTranslation();
   const [duplicateOptions, setDuplicateOptions] = useState<Number[]>([]);
-  const { accountFeatures } = useSelector(state => state.common);
+  const { accountFeatures } = useSelector((state: StateType) => state.common);
 
   useEffect(() => {
     setDuplicateOptions([]);
