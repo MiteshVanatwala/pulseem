@@ -41,6 +41,7 @@ const DashboardScreen = ({ classes }) => {
 
   useEffect(() => {
     const initialize = async () => {
+      let popupShowing = false;
       const hasCookie = getCookie('ignoreTerm');
       const dontShowAgainBusinessSector = getCookie('dontShowAgainBusinessSector');
 
@@ -53,16 +54,20 @@ const DashboardScreen = ({ classes }) => {
         }
         else {
           if (member?.NextRequiredChange <= 14) {
+            popupShowing = true;
             setShowChangePassword(true);
           }
         }
       }
 
+
       if (!hasCookie && !isAdmin) {
+        popupShowing = true;
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
       }
-
-      setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
+      if (!popupShowing) {
+        setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
+      }
     }
     if (accountSettings) {
       initialize();
