@@ -48,7 +48,7 @@ const BusinessSectorActivity = ({ classes, onDone }: any) => {
     setBusinessSectorActivity({ ...businessSectorActivity, MainActivity: e.target.value })
   }
 
-  const handleSend = () => {
+  const handleSend = async () => {
     let isValid = true;
     const errors: any = { BusinessSize: false, MainActivity: false };
     if (businessSectorActivity.BusinessSize === -1) {
@@ -65,8 +65,10 @@ const BusinessSectorActivity = ({ classes, onDone }: any) => {
     if (!isValid) {
       return;
     }
+
+    await dispatch((updateBusinessSectorActivity as any)(businessSectorActivity));
+    setCookie('dontShowAgainBusinessSector', 'true');
     onDone?.();
-    // dispatch, hide pop up, update cookie
   }
 
   const handleCheckbox = async () => {
