@@ -305,7 +305,7 @@ const EditDynamicGroup = ({ classes }: any) => {
                 message = t('group.saveDynamicGroupResponse.daysBackError');
                 isValid = false;
             }
-            else if (!dynamicGroupModel.dynamicData.MyActivitiesPageViewedUrlIDs?.split(',')) {
+            else if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedUrlIDs?.split(',')) {
                 message = t('group.saveDynamicGroupResponse.pageUrlRequired');
                 isValid = false;
             }
