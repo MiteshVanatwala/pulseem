@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 
 export interface DynamicGroupModel {
     MyActivities: MyActivities;
@@ -82,14 +83,10 @@ export interface MyActivities {
     AbandonedPrice: number | string | null;
 
     IsPageViewed: boolean | null;
-    IsPageViewedComparingType: ActivityEvent;
-    IsPageViewedMinPrice: number | string | null;
-    IsPageViewedMaxPrice: number | string | null;
     IsPageViewedInterval: ActivtyTimeInterval;
     IsPageViewedFromDate: Date | string | null;
     IsPageViewedToDate: Date | string | null;
     PageViewedPrice: number | string | null;
-
     ProductCategory: string[] | null;
 
 }
