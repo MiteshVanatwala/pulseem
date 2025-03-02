@@ -5,6 +5,8 @@ import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { CloneOptions } from "../../Models/Campaigns/CloneOptions";
 import { GrDuplicate } from "react-icons/gr";
+import { useSelector } from "react-redux";
+import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 
 const DuplicateCampaign = ({
   title,
@@ -16,6 +18,7 @@ const DuplicateCampaign = ({
 }: any) => {
   const { t } = useTranslation();
   const [duplicateOptions, setDuplicateOptions] = useState<Number[]>([]);
+  const { accountFeatures } = useSelector(state => state.common);
 
   useEffect(() => {
     setDuplicateOptions([]);
@@ -109,7 +112,7 @@ const DuplicateCampaign = ({
               label={t("smsReport.pulseSending")}
             />
             {
-              isSms === false && <FormControlLabel
+              isSms === false && accountFeatures?.indexOf(PulseemFeatures.DuplicateOldCampaignToBee) > -1 && <FormControlLabel
                 control={
                   <Checkbox
                     color="primary"
