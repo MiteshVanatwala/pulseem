@@ -63,7 +63,6 @@ const DashboardScreen = ({ classes }) => {
         }
       }
       if (!hasCookie && !isAdmin) {
-        popupShowing = true;
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
       }
 
