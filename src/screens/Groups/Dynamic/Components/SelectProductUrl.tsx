@@ -121,6 +121,7 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
           getContentAnchorEl: null,
           PaperProps: {
             style: {
+              maxWidth: 540,
               maxHeight: 300,
               direction: isRTL ? 'rtl' : 'ltr'
             },
@@ -138,24 +139,38 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
             onBlur={(e) => e.preventDefault()}
             value={searchTerm}
             placeholder={t('common.searchInput')}
-            fullWidth
             autoFocus
           />
         </Box>
-        {productUrls.filter((pc: any) => {
-          return searchTerm === '' || pc.URL?.toLowerCase()?.indexOf(searchTerm?.toLowerCase()) > -1
-        })?.map((item: any) => {
-          return (<MenuItem key={item?.ID?.toString()} value={item?.ID?.toString()}>
-            <Checkbox checked={data?.indexOf(item?.ID?.toString()) > -1} />
-            <ListItemText
-              primary={
-                searchTerm.trim() ?
-                  highlightText(item?.URL, searchTerm) :
-                  item?.URL
-              }
-            />
-          </MenuItem>)
-        })}
+        {productUrls
+          .filter((pc: any) => {
+            return searchTerm === '' || pc.URL?.toLowerCase()?.indexOf(searchTerm?.toLowerCase()) > -1
+          })
+          .sort((a: any, b: any) => {
+            const aSelected = data?.indexOf(a?.ID?.toString()) > -1;
+            const bSelected = data?.indexOf(b?.ID?.toString()) > -1;
+
+            if (aSelected && !bSelected) return -1;
+            if (!aSelected && bSelected) return 1;
+
+            return decodeURIComponent(a?.URL).localeCompare(decodeURIComponent(b?.URL));
+          })
+          .map((item: any) => {
+            return (
+              <MenuItem key={item?.ID?.toString()} value={item?.ID?.toString()}>
+                <Checkbox checked={data?.indexOf(item?.ID?.toString()) > -1} />
+                <ListItemText
+                  style={{ whiteSpace: 'normal', direction: 'ltr', textAlign: 'left' }}
+                  primary={
+                    searchTerm.trim() ?
+                      highlightText(item?.URL, searchTerm) :
+                      decodeURIComponent(item?.URL)
+                  }
+                />
+              </MenuItem>
+            )
+          })
+        }
       </Select>
     </FormControl>
     {
