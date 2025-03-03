@@ -395,13 +395,13 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                     <SelectProductCategories
                         classes={classes}
                         disabled={!data.dynamicData?.MyActivities.IsNotPurchased}
-                        data={data.dynamicData?.MyActivities?.IsPageViewedProductCategory?.split(',')}
+                        data={data.dynamicData?.MyActivities?.NotPurchasedProductCategory?.split(',')}
                         onUpdate={(value: any) => {
                             if (value !== null) {
-                                onUpdate('IsPageViewedProductCategory', value.join(','))
+                                onUpdate('NotPurchasedProductCategory', value.join(','))
                             }
                             else {
-                                onUpdate('IsPageViewedProductCategory', value)
+                                onUpdate('NotPurchasedProductCategory', value)
                             }
                         }} />
                 </Grid>
