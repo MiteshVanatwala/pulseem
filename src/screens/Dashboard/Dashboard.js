@@ -178,6 +178,7 @@ const DashboardScreen = ({ classes }) => {
         classes={classes}
         open={showBusinessSectorActivity}
         showDefaultButtons={false}
+        childrenStyle={classes.overflowHidden}
         title={t('dashboard.businessSectorActivity.title')}
         onCancel={() => {
           onIgnoreBusinessSector();

@@ -4300,5 +4300,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "& .description": {
       height: '50px'
     }
+  },
+  overflowHidden: {
+    overflow: 'hidden'
   }
 });
