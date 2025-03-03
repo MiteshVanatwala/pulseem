@@ -4270,7 +4270,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   maxWidthMinContent: {
-    maxWidth: 'min-content !important'
+    maxWidth: 'min-content !important',
+    "@media screen and (max-width: 540px)": {
+      maxWidth: '100% !important'
+    },
   },
   connectedDot: {
     '& .MuiBadge-dot': {
