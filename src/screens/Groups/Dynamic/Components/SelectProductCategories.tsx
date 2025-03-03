@@ -83,7 +83,7 @@ const SelectProductCategories = ({ classes, data, onUpdate, disabled }: any) => 
         {productCategories.filter((pc: any) => {
           return searchTerm === '' || pc.CategoryName?.toLowerCase()?.indexOf(searchTerm?.toLowerCase()) > -1
         })?.map((item: any) => {
-          return (<MenuItem key={item?.CategoryId?.toString()} value={item?.CategoryId?.toString()}>
+          return (<MenuItem style={{ paddingInline: 5 }} key={item?.CategoryId?.toString()} value={item?.CategoryId?.toString()}>
             <Checkbox checked={data?.indexOf(item?.CategoryId?.toString()) > -1} />
             <ListItemText primary={item?.CategoryName} />
           </MenuItem>)

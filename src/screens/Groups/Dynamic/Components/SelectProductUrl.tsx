@@ -159,7 +159,7 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
           })
           .map((item: any) => {
             return (
-              <MenuItem key={item?.ID?.toString()} value={item?.ID?.toString()} style={{ direction: 'ltr', textAlign: 'left' }}>
+              <MenuItem key={item?.ID?.toString()} value={item?.ID?.toString()} style={{ direction: 'ltr', textAlign: 'left', paddingInline: 10 }}>
                 <Checkbox checked={data?.indexOf(item?.ID?.toString()) > -1} />
                 <ListItemText
                   style={{ whiteSpace: 'normal', direction: 'ltr', textAlign: 'left' }}
