@@ -1,12 +1,13 @@
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem, Select, styled, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BusinessSectorActivityModel } from "../../../Models/BusinessSectorActivity/BusinessSectorActivity";
 import { useEffect, useState } from "react";
 import { FieldOfActivities } from "../../../helpers/Constants";
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { updateBusinessSectorActivity } from "../../../redux/reducers/commonSlice";
+import { StateType } from "../../../Models/StateTypes";
 
 const StyledMenuItem = styled(MenuItem)({
   '&:not(:first-child):hover': {
@@ -17,6 +18,7 @@ const StyledMenuItem = styled(MenuItem)({
 
 const BusinessSectorActivity = ({ classes, onDone }: any) => {
   const { t } = useTranslation();
+  const { isRTL } = useSelector((state: StateType) => state.core);
   const [filterFieldOfActivity, setFilterFieldOfActivity] = useState<string[]>([]);
   const [businessSectorActivityIgnore, setBusinessSectorActivityIgnore] = useState<boolean>(false);
   const [businessSectorActivity, setBusinessSectorActivity] = useState<BusinessSectorActivityModel>({
@@ -125,10 +127,10 @@ const BusinessSectorActivity = ({ classes, onDone }: any) => {
           className={classes.mt1}
           onChange={handleBusinessSize}
         >
-          <StyledMenuItem value={-1}>{t('common.select')}</StyledMenuItem>
-          <StyledMenuItem value={'1-10'}>{t('dashboard.businessSectorActivity.small')}</StyledMenuItem>
-          <StyledMenuItem value={'10-100'}>{t('dashboard.businessSectorActivity.medium')}</StyledMenuItem>
-          <StyledMenuItem value={'+100'}>{t('dashboard.businessSectorActivity.large')}</StyledMenuItem>
+          <StyledMenuItem value={-1} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>{t('common.select')}</StyledMenuItem>
+          <StyledMenuItem value={'1-10'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>{t('dashboard.businessSectorActivity.small')}</StyledMenuItem>
+          <StyledMenuItem value={'10-100'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>{t('dashboard.businessSectorActivity.medium')}</StyledMenuItem>
+          <StyledMenuItem value={'+100'} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>{t('dashboard.businessSectorActivity.large')}</StyledMenuItem>
         </Select>
         {validationError?.BusinessSize === true && <Typography className={clsx(classes.errorText, classes.f16, classes.pt10)} variant="body1">{t('common.requiredField')}</Typography>}
       </FormControl>
@@ -175,7 +177,8 @@ const BusinessSectorActivity = ({ classes, onDone }: any) => {
             style={{
               paddingInline: 15,
               paddingBlock: 5,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              direction: isRTL ? 'rtl' : 'ltr'
             }}
           >{item}</StyledMenuItem>)}
         </Select>
