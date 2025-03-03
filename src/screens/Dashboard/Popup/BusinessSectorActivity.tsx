@@ -1,8 +1,7 @@
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem, Select, styled, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
-import { useDispatch, useSelector } from "react-redux";
-import { StateType } from "../../../Models/StateTypes";
+import { useDispatch } from "react-redux";
 import { BusinessSectorActivityModel } from "../../../Models/BusinessSectorActivity/BusinessSectorActivity";
 import { useEffect, useState } from "react";
 import { FieldOfActivities } from "../../../helpers/Constants";
@@ -18,14 +17,12 @@ const StyledMenuItem = styled(MenuItem)({
 
 const BusinessSectorActivity = ({ classes, onDone }: any) => {
   const { t } = useTranslation();
-  const { isRTL } = useSelector((state: StateType) => state.core);
   const [filterFieldOfActivity, setFilterFieldOfActivity] = useState<string[]>([]);
   const [businessSectorActivityIgnore, setBusinessSectorActivityIgnore] = useState<boolean>(false);
   const [businessSectorActivity, setBusinessSectorActivity] = useState<BusinessSectorActivityModel>({
     MainActivity: t('common.select'),
     BusinessSize: -1
   })
-  const [isHovering, setIsHovering] = useState<boolean>(false);
 
   const [validationError, setValidationError] = useState<any>({
     MainActivity: false,
