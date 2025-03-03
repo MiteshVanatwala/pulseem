@@ -180,7 +180,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: 440,
+      minWidth: 400,
       maxWidth: `${maxDialogWidth[windowSize]}px !important`,
     },
     "& .MuiDialog-paperScrollPaper": {
@@ -4300,5 +4300,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "& .description": {
       height: '50px'
     }
+  },
+  overflowHidden: {
+    overflow: 'hidden'
   }
 });
