@@ -9,6 +9,9 @@ import {
 	FormHelperText,
 	Divider,
 	MenuItem,
+	Button,
+	Tooltip,
+	IconButton,
 } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import clsx from 'clsx';
@@ -18,6 +21,8 @@ import moment from 'moment';
 import { RightPaneProps, coreProps } from '../Types/WhatsappCampaign.types';
 import { DateField } from '../../../../components/managment';
 import { IoIosArrowDown } from 'react-icons/io';
+import { FaRegCalendarAlt } from 'react-icons/fa';
+import { BsInfoCircle } from 'react-icons/bs';
 
 const RightPane = ({
 	classes,
@@ -36,6 +41,10 @@ const RightPane = ({
 	isSpecialDateBefore,
 	setIsSpecialDateBefore,
 	specialDatedropDown,
+	selectedGroups,
+	pulseSendingOpen,
+	packetSending,
+	randomSending
 }: ClassesType & RightPaneProps) => {
 	const { t: translator } = useTranslation();
 
@@ -321,6 +330,43 @@ const RightPane = ({
 				</FormControl>
 			</Grid>
 			<Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
+			<div className={classes.pulseDiv}>
+				<Button
+					className={clsx(
+						classes.btn, classes.btnRounded,
+						(selectedGroups.length >= 1 && sendType !== "3") ? null : classes.disabled
+					)}
+					onClick={pulseSendingOpen}
+				>
+					<FaRegCalendarAlt className={clsx(classes.paddingSides5)} />
+					{translator("mainReport.pulseSend")}
+				</Button>
+				<Tooltip
+					disableFocusListener
+					style={{ marginInlineEnd: isRTL ? 5 : 0, marginInlineStart: 5 }}
+					title={translator("smsReport.pulseSendTip")}
+					classes={{ tooltip: classes.customWidth }}
+					className={clsx(classes.ml5, classes.mt1)}
+				>
+					<IconButton style={{ padding: 0, marginInlineStart: 10 }} className={clsx(classes.icon_Info, classes.f20)} aria-label={translator("mainReport.toolTip1")}>
+						<BsInfoCircle />
+					</IconButton>
+				</Tooltip>
+			</div>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					color: "#7f7f7f",
+					fontWeight: "400",
+					fontSize: "14px",
+				}}
+			>
+
+				{packetSending || null}
+				{randomSending || null}
+			</div>
 		</div>
 	);
 };
