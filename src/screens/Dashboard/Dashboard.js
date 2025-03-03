@@ -58,9 +58,9 @@ const DashboardScreen = ({ classes }) => {
             setShowChangePassword(true);
           }
         }
-        // if (!popupShowing) {
-        //   setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
-        // }
+        if (!popupShowing) {
+          setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
+        }
       }
       if (!hasCookie && !isAdmin) {
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
