@@ -77,6 +77,7 @@ import { sitePrefix } from '../../../config';
 import { SelectChangeEvent, Stack } from '@mui/material';
 import ConfirmationButtons from '../../../components/ConfirmationButtons/ConfirmationButtons';
 import { DateFormats } from '../../../helpers/Constants';
+import Pulse from '../../../components/Pulse/Pulse';
 
 const SendCampaign = ({
 	classes,
@@ -150,7 +151,23 @@ const SendCampaign = ({
 		type: '',
 		data: ''
 	});
-
+	
+	const [ pulseData, setPulseData ] = useState({
+		pulseSettingsId: 0,
+		pulseAmount: 0,
+		timeInterval: 0,
+		pulseType: 2,
+		random: 0,
+		timeType: 1,
+		pulsePer: "recipients",
+		pulseReci: "",
+		minName: "mins",
+		hourName: "Hours",
+		togglePulse: false,
+		toggleRandom: false,
+		pulsesOpen: false
+	});
+	
 	useEffect(() => {
 		(async () => {
 			setIsLoader(true);
@@ -316,6 +333,28 @@ const SendCampaign = ({
 				);
 				setExceptionalDaysToggle(true);
 			}
+
+			const {
+				PulseSettings,
+				RandomSettings
+			} = campaignSettings?.Data;
+			if (PulseSettings !== null && RandomSettings !== null) {
+				setPulseData({
+					pulseSettingsId: PulseSettings?.PulseSettingsId || 0,
+					pulseAmount: PulseSettings?.PulseAmount || 0,
+					timeInterval: PulseSettings?.TimeInterval || 0,
+					pulseType: PulseSettings?.PulseType || 0,
+					random: RandomSettings?.RandomAmount || 0,
+					timeType: PulseSettings?.TimeType || 0,
+					pulsePer: PulseSettings?.PulseType === 2 ? "recipients" : "percent",
+					pulseReci: PulseSettings?.PulseType === 2 ? "Recipients" : "",
+					minName: PulseSettings?.TimeType === 1 ? "mins" : "",
+					hourName: PulseSettings?.TimeType === 2 ? "Hours" : "",
+					togglePulse: PulseSettings?.PulseSettingsId !== -1 ? true : false,
+					toggleRandom: RandomSettings?.RandomAmount !== 0 ? true : false,
+					pulsesOpen: false
+				})
+			}
 		}
 	};
 
@@ -395,6 +434,16 @@ const SendCampaign = ({
 					),
 					ExceptionalDays: exceptionalDaysToggle ? Number(exceptionalDays) : 0,
 				},
+				PulseSettings: {
+					PulseSettingsId: pulseData.pulseSettingsId,
+					PulseAmount: pulseData.pulseAmount,
+					PulseType: pulseData.pulseType,
+					TimeInterval: pulseData.timeInterval,
+					TimeType: pulseData.timeType
+				},
+				RandomSettings: {
+					RandomAmount: pulseData.random
+				}
 			};
 			if (sendType === '2') {
 				saveCampaignSettingsPayload['FutureDateTime'] = `${moment(sendDate)
@@ -589,7 +638,6 @@ const SendCampaign = ({
 	};
 
 	const onFilter = () => {
-		console.log('onFilter');
 	};
 
 	const getApiGroupsData = async () => {
@@ -952,7 +1000,7 @@ const SendCampaign = ({
 						}}
 				/>
 		)
-}
+	}
 
 	return (
 		<DefaultScreen
@@ -1021,6 +1069,19 @@ const SendCampaign = ({
 											isSpecialDateBefore={isSpecialDateBefore}
 											setIsSpecialDateBefore={setIsSpecialDateBefore}
 											specialDatedropDown={specialDatedropDown}
+											selectedGroups={selectedGroups}
+											pulseSendingOpen={() => setPulseData({ ...pulseData, pulsesOpen: true })}
+											packetSending={
+												pulseData.togglePulse ? <span style={{ marginBottom: "5px", marginTop: "5px" }}>
+													{translator("smsReport.packetSend")} - {pulseData.pulseAmount} {pulseData.pulsePer === "" || pulseData.pulsePer === "recipients" ? translator("sms.recipients") : translator("common.Percent")} {" "}
+													{translator("sms.every")} {pulseData.timeInterval} {pulseData.hourName === "" || pulseData.minName === "mins" ? translator("common.minutes") : translator("common.hours")}
+												</span> : <></>
+											}
+											randomSending={
+												pulseData.toggleRandom ?
+													<span>{translator("smsReport.randomSend")} - {pulseData.random} {translator("smsReport.randomRecipients")}</span>
+												: <></>
+											}
 										/>
 									</Grid>
 								</Grid>
@@ -1042,6 +1103,50 @@ const SendCampaign = ({
 			)}
 			{renderDialog()}
 			<Loader isOpen={isLoader} showBackdrop={true} />
+			{
+        <Pulse
+          classes={classes}
+          selectedGroups={selectedGroups}
+          onClose={(pulseResponse: any) => {
+            if (pulseResponse !== null) {
+							setPulseData({
+								...pulseData,
+								pulseAmount: pulseResponse?.pulseAmount,
+								timeInterval: pulseResponse?.timeInterval,
+								pulseType: pulseResponse?.pulseType,
+								random: pulseResponse?.random,
+								timeType: pulseResponse?.timeType,
+								pulsePer: pulseResponse?.pulsePer,
+								pulseReci: pulseResponse?.pulseReci,
+								minName: pulseResponse?.minName,
+								hourName: pulseResponse?.hourName,
+								togglePulse: pulseResponse?.togglePulse,
+								toggleRandom: pulseResponse?.toggleRandom,
+								pulsesOpen: false,
+							});
+            } else {
+							setPulseData({
+								...pulseData,
+								pulsesOpen: false,
+							})
+						}
+          }}
+          isOpen={pulseData.pulsesOpen}
+          initialValues={{
+            pulseAmount: pulseData.pulseAmount,
+            timeInterval: pulseData.timeInterval,
+            pulseType: pulseData.pulseType,
+            random: pulseData.random,
+            timeType: pulseData.timeType,
+            pulsePer: pulseData.pulsePer,
+            pulseReci: pulseData.pulseReci,
+            minName: pulseData.minName,
+            hourName: pulseData.hourName,
+            togglePulse: pulseData.togglePulse,
+            toggleRandom: pulseData.toggleRandom,
+          }}
+        />
+      }
 		</DefaultScreen>
 	);
 };
