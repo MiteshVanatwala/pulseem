@@ -1,12 +1,12 @@
 import clsx from "clsx";
-import { Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormHelperText, Grid, MenuItem, MobileStepper, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
+import { Box, Button, Checkbox, Container, FormControl, FormControlLabel, FormHelperText, Grid, IconButton, MenuItem, MobileStepper, TextField, Tooltip, Typography, Zoom } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
 import { FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
-import { MdDvr, MdKeyboardArrowDown, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
+import { MdDvr, MdKeyboardArrowDown, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
 import PasswordHint from "../Settings/AccountSettings/Password/PasswordHint";
@@ -107,7 +107,7 @@ const SignUpNew = ({ classes }: any) => {
           emailId: qs?.emailid || '',
           cellPhone: Data?.Mobile,
           companyName: Data?.Company,
-          fieldOfInterest: Data?.ProductType.split(',')
+          fieldOfInterest: Data?.ProductType?.split(',') || []
         })
       }
     } else {
@@ -942,6 +942,48 @@ const SignUpNew = ({ classes }: any) => {
     )
   }
 
+  const buttonNextIcon = () => {
+    if (activeStep === 3) return <></>;
+    return (
+      <>
+        <IconButton
+          aria-label="fingerprint"
+          color="secondary"
+          className="previous"
+          onClick={() => activeStep === 2 ? saveSignup() : saveUserInfo()}
+          disabled={activeStep === 3}
+          style={{
+            left: isRTL ? '-40px' : 'initial',
+            right: !isRTL ? '-40px' : 'initil',
+          }}
+        >
+          { isRTL ? <MdKeyboardArrowLeft /> : <MdKeyboardArrowRight /> }
+        </IconButton>
+      </>
+    )
+  }
+
+  const buttonPreviousIcon = () => {
+    if (activeStep === 0 || activeStep === 3) return <></>;
+    return (
+      <>
+        <IconButton
+          aria-label="fingerprint"
+          color="secondary"
+          className="next"
+          onClick={handleBack}
+          disabled={activeStep === 0 || activeStep === 3}
+          style={{
+            left: !isRTL ? '-40px' : 'initial',
+            right: isRTL ? '-40px' : 'initil',
+          }}
+        >
+          { !isRTL ? <MdKeyboardArrowLeft /> : <MdKeyboardArrowRight /> }
+        </IconButton>
+      </>
+    )
+  }
+
   return (
     <Container
       maxWidth='xl'
@@ -956,6 +998,38 @@ const SignUpNew = ({ classes }: any) => {
             { activeStep === 1 && Step2() }
             { activeStep === 2 && Step3() }
             { activeStep === 3 && Step4() }
+            <Box>
+              <Grid container>
+                <Grid item md={6} className={clsx(isRTL ? classes.textRight : classes.textLeft)}>
+                  {isRTL ? buttonNextIcon() : buttonPreviousIcon()}
+                  {
+                    activeStep !== 0 && activeStep !== 3 && (
+                      <Button
+                        onClick={handleBack}
+                        disabled={activeStep === 0 || activeStep === 3}
+                        className={clsx(classes.f22, classes.bold)}
+                      >
+                        {t('common.back')}
+                      </Button>
+                    )
+                  }
+                </Grid>
+                <Grid item md={6} className={clsx(isRTL ? classes.textLeft : classes.textRight)}>
+                  {isRTL ? buttonPreviousIcon() : buttonNextIcon()}
+                  {
+                    activeStep !== 3 && (
+                      <Button
+                        onClick={() => activeStep === 2 ? saveSignup() : saveUserInfo()}
+                        disabled={activeStep === 3}
+                        className={clsx(classes.f22, classes.bold)}
+                      >
+                        {t(`common.${activeStep === 2 ? 'finish' : 'next'}`)}
+                      </Button>
+                    )
+                  }
+                </Grid>
+              </Grid>
+            </Box>
           </Box>
         </Box>
         {
@@ -967,14 +1041,10 @@ const SignUpNew = ({ classes }: any) => {
               activeStep={activeStep}
               className={clsx("stepper", classes.mt20, classes.borderRadius30)}
               nextButton={
-                <Button size="small" onClick={() => activeStep === 2 ? saveSignup() : saveUserInfo()} disabled={activeStep === 3}>
-                  {t(`common.${activeStep === 2 ? 'finish' : 'next'}`)}
-                </Button>
+                <div />
               }
               backButton={
-                <Button size="small" onClick={handleBack} disabled={activeStep === 0 || activeStep === 3}>
-                  {t('common.back')}
-                </Button>
+                <div />
               }
             />
           )

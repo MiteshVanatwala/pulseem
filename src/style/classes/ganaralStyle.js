@@ -4319,18 +4319,46 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .signUpContainer': {
       marginTop: '5%',
       '& .widgetContainer': {
+        position: 'relative',
         background: '#fff',
         width: '30%',
         margin: 'auto',
         height: '50%',
         borderRadius: '50px',
-        padding: '20px 50px'
+        padding: '20px 50px',
+        boxShadow: '0 10px 30px -6px black',
+        '& .previous, & .next': {
+          background: '#beff00',
+          border: 'solid 5px #fff',
+          boxShadow: '0px 0px 5px 0px #000',
+          bottom: '30px',
+          height: '80px',
+          width: '80px',
+          position: 'absolute',
+          padding: '0px',
+          fontSize: '5rem',
+          color: 'black'
+        },
+        '& .previous': {
+          left: '-40px',
+        },
+        '& .next': {
+          right: '-40px',
+        },
       },
     },
     '& .stepper': {
-      width: 400,
+      width: 'fit-content',
       margin: 'auto',
-      marginTop: 10,
+      background: 'transparent',
+      border: 'solid 2px #fff',
+      marginTop: '20px',
+      '& .MuiMobileStepper-dot': {
+        backgroundColor: '#fff',
+        '&.MuiMobileStepper-dotActive': {
+          backgroundColor: '#beff00',
+        }
+      }
     }
   }
 });
