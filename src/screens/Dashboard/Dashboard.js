@@ -36,7 +36,7 @@ const DashboardScreen = ({ classes }) => {
     IsTermsApproved: false
   });
   const [showBusinessSectorActivity, setShowBusinessSectorActivity] = useState(false);
-
+  const [showThankYou, setShowThankYou] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -187,8 +187,13 @@ const DashboardScreen = ({ classes }) => {
           onIgnoreBusinessSector();
         }}
       >
-        <BusinessSectorActivity classes={classes} onDone={() => {
-          setShowBusinessSectorActivity(false);
+        <BusinessSectorActivity thankYouPage={showThankYou} classes={classes} onDone={() => {
+          if (showThankYou) {
+            setShowBusinessSectorActivity(false);
+          }
+          else {
+            setShowThankYou(true);
+          }
         }} />
       </BaseDialog>
     </DefaultScreen>
