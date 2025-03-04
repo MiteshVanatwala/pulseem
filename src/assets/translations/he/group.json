@@ -46,7 +46,8 @@
     "clickChannelRequired": "יש לבחור לפחות ערוץ קמפיינים אחד לפחות על מנת לחפש לקוחות שהקליקו",
     "notClickChannelRequired": "יש לבחור לפחות ערוץ קמפיינים אחד לפחות על מנת לחפש לקוחות שלא הקליקו",
     "specificDateIsRequired": "יש לבחור תאריכים ספציפיים",
-    "daysBackError": "יש להזין מספר ימים אחורה"
+    "daysBackError": "יש להזין מספר ימים אחורה",
+    "pageUrlRequired": "יש לבחור עמוד אחד לפחות מרשימת העמודים"
   },
   "updateFrequency": "אופן העלאה",
   "results": "לחץ לתוצאות",
@@ -71,5 +72,6 @@
   "mergeGroup": "מזג קבוצות",
   "mergeGroupDesc": "מיזוג הקבוצות יצור קבוצה חדשה  <br/>המורכבת מכל הנמענים מכל הקבוצות שנבחרו",
   "exportGroupNames": "ייצא גם שמות קבוצות (עלול לקחת יותר זמן)",
-  "exportGroupNamesTooltip": "This will take a little bit more time"
+  "exportGroupNamesTooltip": "This will take a little bit more time",
+  "selectePages": "בחר עמודים"
 }

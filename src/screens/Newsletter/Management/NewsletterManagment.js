@@ -474,7 +474,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
             const campaign = newslettersParentCampaigns?.find((e) => { return parseInt(e.CampaignID) === parseInt(CampaignID) });
             setDuplicateDialog({
               id: CampaignID,
-              name: campaign?.Name
+              name: campaign?.Name,
+              IsNewEditor: IsNewEditor
             });
           }
         }
@@ -1049,6 +1050,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         isOpen={!!duplicateDialog?.id}
         duplicateOptions={[]}
         handleClose={async (selectedOptions) => {
+          setLoader(true);
           setDuplicateDialog({});
           if (selectedOptions !== undefined) {
             clearSearch()
@@ -1057,8 +1059,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
             await dispatch(duplicteCampaign({ CampaignID: duplicateDialog?.id, CloneOptions: selectedOptions }))
             getData()
           }
+          setLoader(false);
         }}
         campaignName={duplicateDialog?.name}
+        IsNewEditor={duplicateDialog?.IsNewEditor}
       />
       {/* Here we are using DomainVerification as a component and not via React Store */}
       <DomainVerification

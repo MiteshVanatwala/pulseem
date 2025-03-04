@@ -47,7 +47,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
   const { productList } = useSelector((state: StateType) => state.product)
   const [isSingleOrMultiple, setSingleOrMultiple] = useState(Items.Single);
   const [selectedStaticProduct, setSelectedStaticProduct] = useState<number>(1);
-  const [staticProduct, setStaticProduct] = useState<StaticProductListInterface>({1: StaticProductInit});
+  const [staticProduct, setStaticProduct] = useState<StaticProductListInterface>({ 1: StaticProductInit });
   const [uptoProducts, setUptoProducts] = useState(1);
   const [isFilterByEventType, setFilterIsByEventType] = useState(true);
   const [isFilterIsByProductCategory, setFilterIsByProductCategory] = useState(true);
@@ -128,7 +128,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
 
     if (isStaticOrDynamic === AddProductCatalogType.Static) {
       let staticProductList: StaticProductListInterface = {};
-      for (let ind=1; ind<=uptoProducts; ind++) {
+      for (let ind = 1; ind <= uptoProducts; ind++) {
         staticProductList[ind] = StaticProductInit;
       }
       setStaticProduct(staticProductList);
@@ -140,19 +140,16 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
     if (isStaticOrDynamic === AddProductCatalogType.Static) {
       setSingleOrMultiple(Items.Single);
     }
-  }, [ isStaticOrDynamic  ])
+  }, [isStaticOrDynamic])
 
   useEffect(() => {
     setButtonText(t('campaigns.buyNow'));
-    if (!productList?.length) {
-      dispatch(GetProductsList());
-    }
   }, []);
 
   const onHandleSave = async () => {
     if (isStaticOrDynamic === AddProductCatalogType.Static) {
       let isFormComplete = true;
-      for (var  key in staticProduct) {
+      for (var key in staticProduct) {
         if (staticProduct[key]['ID'] === 0) {
           isFormComplete = false;
           staticProduct[key]['Error'] = t('campaigns.selectProduct');
@@ -431,7 +428,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
       case 2:
         event = t('campaigns.cartAbandonment');
         break;
-      
+
       case 3:
         event = t('campaigns.lastViewedProduct');
         break;
@@ -506,7 +503,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                 <Button className={clsx(classes.btn, classes.w50, isStaticOrDynamic === AddProductCatalogType.Dynamic ? classes.redButton : null)} onClick={() => setIsStaticOrDynamic(AddProductCatalogType.Dynamic)}>{t('campaigns.createProductBlock')}</Button>
                 <Button className={clsx(classes.btn, classes.w50, isStaticOrDynamic === AddProductCatalogType.Static ? classes.redButton : null)} onClick={() => setIsStaticOrDynamic(AddProductCatalogType.Static)}>{t('campaigns.selectProduct')}</Button>
               </ButtonGroup>
-              
+
               <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1" className={clsx(classes.mb10)}>
                 <FormControlLabel
                   value={Items.Single}
@@ -629,7 +626,7 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
 
               {
                 isStaticOrDynamic === AddProductCatalogType.Dynamic && (
-                  <>    
+                  <>
                     <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.filter')}:</h4>
                     <div className={clsx(classes.mb25)}>
                       <div className={clsx(classes.pb10)}>
@@ -926,14 +923,14 @@ const ProductCatalog = ({ classes, isOpen = true, save }: ProductCatalogTypes) =
                           isDescriptionVisible={isDescriptionVisible}
                           isPriceVisible={isPriceVisible}
                           isButtonVisible={isButtonVisible}
-                          imageURL={ isStaticOrDynamic === AddProductCatalogType.Dynamic ? NO_IMAGE_URL : get(staticProduct, [i+1, 'ImageURLs'], NO_IMAGE_URL) }
-                          name={ isStaticOrDynamic === AddProductCatalogType.Dynamic ? ProductDetails.Name : get(staticProduct, [i+1, 'Name'], '')}
-                          description={ isStaticOrDynamic === AddProductCatalogType.Dynamic ? ProductDetails.Description : get(staticProduct, [i+1, 'Description'], '')}
-                          price={ isStaticOrDynamic === AddProductCatalogType.Dynamic ? ProductDetails.Price : `${get(staticProduct, [i+1, 'MaxPrice'], '')}`}
+                          imageURL={isStaticOrDynamic === AddProductCatalogType.Dynamic ? NO_IMAGE_URL : get(staticProduct, [i + 1, 'ImageURLs'], NO_IMAGE_URL)}
+                          name={isStaticOrDynamic === AddProductCatalogType.Dynamic ? ProductDetails.Name : get(staticProduct, [i + 1, 'Name'], '')}
+                          description={isStaticOrDynamic === AddProductCatalogType.Dynamic ? ProductDetails.Description : get(staticProduct, [i + 1, 'Description'], '')}
+                          price={isStaticOrDynamic === AddProductCatalogType.Dynamic ? ProductDetails.Price : `${get(staticProduct, [i + 1, 'MaxPrice'], '')}`}
                           buttonText={buttonText}
                           structure={structure}
                           direction={direction}
-                          eventType={ isStaticOrDynamic === AddProductCatalogType.Dynamic && isFilterByEventType ? getEventName(eventType) : ''}
+                          eventType={isStaticOrDynamic === AddProductCatalogType.Dynamic && isFilterByEventType ? getEventName(eventType) : ''}
                           category={
                             isStaticOrDynamic === AddProductCatalogType.Dynamic ? (isFilterIsByProductCategory ? productCategories.find((cat: any) => cat.CategoryId == category)?.CategoryName || t('campaigns.allCategories') : '') : ''}
                         />

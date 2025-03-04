@@ -1,10 +1,8 @@
 import clsx from 'clsx';
 import {
-    Grid, FormControl, MenuItem, Checkbox, FormControlLabel, InputLabel, TextField, Button, FormHelperText
+    Grid, Checkbox, FormControlLabel, InputLabel, TextField, Button, FormHelperText
 } from '@material-ui/core'
 import 'moment/locale/he';
-import { Select } from '@mui/material';
-import { IoIosArrowDown } from 'react-icons/io';
 import { ActivityEvent, ActivtyTimeInterval } from '../../../../Models/Groups/DynamicGroup';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
@@ -15,6 +13,7 @@ import { DateFormats } from '../../../../helpers/Constants';
 import SelectComparingType from '../Components/SelectComparingType';
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import SelectProductCategories from '../Components/SelectProductCategories';
+import SelectProductUrl from '../Components/SelectProductUrl';
 
 const EventsDetails = ({ classes, data, onUpdate }: any) => {
     const { t } = useTranslation();
@@ -23,22 +22,10 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
     useEffect(() => {
         setOptionDisabled(data.dynamicData?.MyActivities.IsPurchased ||
             data.dynamicData?.MyActivities.IsNotPurchased ||
-            data.dynamicData?.MyActivities.IsAbandoned /* || data.dynamicData?.MyActivities.IsPageViewed */
+            data.dynamicData?.MyActivities.IsAbandoned ||
+            data.dynamicData?.MyActivities.IsPageViewed
         )
     }, [data.dynamicData?.MyActivities]);
-
-    // useEffect(() => {
-    //     if (data.dynamicData?.MyActivities?.IsAbandonedComparingType?.toString() === ActivityEvent.Any ||
-    //         data.dynamicData?.MyActivities?.IsPurchasedComparingType?.toString() === ActivityEvent.Any ||
-    //         data.dynamicData?.MyActivities?.IsNotPurchasedComparingType?.toString() === ActivityEvent.Any) {
-    //         onResetPrices();
-    //     }
-
-    // }, [
-    //     data.dynamicData?.MyActivities?.IsAbandonedComparingType,
-    //     data.dynamicData?.MyActivities?.IsPurchasedComparingType,
-    //     data.dynamicData?.MyActivities?.IsNotPurchasedComparingType
-    // ]);
 
     const renderIsPurchased = () => {
         return (
@@ -639,79 +626,73 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
                         key={'IsPageViewedInterval'}
                     />
                 </Grid>
-                <Grid item xs={6} sm={6} md={2}>
-                    <FormControl
-                        variant="standard"
-                        className={clsx(classes.selectInputFormControl, classes.w100)}
-                    >
-                        <Select
-                            disabled={!data.dynamicData?.MyActivities.IsPageViewed}
-                            // disabled={data.dynamicData?.MyActivities?.IsPurchased === true}
-                            variant='standard'
-                            value={data.dynamicData?.MyActivities.IsPageViewedPriceType || ActivityEvent.Any}
-                            onChange={(event: any) => onUpdate('IsPageViewedPriceType', event.target.value)}
-                            IconComponent={() => <IoIosArrowDown size={20} className={classes.dropdownIconComponent} />}
-                            className={clsx(classes.w100, classes.mt10)}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 300,
-                                    },
-                                },
-                            }}
-                        >
-                            <MenuItem value={ActivityEvent.Any}>{t('common.any')}</MenuItem>
-                            <MenuItem value={ActivityEvent.MoreThan}>{t('common.moreThan')}</MenuItem>
-                            <MenuItem value={ActivityEvent.LessThan}>{t('common.lessThan')}</MenuItem>
-                            <MenuItem value={ActivityEvent.Range}>{t('common.range')}</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-                {(data.dynamicData?.MyActivities.IsPageViewedPriceType.toString() === ActivityEvent.LessThan || data.dynamicData?.MyActivities.IsPageViewedPriceType.toString() === ActivityEvent.MoreThan) && data.dynamicData?.MyActivities.IsPageViewed && (<Grid item xs={12} sm={4} md={4} className={classes.pt5}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
-                            <InputLabel className={classes.fBlack}>{t('common.price')}:</InputLabel>
-                            <TextField
-                                placeholder={t('common.price')}
-                                variant='outlined'
-                                size='small'
-                                value={data.dynamicData?.MyActivities.PageViewedPrice}
-                                onChange={(event: any) => onUpdate('PageViewedPrice', event.target.value.trim())}
-                                className={clsx(classes.w100, classes.textField)}
-                            />
-                        </Grid>
-                    </Grid>
-                </Grid>)
-                }
+                {
+                    data.dynamicData?.MyActivities.IsPageViewedInterval.toString() === ActivtyTimeInterval.SpecificDates && (
+                        <Grid item xs={12} sm={3} md={3} className={classes.pt5}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={6} sm={6} md={6}>
+                                    {/* @ts-ignore */}
+                                    <DateField
+                                        toolbarDisabled={false}
+                                        minDate={undefined}
+                                        maximumDate={moment().add(100, 'y')}
+                                        classes={classes}
+                                        value={data.dynamicData?.MyActivities?.IsPageViewed && data.dynamicData?.MyActivities.IsPageViewedFromDate}
+                                        onChange={(value: any) => onUpdate('IsPageViewedFromDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+                                        placeholder={t('common.FromDate')}
+                                        timePickerOpen={true}
+                                        dateActive={true}
+                                        onTimeChange={() => { }}
+                                        timeActive={false}
+                                        buttons={[]}
+                                        removePadding={true}
+                                        hideInvalidDateMessage={true}
+                                    />
+                                    {
+                                        data.dynamicData?.MyActivities?.IsPageViewedFromDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsAbandonedFromDate', null)}>{t("recipient.reset")}</Button>
+                                    }
+                                </Grid>
 
-                {data.dynamicData?.MyActivities.IsPageViewedPriceType.toString() === ActivityEvent.Range && data.dynamicData?.MyActivities.IsPageViewed && <Grid item xs={12} sm={4} md={4} className={classes.pt5}>
-
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
-                            <InputLabel className={classes.fBlack}>{t('common.minPrice')}:</InputLabel>
-                            <TextField
-                                placeholder={t('common.minPrice')}
-                                variant='outlined'
-                                size='small'
-                                value={data.dynamicData?.MyActivities.IsPageViewedMinPrice}
-                                onChange={(event: any) => onUpdate('IsPageViewedMinPrice', event.target.value.trim())}
-                                className={clsx(classes.w100, classes.textField)}
-                            />
+                                <Grid item xs={6} sm={6} md={6}>
+                                    {/* @ts-ignore */}
+                                    <DateField
+                                        toolbarDisabled={false}
+                                        minDate={data.dynamicData?.MyActivities.IsPageViewedFromDate || undefined}
+                                        maximumDate={moment().add(100, 'y')}
+                                        classes={classes}
+                                        value={data.dynamicData?.MyActivities?.IsPageViewed && data.dynamicData?.MyActivities.IsPageViewedToDate}
+                                        onChange={(value: any) => onUpdate('IsPageViewedToDate', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+                                        placeholder={t('common.ToDate')}
+                                        timePickerOpen={false}
+                                        dateActive={true}
+                                        onTimeChange={() => { }}
+                                        timeActive={false}
+                                        buttons={[]}
+                                        removePadding={true}
+                                        hideInvalidDateMessage={true}
+                                    />
+                                    {
+                                        data.dynamicData?.MyActivities?.IsPageViewedToDate && <Button className={clsx(classes.textRed, classes.f13, classes.p5, classes.floatRight)} onClick={() => onUpdate('IsAbandonedToDate', null)}>{t("recipient.reset")}</Button>
+                                    }
+                                </Grid>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={12} sm={6} md={6} className={clsx(classes.p10, classes.pb25)}>
-                            <InputLabel className={classes.fBlack}>{t('common.maxPrice')}:</InputLabel>
-                            <TextField
-                                placeholder={t('common.maxPrice')}
-                                variant='outlined'
-                                size='small'
-                                value={data.dynamicData?.MyActivities.IsPageViewedMaxPrice}
-                                onChange={(event: any) => onUpdate('IsPageViewedMaxPrice', event.target.value.trim())}
-                                className={clsx(classes.w100, classes.textField)}
-                            />
-                        </Grid>
-                    </Grid>
-                </Grid>
+                    )
                 }
+                <Grid item xs={6} sm={6} md={4}>
+                    <SelectProductUrl
+                        classes={classes}
+                        disabled={!data.dynamicData?.MyActivities.IsPageViewed}
+                        data={data.dynamicData?.MyActivities?.PageViewedUrlIDs?.split(',')}
+                        onUpdate={(value: any) => {
+                            if (value !== null) {
+                                onUpdate('PageViewedUrlIDs', value.join(','))
+                            }
+                            else {
+                                onUpdate('PageViewedUrlIDs', value)
+                            }
+                        }} />
+                </Grid>
             </Grid>
 
         );
@@ -724,7 +705,7 @@ const EventsDetails = ({ classes, data, onUpdate }: any) => {
         {renderIsPurchased()}
         {renderIsNotPurchased()}
         {renderAbandoned()}
-        {/* {renderPageViewed()} */}
+        {renderPageViewed()}
     </>
     )
 }
