@@ -35,7 +35,7 @@ const DashboardScreen = ({ classes }) => {
   const [termOfUse, setTermOfUse] = useState({
     IsTermsApproved: false
   });
-  const [showBusinessSectorActivity, setShowBusinessSectorActivity] = useState(true);
+  const [showBusinessSectorActivity, setShowBusinessSectorActivity] = useState(false);
 
   const dispatch = useDispatch();
 
