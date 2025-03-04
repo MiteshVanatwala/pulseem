@@ -46,7 +46,8 @@
     "clickChannelRequired": "At least one campaign channel must be selected in order to search for customers who clicked",
     "notClickChannelRequired": "At least one campaign channel must be selected in order to search for customers who did not click",
     "specificDateIsRequired": "Please select specific dates",
-    "daysBackError": "Enter several days back"
+    "daysBackError": "Enter several days back",
+    "pageUrlRequired": "At least one page must be selected from the address list"
   },
   "updateFrequency": "Update Frequency",
   "results": "Results",
@@ -71,5 +72,6 @@
   "mergeGroup": "Merge Groups",
   "mergeGroupDesc": "Merging the groups will create a new group <br/>consisting the recipients from all the selected groups",
   "exportGroupNames": "Export Group names (This will take a little bit more time)",
-  "exportGroupNamesTooltip": "This will take a little bit more time"
+  "exportGroupNamesTooltip": "This will take a little bit more time",
+  "selectePages": "Select pages"
 }

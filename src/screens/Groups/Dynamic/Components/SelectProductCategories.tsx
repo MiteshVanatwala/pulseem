@@ -31,8 +31,10 @@ const SelectProductCategories = ({ classes, data, onUpdate, disabled }: any) => 
     <FormControl
       variant="standard"
       className={clsx(classes.selectInputFormControl, classes.w100, classes.ellipsisText)}
+      style={{ paddingLeft: 15, paddingRight: 10 }}
     >
       <Select
+        fullWidth
         displayEmpty={true}
         labelId="category"
         id="category"
@@ -63,14 +65,16 @@ const SelectProductCategories = ({ classes, data, onUpdate, disabled }: any) => 
           getContentAnchorEl: null,
           PaperProps: {
             style: {
+              maxWidth: 540,
               maxHeight: 300,
               direction: isRTL ? 'rtl' : 'ltr'
             },
           },
         }}
       >
-        <Box style={{ padding: 5 }}>
+        <Box style={{ padding: 5, position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white', paddingLeft: 15, paddingRight: 10 }}>
           <TextField
+            fullWidth
             variant="outlined"
             type="text"
             onChange={handleSearchTerm}
@@ -79,7 +83,7 @@ const SelectProductCategories = ({ classes, data, onUpdate, disabled }: any) => 
         {productCategories.filter((pc: any) => {
           return searchTerm === '' || pc.CategoryName?.toLowerCase()?.indexOf(searchTerm?.toLowerCase()) > -1
         })?.map((item: any) => {
-          return (<MenuItem key={item?.CategoryId?.toString()} value={item?.CategoryId?.toString()}>
+          return (<MenuItem style={{ paddingInline: 5 }} key={item?.CategoryId?.toString()} value={item?.CategoryId?.toString()}>
             <Checkbox checked={data?.indexOf(item?.CategoryId?.toString()) > -1} />
             <ListItemText primary={item?.CategoryName} />
           </MenuItem>)

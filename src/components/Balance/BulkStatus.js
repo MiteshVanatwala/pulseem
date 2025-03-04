@@ -137,10 +137,10 @@ const BulkStatus = ({ classes }) => {
   }
 
   const isAllowSms = () => {
-    return billingTypeId !== "1" && Sms.eBillingType === 0 && accountAvailablePackages.length > 0;
+    return Sms?.FeatureAllowed && billingTypeId !== "1" && Sms.eBillingType === 0 && accountAvailablePackages.length > 0;
   }
   const isAllowNewsletter = () => {
-    return accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0;
+    return Newsletters?.FeatureAllowed && accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0;
   }
 
   const showPackageDialogType = async (packageType) => {
@@ -284,7 +284,7 @@ const BulkStatus = ({ classes }) => {
               <Divider />
             </>
           )}
-          {Whatsapp.FeatureExist && (<>
+          {Whatsapp.FeatureExist && Whatsapp.FeatureAllowed && (<>
             <Grid
               container
               item sm={12} md={12} lg={12} xl={12}
