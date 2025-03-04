@@ -128,8 +128,10 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
           },
         }}
       >
-        <Box style={{ padding: 5, position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white' }} onClick={handleInputClick}>
+        <Box style={{ padding: 5, position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'white', paddingLeft: 15, paddingRight: 10 }}
+          onClick={handleInputClick}>
           <TextField
+            fullWidth
             inputRef={inputRef}
             variant="outlined"
             type="text"
@@ -157,7 +159,7 @@ const SelectProductUrl = ({ classes, data, onUpdate, disabled }: any) => {
           })
           .map((item: any) => {
             return (
-              <MenuItem key={item?.ID?.toString()} value={item?.ID?.toString()}>
+              <MenuItem key={item?.ID?.toString()} value={item?.ID?.toString()} style={{ direction: 'ltr', textAlign: 'left', paddingInline: 10 }}>
                 <Checkbox checked={data?.indexOf(item?.ID?.toString()) > -1} />
                 <ListItemText
                   style={{ whiteSpace: 'normal', direction: 'ltr', textAlign: 'left' }}

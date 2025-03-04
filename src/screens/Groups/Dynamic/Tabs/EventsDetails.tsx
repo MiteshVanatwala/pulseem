@@ -1,10 +1,8 @@
 import clsx from 'clsx';
 import {
-    Grid, FormControl, MenuItem, Checkbox, FormControlLabel, InputLabel, TextField, Button, FormHelperText
+    Grid, Checkbox, FormControlLabel, InputLabel, TextField, Button, FormHelperText
 } from '@material-ui/core'
 import 'moment/locale/he';
-import { Select } from '@mui/material';
-import { IoIosArrowDown } from 'react-icons/io';
 import { ActivityEvent, ActivtyTimeInterval } from '../../../../Models/Groups/DynamicGroup';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
