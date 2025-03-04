@@ -4,5 +4,6 @@ export enum CloneOptions {
     SendDate,
     SmsMarketing,
     Pulses,
-    Random
+    Random,
+    SupportedForBee
 }
