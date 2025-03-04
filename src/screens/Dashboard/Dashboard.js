@@ -22,6 +22,7 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { updateTermsOfUse } from '../../redux/reducers/TermsOfUseSlice';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
+import BusinessSectorActivity from './Popup/BusinessSectorActivity';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, isAdmin } = useSelector(state => state.core);
@@ -34,12 +35,15 @@ const DashboardScreen = ({ classes }) => {
   const [termOfUse, setTermOfUse] = useState({
     IsTermsApproved: false
   });
+  const [showBusinessSectorActivity, setShowBusinessSectorActivity] = useState(false);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const initialize = async () => {
+      let popupShowing = false;
       const hasCookie = getCookie('ignoreTerm');
+      const dontShowAgainBusinessSector = getCookie('dontShowAgainBusinessSector');
 
       if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
         const member = accountSettings?.SubAccountSettings?.MembershipDetails;
@@ -50,14 +54,18 @@ const DashboardScreen = ({ classes }) => {
         }
         else {
           if (member?.NextRequiredChange <= 14) {
+            popupShowing = true;
             setShowChangePassword(true);
           }
         }
+        if (!popupShowing) {
+          setShowBusinessSectorActivity((dontShowAgainBusinessSector === 'true' || !accountSettings?.SubAccountSettings?.RequestBusinessActivity) ? false : true);
+        }
       }
-
       if (!hasCookie && !isAdmin) {
         setShowTermsOfUse(!accountSettings?.SubAccountSettings?.IsTermsApproved && accountSettings?.SubAccountSettings?.IgnoranceCount < 3)
       }
+
     }
     if (accountSettings) {
       initialize();
@@ -85,6 +93,15 @@ const DashboardScreen = ({ classes }) => {
       await dispatch(getCommonFeatures());
     }
   }
+
+  const onIgnoreBusinessSector = () => {
+    const count = getCookie('businessSectorActivityIgnore') || 0;
+    const nextCount = parseInt(count) + 1;
+    setCookie('businessSectorActivityIgnore', nextCount);
+    setShowBusinessSectorActivity(false);
+  }
+
+
   return (
     <DefaultScreen
       currentPage='dashboard'
@@ -154,6 +171,25 @@ const DashboardScreen = ({ classes }) => {
         <Box style={{ height: 230 }}>
           <TermsOfUse classes={classes} />
         </Box>
+      </BaseDialog>
+      <BaseDialog
+        paperStyle={classes.maxWidthMinContent}
+        disableBackdropClick
+        classes={classes}
+        open={showBusinessSectorActivity}
+        showDefaultButtons={false}
+        childrenStyle={classes.overflowHidden}
+        title={t('dashboard.businessSectorActivity.title')}
+        onCancel={() => {
+          onIgnoreBusinessSector();
+        }}
+        onClose={() => {
+          onIgnoreBusinessSector();
+        }}
+      >
+        <BusinessSectorActivity classes={classes} onDone={() => {
+          setShowBusinessSectorActivity(false);
+        }} />
       </BaseDialog>
     </DefaultScreen>
   )

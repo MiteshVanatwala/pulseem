@@ -184,5 +184,6 @@ export const PulseemFeatures = {
   SHOW_OLD_API_CREDENTIAL: '58',
   AFFILIATE: '59',
   WhatsAppOnboardingVirtualNumbers: '61',
-  DisableTermOfUse: '62'
+  DisableTermOfUse: '62',
+  DuplicateOldCampaignToBee: '63'
 }

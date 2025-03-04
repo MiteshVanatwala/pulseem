@@ -213,6 +213,19 @@ export const GetAfterLoginInitialData = createAsyncThunk(
   }
 );
 
+export const updateBusinessSectorActivity = createAsyncThunk(
+  'UpdateBusinessSectorActivity',
+  async (request, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`UpdateBusinessSectorActivity`, request);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
