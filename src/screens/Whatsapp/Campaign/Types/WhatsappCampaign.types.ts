@@ -243,6 +243,7 @@ export type SummaryModalProps = {
 	randomlyCount: string;
 	setRandomlyCount: (value: string) => void;
 	resetRandomCount: () => void;
+	pulseData?: any;
 };
 
 export type ApiSendCampaignData = {
