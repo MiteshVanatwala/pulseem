@@ -68,7 +68,7 @@ export const coreSlice = createSlice({
       const isAdmin = userPermissions === '-1' || userPermissions === -1 || isSuperUserSelector(userPermissions);
       const isReadOnly = userPermissions?.indexOf(5) > -1;
 
-      if (isAdmin) {
+      if (isAdmin || payload.isAdmin) {
         state.userRoles = UserRoles.Admin;
       }
       else if (isReadOnly) {
