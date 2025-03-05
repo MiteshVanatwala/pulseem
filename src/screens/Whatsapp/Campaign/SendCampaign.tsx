@@ -915,6 +915,7 @@ const SendCampaign = ({
 				randomlyCount={randomlyCount}
 				setRandomlyCount={setRandomlyCount}
 				resetRandomCount={() => setRandomlyCount('')}
+				pulseData={pulseData}
 			/>
 		),
 		onConfirm: async () => {
