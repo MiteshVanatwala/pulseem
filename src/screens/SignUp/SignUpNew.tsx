@@ -546,7 +546,7 @@ const SignUpNew = ({ classes }: any) => {
         {t('SignUp.PersonalInfo')}
       </h3>
       <Box>
-        <Box className={clsx(classes.paddingInline30)}>
+        <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Typography className={clsx(classes.f18)}>
             {t("SignUp.fullName")}
             <span className={clsx(classes.pl5, classes.colrPrimary)}>*</span>
@@ -576,7 +576,7 @@ const SignUpNew = ({ classes }: any) => {
           )}
         </Box>
 
-        <Box className={clsx(classes.paddingInline30)}>
+        <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Typography className={clsx(classes.f18, classes.mt24)}>
             {t("SignUp.CellPhone")}
             <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
@@ -606,7 +606,7 @@ const SignUpNew = ({ classes }: any) => {
           )}
         </Box>
 
-        <Box className={clsx(classes.paddingInline30)}>
+        <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Typography className={clsx(classes.f18, classes.mt24)}>
             {t("common.Email")}
             <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
@@ -647,7 +647,7 @@ const SignUpNew = ({ classes }: any) => {
         {t('SignUp.BusinessDetail')}
       </h3>
       <Box>
-        <Box className={clsx(classes.paddingInline30)}>
+        <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Typography className={clsx(classes.f18)}>
             {t("SignUp.BusinessName")}
             <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
@@ -691,12 +691,12 @@ const SignUpNew = ({ classes }: any) => {
                   classes.fieldOfInterestButton,
                   classes.mb10,
                   classes.f18,
+                  classes.signUpFieldOfInterestButton,
                   {
                     [classes.dFlex]: windowSize === 'xs',
                     [classes.mt10]: windowSize === 'xs',
                     [classes.f12]: windowSize === 'xs',
-                    [classes.gradientBackground]: userDetails.fieldOfInterest.find((item) => item === interest),
-                    [classes.colorWhite]: userDetails.fieldOfInterest.find((item) => item === interest)
+                    "selected": userDetails.fieldOfInterest.find((item) => item === interest),
                   }
                 )}
                 onClick={() => {
@@ -728,7 +728,7 @@ const SignUpNew = ({ classes }: any) => {
         {t('SignUp.LoginDetails')}
       </h3>
       <Box>
-        <Box className={clsx(classes.paddingInline30)}>
+        <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Typography className={clsx(classes.f18)}>
             {t("SignUp.UserName")}
             <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
@@ -758,7 +758,7 @@ const SignUpNew = ({ classes }: any) => {
           )}
         </Box>
 
-        <Box className={clsx(classes.paddingInline30)}>
+        <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Typography className={clsx(classes.f18, classes.mt24)}>
             {t("SignUp.Password")}
             <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
@@ -809,7 +809,7 @@ const SignUpNew = ({ classes }: any) => {
           )}
         </Box>
 
-        <Box className={clsx(classes.paddingInline30)}>
+        <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Typography className={clsx(classes.f18, classes.mt24)}>
             {t("SignUp.PasswordVerification")}
             <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
@@ -857,9 +857,14 @@ const SignUpNew = ({ classes }: any) => {
                 color="primary"
               />
             }
+            className={clsx({
+              [classes.textRight]: isRTL,
+              [classes.textLeft]: !isRTL,
+            })}
+            style={{ alignItems: 'flex-start' }}
             label={<>
+              <span className={clsx(classes.paddingInline5, classes.colrPrimary, classes.f18)}>*</span>
               <span className={classes.f18}>{RenderHtml(t('SignUp.UpdateTrainingContentCheckbox'))}</span>
-              <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
               {!!errors.chkUpdate && (
                 <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
                   {errors.chkUpdate}
@@ -879,9 +884,14 @@ const SignUpNew = ({ classes }: any) => {
                 color="primary"
               />
             }
+            className={clsx({
+              [classes.textRight]: isRTL,
+              [classes.textLeft]: !isRTL,
+            })}
+            style={{ alignItems: 'flex-start' }}
             label={<>
+              <span className={clsx(classes.paddingInline5, classes.colrPrimary, classes.f18)}>*</span>
               <span className={classes.f18}>{RenderHtml(t('SignUp.PrivacyPolicyCheckbox'))}</span>
-              <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
               {!!errors.chkPolicy && (
                 <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
                   {errors.chkPolicy}
@@ -1000,7 +1010,7 @@ const SignUpNew = ({ classes }: any) => {
             { activeStep === 3 && Step4() }
             <Box>
               <Grid container>
-                <Grid item md={6} className={clsx(isRTL ? classes.textRight : classes.textLeft)}>
+                <Grid item md={6} xs={6} className={clsx(windowSize === 'xs' ? classes.textCenter : (isRTL ? classes.textRight : classes.textLeft))}>
                   {isRTL ? buttonNextIcon() : buttonPreviousIcon()}
                   {
                     activeStep !== 0 && activeStep !== 3 && (
@@ -1014,7 +1024,7 @@ const SignUpNew = ({ classes }: any) => {
                     )
                   }
                 </Grid>
-                <Grid item md={6} className={clsx(isRTL ? classes.textLeft : classes.textRight)}>
+                <Grid item md={6} xs={6} className={clsx(windowSize === 'xs' ? classes.textCenter : (isRTL ? classes.textLeft : classes.textRight))}>
                   {isRTL ? buttonPreviousIcon() : buttonNextIcon()}
                   {
                     activeStep !== 3 && (

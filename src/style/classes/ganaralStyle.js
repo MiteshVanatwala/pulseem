@@ -4327,6 +4327,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         borderRadius: '50px',
         padding: '20px 50px',
         boxShadow: '0 10px 30px -6px black',
+        "@media screen and (max-width: 768px)": {
+          width: '70%',
+          padding: '20px',
+        },
         '& .previous, & .next': {
           background: '#beff00',
           border: 'solid 5px #fff',
@@ -4360,5 +4364,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         }
       }
     }
-  }
+  },
+  signUpFieldOfInterestButton: {
+    borderRadius: 50,
+    borderColor: '#000',
+    '&.selected': {
+      background: '#beff00'
+    },
+    '&:hover': {
+      background: '#beff00',
+      color: '#000',
+      '& svg': {
+        color: '#000',
+        fill: '#000'
+      }
+    },
+  },
 });
