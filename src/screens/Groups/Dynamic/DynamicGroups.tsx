@@ -13,6 +13,9 @@ import {
 import { PreviewIcon, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon, EditIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
+import { FlexGridItem } from '../../../components/Grids/Types/FlexGrid';
+import { NameValueGridItem } from '../../../components/Grids/Types/NameValueGridStructure';
+
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
@@ -335,7 +338,7 @@ const DynamicGroups = ({ classes }: any) => {
                         </Button>
                     </Grid>
                 )}
-                <Grid item className={isRTL ? classes.marginRightAuto : classes.marginLeftAuto} style={{ paddingInline: 25 }}>
+                <Grid item className={windowSize !== 'xs' && (isRTL ? classes.marginRightAuto : classes.marginLeftAuto)} style={{ paddingInline: windowSize !== 'xs' ? 25 : 0 }}>
                     <Sort
                         sortItems={groupSortOptions}
                         sortBySelected={sortBySelected}
@@ -591,7 +594,8 @@ const DynamicGroups = ({ classes }: any) => {
         )
     }
 
-    const renderRow = (row: GroupData) => {
+    // #region RE-USABLE DATA
+    const recipientData = (row: GroupData, isMobile: boolean = false) => {
         const {
             ActiveCell,
             ActiveEmails,
@@ -602,10 +606,323 @@ const DynamicGroups = ({ classes }: any) => {
             RestrictedEmails,
             RemovedCell,
             RemovedEmails,
-            CreationDate,
-            UpdateDate,
             PendingClients,
             PendingSmsClients,
+        } = row;
+
+        const EMAIL_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("campaigns.recipients"),
+                value: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0))?.toLocaleString(),
+                classes: {
+                    name: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if (((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                GroupIds: [GroupID],
+                                Status: 100,
+                                TestStatusOfEmailElseSms: 1,
+                                ResultTitle: GroupName,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ];
+        const ACTIVE_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("recipient.Active"),
+                value: ActiveEmails?.toLocaleString(),
+                classes: {
+                    name: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if ((ActiveEmails || 0) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
+                                GroupIds: [GroupID],
+                                Status: 1,
+                                TestStatusOfEmailElseSms: 1,
+                                ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ];
+        const REMOVED_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("recipient.Removed"),
+                value: RemovedEmails?.toLocaleString(),
+                classes: {
+                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if ((RemovedEmails || 0) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
+                                GroupIds: [GroupID],
+                                Status: 2,
+                                TestStatusOfEmailElseSms: 1,
+                                ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ]
+        const BOUNCED_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("recipient.Bounced"),
+                value: InvalidEmails?.toLocaleString(),
+                classes: {
+                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if ((InvalidEmails || 0) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
+                                GroupIds: [GroupID],
+                                Status: 4,
+                                TestStatusOfEmailElseSms: 1,
+                                ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ];
+        const PENDING_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("recipient.Pending"),
+                value: PendingClients?.toLocaleString() || 0,
+                classes: {
+                    name: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if ((PendingClients || 0) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                GroupIds: [GroupID],
+                                Status: 5,
+                                TestStatusOfEmailElseSms: 1,
+                                ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ];
+        const SMS_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("campaigns.recipients"),
+                value: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0))?.toLocaleString(),
+                classes: {
+                    name: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.blue : clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if (((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                GroupIds: [GroupID],
+                                Status: 100,
+                                TestStatusOfEmailElseSms: 0,
+                                ResultTitle: GroupName,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ];
+        const ACTIVE_SMS_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("recipient.Active"),
+                value: ActiveCell?.toLocaleString(),
+                classes: {
+                    name: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.green : clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if ((ActiveCell || 0) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
+                                GroupIds: [GroupID],
+                                Status: 0,
+                                TestStatusOfEmailElseSms: 0,
+                                ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ];
+        const REMOVED_SMS_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("recipient.Removed"),
+                value: RemovedCell?.toLocaleString(),
+                classes: {
+                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if ((RemovedCell || 0) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
+                                GroupIds: [GroupID],
+                                Status: 1,
+                                TestStatusOfEmailElseSms: 0,
+                                ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ];
+        const BOUNCED_SMS_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("recipient.Bounced"),
+                value: InvalidCell?.toLocaleString(),
+                classes: {
+                    name: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.red : clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if ((InvalidCell || 0) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
+                                GroupIds: [GroupID],
+                                Status: 4,
+                                TestStatusOfEmailElseSms: 0,
+                                ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ];
+        const PENDING_SMS_RECIPIENTS: Array<NameValueGridItem> = [
+            {
+                name: t("recipient.Pending"),
+                value: PendingSmsClients?.toLocaleString() || 0,
+                classes: {
+                    name: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
+                    value: isMobile ? colorTextStyle.grey : clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                    href: ''
+                },
+                onClick: (e: any) => {
+                    e?.preventDefault();
+                    if ((PendingSmsClients || 0) > 0) {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state:
+                            {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                GroupIds: [GroupID],
+                                Status: 5,
+                                TestStatusOfEmailElseSms: 0,
+                                ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+                }
+            }
+        ];
+
+        return {
+            EMAIL_RECIPIENTS,
+            ACTIVE_RECIPIENTS,
+            REMOVED_RECIPIENTS,
+            BOUNCED_RECIPIENTS,
+            PENDING_RECIPIENTS,
+            SMS_RECIPIENTS,
+            ACTIVE_SMS_RECIPIENTS,
+            REMOVED_SMS_RECIPIENTS,
+            BOUNCED_SMS_RECIPIENTS,
+            PENDING_SMS_RECIPIENTS
+        };
+
+    }
+    // #endregion RE-USABLE DATA
+
+    const renderRow = (row: GroupData) => {
+        const {
+            GroupID,
+            GroupName,
+            CreationDate,
+            UpdateDate
         } = row;
         let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e: any) => {
             return e === true
@@ -679,197 +996,56 @@ const DynamicGroups = ({ classes }: any) => {
                             {
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("campaigns.recipients"),
-                                                value: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0))?.toLocaleString(),
-                                                classes: {
-                                                    name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-                                                                GroupIds: [GroupID],
-                                                                Status: 100,
-                                                                TestStatusOfEmailElseSms: 1,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
-
+                                        gridArr={recipientData(row).EMAIL_RECIPIENTS as any}
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
-                            },
+                            } as FlexGridItem,
                             {
 
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("recipient.Active"),
-                                                value: ActiveEmails?.toLocaleString(),
-                                                classes: {
-                                                    name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (ActiveEmails || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
-                                                                GroupIds: [GroupID],
-                                                                Status: 1,
-                                                                TestStatusOfEmailElseSms: 1,
-                                                                ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
-
+                                        gridArr={recipientData(row).ACTIVE_RECIPIENTS as any}
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
-                            },
+                            } as FlexGridItem,
                             {
 
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("recipient.Removed"),
-                                                value: RemovedEmails?.toLocaleString(),
-                                                classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (RemovedEmails || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
-                                                                GroupIds: [GroupID],
-                                                                Status: 2,
-                                                                TestStatusOfEmailElseSms: 1,
-                                                                ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
-
+                                        gridArr={recipientData(row).REMOVED_RECIPIENTS as any}
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
-                            },
+                            } as FlexGridItem,
                             {
 
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("recipient.Bounced"),
-                                                value: InvalidEmails?.toLocaleString(),
-                                                classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (InvalidEmails || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
-                                                                GroupIds: [GroupID],
-                                                                Status: 4,
-                                                                TestStatusOfEmailElseSms: 1,
-                                                                ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
-
+                                        gridArr={recipientData(row).BOUNCED_RECIPIENTS as any}
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
-                            },
+                            } as FlexGridItem,
                             {
 
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("recipient.Pending"),
-                                                value: PendingClients?.toLocaleString() || 0,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (PendingClients || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-                                                                GroupIds: [GroupID],
-                                                                Status: 5,
-                                                                TestStatusOfEmailElseSms: 1,
-                                                                ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
-
+                                        gridArr={recipientData(row).PENDING_RECIPIENTS as any}
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
-                            },
-
-                        ]}
+                            } as FlexGridItem
+                        ] as FlexGridItem[] | any}
                         textVariant="body1"
                         align="center"
                     />
@@ -882,205 +1058,64 @@ const DynamicGroups = ({ classes }: any) => {
 
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("campaigns.recipients"),
-                                                value: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0))?.toLocaleString(),
-                                                classes: {
-                                                    name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-                                                                GroupIds: [GroupID],
-                                                                Status: 100,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
-
+                                        gridArr={recipientData(row).SMS_RECIPIENTS as any}
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
-                            },
+                            } as FlexGridItem,
                             {
 
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("recipient.Active"),
-                                                value: ActiveCell?.toLocaleString(),
-                                                classes: {
-                                                    name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (ActiveCell || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
-                                                                GroupIds: [GroupID],
-                                                                Status: 0,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
-
+                                        gridArr={recipientData(row).ACTIVE_SMS_RECIPIENTS as any}
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
-                            },
+                            } as FlexGridItem,
                             {
 
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("recipient.Removed"),
-                                                value: RemovedCell?.toLocaleString(),
-                                                classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (RemovedCell || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
-                                                                GroupIds: [GroupID],
-                                                                Status: 1,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
-
+                                        gridArr={recipientData(row).REMOVED_SMS_RECIPIENTS as any}
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
-
-                            },
+                            } as FlexGridItem,
                             {
 
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("recipient.Bounced"),
-                                                value: InvalidCell?.toLocaleString(),
-                                                classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (InvalidCell || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
-                                                                GroupIds: [GroupID],
-                                                                Status: 4,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
+                                        gridArr={recipientData(row).BOUNCED_SMS_RECIPIENTS as any}
 
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
-                            },
+                            } as FlexGridItem,
                             {
 
                                 component: (
                                     <NameValueGridStructure
-                                        gridArr={[
-                                            {
-                                                name: t("recipient.Pending"),
-                                                value: PendingSmsClients?.toLocaleString() || 0,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (PendingSmsClients?.toLocaleString() || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-                                                                GroupIds: [GroupID],
-                                                                Status: 5,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]}
+                                        gridArr={recipientData(row).PENDING_SMS_RECIPIENTS as any}
 
                                         variant="body1"
                                         gridSize={{ xs: 12, sm: 12 }}
                                     />
                                 ),
 
-                            },
+                            } as FlexGridItem,
 
-                        ]}
+                        ] as FlexGridItem[] | any}
                         textVariant="body1"
                         align="center"
                     />
                 </TableCell>
                 <TableCell
                     classes={noBorderCellStyle}
-                    // align="center"
-                    // className={clsx(classes.flex5, classes.p0)}
                     component="th"
                     scope="row"
                     className={clsx(
@@ -1097,18 +1132,7 @@ const DynamicGroups = ({ classes }: any) => {
 
     const renderPhoneRow = (row: GroupData) => {
         const {
-            ActiveCell,
-            ActiveEmails,
-            GroupID,
-            InvalidCell,
-            InvalidEmails,
-            RemovedCell,
-            RemovedEmails,
-            TotalRecipients,
-            RestrictedEmails,
-            GroupName,
-            PendingClients,
-            PendingSmsClients
+            GroupID
         } = row;
         return (
             <TableRow key={GroupID} component="div" classes={rowStyle}>
@@ -1141,33 +1165,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("campaigns.recipients"),
-                                                value: TotalRecipients,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.blue, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.blue, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-                                                                GroupIds: [GroupID],
-                                                                Status: 100,
-                                                                TestStatusOfEmailElseSms: 1,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]} />
+                                            gridArr={recipientData(row, true).EMAIL_RECIPIENTS as any} />
                                     ),
                                 },
                                 {
@@ -1176,33 +1174,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("recipient.Active"),
-                                                value: ActiveEmails,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.green, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.green, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (ActiveEmails || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
-                                                                GroupIds: [GroupID],
-                                                                Status: 1,
-                                                                TestStatusOfEmailElseSms: 1,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]} />
+                                            gridArr={recipientData(row, true).ACTIVE_RECIPIENTS as any} />
                                     ),
                                 },
                                 {
@@ -1211,33 +1183,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("recipient.Removed"),
-                                                value: RemovedEmails,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (RemovedEmails || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
-                                                                GroupIds: [GroupID],
-                                                                Status: 2,
-                                                                TestStatusOfEmailElseSms: 1,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]} />
+                                            gridArr={recipientData(row, true).REMOVED_RECIPIENTS as any} />
                                     ),
 
                                 },
@@ -1247,34 +1193,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("recipient.Bounced"),
-                                                value: InvalidEmails,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (InvalidEmails || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
-                                                                GroupIds: [GroupID],
-                                                                Status: 4,
-                                                                TestStatusOfEmailElseSms: 1,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]} />),
-
+                                            gridArr={recipientData(row, true).BOUNCED_RECIPIENTS as any} />),
                                 },
                                 {
 
@@ -1282,38 +1201,12 @@ const DynamicGroups = ({ classes }: any) => {
                                         <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("recipient.Pending"),
-                                                value: PendingSmsClients || 0,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.grey, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.grey, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (PendingSmsClients || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-                                                                GroupIds: [GroupID],
-                                                                Status: 5,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]} />
+                                            gridArr={recipientData(row, true).PENDING_RECIPIENTS as any} />
                                     ),
 
                                 },
 
-                            ]}
+                            ] as FlexGridItem[] | any}
                             textVariant="body1"
                             align="center"
                         />
@@ -1328,33 +1221,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("campaigns.recipients"),
-                                                value: TotalRecipients,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.blue, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.blue, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-                                                                GroupIds: [GroupID],
-                                                                Status: 100,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]} />
+                                            gridArr={recipientData(row, true).SMS_RECIPIENTS as any} />
                                     ),
                                 },
                                 {
@@ -1363,33 +1230,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("recipient.Active"),
-                                                value: ActiveCell,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.green, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.green, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (ActiveCell || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
-                                                                GroupIds: [GroupID],
-                                                                Status: 0,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]} />
+                                            gridArr={recipientData(row, true).ACTIVE_SMS_RECIPIENTS as any} />
                                     ),
                                 },
                                 {
@@ -1398,33 +1239,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("recipient.Removed"),
-                                                value: RemovedCell,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (RemovedCell || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
-                                                                GroupIds: [GroupID],
-                                                                Status: 1,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]} />
+                                            gridArr={recipientData(row, true).REMOVED_SMS_RECIPIENTS as any} />
                                     ),
                                 },
                                 {
@@ -1433,33 +1248,7 @@ const DynamicGroups = ({ classes }: any) => {
                                         <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("recipient.Bounced"),
-                                                value: InvalidCell,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.red, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (InvalidCell || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
-                                                                GroupIds: [GroupID],
-                                                                Status: 4,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]} />),
+                                            gridArr={recipientData(row, true).BOUNCED_SMS_RECIPIENTS as any} />),
 
                                 },
                                 {
@@ -1468,38 +1257,11 @@ const DynamicGroups = ({ classes }: any) => {
                                         accountFeatures?.indexOf(PulseemFeatures.OPTIN) > -1 && <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
-                                            gridArr={[{
-                                                name: t("recipient.Pending"),
-                                                value: PendingClients || 0,
-                                                classes: {
-                                                    name: clsx(colorTextStyle.grey, userRoles?.HideRecipients && classes.disabled),
-                                                    value: clsx(colorTextStyle.grey, userRoles?.HideRecipients && classes.disabled),
-                                                    href: ''
-                                                },
-                                                onClick: (e: any) => {
-                                                    e?.preventDefault();
-                                                    if (!userRoles?.HideRecipients && (PendingClients || 0) > 0) {
-                                                        navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                            state:
-                                                            {
-                                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                                ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-                                                                GroupIds: [GroupID],
-                                                                Status: 5,
-                                                                TestStatusOfEmailElseSms: 0,
-                                                                ResultTitle: GroupName,
-                                                                PageProperty: pageProperty.current
-                                                            }
-                                                        })
-                                                    }
-                                                }
-                                            }]
-                                            } />
+                                            gridArr={recipientData(row, true).PENDING_SMS_RECIPIENTS as any} />
                                     ),
                                 },
 
-                            ]}
+                            ] as FlexGridItem[] | any}
                             textVariant="body1"
                             align="center"
                         />
@@ -1589,6 +1351,7 @@ const DynamicGroups = ({ classes }: any) => {
                 rows={groupData ? groupData.RecordCount : 0}
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleRowsPerPageChange}
+                //@ts-ignore
                 rowsPerPageOptions={rowsOptions}
                 page={serachData.PageIndex}
                 onPageChange={handlePageChange}

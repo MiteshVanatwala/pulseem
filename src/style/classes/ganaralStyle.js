@@ -180,7 +180,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: 440,
+      minWidth: 400,
       maxWidth: `${maxDialogWidth[windowSize]}px !important`,
     },
     "& .MuiDialog-paperScrollPaper": {
@@ -4281,7 +4281,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   maxWidthMinContent: {
-    maxWidth: 'min-content !important'
+    maxWidth: 'min-content !important',
+    "@media screen and (max-width: 540px)": {
+      maxWidth: '100% !important'
+    },
   },
   connectedDot: {
     '& .MuiBadge-dot': {
@@ -4322,5 +4325,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "& .description": {
       height: '50px'
     }
+  },
+  overflowHidden: {
+    overflow: 'hidden'
   }
 });

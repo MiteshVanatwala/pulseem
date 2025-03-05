@@ -52,6 +52,7 @@ const SummaryModal = ({
 	randomlyCount,
 	setRandomlyCount,
 	resetRandomCount,
+	pulseData
 }: SummaryModalProps) => {
 	const dispatch = useDispatch();
 	const { campaignID } = useParams();
@@ -422,6 +423,28 @@ const SummaryModal = ({
 											)}`}
 									</span>
 								</Box>
+								{
+									(pulseData?.togglePulse || pulseData?.toggleRandom) && (
+										<Box className={classes.campaignSummaryTextWrapper}>
+											<span className={classes.campaignSummaryTextTitle}>
+												{translator('mainReport.pulseSend')}
+											</span>
+											<span className={classes.campaignSummaryTextDesc}>
+												{
+													pulseData?.togglePulse ? <span style={{ marginBottom: "5px", marginTop: "5px" }}>
+													{translator("smsReport.packetSend")} - {pulseData?.pulseAmount} {pulseData?.pulsePer === "" || pulseData?.pulsePer === "recipients" ? translator("sms.recipients") : translator("common.Percent")} {" "}
+													{translator("sms.every")} {pulseData?.timeInterval} {pulseData?.hourName === "" || pulseData.minName === "mins" ? translator("common.minutes") : translator("common.hours")}
+												</span> : <></>
+												}
+												{
+													pulseData?.toggleRandom ?
+													<span>{translator("smsReport.randomSend")} - {pulseData?.random} {translator("smsReport.randomRecipients")}</span>
+												: <></>
+												}
+											</span>
+										</Box>
+									)
+								}
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
 										<>{translator('whatsappCampaign.for')}</>

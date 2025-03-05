@@ -5,6 +5,9 @@ import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import { CloneOptions } from "../../Models/Campaigns/CloneOptions";
 import { GrDuplicate } from "react-icons/gr";
+import { useSelector } from "react-redux";
+import { PulseemFeatures } from "../../model/PulseemFields/Fields";
+import { StateType } from "../../Models/StateTypes";
 
 const DuplicateCampaign = ({
   title,
@@ -12,10 +15,12 @@ const DuplicateCampaign = ({
   isOpen,
   handleClose,
   campaignName,
-  isSms = false
+  isSms = false,
+  IsNewEditor
 }: any) => {
   const { t } = useTranslation();
   const [duplicateOptions, setDuplicateOptions] = useState<Number[]>([]);
+  const { accountFeatures } = useSelector((state: StateType) => state.common);
 
   useEffect(() => {
     setDuplicateOptions([]);
@@ -109,7 +114,7 @@ const DuplicateCampaign = ({
               label={t("smsReport.pulseSending")}
             />
             {
-              isSms === false && <FormControlLabel
+              !IsNewEditor && isSms === false && accountFeatures?.indexOf(PulseemFeatures.DuplicateOldCampaignToBee) > -1 && <FormControlLabel
                 control={
                   <Checkbox
                     color="primary"
@@ -118,7 +123,7 @@ const DuplicateCampaign = ({
                     checked={duplicateOptions.indexOf(CloneOptions.SupportedForBee) > -1}
                   />
                 }
-                label={"duplicate supported by bee"}
+                label={t("campaigns.newsLetterEditor.duplicateAsBee")}
               />
             }
           </FormGroup>
