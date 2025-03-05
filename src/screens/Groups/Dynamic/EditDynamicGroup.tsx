@@ -105,13 +105,11 @@ const EditDynamicGroup = ({ classes }: any) => {
                 AbandonedPrice: null,
 
                 IsPageViewed: null,
-                IsPageViewedComparingType: ActivityEvent.Any,
                 IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
-                IsPageViewedMinPrice: null,
-                IsPageViewedMaxPrice: null,
                 IsPageViewedFromDate: null,
                 IsPageViewedToDate: null,
                 PageViewedPrice: null,
+                PageViewedUrlIDs: null,
 
                 ProductCategory: null
             } as MyActivities,
@@ -292,6 +290,23 @@ const EditDynamicGroup = ({ classes }: any) => {
                 && (!dynamicGroupModel.dynamicData.MyActivities.IsNotClickedDaysBack ||
                     dynamicGroupModel.dynamicData.MyActivities.IsNotClickedDaysBack === '')) {
                 message = t('group.saveDynamicGroupResponse.daysBackError');
+                isValid = false;
+            }
+        }
+        if (dynamicGroupModel.dynamicData.MyActivities.IsPageViewed === true) {
+            if (dynamicGroupModel.dynamicData.MyActivities.IsPageViewedInterval.toString() === ActivtyTimeInterval.SpecificDates
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsPageViewedFromDate && !dynamicGroupModel.dynamicData.MyActivities.IsPageViewedToDate)) {
+                message = t('group.saveDynamicGroupResponse.specificDateIsRequired');
+                isValid = false;
+            }
+            else if (dynamicGroupModel.dynamicData.MyActivities.IsPageViewedInterval.toString() === ActivtyTimeInterval.DaysBack
+                && (!dynamicGroupModel.dynamicData.MyActivities.IsPageViewedDaysBack ||
+                    dynamicGroupModel.dynamicData.MyActivities.IsPageViewedDaysBack === '')) {
+                message = t('group.saveDynamicGroupResponse.daysBackError');
+                isValid = false;
+            }
+            else if (!dynamicGroupModel.dynamicData.MyActivities.PageViewedUrlIDs?.split(',')) {
+                message = t('group.saveDynamicGroupResponse.pageUrlRequired');
                 isValid = false;
             }
         }
@@ -638,7 +653,8 @@ const EditDynamicGroup = ({ classes }: any) => {
                                         IsPageViewedMinPrice: null,
                                         IsPageViewedMaxPrice: null,
                                         IsPageViewedInterval: ActivtyTimeInterval.Last2Weeks,
-                                        PageViewedPrice: null
+                                        PageViewedPrice: null,
+                                        IsPageViewedProductCategory: null
                                     }
                                 }
                             });

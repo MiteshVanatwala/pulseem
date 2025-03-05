@@ -506,6 +506,7 @@
     "pre_text": "Preview text",
     "gAnalytics": "Google Analytics",
     "textAdditions": "Text Additions",
+    "duplicateAsBee": "Copy to New Editor Format",
     "helpTexts": {
       "Name": "Used to identify the campaign in the system. Recipients will not see this name",
       "FromName": "This field is mandatory",
