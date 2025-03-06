@@ -214,6 +214,7 @@ export const DateFormats = {
     DATEPICKER_DATE_FORMAT: 'MM/DD/YYYY',
     FULL_DATE_START: 'DD/MM/YYYY 00:00:00',
     FULL_DATE_END: 'DD/MM/YYYY 23:59:59',
+    DATE_WITHOUT_YEAR: 'MM/DD'
 }
 
 export const FBBusiness = 'https://business.facebook.com/wa/manage/';

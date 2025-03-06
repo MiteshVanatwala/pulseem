@@ -87,8 +87,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={moment(data?.MyConditions[0]?.BirthDateFromWithoutYear).diff('0001-01-01') > 0 ? data?.MyConditions[0]?.BirthDateFromWithoutYear : null}
-              onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={moment(data?.MyConditions[0]?.BirthDateFromWithoutYear).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]?.BirthDateFromWithoutYear).format(DateFormats.DATE_WITHOUT_YEAR) : null}
+              onChange={(value: any) => onUpdate('BirthDateFromWithoutYear', moment(value).format(DateFormats.DATE_WITHOUT_YEAR))}
               placeholder={t('common.FromDate')}
               timePickerOpen={true}
               dateActive={true}
@@ -111,8 +111,8 @@ export const ClientSearchDates = ({ classes, data, onUpdate }: any) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={moment(data?.MyConditions[0]?.BirthDateToWithoutYear).diff('0001-01-01') > 0 ? data?.MyConditions[0]?.BirthDateToWithoutYear : null}
-              onChange={(value: any) => onUpdate('BirthDateToWithoutYear', moment(value).format(DateFormats.DATEPICKER_DATE_FORMAT))}
+              value={moment(data?.MyConditions[0]?.BirthDateToWithoutYear).diff('0001-01-01') > 0 ? moment(data?.MyConditions[0]?.BirthDateToWithoutYear).format(DateFormats.DATE_WITHOUT_YEAR) : null}
+              onChange={(value: any) => onUpdate('BirthDateToWithoutYear', moment(value).format(DateFormats.DATE_WITHOUT_YEAR))}
               placeholder={t('common.ToDate')}
               timePickerOpen={false}
               dateActive={true}
