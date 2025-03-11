@@ -144,6 +144,7 @@ export type WhatsappChatSideBarProps = {
 	isLoader: boolean;
 	filterBySelected: number;
 	setFilterBySelected: (filterId: number) => void;
+	setAgentSelected: (agentId: number) => void;
 };
 
 export type chatModalProps = {

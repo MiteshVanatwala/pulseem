@@ -785,6 +785,23 @@ export const updateWhatsappTier = createAsyncThunk(
 	}
 );
 
+//#region Agents
+export const getChatAgents = createAsyncThunk(
+	'WhatsAppChat/GetAgents',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`WhatsAppChat/GetAgents`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+//#endregion
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
@@ -792,6 +809,7 @@ export const whatsappSlice = createSlice({
 		submitTemplate: [],
 		saveTemplate: [],
 		userPhoneNumbers: [],
+		agentList: [],
 		ToastMessages: {
 			SUCCESS: {
 				severity: 'success',
@@ -952,6 +970,9 @@ export const whatsappSlice = createSlice({
 		});
 		builder.addCase(getInboundReport.fulfilled, (state, { payload }) => {
 			if (!payload.IsExport) state.inboundWhatsappReport = payload;
+		});
+		builder.addCase(getChatAgents.fulfilled, (state, { payload }) => {
+			state.agentList = payload?.Data;
 		});
 	},
 });

@@ -19,5 +19,6 @@
 	"noChat": "אין שיחות",
 	"noContacts": "לא נמצאו אנשי קשר",
 	"messageErrorText": "לא ניתן להציג הודעה זאת",
-	"typeMessage": "הקלד הודעה כאן"
+	"typeMessage": "הקלד הודעה כאן",
+	"selectAgent": "בחר סוכן"
 }

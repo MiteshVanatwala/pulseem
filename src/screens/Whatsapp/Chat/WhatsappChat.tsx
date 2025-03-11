@@ -35,6 +35,7 @@ import {
 	manageWhatsappChatCoversationStatus,
 	sendWhatsAppMessage,
 	userPhoneNumbers,
+	getChatAgents
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
@@ -53,6 +54,9 @@ import {
 	phoneNumberAPIProps,
 	SubAccountSettings,
 	updatedVariable,
+	PulseemApiProps,
+	PulseemAPIDataProps,
+	WhatsappAgent
 } from '../Campaign/Types/WhatsappCampaign.types';
 import DynamicModal from '../Campaign/Popups/DynamicModal';
 import {
@@ -109,6 +113,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	>([]);
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [filterBySelected, setFilterBySelected] = useState(0);
+	const [agentSelected, setAgentSelected] = useState(0);
 	const [whatsappChatSession, setWhatsappChatSession] =
 		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
@@ -118,6 +123,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			Second: '0',
 			IsNewMessage: false,
 		});
+
+	const [chatAgents, setChatAgents] = useState<WhatsappAgent[]>([]);
 
 	const handleUserStatus = (e: SelectChangeEvent, ClientNumber: string) => {
 		e.preventDefault();
@@ -237,6 +244,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					getDynamicModalValues();
 				}
 				getSavedTemplateFields();
+				await getAgents();
 				await getPhoneNumber();
 				setIsAccountSetup(true);
 			} else {
@@ -383,7 +391,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					IsPagination: true,
 					pageNo: contactsPaginationSetting?.PageNo,
 					pageSize: contactsPaginationSetting?.PageSize,
-					ChatStatus: filterBySelected,
+					ChatStatus: filterBySelected
 				})
 			);
 		dispatch(setIsLoader(false));
@@ -448,6 +456,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setPhoneNumbersList([]);
 		return [];
 	};
+
+	const getAgents = async () => {
+		const { payload: repsonse }: PulseemApiProps =
+			await dispatch<any>(getChatAgents());
+		if (repsonse?.Data?.length > 0) {
+			setChatAgents(repsonse?.Data);
+			return repsonse?.Data;
+		}
+		return [];
+	}
 
 	const onActiveUserChange = (e: SelectChangeEvent) => {
 		setActivePhoneNumber(e.target.value?.replace(/\D/g, ''));
@@ -881,6 +899,36 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	})
 
+	const getAgentListModalDialog = () => ({
+		title: translator('whatsappCampaign.dfieldTitle'),
+		showDivider: false,
+		showDefaultButtons: false,
+		contentStyle: classes.noPadding,
+		content: (
+			<DynamicModal
+				classes={classes}
+				onDynamcFieldModalClose={() => setDialogType({})}
+				personalFields={personalFields}
+				landingPageData={landingPages}
+				dynamicModalVariable={dynamicModalVariable}
+				onDynamcFieldModalSave={(updatedDynamicVariable) =>
+					onDynamcFieldModalSave(updatedDynamicVariable)
+				}
+				dynamicVariable={updatedDynamicVariable}
+				isTrackLink={isTrackLink}
+				setIsTrackLink={setIsTrackLink}
+				savedTemplate={savedTemplate}
+			/>
+		),
+		onConfirm: async () => {
+			setDialogType({
+				type: '',
+				data: ''
+			});
+		}
+	})
+
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -890,6 +938,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			currentDialog = getExceedDailyLimit();
 		} else if (type === 'dynamicModal') {
 			currentDialog = getDynamicModalDialog();
+		} else if (type === 'agents') {
+			currentDialog = getAgentListModalDialog();
 		}
 
 		if (type) {
@@ -942,6 +992,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									isLoader={isLoader}
 									filterBySelected={filterBySelected}
 									setFilterBySelected={setFilterBySelected}
+									setAgentSelected={setAgentSelected}
 								/>
 								<ChatUi
 									isMobileSideBar={isMobileSideBar}
