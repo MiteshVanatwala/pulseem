@@ -35,7 +35,8 @@ import {
 	manageWhatsappChatCoversationStatus,
 	sendWhatsAppMessage,
 	userPhoneNumbers,
-	getChatAgents
+	getChatAgents,
+	getWhatsappChatContactsByAgent
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
@@ -53,10 +54,7 @@ import {
 	personalFieldDataProps,
 	phoneNumberAPIProps,
 	SubAccountSettings,
-	updatedVariable,
-	PulseemApiProps,
-	PulseemAPIDataProps,
-	WhatsappAgent
+	updatedVariable
 } from '../Campaign/Types/WhatsappCampaign.types';
 import DynamicModal from '../Campaign/Popups/DynamicModal';
 import {
@@ -80,6 +78,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { SelectChangeEvent } from '@mui/material';
 import { DateFormats } from '../../../helpers/Constants';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -113,7 +112,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	>([]);
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [filterBySelected, setFilterBySelected] = useState(0);
-	const [agentSelected, setAgentSelected] = useState(0);
+	const [agentSelected, setAgentSelected] = useState(Number(getCookie('whatsappSelectedAgentId') || 0));
 	const [whatsappChatSession, setWhatsappChatSession] =
 		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
@@ -123,8 +122,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			Second: '0',
 			IsNewMessage: false,
 		});
-
-	const [chatAgents, setChatAgents] = useState<WhatsappAgent[]>([]);
 
 	const handleUserStatus = (e: SelectChangeEvent, ClientNumber: string) => {
 		e.preventDefault();
@@ -384,8 +381,18 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			navigate(whatsappRoutes.CHAT);
 		}
 		setActivePhoneNumber(activeUser);
-		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
-			await dispatch<any>(
+
+		const {
+			payload: whatsAppChatContactsData,
+		}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
+			agentSelected > 0 ? getWhatsappChatContactsByAgent({
+				AgentId: agentSelected,
+				IsPagination: true,
+				pageNo: contactsPaginationSetting?.PageNo,
+				pageSize: contactsPaginationSetting?.PageSize,
+				ChatStatus: filterBySelected,
+				Searchtext: ''
+			}) :
 				getWhatsappChatContactsByPhoneNumber({
 					PhoneNumber: activeUser,
 					IsPagination: true,
@@ -393,10 +400,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					pageSize: contactsPaginationSetting?.PageSize,
 					ChatStatus: filterBySelected
 				})
-			);
+		);
+
 		dispatch(setIsLoader(false));
-		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
-			const contactData = whatsAppChatContactsData.payload.Data.Items;
+		if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
+			const contactData = whatsAppChatContactsData.Data.Items;
 			const updatedActiveChat = contactData[0];
 			if (contactID) {
 				const activeContact = contactData?.find(
@@ -458,13 +466,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	};
 
 	const getAgents = async () => {
-		const { payload: repsonse }: PulseemApiProps =
-			await dispatch<any>(getChatAgents());
-		if (repsonse?.Data?.length > 0) {
-			setChatAgents(repsonse?.Data);
-			return repsonse?.Data;
-		}
-		return [];
+		await dispatch<any>(getChatAgents());
 	}
 
 	const onActiveUserChange = (e: SelectChangeEvent) => {
@@ -766,7 +768,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			const {
 				payload: whatsAppChatContactsData,
 			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
-				getWhatsappChatContactsByPhoneNumber({
+				agentSelected > 0 ? getWhatsappChatContactsByAgent({
+					AgentId: agentSelected,
+					IsPagination: true,
+					pageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
+					pageSize: contactsPaginationSetting?.PageSize,
+					Searchtext: searchText,
+					ChatStatus: ChatStatus,
+				}) : getWhatsappChatContactsByPhoneNumber({
 					PhoneNumber: activePhoneNumber,
 					IsPagination: true,
 					pageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
@@ -957,6 +966,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	}
 
+	const handleAgentSelection = (value: number) => {
+		setAgentSelected(value);
+		setCookie('whatsappSelectedAgentId', value.toString());
+	}
+
 	return (
 		<>
 			<DefaultScreen
@@ -992,7 +1006,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									isLoader={isLoader}
 									filterBySelected={filterBySelected}
 									setFilterBySelected={setFilterBySelected}
-									setAgentSelected={setAgentSelected}
+									setAgentSelected={handleAgentSelection}
+									selectedAgent={agentSelected}
 								/>
 								<ChatUi
 									isMobileSideBar={isMobileSideBar}

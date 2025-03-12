@@ -144,6 +144,7 @@ export type WhatsappChatSideBarProps = {
 	isLoader: boolean;
 	filterBySelected: number;
 	setFilterBySelected: (filterId: number) => void;
+	selectedAgent?: number;
 	setAgentSelected: (agentId: number) => void;
 };
 
@@ -326,13 +327,14 @@ export type displayCountDown = {
 };
 
 export type APIGetWhatsappChatContactsReq = {
-	PhoneNumber: string;
+	PhoneNumber?: string;
 	IsPagination: boolean;
 	pageNo: number;
 	pageSize: number;
 	Searchtext?: string;
 	UserNumber?: string;
 	ChatStatus: number;
+	AgentId?: number;
 };
 
 export type Timer = {

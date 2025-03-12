@@ -800,6 +800,40 @@ export const getChatAgents = createAsyncThunk(
 		}
 	}
 );
+export const getWhatsappChatContactsByAgent = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChatByAgent',
+	async (
+		{
+			AgentId,
+			IsPagination,
+			pageNo,
+			pageSize,
+			Searchtext,
+			ChatStatus
+		}: APIGetWhatsappChatContactsReq,
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetWhatsAppChatByAgent`,
+				{
+					AgentId,
+					IsPagination,
+					pageNo,
+					pageSize,
+					Searchtext,
+					ChatStatus
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 //#endregion
 
 export const whatsappSlice = createSlice({

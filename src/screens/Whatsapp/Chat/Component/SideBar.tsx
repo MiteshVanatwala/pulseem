@@ -14,6 +14,7 @@ import useDebounce from '../Hook/useDebounce';
 import { useSelector } from 'react-redux';
 import { coreProps, WhatsappAgent } from '../../Campaign/Types/WhatsappCampaign.types';
 import { StateType } from '../../../../Models/StateTypes';
+import { setCookie } from '../../../../helpers/Functions/cookies';
 
 const SideBar = ({
 	classes,
@@ -32,19 +33,15 @@ const SideBar = ({
 	isLoader,
 	filterBySelected,
 	setFilterBySelected,
+	selectedAgent,
 	setAgentSelected
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const [searchText, setSearchText] = useState<string>('');
-	const [selectedAgent, setSelectedAgent] = useState<number>(0);
 	const debouncedValue = useDebounce<string>(searchText, 500);
 
-	useEffect(() => {
-		fetchSearchedContacts(searchText, filterBySelected, true);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedValue]);
 	const handleSearch = (e: BaseSyntheticEvent) => {
 		setSearchText(e.target.value.toLowerCase());
 	};
@@ -55,9 +52,19 @@ const SideBar = ({
 	};
 
 	const handleAgentSelected = (e: SelectChangeEvent) => {
-		setSelectedAgent(Number(e.target.value));
-		fetchMoreContacts(searchText, Number(e.target.value), true);
+		setAgentSelected(Number(e.target.value));
+		setCookie('whatsappSelectedAgentId', e.target.value);
 	};
+
+	useEffect(() => {
+		if (selectedAgent && selectedAgent > 0) {
+			fetchMoreContacts(searchText, filterBySelected, true);
+		}
+		else {
+			fetchSearchedContacts(searchText, filterBySelected, true);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedAgent, debouncedValue]);
 
 	return (
 		<>
@@ -101,7 +108,7 @@ const SideBar = ({
 							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
 						</Select>
 					</span>
-					<span style={{marginInlineStart: 10}}>
+					<span style={{ marginInlineStart: 10 }}>
 						<Select
 							className={classes.whatsappMainChatStatusSelect}
 							autoWidth
