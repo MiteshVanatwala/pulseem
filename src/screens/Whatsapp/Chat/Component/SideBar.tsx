@@ -56,6 +56,11 @@ const SideBar = ({
 		setCookie('whatsappSelectedAgentId', e.target.value);
 	};
 
+	const onAddAgentDialog = () => {
+		alert('add agent')
+		return false;
+	}
+
 	useEffect(() => {
 		if (selectedAgent && selectedAgent > 0) {
 			fetchMoreContacts(searchText, filterBySelected, true);
@@ -129,7 +134,7 @@ const SideBar = ({
 							{agentList?.map((agent: WhatsappAgent) => {
 								return <MenuItem value={agent.AgentId}>{agent.Name}</MenuItem>
 							})}
-							<MenuItem value={-1}>{translator('common.addNew')}</MenuItem>
+							<MenuItem onClick={onAddAgentDialog}>{translator('common.addNew')}</MenuItem>
 						</Select>
 					</span>
 					<div className={`${classes.whatsappChat} sidebar__actions`}>

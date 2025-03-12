@@ -4303,5 +4303,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   overflowHidden: {
     overflow: 'hidden'
+  },
+  agentNameContainer: {
+    backgroundColor: '#5EBD6A',
+    paddingInline: 7
   }
 });
