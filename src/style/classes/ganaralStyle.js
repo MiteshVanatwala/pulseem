@@ -608,7 +608,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 28,
   },
   f30: {
-    fontSize: 30,
+    fontSize: '30px !important',
   },
   f09rem: {
     fontSize: '0.9rem'
@@ -4316,17 +4316,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     overflowX: 'hidden',
     fontFamily: isRTL ? 'Heebo' : 'inherit',
+    '& *': {
+      fontSize: 'x-large',
+    },
     '& .signUpContainer': {
       marginTop: '5%',
       '& .widgetContainer': {
         position: 'relative',
         background: '#fff',
-        width: '30%',
+        width: '40%',
         margin: 'auto',
         height: '50%',
         borderRadius: '50px',
         padding: '20px 50px',
         boxShadow: '0 10px 30px -6px black',
+        fontSize: '2rem',
         "@media screen and (max-width: 768px)": {
           width: '70%',
           padding: '20px',

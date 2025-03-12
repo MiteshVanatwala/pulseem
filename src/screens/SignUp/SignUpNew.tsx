@@ -542,7 +542,7 @@ const SignUpNew = ({ classes }: any) => {
 
   const Step1 = () => {
     return <Box className={clsx(classes.pb25)}>
-      <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f25)}>
+      <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f30)}>
         {t('SignUp.PersonalInfo')}
       </h3>
       <Box>
@@ -643,7 +643,7 @@ const SignUpNew = ({ classes }: any) => {
 
   const Step2 = () => {
     return <Box className={clsx(classes.pb25)}>
-      <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f25)}>
+      <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f30)}>
         {t('SignUp.BusinessDetail')}
       </h3>
       <Box>
@@ -679,7 +679,7 @@ const SignUpNew = ({ classes }: any) => {
         </Box>
 
         <div className={clsx(classes.f18, classes.mt24)}>{t('SignUp.FieldOfInterestDesc')}</div>
-        <Box className={clsx(classes.pt10)} style={{ marginBottom: 10 }}>
+        <Box className={clsx(classes.pt25)} style={{ marginBottom: 10 }}>
           {
             FieldOfInterest.map((interest) => {
               return <Button
@@ -724,7 +724,7 @@ const SignUpNew = ({ classes }: any) => {
 
   const Step3 = () => {
     return <Box className={clsx(classes.pb25)}>
-      <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f25)}>
+      <h3 className={clsx(classes.colrPrimary, classes.mt24, classes.mb8, classes.f30)}>
         {t('SignUp.LoginDetails')}
       </h3>
       <Box>
@@ -964,10 +964,10 @@ const SignUpNew = ({ classes }: any) => {
           disabled={activeStep === 3}
           style={{
             left: isRTL ? '-40px' : 'initial',
-            right: !isRTL ? '-40px' : 'initil',
+            right: !isRTL ? '-40px' : 'initil'
           }}
         >
-          { isRTL ? <MdKeyboardArrowLeft /> : <MdKeyboardArrowRight /> }
+          { isRTL ? <MdKeyboardArrowLeft size={'5rem'} /> : <MdKeyboardArrowRight size={'5rem'} /> }
         </IconButton>
       </>
     )
@@ -985,10 +985,10 @@ const SignUpNew = ({ classes }: any) => {
           disabled={activeStep === 0 || activeStep === 3}
           style={{
             left: !isRTL ? '-40px' : 'initial',
-            right: isRTL ? '-40px' : 'initil',
+            right: isRTL ? '-40px' : 'initil'
           }}
         >
-          { !isRTL ? <MdKeyboardArrowLeft /> : <MdKeyboardArrowRight /> }
+          { !isRTL ? <MdKeyboardArrowLeft size={'5rem'} /> : <MdKeyboardArrowRight size={'5rem'} /> }
         </IconButton>
       </>
     )
