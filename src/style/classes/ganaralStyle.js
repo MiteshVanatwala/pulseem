@@ -4311,13 +4311,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minHeight: '100vh',
     height: 'auto',
     width: '100%',
-    position: 'absolute',
     paddingBottom: '50px',
     background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     overflowX: 'hidden',
     fontFamily: isRTL ? 'Heebo' : 'inherit',
     '& *': {
       fontSize: 'x-large',
+      "@media screen and (max-width: 768px)": {
+        fontSize: 'large',
+      }
     },
     '& .signUpContainer': {
       marginTop: '5%',
@@ -4332,8 +4334,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         boxShadow: '0 10px 30px -6px black',
         fontSize: '2rem',
         "@media screen and (max-width: 768px)": {
-          width: '70%',
-          padding: '20px',
+          width: '85%',
+          padding: '15px',
         },
         '& .previous, & .next': {
           background: '#beff00',
@@ -4372,6 +4374,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   signUpFieldOfInterestButton: {
     borderRadius: 50,
     borderColor: '#000',
+    "@media screen and (max-width: 768px)": {
+      width: '100%',
+      display: 'flex'
+    },
     '&.selected': {
       background: '#beff00'
     },

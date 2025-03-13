@@ -265,7 +265,6 @@ const SignUpNew = ({ classes }: any) => {
     errorsTemp.companyName = userDetails.companyName ? '' : t('SignUp.BusinessNameRequired');
     errorsTemp.fieldOfInterest = userDetails.fieldOfInterest.length ? '' : t('SignUp.FieldOfInterestRequired');
     errorsTemp.chkPolicy = userDetails.chkPolicy ? '' : t('common.requiredField');
-    errorsTemp.chkUpdate = userDetails.chkUpdate ? '' : t('common.requiredField');
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     if (userDetails.password && (!passwordValidation.LowerChar || !passwordValidation.NumberChar || !passwordValidation.PasswordLength || !passwordValidation.SpecialChar || !passwordValidation.UpperChar)) {
@@ -278,7 +277,7 @@ const SignUpNew = ({ classes }: any) => {
       ...errorsTemp
     });
 
-    if (!errorsTemp.fullName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.chkUpdate && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
+    if (!errorsTemp.fullName && !errorsTemp.cellPhone && !errorsTemp.userName && !errorsTemp.password && !errorsTemp.companyName && !errorsTemp.fieldOfInterest && !errorsTemp.chkPolicy && !errorsTemp.confirmPassword && !errorsTemp.emailId) {
       const nameArr = userDetails.fullName.split(' ');
       setLoader(true);
       const interests: any = [];
@@ -863,7 +862,6 @@ const SignUpNew = ({ classes }: any) => {
             })}
             style={{ alignItems: 'flex-start' }}
             label={<>
-              <span className={clsx(classes.paddingInline5, classes.colrPrimary, classes.f18)}>*</span>
               <span className={classes.f18}>{RenderHtml(t('SignUp.UpdateTrainingContentCheckbox'))}</span>
               {!!errors.chkUpdate && (
                 <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
@@ -912,7 +910,7 @@ const SignUpNew = ({ classes }: any) => {
         {t('SignUp.accountCreated')}
       </Typography>
       <MdKeyboardArrowDown size={35} className={clsx(classes.mt10, classes.mb10)} />
-      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
+      <Typography style={{ fontSize: 18, wordBreak: 'break-word' }} className={clsx(classes.textCenter)}>
         {RenderHtml(t('SignUp.ConfirmationMessage').replace(/{emailid}/g, userDetails.emailId))}
       </Typography>
     </Box>
@@ -998,7 +996,7 @@ const SignUpNew = ({ classes }: any) => {
     <Container
       maxWidth='xl'
       className={clsx(classes.signupContainer)}
-      style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+      style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: 'none' }}
     >
       <Box className={clsx(classes.posRelative)}>
         <Box className={clsx(classes.textCenter, 'signUpContainer')}>
