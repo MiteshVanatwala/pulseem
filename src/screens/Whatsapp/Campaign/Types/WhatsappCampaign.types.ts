@@ -784,10 +784,10 @@ export interface WhatsappAgent {
 	AgentId: number;
 	Name: string;
 	IsDeleted: boolean;
-	CreationDate: Date | string;
-	UpdatedDate: Date | string | null;
-	Sessions: WhatsappSessionToClient[] | null | never;
-	ChatSessions: string | null
+	CreationDate?: Date | string;
+	UpdatedDate?: Date | string | null;
+	Sessions?: WhatsappSessionToClient[] | null | never;
+	ChatSessions?: string | null
 }
 
 export interface WhatsappSessionToClient {

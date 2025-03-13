@@ -3,7 +3,7 @@ import {
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { IconButton, MenuItem } from '@material-ui/core';
+import { Button, IconButton, MenuItem } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
@@ -34,7 +34,9 @@ const SideBar = ({
 	filterBySelected,
 	setFilterBySelected,
 	selectedAgent,
-	setAgentSelected
+	setAgentSelected,
+	onAddAgent,
+	onEditAgents
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -55,11 +57,6 @@ const SideBar = ({
 		setAgentSelected(Number(e.target.value));
 		setCookie('whatsappSelectedAgentId', e.target.value);
 	};
-
-	const onAddAgentDialog = () => {
-		alert('add agent')
-		return false;
-	}
 
 	useEffect(() => {
 		if (selectedAgent && selectedAgent > 0) {
@@ -134,8 +131,13 @@ const SideBar = ({
 							{agentList?.map((agent: WhatsappAgent) => {
 								return <MenuItem value={agent.AgentId}>{agent.Name}</MenuItem>
 							})}
-							<MenuItem onClick={onAddAgentDialog}>{translator('common.addNew')}</MenuItem>
 						</Select>
+						<Button onClick={(e: BaseSyntheticEvent) => {
+							onAddAgent();
+						}}>{translator('common.addNew')}</Button>
+						<Button onClick={(e: BaseSyntheticEvent) => {
+							onEditAgents();
+						}}>{translator('common.Edit')}</Button>
 					</span>
 					<div className={`${classes.whatsappChat} sidebar__actions`}>
 						<IconButton

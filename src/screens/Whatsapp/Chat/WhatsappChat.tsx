@@ -36,7 +36,9 @@ import {
 	sendWhatsAppMessage,
 	userPhoneNumbers,
 	getChatAgents,
-	getWhatsappChatContactsByAgent
+	getWhatsappChatContactsByAgent,
+	addChatAgent,
+	editChatAgent
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
@@ -54,7 +56,8 @@ import {
 	personalFieldDataProps,
 	phoneNumberAPIProps,
 	SubAccountSettings,
-	updatedVariable
+	updatedVariable,
+	WhatsappAgent
 } from '../Campaign/Types/WhatsappCampaign.types';
 import DynamicModal from '../Campaign/Popups/DynamicModal';
 import {
@@ -73,12 +76,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Toast from '../../../components/Toast/Toast.component';
 import NoSetup from '../NoSetup/NoSetup';
 import moment from 'moment';
-import { Typography } from '@material-ui/core';
+import { Button, FormControl, Grid, TextField, Typography } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { SelectChangeEvent } from '@mui/material';
 import { DateFormats } from '../../../helpers/Constants';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import { MdSupportAgent } from 'react-icons/md';
+import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import { StateType } from '../../../Models/StateTypes';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -92,6 +98,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
 	const { isRTL, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
+	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
@@ -167,6 +174,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
+	const [agentName, setAgentName] = useState<string>('');
+	const [agentModel, setAgentModel] = useState<WhatsappAgent>({
+		AgentId: 0,
+		Name: '',
+		IsDeleted: false
+	})
+	const [allAgents, setAllAgents] = useState<WhatsappAgent[]>(agentList);
 
 	const initialQuickReplyButtons = [
 		{
@@ -466,7 +480,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	};
 
 	const getAgents = async () => {
-		await dispatch<any>(getChatAgents());
+		const response: any = await dispatch<any>(getChatAgents());
+		const agents: WhatsappAgent[] = response?.payload?.Data as any;
+		setAllAgents(agents)
 	}
 
 	const onActiveUserChange = (e: SelectChangeEvent) => {
@@ -908,34 +924,171 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	})
 
-	const getAgentListModalDialog = () => ({
-		title: translator('whatsappCampaign.dfieldTitle'),
-		showDivider: false,
-		showDefaultButtons: false,
-		contentStyle: classes.noPadding,
-		content: (
-			<DynamicModal
-				classes={classes}
-				onDynamcFieldModalClose={() => setDialogType({})}
-				personalFields={personalFields}
-				landingPageData={landingPages}
-				dynamicModalVariable={dynamicModalVariable}
-				onDynamcFieldModalSave={(updatedDynamicVariable) =>
-					onDynamcFieldModalSave(updatedDynamicVariable)
-				}
-				dynamicVariable={updatedDynamicVariable}
-				isTrackLink={isTrackLink}
-				setIsTrackLink={setIsTrackLink}
-				savedTemplate={savedTemplate}
-			/>
-		),
-		onConfirm: async () => {
-			setDialogType({
-				type: '',
-				data: ''
-			});
+	const onAddAgent = async () => {
+		const response = await dispatch(addChatAgent(agentModel.Name)) as any;
+		switch (response?.payload?.StatusCode) {
+			case 201: {
+				getAgents();
+				setToastMessage({
+					...ToastMessages.AGENT_ADDED,
+					message:
+						ToastMessages.AGENT_ADDED?.message,
+				});
+				setDialogType({
+					type: '',
+					data: ''
+				});
+				break;
+			}
+			case 401: {
+				logout();
+				break;
+			}
+			case 404:
+			case 500: {
+				setToastMessage(ToastMessages.ERROR);
+			}
 		}
-	})
+	}
+
+	const onEditAgent = async (agent: WhatsappAgent) => {
+		const response = await dispatch(editChatAgent(agent)) as any;
+		switch (response?.payload?.StatusCode) {
+			case 201: {
+				getAgents();
+				if (agent?.IsDeleted) {
+					setToastMessage({
+						...ToastMessages.AGENT_DELETED,
+						message:
+							ToastMessages.AGENT_DELETED?.message,
+					});
+				}
+				else {
+					setToastMessage({
+						...ToastMessages.AGENT_UPDATED,
+						message:
+							ToastMessages.AGENT_UPDATED?.message,
+					});
+				}
+				setDialogType({
+					type: 'editAgents',
+					data: ''
+				});
+				break;
+			}
+			case 401: {
+				logout();
+				break;
+			}
+			case 404:
+			case 500: {
+				setToastMessage(ToastMessages.ERROR);
+			}
+		}
+	}
+
+	const updateAgent = (agentId: number, updatedData: Partial<WhatsappAgent>) => {
+		setAllAgents(prevAgents =>
+			prevAgents.map(agent =>
+				agent.AgentId === agentId
+					? { ...agent, ...updatedData }
+					: agent
+			)
+		);
+	};
+
+	const editAgentsModalDialog = () => {
+		return {
+			title: translator('whatsappChat.editAgent'),
+			showDivider: false,
+			showDefaultButtons: false,
+			contentStyle: classes.noPadding,
+			icon: <MdSupportAgent />,
+			content: (
+				<Grid container alignItems='center' alignContent='center'>
+					{allAgents?.map((agent: WhatsappAgent) => {
+						return <Grid container alignItems='center' alignContent='center'>
+							<Grid item>
+								<TextField
+									label={translator('whatsappChat.agentName')}
+									value={agent?.Name}
+									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+									placeholder={translator('whatsappChat.agentName')}
+									disabled={false}
+									inputProps={{
+										readOnly: false,
+									}}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+										const newName = e.target.value;
+										updateAgent(agent.AgentId, { Name: newName });
+									}}
+								/>
+							</Grid>
+							<Grid item alignContent='center' alignItems='center'>
+								<Button onClick={(e: any) => {
+									onEditAgent({
+										AgentId: agent.AgentId,
+										Name: agent.Name,
+										IsDeleted: false
+									})
+								}}>{translator('common.Update')}</Button>
+							</Grid>
+							<Grid item>
+								<Button onClick={() => {
+									onEditAgent({
+										AgentId: agent.AgentId,
+										Name: agent.Name,
+										IsDeleted: true
+									})
+								}}>
+									{translator("common.remove")}
+								</Button>
+							</Grid>
+						</Grid>
+					})}
+				</Grid>
+			)
+		}
+	}
+
+	const addAgentModalDialog = () => {
+		return {
+			title: translator('whatsappChat.addAgent'),
+			showDivider: false,
+			showDefaultButtons: false,
+			contentStyle: classes.noPadding,
+			icon: <MdSupportAgent />,
+			content: (
+				<Grid container>
+					<Grid item>
+						<FormControl>
+							<TextField
+								label={translator('whatsappChat.agentName')}
+								value={agentModel.Name}
+								className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+								placeholder={translator('whatsappChat.agentName')}
+								disabled={false}
+								inputProps={{
+									readOnly: false,
+								}}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									setAgentModel({ ...agentModel, Name: e.target.value })
+								}}
+							/>
+							<Button onClick={onAddAgent}>Confirm</Button>
+						</FormControl>
+					</Grid>
+				</Grid>
+			),
+			onConfirm: async () => {
+				// TODO: call api to add agent
+				setDialogType({
+					type: '',
+					data: ''
+				});
+			}
+		};
+	};
 
 
 	const renderDialog = () => {
@@ -947,8 +1100,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			currentDialog = getExceedDailyLimit();
 		} else if (type === 'dynamicModal') {
 			currentDialog = getDynamicModalDialog();
-		} else if (type === 'agents') {
-			currentDialog = getAgentListModalDialog();
+		} else if (type === 'addAgent') {
+			currentDialog = addAgentModalDialog();
+		} else if (type === 'editAgents') {
+			currentDialog = editAgentsModalDialog();
 		}
 
 		if (type) {
@@ -1008,6 +1163,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									setFilterBySelected={setFilterBySelected}
 									setAgentSelected={handleAgentSelection}
 									selectedAgent={agentSelected}
+									onAddAgent={() => {
+										setDialogType({ type: 'addAgent', data: null })
+									}}
+									onEditAgents={() => {
+										getAgents();
+										setDialogType({ type: 'editAgents' })
+									}}
 								/>
 								<ChatUi
 									isMobileSideBar={isMobileSideBar}

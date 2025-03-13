@@ -20,5 +20,11 @@
 	"noContacts": "No Contacts Were Found",
 	"messageErrorText": "This message can't be displayed",
 	"typeMessage": "Type a message",
-	"selectAgent": "Select Agent"
+	"selectAgent": "Select Agent",
+	"addAgent": "Add New Agent",
+	"agentName": "Agent Name",
+	"editAgent": "Edit Agents",
+	"agentAdded": "Agent added to the Agents List successfuly!",
+	"agentUpdated": "Agent updated successfuly!",
+	"agentDeleted": "Agent Deleted from the Agents list successfuly!"
 }
