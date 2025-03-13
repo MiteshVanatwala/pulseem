@@ -26,5 +26,6 @@
 	"editAgent": "Edit Agents",
 	"agentAdded": "Agent added to the Agents List successfuly!",
 	"agentUpdated": "Agent updated successfuly!",
-	"agentDeleted": "Agent Deleted from the Agents list successfuly!"
+	"agentDeleted": "Agent Deleted from the Agents list successfuly!",
+	"setAgent": "Set Agent"
 }

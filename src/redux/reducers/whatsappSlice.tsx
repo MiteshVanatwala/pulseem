@@ -16,6 +16,7 @@ import {
 	TestSendReq,
 	uploadData,
 	WhatsappAgent,
+	WhatsappPhoneSession,
 } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { uploaderInstance } from '../../helpers/Api/UploaderAPI';
 import { setUploadProgress } from './groupSlice';
@@ -874,6 +875,19 @@ export const editChatAgent = createAsyncThunk(
 		}
 	}
 );
+export const assignAgentToChat = createAsyncThunk(
+	'WhatsAppChat/AssignAgentToChat',
+	async (agentToSession: WhatsappPhoneSession, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.put(`WhatsAppChat/AssignAgentToChat`, agentToSession);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 
 //#endregion
 

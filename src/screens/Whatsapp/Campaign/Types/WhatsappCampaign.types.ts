@@ -795,3 +795,7 @@ export interface WhatsappSessionToClient {
 	ClientId: number;
 	Cellphone: string;
 }
+export interface WhatsappPhoneSession {
+	Cellphone: string;
+	AgentId: number;
+}

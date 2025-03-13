@@ -3,6 +3,7 @@ import { ClassesType } from '../../../Classes.types';
 import {
 	personalFieldDataProps,
 	updatedVariable,
+	WhatsappAgent,
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import {
 	savedTemplateListProps,
@@ -57,6 +58,7 @@ export type WhatsappChatUiProps = {
 	personalFields: personalFieldDataProps;
 	onChatTemplateDelete: () => void;
 	setIsLoader: (showing: boolean) => void;
+	selectedAgent?: WhatsappAgent;
 };
 
 export type SideBarContactListProps = {

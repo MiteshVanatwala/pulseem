@@ -85,6 +85,7 @@ import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { MdSupportAgent } from 'react-icons/md';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { StateType } from '../../../Models/StateTypes';
+import { compareLastNineDigits } from '../../../helpers/Utils/TextHelper';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -1126,6 +1127,24 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setCookie('whatsappSelectedAgentId', value.toString());
 	}
 
+	const getAgentByCellphone = (targetCellphone: any) => {
+		// First, iterate through all agents
+		for (const agent of agentList) {
+			// Check if this agent has any sessions with matching cellphone
+			const matchingSession = agent.Sessions.find(
+				(session: any) => compareLastNineDigits(session.Cellphone, targetCellphone)
+			);
+
+			// If we found a matching session, return this agent
+			if (matchingSession) {
+				return agent as WhatsappAgent;
+			}
+		}
+
+		// If no matching agent is found, return null or undefined
+		return {} as WhatsappAgent;
+	};
+
 	return (
 		<>
 			<DefaultScreen
@@ -1210,6 +1229,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									personalFields={personalFields}
 									onChatTemplateDelete={onChatTemplateDelete}
 									setIsLoader={(value: boolean) => dispatch(setIsLoader(value))}
+									selectedAgent={getAgentByCellphone(activeChatContacts.PhoneNumber)}
 								/>
 							</div>
 						</div>
