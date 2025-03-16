@@ -1008,8 +1008,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			content: (
 				<Grid container alignItems='center' alignContent='center'>
 					{allAgents?.map((agent: WhatsappAgent) => {
-						return <Grid container alignItems='center' alignContent='center'>
-							<Grid item>
+						return <Grid container alignItems='center' alignContent='center' style={{ marginBottom: 25 }}>
+							<Grid item xs={8}>
 								<TextField
 									label={translator('whatsappChat.agentName')}
 									value={agent?.Name}
@@ -1025,23 +1025,27 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									}}
 								/>
 							</Grid>
-							<Grid item alignContent='center' alignItems='center'>
-								<Button onClick={(e: any) => {
-									onEditAgent({
-										AgentId: agent.AgentId,
-										Name: agent.Name,
-										IsDeleted: false
-									})
-								}}>{translator('common.Update')}</Button>
-							</Grid>
-							<Grid item>
-								<Button onClick={() => {
-									onEditAgent({
-										AgentId: agent.AgentId,
-										Name: agent.Name,
-										IsDeleted: true
-									})
-								}}>
+							<Grid item alignContent='flex-end' alignItems='flex-end' xs={4}>
+								<Button
+									className={clsx(classes.btn, classes.btnRounded)}
+									style={{ marginInline: 20, marginBlockStart: 20 }}
+									onClick={(e: any) => {
+										onEditAgent({
+											AgentId: agent.AgentId,
+											Name: agent.Name,
+											IsDeleted: false
+										})
+									}}>{translator('common.Update')}</Button>
+								<Button
+									style={{ marginBlockStart: 20 }}
+									className={clsx(classes.btn, classes.btnRounded)}
+									onClick={() => {
+										onEditAgent({
+											AgentId: agent.AgentId,
+											Name: agent.Name,
+											IsDeleted: true
+										})
+									}}>
 									{translator("common.remove")}
 								</Button>
 							</Grid>
@@ -1060,9 +1064,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			contentStyle: classes.noPadding,
 			icon: <MdSupportAgent />,
 			content: (
-				<Grid container>
-					<Grid item>
-						<FormControl>
+				<Grid container className={classes.w100}>
+					<Grid item xs={12}>
+						<FormControl className={classes.w100}>
 							<TextField
 								label={translator('whatsappChat.agentName')}
 								value={agentModel.Name}
@@ -1076,7 +1080,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									setAgentModel({ ...agentModel, Name: e.target.value })
 								}}
 							/>
-							<Button onClick={onAddAgent}>Confirm</Button>
+							<div className={clsx(classes.flex, classes.flexEnd, classes.mt15)}>
+								<Button
+									className={clsx(classes.btn, classes.btnRounded)}
+									style={{ alignSelf: 'center' }}
+									onClick={onAddAgent}>{translator('whatsappChat.addAgent')}</Button>
+							</div>
 						</FormControl>
 					</Grid>
 				</Grid>

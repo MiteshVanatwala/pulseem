@@ -198,7 +198,7 @@ const ChatUi = ({
 							className={clsx(classes.whatsappChatStatusSelect, classes.f12)}
 							autoWidth
 							defaultValue='0'
-							value={`${selectedAgent?.AgentId}`}
+							value={`${selectedAgent?.AgentId || 0}`}
 							variant='standard'
 							style={{ marginInline: 15 }}
 							MenuProps={{
@@ -209,11 +209,19 @@ const ChatUi = ({
 								},
 							}}
 							onChange={(e: SelectChangeEvent) => {
-								const selectedAgent: WhatsappAgent = agentList?.filter((a: WhatsappAgent) => { return a.AgentId === Number(e.target.value) })[0];
-								const agentToSession: WhatsappPhoneSession = {
-									AgentId: selectedAgent.AgentId,
+								let agentToSession: WhatsappPhoneSession = {
+									AgentId: -1,
 									Cellphone: activeChatContacts.PhoneNumber
 								};
+
+								if (Number(e.target.value) > 0) {
+									const selectedAgent: WhatsappAgent = agentList?.filter((a: WhatsappAgent) => { return a.AgentId === Number(e.target.value) })[0];
+									agentToSession = {
+										AgentId: selectedAgent.AgentId,
+										Cellphone: activeChatContacts.PhoneNumber
+									};
+								}
+
 								handleSetAgentToSession(agentToSession);
 							}}
 						>

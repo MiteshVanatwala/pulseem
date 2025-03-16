@@ -111,33 +111,37 @@ const SideBar = ({
 						</Select>
 					</span>
 					<span style={{ marginInlineStart: 10 }}>
-						<Select
-							className={classes.whatsappMainChatStatusSelect}
-							autoWidth
-							defaultValue='0'
-							value={`${selectedAgent}`}
-							variant='standard'
-							style={{ fontSize: '12px' }}
-							MenuProps={{
-								PaperProps: {
-									style: {
-										direction: isRTL ? 'rtl' : 'ltr',
+						<div className={classes.agentSelectorContainer}>
+							<Select
+								className={classes.whatsappAgentSelect}
+								autoWidth
+								defaultValue='0'
+								value={`${selectedAgent}`}
+								variant='standard'
+								style={{ fontSize: '12px' }}
+								MenuProps={{
+									PaperProps: {
+										style: {
+											direction: isRTL ? 'rtl' : 'ltr',
+										},
 									},
-								},
-							}}
-							onChange={(e: SelectChangeEvent) => handleAgentSelected(e)}
-						>
-							<MenuItem value={0}>{translator('whatsappChat.selectAgent')}</MenuItem>
-							{agentList?.map((agent: WhatsappAgent) => {
-								return <MenuItem value={agent.AgentId}>{agent.Name}</MenuItem>
-							})}
-						</Select>
-						<Button onClick={(e: BaseSyntheticEvent) => {
-							onAddAgent();
-						}}>{translator('common.addNew')}</Button>
-						<Button onClick={(e: BaseSyntheticEvent) => {
-							onEditAgents();
-						}}>{translator('common.Edit')}</Button>
+								}}
+								onChange={(e: SelectChangeEvent) => handleAgentSelected(e)}
+							>
+								<MenuItem value={0}>{translator('whatsappChat.selectAgent')}</MenuItem>
+								{agentList?.map((agent: WhatsappAgent) => {
+									return <MenuItem value={agent.AgentId}>{agent.Name}</MenuItem>
+								})}
+							</Select>
+							|
+							<Button onClick={(e: BaseSyntheticEvent) => {
+								onAddAgent();
+							}}>{translator('common.addNew')}</Button>
+							|
+							<Button onClick={(e: BaseSyntheticEvent) => {
+								onEditAgents();
+							}}>{translator('common.Edit')}</Button>
+						</div>
 					</span>
 					<div className={`${classes.whatsappChat} sidebar__actions`}>
 						<IconButton

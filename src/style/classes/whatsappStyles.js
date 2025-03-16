@@ -3245,4 +3245,24 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			color: '#ca332f !important'
 		},
 	},
+	agentSelectorContainer: {
+		borderRadius: 25,
+		backgroundColor: '#5da15d',
+		color: '#fff !important',
+		'& .MuiSelect-select': {
+			color: '#fff',
+		},
+		'& .MuiInput-underline:before': {
+			borderBottomColor: '#fff',
+		},
+		'& .MuiInput-underline:after': {
+			borderBottomColor: '#fff',
+		},
+		'& .MuiSelect-icon': {
+			color: '#fff',
+		},
+		'& .MuiButton-root': {
+			color: '#fff',
+		}
+	}
 });
