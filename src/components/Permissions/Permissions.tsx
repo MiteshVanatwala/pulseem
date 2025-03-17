@@ -24,7 +24,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 		allowDeleting: false,
 		allowSubUsers: false
 	})
-	const [userDetails, setUserDetails] = useState<SubUserModel | any>(null);
+	const [userDetails, setUserDetails] = useState<SubUserModel | any>(subUser);
 	const [errors, setErrors] = useState({
 		cellPhone: '',
 		emailAddress: '',
@@ -77,8 +77,8 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 
 	useEffect(() => {
 		if (isOpen) {
-			setUserDetails({ ...subUser, ActionType: eSubUserAction.Update })
 			reloadForm();
+			setUserDetails({ ...subUser, ActionType: eSubUserAction.Update })
 		}
 	}, [isOpen])
 
@@ -107,6 +107,9 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 			onConfirm(userDetails)
 		}
 	}
+	const scrollToSection = () => {
+		document?.getElementById('permissionAnchor')?.scrollIntoView({ behavior: 'smooth' });
+	};
 
 	return (
 		<BaseDialog
@@ -271,6 +274,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 					</Grid>
 					<Grid item md={1} xs={1} className={clsx(classes.textRight)}>
 						<FormControlLabel
+							id="permissionAnchor"
 							control={
 								<PulseemSwitch
 									id="1"
@@ -324,15 +328,38 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 									className={clsx({ [classes.rtlSwitch]: isRTL })}
 									checked={permissions.accessType === PermissionTypes.LimitedAccess}
 									onChange={(e: any) => {
-										setUserDetails({
-											...userDetails,
-											SubUserPermissions: '',
-											UserPermissionsList: []
-										})
-										setPermissions({
-											...permissions,
-											accessType: permissions.accessType === PermissionTypes.LimitedAccess ? '' : PermissionTypes.LimitedAccess
-										})
+										scrollToSection();
+										if (e.target.checked) {
+											setUserDetails({
+												...userDetails,
+												SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowSubUsers].join(','),
+												UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowSubUsers]
+											})
+											const newPermissions = {
+												allowSending: true,
+												allowExport: true,
+												allowDeleting: true,
+												allowSubUsers: true
+											}
+											setPermissions({
+												...newPermissions,
+												accessType: permissions.accessType === PermissionTypes.LimitedAccess ? '' : PermissionTypes.LimitedAccess
+											})
+										}
+										else {
+											setUserDetails({
+												...userDetails,
+												SubUserPermissions: '',
+												UserPermissionsList: []
+											})
+											setPermissions({
+												accessType: '',
+												allowSending: false,
+												allowExport: false,
+												allowDeleting: false,
+												allowSubUsers: false
+											})
+										}
 									}}
 								/>
 							}
@@ -353,6 +380,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 								<Grid container style={{ marginInline: 55 }}>
 									<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
 										<FormControlLabel
+											id="permissionAnchor"
 											control={
 												<PulseemSwitch
 													id="1"
@@ -368,10 +396,11 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 													onChange={(e: any) => {
 														if (!e.target.checked) {
 															setPermissions({ ...permissions, allowSending: false })
+															const permissionsList = userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSend });
 															setUserDetails({
 																...userDetails,
-																SubUserPermissions: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSend }).join(','),
-																UserPermissionsList: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSend })
+																UserPermissionsList: permissionsList,
+																SubUserPermissions: permissionsList.join(',')
 															})
 														}
 														else {
@@ -413,10 +442,11 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 													onChange={(e: any) => {
 														if (!e.target.checked) {
 															setPermissions({ ...permissions, allowExport: false })
+															const permissionsList = userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowExport });
 															setUserDetails({
 																...userDetails,
-																SubUserPermissions: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowExport }).join(','),
-																UserPermissionsList: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowExport })
+																UserPermissionsList: permissionsList,
+																SubUserPermissions: permissionsList.join(',')
 															})
 														}
 														else {
@@ -457,10 +487,11 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 													onChange={(e: any) => {
 														if (!e.target.checked) {
 															setPermissions({ ...permissions, allowDeleting: false })
+															const permissionsList = userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowDelete });
 															setUserDetails({
 																...userDetails,
-																SubUserPermissions: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowDelete }).join(','),
-																UserPermissionsList: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowDelete })
+																UserPermissionsList: permissionsList,
+																SubUserPermissions: permissionsList.join(',')
 															})
 														}
 														else {
@@ -502,10 +533,11 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 													onChange={(e: any) => {
 														if (!e.target.checked) {
 															setPermissions({ ...permissions, allowSubUsers: false })
+															const permissionsList = userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSubUsers });
 															setUserDetails({
 																...userDetails,
-																SubUserPermissions: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSubUsers }).join(','),
-																UserPermissionsList: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSubUsers })
+																UserPermissionsList: permissionsList,
+																SubUserPermissions: permissionsList.join(',')
 															})
 														}
 														else {

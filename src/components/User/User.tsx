@@ -357,9 +357,9 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 													edge="end"
 												>
 													{!passwordVisible ? (
-														<VisibilityOff style={{ fontSize: 15 }} />
-													) : (
 														<Visibility style={{ fontSize: 15 }} />
+													) : (
+														<VisibilityOff style={{ fontSize: 15 }} />
 													)}
 												</IconButton>
 											</InputAdornment>
@@ -402,9 +402,9 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 											edge="end"
 										>
 											{!passwordVisible ? (
-												<VisibilityOff style={{ fontSize: 15 }} />
-											) : (
 												<Visibility style={{ fontSize: 15 }} />
+											) : (
+												<VisibilityOff style={{ fontSize: 15 }} />
 											)}
 										</IconButton>
 									</InputAdornment>
