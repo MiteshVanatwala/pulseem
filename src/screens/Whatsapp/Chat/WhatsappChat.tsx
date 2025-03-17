@@ -1051,6 +1051,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							</Grid>
 						</Grid>
 					})}
+					<Grid item xs={12}>
+						<Button
+							className={clsx(classes.btn, classes.btnRounded)}
+							onClick={(e: BaseSyntheticEvent) => {
+								setDialogType({ type: 'addAgent', data: null })
+							}}>{translator('whatsappChat.addAgent')}</Button>
+					</Grid>
 				</Grid>
 			)
 		}
