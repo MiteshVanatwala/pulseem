@@ -191,42 +191,44 @@ const ChatUi = ({
 							<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
 							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
 						</Select>
-						<Select
-							className={clsx(classes.whatsappChatStatusSelect, classes.f12)}
-							autoWidth
-							defaultValue='0'
-							value={`${selectedAgent?.AgentId || 0}`}
-							variant='standard'
-							style={{ marginInline: 15 }}
-							MenuProps={{
-								PaperProps: {
-									style: {
-										direction: isRTL ? 'rtl' : 'ltr',
+						<div className={classes.agentSelectorContainer}>
+							<Select
+								className={clsx(classes.whatsappChatStatusSelect, classes.f12)}
+								autoWidth
+								defaultValue='0'
+								value={`${selectedAgent?.AgentId || 0}`}
+								variant='standard'
+								style={{ marginInline: 15 }}
+								MenuProps={{
+									PaperProps: {
+										style: {
+											direction: isRTL ? 'rtl' : 'ltr',
+										},
 									},
-								},
-							}}
-							onChange={(e: SelectChangeEvent) => {
-								let agentToSession: WhatsappPhoneSession = {
-									AgentId: -1,
-									Cellphone: activeChatContacts.PhoneNumber
-								};
-
-								if (Number(e.target.value) > 0) {
-									const selectedAgent: WhatsappAgent = agentList?.filter((a: WhatsappAgent) => { return a.AgentId === Number(e.target.value) })[0];
-									agentToSession = {
-										AgentId: selectedAgent.AgentId,
+								}}
+								onChange={(e: SelectChangeEvent) => {
+									let agentToSession: WhatsappPhoneSession = {
+										AgentId: -1,
 										Cellphone: activeChatContacts.PhoneNumber
 									};
-								}
 
-								handleSetAgentToSession(agentToSession);
-							}}
-						>
-							<MenuItem value={0}>{translator('whatsappChat.setAgent')}</MenuItem>
-							{agentList?.map((agent: WhatsappAgent) => {
-								return <MenuItem value={agent.AgentId}>{agent.Name}</MenuItem>
-							})}
-						</Select>
+									if (Number(e.target.value) > 0) {
+										const selectedAgent: WhatsappAgent = agentList?.filter((a: WhatsappAgent) => { return a.AgentId === Number(e.target.value) })[0];
+										agentToSession = {
+											AgentId: selectedAgent.AgentId,
+											Cellphone: activeChatContacts.PhoneNumber
+										};
+									}
+
+									handleSetAgentToSession(agentToSession);
+								}}
+							>
+								<MenuItem value={0}>{translator('whatsappChat.setAgent')}</MenuItem>
+								{agentList?.map((agent: WhatsappAgent) => {
+									return <MenuItem value={agent.AgentId}>{agent.Name}</MenuItem>
+								})}
+							</Select>
+						</div>
 					</Box>
 					<Box className='clock-font-size'>
 						{whatsappChatSession?.IsIn24Window &&
