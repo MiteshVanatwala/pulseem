@@ -122,15 +122,12 @@ const ChatUi = ({
 		switch (response?.payload?.StatusCode) {
 			case 201: {
 				await dispatch(getChatAgents());
-				// show success assign
+				//TODO: show success assign
 				break;
 			}
 			case 404: {
-				// not found
+				//TODO: not found
 				break;
-			}
-			case 405: {
-				// exists
 			}
 		}
 	}
