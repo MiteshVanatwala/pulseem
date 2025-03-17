@@ -738,5 +738,6 @@
   "setupStaticProduct": "הגדרות מוצר",
   "createProductBlock": "בלוק מוצר מותאם אישית",
   "selectProduct": "בחירת מוצר מקטלוג",
-  "selectAllStaticProducts": "בחירת מוצר מקטלוג"
+  "selectAllStaticProducts": "בחירת מוצר מקטלוג",
+  "fromEmailCaution": "אתה עומד לשלוח קמפיין כששם השולח הוא כתובת מייל, גוגל עלולים לחשוד בשליחה זו כספאם.<br/>האם תרצה להמשיך בכל זאת?"
 }

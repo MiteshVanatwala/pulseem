@@ -34,6 +34,7 @@ import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, sav
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
+import { IsValidEmail } from '../../../helpers/Utils/Validations';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -198,6 +199,8 @@ const NewsLetterInfo = ({ classes }) => {
         FromEmail: "",
         ReplyTo: ""
     })
+    const [showFromNameEmailCaution, setShowFromNameEmailCaution] = useState(false);
+    const [ignoreEmailCaution, setIgnoreEmailCaution] = useState(false);
 
     const helperTexts = {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
@@ -602,6 +605,9 @@ const NewsLetterInfo = ({ classes }) => {
                 isError = true
             }
             else {
+                if (IsValidEmail(data[key]) && !ignoreEmailCaution) {
+                    setShowFromNameEmailCaution();
+                }
                 if (!data[key] || !data[key].trim()) {
                     tempError[key] = ErrorTexts[key];
                     isError = !data[key]
@@ -1370,6 +1376,26 @@ const NewsLetterInfo = ({ classes }) => {
                     <Box>
                         <Typography variant="subtitle1">
                             {t("campaigns.GridButtonColumnResource2.ConfirmText")}
+                        </Typography>
+                    </Box>
+                </BaseDialog>
+                <BaseDialog
+                    classes={classes}
+                    open={showFromNameEmailCaution}
+                    title={t("campaigns.payAttention")}
+                    showDivider={true}
+                    onClose={() => setShowFromNameEmailCaution(false)}
+                    onCancel={() => setShowFromNameEmailCaution(false)}
+                    onConfirm={() => {
+                        setIgnoreEmailCaution(true);
+                        handleSubmit()
+                    }}
+                    cancelText="common.Cancel"
+                    confirmText="common.Ok"
+                >
+                    <Box>
+                        <Typography variant="subtitle1">
+                            {t("campaigns.fromEmailCaution")}
                         </Typography>
                     </Box>
                 </BaseDialog>

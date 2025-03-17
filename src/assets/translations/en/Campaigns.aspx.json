@@ -745,5 +745,6 @@
   "setupStaticProduct": "Product Set-Up",
   "createProductBlock": "Personalized Product Block",
   "selectProduct": "Select Product From Catalog",
-  "selectAllStaticProducts": "Select Product From Catalog"
+  "selectAllStaticProducts": "Select Product From Catalog",
+  "fromEmailCaution": "You are about to send from name as Email address, Google can see it as spam and block this email.<br/>would you still like to continue?"
 }
