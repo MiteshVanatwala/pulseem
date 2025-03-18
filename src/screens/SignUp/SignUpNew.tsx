@@ -103,10 +103,10 @@ const SignUpNew = ({ classes }: any) => {
       if (Message === 'Success') {
         setUserDetails({
           ...userDetails,
-          fullName: `${Data?.FirstName} ${Data?.LastName}`,
+          fullName: `${Data?.FirstName || ''} ${Data?.LastName || ''}`,
           emailId: qs?.emailid || '',
-          cellPhone: Data?.Mobile,
-          companyName: Data?.Company,
+          cellPhone: Data?.Mobile || '',
+          companyName: Data?.Company || '',
           fieldOfInterest: Data?.ProductType?.split(',') || []
         })
       }
@@ -301,7 +301,7 @@ const SignUpNew = ({ classes }: any) => {
       setLoader(false);
       if (status === 200) {
         if (Message === 'ok') {
-          setDialogType({ type: 'confirmation' });
+          // setDialogType({ type: 'confirmation' });
           setActiveStep(activeStep + 1);
           // @ts-ignore
           window?.dataLayer?.push({
@@ -310,8 +310,7 @@ const SignUpNew = ({ classes }: any) => {
             'formPosition': 'Footer'
           });
         } else if (Message === 'internalerror') {
-          // setDialogType({ type: 'internalError' });
-          setActiveStep(activeStep + 1);
+          setDialogType({ type: 'internalError' });
         } else {
           showMessage(`SignUp.Message.${Message}`);
         }
@@ -786,7 +785,7 @@ const SignUpNew = ({ classes }: any) => {
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
                 error={!!errors.password}
-                inputProps={{ maxWidth: 50 }}
+                inputProps={{ maxWidth: 50, style: { textAlign: 'center'}}}
                 InputProps={{
                   endAdornment: (
                     <span onClick={() => setUserDetails({ ...userDetails, isPasswordVisible: !userDetails.isPasswordVisible })}>
@@ -797,6 +796,9 @@ const SignUpNew = ({ classes }: any) => {
                       }
                     </span>
                   ),
+                  style: {
+                    textAlign: 'center'
+                  }
                 }}
               />
             </Tooltip>
@@ -826,7 +828,7 @@ const SignUpNew = ({ classes }: any) => {
               })}
               className={clsx(classes.textField, classes.minWidth252)}
               error={!!errors.confirmPassword}
-              inputProps={{ maxLength: 50 }}
+              inputProps={{ maxWidth: 50, style: { textAlign: 'center'}}}
               InputProps={{
                 endAdornment: (
                   <span onClick={() => setUserDetails({ ...userDetails, isConfirmPasswordVisible: !userDetails.isConfirmPasswordVisible })}>
@@ -837,6 +839,9 @@ const SignUpNew = ({ classes }: any) => {
                     }
                   </span>
                 ),
+                style: {
+                  textAlign: 'center'
+                }
               }}
             />
           </Box>
