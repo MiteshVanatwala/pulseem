@@ -112,11 +112,6 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`${sitePrefix}sign-up`}
-        element={<SignUp classes={classes} />}
-      />
-      <Route
-        exact
-        path={`${sitePrefix}sign-up-new`}
         element={<SignUpNew classes={classes} />}
       />
       <Route
