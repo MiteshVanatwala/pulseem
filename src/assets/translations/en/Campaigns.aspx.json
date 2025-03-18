@@ -746,5 +746,5 @@
   "createProductBlock": "Personalized Product Block",
   "selectProduct": "Select Product From Catalog",
   "selectAllStaticProducts": "Select Product From Catalog",
-  "fromEmailCaution": "You are about to send from name as Email address, Google can see it as spam and block this email.<br/>would you still like to continue?"
+  "fromEmailCaution": "Using an email in the 'From Name' field may cause filtering as spam. It is recommended to use a display name. <br/>Do you want to continue?"
 }
