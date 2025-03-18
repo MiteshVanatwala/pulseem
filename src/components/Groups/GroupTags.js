@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Box, Checkbox, Paper, TextField } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
 import clsx from 'clsx';
 import { Autocomplete } from '@material-ui/lab';
-import React from 'react';
+import React, { useEffect } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { getAllGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 
 
 const GroupTags = ({ classes,
@@ -36,6 +37,17 @@ const GroupTags = ({ classes,
         const newList = groupSelected.filter((g) => { return g !== groupId });
         onRemoveGroup(newList);
     }
+    const dispatch = useDispatch();
+
+    const initGroups = async () => {
+        if (!subAccountAllGroups || subAccountAllGroups?.length <= 0) {
+            await dispatch(getAllGroupsBySubAccountId());
+        }
+    }
+
+    useEffect(() => {
+        initGroups();
+    }, [])
 
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
