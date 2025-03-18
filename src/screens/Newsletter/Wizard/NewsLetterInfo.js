@@ -200,7 +200,9 @@ const NewsLetterInfo = ({ classes }) => {
         ReplyTo: ""
     })
     const [showFromNameEmailCaution, setShowFromNameEmailCaution] = useState(false);
-    const [ignoreEmailCaution, setIgnoreEmailCaution] = useState(false);
+    const [continueAfterSave, setIsContinueAfterSave] = useState(false);
+    const [exitAfterSave, setIsExitAfterSave] = useState(false);
+    const [newEditorAfterSave, setIsNewEditorAfterSave] = useState(false);
 
     const helperTexts = {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
@@ -225,7 +227,7 @@ const NewsLetterInfo = ({ classes }) => {
         Name: "",
         Subject: "",
         personalDatatoSubject: "",
-        FromName: "",
+        FromName: accountSettings?.DefaultFromName,
         FromEmail: "-1",
         WebViewLocation: 1,
         PreviewText: "",
@@ -594,10 +596,15 @@ const NewsLetterInfo = ({ classes }) => {
         }
     }
 
-    const handleValidations = () => {
+    const handleValidations = (ignoreEmailCaution = false) => {
         const tempError = { ...errors }
         const data = { ...campaingnValues }
         let isError = false;
+
+        if (IsValidEmail(data['FromName']) && !ignoreEmailCaution) {
+            setShowFromNameEmailCaution(true);
+            return true;
+        }
 
         Object.keys(tempError).forEach((key) => {
             if ((key === 'FromEmail' && data[key] === '-1') || (key === 'ReplyTo' && data[key] === '-1')) {
@@ -605,9 +612,6 @@ const NewsLetterInfo = ({ classes }) => {
                 isError = true
             }
             else {
-                if (IsValidEmail(data[key]) && !ignoreEmailCaution) {
-                    setShowFromNameEmailCaution();
-                }
                 if (!data[key] || !data[key].trim()) {
                     tempError[key] = ErrorTexts[key];
                     isError = !data[key]
@@ -632,8 +636,12 @@ const NewsLetterInfo = ({ classes }) => {
         window.location = redirectUrl;
     }
 
-    const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
-        if (!handleValidations()) {
+    const handleSubmit = async (isContiue, isExit = false, isNewEditor = false, ignoreEmailCaution = false) => {
+        setIsContinueAfterSave(isContiue);
+        setIsExitAfterSave(isExit);
+        setIsNewEditorAfterSave(isNewEditor);
+
+        if (!handleValidations(ignoreEmailCaution)) {
             setLoader(true);
             setContinueToNewEditor(isNewEditor);
             await dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then(async (response) => {
@@ -834,7 +842,7 @@ const NewsLetterInfo = ({ classes }) => {
                                     label=""
                                     variant="outlined"
                                     name="FromName"
-                                    value={campaingnValues.FromName !== '' ? campaingnValues.FromName : accountSettings?.DefaultFromName}
+                                    value={campaingnValues.FromName}
                                     className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth', { [classes.textFieldError]: !!errors.FromName })}
                                     autoComplete="off"
                                     onChange={handleChange}
@@ -1382,20 +1390,20 @@ const NewsLetterInfo = ({ classes }) => {
                 <BaseDialog
                     classes={classes}
                     open={showFromNameEmailCaution}
-                    title={t("campaigns.payAttention")}
+                    title={t("campaigns.newsLetterMgmt.payAttention")}
                     showDivider={true}
                     onClose={() => setShowFromNameEmailCaution(false)}
                     onCancel={() => setShowFromNameEmailCaution(false)}
                     onConfirm={() => {
-                        setIgnoreEmailCaution(true);
-                        handleSubmit()
+                        setShowFromNameEmailCaution(false);
+                        handleSubmit(continueAfterSave, exitAfterSave, newEditorAfterSave, true)
                     }}
                     cancelText="common.Cancel"
                     confirmText="common.Ok"
                 >
                     <Box>
                         <Typography variant="subtitle1">
-                            {t("campaigns.fromEmailCaution")}
+                            {RenderHtml(t("campaigns.fromEmailCaution"))}
                         </Typography>
                     </Box>
                 </BaseDialog>
