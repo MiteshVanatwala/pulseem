@@ -88,5 +88,6 @@ export interface AuthorizationValuesLog {
 
 export enum OtpRequestFor {
     eDisablePendingOptIn = 0,
-    eUnsubscribeType = 1
+    eUnsubscribeType = 1,
+    eChangeSubUserPassword = 2
 }

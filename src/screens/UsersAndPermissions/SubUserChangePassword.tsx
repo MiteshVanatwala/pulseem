@@ -20,6 +20,12 @@ import { ValidPassword } from "../Settings/AccountSettings/Password/Types";
 import PasswordHint from "../Settings/AccountSettings/Password/PasswordHint";
 import { save } from "../../redux/reducers/SubUserSlice";
 import { eSubUserAction, SubUserModel } from "../../Models/SubUser/SubUsers";
+import OTP from "../../components/OneTimePassword/OTP";
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
+import { confimrOtp, setAuditLog } from "../../redux/reducers/AccountSettingsSlice";
+import { AuditLog, eAuditActionType } from "../../Models/AuditLog/AuditLog";
+import { logout } from "../../helpers/Api/PulseemReactAPI";
+import { OtpRequestFor } from "../../Models/Authorization/AuthorizationModels";
 
 const useStyles = makeStyles({
   dialogContainer: {
@@ -120,6 +126,9 @@ const SubUserChangePassword = ({
   const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
   const [errors, setErrors] = useState([]);
   const [userDetails, setUserDetails] = useState<SubUserModel>(SubUser);
+  const [showOtpDialog, setShowOtpDialog] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [userCodeConfirmed, setUserCodeConfirmed] = useState<boolean>(false);
 
   const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const lowerCaseLetters = /[a-z]/g;
@@ -151,6 +160,15 @@ const SubUserChangePassword = ({
       setConfirmPassError('');
     }
   }, [IsOpen])
+
+  const errorMessages = {
+    401: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.email_error_abused'),
+    404: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_not_match'),
+    405: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_tooMuchAttempts'),
+    409: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired'),
+    500: t('common.ErrorOccured'),
+    501: t('common.ErrorOccured')
+  } as any;
 
   const handleConfirm = async () => {
     const missingErrorsObj: any = {
@@ -195,10 +213,7 @@ const SubUserChangePassword = ({
     } else {
       setErrors([]);
       if (isValid) {
-        setShowLoader(true);
-        const response = await dispatch(save(userDetails));
-        handleResponses(response);
-        setShowLoader(false);
+        setShowOtpDialog(true)
       }
     }
   };
@@ -241,6 +256,54 @@ const SubUserChangePassword = ({
     }
   };
 
+  const handleConfirmOtp = async (req: any) => {
+    setErrorMessage('')
+    if (!req?.Code || req?.Code === '') {
+      setErrorMessage(t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2'));
+      return false;
+    }
+    // @ts-ignore
+    const response = await dispatch(confimrOtp({ ...req, otpRequestFor: OtpRequestFor.eChangeSubUserPassword })) as any;
+
+    const results = response?.payload;
+
+    if (results?.StatusCode === 201) {
+      setErrorMessage('');
+      setShowOtpDialog(false);
+      dispatch(setAuditLog({
+        ActionName: 'ChangeSubUserPassword',
+        AuditActionType: eAuditActionType.Edit,
+        RequestSourceValue: '',
+        ResponseValue: '',
+        RequestValue: ''
+      } as AuditLog));
+
+      setShowLoader(true);
+      const response = await dispatch(save(userDetails));
+      handleResponses(response);
+      setShowLoader(false);
+    }
+    else {
+      handleErrorOTPResponse(results?.StatusCode);
+    }
+  }
+
+  const handleErrorOTPResponse = (statusCode: number) => {
+    switch (statusCode) {
+      case 401: {
+        logout();
+        break;
+      }
+      case 404:
+      case 406:
+      case 501:
+      default: {
+        setErrorMessage(errorMessages[statusCode]);
+        setUserCodeConfirmed(false);
+        break;
+      }
+    }
+  }
   return (
     <>
       <BaseDialog
@@ -447,6 +510,15 @@ const SubUserChangePassword = ({
           )}
         </Grid>
       </BaseDialog>
+      {showOtpDialog && <OTP
+        classes={classes}
+        onClose={() => { setShowOtpDialog(false); }}
+        onConfirm={handleConfirmOtp}
+        userCodeConfirmed={userCodeConfirmed}
+        preText={RenderHtml(t("SubUsers.changeUserPassword"))}
+        responseError={errorMessage}
+        actionName='DisablePendingFeature'
+      />}
       <Loader isOpen={showLoader} zIndex={1500} />
     </>
   );
