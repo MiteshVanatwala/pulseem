@@ -74,5 +74,5 @@
   "exportGroupNames": "Export Group names (This will take a little bit more time)",
   "exportGroupNamesTooltip": "This will take a little bit more time",
   "selectePages": "Select pages",
-  "featuredDisallowDeleteGroup": "Groups that have one of the following features associated with them cannot be deleted:<br/><br/><li>AutoResponder</li><br/><li>Automation</li><br/><li>Landing Page</li>"
+  "featuredDisallowDeleteGroup": "Groups that have one of the following features associated with them cannot be deleted:<br/><br/><li>AutoResponder</li><li>Automation</li><li>Landing Page</li>"
 }
