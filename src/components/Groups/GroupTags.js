@@ -37,6 +37,12 @@ const GroupTags = ({ classes,
         const newList = groupSelected.filter((g) => { return g !== groupId });
         onRemoveGroup(newList);
     }
+    const handleSelectGroup = (e, groupId) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const newList = [...groupSelected, groupId];
+        dropDownProps?.onSelectGroup(newList);
+    }
     const dispatch = useDispatch();
 
     const initGroups = async () => {
@@ -106,11 +112,30 @@ const GroupTags = ({ classes,
                         style={{ marginRight: 8 }}
                         checked={dropDownProps?.selectedGroups?.indexOf(option.GroupID) !== -1}
                         color="primary"
+                        value={option.GroupID}
+                        onChange={(e) => {
+                            if (!e.target.checked) {
+                                handleRemoveGroup(e, option.GroupID);
+                            }
+                            else {
+                                handleSelectGroup(e, option.GroupID)
+                            }
+                        }}
                     />
                     {option.GroupName}
                 </React.Fragment>
             )}
-            onChange={dropDownProps?.onChange}
+            onChange={(e, newValue) => {
+                const currentIds = newValue.map(item => item.GroupID);
+                const removedIds = dropDownProps.selectedGroups.filter(id => !currentIds.includes(id));
+
+                if (removedIds.length > 0) {
+                    handleRemoveGroup(e, removedIds[0]);
+                } else if (newValue.length > dropDownProps.selectedGroups.length) {
+                    const lastItem = newValue[newValue.length - 1];
+                    handleSelectGroup(e, lastItem.GroupID);
+                }
+            }}
             renderInput={(params) => (
                 <TextField
                     {...params}

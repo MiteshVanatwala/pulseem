@@ -49,7 +49,19 @@ const TestSend = ({
         return true;
     }
     const handleSendMethod = (e) => {
+        const sendMethod = e.target.value;
         setSendMethod(e.target.value);
+        if (sendMethod === "1") {
+            setTestGroups([]);
+        }
+        else {
+            setRecipient('');
+        }
+    }
+    const onBeforeClose = () => {
+        setRecipient('');
+        setTestGroups([]);
+        onClose();
     }
 
     const prepareForSubmit = () => {
@@ -57,8 +69,8 @@ const TestSend = ({
             const request = {
                 Language: `${isRTL ? 'he-IL' : 'en-US'}`,
                 CampaignID: campaignId,
-                Emails: recipient,
-                GroupIds: selectedGroups
+                Emails: sendSendMethod === "1" ? recipient : '',
+                GroupIds: sendSendMethod === "2" ? selectedGroups : []
             }
             onSubmit(request);
         }
@@ -118,16 +130,8 @@ const TestSend = ({
                 onRemoveGroup={handleRemoveGroup}
                 groupSelected={selectedGroups}
                 dropDownProps={{
-                    onChange: (e, val) => {
-                        if (e?.target?.checked === false) {
-                            const groupIdToRemove = val[val.length-1]?.GroupID;
-                            const newArr = val?.filter((g) => { return g.GroupID !== groupIdToRemove });
-                            setTestGroups(newArr);
-                        }
-                        else {
-                            const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
-                            setTestGroups(idArr)
-                        }
+                    onSelectGroup: (arr) => {
+                        setTestGroups(arr);
                     },
                     selectedGroups: selectedGroups,
                     groups: testGroups
@@ -160,8 +164,8 @@ const TestSend = ({
                         <RiSendPlaneFill />
                     </div>}
                     showDivider={false}
-                    onClose={onClose}
-                    onCancel={onClose}
+                    onClose={onBeforeClose}
+                    onCancel={onBeforeClose}
                     onConfirm={prepareForSubmit}
                     contentStyle={classes.testSendDialog}
                     reduceTitle
