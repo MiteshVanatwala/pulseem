@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import Toast from '../../../components/Toast/Toast.component';
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
-import GroupTags from "../../../components/Groups/GroupTags";
+import GroupSelectorDropDown from "../../../components/Groups/GroupSelectorDropDown";
 
 const TestSend = ({
     classes,
@@ -111,18 +111,8 @@ const TestSend = ({
         {
             value: "2",
             className: classes.radioButtonActive,
-            label:
-                <CustomTooltip
-                    isSimpleTooltip={false}
-                    classes={classes}
-                    interactive={true}
-                    arrow={true}
-                    style={{ fontSize: 17 }}
-                    placement={'top'}
-                    title={<Typography noWrap={false}>{t("mainReport.sendToGroups")}</Typography>}
-                    text={<>{t("mainReport.sendToGroups")}<span className={classes.newIcn}>{t("mainReport.newFeature")}</span></>}
-                />,
-            child: <GroupTags
+            label: <>{t("mainReport.sendToGroups")}</>,
+            child: <GroupSelectorDropDown
                 classes={classes}
                 title={'siteTracking.typeGroupName'}
                 style={{ width: windowSize === 'xs' ? 320 : 460 }}

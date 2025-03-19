@@ -1,13 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Box, Checkbox, Paper, TextField } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
 import clsx from 'clsx';
 import { Autocomplete } from '@material-ui/lab';
-import React, { useEffect } from 'react';
+import React from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { getAllGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 
 
 const GroupTags = ({ classes,
@@ -37,23 +36,6 @@ const GroupTags = ({ classes,
         const newList = groupSelected.filter((g) => { return g !== groupId });
         onRemoveGroup(newList);
     }
-    const handleSelectGroup = (e, groupId) => {
-        e.stopPropagation();
-        e.preventDefault();
-        const newList = [...groupSelected, groupId];
-        dropDownProps?.onSelectGroup(newList);
-    }
-    const dispatch = useDispatch();
-
-    const initGroups = async () => {
-        if (!subAccountAllGroups || subAccountAllGroups?.length <= 0) {
-            await dispatch(getAllGroupsBySubAccountId());
-        }
-    }
-
-    useEffect(() => {
-        initGroups();
-    }, [])
 
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
@@ -112,30 +94,11 @@ const GroupTags = ({ classes,
                         style={{ marginRight: 8 }}
                         checked={dropDownProps?.selectedGroups?.indexOf(option.GroupID) !== -1}
                         color="primary"
-                        value={option.GroupID}
-                        onChange={(e) => {
-                            if (!e.target.checked) {
-                                handleRemoveGroup(e, option.GroupID);
-                            }
-                            else {
-                                handleSelectGroup(e, option.GroupID)
-                            }
-                        }}
                     />
                     {option.GroupName}
                 </React.Fragment>
             )}
-            onChange={(e, newValue) => {
-                const currentIds = newValue.map(item => item.GroupID);
-                const removedIds = dropDownProps.selectedGroups.filter(id => !currentIds.includes(id));
-
-                if (removedIds.length > 0) {
-                    handleRemoveGroup(e, removedIds[0]);
-                } else if (newValue.length > dropDownProps.selectedGroups.length) {
-                    const lastItem = newValue[newValue.length - 1];
-                    handleSelectGroup(e, lastItem.GroupID);
-                }
-            }}
+            onChange={dropDownProps?.onChange}
             renderInput={(params) => (
                 <TextField
                     {...params}
