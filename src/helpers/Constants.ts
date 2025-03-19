@@ -254,7 +254,9 @@ export const NoAuthenticationAPIs = [
     'User/CheckRef',
     'User/SetupNewEmail',
     'User/CheckSubUserRef',
-    'User/ConfirmSubUser'
+    'User/ConfirmSubUser',
+    'User/SaveInfoAccounts',
+    'User/GetStepWiseAccountInfo'
 ]
 
 export const FieldOfActivities = [
@@ -290,13 +292,13 @@ export const FieldOfActivities = [
 ]
 
 export const FieldOfInterest = [
-    'BulkEmail',
-    'BulkSMS',
+    'Bulk Email',
+    'Bulk SMS',
     'WhatsApp',
-    'LandingPages',
-    'Ecommerce',
-    'Notification',
-    'MarketingAutomation'
+    'Landing Pages',
+    'eCommerce Solutions',
+    'Web Push Notifications',
+    'Marketing Automation'
 ]
 
 export const lowerCaseLetters = /[a-z]/g;

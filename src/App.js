@@ -92,6 +92,7 @@ import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding
 import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
 import { Loader } from './components/Loader/Loader';
 import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
+import SignUpNew from './screens/SignUp/SignUpNew';
 
 const renderRoutes = (classes, redirect, userRoles) => {
   const transferUrl =
@@ -113,7 +114,7 @@ const renderRoutes = (classes, redirect, userRoles) => {
       <Route
         exact
         path={`${sitePrefix}sign-up`}
-        element={<SignUp classes={classes} />}
+        element={<SignUpNew classes={classes} />}
       />
       <Route
         exact
