@@ -1402,7 +1402,7 @@ const NewsLetterInfo = ({ classes }) => {
                     confirmText="common.Ok"
                 >
                     <Box>
-                        <Typography variant="subtitle1">
+                        <Typography variant="subtitle1" className={clsx(classes.font20, classes.textCenter)}>
                             {RenderHtml(t("campaigns.fromEmailCaution"))}
                         </Typography>
                     </Box>

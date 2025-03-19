@@ -746,5 +746,5 @@
   "createProductBlock": "Personalized Product Block",
   "selectProduct": "Select Product From Catalog",
   "selectAllStaticProducts": "Select Product From Catalog",
-  "fromEmailCaution": "Using an email in the 'From Name' field may cause filtering as spam. It is recommended to use a display name. <br/>Do you want to continue?"
+  "fromEmailCaution": "<p style='line-height:1.2'><b>Pay attention!</b><br/><br/>Using an email in the 'From Name' field may cause filtering as spam.<br/>It is recommended to use a display name. <br/>Do you want to continue?</p>"
 }
