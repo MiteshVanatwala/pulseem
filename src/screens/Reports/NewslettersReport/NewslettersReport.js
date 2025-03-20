@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
@@ -29,8 +29,8 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlineAddCircleOutline, MdOutlineRemoveCircleOutline } from 'react-icons/md';
-import { sitePrefix } from '../../../config';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { Virtuoso } from 'react-virtuoso'
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -63,6 +63,7 @@ const NewslettersReport = ({ classes }) => {
   const [dialogType, setDialog] = useState(null);
   const [expandedIds, setExpandedIds] = useState([]);
   const [parentCampaignsWithChild, setParentCampaignsWithChild] = useState([]);
+  const virtuosoRef = useRef();
 
   moment.locale(language)
 
@@ -819,7 +820,10 @@ const NewslettersReport = ({ classes }) => {
     }
   }
 
+  const rowHeight = (childItemsCount) => `${childItemsCount > 4 ? 400 : (childItemsCount * 100)}px`;
+
   const renderRow = (row, isParent = true, isEven = false) => {
+    if (row === undefined) return <></>;
     const childItems = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
     const {
       CampaignID,
@@ -828,20 +832,19 @@ const NewslettersReport = ({ classes }) => {
       LastEditDate,
       RemovedClients,
       Status,
+      ParentCampaignId,
       Revenue = 0
     } = row;
 
     const {
       SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks, SumRevenue
     } = getParentChildSum(row);
-
-    const hasChildren = isParent && newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID)?.length > 0;
-
-    const hrefs = getHrefs(CampaignID, Revenue, hasChildren)
+    
+    const hrefs = getHrefs(CampaignID, Revenue, childItems?.length > 0)
     return (
       <>
         <TableRow
-          key={CampaignID}
+          key={`${ParentCampaignId}_${CampaignID}`}
           classes={rowStyle}
           className={clsx(classes.maxHeight87, classes.maxHeightReponsive, isEven ? classes.evenRowBackground : classes.bgWhite)}
         >
@@ -945,15 +948,21 @@ const NewslettersReport = ({ classes }) => {
             classes={noBorderCellStyle}
             align='center'
             className={clsx(classes.flex1)}>
-            {renderRevenueData(isParent ? SumRevenue : Revenue, '', hrefs.Revenue, (isParent && hasChildren))}
+            {renderRevenueData(isParent ? SumRevenue : Revenue, '', hrefs.Revenue, (isParent && childItems?.length > 0))}
           </TableCell>}
         </TableRow >
         {
           isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
-            <>
-              {renderRow(row, false, isEven)}
-              {childItems.map((campaign) => renderRow(campaign, false, isEven))}
-            </>
+            <div style={{ height: rowHeight(childItems.length), width: "100%", overflow: "auto", maxHeight: rowHeight(childItems.length) }}>
+              <Virtuoso
+                ref={virtuosoRef}
+                style={{ height: rowHeight(childItems.length), width: '100%' }}
+                totalCount={[row, ...childItems].length}
+                itemContent={index => renderRow(childItems[index], false, index % 2)}
+                computeItemKey={(index) => `${childItems[index]?.ParentCampaignId || ''}_${childItems[index]?.CampaignID}`}
+                overscan={10}
+              />
+            </div>
           )
         }
       </>
@@ -961,6 +970,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderPhoneRow = (row, isParent = true, isEven = false) => {
+    if (row === undefined) return <></>;
     const childItems = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
     const {
       CampaignID,
@@ -1066,8 +1076,16 @@ const NewslettersReport = ({ classes }) => {
         {
           isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
             <>
-              {renderPhoneRow(row, false, isEven)}
-              {childItems.map((campaign) => renderPhoneRow(campaign, false, isEven))}
+              <div style={{ height: rowHeight(childItems.length), width: "100%", overflow: "auto", maxHeight: rowHeight(childItems.length) }}>
+                <Virtuoso
+                  ref={virtuosoRef}
+                  style={{ height: rowHeight(childItems.length), width: '100%' }}
+                  totalCount={[row, ...childItems].length}
+                  itemContent={index => renderPhoneRow(childItems[index], false, index % 2)}
+                  computeItemKey={(index) => `${childItems[index]?.ParentCampaignId}_${childItems[index]?.CampaignID}`}
+                  overscan={10}
+                />
+              </div>
             </>
           )
         }

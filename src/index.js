@@ -6,6 +6,27 @@ import store from './redux/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 
+
+// Stop error resizeObserver
+const debounce = (callback, delay) => {
+  let tid;
+  return function (...args) {
+    const ctx = this;
+    tid && clearTimeout(tid);
+    tid = setTimeout(() => {
+      callback.apply(ctx, args);
+    }, delay);
+  };
+};
+
+const OriginalResizeObserver = window.ResizeObserver;
+window.ResizeObserver = class ResizeObserver extends OriginalResizeObserver {
+  constructor(callback) {
+    callback = debounce(callback, 20);
+    super(callback);
+  }
+};
+
 ReactDOM.render(
   // <React.StrictMode>
   <Provider store={store}>
