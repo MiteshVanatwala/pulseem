@@ -270,32 +270,30 @@ const UploadXL = ({
 
                             const finalData = json.flat().map(function (obj) {
                                 return Object.keys(obj).map(function (key) {
-                                    try {
-                                        let value = obj[key];
-                                        // Check if value is a number that could be an Excel date
-                                        if (typeof value === 'number' && value > 10000) {
-                                            // Convert Excel date serial number to JavaScript Date
-                                            const date = new Date((value - 25569) * 86400 * 1000);
-                                            return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
-                                        }
+                                    let value = obj[key];
 
-                                        // Check if value is a date string with 2-digit year
-                                        if (typeof value === 'string' && /^\d{1,2}\/\d{1,2}\/\d{2}$/.test(value)) {
-                                            let parts = value.split('/');
-                                            let year = parseInt(parts[2]);
-
-                                            // Or if you want to base it on the current year
-                                            const currentYear = new Date().getFullYear();
-                                            const currentCentury = Math.floor(currentYear / 100) * 100;
-                                            const twoDigitCurrentYear = currentYear % 100;
-                                            year = year <= twoDigitCurrentYear ? currentCentury + year : currentCentury - 100 + year;
-
-                                            return `${parts[0]}/${parts[1]}/${year}`;
-                                        }
+                                    // Check if value is a number that could be an Excel date
+                                    if (typeof value === 'number' && value > 10000) {
+                                        // Convert Excel date serial number to JavaScript Date
+                                        const date = new Date((value - 25569) * 86400 * 1000);
+                                        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
                                     }
-                                    catch (e) {
-                                        return obj[key];
+
+                                    // Check if value is a date string with 2-digit year
+                                    if (typeof value === 'string' && /^\d{1,2}\/\d{1,2}\/\d{2}$/.test(value)) {
+                                        let parts = value.split('/');
+                                        let year = parseInt(parts[2]);
+
+                                        // Or if you want to base it on the current year
+                                        const currentYear = new Date().getFullYear();
+                                        const currentCentury = Math.floor(currentYear / 100) * 100;
+                                        const twoDigitCurrentYear = currentYear % 100;
+                                        year = year <= twoDigitCurrentYear ? currentCentury + year : currentCentury - 100 + year;
+
+                                        return `${parts[0]}/${parts[1]}/${year}`;
                                     }
+
+                                    return value;
                                 });
                             });
 
