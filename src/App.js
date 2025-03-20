@@ -494,10 +494,10 @@ const renderRoutes = (classes, redirect, userRoles) => {
         path={`${sitePrefix}ApiSettings`}
         element={<ApiSettings classes={classes} />}
       />
-      {userRoles?.AllowSubUsers && <Route
+      <Route
         path={`${sitePrefix}SubUsers`}
         element={<SubUsers classes={classes} />}
-      />}
+      />
       {/* Support */}
       <Route
         path={`/Support`}

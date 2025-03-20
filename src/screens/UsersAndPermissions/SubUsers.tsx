@@ -180,6 +180,7 @@ const SubUsers = ({ classes }: any) => {
         // remove: windowSize === 'xs',
         onClick: () => { setSelectedSubUser(row); setOpenPermissionsDialog(true) },
         rootClass: classes.paddingIcon,
+        remove: !userRoles.AllowSubUsers
       },
       {
         key: 'change-password',
@@ -189,6 +190,7 @@ const SubUsers = ({ classes }: any) => {
         // remove: windowSize === 'xs',
         onClick: () => { setSelectedSubUser(row); setOpenChangePasswordDialog(true) },
         rootClass: clsx(classes.paddingIcon, classes.f18),
+        remove: !userRoles.AllowSubUsers
       },
       {
         key: 'permission-history',
@@ -219,7 +221,7 @@ const SubUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
         disable: false,
         showPhone: true,
-        remove: row.IsApproved,
+        remove: row.IsApproved || !userRoles.AllowSubUsers,
         onClick: () => {
           resendConfirmation(row.ID);
         },
@@ -229,7 +231,8 @@ const SubUsers = ({ classes }: any) => {
       <Grid
         container
         direction={windowSize === 'sm' ? 'column' : 'row'}
-        justifyContent={'flex-end'}
+        justifyContent={userRoles?.HideRecipients ? 'center' : 'flex-end'}
+        style={{ paddingInline: iconsMap[0].filter((icon: any) => { return !icon?.remove }).length === 1 ? 15 : 0 }}
       >
         {iconsMap.map((map, index) => (
           <Grid
@@ -548,7 +551,8 @@ const SubUsers = ({ classes }: any) => {
 
   return (
     <DefaultScreen
-      // currentPage='newsletter'
+      currentPage='settings'
+      subPage='SubUsers'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >

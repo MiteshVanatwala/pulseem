@@ -462,7 +462,7 @@ const AccountUsers = ({ classes }: any) => {
         </Grid>
         <Grid item md={4} xs={12} sm={12} className={clsx(classes.groupsLableContainer)} >
           <Typography className={classes.groupsLable}>
-            {`${subAccountList.length} ${t('SubAccount.title')}`}
+            {`${subAccountList.length} ${t('master.RadMenuItemResource3.Text')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -697,12 +697,13 @@ const AccountUsers = ({ classes }: any) => {
 
   return (
     <DefaultScreen
-      currentPage='newsletter'
+      currentPage='settings'
+      subPage='accountUsers'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
       <Box className={'topSection'}>
-        <Title Text={t('SubAccount.title')} classes={classes} />
+        <Title Text={t('master.RadMenuItemResource3.Text')} classes={classes} />
         {renderSearchSection()}
       </Box>
 

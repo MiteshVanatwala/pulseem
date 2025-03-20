@@ -16,6 +16,7 @@ export interface SubUserModel extends LoginPassword {
     ConfirmPassword?: string | null | any;
     IsDeleted?: boolean | null | any;
     IsApproved?: boolean | null | any;
+    IsActive?: boolean | null | any;
     UpdatedDate?: string | null | any;
     CreationDate?: string | null | any;
     SubUserPermissions?: string | null | any;

@@ -88,7 +88,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails?.Cellphone.trim(), countryCodeList) : !IsValidNonGlobalPhoneNumber(userDetails?.Cellphone.trim())) ? t('recipient.errors.cellPhone') : '',
 			emailAddress: userDetails?.Email?.trim() === '' ? t('common.requiredField') : '',
 			accessType: permissions.accessType === '' ? t('SubUsers.permissionIsRequired') : '',
-			limitedAccess: permissions.accessType === PermissionTypes.LimitedAccess && permissions.allowSending === false && permissions.allowExport === false && permissions.allowDeleting === false ? t('SubUsers.limitedPermissionIsRequired') : '',
+			limitedAccess: permissions.accessType === PermissionTypes.LimitedAccess && permissions.allowSending === false && permissions.allowExport === false && permissions.allowDeleting === false && permissions.allowSubUsers === false ? t('SubUsers.limitedPermissionIsRequired') : '',
 			firstName: userDetails.FirstName === '' ? t('common.requiredField') : '',
 			lastName: userDetails.LastName === '' ? t('common.requiredField') : '',
 		};
@@ -269,7 +269,33 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 
 				<Grid container spacing={2}>
 					<Grid item md={12} xs={12}>
-						<div className={clsx(classes.f18, classes.bold, classes.pb10, classes.pt30)}>{t('SubUsers.permissions')}</div>
+						<Box className={clsx(classes.dFlex, classes.spaceBetween, classes.pb10, classes.pt30)}>
+							<div className={clsx(classes.f18, classes.bold)}>{t('SubUsers.permissions')}</div>
+							<FormControlLabel
+								id="permissionAnchor"
+								control={
+									<PulseemSwitch
+										id="1"
+										switchType='ios'
+										classes={classes}
+										onColor="#0371ad"
+										handleDiameter={20}
+										boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+										activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+										height={15}
+										className={clsx({ [classes.rtlSwitch]: isRTL })}
+										checked={userDetails.IsActive}
+										onChange={(e: any) => {
+											setUserDetails({
+												...userDetails,
+												IsActive: e.target.checked
+											})
+										}}
+									/>
+								}
+								label={t('common.statusActive')}
+							/>
+						</Box>
 						<Divider className={clsx(classes.mb10, classes.bgBlack)} />
 					</Grid>
 					<Grid item md={1} xs={1} className={clsx(classes.textRight)}>
