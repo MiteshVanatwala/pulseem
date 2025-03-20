@@ -825,6 +825,7 @@ const NewslettersReport = ({ classes }) => {
   const renderRow = (row, isParent = true, isEven = false) => {
     if (row === undefined) return <></>;
     const childItems = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
+    const rowPlusChildItems = [ row, ...childItems ];
     const {
       CampaignID,
       Name,
@@ -846,7 +847,17 @@ const NewslettersReport = ({ classes }) => {
         <TableRow
           key={`${ParentCampaignId}_${CampaignID}`}
           classes={rowStyle}
-          className={clsx(classes.maxHeight87, classes.maxHeightReponsive, isEven ? classes.evenRowBackground : classes.bgWhite)}
+          className={
+            clsx(
+              classes.maxHeight87,
+              classes.maxHeightReponsive,
+              {
+                [classes.evenRowBackground]: isParent && isEven,
+                [classes.bgWhite]: isParent && !isEven,
+                [classes.bgLightGray]: !isParent
+              }
+            )
+          }
         >
           <TableCell
             classes={cellBodyStyle}
@@ -953,13 +964,22 @@ const NewslettersReport = ({ classes }) => {
         </TableRow >
         {
           isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
-            <div style={{ height: rowHeight(childItems.length), width: "100%", overflow: "auto", maxHeight: rowHeight(childItems.length) }}>
+            <div
+              style={{ 
+                height: rowHeight(rowPlusChildItems.length), 
+                width: "98%",
+                overflow: "auto",
+                maxHeight: rowHeight(rowPlusChildItems.length),
+                marginLeft: !isRTL ? "auto" : null,
+                marginRight: isRTL ? "auto" : null,
+              }}
+            >
               <Virtuoso
                 ref={virtuosoRef}
-                style={{ height: rowHeight(childItems.length), width: '100%' }}
-                totalCount={[row, ...childItems].length}
-                itemContent={index => renderRow(childItems[index], false, index % 2)}
-                computeItemKey={(index) => `${childItems[index]?.ParentCampaignId || ''}_${childItems[index]?.CampaignID}`}
+                style={{ height: rowHeight(rowPlusChildItems.length), width: '100%' }}
+                totalCount={rowPlusChildItems.length}
+                itemContent={index => renderRow(rowPlusChildItems[index], false, index % 2)}
+                computeItemKey={(index) => `${rowPlusChildItems[index]?.ParentCampaignId || ''}_${rowPlusChildItems[index]?.CampaignID}`}
                 overscan={10}
               />
             </div>
@@ -971,7 +991,7 @@ const NewslettersReport = ({ classes }) => {
 
   const renderPhoneRow = (row, isParent = true, isEven = false) => {
     if (row === undefined) return <></>;
-    const childItems = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
+    const childItems = isParent ? [row, ...newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID)] : [];
     const {
       CampaignID,
       TotalSendPlan,
@@ -995,7 +1015,13 @@ const NewslettersReport = ({ classes }) => {
           key={row.ID}
           component='div'
           classes={rowStyle}
-          className={isEven ? classes.evenRowBackground : classes.bgWhite}
+          className={clsx(
+            {
+              [classes.evenRowBackground]: isParent && isEven,
+              [classes.bgWhite]: isParent && !isEven,
+              [classes.bgLightGray]: !isParent
+            }
+          )}
         >
           <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} >
             <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
@@ -1076,11 +1102,20 @@ const NewslettersReport = ({ classes }) => {
         {
           isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
             <>
-              <div style={{ height: rowHeight(childItems.length), width: "100%", overflow: "auto", maxHeight: rowHeight(childItems.length) }}>
+              <div
+                style={{
+                  height: rowHeight(childItems.length),
+                  width: "98%",
+                  overflow: "auto",
+                  maxHeight: rowHeight(childItems.length),
+                  marginLeft: !isRTL ? "auto" : null,
+                  marginRight: isRTL ? "auto" : null,
+                }}
+              >
                 <Virtuoso
                   ref={virtuosoRef}
                   style={{ height: rowHeight(childItems.length), width: '100%' }}
-                  totalCount={[row, ...childItems].length}
+                  totalCount={childItems.length}
                   itemContent={index => renderPhoneRow(childItems[index], false, index % 2)}
                   computeItemKey={(index) => `${childItems[index]?.ParentCampaignId}_${childItems[index]?.CampaignID}`}
                   overscan={10}
