@@ -5,7 +5,7 @@ import { Autocomplete } from '@material-ui/lab';
 import React, { useEffect } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { getAllGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
+import { getTestGroups } from '../../redux/reducers/groupSlice';
 
 
 const GroupSelectorDropDown = ({ classes,
@@ -25,10 +25,9 @@ const GroupSelectorDropDown = ({ classes,
   ...props
 }: any) => {
   const { t } = useTranslation();
-  const { subAccountAllGroups } = useSelector((state: any) => state.group);
+  const { testGroups } = useSelector((state: any) => state.group);
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
-  const groupsToShow = dropDownProps?.groups !== null && dropDownProps?.groups?.length > 0 ? dropDownProps.groups : subAccountAllGroups;
   const handleRemoveGroup = (e: any, groupId: any) => {
     e.stopPropagation();
     e.preventDefault();
@@ -44,8 +43,8 @@ const GroupSelectorDropDown = ({ classes,
   const dispatch = useDispatch();
 
   const initGroups = async () => {
-    if (!subAccountAllGroups || subAccountAllGroups?.length <= 0) {
-      await dispatch(getAllGroupsBySubAccountId());
+    if (!testGroups || testGroups?.length <= 0) {
+      await dispatch(getTestGroups());
     }
   }
 
@@ -61,9 +60,9 @@ const GroupSelectorDropDown = ({ classes,
       debug={true}
       className={classes.autoCompleteTag}
       disableCloseOnSelect
-      options={groupsToShow ?? []}
+      options={testGroups ?? []}
       getOptionLabel={(option) => option?.GroupName}
-      value={subAccountAllGroups.reduce((prevVal: any, newVal: any) => {
+      value={testGroups?.reduce((prevVal: any, newVal: any) => {
         if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
           return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
         }

@@ -8,7 +8,6 @@ import "moment/locale/he";
 import { useSelector } from "react-redux";
 import Toast from '../../../components/Toast/Toast.component';
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import GroupSelectorDropDown from "../../../components/Groups/GroupSelectorDropDown";
 
 const TestSend = ({
@@ -27,7 +26,7 @@ const TestSend = ({
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { ToastMessages } = useSelector(state => state.campaignEditor);
     const emailRef = useRef(null);
-    const { testGroups } = useSelector((state) => state.sms);
+    const { testGroups } = useSelector((state) => state.group);
 
     const handleRecipient = (e) => {
         validateEmail();
