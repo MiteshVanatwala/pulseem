@@ -546,6 +546,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mlr10: {
     marginInline: 10,
   },
+  mlr30: {
+    marginInline: 30,
+  },
   ml0: {
     marginLeft: 0,
     marginInlineStart: 0,
@@ -605,7 +608,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 28,
   },
   f30: {
-    fontSize: 30,
+    fontSize: '30px !important',
   },
   f09rem: {
     fontSize: '0.9rem'
@@ -1092,6 +1095,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& path': {
         stroke: 'inherit'
       },
+      '& path:nth-of-type(2)': {
+        fill: '#000'
+      }
     },
   },
   redButtonLink: {
@@ -4283,6 +4289,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       background: '#23ff23'
     }
   },
+  stickBottom: {
+    top: 'auto',
+    bottom: 0,
+    height: 70,
+    background: '#F0F5FF',
+    width: '100%',
+    right: 0,
+    left: 0,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    borderTop: '0.5px solid #FF3343'
+  },
   automationTemplate: {
     border: 'solid 1.5px #fefefe',
     borderRadius: '5px',
@@ -4303,6 +4321,89 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   overflowHidden: {
     overflow: 'hidden'
+  },
+  signupContainer: {
+    minHeight: '100vh',
+    height: 'auto',
+    width: '100%',
+    paddingBottom: '50px',
+    background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    overflowX: 'hidden',
+    fontFamily: isRTL ? 'Heebo' : 'inherit',
+    '& *': {
+      fontSize: 'x-large',
+      "@media screen and (max-width: 768px)": {
+        fontSize: 'large',
+      }
+    },
+    '& .signUpContainer': {
+      marginTop: '5%',
+      '& .widgetContainer': {
+        position: 'relative',
+        background: '#fff',
+        width: '40%',
+        margin: 'auto',
+        height: '50%',
+        borderRadius: '50px',
+        padding: '20px 50px',
+        boxShadow: '0 10px 30px -6px black',
+        fontSize: '2rem',
+        "@media screen and (max-width: 768px)": {
+          width: '85%',
+          padding: '15px',
+        },
+        '& .previous, & .next': {
+          background: '#beff00',
+          border: 'solid 5px #fff',
+          boxShadow: '0px 0px 5px 0px #000',
+          bottom: '30px',
+          height: '80px',
+          width: '80px',
+          position: 'absolute',
+          padding: '0px',
+          fontSize: '5rem',
+          color: 'black'
+        },
+        '& .previous': {
+          left: '-40px',
+        },
+        '& .next': {
+          right: '-40px',
+        },
+      },
+    },
+    '& .stepper': {
+      width: 'fit-content',
+      margin: 'auto',
+      background: 'transparent',
+      border: 'solid 2px #fff',
+      marginTop: '20px',
+      '& .MuiMobileStepper-dot': {
+        backgroundColor: '#fff',
+        '&.MuiMobileStepper-dotActive': {
+          backgroundColor: '#beff00',
+        }
+      }
+    }
+  },
+  signUpFieldOfInterestButton: {
+    borderRadius: 50,
+    borderColor: '#000',
+    "@media screen and (max-width: 768px)": {
+      width: '100%',
+      display: 'flex'
+    },
+    '&.selected': {
+      background: '#beff00'
+    },
+    '&:hover': {
+      background: '#beff00',
+      color: '#000',
+      '& svg': {
+        color: '#000',
+        fill: '#000'
+      }
+    },
   },
   agentNameContainer: {
     backgroundColor: '#5EBD6A',
