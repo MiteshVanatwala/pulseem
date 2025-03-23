@@ -26,7 +26,7 @@ const PulseemRadio = ({
                 value={value}
             >
                 {radioOptions.map((radio, idx) => {
-                    return <Box key={`'c_${idx}`}>
+                    return <Box key={`'c_${idx}`} className={classes.mt15}>
                         <FormControlLabel
                             value={radio.value}
                             control={<Radio color="primary"

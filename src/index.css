@@ -41,6 +41,12 @@ code {
     url(./assets/fonts/pulseemicons.ttf) format('truetype');
 }
 
+@font-face {
+  font-family: 'heebo';
+  src: local('heebo'),
+    url(./assets/fonts/Heebo-VariableFont_wght.ttf) format('truetype');
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap');
 
 

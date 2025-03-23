@@ -55,6 +55,7 @@ import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import Sort from '../../../components/Sort/Sort';
 import { SortColumns, SortDirection } from '../../../Models/PushNotifications/Enums';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 // very first structure for next refactor
 // import { GetExtraFields } from '../../../redux/reducers/ExtraFieldsSlice';
@@ -71,6 +72,7 @@ const Groups = ({ classes }) => {
     // const { extraData } = useSelector(state => state.extraFields);
     const rowsOptions = [6, 10, 20, 50];
     const [selectedGroups, setSelectedGroups] = useState([]);
+    const [selectedGroupsExtraData, setSelectedGroupsExtraData] = useState([]);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot) };
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) };
@@ -99,6 +101,7 @@ const Groups = ({ classes }) => {
     const [sortDirection, setSortDirection] = useState(SortDirection.DESC);
     const [sortBySelected, setSortBy] = useState(SortColumns.UPDATE_DATE);
     const [exportGroupNames, setExportGroupNames] = useState(false);
+    const [showDisallowDeleteFeature, setShowDisallowDeleteFeature] = useState(false);
 
     useEffect(() => {
         if (extraData && Object.entries(extraData).length > 0) {
@@ -494,21 +497,22 @@ const Groups = ({ classes }) => {
             <Grid container wrap="nowrap" spacing={1} alignItems='center' className={['sm', 'md'].indexOf(windowSize) > -1 ? classes.groupNameCell : ''}>
                 {windowSize !== 'xs' && <Grid item sm={2} className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.flexJustifyCenter : ''}>
                     {
-                        !row.AutomationID && (
-                            <Checkbox
-                                disabled={row.AutomationID}
-                                color="primary"
-                                checked={selectedGroups && selectedGroups.includes(GroupID)}
-                                // indeterminate={}
-                                onClick={() => {
-                                    if (selectedGroups.includes(GroupID)) {
-                                        setSelectedGroups(selectedGroups.filter(item => item !== GroupID))
-                                    } else {
-                                        setSelectedGroups([...selectedGroups, GroupID])
-                                    }
-                                }}
-                            />
-                        )
+                        <Checkbox
+                            // disabled={row.AutomationID}
+                            color="primary"
+                            checked={selectedGroups && selectedGroups.includes(GroupID)}
+                            // indeterminate={}
+                            onClick={() => {
+                                if (selectedGroups.includes(GroupID)) {
+                                    setSelectedGroups(selectedGroups.filter(item => item !== GroupID))
+                                    setSelectedGroupsExtraData(selectedGroupsExtraData.filter(item => item.GroupID !== GroupID))
+                                } else {
+                                    setSelectedGroups([...selectedGroups, GroupID])
+                                    const nSelected = groupData.Groups.filter((g) => { return g.GroupID === GroupID });
+                                    setSelectedGroupsExtraData([...selectedGroupsExtraData, nSelected[0]]);
+                                }
+                            }}
+                        />
                     }
 
                 </Grid>}
@@ -1960,13 +1964,70 @@ const Groups = ({ classes }) => {
     const handleDeleteGroup = async () => {
         setDialog(null);
         setLoader(true);
-        await dispatch(deleteGroups(selectedGroups));
-        setToastMessage(ToastMessages.GROUP_DELETED);
-        await dispatch(getGroupsBySubAccountId());
+        const existFeatures = selectedGroupsExtraData.filter((g) => {
+            return (g.AutomationID && g.AutomationID > 0) || g.IsAutoResponder || g.IsConnectedToWebForm
+        });
+
+        if (existFeatures?.length > 0) {
+            setShowDisallowDeleteFeature(true);
+        }
+        else {
+            await dispatch(deleteGroups(selectedGroups));
+            setToastMessage(ToastMessages.GROUP_DELETED);
+            await dispatch(getGroupsBySubAccountId());
+            getData(null);
+        }
         setSelectedGroups([]);
-        getData(null);
+        setSelectedGroupsExtraData([]);
         setLoader(false);
     };
+    const disallowDeleteFeature = () => {
+        return <BaseDialog
+            title={t('common.payAttention')}
+            children={<>
+                {RenderHtml(t('group.featuredDisallowDeleteGroup'))}
+            </>}
+            open={showDisallowDeleteFeature}
+            classes={classes}
+            confirmText={t("common.Ok")}
+            disableBackdropClick={true}
+            onCancel={() => {
+                setShowDisallowDeleteFeature(false);
+            }}
+            onClose={() => {
+                setShowDisallowDeleteFeature(false);
+            }}
+            onConfirm={() => {
+                setShowDisallowDeleteFeature(false);
+            }}
+            showDefaultButtons={false}
+            renderTitle={null}
+            renderButtons={() => {
+                return <>
+                    <Grid container spacing={2} className={classes.linePadding} style={{ justifyContent: 'flex-end' }}>
+                        <Grid item>
+                            <Button
+                                className={clsx(
+                                    classes.btn,
+                                    classes.btnRounded,
+                                    classes.middle
+                                )}
+                                variant='contained'
+                                size='medium'
+                                component="a"
+                                onClick={() =>
+                                    setShowDisallowDeleteFeature(false)
+                                }
+                            >
+                                {t('common.close')}
+                            </Button>
+                        </Grid>
+
+                    </Grid>
+                </>
+            }}
+        />
+    }
 
     const handleCombinedResponses = (response, action) => {
         console.log(action);
@@ -2099,8 +2160,8 @@ const Groups = ({ classes }) => {
                     return <UnsubscribeOrDeletePopup
                         classes={classes}
                         isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
-                        onClose={() => { setDialog(null); setSelectedGroups([]); }}
-                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
+                        onClose={() => { setDialog(null); setSelectedGroups([]); setSelectedGroupsExtraData([]) }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); setSelectedGroupsExtraData([]) }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -2115,8 +2176,8 @@ const Groups = ({ classes }) => {
                     return <ConfirmDeletePopUp
                         classes={classes}
                         isOpen={dialog === DialogType.DELETE_GROUP}
-                        onClose={() => { setDialog(null); setSelectedGroups([]); }}
-                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
+                        onClose={() => { setDialog(null); setSelectedGroups([]); setSelectedGroupsExtraData([]) }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); setSelectedGroupsExtraData([]) }}
                         windowSize={windowSize}
                         handleDeleteGroup={() => handleDeleteGroup()}
                     />
@@ -2190,6 +2251,7 @@ const Groups = ({ classes }) => {
                 {renderTableBody()}
                 {renderTablePagination()}
                 {showConfirmDialog && renderConfirmDialog()}
+                {showDisallowDeleteFeature && disallowDeleteFeature()}
                 {dialog !== null && showDialog()}
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </Box>
