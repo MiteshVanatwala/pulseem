@@ -48,7 +48,7 @@ const ClientSearch = ({ classes }: any) => {
     const selectedgroupsList = [] as Group[];
     if (subAccountAllGroups?.length > 0 && searchModel?.MyGroups?.length > 0) {
       searchModel?.MyGroups.forEach((gl: number) => {
-        const exist = subAccountAllGroups?.filter((g: Group) => { return g.GroupID === gl });
+        const exist =  [...testGroups, ...subAccountAllGroups]?.filter((g: Group) => { return g.GroupID === gl });
         if (exist && exist.length > 0) {
           selectedgroupsList.push(exist[0]);
         }
