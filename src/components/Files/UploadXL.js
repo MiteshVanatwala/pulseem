@@ -270,7 +270,7 @@ const UploadXL = ({
 
                             const finalData = json.flat().map(function (obj) {
                                 return Object.keys(obj).map(function (key) {
-                                    return obj[key];
+                                    return obj[key]?.toString();
                                 });
                             });
 
@@ -854,7 +854,7 @@ const UploadXL = ({
                         {extraButtons}
                     </>
                 ) : null}
-                <span  className={windowSize === "xs" ? classes.dBlock : ''} style={{ marginTop: areaData === "" ? 12 : null }}>{t("sms.totalRecords")}:  {totalRecords}</span>
+                <span className={windowSize === "xs" ? classes.dBlock : ''} style={{ marginTop: areaData === "" ? 12 : null }}>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
         </Grid>
         <Loader isOpen={showLoader} progress={uploadProgress} message={t("common.uploadInProgress")} />

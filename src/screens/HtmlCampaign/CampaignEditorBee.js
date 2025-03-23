@@ -18,7 +18,8 @@ import {
   getAllTemplatesBySubaccountId
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
-import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
+import { getAccountExtraData, getPreviousLandingData } from "../../redux/reducers/smsSlice";
+import { getTestGroups } from '../../redux/reducers/groupSlice';
 import { useTranslation } from "react-i18next";
 import TestSend from './modals/TestSend'
 import ResponseModal from './modals/ResponseModal'
@@ -250,7 +251,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getCampaignById(params?.id));
     await dispatch(getAccountExtraData());
     await dispatch(getPreviousLandingData());
-    await dispatch(getTestGroups());
+    await dispatch(getTestGroups(false));
     await dispatch(getUserblocks());
     await dispatch(getAuthorizedEmails());
 
