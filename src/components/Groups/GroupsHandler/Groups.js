@@ -238,6 +238,7 @@ const Groups = ({ classes,
 
         const sortFunctions = {
             "Group Name": (a, b) => {
+                if (!a.GroupName || !b.GroupName) return -1;
                 const aName = a.GroupName.trim().toUpperCase();
                 const bName = b.GroupName.trim().toUpperCase();
                 return direction === 'asc'
