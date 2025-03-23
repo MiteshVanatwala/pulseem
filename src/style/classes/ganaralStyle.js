@@ -4405,4 +4405,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
   },
+  agentNameContainer: {
+    backgroundColor: '#5EBD6A',
+    paddingInline: 7
+  }
 });

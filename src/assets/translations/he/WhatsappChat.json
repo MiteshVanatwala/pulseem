@@ -19,5 +19,13 @@
 	"noChat": "אין שיחות",
 	"noContacts": "לא נמצאו אנשי קשר",
 	"messageErrorText": "לא ניתן להציג הודעה זאת",
-	"typeMessage": "הקלד הודעה כאן"
+	"typeMessage": "הקלד הודעה כאן",
+	"selectAgent": "בחר סוכן",
+	"addAgent": "הוסף סוכן חדש",
+	"agentName": "שם הסוכן",
+	"editAgent": "ערוך סוכנים",
+	"agentAdded": "סוכן נוסף לרשימת הסוכנים בהצלחה!",
+	"agentUpdated": "סוכן עודכן בהצלחה!",
+	"agentDeleted": "סוכן נמחק מרשימת הסוכנים בהצלחה!",
+	"setAgent": "הגדר סוכן"
 }

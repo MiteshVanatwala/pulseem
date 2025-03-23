@@ -3,6 +3,7 @@ import { ClassesType } from '../../../Classes.types';
 import {
 	personalFieldDataProps,
 	updatedVariable,
+	WhatsappAgent,
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import {
 	savedTemplateListProps,
@@ -57,6 +58,7 @@ export type WhatsappChatUiProps = {
 	personalFields: personalFieldDataProps;
 	onChatTemplateDelete: () => void;
 	setIsLoader: (showing: boolean) => void;
+	selectedAgent?: WhatsappAgent;
 };
 
 export type SideBarContactListProps = {
@@ -144,6 +146,10 @@ export type WhatsappChatSideBarProps = {
 	isLoader: boolean;
 	filterBySelected: number;
 	setFilterBySelected: (filterId: number) => void;
+	selectedAgent?: number;
+	setAgentSelected: (agentId: number) => void;
+	onAddAgent: () => void;
+	onEditAgents: () => void;
 };
 
 export type chatModalProps = {
@@ -325,13 +331,14 @@ export type displayCountDown = {
 };
 
 export type APIGetWhatsappChatContactsReq = {
-	PhoneNumber: string;
+	PhoneNumber?: string;
 	IsPagination: boolean;
 	pageNo: number;
 	pageSize: number;
 	Searchtext?: string;
 	UserNumber?: string;
 	ChatStatus: number;
+	AgentId?: number;
 };
 
 export type Timer = {

@@ -1,5 +1,3 @@
-// import { color } from '@amcharts/amcharts4/core';
-
 export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignTitle: {
 		fontSize: windowSize === 'xs' ? '25px' : '30px',
@@ -2859,6 +2857,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappChatUiStatusPadding: {
 		paddingLeft: isRTL ? 'unset' : 12,
 		paddingRight: isRTL ? 12 : 'unset',
+		display: 'flex',
+		alignItems: 'center',
+		gap: 15
 	},
 	pdfFileName: {
 		wordWrap: 'break-word',
@@ -3245,4 +3246,28 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			color: '#ca332f !important'
 		},
 	},
+	agentSelectorContainer: {
+		borderRadius: 25,
+		backgroundColor: '#5da15d',
+		marginInlineEnd: 'auto',
+		color: '#fff !important',
+		display: 'flex',
+		alignItems: 'center',
+		height: 35,
+		'& .MuiSelect-select': {
+			color: '#fff',
+		},
+		'& .MuiInput-underline:before': {
+			borderBottomColor: '#fff',
+		},
+		'& .MuiInput-underline:after': {
+			borderBottomColor: '#fff',
+		},
+		'& .MuiSelect-icon': {
+			color: '#fff',
+		},
+		'& .MuiButton-root': {
+			color: '#fff',
+		}
+	}
 });
