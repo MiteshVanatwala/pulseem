@@ -1014,7 +1014,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			title: translator('whatsappChat.editAgent'),
 			showDivider: false,
 			showDefaultButtons: false,
-			// contentStyle: classes.noPadding,
 			style: { maxWidth: 640, margin: '0 auto' },
 			icon: <MdSupportAgent />,
 			content: (
@@ -1048,7 +1047,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 											IsDeleted: false
 										})
 									}}>{translator('common.Update')}</Button>
-								<div className={clsx(classes.dFlex, classes.flexAlignCetner)} style={{ marginBlockStart: 20 }}>
+								<Box className={clsx(classes.dFlex, classes.flexAlignCetner)} style={{ marginBlockStart: 20 }}>
 									<Link
 										className={clsx('deleteShortcut')} style={{ cursor: 'pointer' }}
 										title={translator("common.remove")}
@@ -1058,22 +1057,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									>
 										<BsTrash className={'trash'} style={{ fontSize: "20", marginLeft: '0 !important', marginRight: '0 !important' }} />
 									</Link>
-									{/* {showConfirmDeleteAgent === agent.AgentId && <div className={clsx(classes.dFlex)} style={{ marginInline: 20 }}>
-										<Typography>{translator("mainReport.confirmSure")}</Typography>
-										<Link className={clsx('deleteShortcut')} style={{ cursor: 'pointer', marginInline: 20 }}
-											onClick={() => {
-												onEditAgent({
-													AgentId: agent.AgentId,
-													Name: agent.Name,
-													IsDeleted: true
-												})
-											}}
-										>{translator('common.Yes')}</Link>
-										<Link className={clsx('deleteShortcut')} style={{ cursor: 'pointer' }}
-											onClick={() => { setShowConfirmDeleteAgent(0); }}
-										>{translator('common.Cancel')}</Link>
-									</div>} */}
-								</div>
+								</Box>
 							</Grid>
 						</Grid>
 					})}
