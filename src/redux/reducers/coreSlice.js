@@ -64,9 +64,10 @@ export const coreSlice = createSlice({
       state.billingTypeId = payload.billingTypeId
       state.isDebtAccount = (payload.isDebtAccount === true || payload.isDebtAccount === 'True')
 
-      const userPermissions = payload?.unique_name;
-      const isAdmin = userPermissions === '-1' || userPermissions === -1 || isSuperUserSelector(userPermissions);
-      const isReadOnly = userPermissions?.indexOf(5) > -1;
+      const userToken = payload?.unique_name ? JSON.parse(payload?.unique_name) : -1;
+
+      const isAdmin = userToken.UserPermissions.indexOf(-1) > 0 || isSuperUserSelector(userToken.UserPermissions);
+      const isReadOnly = userToken.UserPermissions?.indexOf(5) > -1;
 
       if (isAdmin || payload.isAdmin) {
         state.userRoles = UserRoles.Admin;
@@ -78,10 +79,10 @@ export const coreSlice = createSlice({
         const roles = {
           ...UserRoles,
           Restricted: {
-            AllowSend: userPermissions.indexOf(eSubUserPermissions.AllowSend) > -1,
-            AllowExport: userPermissions.indexOf(eSubUserPermissions.AllowExport) > -1,
-            AllowDelete: userPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1,
-            AllowSubUsers: userPermissions.indexOf(eSubUserPermissions.AllowSubUsers) > -1,
+            AllowSend: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowSend) > -1,
+            AllowExport: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowExport) > -1,
+            AllowDelete: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1,
+            AllowSubUsers: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowSubUsers) > -1,
           }
         }
         state.userRoles = roles.Restricted;
