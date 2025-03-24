@@ -18,7 +18,6 @@ import { BsDot } from "react-icons/bs";
 import {
     BsFilter
 } from 'react-icons/bs';
-import { debounce } from 'lodash';
 
 const Groups = ({ classes,
     list,
@@ -63,16 +62,16 @@ const Groups = ({ classes,
     }
     const handleSearch = (event) => {
         setClearInput(event.target.value !== '');
-        debouncedSearch(event.target.value);
+        setGroupNameSearch(event.target.value);
     }
     const resetSearch = (event) => {
         document.querySelector('#searchGroup').value = '';
         setGroupNameSearch('');
         setClearInput(false);
     }
-    const onSelectGroup = useCallback((group) => {
+    const onSelectGroup = (group) => {
         callbackSelectedGroups(group);
-    }, [callbackSelectedGroups])
+    }
 
     const onTagChange = (event, value) => {
         callbackUpdateGroups(value, event);
@@ -232,36 +231,71 @@ const Groups = ({ classes,
         sortBy(sortBySelected, selected);
     }
 
-    const sortBy = useCallback((sortBy, direction) => {
-        if (!list) return;
-        let tempList = [...list];
+    const sortBy = (sortBy, direction) => {
+        if (list) {
+            let tempList = [...list];
 
-        const sortFunctions = {
-            "Group Name": (a, b) => {
-                const aName = a.GroupName.trim().toUpperCase();
-                const bName = b.GroupName.trim().toUpperCase();
-                return direction === 'asc'
-                    ? aName.localeCompare(bName)
-                    : bName.localeCompare(aName);
-            },
-            "Update Date": (a, b) => {
-                if (!a.UpdateDate || !b.UpdateDate) return -1;
-                const aDate = new Date(a.UpdateDate).getTime();
-                const bDate = new Date(b.UpdateDate).getTime();
-                return direction === 'asc' ? aDate - bDate : bDate - aDate;
+            if (sortBy === "Group Name" && !isCampaign) {
+                direction === 'asc'
+                    ? tempList.sort((a, b) =>
+                        a.GroupName.trim().toUpperCase() < b.GroupName.trim().toUpperCase()
+                            ? -1
+                            : Number(
+                                a.GroupName.toUpperCase() > b.GroupName.toUpperCase()
+                            )
+                    )
+                    : tempList.sort((a, b) =>
+                        b.GroupName.toUpperCase() < a.GroupName.toUpperCase()
+                            ? -1
+                            : Number(
+                                b.GroupName.toUpperCase() > a.GroupName.toUpperCase()
+                            )
+                    );
+            } else if (sortBy === "Update Date" && tempList[0] && tempList[0].UpdateDate) {
+                direction === 'asc'
+                    ? tempList.sort((a, b) =>
+                        a.UpdateDate !== null && b.UpdateDate !== null
+                            ? Date.parse(a.UpdateDate) - Date.parse(b.UpdateDate)
+                            : -1
+                    )
+                    : tempList.sort((a, b) =>
+                        a.UpdateDate !== null && b.UpdateDate !== null
+                            ? Date.parse(b.UpdateDate) - Date.parse(a.UpdateDate)
+                            : -1
+                    );
             }
+            else if (sortBy === "Creation Date") {
+                if (isSms) {
+                    direction === 'asc'
+                        ? tempList.sort((a, b) =>
+                            a.CreationDate !== null && b.CreationDate !== null
+                                ? Date.parse(a.CreationDate) - Date.parse(b.CreationDate)
+                                : -1
+                        )
+                        : tempList.sort((a, b) =>
+                            a.CreationDate !== null && b.CreationDate !== null
+                                ? Date.parse(b.CreationDate) - Date.parse(a.CreationDate)
+                                : -1
+                        );
+                }
+                else {
+                    direction === 'asc'
+                        ? tempList.sort((a, b) =>
+                            a.CreatedDate !== null && b.CreatedDate !== null
+                                ? Date.parse(a.CreatedDate) - Date.parse(b.CreatedDate)
+                                : -1
+                        )
+                        : tempList.sort((a, b) =>
+                            a.CreatedDate !== null && b.CreatedDate !== null
+                                ? Date.parse(b.CreatedDate) - Date.parse(a.CreatedDate)
+                                : -1
+                        );
+                }
+            }
+
+            setGroupList(tempList);
         }
-
-        tempList.sort(sortFunctions[sortBy] || sortFunctions["Group Name"]);
-        setGroupList(tempList);
-    }, [list, isSms, isCampaign])
-
-    const debouncedSearch = useCallback(
-        debounce((value) => {
-            setGroupNameSearch(value);
-        }, 300),
-        []
-    );
+    }
 
     return (
         <Box className={classes.groupsContainer} key={uniqueKey}>
