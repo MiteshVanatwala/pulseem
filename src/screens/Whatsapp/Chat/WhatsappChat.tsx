@@ -76,7 +76,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Toast from '../../../components/Toast/Toast.component';
 import NoSetup from '../NoSetup/NoSetup';
 import moment from 'moment';
-import { Button, FormControl, Grid, TextField, Typography } from '@material-ui/core';
+import { Box, Button, FormControl, Grid, Link, TextField, Typography } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { SelectChangeEvent } from '@mui/material';
 import { DateFormats } from '../../../helpers/Constants';
@@ -86,6 +86,8 @@ import { MdSupportAgent } from 'react-icons/md';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { StateType } from '../../../Models/StateTypes';
 import { compareLastNineDigits } from '../../../helpers/Utils/TextHelper';
+import { BsTrash } from 'react-icons/bs';
+import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -98,7 +100,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
-	const { isRTL, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
 	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
@@ -175,13 +177,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
-	const [agentName, setAgentName] = useState<string>('');
 	const [agentModel, setAgentModel] = useState<WhatsappAgent>({
 		AgentId: 0,
 		Name: '',
 		IsDeleted: false
 	})
 	const [allAgents, setAllAgents] = useState<WhatsappAgent[]>(agentList);
+	const [showConfirmDeleteAgent, setShowConfirmDeleteAgent] = useState<number>(0);
 
 	const initialQuickReplyButtons = [
 		{
@@ -926,6 +928,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	})
 
 	const onAddAgent = async () => {
+		dispatch(setIsLoader(true));
 		const response = await dispatch(addChatAgent(agentModel.Name)) as any;
 		switch (response?.payload?.StatusCode) {
 			case 201: {
@@ -950,9 +953,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				setToastMessage(ToastMessages.ERROR);
 			}
 		}
+		dispatch(setIsLoader(false));
+		setAgentModel({
+			AgentId: 0,
+			Name: '',
+			IsDeleted: false
+		});
 	}
 
 	const onEditAgent = async (agent: WhatsappAgent) => {
+		dispatch(setIsLoader(true));
 		const response = await dispatch(editChatAgent(agent)) as any;
 		switch (response?.payload?.StatusCode) {
 			case 201: {
@@ -986,6 +996,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				setToastMessage(ToastMessages.ERROR);
 			}
 		}
+		dispatch(setIsLoader(false));
 	}
 
 	const updateAgent = (agentId: number, updatedData: Partial<WhatsappAgent>) => {
@@ -1003,10 +1014,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			title: translator('whatsappChat.editAgent'),
 			showDivider: false,
 			showDefaultButtons: false,
-			contentStyle: classes.noPadding,
+			// contentStyle: classes.noPadding,
+			style: { maxWidth: 640, margin: '0 auto' },
 			icon: <MdSupportAgent />,
 			content: (
-				<Grid container alignItems='center' alignContent='center'>
+				<Grid container alignItems='center' alignContent='center' style={{ marginBlockEnd: 60 }}>
 					{allAgents?.map((agent: WhatsappAgent) => {
 						return <Grid container alignItems='center' alignContent='center' style={{ marginBottom: 25 }}>
 							<Grid item xs={8}>
@@ -1025,7 +1037,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									}}
 								/>
 							</Grid>
-							<Grid item alignContent='flex-end' alignItems='flex-end' xs={4}>
+							<Grid item alignContent='flex-end' alignItems='flex-end' xs={4} style={{ display: 'flex' }}>
 								<Button
 									className={clsx(classes.btn, classes.btnRounded)}
 									style={{ marginInline: 20, marginBlockStart: 20 }}
@@ -1036,28 +1048,44 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 											IsDeleted: false
 										})
 									}}>{translator('common.Update')}</Button>
-								<Button
-									style={{ marginBlockStart: 20 }}
-									className={clsx(classes.btn, classes.btnRounded)}
-									onClick={() => {
-										onEditAgent({
-											AgentId: agent.AgentId,
-											Name: agent.Name,
-											IsDeleted: true
-										})
-									}}>
-									{translator("common.remove")}
-								</Button>
+								<div className={clsx(classes.dFlex, classes.flexAlignCetner)} style={{ marginBlockStart: 20 }}>
+									<Link
+										className={clsx('deleteShortcut')} style={{ cursor: 'pointer' }}
+										title={translator("common.remove")}
+										onClick={() => {
+											setShowConfirmDeleteAgent(agent.AgentId);
+										}}
+									>
+										<BsTrash className={'trash'} style={{ fontSize: "20", marginLeft: '0 !important', marginRight: '0 !important' }} />
+									</Link>
+									{/* {showConfirmDeleteAgent === agent.AgentId && <div className={clsx(classes.dFlex)} style={{ marginInline: 20 }}>
+										<Typography>{translator("mainReport.confirmSure")}</Typography>
+										<Link className={clsx('deleteShortcut')} style={{ cursor: 'pointer', marginInline: 20 }}
+											onClick={() => {
+												onEditAgent({
+													AgentId: agent.AgentId,
+													Name: agent.Name,
+													IsDeleted: true
+												})
+											}}
+										>{translator('common.Yes')}</Link>
+										<Link className={clsx('deleteShortcut')} style={{ cursor: 'pointer' }}
+											onClick={() => { setShowConfirmDeleteAgent(0); }}
+										>{translator('common.Cancel')}</Link>
+									</div>} */}
+								</div>
 							</Grid>
 						</Grid>
 					})}
-					<Grid item xs={12}>
-						<Button
-							className={clsx(classes.btn, classes.btnRounded)}
-							onClick={(e: BaseSyntheticEvent) => {
-								setDialogType({ type: 'addAgent', data: null })
-							}}>{translator('whatsappChat.addAgent')}</Button>
-					</Grid>
+					<Box position={'absolute'} className={clsx(classes.flex, classes.stickBottom)} style={{ background: 'transparent', border: 'none' }}>
+						<Box style={{ width: '80%', margin: '0 auto', justifyContent: 'flex-end' }} className={clsx(classes.flex)}>
+							<Button
+								className={clsx(classes.btn, classes.btnRounded)}
+								onClick={(e: BaseSyntheticEvent) => {
+									setDialogType({ type: 'addAgent', data: null })
+								}}>{translator('whatsappChat.addAgent')}</Button>
+						</Box>
+					</Box>
 				</Grid>
 			)
 		}
@@ -1098,7 +1126,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				</Grid>
 			),
 			onConfirm: async () => {
-				// TODO: call api to add agent
 				setDialogType({
 					type: '',
 					data: ''
@@ -1255,6 +1282,28 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					!isLoader && <NoSetup classes={classes} />
 				)}
 				{renderDialog()}
+				<ConfirmDeletePopUp
+					classes={classes}
+					isOpen={showConfirmDeleteAgent > 0}
+					onClose={() => { setShowConfirmDeleteAgent(0) }}
+					onCancel={() => { setShowConfirmDeleteAgent(0) }}
+					windowSize={windowSize}
+					title={translator('whatsappChat.deleteAgent')}
+					text={translator('whatsappChat.confirmDeleteAgent')}
+					handleDeleteGroup={() => {
+						const agentToDelete = allAgents.filter((agent: WhatsappAgent) => { return agent.AgentId === showConfirmDeleteAgent })[0];
+						if (agentToDelete) {
+							dispatch(setIsLoader(true));
+							onEditAgent({
+								AgentId: agentToDelete.AgentId,
+								Name: agentToDelete.Name,
+								IsDeleted: true
+							});
+							setShowConfirmDeleteAgent(0)
+							dispatch(setIsLoader(false));
+						}
+					}}
+				/>
 			</DefaultScreen >
 		</>
 	);
