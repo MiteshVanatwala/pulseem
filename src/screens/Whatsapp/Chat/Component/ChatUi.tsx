@@ -11,14 +11,16 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import { apiStatus } from '../../Constant';
-import { useDispatch } from 'react-redux';
-import { getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { assignAgentToChat, getChatAgents, getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
 import ChatTemplate from './ChatTemplate';
 import ChatFooterContent from './ChatFooterContent';
 import clsx from 'clsx';
 import ChatHeaderContent from './ChatHeaderContent';
 import { useTranslation } from 'react-i18next';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { StateType } from '../../../../Models/StateTypes';
+import { coreProps, WhatsappAgent, WhatsappPhoneSession } from '../../Campaign/Types/WhatsappCampaign.types';
 
 const ChatUi = ({
 	classes,
@@ -54,13 +56,16 @@ const ChatUi = ({
 	updateContactList,
 	personalFields,
 	onChatTemplateDelete,
-	setIsLoader
+	setIsLoader,
+	selectedAgent
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const [dialogType, setDialogType] = useState<{
 		type: string;
 	} | null>(null);
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -111,6 +116,21 @@ const ChatUi = ({
 			}
 		}
 	};
+
+	const handleSetAgentToSession = async (agentToSession: WhatsappPhoneSession) => {
+		const response: any = await dispatch(assignAgentToChat(agentToSession));
+		switch (response?.payload?.StatusCode) {
+			case 201: {
+				await dispatch(getChatAgents());
+				//TODO: show success assign
+				break;
+			}
+			case 404: {
+				//TODO: not found
+				break;
+			}
+		}
+	}
 
 	const chatHeader = () => {
 		return (
@@ -171,6 +191,44 @@ const ChatUi = ({
 							<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
 							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
 						</Select>
+						<div className={classes.agentSelectorContainer}>
+							<Select
+								className={clsx(classes.whatsappChatStatusSelect, classes.f12)}
+								autoWidth
+								defaultValue='0'
+								value={`${selectedAgent?.AgentId || 0}`}
+								variant='standard'
+								style={{ marginInline: 15 }}
+								MenuProps={{
+									PaperProps: {
+										style: {
+											direction: isRTL ? 'rtl' : 'ltr',
+										},
+									},
+								}}
+								onChange={(e: SelectChangeEvent) => {
+									let agentToSession: WhatsappPhoneSession = {
+										AgentId: -1,
+										Cellphone: activeChatContacts.PhoneNumber
+									};
+
+									if (Number(e.target.value) > 0) {
+										const selectedAgent: WhatsappAgent = agentList?.filter((a: WhatsappAgent) => { return a.AgentId === Number(e.target.value) })[0];
+										agentToSession = {
+											AgentId: selectedAgent.AgentId,
+											Cellphone: activeChatContacts.PhoneNumber
+										};
+									}
+
+									handleSetAgentToSession(agentToSession);
+								}}
+							>
+								<MenuItem value={0}>{translator('whatsappChat.setAgent')}</MenuItem>
+								{agentList?.map((agent: WhatsappAgent) => {
+									return <MenuItem value={agent.AgentId}>{agent.Name}</MenuItem>
+								})}
+							</Select>
+						</div>
 					</Box>
 					<Box className='clock-font-size'>
 						{whatsappChatSession?.IsIn24Window &&

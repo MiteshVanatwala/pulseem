@@ -15,6 +15,8 @@ import {
 	SaveQuickSendGroupReq,
 	TestSendReq,
 	uploadData,
+	WhatsappAgent,
+	WhatsappPhoneSession,
 } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { uploaderInstance } from '../../helpers/Api/UploaderAPI';
 import { setUploadProgress } from './groupSlice';
@@ -785,6 +787,110 @@ export const updateWhatsappTier = createAsyncThunk(
 	}
 );
 
+//#region Agents
+export const getChatAgents = createAsyncThunk(
+	'WhatsAppChat/GetAgents',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`WhatsAppChat/GetAgents`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+export const getWhatsappChatContactsByAgent = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChatByAgent',
+	async (
+		{
+			AgentId,
+			IsPagination,
+			pageNo,
+			pageSize,
+			Searchtext,
+			ChatStatus
+		}: APIGetWhatsappChatContactsReq,
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetWhatsAppChatByAgent`,
+				{
+					AgentId,
+					IsPagination,
+					pageNo,
+					pageSize,
+					Searchtext,
+					ChatStatus
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const addChatAgent = createAsyncThunk(
+	'WhatsAppChat/AddAgent',
+	async (agentName: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/AddAgent`,
+				{
+					Name: agentName,
+					IsDeleted: false
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+export const editChatAgent = createAsyncThunk(
+	'WhatsAppChat/AddAgent',
+	async (agent: WhatsappAgent, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/AddAgent`,
+				{
+					AgentId: agent.AgentId,
+					Name: agent.Name,
+					IsDeleted: agent.IsDeleted
+				} as WhatsappAgent
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+export const assignAgentToChat = createAsyncThunk(
+	'WhatsAppChat/AssignAgentToChat',
+	async (agentToSession: WhatsappPhoneSession, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.put(`WhatsAppChat/AssignAgentToChat`, agentToSession);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+
+//#endregion
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
@@ -792,6 +898,7 @@ export const whatsappSlice = createSlice({
 		submitTemplate: [],
 		saveTemplate: [],
 		userPhoneNumbers: [],
+		agentList: [],
 		ToastMessages: {
 			SUCCESS: {
 				severity: 'success',
@@ -925,6 +1032,24 @@ export const whatsappSlice = createSlice({
 				message: 'sms.errorQuickSend',
 				showAnimtionCheck: false,
 			},
+			AGENT_ADDED: {
+				severity: 'success',
+				color: 'success',
+				message: 'whatsappChat.agentAdded',
+				showAnimtionCheck: false,
+			},
+			AGENT_DELETED: {
+				severity: 'success',
+				color: 'success',
+				message: 'whatsappChat.agentDeleted',
+				showAnimtionCheck: false,
+			},
+			AGENT_UPDATED: {
+				severity: 'success',
+				color: 'success',
+				message: 'whatsappChat.agentUpdated',
+				showAnimtionCheck: false,
+			},
 		},
 		directWhatsappReport: null,
 		inboundWhatsappReport: null,
@@ -952,6 +1077,9 @@ export const whatsappSlice = createSlice({
 		});
 		builder.addCase(getInboundReport.fulfilled, (state, { payload }) => {
 			if (!payload.IsExport) state.inboundWhatsappReport = payload;
+		});
+		builder.addCase(getChatAgents.fulfilled, (state, { payload }) => {
+			state.agentList = payload?.Data;
 		});
 	},
 });

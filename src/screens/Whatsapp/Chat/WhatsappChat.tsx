@@ -35,6 +35,10 @@ import {
 	manageWhatsappChatCoversationStatus,
 	sendWhatsAppMessage,
 	userPhoneNumbers,
+	getChatAgents,
+	getWhatsappChatContactsByAgent,
+	addChatAgent,
+	editChatAgent
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
@@ -53,6 +57,7 @@ import {
 	phoneNumberAPIProps,
 	SubAccountSettings,
 	updatedVariable,
+	WhatsappAgent
 } from '../Campaign/Types/WhatsappCampaign.types';
 import DynamicModal from '../Campaign/Popups/DynamicModal';
 import {
@@ -71,11 +76,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Toast from '../../../components/Toast/Toast.component';
 import NoSetup from '../NoSetup/NoSetup';
 import moment from 'moment';
-import { Typography } from '@material-ui/core';
+import { Box, Button, FormControl, Grid, Link, TextField, Typography } from '@material-ui/core';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { SelectChangeEvent } from '@mui/material';
 import { DateFormats } from '../../../helpers/Constants';
 import { setIsLoader } from '../../../redux/reducers/coreSlice';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import { MdSupportAgent } from 'react-icons/md';
+import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import { StateType } from '../../../Models/StateTypes';
+import { compareLastNineDigits } from '../../../helpers/Utils/TextHelper';
+import { BsTrash } from 'react-icons/bs';
+import ConfirmDeletePopUp from '../../Groups/Management/Popup/ConfirmDeletePopUp';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -88,7 +100,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
 		}) => state.common?.accountSettings?.SubAccountSettings
 	);
-	const { isRTL, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize, isLoader = false } = useSelector((state: { core: coreProps }) => state.core);
+	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean | null>(null);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
@@ -109,6 +122,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	>([]);
 	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [filterBySelected, setFilterBySelected] = useState(0);
+	const [agentSelected, setAgentSelected] = useState(Number(getCookie('whatsappSelectedAgentId') || 0));
 	const [whatsappChatSession, setWhatsappChatSession] =
 		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
@@ -163,6 +177,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
+	const [agentModel, setAgentModel] = useState<WhatsappAgent>({
+		AgentId: 0,
+		Name: '',
+		IsDeleted: false
+	})
+	const [allAgents, setAllAgents] = useState<WhatsappAgent[]>(agentList);
+	const [showConfirmDeleteAgent, setShowConfirmDeleteAgent] = useState<number>(0);
 
 	const initialQuickReplyButtons = [
 		{
@@ -237,6 +258,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					getDynamicModalValues();
 				}
 				getSavedTemplateFields();
+				await getAgents();
 				await getPhoneNumber();
 				setIsAccountSetup(true);
 			} else {
@@ -376,19 +398,30 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			navigate(whatsappRoutes.CHAT);
 		}
 		setActivePhoneNumber(activeUser);
-		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
-			await dispatch<any>(
+
+		const {
+			payload: whatsAppChatContactsData,
+		}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
+			agentSelected > 0 ? getWhatsappChatContactsByAgent({
+				AgentId: agentSelected,
+				IsPagination: true,
+				pageNo: contactsPaginationSetting?.PageNo,
+				pageSize: contactsPaginationSetting?.PageSize,
+				ChatStatus: filterBySelected,
+				Searchtext: ''
+			}) :
 				getWhatsappChatContactsByPhoneNumber({
 					PhoneNumber: activeUser,
 					IsPagination: true,
 					pageNo: contactsPaginationSetting?.PageNo,
 					pageSize: contactsPaginationSetting?.PageSize,
-					ChatStatus: filterBySelected,
+					ChatStatus: filterBySelected
 				})
-			);
+		);
+
 		dispatch(setIsLoader(false));
-		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
-			const contactData = whatsAppChatContactsData.payload.Data.Items;
+		if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
+			const contactData = whatsAppChatContactsData.Data.Items;
 			const updatedActiveChat = contactData[0];
 			if (contactID) {
 				const activeContact = contactData?.find(
@@ -448,6 +481,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setPhoneNumbersList([]);
 		return [];
 	};
+
+	const getAgents = async () => {
+		const response: any = await dispatch<any>(getChatAgents());
+		const agents: WhatsappAgent[] = response?.payload?.Data as any;
+		setAllAgents(agents)
+	}
 
 	const onActiveUserChange = (e: SelectChangeEvent) => {
 		setActivePhoneNumber(e.target.value?.replace(/\D/g, ''));
@@ -748,7 +787,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			const {
 				payload: whatsAppChatContactsData,
 			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
-				getWhatsappChatContactsByPhoneNumber({
+				agentSelected > 0 ? getWhatsappChatContactsByAgent({
+					AgentId: agentSelected,
+					IsPagination: true,
+					pageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
+					pageSize: contactsPaginationSetting?.PageSize,
+					Searchtext: searchText,
+					ChatStatus: ChatStatus,
+				}) : getWhatsappChatContactsByPhoneNumber({
 					PhoneNumber: activePhoneNumber,
 					IsPagination: true,
 					pageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
@@ -881,6 +927,198 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	})
 
+	const onAddAgent = async () => {
+		dispatch(setIsLoader(true));
+		const response = await dispatch(addChatAgent(agentModel.Name)) as any;
+		switch (response?.payload?.StatusCode) {
+			case 201: {
+				getAgents();
+				setToastMessage({
+					...ToastMessages.AGENT_ADDED,
+					message:
+						ToastMessages.AGENT_ADDED?.message,
+				});
+				setDialogType({
+					type: '',
+					data: ''
+				});
+				break;
+			}
+			case 401: {
+				logout();
+				break;
+			}
+			case 404:
+			case 500: {
+				setToastMessage(ToastMessages.ERROR);
+			}
+		}
+		dispatch(setIsLoader(false));
+		setAgentModel({
+			AgentId: 0,
+			Name: '',
+			IsDeleted: false
+		});
+	}
+
+	const onEditAgent = async (agent: WhatsappAgent) => {
+		dispatch(setIsLoader(true));
+		const response = await dispatch(editChatAgent(agent)) as any;
+		switch (response?.payload?.StatusCode) {
+			case 201: {
+				getAgents();
+				if (agent?.IsDeleted) {
+					setToastMessage({
+						...ToastMessages.AGENT_DELETED,
+						message:
+							ToastMessages.AGENT_DELETED?.message,
+					});
+				}
+				else {
+					setToastMessage({
+						...ToastMessages.AGENT_UPDATED,
+						message:
+							ToastMessages.AGENT_UPDATED?.message,
+					});
+				}
+				setDialogType({
+					type: 'editAgents',
+					data: ''
+				});
+				break;
+			}
+			case 401: {
+				logout();
+				break;
+			}
+			case 404:
+			case 500: {
+				setToastMessage(ToastMessages.ERROR);
+			}
+		}
+		dispatch(setIsLoader(false));
+	}
+
+	const updateAgent = (agentId: number, updatedData: Partial<WhatsappAgent>) => {
+		setAllAgents(prevAgents =>
+			prevAgents.map(agent =>
+				agent.AgentId === agentId
+					? { ...agent, ...updatedData }
+					: agent
+			)
+		);
+	};
+
+	const editAgentsModalDialog = () => {
+		return {
+			title: translator('whatsappChat.editAgent'),
+			showDivider: false,
+			showDefaultButtons: false,
+			style: { maxWidth: 640, margin: '0 auto' },
+			icon: <MdSupportAgent />,
+			content: (
+				<Grid container alignItems='center' alignContent='center' style={{ marginBlockEnd: 60 }}>
+					{allAgents?.map((agent: WhatsappAgent) => {
+						return <Grid container alignItems='center' alignContent='center' style={{ marginBottom: 25 }}>
+							<Grid item xs={8}>
+								<TextField
+									label={translator('whatsappChat.agentName')}
+									value={agent?.Name}
+									className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+									placeholder={translator('whatsappChat.agentName')}
+									disabled={false}
+									inputProps={{
+										readOnly: false,
+									}}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+										const newName = e.target.value;
+										updateAgent(agent.AgentId, { Name: newName });
+									}}
+								/>
+							</Grid>
+							<Grid item alignContent='flex-end' alignItems='flex-end' xs={4} style={{ display: 'flex' }}>
+								<Button
+									className={clsx(classes.btn, classes.btnRounded)}
+									style={{ marginInline: 20, marginBlockStart: 20 }}
+									onClick={(e: any) => {
+										onEditAgent({
+											AgentId: agent.AgentId,
+											Name: agent.Name,
+											IsDeleted: false
+										})
+									}}>{translator('common.Update')}</Button>
+								<Box className={clsx(classes.dFlex, classes.flexAlignCetner)} style={{ marginBlockStart: 20 }}>
+									<Link
+										className={clsx('deleteShortcut')} style={{ cursor: 'pointer' }}
+										title={translator("common.remove")}
+										onClick={() => {
+											setShowConfirmDeleteAgent(agent.AgentId);
+										}}
+									>
+										<BsTrash className={'trash'} style={{ fontSize: "20", marginLeft: '0 !important', marginRight: '0 !important' }} />
+									</Link>
+								</Box>
+							</Grid>
+						</Grid>
+					})}
+					<Box position={'absolute'} className={clsx(classes.flex, classes.stickBottom)} style={{ background: 'transparent', border: 'none' }}>
+						<Box style={{ width: '80%', margin: '0 auto', justifyContent: 'flex-end' }} className={clsx(classes.flex)}>
+							<Button
+								className={clsx(classes.btn, classes.btnRounded)}
+								onClick={(e: BaseSyntheticEvent) => {
+									setDialogType({ type: 'addAgent', data: null })
+								}}>{translator('whatsappChat.addAgent')}</Button>
+						</Box>
+					</Box>
+				</Grid>
+			)
+		}
+	}
+
+	const addAgentModalDialog = () => {
+		return {
+			title: translator('whatsappChat.addAgent'),
+			showDivider: false,
+			showDefaultButtons: false,
+			contentStyle: classes.noPadding,
+			icon: <MdSupportAgent />,
+			content: (
+				<Grid container className={classes.w100}>
+					<Grid item xs={12}>
+						<FormControl className={classes.w100}>
+							<TextField
+								label={translator('whatsappChat.agentName')}
+								value={agentModel.Name}
+								className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.w100)}
+								placeholder={translator('whatsappChat.agentName')}
+								disabled={false}
+								inputProps={{
+									readOnly: false,
+								}}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									setAgentModel({ ...agentModel, Name: e.target.value })
+								}}
+							/>
+							<div className={clsx(classes.flex, classes.flexEnd, classes.mt15)}>
+								<Button
+									className={clsx(classes.btn, classes.btnRounded)}
+									style={{ alignSelf: 'center' }}
+									onClick={onAddAgent}>{translator('whatsappChat.addAgent')}</Button>
+							</div>
+						</FormControl>
+					</Grid>
+				</Grid>
+			),
+			onConfirm: async () => {
+				setDialogType({
+					type: '',
+					data: ''
+				});
+			}
+		};
+	};
+
+
 	const renderDialog = () => {
 		const { type } = dialogType || {}
 		let currentDialog: any = {};
@@ -890,6 +1128,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			currentDialog = getExceedDailyLimit();
 		} else if (type === 'dynamicModal') {
 			currentDialog = getDynamicModalDialog();
+		} else if (type === 'addAgent') {
+			currentDialog = addAgentModalDialog();
+		} else if (type === 'editAgents') {
+			currentDialog = editAgentsModalDialog();
 		}
 
 		if (type) {
@@ -906,6 +1148,29 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			)
 		}
 	}
+
+	const handleAgentSelection = (value: number) => {
+		setAgentSelected(value);
+		setCookie('whatsappSelectedAgentId', value.toString());
+	}
+
+	const getAgentByCellphone = (targetCellphone: any) => {
+		// First, iterate through all agents
+		for (const agent of agentList) {
+			// Check if this agent has any sessions with matching cellphone
+			const matchingSession = agent.Sessions.find(
+				(session: any) => compareLastNineDigits(session.Cellphone, targetCellphone)
+			);
+
+			// If we found a matching session, return this agent
+			if (matchingSession) {
+				return agent as WhatsappAgent;
+			}
+		}
+
+		// If no matching agent is found, return null or undefined
+		return {} as WhatsappAgent;
+	};
 
 	return (
 		<>
@@ -942,6 +1207,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									isLoader={isLoader}
 									filterBySelected={filterBySelected}
 									setFilterBySelected={setFilterBySelected}
+									setAgentSelected={handleAgentSelection}
+									selectedAgent={agentSelected}
+									onAddAgent={() => {
+										setDialogType({ type: 'addAgent', data: null })
+									}}
+									onEditAgents={() => {
+										getAgents();
+										setDialogType({ type: 'editAgents' })
+									}}
 								/>
 								<ChatUi
 									isMobileSideBar={isMobileSideBar}
@@ -982,6 +1256,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									personalFields={personalFields}
 									onChatTemplateDelete={onChatTemplateDelete}
 									setIsLoader={(value: boolean) => dispatch(setIsLoader(value))}
+									selectedAgent={getAgentByCellphone(activeChatContacts.PhoneNumber)}
 								/>
 							</div>
 						</div>
@@ -991,6 +1266,28 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					!isLoader && <NoSetup classes={classes} />
 				)}
 				{renderDialog()}
+				<ConfirmDeletePopUp
+					classes={classes}
+					isOpen={showConfirmDeleteAgent > 0}
+					onClose={() => { setShowConfirmDeleteAgent(0) }}
+					onCancel={() => { setShowConfirmDeleteAgent(0) }}
+					windowSize={windowSize}
+					title={translator('whatsappChat.deleteAgent')}
+					text={translator('whatsappChat.confirmDeleteAgent')}
+					handleDeleteGroup={() => {
+						const agentToDelete = allAgents.filter((agent: WhatsappAgent) => { return agent.AgentId === showConfirmDeleteAgent })[0];
+						if (agentToDelete) {
+							dispatch(setIsLoader(true));
+							onEditAgent({
+								AgentId: agentToDelete.AgentId,
+								Name: agentToDelete.Name,
+								IsDeleted: true
+							});
+							setShowConfirmDeleteAgent(0)
+							dispatch(setIsLoader(false));
+						}
+					}}
+				/>
 			</DefaultScreen >
 		</>
 	);

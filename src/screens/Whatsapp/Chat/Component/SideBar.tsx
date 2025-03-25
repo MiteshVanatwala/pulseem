@@ -3,7 +3,7 @@ import {
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { IconButton, MenuItem } from '@material-ui/core';
+import { Button, IconButton, MenuItem } from '@material-ui/core';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FaBars } from 'react-icons/fa';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
@@ -12,7 +12,9 @@ import SideHeaderContactDropDown from './SideHeaderContactDropDown';
 import SideBarContactList from './SideBarContactList';
 import useDebounce from '../Hook/useDebounce';
 import { useSelector } from 'react-redux';
-import { coreProps } from '../../Campaign/Types/WhatsappCampaign.types';
+import { coreProps, WhatsappAgent } from '../../Campaign/Types/WhatsappCampaign.types';
+import { StateType } from '../../../../Models/StateTypes';
+import { setCookie } from '../../../../helpers/Functions/cookies';
 
 const SideBar = ({
 	classes,
@@ -31,16 +33,17 @@ const SideBar = ({
 	isLoader,
 	filterBySelected,
 	setFilterBySelected,
+	selectedAgent,
+	setAgentSelected,
+	onAddAgent,
+	onEditAgents
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 	const [searchText, setSearchText] = useState<string>('');
 	const debouncedValue = useDebounce<string>(searchText, 500);
 
-	useEffect(() => {
-		fetchSearchedContacts(searchText, filterBySelected, true);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedValue]);
 	const handleSearch = (e: BaseSyntheticEvent) => {
 		setSearchText(e.target.value.toLowerCase());
 	};
@@ -50,12 +53,26 @@ const SideBar = ({
 		fetchMoreContacts(searchText, Number(e.target.value), true);
 	};
 
+	const handleAgentSelected = (e: SelectChangeEvent) => {
+		setAgentSelected(Number(e.target.value));
+		setCookie('whatsappSelectedAgentId', e.target.value);
+	};
+
+	useEffect(() => {
+		if (selectedAgent && selectedAgent > 0) {
+			fetchMoreContacts(searchText, filterBySelected, true);
+		}
+		else {
+			fetchSearchedContacts(searchText, filterBySelected, true);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedAgent, debouncedValue]);
+
 	return (
 		<>
 			<aside
-				className={`${classes.whatsappChat} sidebar ${
-					isMobileSideBar && 'mobile-side-bar'
-				}`}>
+				className={`${classes.whatsappChat} sidebar ${isMobileSideBar && 'mobile-side-bar'
+					}`}>
 				<header className={`${classes.whatsappChat} header left`}>
 					<div className={`${classes.whatsappChat} sidebar__avatar-wrapper`}>
 						<img
@@ -92,6 +109,39 @@ const SideBar = ({
 							<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
 							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
 						</Select>
+					</span>
+					<span style={{ marginInlineStart: 10 }}>
+						<div className={classes.agentSelectorContainer}>
+							<Select
+								className={classes.whatsappAgentSelect}
+								autoWidth
+								defaultValue='0'
+								value={`${selectedAgent}`}
+								variant='standard'
+								style={{ fontSize: '12px' }}
+								MenuProps={{
+									PaperProps: {
+										style: {
+											direction: isRTL ? 'rtl' : 'ltr',
+										},
+									},
+								}}
+								onChange={(e: SelectChangeEvent) => handleAgentSelected(e)}
+							>
+								<MenuItem value={0}>{translator('whatsappChat.selectAgent')}</MenuItem>
+								{agentList?.map((agent: WhatsappAgent) => {
+									return <MenuItem value={agent.AgentId}>{agent.Name}</MenuItem>
+								})}
+							</Select>
+							|
+							<Button onClick={(e: BaseSyntheticEvent) => {
+								onAddAgent();
+							}}>{translator('common.addNew')}</Button>
+							|
+							<Button onClick={(e: BaseSyntheticEvent) => {
+								onEditAgents();
+							}}>{translator('common.Edit')}</Button>
+						</div>
 					</span>
 					<div className={`${classes.whatsappChat} sidebar__actions`}>
 						<IconButton
