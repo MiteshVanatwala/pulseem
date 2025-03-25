@@ -98,6 +98,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappActionButtonsWrapper: {
 		top: '-4px',
 		position: 'relative',
+		maxHeight: '150px',
+    overflowY: 'scroll',
 	},
 	whatsappActionButtonsBox: {
 		display: 'flex',
@@ -1384,6 +1386,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappCampaignActionButtonsWrapper: {
 		marginTop: '10px',
+		height: '100px',
+		maxHeight: '100px',
+		overflowY: 'auto',
 	},
 	testSendNewTag: {
 		backgroundColor: '#c9302c',
