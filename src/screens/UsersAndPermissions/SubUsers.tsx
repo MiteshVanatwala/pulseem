@@ -8,7 +8,7 @@ import DefaultScreen from '../DefaultScreen';
 import { Title } from '../../components/managment/Title';
 import { Loader } from '../../components/Loader/Loader';
 import { toastProps } from '../Whatsapp/Editor/Types/WhatsappCreator.types';
-import { errorToastData, resetToastData, successToastData } from '../Whatsapp/Constant';
+import { errorToastData, resetToastData } from '../Whatsapp/Constant';
 import Toast from '../../components/Toast/Toast.component';
 import { ManagmentIcon, TablePagination } from '../../components/managment';
 import { DateFormats, rowsOptions } from '../../helpers/Constants';
@@ -25,11 +25,10 @@ import { eSubUserAction, SubUserModel, SubUserRequest } from '../../Models/SubUs
 import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
-import { get } from 'lodash';
 import { BiMailSend } from 'react-icons/bi';
 
 const SubUsers = ({ classes }: any) => {
-  const { language, windowSize, isRTL, rowsPerPage, userRoles } = useSelector((state: any) => state.core);
+  const { language, windowSize, isRTL, rowsPerPage, userRoles, subUserName } = useSelector((state: any) => state.core);
   const { ToastMessages } = useSelector((state: any) => state?.subUser);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -72,7 +71,7 @@ const SubUsers = ({ classes }: any) => {
 
   const getData = async () => {
     setShowLoader(true);
-    const response = await dispatch(getAllUsers({ ...searchData, PageSize: rowsPerPage })) as any;
+    const response = await dispatch(getAllUsers({ ...searchData, PageSize: rowsPerPage, SearchTerm: !userRoles.AllowSubUsers ? subUserName : searchData?.SearchTerm })) as any;
     switch (response?.payload?.StatusCode) {
       case 201: {
         setUserList(response?.payload?.Data?.Users);
@@ -190,7 +189,7 @@ const SubUsers = ({ classes }: any) => {
         // remove: windowSize === 'xs',
         onClick: () => { setSelectedSubUser(row); setOpenChangePasswordDialog(true) },
         rootClass: clsx(classes.paddingIcon, classes.f18),
-        remove: !userRoles.AllowSubUsers
+        remove: row.UserName !== subUserName && !userRoles.AllowSubUsers
       },
       {
         key: 'permission-history',
@@ -200,6 +199,7 @@ const SubUsers = ({ classes }: any) => {
         // remove: windowSize === 'xs',
         onClick: () => { setSelectedSubUser(row); setOpenPermissionsHistoryDialog(true) },
         rootClass: classes.paddingIcon,
+        remove: !userRoles.AllowSubUsers
       },
       {
         key: 'delete',
@@ -208,8 +208,7 @@ const SubUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
         disable: false,
         showPhone: true,
-        remove: !userRoles?.AllowDelete,
-        // remove: windowSize === 'xs',
+        remove: !userRoles?.AllowSubUsers,
         onClick: () => {
           setDialogType({ type: 'Delete', data: row });
         }
@@ -368,7 +367,7 @@ const SubUsers = ({ classes }: any) => {
       <Grid container className={clsx(classes.linePadding, classes.pb10)} spacing={2}>
         <Grid item md={8} xs={12} sm={12}>
           {
-            <Button
+            userRoles.AllowSubUsers && <Button
               className={clsx(
                 classes.btn,
                 classes.btnRounded,
@@ -390,7 +389,7 @@ const SubUsers = ({ classes }: any) => {
   }
 
   const renderRow = (row: SubUserModel | any) => {
-    return (
+    return (row.UserName === subUserName || userRoles?.AllowSubUsers) && (
       <TableRow
         key={row.AspnetUserId}
         classes={rowStyle}
@@ -423,6 +422,7 @@ const SubUsers = ({ classes }: any) => {
           <PermissionList list={row.UserPermissionsList} />
         </TableCell>
         <TableCell
+          style={{ minHeight: 80 }}
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex2, classes.noBorderOnLastCell)}>

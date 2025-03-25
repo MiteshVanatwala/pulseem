@@ -4,7 +4,7 @@ import { eSubUserPermissions, UserRoles } from '../../Models/SubUser/SubUsers';
 const rtlLanguages = ['he', 'ar']
 
 export const isSuperUserSelector = (permissions) => {
-  if (permissions.indexOf(-1) > 0) return true;
+  if (permissions.indexOf(-1) > -1) return true;
   const adminPermissions = [1, 2, 3, 4];
   return adminPermissions?.every(permission =>
     permissions?.indexOf(permission) > -1
@@ -36,6 +36,7 @@ export const coreSlice = createSlice({
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     },
     isLoader: false,
+    subUserName: ''
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -67,8 +68,9 @@ export const coreSlice = createSlice({
 
       const userToken = payload?.unique_name ? JSON.parse(payload?.unique_name) : -1;
 
-      const isSuperUser = isSuperUserSelector(userToken.UserPermissions);
-      const isReadOnly = userToken.UserPermissions?.indexOf(5) > -1;
+      const isSuperUser = isSuperUserSelector(userToken?.UserPermissions);
+      const isReadOnly = userToken?.UserPermissions?.indexOf(5) > -1;
+      state.subUserName = userToken?.Name;
 
       if (isSuperUser) {
         state.userRoles = UserRoles.Admin;
