@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
+import { CountryCodes, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
 import { MdDvr, MdKeyboardArrowDown, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
@@ -36,6 +36,7 @@ const SignUpNew = ({ classes }: any) => {
     fullName: '',
     emailId: qs?.emailid || '',
     phone: '',
+    countryCode: '+972',
     cellPhone: '',
     userName: '',
     password: '',
@@ -51,6 +52,7 @@ const SignUpNew = ({ classes }: any) => {
   const [errors, setErrors] = useState({
     fullName: '',
     emailId: '',
+    countryCode: '',
     cellPhone: '',
     userName: '',
     password: '',
@@ -575,33 +577,85 @@ const SignUpNew = ({ classes }: any) => {
         </Box>
 
         <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
-          <Typography className={clsx(classes.f18, classes.mt24)}>
-            {t("SignUp.CellPhone")}
-            <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
-          </Typography>
-          <TextField
-            variant="outlined"
-            size="small"
-            name="CellPhone"
-            value={userDetails?.cellPhone}
-            onChange={(event: any) => IsValidPhoneNumber(event.target.value) && setUserDetails({
-              ...userDetails,
-              cellPhone: event.target.value
-            })}
-            className={clsx(classes.textField, classes.minWidth252)}
-            error={!!errors.cellPhone}
-            inputProps={{
-              maxLength: 15,
-              style: {
-                textAlign: 'center'
-              }
-            }}
-          />
-          {!!errors.cellPhone && (
-            <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
-              {errors.cellPhone}
-            </Typography>
-          )}
+          <Grid container className={clsx(classes.directionLTR)}>
+            <Grid item md={5}>
+              <FormControl
+                variant='standard'
+                className={clsx(classes.selectInputFormControl, classes.SignUpCountryDropdown, classes.bgWhite, classes.mb10, classes.w100)} 
+                style={{ borderRadius: 0, paddingTop: '0px', direction: isRTL ? 'rtl' : 'ltr' }}
+              >
+                <Typography className={clsx(classes.f18, classes.mt24)}>
+                  {t("SignUp.countryCode")}
+                  <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+                </Typography>
+                <Select
+                  variant="standard"
+                  value={userDetails?.countryCode}
+                  name='CountryCode'
+                  onChange={(e: SelectChangeEvent) => setUserDetails({
+                    ...userDetails,
+                    countryCode: e.target.value
+                  })}
+                  IconComponent={() => <IoIosArrowDown size={20} className={clsx(classes.dropdownIconComponent, classes.bgWhite, classes.paddingInline10)} style={{ right: isRTL ? 0 : 'auto', left: isRTL ? 'auto' : 0, width: 20, height: '100%' }} />}
+                  style={{
+                    direction: 'ltr',
+                    justifyContent: 'flex-start',
+                    marginTop: '3.5px'
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        width: 100,
+                        maxHeight: 200,
+                        direction: isRTL ? 'rtl' : 'ltr',
+                        justifyContent: 'flex-start'
+                      },
+                    },
+                  }}
+                  className={clsx(classes.w100, classes.directionLTR, classes.SignUpCountryDropdown)}
+                >
+                  {
+                    CountryCodes.map((country: any) => 
+                      <MenuItem value={country?.code} className={clsx(classes.cursorPointer, classes.directionLTR)}>
+                        <label className={clsx(classes.paddingInline5)}>
+                          {country?.flag}&nbsp;({country?.code})&nbsp;{country?.name}
+                        </label>
+                      </MenuItem>
+                    )
+                  }
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item md={7}>
+              <Typography className={clsx(classes.f18, classes.mt24)}>
+                {t("SignUp.CellPhone")}
+                <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
+              </Typography>
+              <TextField
+                variant="outlined"
+                size="small"
+                name="CellPhone"
+                value={userDetails?.cellPhone}
+                onChange={(event: any) => IsValidPhoneNumber(event.target.value) && setUserDetails({
+                  ...userDetails,
+                  cellPhone: event.target.value
+                })}
+                className={clsx(classes.textField, classes.minWidth252)}
+                error={!!errors.cellPhone}
+                inputProps={{
+                  maxLength: 15,
+                  style: {
+                    textAlign: 'center'
+                  }
+                }}
+              />
+              {!!errors.cellPhone && (
+                <Typography className={clsx(classes.errorText, classes.f14, classes.textCapitalize)}>
+                  {errors.cellPhone}
+                </Typography>
+              )}
+            </Grid>
+          </Grid>
         </Box>
 
         <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
