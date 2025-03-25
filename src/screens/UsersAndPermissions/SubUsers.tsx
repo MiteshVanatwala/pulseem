@@ -581,7 +581,7 @@ const SubUsers = ({ classes }: any) => {
         SetToast={setToastMessage}
         IsOpen={openChangePasswordDialog}
         OnClose={() => setOpenChangePasswordDialog(false)}
-        oldPasswordRequired={false}
+        oldPasswordRequired={subUserName !== '' && !userRoles.AllowSubUsers}
       />
 
       {selectedSubUser && <Permissions

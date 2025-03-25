@@ -26,6 +26,8 @@ import { confimrOtp, setAuditLog } from "../../redux/reducers/AccountSettingsSli
 import { AuditLog, eAuditActionType } from "../../Models/AuditLog/AuditLog";
 import { logout } from "../../helpers/Api/PulseemReactAPI";
 import { OtpRequestFor } from "../../Models/Authorization/AuthorizationModels";
+import { changePassword } from "../../redux/reducers/AccountSettingsSlice";
+import { LoginPassword } from "../../Models/Account/Password";
 
 const useStyles = makeStyles({
   dialogContainer: {
@@ -212,8 +214,27 @@ const SubUserChangePassword = ({
       setErrors(missingRules);
     } else {
       setErrors([]);
-      if (isValid) {
+      if (isValid && oldPasswordRequired) {
         setShowOtpDialog(true)
+      }
+      else {
+        dispatch(setAuditLog({
+          ActionName: 'ChangeSubUserPassword',
+          AuditActionType: eAuditActionType.Edit,
+          RequestSourceValue: '',
+          ResponseValue: '',
+          RequestValue: ''
+        } as AuditLog));
+
+        setShowLoader(true);
+        const details: LoginPassword = {
+          NewPassword: userDetails.NewPassword,
+          ConfirmPassword: userDetails.ConfirmPassword,
+          OldPassword: userDetails.OldPassword
+        };
+        const response = await dispatch(changePassword(details));
+        handleResponses(response);
+        setShowLoader(false);
       }
     }
   };
