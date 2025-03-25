@@ -1,3 +1,6 @@
+import { ActivityGroup, Conditions } from "../Models/Clients/ClientSearch";
+import { getCookie } from "./Functions/cookies";
+
 export const rowsOptions = [6, 10, 20, 50];
 
 export const DomainProtocol = [
@@ -208,7 +211,10 @@ export const DateFormats = {
     DATE_ONLY: 'DD/MM/YYYY',
     TIME_ONLY: 'HH:mm',
     FULL_DATE_AM_PM: 'DD/MM/YYYY HH:mm:ss A',
-    DATEPICKER_DATE_FORMAT: 'MM/DD/YYYY'
+    DATEPICKER_DATE_FORMAT: 'MM/DD/YYYY',
+    FULL_DATE_START: 'DD/MM/YYYY 00:00:00',
+    FULL_DATE_END: 'DD/MM/YYYY 23:59:59',
+    DATE_WITHOUT_YEAR: 'MM/DD'
 }
 
 export const FBBusiness = 'https://business.facebook.com/wa/manage/';
@@ -373,3 +379,108 @@ export const GlobalPackageId = 4;
 export const URL_REGEX = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_#]*)?\??(?:[\-\+=&;,%@\.\w_#]*)#?(?:[\.\!\/\\\w+]*))?)/g;
 
 export const Separator = '<sep>';
+
+export const DEFAULT_CLIENT_SEARCH = {
+    IsSearchByFilter: true,
+    IsAdvanced: true,
+    PageSize: getCookie('rpp') || 6,
+    PageIndex: 1,
+    SearchTerm: '',
+    Status: null,
+    PageType: null,
+    ReportType: 10,
+    TestStatusOfEmailElseSms: null,
+    Switch: '',
+    CountryOrRegion: '',
+    GroupIds: [],
+    NodeID: '',
+    OrderBy: 0,
+    IsExport: false,
+    MyActivities: {
+        IsOpened: null,
+        IsOpenedInterval: 0,
+        IsOpenedFromDate: null,
+        IsOpenedToDate: null,
+        IsNotOpened: null,
+        IsNotOpenedInterval: 0,
+        IsNotOpenedFromDate: null,
+        IsNotOpenedToDate: null
+    } as ActivityGroup,
+    MyConditions: [
+        {
+            FirstName: null,
+            FirstNameCond: 0,
+            LastName: null,
+            LastNameCond: 0,
+            Email: null,
+            EmailCond: 2,
+            Address: null,
+            AddressCond: 0,
+            City: null,
+            CityCond: 0,
+            Country: null,
+            CountryCond: 0,
+            State: null,
+            StateCond: 0,
+            Zip: null,
+            ZipCond: 0,
+            Telephone: null,
+            TelephoneCond: 0,
+            Cellphone: null,
+            CellphoneCond: 0,
+            Company: null,
+            ComapnyCond: 0,
+            BirthDateFrom: null,
+            BirthDateTo: null,
+            BirthDateFromWithoutYear: null,
+            BirthDateToWithoutYear: null,
+            ReminderFrom: null,
+            ReminderTo: null,
+            CreatedFrom: null,
+            CreatedTo: null,
+            Status: 0,
+            StatusCond: 0,
+            SmsStatus: 0,
+            SmsStatusCond: 0,
+            ExtraField1: null,
+            ExtraField1Cond: 0,
+            ExtraField2: null,
+            ExtraField2Cond: 0,
+            ExtraField3: null,
+            ExtraField3Cond: 0,
+            ExtraField4: null,
+            ExtraField4Cond: 0,
+            ExtraField5: null,
+            ExtraField5Cond: 0,
+            ExtraField6: null,
+            ExtraField6Cond: 0,
+            ExtraField7: null,
+            ExtraField7Cond: 0,
+            ExtraField8: null,
+            ExtraField8Cond: 0,
+            ExtraField9: null,
+            ExtraField9Cond: 0,
+            ExtraField10: null,
+            ExtraField10Cond: 0,
+            ExtraField11: null,
+            ExtraField11Cond: 0,
+            ExtraField12: null,
+            ExtraField12Cond: 0,
+            ExtraField13: null,
+            ExtraField13Cond: 0,
+            ExtraDate1From: null,
+            ExtraDate1To: null,
+            ExtraDate2From: null,
+            ExtraDate2To: null,
+            ExtraDate3From: null,
+            ExtraDate3To: null,
+            ExtraDate4From: null,
+            ExtraDate4To: null
+        }
+    ] as Conditions[],
+    MyGroups: [],
+    ShowOpened: false,
+    ShowNotOpened: false,
+    ShowClicked: false,
+    ShowNotClicked: false
+}

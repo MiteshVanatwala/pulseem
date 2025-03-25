@@ -23,3 +23,16 @@ export const isValidHttpUrl = (url: string) => {
         return false;
     }
 }
+
+export const compareLastNineDigits = (number1: string, number2: string) => {
+    // Convert numbers to strings
+    const str1 = String(number1);
+    const str2 = String(number2);
+
+    // Extract last 9 digits
+    const lastNineDigits1 = str1.slice(-9);
+    const lastNineDigits2 = str2.slice(-9);
+
+    // Compare
+    return lastNineDigits1 === lastNineDigits2;
+}

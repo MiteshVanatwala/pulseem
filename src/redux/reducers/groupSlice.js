@@ -163,6 +163,17 @@ export const createCombinedGroupV2 = createAsyncThunk(
         }
     })
 
+export const getTestGroups = createAsyncThunk(
+    'Group/GetTestGroups',
+    async (isSms, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`Group/GetTestGroups/${isSms}`);
+            return JSON.parse(response.data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
 
 export const groupSlice = createSlice({
     name: 'group',
@@ -173,6 +184,7 @@ export const groupSlice = createSlice({
         groupData: null,
         error: "",
         uploadProgress: null,
+        testGroups: [],
         ToastMessages: {
             GROUP_CREATED: { severity: 'success', color: 'success', message: 'group.created', showAnimtionCheck: false },
             GROUP_UPDATED: { severity: 'success', color: 'success', message: 'group.updated', showAnimtionCheck: false },
@@ -259,6 +271,9 @@ export const groupSlice = createSlice({
         })
         builder.addCase(addRecipients.fulfilled, (state, { payload }) => {
             state.uploadProgress = null;
+        })
+        builder.addCase(getTestGroups.fulfilled, (state, { payload }) => {
+            state.testGroups = payload;
         })
     }
 })

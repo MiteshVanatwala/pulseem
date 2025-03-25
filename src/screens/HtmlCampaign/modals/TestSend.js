@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import clsx from "clsx";
-import { TextField, Box } from "@material-ui/core";
+import { TextField, Box, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { RiSendPlaneFill } from 'react-icons/ri'
 import PulseemRadio from '../../../components/Controlls/PulseemRadio'
@@ -8,6 +8,7 @@ import "moment/locale/he";
 import { useSelector } from "react-redux";
 import Toast from '../../../components/Toast/Toast.component';
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import GroupSelectorDropDown from "../../../components/Groups/GroupSelectorDropDown";
 
 const TestSend = ({
     classes,
@@ -22,9 +23,10 @@ const TestSend = ({
     const [toastMessage, setToastMessage] = useState(null);
     //eslint-disable-next-line
     const [selectedGroups, setTestGroups] = useState([]);
-    const { isRTL } = useSelector(state => state.core);
+    const { isRTL, windowSize } = useSelector(state => state.core);
     const { ToastMessages } = useSelector(state => state.campaignEditor);
     const emailRef = useRef(null);
+    const { testGroups } = useSelector((state) => state.group);
 
     const handleRecipient = (e) => {
         validateEmail();
@@ -46,22 +48,39 @@ const TestSend = ({
         return true;
     }
     const handleSendMethod = (e) => {
+        const sendMethod = e.target.value;
         setSendMethod(e.target.value);
+        if (sendMethod === "1") {
+            setTestGroups([]);
+        }
+        else {
+            setRecipient('');
+        }
+    }
+    const onBeforeClose = () => {
+        setRecipient('');
+        setTestGroups([]);
+        onClose();
     }
 
     const prepareForSubmit = () => {
-        if (validateEmail()) {
+        if ((sendSendMethod === "1" && validateEmail()) || sendSendMethod === "2") {
             const request = {
                 Language: `${isRTL ? 'he-IL' : 'en-US'}`,
                 CampaignID: campaignId,
-                Emails: recipient,
-                GroupIds: selectedGroups
+                Emails: sendSendMethod === "1" ? recipient : '',
+                GroupIds: sendSendMethod === "2" ? selectedGroups : []
             }
             onSubmit(request);
         }
         else {
             setToastMessage(ToastMessages.INVALID_EMAIL);
         }
+    }
+
+    const handleRemoveGroup = (newList) => {
+        let newSelection = newList ? newList : [];
+        setTestGroups(newSelection);
     }
 
     const radios = [
@@ -87,36 +106,27 @@ const TestSend = ({
                 autoFocus
                 ref={emailRef}
             />
-        }//,
-        /*{
+        },
+        {
             value: "2",
             className: classes.radioButtonActive,
-            label:
-                <CustomTooltip
-                    isSimpleTooltip={false}
-                    classes={classes}
-                    interactive={true}
-                    arrow={true}
-                    style={{ fontSize: 17 }}
-                    placement={'top'}
-                    title={<Typography noWrap={false}>{t("mainReport.sendToGroups")}</Typography>}
-                    text={<>{t("mainReport.sendToGroups")}<span className={classes.newIcn}>{t("mainReport.newFeature")}</span></>}
-                />,
-            child: <GroupTags
+            label: <>{t("mainReport.sendToGroups")}</>,
+            child: <GroupSelectorDropDown
                 classes={classes}
                 title={'siteTracking.typeGroupName'}
                 style={{ width: windowSize === 'xs' ? 320 : 460 }}
                 dropdown
+                onRemoveGroup={handleRemoveGroup}
+                groupSelected={selectedGroups}
                 dropDownProps={{
-                    onChange: (e, val) => {
-                        const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
-                        setTestGroups(idArr)
+                    onSelectGroup: (arr) => {
+                        setTestGroups(arr);
                     },
                     selectedGroups: selectedGroups,
                     groups: testGroups
                 }}
             />
-        }*/
+        }
     ];
 
     const renderToast = () => {
@@ -143,8 +153,8 @@ const TestSend = ({
                         <RiSendPlaneFill />
                     </div>}
                     showDivider={false}
-                    onClose={onClose}
-                    onCancel={onClose}
+                    onClose={onBeforeClose}
+                    onCancel={onBeforeClose}
                     onConfirm={prepareForSubmit}
                     contentStyle={classes.testSendDialog}
                     reduceTitle

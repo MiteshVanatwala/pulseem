@@ -95,9 +95,10 @@ export const getRoutes = (
           isShow: true,
         },
         {
-          title: t("master.RadMenuItemResource7.Text"),
-          href: `${rootDomain}/ClientSearch.aspx?fromreact=true`,
-          isShow: !userRoles?.HideRecipients,
+          key: 'clientSearch',
+          title: t("client.logPageHeaderResource1.search"),
+          href: `${sitePrefix}ClientSearch`,
+          isShow: !userRoles?.HideRecipients
         },
         {
           title: t("master.RadMenuItemResource37.Text"),

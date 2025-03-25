@@ -91,6 +91,7 @@ import SubUsers from './screens/UsersAndPermissions/SubUsers';
 import WhatsappOnBoarding from './screens/Whatsapp/OnBoarding/WhatsappOnBoarding';
 import SubUserConfirmationPage from './screens/UsersAndPermissions/SubUserConfirmationPage';
 import { Loader } from './components/Loader/Loader';
+import ClientSearch from './screens/ClientSearch/ClientSearch';
 import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 import SignUpNew from './screens/SignUp/SignUpNew';
 
@@ -160,10 +161,6 @@ const renderRoutes = (classes, redirect, userRoles) => {
         path={`${sitePrefix}Groups`}
         element={<Groups classes={classes} />}
       />
-      {!userRoles?.HideRecipients && <Route
-        path={`/ClientSearch`}
-        component={transferUrl('/Pulseem/ClientSearch.aspx')}
-      />}
       {/* Newsletter */}
       <Route
         exact
@@ -592,6 +589,11 @@ const renderRoutes = (classes, redirect, userRoles) => {
         path={`${sitePrefix}TermsOfUse`}
         element={<TermsOfUsePage classes={classes} />}
       />
+      {!userRoles?.HideRecipients && <Route
+        exact
+        path={`${sitePrefix}ClientSearch`}
+        element={<ClientSearch classes={classes} />}
+      />}
     </Routes>
   )
 }

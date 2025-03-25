@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
@@ -43,6 +43,7 @@ import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
 import DomainVerification from '../../../Shared/Dialogs/DomainVerification';
 import { IsSharedDomain } from '../../../helpers/Functions/DomainVerificationHelper';
 import { SEND_1, PULSE_1, DateFormats } from '../../../helpers/Constants';
+import { Virtuoso } from 'react-virtuoso';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures, verifiedEmails } = useSelector(state => state.common);
@@ -85,6 +86,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   });
   const [expandedIds, setExpandedIds] = useState([]);
   const [parentCampaignsWithChild, setParentCampaignsWithChild] = useState([]);
+  const virtuosoRef = useRef();
 
   moment.locale(language);
 
@@ -714,8 +716,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
+  const rowHeight = (childItemsCount) => `${childItemsCount > 4 ? 400 : (childItemsCount * 100)}px`;
+
   const renderRow = (row, isParent = true, isEven = false) => {
     const childItems = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
+    const rowPlusChildItems = [ row, ...childItems ];
     const isExpanded = expandedIds.indexOf(row.CampaignID) > -1;
     return (
       <>
@@ -723,7 +728,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
           key={row.CampaignID}
           classes={rowStyle}
           className={clsx(
-            isEven ? classes.evenRowBackground : classes.bgWhite
+            {
+              [classes.evenRowBackground]: isParent && isEven,
+              [classes.bgWhite]: isParent && !isEven,
+              [classes.bgLightGray]: !isParent
+            }
           )}
         >
           <TableCell
@@ -755,10 +764,25 @@ const NewsletterManagnentScreen = ({ classes }) => {
         {
           isParent === true && isExpanded && (
             <>
-              {renderRow(row, false, isEven)}
-              {
-                childItems.map((campaign) => renderRow(campaign, false, isEven))
-              }
+              <div
+                style={{
+                  height: rowHeight(rowPlusChildItems.length),
+                  width: "98%",
+                  overflow: "auto",
+                  maxHeight: rowHeight(rowPlusChildItems.length),
+                  marginLeft: !isRTL ? "auto" : null,
+                  marginRight: isRTL ? "auto" : null,
+                }}
+              >
+                <Virtuoso
+                  ref={virtuosoRef}
+                  style={{ height: rowHeight(rowPlusChildItems.length), width: '100%' }}
+                  totalCount={rowPlusChildItems.length}
+                  itemContent={index => renderRow(rowPlusChildItems[index], false, index % 2)}
+                  computeItemKey={(index) => `${rowPlusChildItems[index]?.ParentCampaignId}_${rowPlusChildItems[index]?.CampaignID}`}
+                  overscan={10}
+                />
+              </div>
             </>
           )
         }
@@ -767,7 +791,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   }
 
   const renderPhoneRow = (row, isParent = true, isEven = false) => {
-    const childItems = (isParent ? newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : []).sort((a, b) => a.CampaignID - b.CampaignID);
+    const childItems = (isParent ? [row, ...newslettersChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID)] : []).sort((a, b) => a.CampaignID - b.CampaignID);
     const isExpanded = expandedIds.indexOf(row.CampaignID) > -1;
     return (
       <>
@@ -776,7 +800,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
           component='div'
           classes={rowStyle}
           className={clsx(
-            isEven ? classes.evenRowBackground : classes.bgWhite
+            {
+              [classes.evenRowBackground]: isParent && isEven,
+              [classes.bgWhite]: isParent && !isEven,
+              [classes.bgLightGray]: !isParent
+            }
           )}
         >
           <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.p10) }}>
@@ -793,10 +821,25 @@ const NewsletterManagnentScreen = ({ classes }) => {
         </TableRow>
         {
           isParent === true && isExpanded && (
-            <>
-              {renderPhoneRow(row, false, isEven)}
-              {childItems.map((campaign) => renderPhoneRow(campaign, false, isEven))}
-            </>
+            <div
+              style={{
+                height: rowHeight(childItems.length),
+                width: "98%",
+                overflow: "auto",
+                maxHeight: rowHeight(childItems.length),
+                marginLeft: !isRTL ? "auto" : null,
+                marginRight: isRTL ? "auto" : null,
+              }}
+            >
+              <Virtuoso
+                ref={virtuosoRef}
+                style={{ height: rowHeight(childItems.length), width: '100%' }}
+                totalCount={childItems.length}
+                itemContent={index => renderPhoneRow(childItems[index], false, index % 2)}
+                computeItemKey={(index) => `${childItems[index]?.ParentCampaignId}_${childItems[index]?.CampaignID}`}
+                overscan={10}
+              />
+            </div>
           )
         }
       </>

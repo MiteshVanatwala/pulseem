@@ -1101,6 +1101,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& path': {
         stroke: 'inherit'
       },
+      '& path:nth-of-type(2)': {
+        fill: '#000'
+      }
     },
   },
   redButtonLink: {
@@ -4311,6 +4314,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTopRightRadius: 14,
     borderTopLeftRadius: 14
   },
+  stickBottom: {
+    top: 'auto',
+    bottom: 0,
+    height: 70,
+    background: '#F0F5FF',
+    width: '100%',
+    right: 0,
+    left: 0,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    borderTop: '0.5px solid #FF3343'
+  },
   automationTemplate: {
     border: 'solid 1.5px #fefefe',
     borderRadius: '5px',
@@ -4415,4 +4430,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
   },
+  agentNameContainer: {
+    backgroundColor: '#5EBD6A',
+    paddingInline: 7
+  }
 });

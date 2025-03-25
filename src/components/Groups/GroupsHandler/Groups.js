@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText, ListItemSecondaryAction, List, TextField, FormControl, Input, InputAdornment, Box, MenuItem, Button
 } from '@material-ui/core'
@@ -18,8 +18,6 @@ import { BsDot } from "react-icons/bs";
 import {
     BsFilter
 } from 'react-icons/bs';
-
-
 
 const Groups = ({ classes,
     list,
@@ -236,6 +234,7 @@ const Groups = ({ classes,
     const sortBy = (sortBy, direction) => {
         if (list) {
             let tempList = [...list];
+
             if (sortBy === "Group Name" && !isCampaign) {
                 direction === 'asc'
                     ? tempList.sort((a, b) =>
@@ -412,7 +411,7 @@ const Groups = ({ classes,
                     open={false}
                     popupIcon={false}
                     onChange={onTagChange}
-                    renderInput={(params) => selectedList.length > 0 ? (
+                    renderInput={(params) => selectedList?.length > 0 ? (
                         <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
                     ) : (
                         <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{noSelectionText !== '' ? noSelectionText : t('notifications.noGroupsSelected')}</Typography>
@@ -430,4 +429,4 @@ const Groups = ({ classes,
     )
 }
 
-export default Groups;
+export default React.memo(Groups);

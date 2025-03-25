@@ -14,9 +14,11 @@ import { lastMessage } from './data';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { coreProps } from '../../Campaign/Types/WhatsappCampaign.types';
+import { coreProps, WhatsappAgent } from '../../Campaign/Types/WhatsappCampaign.types';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
+import { StateType } from '../../../../Models/StateTypes';
+import { compareLastNineDigits } from '../../../../helpers/Utils/TextHelper';
 
 const SideBarContactList = ({
 	classes,
@@ -31,6 +33,7 @@ const SideBarContactList = ({
 	const { t: translator } = useTranslation();
 	const { contactID } = useParams();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { agentList } = useSelector((state: StateType) => state.whatsapp);
 
 	return (
 		<>
@@ -113,6 +116,12 @@ const SideBarContactList = ({
 													<div className={classes.whatsappDateTime}>
 														<div>{moment(contact.LastMessageDate).format('HH:mm')}</div>
 														<div>{moment(contact.LastMessageDate).format('DD/MM/YYYY')}</div>
+													</div>
+													<div className={clsx(classes.justifyContentEnd, classes.bold)}>
+														{agentList
+															?.filter((agent: WhatsappAgent) => agent?.Sessions?.some(session => compareLastNineDigits(session.Cellphone, contact?.PhoneNumber)))
+															?.map((agent: WhatsappAgent) => <div className={classes.agentNameContainer} style={{color: '#000'}}>{agent.Name}</div>)
+														}
 													</div>
 												</span>
 											</div>

@@ -771,3 +771,32 @@ export type SaveQuickSendGroupsPayload = {
 export type SaveQuickSendGroups = {
 	payload: SaveQuickSendGroupsPayload;
 };
+
+export type PulseemAPIDataProps = {
+	Data: any;
+	Status: string;
+};
+
+export type PulseemApiProps = {
+	payload: PulseemAPIDataProps;
+};
+
+export interface WhatsappAgent {
+	AgentId: number;
+	Name: string;
+	IsDeleted: boolean;
+	CreationDate?: Date | string;
+	UpdatedDate?: Date | string | null;
+	Sessions?: WhatsappSessionToClient[] | null | never;
+	ChatSessions?: string | null
+}
+
+export interface WhatsappSessionToClient {
+	ChatSessionId: number;
+	ClientId: number;
+	Cellphone: string;
+}
+export interface WhatsappPhoneSession {
+	Cellphone: string;
+	AgentId: number;
+}

@@ -325,6 +325,9 @@ export type toastProps = {
 	TEMPLATE_ALREADY_EXIST: toastKeyProps;
 	INVALID_NUMBER: toastKeyProps;
 	QUICK_SEND_ERROR: toastKeyProps;
+	AGENT_ADDED: toastKeyProps;
+	AGENT_DELETED: toastKeyProps;
+	AGENT_UPDATED: toastKeyProps;
 };
 
 export type toastKeyProps = {
