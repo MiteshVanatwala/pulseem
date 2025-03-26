@@ -103,11 +103,21 @@ const SignUpNew = ({ classes }: any) => {
     setLoader(false);
     if (status === 200) {
       if (Message === 'Success') {
+        let cellPhone = Data?.Mobile || '';
+        let countryCode = '+972';
+        if (cellPhone !== '') {
+          const CellPhoneWithCode = cellPhone.split("-");
+          countryCode = CellPhoneWithCode[0];
+          cellPhone = CellPhoneWithCode[1];
+        } 
+
+        
         setUserDetails({
           ...userDetails,
           fullName: `${Data?.FirstName || ''} ${Data?.LastName || ''}`,
           emailId: qs?.emailid || '',
-          cellPhone: Data?.Mobile || '',
+          cellPhone: cellPhone || '',
+          countryCode: countryCode,
           companyName: Data?.Company || '',
           fieldOfInterest: Data?.ProductType?.split(',') || []
         })
@@ -118,6 +128,7 @@ const SignUpNew = ({ classes }: any) => {
   }
 
   const saveUserInfo = async () => {
+    console.log(userDetails)
     let errorsTemp = errors;
     const payload: any = {
       FirstName: '',
@@ -145,7 +156,7 @@ const SignUpNew = ({ classes }: any) => {
       const nameArr = userDetails.fullName.split(' ');
       payload.FirstName = nameArr[0];
       payload.LastName = nameArr.slice(1).join(" ");
-      payload.Mobile = userDetails.cellPhone;
+      payload.Mobile = `${userDetails.countryCode}-${userDetails.cellPhone}`;
       payload.Email = userDetails.emailId;
     }
 
@@ -287,8 +298,8 @@ const SignUpNew = ({ classes }: any) => {
       const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
         FirstName: nameArr[0],
         LastName: nameArr.slice(1).join(" "),
-        Mobile: userDetails.cellPhone,
-        Phone: userDetails.phone,
+        Mobile: `${userDetails.countryCode}${userDetails.cellPhone}`,
+        Phone: `${userDetails.phone}`,
         UserName: userDetails.userName,
         Password: userDetails.password,
         Company: userDetails.companyName,
