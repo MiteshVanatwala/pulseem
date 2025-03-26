@@ -107,8 +107,8 @@ const SignUpNew = ({ classes }: any) => {
         let countryCode = '+972';
         if (cellPhone !== '') {
           const CellPhoneWithCode = cellPhone.split("-");
-          countryCode = CellPhoneWithCode[0];
-          cellPhone = CellPhoneWithCode[1];
+          countryCode = CellPhoneWithCode.length > 1 ? CellPhoneWithCode[0] : '+972';
+          cellPhone = CellPhoneWithCode.length > 1 ? CellPhoneWithCode[1] : CellPhoneWithCode[0];
         } 
 
         
