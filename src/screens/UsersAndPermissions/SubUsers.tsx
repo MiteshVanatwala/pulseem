@@ -328,7 +328,7 @@ const SubUsers = ({ classes }: any) => {
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.email")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("SubUsers.cellphone")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("SubUsers.permissions")}</TableCell>
-          <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.noBorderOnLastCell)} align='center'>
+          <TableCell classes={cellStyle} className={clsx(classes.flex3, classes.noBorderOnLastCell)} align='center'>
           </TableCell>
         </TableRow>
       </TableHead>
@@ -425,7 +425,7 @@ const SubUsers = ({ classes }: any) => {
           style={{ minHeight: 80 }}
           classes={cellBodyStyle}
           align='center'
-          className={clsx(classes.flex2, classes.noBorderOnLastCell)}>
+          className={clsx(classes.flex3, classes.noBorderOnLastCell)}>
           {renderCellIcons(row)}
         </TableCell>
       </TableRow>

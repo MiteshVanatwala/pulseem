@@ -214,7 +214,7 @@ const SubUserChangePassword = ({
       setErrors(missingRules);
     } else {
       setErrors([]);
-      if (isValid && oldPasswordRequired) {
+      if (isValid && !oldPasswordRequired) {
         setShowOtpDialog(true)
       }
       else {
