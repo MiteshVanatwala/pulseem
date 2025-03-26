@@ -589,7 +589,7 @@ const SignUpNew = ({ classes }: any) => {
 
         <Box className={clsx(windowSize !== 'xs' ? classes.paddingInline30 : '')}>
           <Grid container className={clsx(classes.directionLTR)}>
-            <Grid item md={5}>
+            <Grid item md={5} xs={12}>
               <FormControl
                 variant='standard'
                 className={clsx(classes.selectInputFormControl, classes.SignUpCountryDropdown, classes.bgWhite, classes.mb10, classes.w100)} 
@@ -637,7 +637,7 @@ const SignUpNew = ({ classes }: any) => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item md={7}>
+            <Grid item md={7} xs={12}>
               <Typography className={clsx(classes.f18, classes.mt24)}>
                 {t("SignUp.CellPhone")}
                 <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
