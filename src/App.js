@@ -94,8 +94,9 @@ import { Loader } from './components/Loader/Loader';
 import ClientSearch from './screens/ClientSearch/ClientSearch';
 import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 import SignUpNew from './screens/SignUp/SignUpNew';
+import { UserRoles } from './Models/SubUser/SubUsers';
 
-const renderRoutes = (classes, redirect, userRoles, isSuperUser) => {
+const renderRoutes = (classes, redirect, userRoles) => {
   const transferUrl =
     (url = '', param = '') =>
       () => {
@@ -474,12 +475,12 @@ const renderRoutes = (classes, redirect, userRoles, isSuperUser) => {
         path={`/AccountBilling`}
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
-      {isSuperUser && <Route
+      {userRoles === UserRoles.Admin && <Route
         exact
         path={`${sitePrefix}AccountUsers`}
         element={<AccountUsers classes={classes} />}
       />}
-      {isSuperUser && <Route
+      {userRoles === UserRoles.Admin && <Route
         path={`/AccountUsersReport`}
         component={transferUrl('/Pulseem/AccountUsersReport.aspx')}
       />}
@@ -602,7 +603,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isSuperUser } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
@@ -792,7 +793,7 @@ const App = ({ screenSize }) => {
       </Routes>
     }
     else {
-      return renderRoutes(classes, redirect, userRoles, isSuperUser);
+      return renderRoutes(classes, redirect, userRoles);
     }
 
   }

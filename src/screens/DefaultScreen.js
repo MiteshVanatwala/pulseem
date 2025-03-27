@@ -13,15 +13,16 @@ import TawkToContainer from '../components/TawkTo/TawkToContainer';
 import { sitePrefix } from '../config';
 import useRedirect from '../helpers/Routes/Redirect';
 import { getCookie } from '../helpers/Functions/cookies';
+import { get } from 'lodash';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
-  const { isAdmin, isAllowSwitchAccount, windowSize, isRTL, isDebtAccount, isClal, isSuperUser } = useSelector(state => state.core)
+  const { isAdmin, isAllowSwitchAccount, windowSize, isRTL, isDebtAccount, isClal, userRoles } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
   const [reKey, setReKey] = useState(0);
   const Redirect = useRedirect();
-  const { accountSettings, accountFeatures } = useSelector(state => state.common);
+  const { accountSettings, accountFeatures, subAccount } = useSelector(state => state.common);
 
   let route, title;
 
@@ -29,7 +30,8 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
 
   if (subPage) {
     if (currentPage === 'settings') {
-      let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL, isSuperUser)
+      let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon,
+        (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false), userRoles)
       const option = settingsRoutes.options.find((sr) => sr.key === subPage) //settingsRoutes && settingsRoutes.options[0].title || '';
       title = (option && option.title) ?? '';
     }
