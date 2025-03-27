@@ -21,7 +21,7 @@ import User from '../../components/User/User';
 import Permissions from '../../components/Permissions/Permissions';
 import PermissionsHistory from '../../components/PermissionsHistory/PermissionsHistory';
 import { getAllUsers, resendConfirmationEmail, save } from '../../redux/reducers/SubUserSlice';
-import { eSubUserAction, SubUserModel, SubUserRequest } from '../../Models/SubUser/SubUsers';
+import { eSubUserAction, SubUserModel, SubUserRequest, UserRoles } from '../../Models/SubUser/SubUsers';
 import PermissionList from './PermissionList';
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 import SubUserChangePassword from './SubUserChangePassword';
@@ -71,7 +71,7 @@ const SubUsers = ({ classes }: any) => {
 
   const getData = async () => {
     setShowLoader(true);
-    const response = await dispatch(getAllUsers({ ...searchData, PageSize: rowsPerPage, SearchTerm: !userRoles.AllowSubUsers ? subUserName : searchData?.SearchTerm })) as any;
+    const response = await dispatch(getAllUsers({ ...searchData, PageSize: rowsPerPage, SearchTerm: userRoles !== UserRoles.Admin ? subUserName : searchData?.SearchTerm })) as any;
     switch (response?.payload?.StatusCode) {
       case 201: {
         setUserList(response?.payload?.Data?.Users);
@@ -179,17 +179,16 @@ const SubUsers = ({ classes }: any) => {
         // remove: windowSize === 'xs',
         onClick: () => { setSelectedSubUser(row); setOpenPermissionsDialog(true) },
         rootClass: classes.paddingIcon,
-        remove: !userRoles.AllowSubUsers
+        remove: userRoles !== UserRoles.Admin
       },
       {
         key: 'change-password',
         uIcon: MdPassword,
         disable: false,
         lable: t('SubUsers.changePassword'),
-        // remove: windowSize === 'xs',
         onClick: () => { setSelectedSubUser(row); setOpenChangePasswordDialog(true) },
         rootClass: clsx(classes.paddingIcon, classes.f18),
-        remove: row.UserName !== subUserName && !userRoles.AllowSubUsers
+        remove: row.UserName !== subUserName && userRoles !== UserRoles.Admin
       },
       {
         key: 'permission-history',
@@ -199,7 +198,7 @@ const SubUsers = ({ classes }: any) => {
         // remove: windowSize === 'xs',
         onClick: () => { setSelectedSubUser(row); setOpenPermissionsHistoryDialog(true) },
         rootClass: classes.paddingIcon,
-        remove: !userRoles.AllowSubUsers
+        remove: userRoles !== UserRoles.Admin
       },
       {
         key: 'delete',
@@ -208,7 +207,7 @@ const SubUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
         disable: false,
         showPhone: true,
-        remove: !userRoles?.AllowSubUsers,
+        remove: userRoles !== UserRoles.Admin,
         onClick: () => {
           setDialogType({ type: 'Delete', data: row });
         }
@@ -220,7 +219,7 @@ const SubUsers = ({ classes }: any) => {
         rootClass: classes.paddingIcon,
         disable: false,
         showPhone: true,
-        remove: row.IsApproved || !userRoles.AllowSubUsers,
+        remove: row.IsApproved || userRoles !== UserRoles.Admin,
         onClick: () => {
           resendConfirmation(row.ID);
         },
@@ -367,7 +366,7 @@ const SubUsers = ({ classes }: any) => {
       <Grid container className={clsx(classes.linePadding, classes.pb10)} spacing={2}>
         <Grid item md={8} xs={12} sm={12}>
           {
-            userRoles.AllowSubUsers && <Button
+            userRoles === UserRoles.Admin && <Button
               className={clsx(
                 classes.btn,
                 classes.btnRounded,
@@ -389,7 +388,7 @@ const SubUsers = ({ classes }: any) => {
   }
 
   const renderRow = (row: SubUserModel | any) => {
-    return (row.UserName === subUserName || userRoles?.AllowSubUsers) && (
+    return (row.UserName === subUserName || userRoles === UserRoles.Admin) && (
       <TableRow
         key={row.AspnetUserId}
         classes={rowStyle}
@@ -581,7 +580,7 @@ const SubUsers = ({ classes }: any) => {
         SetToast={setToastMessage}
         IsOpen={openChangePasswordDialog}
         OnClose={() => setOpenChangePasswordDialog(false)}
-        oldPasswordRequired={subUserName !== '' && !userRoles.AllowSubUsers}
+        oldPasswordRequired={subUserName !== '' && userRoles !== UserRoles.Admin}
       />
 
       {selectedSubUser && <Permissions

@@ -22,7 +22,6 @@ interface Permissions {
   allowSending: boolean;
   allowExport: boolean;
   allowDeleting: boolean;
-  allowSubUsers: boolean;
 }
 
 const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissions, updatePermissions }: refs) => {
@@ -45,8 +44,7 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
       accessType: PermissionTypes.ReadOnly,
       allowSending: false,
       allowExport: false,
-      allowDeleting: false,
-      allowSubUsers: false
+      allowDeleting: false
     });
 
     updateSubUserDetails({
@@ -87,8 +85,8 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
                 if (e.target.checked) {
                   updateSubUserDetails({
                     ...userDetails,
-                    SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowSubUsers].join(','),
-                    UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowSubUsers]
+                    SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete].join(','),
+                    UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete]
                   })
                 }
                 updatePermissions({
@@ -284,51 +282,6 @@ const PermissionItems = ({ classes, userDetails, updateSubUserDetails, permissio
                 {t('SubUsers.allowDeleting')}
               </Grid>
             </Grid>
-
-            <Grid container style={{ marginInline: 55 }}>
-              <Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
-                <FormControlLabel
-                  control={
-                    <PulseemSwitch
-                      id="1"
-                      switchType='ios'
-                      classes={classes}
-                      onColor="#0371ad"
-                      handleDiameter={20}
-                      boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                      activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                      height={15}
-                      className={clsx({ [classes.rtlSwitch]: isRTL })}
-                      checked={permissions.allowSubUsers === true}
-                      onChange={(e: any) => {
-                        if (!e.target.checked) {
-                          updatePermissions({ ...permissions, allowSubUsers: false })
-                          updateSubUserDetails({
-                            ...userDetails,
-                            SubUserPermissions: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSubUsers }).join(','),
-                            UserPermissionsList: userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSubUsers })
-                          })
-                        }
-                        else {
-                          updatePermissions({ ...permissions, allowSubUsers: true })
-                          updateSubUserDetails({
-                            ...userDetails,
-                            SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowSubUsers].join(','),
-                            UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowSubUsers]
-                          })
-
-                        }
-                      }}
-                    />
-                  }
-                  label=''
-                />
-              </Grid>
-              <Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)} style={{ paddingInline: 10 }}>
-                {t('SubUsers.userCreation')}
-              </Grid>
-            </Grid>
-
           </>
         )
       }

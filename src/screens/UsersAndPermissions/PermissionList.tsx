@@ -18,7 +18,7 @@ const PermissionList: React.FC<PermissionListProps> = ({ list }) => {
       permissionText = <b>{t('SubUsers.readOnly')}</b>
     }
     else {
-      if (permissionList?.length > 3) {
+      if (permissionList?.length > 2) {
         permissionText = <><b>{t('SubUsers.admin')}: </b> {texts.join(', ')}</>
       }
       else {
@@ -38,8 +38,6 @@ const PermissionList: React.FC<PermissionListProps> = ({ list }) => {
         return t('SubUsers.allowExport');
       case eSubUserPermissions.AllowDelete:
         return t('SubUsers.allowDeleting');
-      case eSubUserPermissions.AllowSubUsers:
-        return t('SubUsers.userCreation');
       case eSubUserPermissions.HideRecipients:
         return t('SubUsers.readOnly');
       default:

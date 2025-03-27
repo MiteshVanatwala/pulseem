@@ -5,7 +5,7 @@ const rtlLanguages = ['he', 'ar']
 
 export const isSuperUserSelector = (permissions) => {
   if (permissions.indexOf(-1) > -1) return true;
-  const adminPermissions = [1, 2, 3, 4];
+  const adminPermissions = [1, 2, 3];
   return adminPermissions?.every(permission =>
     permissions?.indexOf(permission) > -1
   );
@@ -84,8 +84,7 @@ export const coreSlice = createSlice({
           Restricted: {
             AllowSend: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowSend) > -1,
             AllowExport: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowExport) > -1,
-            AllowDelete: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1,
-            AllowSubUsers: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowSubUsers) > -1,
+            AllowDelete: userToken.UserPermissions.indexOf(eSubUserPermissions.AllowDelete) > -1
           }
         }
         state.userRoles = roles.Restricted;

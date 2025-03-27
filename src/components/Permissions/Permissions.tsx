@@ -21,8 +21,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 		accessType: '',
 		allowSending: false,
 		allowExport: false,
-		allowDeleting: false,
-		allowSubUsers: false
+		allowDeleting: false
 	})
 	const [userDetails, setUserDetails] = useState<SubUserModel | any>(subUser);
 	const [errors, setErrors] = useState({
@@ -37,8 +36,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 	const adminPermissions = [
 		eSubUserPermissions.AllowSend,
 		eSubUserPermissions.AllowDelete,
-		eSubUserPermissions.AllowExport,
-		eSubUserPermissions.AllowSubUsers,
+		eSubUserPermissions.AllowExport
 	];
 
 	const reloadForm = () => {
@@ -60,8 +58,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 				accessType: PermissionTypes.Admin,
 				allowSending: true,
 				allowExport: true,
-				allowDeleting: true,
-				allowSubUsers: true
+				allowDeleting: true
 			})
 		}
 		else {
@@ -69,8 +66,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 				accessType: subUser.UserPermissionsList.indexOf(eSubUserPermissions.HideRecipients) > -1 ? PermissionTypes.ReadOnly : PermissionTypes.LimitedAccess,
 				allowSending: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowSend) > -1,
 				allowExport: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowExport) > -1,
-				allowDeleting: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowDelete) > -1,
-				allowSubUsers: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowSubUsers) > -1
+				allowDeleting: subUser.UserPermissionsList.indexOf(eSubUserPermissions.AllowDelete) > -1
 			});
 		}
 	}
@@ -88,7 +84,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 			cellPhone: (isGlobal ? !IsValidPhoneNumberWithCountryCode(userDetails?.Cellphone.trim(), countryCodeList) : !IsValidNonGlobalPhoneNumber(userDetails?.Cellphone.trim())) ? t('recipient.errors.cellPhone') : '',
 			emailAddress: userDetails?.Email?.trim() === '' ? t('common.requiredField') : '',
 			accessType: permissions.accessType === '' ? t('SubUsers.permissionIsRequired') : '',
-			limitedAccess: permissions.accessType === PermissionTypes.LimitedAccess && permissions.allowSending === false && permissions.allowExport === false && permissions.allowDeleting === false && permissions.allowSubUsers === false ? t('SubUsers.limitedPermissionIsRequired') : '',
+			limitedAccess: permissions.accessType === PermissionTypes.LimitedAccess && permissions.allowSending === false && permissions.allowExport === false && permissions.allowDeleting === false ? t('SubUsers.limitedPermissionIsRequired') : '',
 			firstName: userDetails.FirstName === '' ? t('common.requiredField') : '',
 			lastName: userDetails.LastName === '' ? t('common.requiredField') : '',
 		};
@@ -317,8 +313,8 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 										if (e.target.checked) {
 											setUserDetails({
 												...userDetails,
-												SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowSubUsers].join(','),
-												UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowSubUsers]
+												SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete].join(','),
+												UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowDelete]
 											})
 										}
 										setPermissions({
@@ -358,14 +354,13 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 										if (e.target.checked) {
 											setUserDetails({
 												...userDetails,
-												SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowSubUsers].join(','),
-												UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowExport, eSubUserPermissions.AllowSubUsers]
+												SubUserPermissions: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowExport].join(','),
+												UserPermissionsList: [eSubUserPermissions.AllowSend, eSubUserPermissions.AllowDelete, eSubUserPermissions.AllowExport]
 											})
 											const newPermissions = {
 												allowSending: true,
 												allowExport: true,
-												allowDeleting: true,
-												allowSubUsers: true
+												allowDeleting: true
 											}
 											setPermissions({
 												...newPermissions,
@@ -382,8 +377,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 												accessType: '',
 												allowSending: false,
 												allowExport: false,
-												allowDeleting: false,
-												allowSubUsers: false
+												allowDeleting: false
 											})
 										}
 									}}
@@ -538,54 +532,7 @@ const Permissions = ({ classes, isOpen, subUser, onClose, onConfirm, showButtons
 									<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)} style={{ paddingInline: 10 }}>
 										{t('SubUsers.allowDeleting')}
 									</Grid>
-
 								</Grid>
-
-								<Grid container style={{ marginInline: 55 }}>
-									<Grid item md={1} xs={1} className={clsx(classes.textRight, classes.pt10)}>
-										<FormControlLabel
-											control={
-												<PulseemSwitch
-													id="1"
-													switchType='ios'
-													classes={classes}
-													onColor="#0371ad"
-													handleDiameter={20}
-													boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-													activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-													height={15}
-													className={clsx({ [classes.rtlSwitch]: isRTL })}
-													checked={permissions.allowSubUsers === true}
-													onChange={(e: any) => {
-														if (!e.target.checked) {
-															setPermissions({ ...permissions, allowSubUsers: false })
-															const permissionsList = userDetails.UserPermissionsList.filter((x: any) => { return x !== eSubUserPermissions.AllowSubUsers });
-															setUserDetails({
-																...userDetails,
-																UserPermissionsList: permissionsList,
-																SubUserPermissions: permissionsList.join(',')
-															})
-														}
-														else {
-															setPermissions({ ...permissions, allowSubUsers: true })
-															setUserDetails({
-																...userDetails,
-																SubUserPermissions: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowSubUsers].join(','),
-																UserPermissionsList: [...userDetails.UserPermissionsList, eSubUserPermissions.AllowSubUsers]
-															})
-
-														}
-													}}
-												/>
-											}
-											label=''
-										/>
-									</Grid>
-									<Grid item md={11} xs={11} className={clsx(classes.pt10, classes.dFlex, classes.alignItemsCenter)} style={{ paddingInline: 10 }}>
-										{t('SubUsers.userCreation')}
-									</Grid>
-								</Grid>
-
 							</>
 						)
 					}

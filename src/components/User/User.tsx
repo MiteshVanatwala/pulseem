@@ -71,8 +71,7 @@ const User = ({ classes, isOpen, onClose, onConfirm, CustomGuidEnc }: any) => {
 		accessType: '',
 		allowSending: false,
 		allowExport: false,
-		allowDeleting: false,
-		allowSubUsers: false
+		allowDeleting: false
 	})
 
 	useEffect(() => {
