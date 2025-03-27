@@ -10,6 +10,7 @@
   "Phone": "טלפון",
   "CellPhone": "טלפון סלולרי",
   "CellPhoneRequired": "יש למלא סלולרי",
+  "InvalidCellPhone": "מספר סלולרי שגוי",
   "UserName": "שם משתמש",
   "UserNameRequired": "יש למלא שם משתמש",
   "Password": "סיסמא",

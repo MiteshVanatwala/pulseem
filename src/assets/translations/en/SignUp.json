@@ -10,6 +10,7 @@
   "Phone": "Phone",
   "CellPhone": "Cell Phone",
   "CellPhoneRequired": "Cell Phone is required",
+  "InvalidCellPhone": "Invalid Cell Phone",
   "UserName": "Username",
   "UserNameRequired": "Username is required",
   "Password": "Password",

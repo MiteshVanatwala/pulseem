@@ -4182,6 +4182,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiSelect-select': {
       justifyContent: 'flex-start'
     },
+    '& .MuiInput-root': {
+      direction: 'ltr !important',
+    },
   },
   SignUpLanguageDropdown: {
     width: 150,

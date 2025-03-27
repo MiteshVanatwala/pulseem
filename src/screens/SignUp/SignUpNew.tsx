@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { StateType } from "../../Models/StateTypes";
 import { IoIosArrowDown, IoIosEye, IoIosEyeOff } from "react-icons/io";
-import { CountryCodes, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
+import { CountryCodes, DefaultCountryCodeIsrael, FieldOfInterest, lowerCaseLetters, numbers, specialLetters, upperCaseLetters } from "../../helpers/Constants";
 import { MdDvr, MdKeyboardArrowDown, MdKeyboardArrowLeft, MdKeyboardArrowRight, MdMobileFriendly, MdNotifications, MdOutlineAddShoppingCart, MdOutlineAutoMode, MdOutlineMarkEmailRead, MdOutlineWhatsapp } from "react-icons/md";
 import { RenderHtml, useStylesBootstrapPasswordHint } from "../../helpers/Utils/HtmlUtils";
 import { Loader } from "../../components/Loader/Loader";
@@ -25,6 +25,9 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { setCookie } from "../../helpers/Functions/cookies";
 import EnImage from '../../assets/images/british.svg';
 import IsraelImage from "../../assets/images/israel-flag-icon.svg";
+import { Autocomplete } from "@mui/material";
+import { filter, first } from "lodash";
+import { isValidPhoneNumber } from "libphonenumber-js";
 
 const SignUpNew = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -36,7 +39,7 @@ const SignUpNew = ({ classes }: any) => {
     fullName: '',
     emailId: qs?.emailid || '',
     phone: '',
-    countryCode: '+972',
+    countryCode: DefaultCountryCodeIsrael,
     cellPhone: '',
     userName: '',
     password: '',
@@ -104,20 +107,19 @@ const SignUpNew = ({ classes }: any) => {
     if (status === 200) {
       if (Message === 'Success') {
         let cellPhone = Data?.Mobile || '';
-        let countryCode = '+972';
+        let countryCode = DefaultCountryCodeIsrael;
         if (cellPhone !== '') {
           const CellPhoneWithCode = cellPhone.split("-");
-          countryCode = CellPhoneWithCode.length > 1 ? CellPhoneWithCode[0] : '+972';
-          cellPhone = CellPhoneWithCode.length > 1 ? CellPhoneWithCode[1] : CellPhoneWithCode[0];
-        } 
-
+          countryCode = first(filter(CountryCodes, { code: `${CellPhoneWithCode[0]}` })) || countryCode;
+          cellPhone = CellPhoneWithCode[1];
+        }
         
         setUserDetails({
           ...userDetails,
           fullName: `${Data?.FirstName || ''} ${Data?.LastName || ''}`,
           emailId: qs?.emailid || '',
           cellPhone: cellPhone || '',
-          countryCode: countryCode,
+          countryCode,
           companyName: Data?.Company || '',
           fieldOfInterest: Data?.ProductType?.split(',') || []
         })
@@ -128,7 +130,6 @@ const SignUpNew = ({ classes }: any) => {
   }
 
   const saveUserInfo = async () => {
-    console.log(userDetails)
     let errorsTemp = errors;
     const payload: any = {
       FirstName: '',
@@ -141,7 +142,11 @@ const SignUpNew = ({ classes }: any) => {
       UserID: qs?.id,
     }
     errorsTemp.fullName = userDetails.fullName ? '' : t('SignUp.fullNameRequired');
-    errorsTemp.cellPhone = userDetails.cellPhone ? '' : t('SignUp.CellPhoneRequired');
+    errorsTemp.cellPhone = userDetails.cellPhone.trim() !== '' ? '' : t('SignUp.CellPhoneRequired');
+    if (errorsTemp.cellPhone === '') {
+      // @ts-ignore
+      errorsTemp.cellPhone = !isValidPhoneNumber(userDetails.cellPhone, userDetails.countryCode.country) ? t('SignUp.InvalidCellPhone') : '';
+    }
     errorsTemp.emailId = userDetails.emailId ? (IsValidEmail(`${userDetails.emailId}`) ? '' : t('common.invalidEmail')) : t('common.Required');
 
     setErrors({
@@ -156,7 +161,7 @@ const SignUpNew = ({ classes }: any) => {
       const nameArr = userDetails.fullName.split(' ');
       payload.FirstName = nameArr[0];
       payload.LastName = nameArr.slice(1).join(" ");
-      payload.Mobile = `${userDetails.countryCode}-${userDetails.cellPhone}`;
+      payload.Mobile = `${userDetails.countryCode.code}-${userDetails.cellPhone}`;
       payload.Email = userDetails.emailId;
     }
 
@@ -298,7 +303,7 @@ const SignUpNew = ({ classes }: any) => {
       const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
         FirstName: nameArr[0],
         LastName: nameArr.slice(1).join(" "),
-        Mobile: `${userDetails.countryCode}${userDetails.cellPhone}`,
+        Mobile: `${userDetails.countryCode.code}${userDetails.cellPhone}`,
         Phone: `${userDetails.phone}`,
         UserName: userDetails.userName,
         Password: userDetails.password,
@@ -593,13 +598,49 @@ const SignUpNew = ({ classes }: any) => {
               <FormControl
                 variant='standard'
                 className={clsx(classes.selectInputFormControl, classes.SignUpCountryDropdown, classes.bgWhite, classes.mb10, classes.w100)} 
-                style={{ borderRadius: 0, paddingTop: '0px', direction: isRTL ? 'rtl' : 'ltr' }}
+                style={{ borderRadius: 0, paddingTop: '0px', direction: 'ltr' }}
               >
                 <Typography className={clsx(classes.f18, classes.mt24)}>
                   {t("SignUp.countryCode")}
                   <span className={clsx(classes.pl5, classes.colrPrimary, classes.f18)}>*</span>
                 </Typography>
-                <Select
+                <Autocomplete
+                  value={userDetails?.countryCode}
+                  multiple={false}
+                  includeInputInList={true}
+                  id="CountryCode"
+                  options={CountryCodes}
+                  disableCloseOnSelect
+                  // @ts-ignore
+                  onChange={(option, selected) => setUserDetails({...userDetails, countryCode: selected})}
+                  getOptionLabel={(option) => `${option?.flag} (${option?.code}) ${option?.name}`}
+                  renderGroup={(option: any) => (
+                    <MenuItem value={option} className={clsx(classes.cursorPointer, classes.directionLTR)}>
+                      <label className={clsx(classes.paddingInline5)}>
+                        {option?.flag}&nbsp;({option?.code})&nbsp;{option?.name}
+                      </label>
+                    </MenuItem>
+                  )}
+                  renderOption={(props, option: any) => (
+                    <MenuItem {...props} value={option} className={clsx(classes.cursorPointer, classes.directionLTR)}>
+                      <label className={clsx(classes.paddingInline5)}>
+                        {option?.flag}&nbsp;({option?.code})&nbsp;{option?.name}
+                      </label>
+                    </MenuItem>
+                  )}
+                  style={{ 
+                    direction: 'ltr',
+                    paddingRight: '30px !important'
+                  }}
+                  renderInput={(params) => {
+                    //@ts-ignore
+                    return (<TextField
+                      {...params}
+                      color="primary" className={clsx(classes.textField, classes.w100)}
+                    />)
+                  }}
+                />
+                {/* <Select
                   variant="standard"
                   value={userDetails?.countryCode}
                   name='CountryCode'
@@ -634,7 +675,7 @@ const SignUpNew = ({ classes }: any) => {
                       </MenuItem>
                     )
                   }
-                </Select>
+                </Select> */}
               </FormControl>
             </Grid>
             <Grid item md={7} xs={12}>
@@ -988,7 +1029,7 @@ const SignUpNew = ({ classes }: any) => {
 
   const languageSelector = () => {
     return (
-      <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)}>
+      <FormControl variant='standard' className={clsx(classes.SignUpLanguageDropdown, classes.bgWhite, classes.mb10)}>
         <Select
           variant="standard"
           value={isRTL ? 'he' : 'en'}
