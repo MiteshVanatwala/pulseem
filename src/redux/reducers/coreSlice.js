@@ -32,6 +32,7 @@ export const coreSlice = createSlice({
     isDebtAccount: null,
     userRoles: UserRoles?.Admin,
     subUserPermissions: [],
+    isSuperUser: false,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     },
@@ -74,6 +75,7 @@ export const coreSlice = createSlice({
 
       if (isSuperUser) {
         state.userRoles = UserRoles.Admin;
+        state.isSuperUser = isSuperUser;
       }
       else if (isReadOnly) {
         state.userRoles = UserRoles.ReadOnly;

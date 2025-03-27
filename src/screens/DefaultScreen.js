@@ -16,7 +16,7 @@ import { getCookie } from '../helpers/Functions/cookies';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '', hideSideImages = false }) => {
   const { t } = useTranslation();
-  const { isAdmin, isAllowSwitchAccount, windowSize, isRTL, isDebtAccount, isClal } = useSelector(state => state.core)
+  const { isAdmin, isAllowSwitchAccount, windowSize, isRTL, isDebtAccount, isClal, isSuperUser } = useSelector(state => state.core)
   const { domainVerificationPopUp } = useSelector(state => state.newsletter);
   const { username } = useSelector(state => state.user)
   const [reKey, setReKey] = useState(0);
@@ -29,7 +29,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
 
   if (subPage) {
     if (currentPage === 'settings') {
-      let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL)
+      let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username, isRTL, isSuperUser)
       const option = settingsRoutes.options.find((sr) => sr.key === subPage) //settingsRoutes && settingsRoutes.options[0].title || '';
       title = (option && option.title) ?? '';
     }

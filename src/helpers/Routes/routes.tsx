@@ -38,7 +38,8 @@ export const getSettingsItem = (
   accountSettings: any,
   features: any = null,
   companyAdmin: boolean = false,
-  userRoles: any = null
+  userRoles: any = null,
+  isSuperUser: boolean
 ) => ({
   key: "settings",
   title: title,
@@ -47,8 +48,8 @@ export const getSettingsItem = (
     { key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: `${sitePrefix}AccountSettings`, iconSrc: SettingsMenuIcon, isShow: !accountSettings?.SubAccountSettings?.IsTokenAccount && userRoles === UserRoles.Admin },
     { key: 'billingSettings', title: t('master.linkAccountBilling.Text'), href: `${sitePrefix}BillingSettings`, iconSrc: DolarMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount },
     { key: 'affiliateManagement', title: t('master.affiliateManagement'), href: `${sitePrefix}AffiliateManagement`, iconSrc: DolarMenuIcon, isShow: features && features?.indexOf(PulseemFeatures.AFFILIATE) > -1 && !accountSettings?.SubAccountSettings?.IsTokenAccount },
-    { key: 'accountUsers', title: t('master.RadMenuItemResource3.Text'), href: `${sitePrefix}AccountUsers`, iconSrc: GroupMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount },
-    { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount },
+    { key: 'accountUsers', title: t('master.RadMenuItemResource3.Text'), href: `${sitePrefix}AccountUsers`, iconSrc: GroupMenuIcon, isShow: isSuperUser && (companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount) },
+    { title: t('master.RadMenuItemResource4.Text'), href: `${rootDomain}/AccountUsersReport.aspx?fromreact=true`, iconSrc: GrafMenuIcon, isShow: isSuperUser && (companyAdmin && !accountSettings?.SubAccountSettings?.IsTokenAccount) },
     { title: t('master.RadMenuItemResource23.Text'), href: `${sitePrefix}AccountSettings/ExtraFields`, iconSrc: StarMenuIcon, isShow: true },
     //@ts-ignore
     { title: t('master.linkApiSettingsResource1.Text'), href: `${sitePrefix}ApiSettings`, iconSrc: CodeMenuIcon, isShow: (!accountSettings?.SubAccountSettings?.IsTokenAccount && (WhiteLabelObject[accountSettings?.Account?.ReferrerID] === undefined || !accountSettings?.Account?.ReferrerID || accountSettings?.Account?.ReferrerID === 0)) ? true : false },

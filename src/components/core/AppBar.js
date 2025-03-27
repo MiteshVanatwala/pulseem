@@ -211,9 +211,10 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   }
   const { t } = useTranslation();
   const { username } = useSelector(state => state.user)
+  const { isSuperUser } = useSelector(state => state.core)
   const routes = getRoutes(t, isClal, accountFeatures, accountSettings, windowSize, isRTL, userRoles) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon,
-    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username.length > 20 ? `${username.slice(0, 20)}...` : username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false), userRoles)
+    (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username.length > 20 ? `${username.slice(0, 20)}...` : username, isRTL, accountSettings, accountFeatures, get(subAccount, 'CompanyAdmin', false), userRoles, isSuperUser)
 
   const returnToAdmin = () => {
     window.location = '/Pulseem/ReactRedirect.aspx';

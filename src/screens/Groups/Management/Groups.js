@@ -959,7 +959,7 @@ const Groups = ({ classes }) => {
                                                 },
                                                 onClick: (e) => {
                                                     e?.preventDefault();
-                                                    if (userRoles?.HideRecipients && (PendingClients || 0) > 0) {
+                                                    if (!userRoles?.HideRecipients && (PendingClients || 0) > 0) {
                                                         navigate(CLIENT_CONSTANTS.BASEURL, {
                                                             state:
                                                             {

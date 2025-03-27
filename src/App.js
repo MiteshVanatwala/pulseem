@@ -95,7 +95,7 @@ import ClientSearch from './screens/ClientSearch/ClientSearch';
 import CreateAutomationTemplate from './screens/Automations/CreateAutomation';
 import SignUpNew from './screens/SignUp/SignUpNew';
 
-const renderRoutes = (classes, redirect, userRoles) => {
+const renderRoutes = (classes, redirect, userRoles, isSuperUser) => {
   const transferUrl =
     (url = '', param = '') =>
       () => {
@@ -474,15 +474,15 @@ const renderRoutes = (classes, redirect, userRoles) => {
         path={`/AccountBilling`}
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
-      <Route
+      {isSuperUser && <Route
         exact
         path={`${sitePrefix}AccountUsers`}
         element={<AccountUsers classes={classes} />}
-      />
-      <Route
+      />}
+      {isSuperUser && <Route
         path={`/AccountUsersReport`}
         component={transferUrl('/Pulseem/AccountUsersReport.aspx')}
-      />
+      />}
       <Route
         path={`/ExtraFieldsDefinition`}
         component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
@@ -602,7 +602,7 @@ const App = ({ screenSize }) => {
   let location = useLocation();
   const dispatch = useDispatch();
 
-  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal, isDebtAccount, isAdmin, isLoader, userRoles, isSuperUser } = useSelector(state => state.core)
   const { accountSettings, currencyList } = useSelector(state => state.common)
   const classes = useClasses(windowSize, isRTL)();
   setCookie('accountSettings', '');
@@ -792,7 +792,7 @@ const App = ({ screenSize }) => {
       </Routes>
     }
     else {
-      return renderRoutes(classes, redirect, userRoles);
+      return renderRoutes(classes, redirect, userRoles, isSuperUser);
     }
 
   }

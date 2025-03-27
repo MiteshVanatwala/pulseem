@@ -113,7 +113,7 @@ const NewslettersReport = ({ classes }) => {
       href: !userRoles?.HideRecipients && `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
       clickable: !userRoles?.HideRecipients,
       onClick: (isParent = false) => {
-        if (!userRoles?.HideRecipients)
+        if (userRoles?.HideRecipients)
           return false;
         else {
           window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true`
@@ -142,7 +142,7 @@ const NewslettersReport = ({ classes }) => {
       title: SizeOptionsOfHandHeldDevices.indexOf(windowSize) > -1 ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: !userRoles?.HideRecipients && `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
       onClick: (isParent = false) => {
-        if (!userRoles?.HideRecipients)
+        if (userRoles?.HideRecipients)
           return false;
         else {
           window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}${isParent ? '&IsParent=true' : ''}&fromreact=true`
@@ -838,7 +838,7 @@ const NewslettersReport = ({ classes }) => {
   const renderRow = (row, isParent = true, isEven = false) => {
     if (row === undefined) return <></>;
     const childItems = isParent ? newslettersReportsChildCampaigns.filter(childCampaign => childCampaign?.ParentCampaignId === row?.CampaignID) : [];
-    const rowPlusChildItems = [ row, ...childItems ];
+    const rowPlusChildItems = [row, ...childItems];
     const {
       CampaignID,
       Name,
@@ -853,7 +853,7 @@ const NewslettersReport = ({ classes }) => {
     const {
       SumTotalSendPlan, SumTotalSendCompleted, SumOpenCount, SumOpenCountUnique, SumClickCount, SumClickCountUnique, SumSendError, SumRemovedClients, SumNotOpened, SumPercentageOpens, SumPercetangeClicks, SumRevenue
     } = getParentChildSum(row);
-    
+
     const hrefs = getHrefs(CampaignID, Revenue, childItems?.length > 0)
     return (
       <>
@@ -978,8 +978,8 @@ const NewslettersReport = ({ classes }) => {
         {
           isParent === true && expandedIds.indexOf(row.CampaignID) > -1 && (
             <div
-              style={{ 
-                height: rowHeight(rowPlusChildItems.length), 
+              style={{
+                height: rowHeight(rowPlusChildItems.length),
                 width: "98%",
                 overflow: "auto",
                 maxHeight: rowHeight(rowPlusChildItems.length),
