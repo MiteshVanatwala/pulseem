@@ -538,7 +538,7 @@ const SubUserChangePassword = ({
         userCodeConfirmed={userCodeConfirmed}
         preText={RenderHtml(t("SubUsers.changeUserPassword"))}
         responseError={errorMessage}
-        actionName='DisablePendingFeature'
+        actionName='ChangePassword'
       />}
       <Loader isOpen={showLoader} zIndex={1500} />
     </>
