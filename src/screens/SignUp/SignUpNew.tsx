@@ -303,7 +303,7 @@ const SignUpNew = ({ classes }: any) => {
       const { data: { Message }, status } = await PulseemReactInstance.post(`User/Signup`, {
         FirstName: nameArr[0],
         LastName: nameArr.slice(1).join(" "),
-        Mobile: `${userDetails.countryCode.code}${userDetails.cellPhone}`,
+        Mobile: `${userDetails.countryCode.code.replace('+', '')}${userDetails.cellPhone}`,
         Phone: `${userDetails.phone}`,
         UserName: userDetails.userName,
         Password: userDetails.password,
